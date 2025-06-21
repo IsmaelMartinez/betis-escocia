@@ -1,0 +1,42 @@
+{
+  "upcoming": [
+    {
+      "id": "betis-sevilla-2025",
+      "opponent": "Sevilla FC",
+      "date": "2025-07-15T20:00:00Z",
+      "venue": "Estadio Benito Villamarín",
+      "competition": "La Liga",
+      "isHome": true,
+      "watchParty": {
+        "location": "Polwarth Tavern",
+        "address": "15 Polwarth Pl, Edinburgh EH11 1NH",
+        "time": "19:30"
+      }
+    },
+    {
+      "id": "betis-atletico-2025",
+      "opponent": "Atlético Madrid",
+      "date": "2025-07-22T16:15:00Z",
+      "venue": "Cívitas Metropolitano",
+      "competition": "La Liga",
+      "isHome": false,
+      "watchParty": {
+        "location": "Polwarth Tavern",
+        "address": "15 Polwarth Pl, Edinburgh EH11 1NH",
+        "time": "16:00"
+      }
+    }
+  ],
+  "recent": [
+    {
+      "id": "betis-barcelona-2025",
+      "opponent": "FC Barcelona",
+      "date": "2025-06-01T18:00:00Z",
+      "venue": "Estadio Benito Villamarín",
+      "competition": "La Liga",
+      "result": "2-1",
+      "scorers": ["Isco", "Fekir"],
+      "isHome": true
+    }
+  ]
+}

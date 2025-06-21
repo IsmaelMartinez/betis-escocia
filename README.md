@@ -1,36 +1,153 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Peña Bética Escocesa Website
 
-## Getting Started
+🟢⚪ Official website for the Real Betis supporters association in Edinburgh, Scotland.
 
-First, run the development server:
+## 🏟️ About
 
+This website serves as the digital home for **Peña Bética Escocesa**, the Real Betis supporters club in Edinburgh. We meet at **Polwarth Tavern** to watch every Betis match and welcome all visiting Betis fans to join us.
+
+## ✨ Features
+
+- **Mobile-first responsive design** optimized for smartphones
+- **La Porra de Fran** - Interactive betting system for matches
+- **Match calendar** with watch party information
+- **Real Betis branding** with official colors
+- **Social media integration** (Facebook & Instagram)
+- **Bilingual content** (Spanish/English)
+- **Serverless architecture** for optimal performance
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 15, TypeScript, Tailwind CSS
+- **Backend**: Next.js API Routes (Serverless)
+- **Database**: JSON file storage (easily upgradeable)
+- **Deployment**: Vercel with GitHub Actions
+- **Styling**: Custom Real Betis color scheme
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/pena-betica-escocesa.git
+cd pena-betica-escocesa
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Learn More
+## 📁 Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/                 # Next.js App Router pages
+│   ├── api/            # Serverless API routes
+│   ├── porra/          # La Porra de Fran page
+│   └── partidos/       # Matches page
+├── components/         # Reusable UI components
+│   ├── Layout.tsx      # Main layout wrapper
+│   ├── Hero.tsx        # Homepage hero section
+│   ├── PorraCard.tsx   # Porra betting component
+│   └── MatchCard.tsx   # Match display component
+├── lib/               # Utilities and types
+│   ├── types.ts       # TypeScript definitions
+│   └── utils.ts       # Helper functions
+└── globals.css        # Global styles with Betis branding
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+data/
+├── porra.json         # Porra data storage
+├── matches.json       # Match fixtures
+└── content.json       # General content
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎲 La Porra de Fran
 
-## Deploy on Vercel
+Our signature feature - a betting system where members predict:
+- Exact match result
+- First Betis goalscorer
+- Entry fee: €5
+- 50% goes to the peña, 50% to prizes
+- Depends on Fran's availability
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🏠 Polwarth Tavern
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Our home in Edinburgh:**
+- Address: 15 Polwarth Pl, Edinburgh EH11 1NH
+- Phone: +44 131 229 3402
+- We watch every Betis match here!
+
+## 🌐 Deployment
+
+### Vercel Setup
+
+1. Create a [Vercel account](https://vercel.com)
+2. Import your GitHub repository
+3. Configure environment variables (if needed)
+4. Deploy automatically on every push to `main`
+
+### GitHub Actions
+
+The project includes automatic deployment via GitHub Actions. Set up these secrets in your repository:
+
+- `VERCEL_TOKEN` - Your Vercel token
+- `VERCEL_ORG_ID` - Your Vercel organization ID  
+- `VERCEL_PROJECT_ID` - Your Vercel project ID
+
+## 📱 Social Media
+
+- **Facebook**: [Beticos en Escocia](https://www.facebook.com/groups/beticosenescocia/)
+- **Instagram**: [@rbetisescocia](https://www.instagram.com/rbetisescocia/)
+
+## 🎨 Brand Colors
+
+- **Betis Green**: #00A651
+- **Betis Gold**: #FFD700
+- **Scotland Blue**: #005EB8
+
+## 🚀 Development
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+
+### Adding New Features
+
+1. Create components in `src/components/`
+2. Add pages in `src/app/`
+3. Use TypeScript for type safety
+4. Follow mobile-first design principles
+5. Maintain Real Betis branding
+
+## 📝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## 📄 License
+
+This project is for the Peña Bética Escocesa community.
+
+---
+
+**¡Viva er Betis manque pierda!** 🟢⚪

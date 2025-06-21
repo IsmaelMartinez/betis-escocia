@@ -1,0 +1,29 @@
+{
+  "about": {
+    "title": "Peña Bética Escocesa",
+    "subtitle": "Real Betis supporters in Edinburgh",
+    "description": "Somos la peña del Real Betis Balompié en Edimburgo, Escocia. Nos reunimos en el Polwarth Tavern para ver todos los partidos del Betis. ¡Únete a nosotros! / We are the Real Betis supporters club in Edinburgh, Scotland. We meet at Polwarth Tavern to watch every Betis match. Join us!",
+    "founded": "2018",
+    "location": "Edinburgh, Scotland",
+    "homeVenue": "Polwarth Tavern"
+  },
+  "contact": {
+    "email": "info@beticaescocesa.com",
+    "facebook": "https://www.facebook.com/groups/beticosenescocia/",
+    "instagram": "https://www.instagram.com/rbetisescocia/",
+    "venue": {
+      "name": "Polwarth Tavern",
+      "address": "15 Polwarth Pl, Edinburgh EH11 1NH, UK",
+      "phone": "+44 131 229 3402"
+    }
+  },
+  "gallery": [
+    {
+      "id": "1",
+      "title": "Celebrating Betis victory",
+      "description": "After the win against Sevilla",
+      "image": "/placeholder-celebration.jpg",
+      "date": "2025-03-15"
+    }
+  ]
+}
