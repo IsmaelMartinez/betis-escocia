@@ -6,13 +6,21 @@
   
   /* Real Betis brand colors */
   --betis-green: #00A651;
+  --betis-green-dark: #008542;
   --betis-white: #FFFFFF;
-  --betis-dark: #1a1a1a;
+  --betis-dark: #0f1419;
+  --betis-black: #000000;
   --betis-gold: #FFD700;
+  --betis-gold-dark: #e6c200;
   
   /* Scottish accent colors */
   --scotland-blue: #005EB8;
   --scotland-navy: #0B1426;
+  
+  /* Enhanced contrast colors */
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-900: #111827;
 }
 
 body {
@@ -30,9 +38,40 @@ body {
 
 /* Custom utility classes for Real Betis branding */
 .bg-betis-green { background-color: var(--betis-green); }
+.bg-betis-green-dark { background-color: var(--betis-green-dark); }
 .text-betis-green { color: var(--betis-green); }
 .border-betis-green { border-color: var(--betis-green); }
 .bg-betis-gold { background-color: var(--betis-gold); }
+.bg-betis-gold-dark { background-color: var(--betis-gold-dark); }
 .text-betis-gold { color: var(--betis-gold); }
+.bg-betis-dark { background-color: var(--betis-dark); }
+.text-betis-dark { color: var(--betis-dark); }
+.bg-betis-black { background-color: var(--betis-black); }
+.text-betis-black { color: var(--betis-black); }
 .bg-scotland-blue { background-color: var(--scotland-blue); }
 .text-scotland-blue { color: var(--scotland-blue); }
+
+/* Enhanced contrast utilities */
+.text-shadow-lg { text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); }
+.text-shadow-xl { text-shadow: 0 6px 12px rgba(0, 0, 0, 0.7); }
+.drop-shadow-2xl { filter: drop-shadow(0 25px 25px rgba(0, 0, 0, 0.5)); }
+.bg-gradient-betis { 
+  background: linear-gradient(135deg, var(--betis-green) 0%, var(--betis-green-dark) 100%); 
+}
+.bg-gradient-dark-overlay {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%);
+}
+.bg-gradient-radial {
+  background: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+/* Border width utilities */
+.border-3 { border-width: 3px; }
+.border-4 { border-width: 4px; }
+
+/* Animation utilities */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }

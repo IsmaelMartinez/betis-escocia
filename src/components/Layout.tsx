@@ -8,6 +8,7 @@ const navigation = [
   { name: 'Inicio', href: '/', nameEn: 'Home' },
   { name: 'La Porra', href: '/porra', nameEn: 'La Porra' },
   { name: 'Partidos', href: '/partidos', nameEn: 'Matches' },
+  { name: 'Referencias', href: '/referencias', nameEn: 'References' },
   { name: 'Nosotros', href: '/nosotros', nameEn: 'About' },
   { name: 'Galería', href: '/galeria', nameEn: 'Gallery' },
   { name: 'Únete', href: '/unete', nameEn: 'Join Us' },
@@ -32,8 +33,8 @@ export default function Layout({ children }: LayoutProps) {
                 <span className="text-betis-green font-bold text-sm">RB</span>
               </div>
               <div className="text-white">
-                <h1 className="font-bold text-lg sm:text-xl">Peña Bética</h1>
-                <p className="text-xs opacity-90">Escocesa</p>
+                <h1 className="font-bold text-lg sm:text-xl">No busques más</h1>
+                <p className="text-xs opacity-90">que no hay</p>
               </div>
             </Link>
 
@@ -90,7 +91,7 @@ export default function Layout({ children }: LayoutProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* About */}
             <div>
-              <h3 className="font-bold text-lg mb-4 text-betis-green">Peña Bética Escocesa</h3>
+              <h3 className="font-bold text-lg mb-4 text-betis-green">No busques más que no hay</h3>
               <p className="text-gray-300 text-sm">
                 La peña del Real Betis en Edimburgo. Nos vemos en el Polwarth Tavern para cada partido.
               </p>

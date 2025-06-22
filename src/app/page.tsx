@@ -1,4 +1,5 @@
-import Hero from '@/components/Hero';
+import Link from 'next/link';
+import HeroCommunity from '@/components/HeroCommunity';
 import PorraCard from '@/components/PorraCard';
 import MatchCard from '@/components/MatchCard';
 
@@ -33,84 +34,203 @@ export default function Home() {
 
   return (
     <>
-      <Hero />
+      <HeroCommunity />
       
-      {/* La Porra Section */}
+      {/* La Porra Section - Official Betis Style */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section header - official style */}
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              🎲 La Porra de Fran
+            <div className="inline-block bg-betis-green text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
+              🎲 LA PORRA DE FRAN
+            </div>
+            <h2 className="text-4xl sm:text-5xl font-black text-betis-black mb-6 uppercase">
+              NUESTRA TRADICIÓN
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Nuestra tradicional porra para cada partido. ¡Demuestra que conoces al Betis!
-            </p>
+            <div className="bg-white rounded-lg p-6 max-w-4xl mx-auto shadow-sm border border-gray-200">
+              <p className="text-lg text-gray-700 leading-relaxed">
+                <strong className="text-betis-green">Más que una apuesta</strong>, es nuestra forma de vivir cada partido juntos. 
+                Una tradición familiar que nos une y hace que cada gol sea aún más especial.
+              </p>
+            </div>
           </div>
           
-          <div className="max-w-md mx-auto">
-            <PorraCard
-              isActive={true}
-              opponent="Sevilla FC"
-              date="2025-07-15T20:00:00Z"
-              prizePool={150}
-              totalEntries={23}
-            />
+          {/* Porra card container */}
+          <div className="max-w-lg mx-auto mb-12">
+            <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+              <PorraCard
+                isActive={true}
+                opponent="Sevilla FC"
+                date="2025-07-15T20:00:00Z"
+                prizePool={150}
+                totalEntries={23}
+              />
+            </div>
+          </div>
+
+          {/* Community explanation - official card style */}
+          <div className="text-center">
+            <div className="bg-white rounded-lg p-8 max-w-4xl mx-auto shadow-sm border-l-4 border-betis-green">
+              <h3 className="text-xl font-bold text-betis-black mb-4 uppercase tracking-wide">
+                💝 MÁS QUE DINERO, SON MOMENTOS
+              </h3>
+              <p className="text-gray-700 leading-relaxed">
+                La porra no es solo por el premio. Es por las risas cuando alguien dice que el Betis va a ganar 5-0, 
+                por los abrazos cuando acertamos el resultado, y por ese sentimiento de familia que nos une cada domingo.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Upcoming Matches */}
-      <section className="py-16">
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              📅 Próximos Partidos
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center px-6 py-3 rounded-full bg-betis-green/10 border-2 border-betis-green/20 mb-8">
+              <span className="text-betis-green font-bold text-lg">📅 Nuestras citas familiares</span>
+            </div>
+            <h2 className="text-4xl sm:text-5xl font-black text-betis-black mb-6">
+              Próximos Partidos
             </h2>
-            <p className="text-lg text-gray-600">
-              No te pierdas ningún partido en el Polwarth Tavern
-            </p>
+            <div className="bg-white rounded-3xl p-8 max-w-4xl mx-auto shadow-lg border border-gray-100">
+              <p className="text-xl text-gray-700 leading-relaxed">
+                Cada partido es una reunión familiar en el Polwarth Tavern. 
+                Ven a compartir emociones, risas y ese cariño que solo una familia bética puede ofrecer.
+              </p>
+            </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {upcomingMatches.map((match) => (
-              <MatchCard
-                key={`${match.opponent}-${match.date}`}
-                opponent={match.opponent}
-                date={match.date}
-                venue={match.venue}
-                competition={match.competition}
-                isHome={match.isHome}
-                watchParty={match.watchParty}
-              />
+              <div key={`${match.opponent}-${match.date}`} className="transform hover:scale-105 transition-all duration-300">
+                <MatchCard
+                  opponent={match.opponent}
+                  date={match.date}
+                  venue={match.venue}
+                  competition={match.competition}
+                  isHome={match.isHome}
+                  watchParty={match.watchParty}
+                />
+              </div>
             ))}
+          </div>
+          
+          {/* Family welcome info */}
+          <div className="mt-16 text-center">
+            <div className="bg-gradient-to-r from-betis-green/5 to-betis-gold/5 rounded-3xl p-8 max-w-4xl mx-auto border border-betis-green/20">
+              <h3 className="text-2xl font-bold text-betis-black mb-4">
+                � ¿Primera vez en nuestra casa?
+              </h3>
+              <p className="text-gray-700 mb-6 leading-relaxed">
+                Llega 30 minutos antes del partido. Pregunta por cualquiera de la familia, 
+                te haremos sitio y en cinco minutos ya serás uno más. El ambiente es familiar, 
+                relajado y siempre con una sonrisa.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a
+                  href="https://maps.google.com/maps?q=Polwarth+Tavern+Edinburgh"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-betis-green hover:bg-betis-green-dark text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300"
+                >
+                  📍 Cómo llegar
+                </a>
+                <Link
+                  href="/partidos"
+                  className="border-2 border-betis-green text-betis-green hover:bg-betis-green hover:text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300"
+                >
+                  Ver todos los partidos
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Join Us CTA */}
-      <section className="py-16 bg-betis-green text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">
+      <section className="py-20 bg-gradient-to-br from-betis-green via-betis-green-dark to-betis-black text-white relative overflow-hidden">
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }} />
+        </div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-betis-gold/20 border border-betis-gold/30 backdrop-blur-sm mb-8">
+            <span className="text-betis-gold font-medium text-sm">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Bienvenidos a Escocia</span>
+          </div>
+          
+          <h2 className="text-4xl sm:text-5xl font-black mb-6 text-shadow-lg">
             ¿Estás de visita en Escocia?
           </h2>
-          <p className="text-xl mb-8 opacity-90">
-            ¡Únete a nosotros en el Polwarth Tavern! Todos los béticos son bienvenidos.
+          
+          <p className="text-xl sm:text-2xl mb-4 font-semibold text-betis-gold text-shadow-lg">
+            ¡Únete a nosotros en el Polwarth Tavern!
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
+          
+          <p className="text-lg mb-12 max-w-3xl mx-auto opacity-90 text-shadow-lg leading-relaxed">
+            Todos los béticos son bienvenidos. No importa de dónde vengas, 
+            aquí tienes una familia que comparte tu pasión por el Betis.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+            <Link
               href="/unete"
-              className="bg-betis-gold text-betis-dark px-8 py-4 rounded-lg font-bold text-lg hover:bg-yellow-400 transition-colors duration-200"
+              className="group bg-betis-gold hover:bg-betis-gold-dark text-betis-black px-10 py-5 rounded-2xl font-black text-xl shadow-2xl hover:shadow-betis-gold/25 transition-all duration-300 transform hover:scale-105"
             >
-              Contáctanos
-            </a>
+              <span className="flex items-center">
+                💬 Contáctanos
+                <svg className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </span>
+            </Link>
+            
             <a
               href="https://www.facebook.com/groups/beticosenescocia/"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white/20 backdrop-blur-sm border border-white/30 px-8 py-4 rounded-lg font-bold text-lg hover:bg-white/30 transition-colors duration-200"
+              className="group bg-white/10 backdrop-blur-sm border-2 border-white/30 hover:bg-white/20 px-10 py-5 rounded-2xl font-bold text-xl text-white hover:text-betis-gold transition-all duration-300 transform hover:scale-105"
             >
-              Facebook
+              <span className="flex items-center">
+                📘 Facebook
+                <svg className="ml-2 h-5 w-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+              </span>
             </a>
+          </div>
+          
+          {/* Contact info */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+              <h3 className="text-lg font-bold mb-3 text-betis-gold">📍 Ubicación</h3>
+              <p className="text-sm text-gray-200">
+                Polwarth Tavern<br />
+                15 Polwarth Pl<br />
+                Edinburgh EH11 1NH
+              </p>
+            </div>
+            
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+              <h3 className="text-lg font-bold mb-3 text-betis-gold">⏰ Horarios</h3>
+              <p className="text-sm text-gray-200">
+                30 min antes del partido<br />
+                Todos los partidos<br />
+                Liga, Copa, Europa
+              </p>
+            </div>
+            
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+              <h3 className="text-lg font-bold mb-3 text-betis-gold">💚 Ambiente</h3>
+              <p className="text-sm text-gray-200">
+                100% bético<br />
+                Familiar y acogedor<br />
+                Cervezas frías garantizadas
+              </p>
+            </div>
           </div>
         </div>
       </section>

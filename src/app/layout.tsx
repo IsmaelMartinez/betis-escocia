@@ -14,12 +14,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Peña Bética Escocesa - Real Betis supporters in Edinburgh",
-  description: "La peña del Real Betis en Edimburgo, Escocia. Nos reunimos en el Polwarth Tavern para ver todos los partidos. ¡Únete a nosotros!",
-  keywords: "Real Betis, Edinburgh, Scotland, football, supporters, peña, Polwarth Tavern",
+  title: "No busques más que no hay - Peña Bética Escocesa",
+  description: "La peña del Real Betis en Edimburgo, Escocia. No busques más que no hay - nos reunimos en el Polwarth Tavern para ver todos los partidos.",
+  keywords: "Real Betis, Edinburgh, Scotland, No busques más que no hay, peña bética, Polwarth Tavern, José María Conde",
   openGraph: {
-    title: "Peña Bética Escocesa",
-    description: "Real Betis supporters in Edinburgh, Scotland",
+    title: "No busques más que no hay - Peña Bética Escocesa",
+    description: "La peña del Real Betis en Edimburgo, Escocia. No busques más que no hay.",
     type: "website",
   },
 };

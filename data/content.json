@@ -1,11 +1,13 @@
 {
   "about": {
-    "title": "Peña Bética Escocesa",
-    "subtitle": "Real Betis supporters in Edinburgh",
-    "description": "Somos la peña del Real Betis Balompié en Edimburgo, Escocia. Nos reunimos en el Polwarth Tavern para ver todos los partidos del Betis. ¡Únete a nosotros! / We are the Real Betis supporters club in Edinburgh, Scotland. We meet at Polwarth Tavern to watch every Betis match. Join us!",
-    "founded": "2018",
+    "title": "No busques más que no hay",
+    "subtitle": "Peña Bética en Edimburgo, Escocia",
+    "description": "Somos la peña del Real Betis Balompié en Edimburgo, Escocia. Fundada en diciembre de 2010 por José María Conde y Juan Morata. Nos reunimos en el Polwarth Tavern para ver todos los partidos del Betis. No busques más que no hay - aquí está tu sitio si eres bético en Escocia.",
+    "founded": "2010",
     "location": "Edinburgh, Scotland",
-    "homeVenue": "Polwarth Tavern"
+    "homeVenue": "Polwarth Tavern",
+    "founders": ["José María Conde", "Juan Morata"],
+    "nameOrigin": "Inspirado en la canción de Silvio 'Betis', específicamente en las letras que inspiraron parte del nombre 'No busques más que no hay'."
   },
   "contact": {
     "email": "info@beticaescocesa.com",
@@ -17,6 +19,15 @@
       "phone": "+44 131 229 3402"
     }
   },
+  "references": [
+    {
+      "title": "Conoce a la Peña Bética de Escocia: 'No busques más que no hay'",
+      "url": "https://www.laliga.com/noticias/conoce-a-la-pena-betica-de-escocia-no-busques-mas-que-no-hay",
+      "source": "LaLiga Oficial",
+      "date": "2018-05-14",
+      "type": "interview"
+    }
+  ],
   "gallery": [
     {
       "id": "1",
