@@ -1,7 +1,6 @@
 'use client';
 
 import { Calendar, MapPin, Clock } from 'lucide-react';
-import { formatMatchDate } from '@/lib/utils';
 
 interface MatchCardProps {
   readonly opponent: string;
@@ -27,6 +26,18 @@ export default function MatchCard({
   watchParty 
 }: MatchCardProps) {
   const isUpcoming = new Date(date) > new Date();
+  
+  // Format date inline
+  const formatDate = (dateString: string): string => {
+    const matchDate = new Date(dateString);
+    return matchDate.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
@@ -45,7 +56,7 @@ export default function MatchCard({
             </div>
             
             <div className="text-2xl font-bold text-gray-400">
-              {result || 'VS'}
+              {result ?? 'VS'}
             </div>
             
             <div className="text-left">
@@ -59,7 +70,7 @@ export default function MatchCard({
         <div className="space-y-2 mb-4">
           <div className="flex items-center justify-center space-x-2 text-gray-600">
             <Calendar className="h-4 w-4" />
-            <span className="text-sm">{formatMatchDate(date)}</span>
+            <span className="text-sm">{formatDate(date)}</span>
           </div>
           
           <div className="flex items-center justify-center space-x-2 text-gray-600">

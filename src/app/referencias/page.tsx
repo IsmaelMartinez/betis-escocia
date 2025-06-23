@@ -45,7 +45,7 @@ function ReferenceCard({ title, url, description, date, source, preview }: Refer
         
         {/* Preview */}
         <div className="bg-gray-50 rounded-lg p-4">
-          <p className="text-sm text-gray-600 italic">"{preview}"</p>
+          <p className="text-sm text-gray-600 italic">&ldquo;{preview}&rdquo;</p>
         </div>
       </div>
     </div>
@@ -147,8 +147,8 @@ export default function ReferenciasPage() {
                 
                 <div className="mt-6 p-4 bg-betis-green/10 rounded-lg">
                   <p className="text-sm text-gray-700">
-                    <strong>Origen del nombre:</strong> Inspirado en la canción de Silvio "Betis", 
-                    específicamente en las letras que inspiraron el nombre "No busques más que no hay".
+                    <strong>Origen del nombre:</strong> Inspirado en la canción de Silvio &ldquo;Betis&rdquo;, 
+                    específicamente en las letras que inspiraron el nombre &ldquo;No busques más que no hay&rdquo;.
                   </p>
                 </div>
               </div>
@@ -160,7 +160,7 @@ export default function ReferenciasPage() {
                 José María Conde y Juan Morata se conocieron de forma casual jugando un partido de fútbol 
                 en Edimburgo. Ambos llevaban la camiseta del Betis ese día, lo que marcó el inicio de una 
                 gran amistad. La idea de crear la peña surgió más tarde mientras tomaban algo en un pub, 
-                y así nació "No busques más que no hay".
+                y así nació &ldquo;No busques más que no hay&rdquo;.
               </p>
             </div>
           </div>
