@@ -1,5 +1,6 @@
 import MatchCard from '@/components/MatchCard';
-import { Match } from '@/services/footballDataService';
+import { NoMatchesMessage } from '@/components/ErrorMessage';
+import type { Match } from '@/types/match';
 
 // Fetch data at build time and revalidate every 30 minutes
 async function getMatches() {
@@ -9,10 +10,10 @@ async function getMatches() {
       : 'http://localhost:3000';
     
     const [upcomingRes, recentRes] = await Promise.all([
-      fetch(`${baseUrl}/api/matches?type=upcoming&limit=5`, { 
+      fetch(`${baseUrl}/api/matches?type=upcoming&limit=3`, { 
         next: { revalidate: 1800 } // 30 minutes
       }),
-      fetch(`${baseUrl}/api/matches?type=recent&limit=5`, { 
+      fetch(`${baseUrl}/api/matches?type=recent&limit=3`, { 
         next: { revalidate: 1800 } // 30 minutes
       })
     ]);
@@ -27,8 +28,8 @@ async function getMatches() {
     ]);
 
     return {
-      upcoming: upcomingData.matches || [],
-      recent: recentData.matches || []
+      upcoming: upcomingData.matches ?? [],
+      recent: recentData.matches ?? []
     };
   } catch (error) {
     console.error('Error fetching matches:', error);
@@ -41,18 +42,87 @@ async function getMatches() {
 
 // Helper function to transform Football-Data.org match to component props
 function transformMatch(match: Match, isUpcoming: boolean = false) {
-  const isHome = match.homeTeam.id === 90; // Real Betis team ID
-  const opponent = isHome ? match.awayTeam.name : match.homeTeam.name;
+  const isBetisHome = match.homeTeam.id === 90; // Real Betis team ID
+  const opponent = isBetisHome ? match.awayTeam.name : match.homeTeam.name;
+  const opponentCrest = isBetisHome ? match.awayTeam.crest : match.homeTeam.crest;
   
+  // Get venue information - use known stadiums for common opponents
+  const getVenue = () => {
+    if (isBetisHome) {
+      return "Estadio Benito Villamarín";
+    } else {
+      // Known opponent stadiums (add more as needed)
+      const stadiums: Record<string, string> = {
+        'FC Barcelona': 'Camp Nou',
+        'Real Madrid CF': 'Santiago Bernabéu',
+        'Atlético Madrid': 'Riyadh Air Metropolitano',
+        'Sevilla FC': 'Ramón Sánchez-Pizjuán',
+        'Valencia CF': 'Mestalla',
+        'Athletic Bilbao': 'San Mamés',
+        'Real Sociedad': 'Reale Arena',
+        'Villarreal CF': 'Estadio de la Cerámica',
+        'CA Osasuna': 'El Sadar',
+        'Celta Vigo': 'Abanca-Balaídos',
+        'RCD Espanyol': 'RCDE Stadium',
+        'Getafe CF': 'Coliseum',
+        'Deportivo Alavés': 'Mendizorroza',
+        'Girona FC': 'Montilivi',
+        'UD Las Palmas': 'Estadio Gran Canaria',
+        'Rayo Vallecano': 'Campo de Fútbol de Vallecas',
+        'RCD Mallorca': 'Son Moix',
+        'CD Leganés': 'Butarque',
+        'Real Valladolid CF': 'José Zorrilla'
+      };
+      
+      const opponentName = isBetisHome ? match.awayTeam.name : match.homeTeam.name;
+      return stadiums[opponentName] || `Estadio de ${opponentName}`;
+    }
+  };
+  
+  // Format score for display (always show Betis score first)
+  const getFormattedScore = () => {
+    if (match.score?.fullTime?.home !== null && match.score?.fullTime?.away !== null) {
+      if (isBetisHome) {
+        return {
+          home: match.score.fullTime.home,
+          away: match.score.fullTime.away
+        };
+      } else {
+        // When Betis is away, flip the scores so Betis appears first
+        return {
+          home: match.score.fullTime.away,
+          away: match.score.fullTime.home
+        };
+      }
+    }
+    return undefined;
+  };
+
+  // Get formatted result string (always show Betis score first)
+  const getResultString = () => {
+    if (!isUpcoming && match.score?.fullTime?.home !== null && match.score?.fullTime?.away !== null) {
+      if (isBetisHome) {
+        return `${match.score.fullTime.home}-${match.score.fullTime.away}`;
+      } else {
+        // When Betis is away, flip the result so Betis score appears first
+        return `${match.score.fullTime.away}-${match.score.fullTime.home}`;
+      }
+    }
+    return undefined;
+  };
+
   return {
     opponent,
     date: match.utcDate,
-    venue: match.venue || (isHome ? "Estadio Benito Villamarín" : "Estadio rival"),
+    venue: getVenue(),
     competition: match.competition.name,
-    isHome,
-    result: !isUpcoming && match.score?.fullTime?.home !== null && match.score?.fullTime?.away !== null
-      ? `${match.score.fullTime.home}-${match.score.fullTime.away}`
-      : undefined,
+    isHome: isBetisHome, // Keep this for internal logic
+    status: match.status,
+    matchday: match.matchday,
+    opponentCrest,
+    competitionEmblem: match.competition.emblem,
+    score: getFormattedScore(),
+    result: getResultString(),
     watchParty: isUpcoming ? {
       location: "Polwarth Tavern",
       address: "15 Polwarth Pl, Edinburgh EH11 1NH",
@@ -88,24 +158,14 @@ export default async function MatchesPage() {
                 return (
                   <MatchCard
                     key={`upcoming-${match.id}`}
-                    opponent={transformedMatch.opponent}
-                    date={transformedMatch.date}
-                    venue={transformedMatch.venue}
-                    competition={transformedMatch.competition}
-                    isHome={transformedMatch.isHome}
-                    watchParty={transformedMatch.watchParty}
+                    {...transformedMatch}
                   />
                 );
               })}
             </div>
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">
-                No hay próximos partidos programados en este momento.
-              </p>
-              <p className="text-gray-500 mt-2">
-                ¡Mantente atento para las próximas fechas!
-              </p>
+              <NoMatchesMessage />
             </div>
           )}
         </div>
@@ -123,12 +183,7 @@ export default async function MatchesPage() {
                 return (
                   <MatchCard
                     key={`recent-${match.id}`}
-                    opponent={transformedMatch.opponent}
-                    date={transformedMatch.date}
-                    venue={transformedMatch.venue}
-                    competition={transformedMatch.competition}
-                    isHome={transformedMatch.isHome}
-                    result={transformedMatch.result}
+                    {...transformedMatch}
                   />
                 );
               })}
@@ -161,8 +216,7 @@ export default async function MatchesPage() {
             <div className="bg-white/10 rounded-lg p-6">
               <h3 className="text-xl font-semibold mb-4">¿Cómo llegar?</h3>
               <p className="mb-2">🚌 Autobuses: 10, 27, 45</p>
-              <p className="mb-2">🚶 10 min desde Haymarket</p>
-              <p>🅿️ Parking disponible</p>
+              <p>🚶 10 min desde Haymarket</p>
             </div>
           </div>
           

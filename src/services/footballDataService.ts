@@ -8,6 +8,11 @@
  */
 
 import { getFootballDataConfig } from '@/lib/config';
+import type { 
+  Match, 
+  Team,
+  Competition
+} from '@/types/match';
 
 // Competition IDs for different tournaments
 export const COMPETITIONS = {
@@ -20,59 +25,6 @@ export const COMPETITIONS = {
 
 // Real Betis team ID in Football-Data.org API
 export const REAL_BETIS_TEAM_ID = 90;
-
-// Types based on Football-Data.org API response structure
-export interface Competition {
-  id: number;
-  name: string;
-  code: string;
-  type: string;
-  emblem: string;
-}
-
-export interface Team {
-  id: number;
-  name: string;
-  shortName: string;
-  tla: string;
-  crest: string;
-}
-
-export interface Score {
-  winner: string | null;
-  duration: string;
-  fullTime: {
-    home: number | null;
-    away: number | null;
-  };
-  halfTime: {
-    home: number | null;
-    away: number | null;
-  };
-}
-
-export interface Referee {
-  id: number;
-  name: string;
-  type: string;
-  nationality: string;
-}
-
-export interface Match {
-  id: number;
-  utcDate: string;
-  status: 'SCHEDULED' | 'LIVE' | 'IN_PLAY' | 'PAUSED' | 'FINISHED' | 'POSTPONED' | 'SUSPENDED' | 'CANCELLED';
-  matchday: number;
-  stage: string;
-  group: string | null;
-  lastUpdated: string;
-  competition: Competition;
-  homeTeam: Team;
-  awayTeam: Team;
-  score: Score;
-  venue: string | null;
-  referees: Referee[];
-}
 
 export interface ApiResponse<T> {
   filters: Record<string, string | number | boolean>;
