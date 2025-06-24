@@ -1,5 +1,6 @@
 import MatchCard from '@/components/MatchCard';
-import { NoMatchesMessage } from '@/components/ErrorMessage';
+import { NoUpcomingMatchesMessage, NoRecentMatchesMessage } from '@/components/ErrorMessage';
+import { ApiErrorBoundary, MatchCardErrorBoundary } from '@/components/ErrorBoundary';
 import type { Match } from '@/types/match';
 
 // Fetch data at build time and revalidate every 30 minutes
@@ -152,20 +153,24 @@ export default async function MatchesPage() {
           <h2 className="text-3xl font-bold text-center mb-12">Próximos Partidos</h2>
           
           {upcoming.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {upcoming.map((match: Match) => {
-                const transformedMatch = transformMatch(match, true);
-                return (
-                  <MatchCard
-                    key={`upcoming-${match.id}`}
-                    {...transformedMatch}
-                  />
-                );
-              })}
-            </div>
+            <ApiErrorBoundary>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {upcoming.map((match: Match) => {
+                  const transformedMatch = transformMatch(match, true);
+                  return (
+                    <MatchCardErrorBoundary key={`upcoming-boundary-${match.id}`}>
+                      <MatchCard
+                        key={`upcoming-${match.id}`}
+                        {...transformedMatch}
+                      />
+                    </MatchCardErrorBoundary>
+                  );
+                })}
+              </div>
+            </ApiErrorBoundary>
           ) : (
             <div className="text-center py-12">
-              <NoMatchesMessage />
+              <NoUpcomingMatchesMessage />
             </div>
           )}
         </div>
@@ -177,25 +182,24 @@ export default async function MatchesPage() {
           <h2 className="text-3xl font-bold text-center mb-12">Resultados Recientes</h2>
           
           {recent.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recent.map((match: Match) => {
-                const transformedMatch = transformMatch(match, false);
-                return (
-                  <MatchCard
-                    key={`recent-${match.id}`}
-                    {...transformedMatch}
-                  />
-                );
-              })}
-            </div>
+            <ApiErrorBoundary>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {recent.map((match: Match) => {
+                  const transformedMatch = transformMatch(match, false);
+                  return (
+                    <MatchCardErrorBoundary key={`recent-boundary-${match.id}`}>
+                      <MatchCard
+                        key={`recent-${match.id}`}
+                        {...transformedMatch}
+                      />
+                    </MatchCardErrorBoundary>
+                  );
+                })}
+              </div>
+            </ApiErrorBoundary>
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">
-                No se encontraron resultados recientes.
-              </p>
-              <p className="text-gray-500 mt-2">
-                Los resultados aparecerán aquí después de los partidos.
-              </p>
+              <NoRecentMatchesMessage />
             </div>
           )}
         </div>

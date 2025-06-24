@@ -5,6 +5,7 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') ?? '10', 10);
+    const offset = parseInt(searchParams.get('offset') ?? '0', 10);
     const type = searchParams.get('type') ?? 'all'; // 'all', 'upcoming', 'recent'
     
     const footballService = new FootballDataService();
@@ -12,13 +13,13 @@ export async function GET(request: Request) {
     let matches;
     switch (type) {
       case 'upcoming':
-        matches = await footballService.getUpcomingBetisMatches(limit);
+        matches = await footballService.getUpcomingBetisMatches(limit, offset);
         break;
       case 'recent':
-        matches = await footballService.getRecentBetisResults(limit);
+        matches = await footballService.getRecentBetisResults(limit, offset);
         break;
       default:
-        matches = await footballService.getBetisMatches(limit);
+        matches = await footballService.getBetisMatches(limit, offset);
         break;
     }
     
@@ -26,6 +27,8 @@ export async function GET(request: Request) {
       success: true,
       matches,
       count: matches.length,
+      limit,
+      offset,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {

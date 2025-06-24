@@ -185,7 +185,7 @@ export class FootballDataService {
    * Uses competitions endpoint as teams/{id}/matches is restricted in free tier
    * Free tier only supports La Liga (PD) and Champions League (CL) for seasons 2023-2024
    */
-  async getBetisMatches(limit: number = 20): Promise<Match[]> {
+  async getBetisMatches(limit: number = 20, offset: number = 0): Promise<Match[]> {
     try {
       const allMatches: Match[] = [];
       
@@ -213,9 +213,9 @@ export class FootballDataService {
         }
       }
 
-      // Sort by date (most recent first) and limit results
+      // Sort by date (most recent first) and apply pagination
       const sortedMatches = allMatches.toSorted((a, b) => new Date(b.utcDate).getTime() - new Date(a.utcDate).getTime());
-      return sortedMatches.slice(0, limit);
+      return sortedMatches.slice(offset, offset + limit);
     } catch (error) {
       console.error('Error fetching Betis matches:', error);
       return [];
@@ -227,7 +227,7 @@ export class FootballDataService {
    * Uses competitions endpoint as teams/{id}/matches is restricted in free tier
    * Note: status=SCHEDULED filter may hit rate limits, so we filter manually
    */
-  async getUpcomingBetisMatches(limit: number = 5): Promise<Match[]> {
+  async getUpcomingBetisMatches(limit: number = 5, offset: number = 0): Promise<Match[]> {
     try {
       const allMatches: Match[] = [];
       
@@ -258,7 +258,7 @@ export class FootballDataService {
       }
 
       const sortedMatches = allMatches.toSorted((a, b) => new Date(a.utcDate).getTime() - new Date(b.utcDate).getTime());
-      return sortedMatches.slice(0, limit);
+      return sortedMatches.slice(offset, offset + limit);
     } catch (error) {
       console.error('Error fetching upcoming Betis matches:', error);
       return [];
@@ -269,7 +269,7 @@ export class FootballDataService {
    * Get recent Real Betis match results
    * Uses competitions endpoint as teams/{id}/matches is restricted in free tier
    */
-  async getRecentBetisResults(limit: number = 5): Promise<Match[]> {
+  async getRecentBetisResults(limit: number = 5, offset: number = 0): Promise<Match[]> {
     try {
       const allMatches: Match[] = [];
       
@@ -299,7 +299,7 @@ export class FootballDataService {
       }
 
       const sortedMatches = allMatches.toSorted((a, b) => new Date(b.utcDate).getTime() - new Date(a.utcDate).getTime());
-      return sortedMatches.slice(0, limit);
+      return sortedMatches.slice(offset, offset + limit);
     } catch (error) {
       console.error('Error fetching recent Betis results:', error);
       return [];

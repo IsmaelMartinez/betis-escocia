@@ -87,12 +87,63 @@ export function ApiErrorMessage({ onRetry }: { readonly onRetry?: () => void }) 
   );
 }
 
+export function MatchDataErrorMessage({ onRetry }: { readonly onRetry?: () => void }) {
+  return (
+    <ErrorMessage
+      title="Error en los datos del partido"
+      message="Hubo un problema al mostrar la información de este partido. Los datos podrían estar temporalmente no disponibles."
+      onRetry={onRetry}
+    />
+  );
+}
+
 export function NoMatchesMessage() {
   return (
     <ErrorMessage
       type="warning"
       title="No hay partidos"
-      message="No hay partidos programados para mostrar en este momento."
+      message="No hay partidos programados para mostrar en este momento. ¡Vuelve pronto para ver las próximas fechas!"
+    />
+  );
+}
+
+export function NoUpcomingMatchesMessage() {
+  return (
+    <ErrorMessage
+      type="warning" 
+      title="No hay próximos partidos"
+      message="No hay partidos próximos programados. Mantente atento para futuras fechas del Betis."
+    />
+  );
+}
+
+export function NoRecentMatchesMessage() {
+  return (
+    <ErrorMessage
+      type="warning"
+      title="No hay resultados recientes"
+      message="No se encontraron resultados recientes. Los resultados aparecerán aquí después de los partidos."
+    />
+  );
+}
+
+export function ServerErrorMessage({ onRetry }: { readonly onRetry?: () => void }) {
+  return (
+    <ErrorMessage
+      title="Error del servidor"
+      message="El servidor no está disponible en este momento. Intenta de nuevo en unos minutos."
+      onRetry={onRetry}
+    />
+  );
+}
+
+export function RateLimitErrorMessage({ onRetry }: { readonly onRetry?: () => void }) {
+  return (
+    <ErrorMessage
+      title="Límite de consultas alcanzado"
+      message="Hemos alcanzado el límite de consultas a la API. Intenta de nuevo en unos minutos."
+      onRetry={onRetry}
+      retryLabel="Intentar más tarde"
     />
   );
 }
