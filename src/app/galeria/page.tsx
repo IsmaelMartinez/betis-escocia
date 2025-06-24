@@ -78,21 +78,24 @@ export default function Galeria() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-betis-green via-betis-green-dark to-betis-black text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center px-6 py-3 rounded-full bg-betis-gold/20 border border-betis-gold/30 backdrop-blur-sm mb-8">
-            <span className="text-betis-gold font-medium">📸 Nuestros momentos</span>
+      <section className="bg-gradient-to-br from-betis-green via-betis-green-dark to-betis-black text-white py-20 relative">
+        {/* Background overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/20"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="inline-flex items-center px-6 py-3 rounded-full bg-betis-gold/30 border border-betis-gold/50 backdrop-blur-sm mb-8">
+            <span className="text-betis-gold font-bold text-lg">📸 Nuestros momentos</span>
           </div>
           
-          <h1 className="text-4xl sm:text-6xl font-black mb-6 text-shadow-lg">
+          <h1 className="text-4xl sm:text-6xl font-black mb-6 text-white drop-shadow-xl">
             Galería
           </h1>
           
-          <p className="text-xl sm:text-2xl mb-4 font-semibold text-betis-gold text-shadow-lg">
+          <p className="text-xl sm:text-2xl mb-6 font-bold text-betis-gold drop-shadow-lg">
             Los mejores momentos de nuestra familia bética
           </p>
           
-          <p className="text-lg max-w-3xl mx-auto opacity-90 text-shadow-lg leading-relaxed">
+          <p className="text-lg max-w-3xl mx-auto text-white/95 leading-relaxed font-medium">
             Cada foto cuenta una historia. Cada sonrisa refleja la pasión que compartimos. 
             Aquí están nuestros recuerdos más preciados.
           </p>
@@ -105,19 +108,19 @@ export default function Galeria() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="text-center bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
               <div className="text-3xl font-black text-betis-green mb-2">234</div>
-              <div className="text-gray-600 font-medium">Fotos totales</div>
+              <div className="text-gray-700 font-medium">Fotos totales</div>
             </div>
             <div className="text-center bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
               <div className="text-3xl font-black text-betis-green mb-2">6</div>
-              <div className="text-gray-600 font-medium">Álbumes</div>
+              <div className="text-gray-700 font-medium">Álbumes</div>
             </div>
             <div className="text-center bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
               <div className="text-3xl font-black text-betis-green mb-2">50+</div>
-              <div className="text-gray-600 font-medium">Béticos fotografiados</div>
+              <div className="text-gray-700 font-medium">Béticos fotografiados</div>
             </div>
             <div className="text-center bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
               <div className="text-3xl font-black text-betis-green mb-2">3</div>
-              <div className="text-gray-600 font-medium">Años de recuerdos</div>
+              <div className="text-gray-700 font-medium">Años de recuerdos</div>
             </div>
           </div>
         </div>
@@ -133,7 +136,7 @@ export default function Galeria() {
             <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
               MOMENTOS INOLVIDABLES
             </h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-800 max-w-3xl mx-auto leading-relaxed">
               Haz clic en cualquier álbum para ver todas las fotos
             </p>
           </div>
@@ -175,7 +178,7 @@ export default function Galeria() {
                     }`}>
                       {categoryNames[gallery.category as keyof typeof categoryNames]}
                     </span>
-                    <div className="flex items-center text-gray-500 text-sm">
+                    <div className="flex items-center text-gray-600 text-sm font-medium">
                       <Calendar className="h-4 w-4 mr-1" />
                       {gallery.date}
                     </div>
@@ -185,7 +188,7 @@ export default function Galeria() {
                     {gallery.title}
                   </h3>
                   
-                  <p className="text-gray-700 text-sm leading-relaxed mb-4">
+                  <p className="text-gray-800 text-sm leading-relaxed mb-4 font-medium">
                     {gallery.description}
                   </p>
                   
@@ -210,7 +213,7 @@ export default function Galeria() {
               <Camera className="h-6 w-6 text-betis-green mr-3" />
               📱 ¿Tienes fotos de la peña?
             </h2>
-            <p className="text-gray-700 mb-6 leading-relaxed">
+            <p className="text-gray-800 mb-6 leading-relaxed font-medium">
               Si tienes fotos de algún partido o evento de la peña, ¡compártelas con nosotros! 
               Nos encanta tener recuerdos de todos los momentos que vivimos juntos.
             </p>

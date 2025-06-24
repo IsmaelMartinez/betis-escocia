@@ -4,7 +4,7 @@ This document provides a list of ideas and features for the Peña Bética Escoce
   
 * Find where it is shown on tv in the UK and Spain, maybe provide some links to the channels or streaming services.
 
-* Make the porra private only for Peña members, so that we don't get in a legal trouble with the gambling commission. Also it is a skill based game, not gambling, 
+* Make the porra private only for Peña members, so that we don't get in a legal trouble with the gambling commission. Also it is a skill based game, not gambling. 50/50 split of the prize pool, 50% to the winner, 50% to the Peña (donation for the yearly celebration).
 
 * add friendly games to the system, so that we can see the results of the friendly games as well.
 

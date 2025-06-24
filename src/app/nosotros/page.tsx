@@ -65,21 +65,24 @@ export default function Nosotros() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-betis-green via-betis-green-dark to-betis-black text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center px-6 py-3 rounded-full bg-betis-gold/20 border border-betis-gold/30 backdrop-blur-sm mb-8">
-            <span className="text-betis-gold font-medium">💚 Nuestra historia</span>
+      <section className="bg-gradient-to-br from-betis-green via-betis-green-dark to-betis-black text-white py-20 relative">
+        {/* Background overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/20"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="inline-flex items-center px-6 py-3 rounded-full bg-betis-gold/30 border border-betis-gold/50 backdrop-blur-sm mb-8">
+            <span className="text-betis-gold font-bold text-lg">💚 Nuestra historia</span>
           </div>
           
-          <h1 className="text-4xl sm:text-6xl font-black mb-6 text-shadow-lg">
+          <h1 className="text-4xl sm:text-6xl font-black mb-6 text-white drop-shadow-xl">
             Nosotros
           </h1>
           
-          <p className="text-xl sm:text-2xl mb-4 font-semibold text-betis-gold text-shadow-lg">
+          <p className="text-xl sm:text-2xl mb-6 font-bold text-betis-gold drop-shadow-lg">
             Más que una peña, somos familia
           </p>
           
-          <p className="text-lg max-w-3xl mx-auto opacity-90 text-shadow-lg leading-relaxed">
+          <p className="text-lg max-w-3xl mx-auto text-white/95 leading-relaxed font-medium">
             Desde 2018, hemos sido el hogar de todos los béticos en Escocia. 
             Una historia de pasión, amistad y amor incondicional por los colores verdes y blancos.
           </p>
@@ -133,7 +136,7 @@ export default function Nosotros() {
                 familia. Béticos de toda España que viven en Escocia, estudiantes de intercambio, 
                 turistas de paso... todos son bienvenidos.
               </p>
-              <p className="text-gray-800 leading-relaxed mb-6">
+              <p className="text-gray-800 leading-relaxed mb-6 text-base">
                 Hemos celebrado bodas, nacimientos, ascensos profesionales y, por supuesto, 
                 títulos del Betis. También hemos llorado derrotas juntos y nos hemos consolado 
                 con una cerveza y la certeza de que &ldquo;el año que viene será el nuestro&rdquo;.
@@ -141,11 +144,11 @@ export default function Nosotros() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center p-4 bg-betis-green/5 rounded-lg">
                   <div className="text-2xl font-black text-betis-green">50+</div>
-                  <div className="text-sm text-gray-600">Miembros activos</div>
+                  <div className="text-sm text-gray-700 font-medium">Miembros activos</div>
                 </div>
                 <div className="text-center p-4 bg-betis-green/5 rounded-lg">
                   <div className="text-2xl font-black text-betis-green">200+</div>
-                  <div className="text-sm text-gray-600">Partidos vividos</div>
+                  <div className="text-sm text-gray-700 font-medium">Partidos vividos</div>
                 </div>
               </div>
             </div>
@@ -210,7 +213,7 @@ export default function Nosotros() {
                 <p className="text-betis-green font-semibold mb-3 text-sm uppercase tracking-wide">
                   {member.role}
                 </p>
-                <p className="text-gray-600 text-sm leading-relaxed">
+                <p className="text-gray-700 text-sm leading-relaxed font-medium">
                   {member.description}
                 </p>
               </div>
