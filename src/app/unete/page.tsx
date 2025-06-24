@@ -205,8 +205,8 @@ export default function Unete() {
               <h3 className="text-xl font-bold text-gray-900 mb-4">Contacto</h3>
               <p className="text-gray-800 mb-4 leading-relaxed">
                 <strong className="text-gray-900">¿Dudas?</strong><br />
-                Escríbenos por Facebook<br />
-                o Instagram
+                Escríbenos por Facebook,<br />
+                Instagram o YouTube
               </p>
               <a
                 href="https://www.facebook.com/groups/beticosenescocia/"
@@ -310,6 +310,14 @@ export default function Unete() {
               className="border-2 border-white text-white hover:bg-white hover:text-betis-green px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
             >
               💬 Contactar por Facebook
+            </a>
+            <a
+              href="https://www.youtube.com/beticosenescocia"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
+            >
+              📺 Ver en YouTube
             </a>
           </div>
         </div>

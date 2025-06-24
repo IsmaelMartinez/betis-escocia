@@ -147,6 +147,7 @@ Created: December 2024
 - [ ] T12.4: Add performance monitoring and alerting
 - [ ] T12.5: Create deployment checklist and rollback procedures
 - [ ] T12.6: Document API usage and troubleshooting guide
+- [ ] T12.7: Clean up codebase and remove unused files/folders
 
 ## 📁 **RELEVANT FILES**
 

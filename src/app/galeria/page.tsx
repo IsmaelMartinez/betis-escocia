@@ -234,6 +234,14 @@ export default function Galeria() {
               >
                 📸 Etiquétanos en Instagram
               </a>
+              <a
+                href="https://www.youtube.com/beticosenescocia"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300"
+              >
+                📺 Síguenos en YouTube
+              </a>
             </div>
           </div>
         </div>

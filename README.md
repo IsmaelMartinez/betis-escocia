@@ -112,6 +112,7 @@ The project includes automatic deployment via GitHub Actions. Set up these secre
 
 - **Facebook**: [Beticos en Escocia](https://www.facebook.com/groups/beticosenescocia/)
 - **Instagram**: [@rbetisescocia](https://www.instagram.com/rbetisescocia/)
+- **YouTube**: [Beticos en Escocia](https://www.youtube.com/beticosenescocia)
 
 ## 🎨 Brand Colors
 

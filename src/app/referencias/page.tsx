@@ -85,6 +85,14 @@ export default function ReferenciasPage() {
       date: "Activo",
       description: "Cuenta oficial de Instagram con fotos de las quedadas, partidos y momentos especiales de la peña.",
       preview: "Fotos y momentos especiales de la peña bética en Edimburgo. Síguenos para ver nuestras celebraciones en Polwarth Tavern."
+    },
+    {
+      title: "Béticos en Escocia en YouTube",
+      url: "https://www.youtube.com/beticosenescocia",
+      source: "YouTube",
+      date: "Activo",
+      description: "Canal oficial de YouTube con vídeos de las quedadas, celebraciones y vida de la peña en Escocia.",
+      preview: "Vídeos de nuestras celebraciones, entrevistas y momentos especiales de la comunidad bética en Edimburgo."
     }
   ];
 
@@ -213,7 +221,7 @@ export default function ReferenciasPage() {
                   📱
                 </div>
                 <h4 className="font-semibold mb-2">Redes Sociales</h4>
-                <p className="text-sm text-gray-600">Presencia activa en Facebook e Instagram</p>
+                <p className="text-sm text-gray-600">Presencia activa en Facebook, Instagram y YouTube</p>
               </div>
               
               <div className="text-center">
@@ -251,6 +259,14 @@ export default function ReferenciasPage() {
               className="bg-white/20 backdrop-blur-sm border border-white/30 px-8 py-4 rounded-lg font-bold text-lg hover:bg-white/30 transition-colors duration-200"
             >
               📸 Instagram
+            </a>
+            <a
+              href="https://www.youtube.com/beticosenescocia"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-red-600 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-red-700 transition-colors duration-200"
+            >
+              📺 YouTube
             </a>
           </div>
         </div>

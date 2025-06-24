@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, MapPin, Facebook, Instagram } from 'lucide-react';
+import { Menu, X, MapPin, Facebook, Instagram, Video } from 'lucide-react';
 
 const navigation = [
   { name: 'Inicio', href: '/', nameEn: 'Home' },
@@ -129,6 +129,14 @@ export default function Layout({ children }: LayoutProps) {
                   className="text-gray-300 hover:text-betis-green transition-colors"
                 >
                   <Instagram size={24} />
+                </a>
+                <a
+                  href="https://www.youtube.com/beticosenescocia"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-300 hover:text-betis-green transition-colors"
+                >
+                  <Video size={24} />
                 </a>
               </div>
             </div>
