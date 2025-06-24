@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import HeroCommunity from '@/components/HeroCommunity';
-import PorraCard from '@/components/PorraCard';
 import MatchCard from '@/components/MatchCard';
 import BetisPositionWidget from '@/components/BetisPositionWidget';
 
@@ -41,53 +40,6 @@ export default function Home() {
     <>
       <HeroCommunity />
       
-      {/* La Porra Section - Official Betis Style */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Section header - official style */}
-          <div className="text-center mb-12">
-            <div className="inline-block bg-betis-green text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
-              🎲 LA PORRA DE FRAN
-            </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
-              NUESTRA TRADICIÓN
-            </h2>
-            <div className="bg-white rounded-lg p-6 max-w-4xl mx-auto shadow-sm border border-gray-200">
-              <p className="text-lg text-gray-700 leading-relaxed">
-                <strong className="text-betis-green">Más que una apuesta</strong>, es nuestra forma de vivir cada partido juntos. 
-                Una tradición familiar que nos une y hace que cada gol sea aún más especial.
-              </p>
-            </div>
-          </div>
-          
-          {/* Porra card container */}
-          <div className="max-w-lg mx-auto mb-12">
-            <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
-              <PorraCard
-                isActive={true}
-                opponent="Sevilla FC"
-                date="2025-07-15T20:00:00Z"
-                prizePool={150}
-                totalEntries={23}
-              />
-            </div>
-          </div>
-
-          {/* Community explanation - official card style */}
-          <div className="text-center">
-            <div className="bg-white rounded-lg p-8 max-w-4xl mx-auto shadow-sm border-l-4 border-betis-green">
-              <h3 className="text-xl font-bold text-gray-900 mb-4 uppercase tracking-wide">
-                💝 MÁS QUE DINERO, SON MOMENTOS
-              </h3>
-              <p className="text-gray-700 leading-relaxed">
-                La porra no es solo por el premio. Es por las risas cuando alguien dice que el Betis va a ganar 5-0, 
-                por los abrazos cuando acertamos el resultado, y por ese sentimiento de familia que nos une cada domingo.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Upcoming Matches */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -106,26 +58,29 @@ export default function Home() {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {upcomingMatches.map((match) => (
-              <div key={`${match.opponent}-${match.date}`} className="transform hover:scale-105 transition-all duration-300">
-                <MatchCard
-                  id={match.id}
-                  opponent={match.opponent}
-                  date={match.date}
-                  venue={match.venue}
-                  competition={match.competition}
-                  isHome={match.isHome}
-                  status={match.status}
-                  watchParty={match.watchParty}
-                />
-              </div>
-            ))}
-          </div>
-          
-          {/* Betis position widget */}
-          <div className="mt-12 max-w-md mx-auto">
-            <BetisPositionWidget />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            {/* Matches section */}
+            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+              {upcomingMatches.map((match) => (
+                <div key={`${match.opponent}-${match.date}`} className="transform hover:scale-105 transition-all duration-300">
+                  <MatchCard
+                    id={match.id}
+                    opponent={match.opponent}
+                    date={match.date}
+                    venue={match.venue}
+                    competition={match.competition}
+                    isHome={match.isHome}
+                    status={match.status}
+                    watchParty={match.watchParty}
+                  />
+                </div>
+              ))}
+            </div>
+            
+            {/* Betis position widget */}
+            <div className="lg:col-span-1">
+              <BetisPositionWidget />
+            </div>
           </div>
           
           {/* Family welcome info */}

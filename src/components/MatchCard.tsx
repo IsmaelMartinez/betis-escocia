@@ -161,7 +161,7 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
   const renderTeamCrest = (team: { name: string; crest?: string; isBetis: boolean }) => {
     if (team.isBetis) {
       return (
-        <BetisLogo className="w-8 h-8 object-contain rounded" />
+        <BetisLogo width={32} height={32} className="object-contain rounded" />
       );
     }
     

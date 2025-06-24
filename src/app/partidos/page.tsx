@@ -55,24 +55,27 @@ export default async function MatchesPage() {
         </div>
       </section>
 
-      {/* Betis Position Widget */}
-      <section className="py-8 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-md mx-auto">
-            <BetisPositionWidget />
-          </div>
-        </div>
-      </section>
-
-      {/* Matches with Filtering */}
+      {/* Matches with Filtering and Position Widget */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ApiErrorBoundary>
-            <FilteredMatches 
-              upcomingMatches={upcoming} 
-              recentMatches={recent} 
-            />
-          </ApiErrorBoundary>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Main content - matches */}
+            <div className="lg:col-span-3">
+              <ApiErrorBoundary>
+                <FilteredMatches 
+                  upcomingMatches={upcoming} 
+                  recentMatches={recent} 
+                />
+              </ApiErrorBoundary>
+            </div>
+            
+            {/* Sidebar - Betis Position Widget */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-8">
+                <BetisPositionWidget />
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

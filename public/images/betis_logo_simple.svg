@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Simplified but official Real Betis shield -->
+  <!-- Main shield background (gold/yellow frame) -->
+  <path d="M100 10 L170 40 L170 130 L100 190 L30 130 L30 40 Z" fill="#de9500" stroke="#000" stroke-width="2"/>
+  
+  <!-- Inner white shield -->
+  <path d="M100 20 L155 45 L155 125 L100 175 L45 125 L45 45 Z" fill="#ffffff"/>
+  
+  <!-- Green horizontal stripes -->
+  <rect x="45" y="45" width="110" height="12" fill="#00954c"/>
+  <rect x="45" y="70" width="110" height="12" fill="#00954c"/>
+  <rect x="45" y="95" width="110" height="12" fill="#00954c"/>
+  <rect x="45" y="120" width="110" height="12" fill="#00954c"/>
+  
+  <!-- Central "BETIS" text area -->
+  <rect x="65" y="75" width="70" height="30" fill="#00954c" rx="3"/>
+  <text x="100" y="95" font-family="serif" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">BETIS</text>
+  
+  <!-- Crown/decorative elements at top -->
+  <polygon points="95,25 100,15 105,25 103,30 97,30" fill="#de9500"/>
+  <circle cx="100" cy="18" r="2" fill="#de9500"/>
+  
+  <!-- Side decorative dots -->
+  <circle cx="60" cy="60" r="3" fill="#00954c"/>
+  <circle cx="140" cy="60" r="3" fill="#00954c"/>
+  <circle cx="60" cy="90" r="3" fill="#00954c"/>
+  <circle cx="140" cy="90" r="3" fill="#00954c"/>
+  <circle cx="60" cy="120" r="3" fill="#00954c"/>
+  <circle cx="140" cy="120" r="3" fill="#00954c"/>
+  
+  <!-- Bottom text -->
+  <rect x="50" y="145" width="100" height="12" fill="#00954c" rx="2"/>
+  <text x="100" y="152" font-family="serif" font-size="8" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">REAL BETIS BALOMPIÉ</text>
+</svg>

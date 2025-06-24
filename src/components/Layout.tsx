@@ -6,7 +6,6 @@ import { Menu, X, MapPin, Facebook, Instagram, Video } from 'lucide-react';
 
 const navigation = [
   { name: 'Inicio', href: '/', nameEn: 'Home' },
-  { name: 'La Porra', href: '/porra', nameEn: 'La Porra' },
   { name: 'Partidos', href: '/partidos', nameEn: 'Matches' },
   { name: 'Clasificación', href: '/clasificacion', nameEn: 'Standings' },
   { name: 'Referencias', href: '/referencias', nameEn: 'References' },

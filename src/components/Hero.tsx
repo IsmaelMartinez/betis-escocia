@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { MapPin, Calendar, Users, Play, Heart } from 'lucide-react';
+import { MapPin, Calendar, Users, Heart } from 'lucide-react';
 
 export default function Hero() {
   return (
@@ -94,18 +94,7 @@ export default function Hero() {
           </div>
 
           {/* CTA buttons with enhanced modern styling */}
-          <div className="flex flex-col sm:flex-row gap-8 justify-center items-center mb-20">
-            <Link 
-              href="/porra"
-              className="group relative bg-gradient-to-r from-betis-gold to-betis-gold-dark hover:from-betis-gold-dark hover:to-betis-gold text-betis-black px-12 py-6 rounded-3xl font-black text-2xl shadow-2xl hover:shadow-betis-gold/40 transition-all duration-500 transform hover:scale-110 border-2 border-betis-gold"
-            >
-              <span className="flex items-center relative z-10">
-                🎲 La Porra de Fran
-                <Play className="ml-3 h-6 w-6 group-hover:translate-x-2 transition-transform duration-300" />
-              </span>
-              <div className="absolute inset-0 bg-white/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </Link>
-            
+          <div className="flex flex-col sm:flex-row gap-8 justify-center items-center mb-20">            
             <Link 
               href="/unete"
               className="group relative bg-betis-black/90 backdrop-blur-md border-3 border-betis-gold hover:bg-betis-gold hover:text-betis-black px-12 py-6 rounded-3xl font-black text-2xl text-white transition-all duration-500 transform hover:scale-110 shadow-2xl"
@@ -114,6 +103,17 @@ export default function Hero() {
                 Únete a nosotros
                 <Users className="ml-3 h-6 w-6 group-hover:scale-125 transition-transform duration-300" />
               </span>
+            </Link>
+
+            <Link 
+              href="/partidos"
+              className="group relative bg-gradient-to-r from-betis-green to-betis-green-dark hover:from-betis-green-dark hover:to-betis-green text-white px-12 py-6 rounded-3xl font-black text-2xl shadow-2xl hover:shadow-betis-green/40 transition-all duration-500 transform hover:scale-110 border-2 border-betis-green"
+            >
+              <span className="flex items-center relative z-10">
+                📅 Ver Partidos
+                <Calendar className="ml-3 h-6 w-6 group-hover:translate-x-2 transition-transform duration-300" />
+              </span>
+              <div className="absolute inset-0 bg-white/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </Link>
           </div>
 

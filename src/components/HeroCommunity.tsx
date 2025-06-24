@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { MapPin, Users, Play, Heart, Coffee, Smile } from 'lucide-react';
+import { MapPin, Users, Calendar, Heart, Coffee, Smile } from 'lucide-react';
 
 export default function HeroCommunity() {
   return (
@@ -73,11 +73,11 @@ export default function HeroCommunity() {
                 ÚNETE A LA FAMILIA
               </Link>
               <Link 
-                href="/porra"
+                href="/partidos"
                 className="border-2 border-betis-green text-betis-green hover:bg-betis-green hover:text-white px-8 py-4 rounded-lg font-bold text-lg transition-all duration-300 flex items-center justify-center"
               >
-                <Play className="mr-3 h-5 w-5" />
-                LA PORRA DE FRAN
+                <Calendar className="mr-3 h-5 w-5" />
+                VER PARTIDOS
               </Link>
             </div>
           </div>
