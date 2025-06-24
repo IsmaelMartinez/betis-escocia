@@ -82,7 +82,7 @@ export default function Nosotros() {
             Más que una peña, somos familia
           </p>
           
-          <p className="text-lg max-w-3xl mx-auto text-white/95 leading-relaxed font-medium">
+          <p className="text-lg max-w-3xl mx-auto text-white leading-relaxed font-medium drop-shadow-xl">
             Desde 2018, hemos sido el hogar de todos los béticos en Escocia. 
             Una historia de pasión, amistad y amor incondicional por los colores verdes y blancos.
           </p>

@@ -157,20 +157,23 @@ export default function Home() {
           }} />
         </div>
         
+        {/* Text readability overlay */}
+        <div className="absolute inset-0 bg-black/20"></div>
+        
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center px-4 py-2 rounded-full bg-betis-gold/20 border border-betis-gold/30 backdrop-blur-sm mb-8">
             <span className="text-betis-gold font-medium text-sm">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Bienvenidos a Escocia</span>
           </div>
           
-          <h2 className="text-4xl sm:text-5xl font-black mb-6 text-shadow-lg">
+          <h2 className="text-4xl sm:text-5xl font-black mb-6 text-white drop-shadow-2xl">
             ¿Estás de visita en Escocia?
           </h2>
           
-          <p className="text-xl sm:text-2xl mb-4 font-semibold text-betis-gold text-shadow-lg">
+          <p className="text-xl sm:text-2xl mb-4 font-semibold text-betis-gold drop-shadow-xl">
             ¡Únete a nosotros en el Polwarth Tavern!
           </p>
           
-          <p className="text-lg mb-12 max-w-3xl mx-auto text-white/95 font-medium leading-relaxed drop-shadow-lg">
+          <p className="text-lg mb-12 max-w-3xl mx-auto text-white font-medium leading-relaxed drop-shadow-xl">
             Todos los béticos son bienvenidos. No importa de dónde vengas, 
             aquí tienes una familia que comparte tu pasión por el Betis.
           </p>

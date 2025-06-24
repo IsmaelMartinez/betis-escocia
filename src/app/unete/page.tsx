@@ -80,7 +80,7 @@ export default function Unete() {
             Ser bético en Escocia nunca fue tan fácil
           </p>
           
-          <p className="text-lg max-w-3xl mx-auto text-white/95 leading-relaxed font-medium">
+          <p className="text-lg max-w-3xl mx-auto text-white leading-relaxed font-medium drop-shadow-xl">
             No importa si acabas de llegar a Edinburgh o si llevas años aquí. 
             Si eres bético, ya tienes sitio en nuestra mesa.
           </p>

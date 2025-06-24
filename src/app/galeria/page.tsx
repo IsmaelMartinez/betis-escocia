@@ -95,7 +95,7 @@ export default function Galeria() {
             Los mejores momentos de nuestra familia bética
           </p>
           
-          <p className="text-lg max-w-3xl mx-auto text-white/95 leading-relaxed font-medium">
+          <p className="text-lg max-w-3xl mx-auto text-white leading-relaxed font-medium drop-shadow-xl">
             Cada foto cuenta una historia. Cada sonrisa refleja la pasión que compartimos. 
             Aquí están nuestros recuerdos más preciados.
           </p>
