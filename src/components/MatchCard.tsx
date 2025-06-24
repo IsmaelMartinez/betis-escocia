@@ -37,18 +37,68 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
     });
   };
 
-  // Get competition badge color
+  // Get competition badge color and style
   const getCompetitionColor = (comp: string): string => {
-    if (comp.toLowerCase().includes('liga') || comp.includes('Primera')) {
-      return 'bg-red-600'; // La Liga red
+    const compLower = comp.toLowerCase();
+    
+    // La Liga
+    if (compLower.includes('liga') || compLower.includes('primera')) {
+      return 'bg-gradient-to-r from-red-600 to-red-700'; // La Liga red
     }
-    if (comp.toLowerCase().includes('champions')) {
-      return 'bg-blue-600'; // Champions League blue
+    
+    // Champions League
+    if (compLower.includes('champions')) {
+      return 'bg-gradient-to-r from-blue-600 to-blue-800'; // Champions League blue
     }
-    if (comp.toLowerCase().includes('copa')) {
-      return 'bg-yellow-600'; // Copa del Rey gold
+    
+    // Europa League
+    if (compLower.includes('europa') && !compLower.includes('conference')) {
+      return 'bg-gradient-to-r from-orange-500 to-orange-600'; // Europa League orange
     }
-    return 'bg-betis-green'; // Default Betis green
+    
+    // Conference League
+    if (compLower.includes('conference')) {
+      return 'bg-gradient-to-r from-green-600 to-green-700'; // Conference League green
+    }
+    
+    // Copa del Rey
+    if (compLower.includes('copa')) {
+      return 'bg-gradient-to-r from-yellow-600 to-yellow-700'; // Copa del Rey gold
+    }
+    
+    // Supercopa de España
+    if (compLower.includes('supercopa')) {
+      return 'bg-gradient-to-r from-purple-600 to-purple-700'; // Supercopa purple
+    }
+    
+    // Default - Betis green gradient
+    return 'bg-gradient-to-r from-green-600 to-betis-green';
+  };
+
+  // Get friendly competition name for display
+  const getCompetitionDisplayName = (comp: string): string => {
+    const compLower = comp.toLowerCase();
+    
+    if (compLower.includes('primera') || compLower === 'laliga santander' || compLower === 'la liga') {
+      return 'LaLiga';
+    }
+    if (compLower.includes('champions')) {
+      return 'Champions League';
+    }
+    if (compLower.includes('europa') && !compLower.includes('conference')) {
+      return 'Europa League';
+    }
+    if (compLower.includes('conference')) {
+      return 'Conference League';
+    }
+    if (compLower.includes('copa del rey')) {
+      return 'Copa del Rey';
+    }
+    if (compLower.includes('supercopa')) {
+      return 'Supercopa de España';
+    }
+    
+    return comp; // Return original if no mapping found
   };
 
   // Get match status display
@@ -150,7 +200,7 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
                 className="object-contain"
               />
             )}
-            <p className="text-sm font-medium">{competition}</p>
+            <p className="text-sm font-medium">{getCompetitionDisplayName(competition)}</p>
           </div>
           {matchday && (
             <span className="text-xs bg-white/20 px-2 py-1 rounded-full">

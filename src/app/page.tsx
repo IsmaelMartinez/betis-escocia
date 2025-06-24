@@ -2,6 +2,7 @@ import Link from 'next/link';
 import HeroCommunity from '@/components/HeroCommunity';
 import PorraCard from '@/components/PorraCard';
 import MatchCard from '@/components/MatchCard';
+import BetisPositionWidget from '@/components/BetisPositionWidget';
 
 export default function Home() {
   // Mock data for demo
@@ -120,6 +121,11 @@ export default function Home() {
                 />
               </div>
             ))}
+          </div>
+          
+          {/* Betis position widget */}
+          <div className="mt-12 max-w-md mx-auto">
+            <BetisPositionWidget />
           </div>
           
           {/* Family welcome info */}

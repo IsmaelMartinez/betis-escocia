@@ -3,7 +3,23 @@
  * Handles all interactions with the Football-Data.org API for Real Betis match data
  * 
  * API Documentation: https://www.football-data.org/documentation/quickstart
- * Real Betis Team ID: 90 (discovered from API testing)
+ * Real Betis Team ID: 90 (disc  async   async getRecentBetisMatches(limit: number = 10): Promise<Match[]> {
+    try {
+      const allMatches: Match[] = [];
+      
+      // Primary competitions available in free tier: La Liga and Champions League
+      // Copa del Rey attempted but may fail in free tier
+      const availableCompetitions = [COMPETITIONS.LALIGA, COMPETITIONS.CHAMPIONS, COMPETITIONS.COPA_REY];
+      // Only use seasons available in free tier: 2023 and 2024
+      const availableSeasons = ['2024', '2023'];ingBetisMatches(limit: number = 10): Promise<Match[]> {
+    try {
+      const allMatches: Match[] = [];
+      
+      // Primary competitions available in free tier: La Liga and Champions League
+      // Copa del Rey attempted but may fail in free tier
+      const availableCompetitions = [COMPETITIONS.LALIGA, COMPETITIONS.CHAMPIONS, COMPETITIONS.COPA_REY];
+      // Only use seasons available in free tier: 2023 and 2024
+      const availableSeasons = ['2024', '2023'];rom API testing)
  * La Liga Competition ID: PD (Primera División)
  */
 
@@ -189,8 +205,9 @@ export class FootballDataService {
     try {
       const allMatches: Match[] = [];
       
-      // Only use competitions available in free tier: La Liga and Champions League
-      const availableCompetitions = [COMPETITIONS.LALIGA, COMPETITIONS.CHAMPIONS];
+      // Primary competitions available in free tier: La Liga and Champions League
+      // Copa del Rey attempted but may fail in free tier
+      const availableCompetitions = [COMPETITIONS.LALIGA, COMPETITIONS.CHAMPIONS, COMPETITIONS.COPA_REY];
       // Only use seasons available in free tier: 2023 and 2024
       const availableSeasons = ['2024', '2023'];
       

@@ -1,5 +1,6 @@
 import { ApiErrorBoundary } from '@/components/ErrorBoundary';
 import FilteredMatches from '@/components/FilteredMatches';
+import BetisPositionWidget from '@/components/BetisPositionWidget';
 
 // Fetch data at build time and revalidate every 30 minutes
 async function getMatches() {
@@ -51,6 +52,15 @@ export default async function MatchesPage() {
           <p className="text-xl opacity-90 max-w-2xl mx-auto">
             Todos los partidos se ven en el Polwarth Tavern. ¡No te pierdas ni uno!
           </p>
+        </div>
+      </section>
+
+      {/* Betis Position Widget */}
+      <section className="py-8 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-md mx-auto">
+            <BetisPositionWidget />
+          </div>
         </div>
       </section>
 
