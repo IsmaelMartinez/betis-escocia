@@ -227,7 +227,7 @@ export default function Galeria() {
                 📘 Compartir en Facebook
               </a>
               <a
-                href="https://www.instagram.com/beticosenescocia/"
+                href="https://www.instagram.com/rbetisescocia/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="border-2 border-betis-green text-betis-green hover:bg-betis-green hover:text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300"
