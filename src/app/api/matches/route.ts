@@ -1,15 +1,47 @@
 import { NextResponse } from 'next/server';
-import { readFileSync } from 'fs';
-import { join } from 'path';
+import { FootballDataService } from '@/services/footballDataService';
 
-const dataPath = join(process.cwd(), 'data', 'matches.json');
-
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const data = JSON.parse(readFileSync(dataPath, 'utf8'));
-    return NextResponse.json(data);
+    const { searchParams } = new URL(request.url);
+    const limit = parseInt(searchParams.get('limit') ?? '10', 10);
+    const type = searchParams.get('type') ?? 'all'; // 'all', 'upcoming', 'recent'
+    
+    const footballService = new FootballDataService();
+    
+    let matches;
+    switch (type) {
+      case 'upcoming':
+        matches = await footballService.getUpcomingBetisMatches(limit);
+        break;
+      case 'recent':
+        matches = await footballService.getRecentBetisResults(limit);
+        break;
+      default:
+        matches = await footballService.getBetisMatches(limit);
+        break;
+    }
+    
+    return NextResponse.json({
+      success: true,
+      matches,
+      count: matches.length,
+      timestamp: new Date().toISOString(),
+    });
   } catch (error) {
-    console.error('Error reading matches data:', error);
-    return NextResponse.json({ error: 'Failed to fetch matches data' }, { status: 500 });
+    console.error('Error fetching matches from Football-Data.org:', error);
+    
+    return NextResponse.json(
+      { 
+        success: false,
+        error: 'Failed to fetch matches data',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString(),
+      }, 
+      { status: 500 }
+    );
   }
 }
+
+// Add ISR caching configuration
+export const revalidate = 1800; // 30 minutes cache

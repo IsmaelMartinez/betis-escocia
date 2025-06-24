@@ -7,3 +7,5 @@ This document provides a list of ideas and features for the Peña Bética Escoce
 * Provide a cheap AI assistant for the users that access the website. It can guide them through the website, help them with the porra, and answer questions about Real Betis.
 
 * Add a soylenti (rummors in turkish) page where rummors spread. Ceballos, again, is coming back to Betis, etc. It can be a fun page where people can share their opinions and rumors about the team. Fran mode to provide % values to the rumors.
+
+* British and Spanish version of the website.
