@@ -223,25 +223,28 @@ export default function Nosotros() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-20 bg-gradient-to-r from-betis-green to-betis-green-dark text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-black mb-6">
+      <section className="py-20 bg-gradient-to-r from-betis-green to-betis-green-dark text-white relative">
+        {/* Background overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/20"></div>
+        
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <h2 className="text-3xl sm:text-4xl font-black mb-6 text-white drop-shadow-xl">
             ¿Quieres ser parte de nuestra historia?
           </h2>
-          <p className="text-xl mb-8 opacity-90">
+          <p className="text-xl mb-8 text-white font-medium leading-relaxed drop-shadow-lg">
             Cada bético que se une a nosotros añade un capítulo más a nuestra historia. 
             Tu historia también puede formar parte de la nuestra.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/unete"
-              className="bg-betis-gold hover:bg-betis-gold-dark text-gray-900 px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
+              className="bg-betis-gold hover:bg-betis-gold-dark text-gray-900 px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
               💬 Únete a nosotros
             </Link>
             <Link
               href="/partidos"
-              className="border-2 border-white text-white hover:bg-white hover:text-betis-green px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
+              className="border-2 border-white text-white hover:bg-white hover:text-betis-green px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
               📅 Próximos partidos
             </Link>

@@ -170,7 +170,7 @@ export default function Home() {
             ¡Únete a nosotros en el Polwarth Tavern!
           </p>
           
-          <p className="text-lg mb-12 max-w-3xl mx-auto opacity-90 text-shadow-lg leading-relaxed">
+          <p className="text-lg mb-12 max-w-3xl mx-auto text-white/95 font-medium leading-relaxed drop-shadow-lg">
             Todos los béticos son bienvenidos. No importa de dónde vengas, 
             aquí tienes una familia que comparte tu pasión por el Betis.
           </p>

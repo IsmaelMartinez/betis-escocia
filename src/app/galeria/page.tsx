@@ -240,12 +240,15 @@ export default function Galeria() {
       </section>
 
       {/* Next Events */}
-      <section className="py-20 bg-gradient-to-r from-betis-green to-betis-green-dark text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-black mb-6">
+      <section className="py-20 bg-gradient-to-r from-betis-green to-betis-green-dark text-white relative">
+        {/* Background overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/20"></div>
+        
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <h2 className="text-3xl sm:text-4xl font-black mb-6 text-white drop-shadow-xl">
             🎬 Próximas sesiones de fotos
           </h2>
-          <p className="text-xl mb-8 opacity-90">
+          <p className="text-xl mb-8 text-white font-medium leading-relaxed drop-shadow-lg">
             No te pierdas los próximos partidos. Siempre hay momentos únicos que capturar.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
