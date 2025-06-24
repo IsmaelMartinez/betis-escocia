@@ -113,10 +113,10 @@ Created: December 2024
 
 ### T9: Competition and Standings Integration
 
-- [ ] T9.1: Add La Liga standings display
+- [x] T9.1: Add La Liga standings display ✅
 - [ ] T9.2: Add Copa del Rey matches support
 - [ ] T9.3: Add Europa League/Conference League matches (if Betis qualifies)
-- [ ] T9.4: Create competition filter functionality
+- [x] T9.4: Create competition filter functionality ✅
 - [ ] T9.5: Add competition badges and proper branding
 - [ ] T9.6: Show Betis position and points in league table
 

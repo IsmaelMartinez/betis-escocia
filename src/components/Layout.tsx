@@ -8,6 +8,7 @@ const navigation = [
   { name: 'Inicio', href: '/', nameEn: 'Home' },
   { name: 'La Porra', href: '/porra', nameEn: 'La Porra' },
   { name: 'Partidos', href: '/partidos', nameEn: 'Matches' },
+  { name: 'Clasificación', href: '/clasificacion', nameEn: 'Standings' },
   { name: 'Referencias', href: '/referencias', nameEn: 'References' },
   { name: 'Nosotros', href: '/nosotros', nameEn: 'About' },
   { name: 'Galería', href: '/galeria', nameEn: 'Gallery' },

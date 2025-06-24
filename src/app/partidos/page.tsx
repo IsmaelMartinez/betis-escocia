@@ -1,7 +1,5 @@
-import MatchCard from '@/components/MatchCard';
-import { NoUpcomingMatchesMessage, NoRecentMatchesMessage } from '@/components/ErrorMessage';
-import { ApiErrorBoundary, MatchCardErrorBoundary } from '@/components/ErrorBoundary';
-import type { Match } from '@/types/match';
+import { ApiErrorBoundary } from '@/components/ErrorBoundary';
+import FilteredMatches from '@/components/FilteredMatches';
 
 // Fetch data at build time and revalidate every 30 minutes
 async function getMatches() {
@@ -41,97 +39,6 @@ async function getMatches() {
   }
 }
 
-// Helper function to transform Football-Data.org match to component props
-function transformMatch(match: Match, isUpcoming: boolean = false) {
-  const isBetisHome = match.homeTeam.id === 90; // Real Betis team ID
-  const opponent = isBetisHome ? match.awayTeam.name : match.homeTeam.name;
-  const opponentCrest = isBetisHome ? match.awayTeam.crest : match.homeTeam.crest;
-  
-  // Get venue information - use known stadiums for common opponents
-  const getVenue = () => {
-    if (isBetisHome) {
-      return "Estadio Benito Villamarín";
-    } else {
-      // Known opponent stadiums (add more as needed)
-      const stadiums: Record<string, string> = {
-        'FC Barcelona': 'Camp Nou',
-        'Real Madrid CF': 'Santiago Bernabéu',
-        'Atlético Madrid': 'Riyadh Air Metropolitano',
-        'Sevilla FC': 'Ramón Sánchez-Pizjuán',
-        'Valencia CF': 'Mestalla',
-        'Athletic Bilbao': 'San Mamés',
-        'Real Sociedad': 'Reale Arena',
-        'Villarreal CF': 'Estadio de la Cerámica',
-        'CA Osasuna': 'El Sadar',
-        'Celta Vigo': 'Abanca-Balaídos',
-        'RCD Espanyol': 'RCDE Stadium',
-        'Getafe CF': 'Coliseum',
-        'Deportivo Alavés': 'Mendizorroza',
-        'Girona FC': 'Montilivi',
-        'UD Las Palmas': 'Estadio Gran Canaria',
-        'Rayo Vallecano': 'Campo de Fútbol de Vallecas',
-        'RCD Mallorca': 'Son Moix',
-        'CD Leganés': 'Butarque',
-        'Real Valladolid CF': 'José Zorrilla'
-      };
-      
-      const opponentName = isBetisHome ? match.awayTeam.name : match.homeTeam.name;
-      return stadiums[opponentName] || `Estadio de ${opponentName}`;
-    }
-  };
-  
-  // Format score for display (always show Betis score first)
-  const getFormattedScore = () => {
-    if (match.score?.fullTime?.home !== null && match.score?.fullTime?.away !== null) {
-      if (isBetisHome) {
-        return {
-          home: match.score.fullTime.home,
-          away: match.score.fullTime.away
-        };
-      } else {
-        // When Betis is away, flip the scores so Betis appears first
-        return {
-          home: match.score.fullTime.away,
-          away: match.score.fullTime.home
-        };
-      }
-    }
-    return undefined;
-  };
-
-  // Get formatted result string (always show Betis score first)
-  const getResultString = () => {
-    if (!isUpcoming && match.score?.fullTime?.home !== null && match.score?.fullTime?.away !== null) {
-      if (isBetisHome) {
-        return `${match.score.fullTime.home}-${match.score.fullTime.away}`;
-      } else {
-        // When Betis is away, flip the result so Betis score appears first
-        return `${match.score.fullTime.away}-${match.score.fullTime.home}`;
-      }
-    }
-    return undefined;
-  };
-
-  return {
-    opponent,
-    date: match.utcDate,
-    venue: getVenue(),
-    competition: match.competition.name,
-    isHome: isBetisHome, // Keep this for internal logic
-    status: match.status,
-    matchday: match.matchday,
-    opponentCrest,
-    competitionEmblem: match.competition.emblem,
-    score: getFormattedScore(),
-    result: getResultString(),
-    watchParty: isUpcoming ? {
-      location: "Polwarth Tavern",
-      address: "15 Polwarth Pl, Edinburgh EH11 1NH",
-      time: "30 minutos antes del partido"
-    } : undefined
-  };
-}
-
 export default async function MatchesPage() {
   const { upcoming, recent } = await getMatches();
 
@@ -147,61 +54,15 @@ export default async function MatchesPage() {
         </div>
       </section>
 
-      {/* Upcoming Matches */}
+      {/* Matches with Filtering */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-12">Próximos Partidos</h2>
-          
-          {upcoming.length > 0 ? (
-            <ApiErrorBoundary>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {upcoming.map((match: Match) => {
-                  const transformedMatch = transformMatch(match, true);
-                  return (
-                    <MatchCardErrorBoundary key={`upcoming-boundary-${match.id}`}>
-                      <MatchCard
-                        key={`upcoming-${match.id}`}
-                        {...transformedMatch}
-                      />
-                    </MatchCardErrorBoundary>
-                  );
-                })}
-              </div>
-            </ApiErrorBoundary>
-          ) : (
-            <div className="text-center py-12">
-              <NoUpcomingMatchesMessage />
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Recent Results */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-12">Resultados Recientes</h2>
-          
-          {recent.length > 0 ? (
-            <ApiErrorBoundary>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {recent.map((match: Match) => {
-                  const transformedMatch = transformMatch(match, false);
-                  return (
-                    <MatchCardErrorBoundary key={`recent-boundary-${match.id}`}>
-                      <MatchCard
-                        key={`recent-${match.id}`}
-                        {...transformedMatch}
-                      />
-                    </MatchCardErrorBoundary>
-                  );
-                })}
-              </div>
-            </ApiErrorBoundary>
-          ) : (
-            <div className="text-center py-12">
-              <NoRecentMatchesMessage />
-            </div>
-          )}
+          <ApiErrorBoundary>
+            <FilteredMatches 
+              upcomingMatches={upcoming} 
+              recentMatches={recent} 
+            />
+          </ApiErrorBoundary>
         </div>
       </section>
 
