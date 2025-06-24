@@ -44,7 +44,7 @@ export default function Home() {
             <div className="inline-block bg-betis-green text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
               🎲 LA PORRA DE FRAN
             </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-betis-black mb-6 uppercase">
+            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
               NUESTRA TRADICIÓN
             </h2>
             <div className="bg-white rounded-lg p-6 max-w-4xl mx-auto shadow-sm border border-gray-200">
@@ -71,7 +71,7 @@ export default function Home() {
           {/* Community explanation - official card style */}
           <div className="text-center">
             <div className="bg-white rounded-lg p-8 max-w-4xl mx-auto shadow-sm border-l-4 border-betis-green">
-              <h3 className="text-xl font-bold text-betis-black mb-4 uppercase tracking-wide">
+              <h3 className="text-xl font-bold text-gray-900 mb-4 uppercase tracking-wide">
                 💝 MÁS QUE DINERO, SON MOMENTOS
               </h3>
               <p className="text-gray-700 leading-relaxed">
@@ -90,7 +90,7 @@ export default function Home() {
             <div className="inline-flex items-center px-6 py-3 rounded-full bg-betis-green/10 border-2 border-betis-green/20 mb-8">
               <span className="text-betis-green font-bold text-lg">📅 Nuestras citas familiares</span>
             </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-betis-black mb-6">
+            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6">
               Próximos Partidos
             </h2>
             <div className="bg-white rounded-3xl p-8 max-w-4xl mx-auto shadow-lg border border-gray-100">
@@ -119,7 +119,7 @@ export default function Home() {
           {/* Family welcome info */}
           <div className="mt-16 text-center">
             <div className="bg-gradient-to-r from-betis-green/5 to-betis-gold/5 rounded-3xl p-8 max-w-4xl mx-auto border border-betis-green/20">
-              <h3 className="text-2xl font-bold text-betis-black mb-4">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
                 � ¿Primera vez en nuestra casa?
               </h3>
               <p className="text-gray-700 mb-6 leading-relaxed">

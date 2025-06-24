@@ -63,21 +63,24 @@ export default function Unete() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-betis-green via-betis-green-dark to-betis-black text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center px-6 py-3 rounded-full bg-betis-gold/20 border border-betis-gold/30 backdrop-blur-sm mb-8">
-            <span className="text-betis-gold font-medium">🤝 Únete a la familia</span>
+      <section className="bg-gradient-to-br from-betis-green via-betis-green-dark to-betis-black text-white py-20 relative">
+        {/* Background overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/20"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="inline-flex items-center px-6 py-3 rounded-full bg-betis-gold/30 border border-betis-gold/50 backdrop-blur-sm mb-8">
+            <span className="text-betis-gold font-bold text-lg">🤝 Únete a la familia</span>
           </div>
           
-          <h1 className="text-4xl sm:text-6xl font-black mb-6 text-shadow-lg">
+          <h1 className="text-4xl sm:text-6xl font-black mb-6 text-white drop-shadow-xl">
             Únete a Nosotros
           </h1>
           
-          <p className="text-xl sm:text-2xl mb-4 font-semibold text-betis-gold text-shadow-lg">
+          <p className="text-xl sm:text-2xl mb-6 font-bold text-betis-gold drop-shadow-lg">
             Ser bético en Escocia nunca fue tan fácil
           </p>
           
-          <p className="text-lg max-w-3xl mx-auto opacity-90 text-shadow-lg leading-relaxed">
+          <p className="text-lg max-w-3xl mx-auto text-white/95 leading-relaxed font-medium">
             No importa si acabas de llegar a Edinburgh o si llevas años aquí. 
             Si eres bético, ya tienes sitio en nuestra mesa.
           </p>
@@ -91,10 +94,10 @@ export default function Unete() {
             <div className="inline-block bg-betis-green text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
               🚀 PROCESO FÁCIL
             </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-betis-black mb-6 uppercase">
+            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
               CÓMO UNIRTE
             </h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-800 max-w-3xl mx-auto leading-relaxed">
               Es tan fácil como aparecer. No hay formularios, cuotas ni complicaciones.
             </p>
           </div>
@@ -115,14 +118,14 @@ export default function Unete() {
                       </div>
                       <span className="text-4xl">{step.icon}</span>
                     </div>
-                    <h3 className="text-2xl font-bold text-betis-black mb-4">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">
                       {step.title}
                     </h3>
-                    <p className="text-gray-700 mb-4 leading-relaxed">
+                    <p className="text-gray-800 mb-4 leading-relaxed text-base">
                       {step.description}
                     </p>
-                    <div className="bg-betis-green/5 rounded-lg p-4 border-l-4 border-betis-green">
-                      <p className="text-sm text-gray-600 italic">
+                    <div className="bg-betis-green/10 rounded-lg p-4 border-l-4 border-betis-green">
+                      <p className="text-sm text-gray-700 font-medium">
                         💡 {step.details}
                       </p>
                     </div>
@@ -133,10 +136,10 @@ export default function Unete() {
                   <div className="bg-gradient-to-br from-betis-green/10 to-betis-gold/10 rounded-2xl p-8 border border-betis-green/20">
                     <div className="text-center">
                       <div className="text-6xl mb-4">{step.icon}</div>
-                      <h4 className="text-xl font-bold text-betis-black mb-2">
+                      <h4 className="text-xl font-bold text-gray-900 mb-2">
                         Paso {step.number}
                       </h4>
-                      <p className="text-gray-600">
+                      <p className="text-gray-700 font-medium">
                         {step.title}
                       </p>
                     </div>
@@ -155,7 +158,7 @@ export default function Unete() {
             <div className="inline-block bg-betis-green text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
               📍 INFORMACIÓN PRÁCTICA
             </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-betis-black mb-6 uppercase">
+            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
               TODO LO QUE NECESITAS SABER
             </h2>
           </div>
@@ -163,9 +166,9 @@ export default function Unete() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center">
               <MapPin className="h-12 w-12 text-betis-green mx-auto mb-6" />
-              <h3 className="text-xl font-bold text-betis-black mb-4">Ubicación</h3>
-              <p className="text-gray-700 mb-4">
-                <strong>Polwarth Tavern</strong><br />
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Ubicación</h3>
+              <p className="text-gray-800 mb-4 leading-relaxed">
+                <strong className="text-gray-900">Polwarth Tavern</strong><br />
                 15 Polwarth Place<br />
                 Edinburgh EH11 1NH
               </p>
@@ -182,9 +185,9 @@ export default function Unete() {
 
             <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center">
               <Clock className="h-12 w-12 text-betis-green mx-auto mb-6" />
-              <h3 className="text-xl font-bold text-betis-black mb-4">Horarios</h3>
-              <p className="text-gray-700 mb-4">
-                <strong>30 minutos antes</strong><br />
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Horarios</h3>
+              <p className="text-gray-800 mb-4 leading-relaxed">
+                <strong className="text-gray-900">30 minutos antes</strong><br />
                 de cada partido del Betis<br />
                 (Liga, Copa, Europa)
               </p>
@@ -199,9 +202,9 @@ export default function Unete() {
 
             <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center">
               <Users className="h-12 w-12 text-betis-green mx-auto mb-6" />
-              <h3 className="text-xl font-bold text-betis-black mb-4">Contacto</h3>
-              <p className="text-gray-700 mb-4">
-                <strong>¿Dudas?</strong><br />
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Contacto</h3>
+              <p className="text-gray-800 mb-4 leading-relaxed">
+                <strong className="text-gray-900">¿Dudas?</strong><br />
                 Escríbenos por Facebook<br />
                 o Instagram
               </p>
@@ -220,26 +223,26 @@ export default function Unete() {
           {/* Special Welcome for Tourists */}
           <div className="bg-gradient-to-r from-betis-green/10 to-betis-gold/10 rounded-2xl p-8 border border-betis-green/20">
             <div className="text-center">
-              <h3 className="text-2xl font-bold text-betis-black mb-4 flex items-center justify-center">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center justify-center">
                 <Heart className="h-6 w-6 text-betis-green mr-3" />
                 🏴󠁧󠁢󠁳󠁣󠁴󠁿 ¿Estás de visita en Escocia?
               </h3>
-              <p className="text-lg text-gray-700 mb-6 leading-relaxed max-w-3xl mx-auto">
+              <p className="text-lg text-gray-800 mb-6 leading-relaxed max-w-3xl mx-auto">
                 Si eres bético y estás de vacaciones, trabajo o estudios en Edinburgh, 
                 ¡eres especialmente bienvenido! Nos encanta conocer béticos de toda España 
                 y hacer que se sientan como en casa.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                 <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                  <h4 className="font-bold text-betis-black mb-2">✈️ Turistas</h4>
-                  <p className="text-sm text-gray-600">
+                  <h4 className="font-bold text-gray-900 mb-2">✈️ Turistas</h4>
+                  <p className="text-sm text-gray-700">
                     Si coincides con un partido durante tu visita, ven y vive la experiencia 
                     de ser bético en Escocia.
                   </p>
                 </div>
                 <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                  <h4 className="font-bold text-betis-black mb-2">🎓 Estudiantes</h4>
-                  <p className="text-sm text-gray-600">
+                  <h4 className="font-bold text-gray-900 mb-2">🎓 Estudiantes</h4>
+                  <p className="text-sm text-gray-700">
                     Edinburgh tiene muchos estudiantes españoles. Si eres bético y estudias aquí, 
                     esta es tu casa.
                   </p>
@@ -257,21 +260,21 @@ export default function Unete() {
             <div className="inline-block bg-betis-green text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
               ❓ PREGUNTAS FRECUENTES
             </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-betis-black mb-6 uppercase">
+            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
               RESOLVEMOS TUS DUDAS
             </h2>
           </div>
 
           <div className="space-y-6">
-            {faqs.map((faq, index) => (
-              <div key={index} className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
-                <h3 className="text-lg font-bold text-betis-black mb-3 flex items-center">
+            {faqs.map((faq) => (
+              <div key={faq.question} className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
+                <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
                   <span className="w-6 h-6 bg-betis-green text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">
                     ?
                   </span>
                   {faq.question}
                 </h3>
-                <p className="text-gray-700 leading-relaxed pl-9">
+                <p className="text-gray-800 leading-relaxed pl-9 text-base">
                   {faq.answer}
                 </p>
               </div>

@@ -93,47 +93,47 @@ export default function Nosotros() {
             <div className="inline-block bg-betis-green text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
               📖 NUESTRA HISTORIA
             </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-betis-black mb-6 uppercase">
+            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
               CÓMO EMPEZÓ TODO
             </h2>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
-              <h3 className="text-2xl font-bold text-betis-black mb-6 flex items-center">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                 <Heart className="h-6 w-6 text-betis-green mr-3" />
                 El Comienzo
               </h3>
-              <p className="text-gray-700 leading-relaxed mb-6">
+              <p className="text-gray-800 leading-relaxed mb-6 text-base">
                 Todo empezó en 2018 cuando un grupo de béticos residentes en Edinburgh nos dimos cuenta 
                 de que estábamos viendo los partidos solos en casa. ¿La solución? Encontrar un pub 
                 que nos acogiera y crear nuestra propia familia bética en Escocia.
               </p>
-              <p className="text-gray-700 leading-relaxed mb-6">
+              <p className="text-gray-800 leading-relaxed mb-6 text-base">
                 El Polwarth Tavern se convirtió en nuestro hogar. Los dueños, aunque no entendían 
                 mucho de fútbol español, nos recibieron con los brazos abiertos. Y así comenzó 
                 nuestra aventura.
               </p>
-              <div className="bg-betis-green/5 rounded-lg p-4 border-l-4 border-betis-green">
-                <p className="text-betis-green font-semibold italic">
+              <div className="bg-betis-green/10 rounded-lg p-4 border-l-4 border-betis-green">
+                <p className="text-betis-green font-semibold">
                   &ldquo;Desde el primer día supimos que esto iba a ser especial. No solo por los partidos, 
                   sino por las personas que íbamos a conocer.&rdquo;
                 </p>
-                <p className="text-sm text-gray-600 mt-2">- Fran, fundador</p>
+                <p className="text-sm text-gray-800 mt-2 font-medium">- Fran, fundador</p>
               </div>
             </div>
 
             <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
-              <h3 className="text-2xl font-bold text-betis-black mb-6 flex items-center">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                 <Users className="h-6 w-6 text-betis-green mr-3" />
                 La Comunidad
               </h3>
-              <p className="text-gray-700 leading-relaxed mb-6">
+              <p className="text-gray-800 leading-relaxed mb-6 text-base">
                 Lo que empezó como 4 o 5 personas viendo partidos, se convirtió en una verdadera 
                 familia. Béticos de toda España que viven en Escocia, estudiantes de intercambio, 
                 turistas de paso... todos son bienvenidos.
               </p>
-              <p className="text-gray-700 leading-relaxed mb-6">
+              <p className="text-gray-800 leading-relaxed mb-6">
                 Hemos celebrado bodas, nacimientos, ascensos profesionales y, por supuesto, 
                 títulos del Betis. También hemos llorado derrotas juntos y nos hemos consolado 
                 con una cerveza y la certeza de que &ldquo;el año que viene será el nuestro&rdquo;.
@@ -160,7 +160,7 @@ export default function Nosotros() {
             <div className="inline-block bg-betis-green text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
               ⏰ CRONOLOGÍA
             </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-betis-black mb-6 uppercase">
+            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
               MOMENTOS CLAVE
             </h2>
           </div>
@@ -174,10 +174,10 @@ export default function Nosotros() {
                   </span>
                 </div>
                 <div className="flex-1 bg-white rounded-xl p-6 shadow-lg border border-gray-200 transform hover:scale-105 transition-all duration-300">
-                  <h3 className="text-xl font-bold text-betis-black mb-2">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
                     {milestone.event}
                   </h3>
-                  <p className="text-gray-700">
+                  <p className="text-gray-800">
                     {milestone.description}
                   </p>
                 </div>
@@ -194,10 +194,10 @@ export default function Nosotros() {
             <div className="inline-block bg-betis-green text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
               👥 EL EQUIPO
             </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-betis-black mb-6 uppercase">
+            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
               NUESTROS PILARES
             </h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-800 max-w-3xl mx-auto">
               Las personas que hacen que todo funcione y que cada domingo sea especial
             </p>
           </div>
@@ -206,7 +206,7 @@ export default function Nosotros() {
             {foundingMembers.map((member) => (
               <div key={member.name} className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 text-center transform hover:scale-105 transition-all duration-300">
                 <div className="text-4xl mb-4">{member.emoji}</div>
-                <h3 className="text-xl font-bold text-betis-black mb-2">{member.name}</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{member.name}</h3>
                 <p className="text-betis-green font-semibold mb-3 text-sm uppercase tracking-wide">
                   {member.role}
                 </p>
@@ -232,7 +232,7 @@ export default function Nosotros() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/unete"
-              className="bg-betis-gold hover:bg-betis-gold-dark text-betis-black px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
+              className="bg-betis-gold hover:bg-betis-gold-dark text-gray-900 px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
             >
               💬 Únete a nosotros
             </Link>
