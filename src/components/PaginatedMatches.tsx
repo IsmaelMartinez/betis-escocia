@@ -84,6 +84,7 @@ function transformMatch(match: Match, isUpcoming: boolean = false) {
   };
 
   return {
+    id: match.id,
     opponent,
     date: match.utcDate,
     venue: getVenue(),

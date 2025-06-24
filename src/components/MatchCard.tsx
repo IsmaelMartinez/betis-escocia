@@ -4,6 +4,7 @@ import { Calendar, MapPin, Clock, Trophy, Users } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { MatchCardProps } from '@/types/match';
+import BetisLogo from '@/components/BetisLogo';
 
 export default function MatchCard(props: Readonly<MatchCardProps>) {
   const { 
@@ -110,9 +111,7 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
   const renderTeamCrest = (team: { name: string; crest?: string; isBetis: boolean }) => {
     if (team.isBetis) {
       return (
-        <div className="w-8 h-8 bg-betis-green rounded-full flex items-center justify-center">
-          <span className="text-white text-xs font-bold">RB</span>
-        </div>
+        <BetisLogo className="w-8 h-8 object-contain rounded" />
       );
     }
     

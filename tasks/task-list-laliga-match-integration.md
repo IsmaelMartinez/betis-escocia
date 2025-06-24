@@ -13,12 +13,6 @@ Created: December 2024
 - **Reliable**: Maintained since 2014, stable API ✅
 - **Scope**: Basic match data (fixtures, results, standings) ⚠️
 
-### 🔮 **Version 2: LaLiga Official API Migration** (Future Enhancement)
-- **Enhanced Data**: Player stats, lineups, events, advanced metrics
-- **Official Source**: Direct from LaLiga (apifootball.laliga.com)
-- **Approval Required**: Non-commercial use application needed
-- **Timeline**: After V1 completion, pending API approval
-
 ## 📝 **VERSION 1 FEATURE SCOPE** (Football-Data.org)
 
 ### ✅ **FEATURES AVAILABLE**
@@ -29,14 +23,6 @@ Created: December 2024
 - ✅ Basic match details (venue, referee, date/time)
 - ✅ Team information and logos
 - ✅ Competition badges and branding
-
-### 🔮 **FEATURES FOR VERSION 2** (Pending LaLiga API)
-- 🔮 Detailed player statistics and ratings
-- 🔮 Match lineups and formations
-- 🔮 Match events timeline (goals, cards, subs)
-- 🔮 Advanced statistics (possession, shots, etc.)
-- 🔮 Player performance metrics
-- 🔮 Live match updates and real-time data
 
 ## VERSION 1: Core Integration (Football-Data.org) 🚀
 

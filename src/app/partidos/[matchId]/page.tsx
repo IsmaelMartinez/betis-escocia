@@ -7,15 +7,17 @@ import { Match } from '@/types/match';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ShareMatch from '@/components/ShareMatch';
+import BetisLogo from '@/components/BetisLogo';
 import { Suspense } from 'react';
 
 interface MatchDetailPageProps {
-  params: { matchId: string };
+  params: Promise<{ matchId: string }>;
 }
 
 // Generate metadata for the page
 export async function generateMetadata({ params }: MatchDetailPageProps): Promise<Metadata> {
-  const matchId = parseInt(params.matchId);
+  const { matchId: matchIdString } = await params;
+  const matchId = parseInt(matchIdString);
   
   if (isNaN(matchId)) {
     return {
@@ -196,14 +198,18 @@ async function MatchDetailContent({ matchId }: { matchId: number }) {
             {/* Local Team (always on left) */}
             <div className="text-center md:text-right">
               <div className="flex flex-col items-center md:items-end space-y-3">
-                <Image
-                  src={betisHome ? "/images/betis-logo.png" : opponent.crest}
-                  alt={betisHome ? "Real Betis" : opponent.name}
-                  width={80}
-                  height={80}
-                  className="rounded-lg shadow-md"
-                  unoptimized={!betisHome}
-                />
+                {betisHome ? (
+                  <BetisLogo width={80} height={80} />
+                ) : (
+                  <Image
+                    src={opponent.crest}
+                    alt={opponent.name}
+                    width={80}
+                    height={80}
+                    className="rounded-lg shadow-md"
+                    unoptimized
+                  />
+                )}
                 <div>
                   <h1 className={`text-xl md:text-2xl font-bold ${betisHome ? 'text-green-700' : 'text-gray-900'}`}>
                     {betisHome ? 'Real Betis' : opponent.name}
@@ -234,14 +240,18 @@ async function MatchDetailContent({ matchId }: { matchId: number }) {
             {/* Visitor Team (always on right) */}
             <div className="text-center md:text-left">
               <div className="flex flex-col items-center md:items-start space-y-3">
-                <Image
-                  src={betisHome ? opponent.crest : "/images/betis-logo.png"}
-                  alt={betisHome ? opponent.name : "Real Betis"}
-                  width={80}
-                  height={80}
-                  className="rounded-lg shadow-md"
-                  unoptimized={betisHome}
-                />
+                {betisHome ? (
+                  <Image
+                    src={opponent.crest}
+                    alt={opponent.name}
+                    width={80}
+                    height={80}
+                    className="rounded-lg shadow-md"
+                    unoptimized
+                  />
+                ) : (
+                  <BetisLogo width={80} height={80} />
+                )}
                 <div>
                   <h1 className={`text-xl md:text-2xl font-bold ${!betisHome ? 'text-green-700' : 'text-gray-900'}`}>
                     {betisHome ? opponent.name : 'Real Betis'}
@@ -402,7 +412,8 @@ async function MatchDetailContent({ matchId }: { matchId: number }) {
 
 // Main page component with error boundary and loading
 export default async function MatchDetailPage({ params }: MatchDetailPageProps) {
-  const matchId = parseInt(params.matchId);
+  const { matchId: matchIdString } = await params;
+  const matchId = parseInt(matchIdString);
 
   if (isNaN(matchId)) {
     notFound();

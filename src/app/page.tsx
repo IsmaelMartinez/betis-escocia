@@ -7,11 +7,13 @@ export default function Home() {
   // Mock data for demo
   const upcomingMatches = [
     {
+      id: 1001,
       opponent: "Sevilla FC",
       date: "2025-07-15T20:00:00Z",
       venue: "Estadio Benito Villamarín",
       competition: "La Liga",
       isHome: true,
+      status: "SCHEDULED" as const,
       watchParty: {
         location: "Polwarth Tavern",
         address: "15 Polwarth Pl, Edinburgh EH11 1NH",
@@ -19,11 +21,13 @@ export default function Home() {
       }
     },
     {
+      id: 1002,
       opponent: "Atlético Madrid",
       date: "2025-07-22T16:15:00Z",
       venue: "Cívitas Metropolitano",
       competition: "La Liga",
       isHome: false,
+      status: "SCHEDULED" as const,
       watchParty: {
         location: "Polwarth Tavern",
         address: "15 Polwarth Pl, Edinburgh EH11 1NH",
@@ -105,11 +109,13 @@ export default function Home() {
             {upcomingMatches.map((match) => (
               <div key={`${match.opponent}-${match.date}`} className="transform hover:scale-105 transition-all duration-300">
                 <MatchCard
+                  id={match.id}
                   opponent={match.opponent}
                   date={match.date}
                   venue={match.venue}
                   competition={match.competition}
                   isHome={match.isHome}
+                  status={match.status}
                   watchParty={match.watchParty}
                 />
               </div>
