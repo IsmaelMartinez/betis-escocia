@@ -102,7 +102,7 @@ Created: December 2024
 - [x] T7.5: Create user-friendly error messages in Spanish ✅
 - [x] T7.6: Add offline detection and messaging ✅
 
-### T8: Basic Match Details and Navigation
+### T8: Basic Match Details and Navigation ✅ COMPLETED
 
 - [x] T8.1: Create `src/app/partidos/[matchId]/page.tsx` dynamic route ✅
 - [x] T8.2: Implement match detail view with available Football-Data.org data ✅
@@ -110,6 +110,7 @@ Created: December 2024
 - [x] T8.4: Add team information and competition details ✅
 - [x] T8.5: Implement breadcrumb navigation and mobile optimization ✅
 - [x] T8.6: Add sharing functionality for match results ✅
+- [x] T8.7: Link match cards to detail pages with proper team display (local left, visitor right) ✅
 
 ### T9: Competition and Standings Integration
 

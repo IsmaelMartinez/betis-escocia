@@ -164,6 +164,7 @@ export interface WatchParty {
 
 // Enhanced match card props
 export interface MatchCardProps {
+  readonly id: number;
   readonly opponent: string;
   readonly date: string;
   readonly venue: string;

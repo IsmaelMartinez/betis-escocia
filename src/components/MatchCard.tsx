@@ -2,10 +2,12 @@
 
 import { Calendar, MapPin, Clock, Trophy, Users } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import type { MatchCardProps } from '@/types/match';
 
 export default function MatchCard(props: Readonly<MatchCardProps>) {
   const { 
+    id,
     opponent, 
     date, 
     venue, 
@@ -74,83 +76,122 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
 
   const statusInfo = getStatusInfo();
 
-  // Get formatted score or result
+  // Get formatted score or result - always show local team score first
   const getMatchResult = (): string => {
     if (score && score.home !== null && score.away !== null) {
-      if (isHome) {
-        return `${score.home} - ${score.away}`;
-      } else {
-        return `${score.away} - ${score.home}`;
-      }
+      // Always show local team score first, visitor team score second
+      return `${score.home} - ${score.away}`;
     }
     return result ?? 'VS';
   };
 
-  return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-200">
-      {/* Competition header with emblem */}
-      <div className={`${getCompetitionColor(competition)} text-white px-4 py-2 flex items-center justify-between`}>
-        <div className="flex items-center space-x-2">
-          {competitionEmblem && (
-            <Image
-              src={competitionEmblem}
-              alt={`${competition} logo`}
-              width={20}
-              height={20}
-              className="object-contain"
-            />
-          )}
-          <p className="text-sm font-medium">{competition}</p>
-        </div>
-        {matchday && (
-          <span className="text-xs bg-white/20 px-2 py-1 rounded-full">
-            J{matchday}
-          </span>
-        )}
-      </div>
+  // Determine team display information - always show local (home) team on left, visitor (away) on right
+  const localTeam = isHome ? {
+    name: 'Real Betis',
+    crest: '/images/betis-logo.png',
+    isBetis: true
+  } : {
+    name: opponent,
+    crest: opponentCrest,
+    isBetis: false
+  };
 
-      <div className="p-4">
-        {/* Match details */}
-        <div className="text-center mb-4">
-          <div className="flex items-center justify-center space-x-4 mb-2">
-            {/* Home Team (Betis) */}
-            <div className="text-right flex-1">
-              <div className="flex items-center justify-end space-x-2 mb-1">
-                <p className="font-bold text-lg">Real Betis</p>
-                <div className="w-8 h-8 bg-betis-green rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">RB</span>
+  const visitorTeam = isHome ? {
+    name: opponent,
+    crest: opponentCrest,
+    isBetis: false
+  } : {
+    name: 'Real Betis',
+    crest: '/images/betis-logo.png',
+    isBetis: true
+  };
+
+  // Helper function to render team crest
+  const renderTeamCrest = (team: { name: string; crest?: string; isBetis: boolean }) => {
+    if (team.isBetis) {
+      return (
+        <div className="w-8 h-8 bg-betis-green rounded-full flex items-center justify-center">
+          <span className="text-white text-xs font-bold">RB</span>
+        </div>
+      );
+    }
+    
+    if (team.crest) {
+      return (
+        <Image
+          src={team.crest}
+          alt={`${team.name} logo`}
+          width={32}
+          height={32}
+          className="object-contain rounded"
+          unoptimized
+        />
+      );
+    }
+    
+    return (
+      <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+        <Trophy className="h-4 w-4 text-gray-400" />
+      </div>
+    );
+  };
+
+  return (
+    <Link href={`/partidos/${id}`} className="block">
+      <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-200 cursor-pointer">
+        {/* Competition header with emblem */}
+        <div className={`${getCompetitionColor(competition)} text-white px-4 py-2 flex items-center justify-between`}>
+          <div className="flex items-center space-x-2">
+            {competitionEmblem && (
+              <Image
+                src={competitionEmblem}
+                alt={`${competition} logo`}
+                width={20}
+                height={20}
+                className="object-contain"
+              />
+            )}
+            <p className="text-sm font-medium">{competition}</p>
+          </div>
+          {matchday && (
+            <span className="text-xs bg-white/20 px-2 py-1 rounded-full">
+              J{matchday}
+            </span>
+          )}
+        </div>
+
+        <div className="p-4">
+          {/* Match details */}
+          <div className="text-center mb-4">
+            <div className="flex items-center justify-center space-x-4 mb-2">
+              {/* Local Team (always on left) */}
+              <div className="text-right flex-1">
+                <div className="flex items-center justify-end space-x-2 mb-1">
+                  <p className={`font-bold text-lg ${localTeam.isBetis ? 'text-betis-green' : ''}`}>
+                    {localTeam.name}
+                  </p>
+                  {renderTeamCrest(localTeam)}
                 </div>
+                <p className="text-sm text-gray-600">Local</p>
               </div>
-              <p className="text-sm text-gray-600">{isHome ? 'Local' : 'Visitante'}</p>
-            </div>
-            
-            {/* Score/VS */}
-            <div className="text-2xl font-bold text-gray-400 px-4">
-              {getMatchResult()}
-            </div>
-            
-            {/* Away Team (Opponent) */}
-            <div className="text-left flex-1">
-              <div className="flex items-center justify-start space-x-2 mb-1">
-                {opponentCrest ? (
-                  <Image
-                    src={opponentCrest}
-                    alt={`${opponent} logo`}
-                    width={32}
-                    height={32}
-                    className="object-contain"
-                  />
-                ) : (
-                  <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                    <Trophy className="h-4 w-4 text-gray-400" />
-                  </div>
-                )}
-                <p className="font-bold text-lg">{opponent}</p>
+              
+              {/* Score/VS */}
+              <div className="text-2xl font-bold text-gray-400 px-4">
+                {getMatchResult()}
               </div>
-              <p className="text-sm text-gray-600">{!isHome ? 'Local' : 'Visitante'}</p>
+              
+              {/* Visitor Team (always on right) */}
+              <div className="text-left flex-1">
+                <div className="flex items-center justify-start space-x-2 mb-1">
+                  {renderTeamCrest(visitorTeam)}
+                  <p className={`font-bold text-lg ${visitorTeam.isBetis ? 'text-betis-green' : ''}`}>
+                    {visitorTeam.name}
+                  </p>
+                </div>
+                <p className="text-sm text-gray-600">Visitante</p>
+              </div>
             </div>
           </div>
-        </div>
 
         {/* Date and venue */}
         <div className="space-y-2 mb-4">
@@ -193,5 +234,6 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
         )}
       </div>
     </div>
+    </Link>
   );
 }

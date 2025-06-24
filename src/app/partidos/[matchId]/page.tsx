@@ -193,22 +193,23 @@ async function MatchDetailContent({ matchId }: { matchId: number }) {
 
           {/* Teams and Score */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-center mb-8">
-            {/* Home Team (always Betis on left) */}
+            {/* Local Team (always on left) */}
             <div className="text-center md:text-right">
               <div className="flex flex-col items-center md:items-end space-y-3">
                 <Image
-                  src="/images/betis-logo.png"
-                  alt="Real Betis"
+                  src={betisHome ? "/images/betis-logo.png" : opponent.crest}
+                  alt={betisHome ? "Real Betis" : opponent.name}
                   width={80}
                   height={80}
                   className="rounded-lg shadow-md"
+                  unoptimized={!betisHome}
                 />
                 <div>
-                  <h1 className="text-xl md:text-2xl font-bold text-gray-900">
-                    Real Betis
+                  <h1 className={`text-xl md:text-2xl font-bold ${betisHome ? 'text-green-700' : 'text-gray-900'}`}>
+                    {betisHome ? 'Real Betis' : opponent.name}
                   </h1>
                   <p className="text-sm text-gray-600">
-                    {betisHome ? 'Local' : 'Visitante'}
+                    Local
                   </p>
                 </div>
               </div>
@@ -218,7 +219,7 @@ async function MatchDetailContent({ matchId }: { matchId: number }) {
             <div className="text-center order-first md:order-none">
               {result ? (
                 <div className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                  {betisHome ? result : result.split(' - ').reverse().join(' - ')}
+                  {result}
                 </div>
               ) : (
                 <div className="text-xl md:text-2xl font-semibold text-gray-700 mb-2">
@@ -230,23 +231,23 @@ async function MatchDetailContent({ matchId }: { matchId: number }) {
               </p>
             </div>
 
-            {/* Away Team (opponent) */}
+            {/* Visitor Team (always on right) */}
             <div className="text-center md:text-left">
               <div className="flex flex-col items-center md:items-start space-y-3">
                 <Image
-                  src={opponent.crest}
-                  alt={opponent.name}
+                  src={betisHome ? opponent.crest : "/images/betis-logo.png"}
+                  alt={betisHome ? opponent.name : "Real Betis"}
                   width={80}
                   height={80}
                   className="rounded-lg shadow-md"
-                  unoptimized
+                  unoptimized={betisHome}
                 />
                 <div>
-                  <h1 className="text-xl md:text-2xl font-bold text-gray-900">
-                    {opponent.name}
+                  <h1 className={`text-xl md:text-2xl font-bold ${!betisHome ? 'text-green-700' : 'text-gray-900'}`}>
+                    {betisHome ? opponent.name : 'Real Betis'}
                   </h1>
                   <p className="text-sm text-gray-600">
-                    {betisHome ? 'Visitante' : 'Local'}
+                    Visitante
                   </p>
                 </div>
               </div>
@@ -340,10 +341,7 @@ async function MatchDetailContent({ matchId }: { matchId: number }) {
                 <div className="bg-gray-50 rounded-lg p-4 text-center">
                   <p className="text-sm text-gray-600 mb-1">Tiempo Reglamentario</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {betisHome 
-                      ? `${match.score.fullTime.home} - ${match.score.fullTime.away}`
-                      : `${match.score.fullTime.away} - ${match.score.fullTime.home}`
-                    }
+                    {match.score.fullTime.home} - {match.score.fullTime.away}
                   </p>
                 </div>
 
@@ -352,10 +350,7 @@ async function MatchDetailContent({ matchId }: { matchId: number }) {
                   <div className="bg-gray-50 rounded-lg p-4 text-center">
                     <p className="text-sm text-gray-600 mb-1">Descanso</p>
                     <p className="text-xl font-semibold text-gray-900">
-                      {betisHome 
-                        ? `${match.score.halfTime.home} - ${match.score.halfTime.away}`
-                        : `${match.score.halfTime.away} - ${match.score.halfTime.home}`
-                      }
+                      {match.score.halfTime.home} - {match.score.halfTime.away}
                     </p>
                   </div>
                 )}
@@ -365,10 +360,7 @@ async function MatchDetailContent({ matchId }: { matchId: number }) {
                   <div className="bg-gray-50 rounded-lg p-4 text-center">
                     <p className="text-sm text-gray-600 mb-1">Prórroga</p>
                     <p className="text-xl font-semibold text-gray-900">
-                      {betisHome 
-                        ? `${match.score.extraTime.home} - ${match.score.extraTime.away}`
-                        : `${match.score.extraTime.away} - ${match.score.extraTime.home}`
-                      }
+                      {match.score.extraTime.home} - {match.score.extraTime.away}
                     </p>
                   </div>
                 )}
@@ -378,10 +370,7 @@ async function MatchDetailContent({ matchId }: { matchId: number }) {
                   <div className="bg-gray-50 rounded-lg p-4 text-center">
                     <p className="text-sm text-gray-600 mb-1">Penaltis</p>
                     <p className="text-xl font-semibold text-gray-900">
-                      {betisHome 
-                        ? `${match.score.penalties.home} - ${match.score.penalties.away}`
-                        : `${match.score.penalties.away} - ${match.score.penalties.home}`
-                      }
+                      {match.score.penalties.home} - {match.score.penalties.away}
                     </p>
                   </div>
                 )}

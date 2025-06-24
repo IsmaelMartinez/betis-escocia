@@ -54,9 +54,8 @@ function transformMatch(match: Match, isUpcoming: boolean = false) {
 
   return {
     id: match.id,
-    date: match.utcDate,
     opponent,
-    opponentCrest,
+    date: match.utcDate,
     venue: getVenue(),
     competition: match.competition.name,
     competitionLogo: match.competition.emblem || '',
@@ -66,7 +65,15 @@ function transformMatch(match: Match, isUpcoming: boolean = false) {
       home: match.score.fullTime.home,
       away: match.score.fullTime.away
     } : undefined,
-    isUpcoming
+    isUpcoming,
+    opponentCrest,
+    competitionEmblem: match.competition.emblem,
+    matchday: match.matchday,
+    watchParty: isUpcoming ? {
+      location: "Polwarth Tavern",
+      address: "15 Polwarth Pl, Edinburgh EH11 1NH",
+      time: "30 minutos antes del partido"
+    } : undefined
   };
 }
 
