@@ -81,7 +81,7 @@ export function ApiErrorMessage({ onRetry }: { readonly onRetry?: () => void }) 
   return (
     <ErrorMessage
       title="Error al cargar los datos"
-      message="No pudimos obtener la información de los partidos. Comprueba tu conexión a internet e intenta de nuevo."
+      message="No pudimos obtener la información de los eventos. Comprueba tu conexión a internet e intenta de nuevo."
       onRetry={onRetry}
     />
   );
@@ -90,8 +90,8 @@ export function ApiErrorMessage({ onRetry }: { readonly onRetry?: () => void }) 
 export function MatchDataErrorMessage({ onRetry }: { readonly onRetry?: () => void }) {
   return (
     <ErrorMessage
-      title="Error en los datos del partido"
-      message="Hubo un problema al mostrar la información de este partido. Los datos podrían estar temporalmente no disponibles."
+      title="Error en los datos del evento"
+      message="Hubo un problema al mostrar la información de este evento. Los datos podrían estar temporalmente no disponibles."
       onRetry={onRetry}
     />
   );
@@ -101,8 +101,8 @@ export function NoMatchesMessage() {
   return (
     <ErrorMessage
       type="warning"
-      title="No hay partidos"
-      message="No hay partidos programados para mostrar en este momento. ¡Vuelve pronto para ver las próximas fechas!"
+      title="No hay eventos"
+      message="No hay eventos programados para mostrar en este momento. ¡Vuelve pronto para ver las próximas fechas!"
     />
   );
 }
@@ -111,8 +111,8 @@ export function NoUpcomingMatchesMessage() {
   return (
     <ErrorMessage
       type="warning" 
-      title="No hay próximos partidos"
-      message="No hay partidos próximos programados. Mantente atento para futuras fechas del Betis."
+      title="No hay próximos eventos"
+      message="No hay eventos próximos programados. Mantente atento para futuras fechas del Betis."
     />
   );
 }

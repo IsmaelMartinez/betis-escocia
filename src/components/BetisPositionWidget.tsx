@@ -137,7 +137,7 @@ export default function BetisPositionWidget() {
           </div>
           <div className="text-sm text-gray-600">Puntos</div>
           <div className="text-xs text-gray-500">
-            {betisData.playedGames} partidos
+            {betisData.playedGames} jugados
           </div>
         </div>
       </div>

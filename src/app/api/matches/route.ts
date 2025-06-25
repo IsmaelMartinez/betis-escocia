@@ -107,7 +107,7 @@ export async function GET(request: Request) {
     return NextResponse.json(
       {
         success: false,
-        error: 'Error interno del servidor al obtener los partidos',
+        error: 'Error interno del servidor al obtener los eventos',
         matches: [],
         count: 0,
       },

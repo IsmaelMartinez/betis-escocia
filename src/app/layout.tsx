@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "No busques más que no hay - Peña Bética Escocesa",
-  description: "La peña del Real Betis en Edimburgo, Escocia. No busques más que no hay - nos reunimos en el Polwarth Tavern para ver todos los partidos.",
+  description: "La peña del Real Betis en Edimburgo, Escocia. No busques más que no hay - comunidad bética en el Polwarth Tavern con eventos, RSVP y galería.",
   keywords: "Real Betis, Edinburgh, Scotland, No busques más que no hay, peña bética, Polwarth Tavern, José María Conde",
   openGraph: {
     title: "No busques más que no hay - Peña Bética Escocesa",

@@ -128,7 +128,7 @@ export default function PaginatedMatches({
       );
 
       if (!response.ok) {
-        throw new Error('Error al cargar más partidos');
+        throw new Error('Error al cargar más eventos');
       }
 
       const data = await response.json();
@@ -191,7 +191,7 @@ export default function PaginatedMatches({
           {!error && loading && (
             <div className="flex flex-col items-center space-y-4">
               <LoadingSpinner />
-              <p className="text-gray-600">Cargando más partidos...</p>
+              <p className="text-gray-600">Cargando más eventos...</p>
             </div>
           )}
           
@@ -200,13 +200,13 @@ export default function PaginatedMatches({
               onClick={loadMoreMatches}
               className="bg-betis-green hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
             >
-              Ver más partidos
+              Ver más eventos
             </button>
           )}
           
           {!error && !loading && !hasMore && (
             <p className="text-gray-500 text-sm">
-              No hay más {matchType === 'recent' ? 'resultados' : 'partidos'} para mostrar
+              No hay más {matchType === 'recent' ? 'resultados' : 'eventos'} para mostrar
             </p>
           )}
         </div>

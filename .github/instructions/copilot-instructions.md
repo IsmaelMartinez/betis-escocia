@@ -4,13 +4,16 @@
 
 ## Project Overview
 
-This is a Next.js TypeScript project for the Peña Bética Escocesa (Real Betis FC supporters association in Edinburgh, Scotland). The website serves as a portal for Real Betis fans visiting Scotland to join the community at Polwarth Tavern.
+This is a Next.js TypeScript project for the Peña Bética Escocesa (Real Betis FC supporters association in Edinburgh, Scotland). The website serves as a community engagement platform for Real Betis fans in Scotland, focusing on events, RSVP management, and community building at Polwarth Tavern.
 
 ## Key Features
 
 - **Mobile-first responsive design** optimized for smartphones
 - **Real Betis branding** using official colors (green #00A651 and white)
-- **La Porra de Fran** - A betting/prediction system for matches
+- **RSVP System** - Event management and attendance tracking
+- **Merchandise Store** - Community shop for Real Betis gear
+- **Photo Gallery** - Community photos with merchandise tagging
+- **Enhanced Contact Forms** - Improved communication tools
 - **Serverless architecture** using Vercel Functions
 - **Social media integration** with Facebook and Instagram
 - **Bilingual content** (Spanish/English)
@@ -42,7 +45,8 @@ This is a Next.js TypeScript project for the Peña Bética Escocesa (Real Betis 
 
 ## Special Considerations
 
-- "La Porra de Fran" is the key interactive feature
+- Community engagement is the primary focus
+- RSVP system is the key interactive feature
 - Polwarth Tavern is the primary meeting location
 - Content should appeal to both local and visiting Real Betis fans
 - Maintain authentic Spanish football culture terminology

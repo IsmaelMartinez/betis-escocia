@@ -73,11 +73,11 @@ export default function HeroCommunity() {
                 ÚNETE A LA FAMILIA
               </Link>
               <Link 
-                href="/partidos"
+                href="/rsvp"
                 className="border-2 border-betis-green text-betis-green hover:bg-betis-green hover:text-white px-8 py-4 rounded-lg font-bold text-lg transition-all duration-300 flex items-center justify-center"
               >
                 <Calendar className="mr-3 h-5 w-5" />
-                VER PARTIDOS
+                VER EVENTOS
               </Link>
             </div>
           </div>

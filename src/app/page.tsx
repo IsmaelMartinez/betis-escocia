@@ -48,11 +48,11 @@ export default function Home() {
               <span className="text-betis-green font-bold text-lg">📅 Nuestras citas familiares</span>
             </div>
             <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6">
-              Próximos Partidos
+              Próximos Eventos
             </h2>
             <div className="bg-white rounded-3xl p-8 max-w-4xl mx-auto shadow-lg border border-gray-100">
               <p className="text-xl text-gray-700 leading-relaxed">
-                Cada partido es una reunión familiar en el Polwarth Tavern. 
+                Cada evento es una reunión familiar en el Polwarth Tavern. 
                 Ven a compartir emociones, risas y ese cariño que solo una familia bética puede ofrecer.
               </p>
             </div>
@@ -104,10 +104,10 @@ export default function Home() {
                   📍 Cómo llegar
                 </a>
                 <Link
-                  href="/partidos"
+                  href="/rsvp"
                   className="border-2 border-betis-green text-betis-green hover:bg-betis-green hover:text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300"
                 >
-                  Ver todos los partidos
+                  ¿Vienes al próximo partido?
                 </Link>
               </div>
             </div>
@@ -201,9 +201,9 @@ export default function Home() {
             <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
               <h3 className="text-lg font-bold mb-3 text-betis-gold">⏰ Horarios</h3>
               <p className="text-sm text-gray-200">
-                30 min antes del partido<br />
-                Todos los partidos<br />
-                Liga, Copa, Europa
+                30 min antes del evento<br />
+                Todos los eventos<br />
+                Fútbol, reuniones, celebraciones
               </p>
             </div>
             

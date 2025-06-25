@@ -5,14 +5,14 @@ export default function Nosotros() {
   const foundingMembers = [
     {
       name: "Fran",
-      role: "Fundador y organizador de La Porra",
-      description: "El alma de nuestra peña. Siempre con una sonrisa y la porra preparada.",
+      role: "Fundador y organizador",
+      description: "El alma de nuestra peña. Siempre con una sonrisa y listo para organizar.",
       emoji: "👑"
     },
     {
       name: "Isabel",
       role: "Coordinadora de eventos",
-      description: "Se encarga de que todo esté perfecto para cada partido.",
+      description: "Se encarga de que todo esté perfecto para cada evento y reunión.",
       emoji: "🎯"
     },
     {
@@ -37,8 +37,8 @@ export default function Nosotros() {
     },
     {
       year: "2019",
-      event: "Primera porra oficial",
-      description: "Fran organiza la primera porra que se convertiría en nuestra tradición."
+      event: "Primera reunión oficial",
+      description: "Fran organiza la primera reunión que se convertiría en nuestra tradición."
     },
     {
       year: "2020",
@@ -109,7 +109,7 @@ export default function Nosotros() {
               </h3>
               <p className="text-gray-800 leading-relaxed mb-6 text-base">
                 Todo empezó en 2018 cuando un grupo de béticos residentes en Edinburgh nos dimos cuenta 
-                de que estábamos viendo los partidos solos en casa. ¿La solución? Encontrar un pub 
+                de que estábamos viendo el fútbol solos en casa. ¿La solución? Encontrar un pub 
                 que nos acogiera y crear nuestra propia familia bética en Escocia.
               </p>
               <p className="text-gray-800 leading-relaxed mb-6 text-base">
@@ -119,7 +119,7 @@ export default function Nosotros() {
               </p>
               <div className="bg-betis-green/10 rounded-lg p-4 border-l-4 border-betis-green">
                 <p className="text-betis-green font-semibold">
-                  &ldquo;Desde el primer día supimos que esto iba a ser especial. No solo por los partidos, 
+                  &ldquo;Desde el primer día supimos que esto iba a ser especial. No solo por el fútbol, 
                   sino por las personas que íbamos a conocer.&rdquo;
                 </p>
                 <p className="text-sm text-gray-800 mt-2 font-medium">- Fran, fundador</p>
@@ -132,7 +132,7 @@ export default function Nosotros() {
                 La Comunidad
               </h3>
               <p className="text-gray-800 leading-relaxed mb-6 text-base">
-                Lo que empezó como 4 o 5 personas viendo partidos, se convirtió en una verdadera 
+                Lo que empezó como 4 o 5 personas viendo fútbol, se convirtió en una verdadera 
                 familia. Béticos de toda España que viven en Escocia, estudiantes de intercambio, 
                 turistas de paso... todos son bienvenidos.
               </p>
@@ -148,7 +148,7 @@ export default function Nosotros() {
                 </div>
                 <div className="text-center p-4 bg-betis-green/5 rounded-lg">
                   <div className="text-2xl font-black text-betis-green">200+</div>
-                  <div className="text-sm text-gray-700 font-medium">Partidos vividos</div>
+                  <div className="text-sm text-gray-700 font-medium">Eventos vividos</div>
                 </div>
               </div>
             </div>
@@ -243,10 +243,10 @@ export default function Nosotros() {
               💬 Únete a nosotros
             </Link>
             <Link
-              href="/partidos"
+              href="/rsvp"
               className="border-2 border-white text-white hover:bg-white hover:text-betis-green px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
-              📅 Próximos partidos
+              📅 Próximos eventos
             </Link>
           </div>
         </div>

@@ -9,9 +9,9 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 ## ✨ Features
 
 - **Mobile-first responsive design** optimized for smartphones
-- **La Porra de Fran (WIP)** - Interactive betting system for matches
-- **Match calendar** with watch party information
-- **El Jueves de la Peña** - Our online store for merchandise
+- **Community RSVP System** - "¿Vienes al Polwarth?" attendance confirmation
+- **Merchandise Showcase** - Official peña gear: bufandas, llaveros, parches, camisetas
+- **Photo Gallery** - Share match day photos with your peña merch
 - **Real Betis branding** with official colors
 - **Social media integration** (Facebook & Instagram)
 - **Bilingual content** (Spanish/English)
@@ -58,93 +58,62 @@ npm run dev
 src/
 ├── app/                 # Next.js App Router pages
 │   ├── api/            # Serverless API routes
-│   ├── porra/          # La Porra de Fran page
-│   └── partidos/       # Matches page
+│   ├── rsvp/           # RSVP attendance confirmation
+│   ├── tienda/         # Merchandise showcase
+│   └── galeria/        # Photo gallery
 ├── components/         # Reusable UI components
 │   ├── Layout.tsx      # Main layout wrapper
 │   ├── Hero.tsx        # Homepage hero section
-│   ├── PorraCard.tsx   # Porra betting component
-│   └── MatchCard.tsx   # Match display component
+│   ├── RSVPForm.tsx    # RSVP confirmation component
+│   └── MerchandiseCard.tsx # Merch display component
 ├── lib/               # Utilities and types
 │   ├── types.ts       # TypeScript definitions
 │   └── utils.ts       # Helper functions
 └── globals.css        # Global styles with Betis branding
 
 data/
-├── porra.json         # Porra data storage
-├── matches.json       # Match fixtures (upcoming, recent, Conference League, friendlies)
+├── rsvp.json          # RSVP attendance data
+├── merch.json         # Merchandise catalog
 └── content.json       # General content
 ```
 
-## ⚽ Match Data Management
+## 🎪 Community Features
 
-The website displays four types of matches:
+### 🎪 RSVP System - "¿Vienes al Polwarth?"
+
+Confirm your attendance for match viewing parties at Polwarth Tavern:
+- Quick RSVP form for each match
+- See who else is coming
+- Automatic reminders and updates
+- Help us plan seating and atmosphere
+
+### �️ Merchandise Showcase
+
+Official Peña Bética Escocesa gear to show your colors:
+- **Bufandas** (Scarves): Show your support with our custom scarves
+- **Llaveros** (Keychains): Perfect for your keys or bag
+- **Parches** (Patches): Customize your jacket or backpack
+- **Camisetas** (T-shirts): Limited edition peña designs
+
+### 📸 Photo Gallery - "Mérch in Action"
+
+Share your match day experiences:
+- Upload photos wearing your peña merchandise
+- Tag yourself at games with other members
+- Create lasting memories of our community
+- Photo of the month contests
+
+## ⚽ Match Information
+
+While we focus on community features, basic match information is maintained for reference.
 
 ### 📊 Data Sources
-- **La Liga & Copa del Rey**: Fetched from Football-Data.org API in real-time
-- **UEFA Conference League**: Manually maintained in `data/matches.json`
-- **Friendlies**: Manually maintained in `data/matches.json`
 
-### 🔧 Manual Data Maintenance
+- **La Liga & Copa del Rey**: Available via API integration
+- **UEFA Conference League**: Manually maintained
+- **Friendlies**: Manually maintained
 
-To add new Conference League or friendly matches:
-
-1. **Open** `data/matches.json`
-2. **Add matches** to the appropriate array (`conferenceLeague` or `friendlies`)
-3. **Follow the data structure**:
-
-```json
-{
-  "id": "unique-match-id",
-  "utcDate": "2024-07-26T23:30:00Z",
-  "status": "SCHEDULED",
-  "homeTeam": {
-    "id": 90,
-    "name": "Real Betis Balompié",
-    "shortName": "Real Betis",
-    "tla": "BET",
-    "crest": ""
-  },
-  "awayTeam": {
-    "id": 64,
-    "name": "Liverpool FC",
-    "shortName": "Liverpool",
-    "tla": "LIV",
-    "crest": ""
-  },
-  "competition": {
-    "id": 9999,
-    "name": "Friendly",
-    "code": "FR",
-    "type": "FRIENDLY",
-    "emblem": ""
-  },
-  "venue": "Stadium Name"
-}
-```
-
-4. **Deploy** changes to see them live on the website
-
-### 🚀 Future Database Migration
-
-The project is designed to migrate from JSON files to a database (Supabase) for better data management. See the task list for migration plans.
-
-## 🎲 La Porra de Fran (Work in Progress)
-
-Our signature feature - a betting system where members predict:
-- Exact match result
-- First Betis goalscorer
-- Entry fee: €5
-- 50% goes to the peña, 50% to prizes
-- Depends on Fran's availability
-
-## 🛍️ El Jueves de la Peña
-
-Inspired by Seville's famous "El Jueves" market, this is our online store where you can find Peña Bética Escocesa merchandise. All proceeds go towards supporting the peña's activities.
-
-- **T-shirts & Scarves**: Show your support with our custom gear.
-- **Stickers & Badges**: Perfect for decorating your laptop or jacket.
-- **Limited Edition Items**: Special releases for big matches and events.
+The project maintains technical infrastructure for match data but prioritizes community engagement features.
 
 ## 🏠 Polwarth Tavern
 

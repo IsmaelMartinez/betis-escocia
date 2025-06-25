@@ -7,12 +7,12 @@ import BetisLogo from '@/components/BetisLogo';
 
 const navigation = [
   { name: 'Inicio', href: '/', nameEn: 'Home' },
-  { name: 'Partidos', href: '/partidos', nameEn: 'Matches' },
+  { name: 'RSVP', href: '/rsvp', nameEn: 'RSVP' },
   { name: 'Clasificación', href: '/clasificacion', nameEn: 'Standings' },
-  { name: 'Referencias', href: '/referencias', nameEn: 'References' },
-  { name: 'Nosotros', href: '/nosotros', nameEn: 'About' },
+  { name: 'Tienda', href: '/tienda', nameEn: 'Shop' },
   { name: 'Galería', href: '/galeria', nameEn: 'Gallery' },
-  { name: 'Únete', href: '/unete', nameEn: 'Join Us' },
+  { name: 'Nosotros', href: '/nosotros', nameEn: 'About' },
+  { name: 'Contacto', href: '/contacto', nameEn: 'Contact' },
 ];
 
 interface LayoutProps {

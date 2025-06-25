@@ -8,7 +8,6 @@ import BetisLogo from '@/components/BetisLogo';
 
 export default function MatchCard(props: Readonly<MatchCardProps>) {
   const { 
-    id,
     opponent, 
     date, 
     venue, 
@@ -186,7 +185,7 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
   };
 
   return (
-    <Link href={`/partidos/${id}`} className="block">
+    <Link href={`/clasificacion`} className="block">
       <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-200 cursor-pointer">
         {/* Competition header with emblem */}
         <div className={`${getCompetitionColor(competition)} text-white px-4 py-2 flex items-center justify-between`}>

@@ -67,15 +67,15 @@ export default function ReferenciasPage() {
       url: "https://www.realbetisbalompie.es",
       source: "Real Betis Balompié",
       date: "Actualizado permanentemente",
-      description: "Página oficial del Real Betis con noticias, partidos y información sobre las peñas oficiales del club.",
-      preview: "Web oficial del Real Betis Balompié con toda la información del primer equipo, cantera, femenino y futsal. Noticias, partidos, clasificación y mucho más."
+      description: "Página oficial del Real Betis con noticias, eventos y información sobre las peñas oficiales del club.",
+      preview: "Web oficial del Real Betis Balompié con toda la información del primer equipo, cantera, femenino y futsal. Noticias, eventos, clasificación y mucho más."
     },
     {
       title: "Peña Bética Escocesa en Facebook",
       url: "https://www.facebook.com/groups/beticosenescocia/",
       source: "Facebook",
       date: "Activo desde 2010",
-      description: "Grupo oficial en Facebook donde los miembros comparten noticias, organizan quedadas y comentan los partidos.",
+      description: "Grupo oficial en Facebook donde los miembros comparten noticias, organizan quedadas y comentan los eventos.",
       preview: "Grupo cerrado de Facebook para los béticos en Escocia. Aquí organizamos las quedadas en Polwarth Tavern y compartimos nuestra pasión por el Betis."
     },
     {
@@ -83,7 +83,7 @@ export default function ReferenciasPage() {
       url: "https://www.instagram.com/rbetisescocia/",
       source: "Instagram",
       date: "Activo",
-      description: "Cuenta oficial de Instagram con fotos de las quedadas, partidos y momentos especiales de la peña.",
+      description: "Cuenta oficial de Instagram con fotos de las quedadas, eventos y momentos especiales de la peña.",
       preview: "Fotos y momentos especiales de la peña bética en Edimburgo. Síguenos para ver nuestras celebraciones en Polwarth Tavern."
     },
     {
@@ -101,7 +101,7 @@ export default function ReferenciasPage() {
     founders: ["José María Conde (Presidente actual)", "Juan Morata (fundador, ahora en España)"],
     location: "Edimburgo, Escocia",
     venue: "Polwarth Tavern",
-    members: "7-8 miembros incondicionales, hasta 15 en grandes partidos",
+    members: "7-8 miembros incondicionales, hasta 15 en grandes eventos",
     origin: "Se conocieron jugando fútbol, ambos llevaban la camiseta del Betis"
   };
 

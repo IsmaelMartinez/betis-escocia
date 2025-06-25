@@ -43,11 +43,12 @@
 - [x] Input validation and error handling
 
 ### 📱 **Key Features**
-- [x] **La Porra de Fran** - Complete betting system
-  - Entry form with validation
-  - Prize pool calculation (50/50 split)
-  - Rules and previous winners display
-  - Fran availability status
+- [x] **Community Engagement Platform** - Focus pivot complete
+  - RSVP system for events
+  - Merchandise interest tracking
+  - Enhanced contact forms
+  - Photo gallery with tagging
+  - ~~La Porra de Fran~~ (REMOVED - pivoted to community focus)
 - [x] **Match Integration** - Polwarth Tavern watch parties
 - [x] **Social Media Links** - Facebook and Instagram
 - [x] **SEO Optimization** - Meta tags and descriptions
