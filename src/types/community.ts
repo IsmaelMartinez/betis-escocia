@@ -59,19 +59,21 @@ export interface MerchandiseOrder {
   };
 }
 
+// Photo submission and gallery types
 export interface PhotoSubmission {
   id: string;
-  submitterName: string;
-  submitterEmail: string;
+  name: string;
+  email: string;
+  caption: string;
+  merchandiseItems: string[];
+  location: string;
+  matchDate: string;
   imageUrl: string;
-  caption?: string;
-  tags: string[];
-  merchandiseVisible: string[]; // IDs of merchandise items visible in photo
-  matchDate?: string;
-  location?: string;
   approved: boolean;
-  submittedAt: string;
-  approvedAt?: string;
+  featured: boolean;
+  timestamp: string;
+  moderatedAt?: string;
+  moderatedBy?: string;
 }
 
 export interface ContactFormSubmission {
