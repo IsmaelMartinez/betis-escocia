@@ -47,16 +47,11 @@ Created: December 2024
 - [ ] T17.3: Implement interest/pre-order form for each item
 - [ ] T17.4: Add photo upload for customers wearing purchased items
 - [ ] T17.5: Create "Mérch in Action" gallery showing fans with peña gear
-- [ ] T17.6: Add simple payment integration or contact-for-purchase system
+- [ ] T17.6: Add contact-for-purchase system, locations available are in Polwarth Tavern or Seville
 
 ### T18: Photo Tagging & Social Features 📸
 
-- [ ] T18.1: Create photo upload form for match day experiences
-- [ ] T18.2: Add tags for merchandise items visible in photos
-- [ ] T18.3: Create photo gallery with filtering by merch type
-- [ ] T18.4: Add social sharing capabilities for uploaded photos
-- [ ] T18.5: Implement photo moderation and approval system
-- [ ] T18.6: Create "Photo of the Month" feature for homepage
+- [ ] T18.1: Mention and help fans to tag photos with merchandise for facebook and instagram
 
 ### T19: Enhanced Contact & Communication 📝
 

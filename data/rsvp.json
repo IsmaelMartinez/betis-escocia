@@ -70,7 +70,18 @@
       "whatsappInterest": true,
       "matchDate": "2025-06-28T20:00:00",
       "submittedAt": "2025-06-25T15:10:00.000Z"
+    },
+    {
+      "id": "rsvp_1750887101633_gmaowhjjj",
+      "name": "Ismael Martinez Ramos",
+      "email": "ismaelmartinez@gmail.com",
+      "attendees": 2,
+      "message": "bananas",
+      "dietaryRequirements": "ni leches ni gluten",
+      "whatsappInterest": true,
+      "matchDate": "2025-06-28T20:00:00",
+      "submittedAt": "2025-06-25T21:31:41.633Z"
     }
   ],
-  "totalAttendees": 10
+  "totalAttendees": 12
 }

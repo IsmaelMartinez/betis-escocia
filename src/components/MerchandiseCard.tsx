@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { ShoppingCart, Star, Eye, Package } from 'lucide-react';
 import type { MerchandiseItem } from '@/types/community';
+import OrderForm from './OrderForm';
 
 interface MerchandiseCardProps {
   readonly item: MerchandiseItem;
@@ -12,12 +13,12 @@ interface MerchandiseCardProps {
 export default function MerchandiseCard({ item }: MerchandiseCardProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
+  const [showOrderForm, setShowOrderForm] = useState(false);
   const [selectedSize, setSelectedSize] = useState(item.sizes?.[0] || '');
   const [selectedColor, setSelectedColor] = useState(item.colors?.[0] || '');
 
   const handleOrderClick = () => {
-    // In a real implementation, this would open an order form or add to cart
-    alert(`Funcionalidad de pedido para "${item.name}" estará disponible pronto. Por ahora, usa el formulario de contacto.`);
+    setShowOrderForm(true);
   };
 
   const getCategoryLabel = (category: string) => {
@@ -252,6 +253,17 @@ export default function MerchandiseCard({ item }: MerchandiseCardProps) {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Order Form Modal */}
+      {showOrderForm && (
+        <OrderForm
+          productId={item.id}
+          productName={item.name}
+          price={item.price}
+          isInStock={item.inStock}
+          onClose={() => setShowOrderForm(false)}
+        />
       )}
     </div>
   );

@@ -176,3 +176,26 @@ export interface PhotoGalleryResponse extends APIResponse {
   totalPhotos?: number;
   tags?: string[];
 }
+
+export interface Order {
+  id: string;
+  productId: string;
+  productName: string;
+  price: number;
+  quantity: number;
+  totalPrice: number;
+  customerInfo: {
+    name: string;
+    email: string;
+    phone: string;
+    contactMethod: 'email' | 'whatsapp';
+  };
+  orderDetails: {
+    size?: string;
+    message: string;
+  };
+  isPreOrder: boolean;
+  status: 'pending' | 'confirmed' | 'fulfilled' | 'cancelled';
+  timestamp: string;
+  fulfillmentDate?: string;
+}
