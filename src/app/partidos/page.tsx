@@ -9,39 +9,51 @@ async function getMatches() {
       ? `https://${process.env.VERCEL_URL}` 
       : 'http://localhost:3000';
     
-    const [upcomingRes, recentRes] = await Promise.all([
-      fetch(`${baseUrl}/api/matches?type=upcoming&limit=3`, { 
+    const [upcomingRes, recentRes, conferenceRes, friendliesRes] = await Promise.all([
+      fetch(`${baseUrl}/api/matches?type=upcoming`, { 
         next: { revalidate: 1800 } // 30 minutes
       }),
-      fetch(`${baseUrl}/api/matches?type=recent&limit=3`, { 
+      fetch(`${baseUrl}/api/matches?type=recent`, { 
+        next: { revalidate: 1800 } // 30 minutes
+      }),
+      fetch(`${baseUrl}/api/matches?type=conference`, { 
+        next: { revalidate: 1800 } // 30 minutes
+      }),
+      fetch(`${baseUrl}/api/matches?type=friendlies`, { 
         next: { revalidate: 1800 } // 30 minutes
       })
     ]);
 
-    if (!upcomingRes.ok || !recentRes.ok) {
+    if (!upcomingRes.ok || !recentRes.ok || !conferenceRes.ok || !friendliesRes.ok) {
       throw new Error('Failed to fetch matches');
     }
 
-    const [upcomingData, recentData] = await Promise.all([
+    const [upcomingData, recentData, conferenceData, friendliesData] = await Promise.all([
       upcomingRes.json(),
-      recentRes.json()
+      recentRes.json(),
+      conferenceRes.json(),
+      friendliesRes.json()
     ]);
 
     return {
       upcoming: upcomingData.matches ?? [],
-      recent: recentData.matches ?? []
+      recent: recentData.matches ?? [],
+      conference: conferenceData.matches ?? [],
+      friendlies: friendliesData.matches ?? []
     };
   } catch (error) {
     console.error('Error fetching matches:', error);
     return {
       upcoming: [],
-      recent: []
+      recent: [],
+      conference: [],
+      friendlies: []
     };
   }
 }
 
 export default async function MatchesPage() {
-  const { upcoming, recent } = await getMatches();
+  const { upcoming, recent, conference, friendlies } = await getMatches();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -64,7 +76,9 @@ export default async function MatchesPage() {
               <ApiErrorBoundary>
                 <FilteredMatches 
                   upcomingMatches={upcoming} 
-                  recentMatches={recent} 
+                  recentMatches={recent}
+                  conferenceMatches={conference}
+                  friendlyMatches={friendlies}
                 />
               </ApiErrorBoundary>
             </div>

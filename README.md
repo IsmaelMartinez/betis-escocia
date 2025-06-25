@@ -9,8 +9,9 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 ## ✨ Features
 
 - **Mobile-first responsive design** optimized for smartphones
-- **La Porra de Fran** - Interactive betting system for matches
+- **La Porra de Fran (WIP)** - Interactive betting system for matches
 - **Match calendar** with watch party information
+- **El Jueves de la Peña** - Our online store for merchandise
 - **Real Betis branding** with official colors
 - **Social media integration** (Facebook & Instagram)
 - **Bilingual content** (Spanish/English)
@@ -71,11 +72,64 @@ src/
 
 data/
 ├── porra.json         # Porra data storage
-├── matches.json       # Match fixtures
+├── matches.json       # Match fixtures (upcoming, recent, Conference League, friendlies)
 └── content.json       # General content
 ```
 
-## 🎲 La Porra de Fran
+## ⚽ Match Data Management
+
+The website displays four types of matches:
+
+### 📊 Data Sources
+- **La Liga & Copa del Rey**: Fetched from Football-Data.org API in real-time
+- **UEFA Conference League**: Manually maintained in `data/matches.json`
+- **Friendlies**: Manually maintained in `data/matches.json`
+
+### 🔧 Manual Data Maintenance
+
+To add new Conference League or friendly matches:
+
+1. **Open** `data/matches.json`
+2. **Add matches** to the appropriate array (`conferenceLeague` or `friendlies`)
+3. **Follow the data structure**:
+
+```json
+{
+  "id": "unique-match-id",
+  "utcDate": "2024-07-26T23:30:00Z",
+  "status": "SCHEDULED",
+  "homeTeam": {
+    "id": 90,
+    "name": "Real Betis Balompié",
+    "shortName": "Real Betis",
+    "tla": "BET",
+    "crest": ""
+  },
+  "awayTeam": {
+    "id": 64,
+    "name": "Liverpool FC",
+    "shortName": "Liverpool",
+    "tla": "LIV",
+    "crest": ""
+  },
+  "competition": {
+    "id": 9999,
+    "name": "Friendly",
+    "code": "FR",
+    "type": "FRIENDLY",
+    "emblem": ""
+  },
+  "venue": "Stadium Name"
+}
+```
+
+4. **Deploy** changes to see them live on the website
+
+### 🚀 Future Database Migration
+
+The project is designed to migrate from JSON files to a database (Supabase) for better data management. See the task list for migration plans.
+
+## 🎲 La Porra de Fran (Work in Progress)
 
 Our signature feature - a betting system where members predict:
 - Exact match result
@@ -83,6 +137,14 @@ Our signature feature - a betting system where members predict:
 - Entry fee: €5
 - 50% goes to the peña, 50% to prizes
 - Depends on Fran's availability
+
+## 🛍️ El Jueves de la Peña
+
+Inspired by Seville's famous "El Jueves" market, this is our online store where you can find Peña Bética Escocesa merchandise. All proceeds go towards supporting the peña's activities.
+
+- **T-shirts & Scarves**: Show your support with our custom gear.
+- **Stickers & Badges**: Perfect for decorating your laptop or jacket.
+- **Limited Edition Items**: Special releases for big matches and events.
 
 ## 🏠 Polwarth Tavern
 

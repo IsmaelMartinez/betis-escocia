@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X, MapPin, Facebook, Instagram, Video } from 'lucide-react';
+import BetisLogo from '@/components/BetisLogo';
 
 const navigation = [
   { name: 'Inicio', href: '/', nameEn: 'Home' },
@@ -15,7 +16,7 @@ const navigation = [
 ];
 
 interface LayoutProps {
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
@@ -29,9 +30,7 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex justify-between items-center py-4">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                <span className="text-betis-green font-bold text-sm">RB</span>
-              </div>
+              <BetisLogo width={32} height={32} className="bg-white rounded-full p-1" />
               <div className="text-white">
                 <h1 className="font-bold text-lg sm:text-xl">No busques más</h1>
                 <p className="text-xs opacity-90">que no hay</p>

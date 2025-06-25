@@ -101,11 +101,7 @@ Created: December 2024
 ### T9: Competition and Standings Integration
 
 - [x] T9.1: Add La Liga standings display ✅
-- [ ] T9.2: Add Copa del Rey matches support
-- [ ] T9.3: Add Europa League/Conference League matches (if Betis qualifies)
-- [x] T9.4: Create competition filter functionality ✅
-- [ ] T9.5: Add competition badges and proper branding
-- [ ] T9.6: Show Betis position and points in league table
+- [x] T9.2: Create competition filter functionality ✅
 
 ### T10: Performance and Caching Optimization
 
@@ -115,6 +111,7 @@ Created: December 2024
 - [ ] T10.4: Add image optimization for team logos and badges
 - [ ] T10.5: Implement background data refresh
 - [ ] T10.6: Add service worker for offline functionality (optional)
+- [ ] T10.7: Monitor API request usage and optimize calls
 
 ### T11: Testing and Quality Assurance
 
@@ -133,7 +130,37 @@ Created: December 2024
 - [ ] T12.4: Add performance monitoring and alerting
 - [ ] T12.5: Create deployment checklist and rollback procedures
 - [ ] T12.6: Document API usage and troubleshooting guide
-- [ ] T12.7: Clean up codebase and remove unused files/folders
+- [x] T12.7: Clean up codebase and remove unused files/folders ✅
+
+### T13: Product Documentation, User Guides and Support
+
+- [ ] T13.1: Create user guide for how to contribute to the Peña Bética Escocesa website
+- [ ] T13.2: Document the architecture and design decisions
+- [ ] T13.3: Add transparent user tracking using umami or similar, always transparent and not intrusive (getting anonimised aggregated data)
+- [ ] T13.4: Create a support page with contact information and FAQs
+- [ ] T13.5: Create a contribution guide for developers
+- [ ] T13.6: Feedback form/issue template for users to suggest improvements/problems. Use github issues for this.
+- [ ] T13.7: Integrate the template with the website, so that users can easily access it.
+
+### T14: Fixed & Upcoming Matches Data
+
+- [x] T14.1: Research and gather all Real Betis 2024–25 UEFA Conference League fixtures (group stage, knockouts, final) ✅
+- [x] T14.2: Research upcoming friendly matches and collect date, opponent, and venue details ✅
+- [x] T14.3: Add a top-level `conferenceLeague` array to `data/matches.json` with all UEFA Conference League matches ✅
+- [x] T14.4: Add a top-level `friendlies` array to `data/matches.json` with all upcoming friendlies ✅
+- [x] T14.5: Update `src/app/partidos/page.tsx` to load and display `conferenceLeague` matches alongside existing fixtures ✅
+- [x] T14.6: Update UI to load and display `friendlies` under a distinct section or badge ✅
+- [x] T14.7: Document the match data maintenance process in `README.md` ✅
+
+### T15: Database Migration & Persistence
+
+- [ ] T15.1: Evaluate free-tier database providers (e.g., Supabase, Vercel??) and select one for match storage
+- [ ] T15.2: Configure database connection using environment variables (`.env.local` and `.env.example`)
+- [ ] T15.3: Design and create a `matches` table schema to store fixtures and friendlies
+- [ ] T15.4: Implement a service layer (`src/services/databaseService.ts`) for CRUD operations against the database
+- [ ] T15.5: Update data loading in `src/app/partidos/page.tsx` to fetch matches from the database instead of JSON
+- [ ] T15.6: Create a seed script (`scripts/seed-matches.ts`) to import existing `conferenceLeague` and `friendlies` JSON data into the database
+- [ ] T15.7: Document database setup, seeding, and maintenance instructions in `README.md`
 
 ## 📁 **RELEVANT FILES**
 
@@ -157,7 +184,6 @@ Created: December 2024
 - `src/components/PaginatedMatches.tsx` - Pagination component for historical matches ✅
 - `package.json` - Updated with test scripts
 - `API_FREE_TIER_SOLUTION.md` - Documentation of 403 error fix ✅
-- `TASK_T3_T6_COMPLETED.md` - Completion summary ✅
 
 ### 🔄 **Files to Modify**
 
@@ -168,11 +194,7 @@ Created: December 2024
 
 ### 🆕 **Files to Create**
 
-- `src/components/LoadingSpinner.tsx` - Loading state component
-- `src/components/ErrorMessage.tsx` - Error handling component
-- `src/app/partidos/[matchId]/page.tsx` - Match detail page
-- `src/services/laligaService.ts` - Future LaLiga API service (V2)
-- `src/lib/apiSwitcher.ts` - API switching logic (V2)
+- `scripts/seed-matches.ts` - Seed JSON match data into database
 
 ---
 
@@ -187,13 +209,6 @@ Created: December 2024
 - **Data Available**: Fixtures, results, standings, basic team info
 - **Cache Strategy**: 30 minutes for fixtures, 5 minutes for live matches
 
-### LaLiga API (Version 2)
-
-- **Status**: Requires application approval
-- **Use Case**: Non-commercial fan community website
-- **Enhanced Data**: Player stats, lineups, events, detailed metrics
-- **Integration**: Will be additive to existing Football-Data.org implementation
-
 ### Development Priorities
 
 1. **Version 1 First**: Complete functional system with Football-Data.org
@@ -201,9 +216,3 @@ Created: December 2024
 3. **Progressive Enhancement**: Ensure basic functionality without JavaScript
 4. **Spanish Localization**: Error messages and dates in Spanish
 5. **Error Resilience**: Graceful degradation when API is unavailable
-
----
-
-**🎉 MAJOR MILESTONE ACHIEVED**: T1, T2, T3, T4, T5, T6, and T7 are complete! The core match integration system has comprehensive TypeScript types, enhanced UI components, robust error handling, and offline detection.
-
-**🚀 Next Priority**: Complete T9 (Competition and Standings Integration) to add league standings and competition filters.

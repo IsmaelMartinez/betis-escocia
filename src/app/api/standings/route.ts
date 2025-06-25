@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { FootballDataService } from '@/services/footballDataService';
 
+export const dynamic = 'force-dynamic'; // This route requires dynamic rendering
+
 export async function GET() {
   try {
     const service = new FootballDataService();

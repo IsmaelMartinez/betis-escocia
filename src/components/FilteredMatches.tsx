@@ -9,12 +9,20 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import type { Match } from '@/types/match';
 
 interface FilteredMatchesProps {
-  upcomingMatches: Match[];
-  recentMatches: Match[];
+  readonly upcomingMatches: Match[];
+  readonly recentMatches: Match[];
+  readonly conferenceMatches: Match[];
+  readonly friendlyMatches: Match[];
 }
 
 // Helper function to transform Football-Data.org match to component props
 function transformMatch(match: Match, isUpcoming: boolean = false) {
+  // Add safety checks for required properties
+  if (!match?.homeTeam?.id || !match?.awayTeam?.id || !match?.competition?.id) {
+    console.error('Invalid match data:', match);
+    return null;
+  }
+
   const isBetisHome = match.homeTeam.id === 90; // Real Betis team ID
   const opponent = isBetisHome ? match.awayTeam.name : match.homeTeam.name;
   const opponentCrest = isBetisHome ? match.awayTeam.crest : match.homeTeam.crest;
@@ -57,8 +65,8 @@ function transformMatch(match: Match, isUpcoming: boolean = false) {
     opponent,
     date: match.utcDate,
     venue: getVenue(),
-    competition: match.competition.name,
-    competitionLogo: match.competition.emblem || '',
+    competition: match.competition?.name || 'Unknown',
+    competitionLogo: match.competition?.emblem || '',
     isHome: isBetisHome,
     status: match.status,
     score: match.status === 'FINISHED' && match.score?.fullTime ? {
@@ -67,7 +75,7 @@ function transformMatch(match: Match, isUpcoming: boolean = false) {
     } : undefined,
     isUpcoming,
     opponentCrest,
-    competitionEmblem: match.competition.emblem,
+    competitionEmblem: match.competition?.emblem || '',
     matchday: match.matchday,
     watchParty: isUpcoming ? {
       location: "Polwarth Tavern",
@@ -77,19 +85,21 @@ function transformMatch(match: Match, isUpcoming: boolean = false) {
   };
 }
 
-export default function FilteredMatches({ upcomingMatches, recentMatches }: FilteredMatchesProps) {
+export default function FilteredMatches({ upcomingMatches, recentMatches, conferenceMatches, friendlyMatches }: FilteredMatchesProps) {
   const [selectedCompetition, setSelectedCompetition] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   // Extract unique competitions from all matches
   const competitions = useMemo(() => {
-    const allMatches = [...upcomingMatches, ...recentMatches];
+    const allMatches = [...upcomingMatches, ...recentMatches, ...conferenceMatches, ...friendlyMatches];
     const competitionMap = new Map<string, Competition>();
 
     allMatches.forEach(match => {
-      if (!competitionMap.has(match.competition.id.toString())) {
-        competitionMap.set(match.competition.id.toString(), {
-          id: match.competition.id.toString(),
+      // Add defensive check for competition.id
+      const competitionId = match.competition?.id;
+      if (competitionId && !competitionMap.has(competitionId.toString())) {
+        competitionMap.set(competitionId.toString(), {
+          id: competitionId.toString(),
           code: match.competition.code || '',
           name: match.competition.name,
           emblem: match.competition.emblem
@@ -98,31 +108,43 @@ export default function FilteredMatches({ upcomingMatches, recentMatches }: Filt
     });
 
     return Array.from(competitionMap.values());
-  }, [upcomingMatches, recentMatches]);
+  }, [upcomingMatches, recentMatches, conferenceMatches, friendlyMatches]);
 
   // Filter matches by selected competition
   const filteredUpcoming = useMemo(() => {
     if (!selectedCompetition) return upcomingMatches;
-    return upcomingMatches.filter(match => match.competition.id.toString() === selectedCompetition);
+    return upcomingMatches.filter(match => match.competition?.id?.toString() === selectedCompetition);
   }, [upcomingMatches, selectedCompetition]);
 
   const filteredRecent = useMemo(() => {
     if (!selectedCompetition) return recentMatches;
-    return recentMatches.filter(match => match.competition.id.toString() === selectedCompetition);
+    return recentMatches.filter(match => match.competition?.id?.toString() === selectedCompetition);
   }, [recentMatches, selectedCompetition]);
+
+  const filteredConference = useMemo(() => {
+    if (!selectedCompetition) return conferenceMatches;
+    return conferenceMatches.filter(match => match.competition.name === 'UEFA Conference League');
+  }, [conferenceMatches, selectedCompetition]);
+
+  const filteredFriendlies = useMemo(() => {
+    if (!selectedCompetition) return friendlyMatches;
+    return friendlyMatches.filter(match => match.competition.name === 'Friendly');
+  }, [friendlyMatches, selectedCompetition]);
 
   // Calculate match counts per competition
   const matchCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    const allMatches = [...upcomingMatches, ...recentMatches];
+    const allMatches = [...upcomingMatches, ...recentMatches, ...conferenceMatches, ...friendlyMatches];
     
     allMatches.forEach(match => {
-      const compId = match.competition.id.toString();
-      counts[compId] = (counts[compId] || 0) + 1;
+      const compId = match.competition?.id?.toString();
+      if (compId) {
+        counts[compId] = (counts[compId] || 0) + 1;
+      }
     });
 
     return counts;
-  }, [upcomingMatches, recentMatches]);
+  }, [upcomingMatches, recentMatches, conferenceMatches, friendlyMatches]);
 
   const handleCompetitionChange = (competitionId: string | null) => {
     setIsLoading(true);
@@ -171,14 +193,68 @@ export default function FilteredMatches({ upcomingMatches, recentMatches }: Filt
           <NoUpcomingMatchesMessage />
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredUpcoming.map((match) => (
-              <MatchCardErrorBoundary key={match.id}>
-                <MatchCard {...transformMatch(match, true)} />
-              </MatchCardErrorBoundary>
-            ))}
+            {filteredUpcoming.slice(0, 2).map((match) => {
+              const transformedMatch = transformMatch(match, true);
+              if (!transformedMatch) return null;
+              return (
+                <MatchCardErrorBoundary key={match.id}>
+                  <MatchCard {...transformedMatch} />
+                </MatchCardErrorBoundary>
+              );
+            })}
           </div>
         )}
       </section>
+
+      {/* Conference League Matches */}
+      {filteredConference.length > 0 && (
+        <section className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            UEFA Conference League
+            {selectedCompetition && (
+              <span className="text-lg font-normal text-gray-600 ml-2">
+                - {competitions.find(c => c.id === selectedCompetition)?.name}
+              </span>
+            )}
+          </h2>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredConference.slice(0, 2).map((match) => {
+              const transformedMatch = transformMatch(match, true);
+              if (!transformedMatch) return null;
+              return (
+                <MatchCardErrorBoundary key={match.id}>
+                  <MatchCard {...transformedMatch} />
+                </MatchCardErrorBoundary>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* Friendlies */}
+      {filteredFriendlies.length > 0 && (
+        <section className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            Amistosos
+            {selectedCompetition && (
+              <span className="text-lg font-normal text-gray-600 ml-2">
+                - {competitions.find(c => c.id === selectedCompetition)?.name}
+              </span>
+            )}
+          </h2>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredFriendlies.slice(0, 2).map((match) => {
+              const transformedMatch = transformMatch(match, true);
+              if (!transformedMatch) return null;
+              return (
+                <MatchCardErrorBoundary key={match.id}>
+                  <MatchCard {...transformedMatch} />
+                </MatchCardErrorBoundary>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* Recent Results */}
       <section className="bg-white rounded-lg shadow-md p-6">
@@ -195,11 +271,15 @@ export default function FilteredMatches({ upcomingMatches, recentMatches }: Filt
           <NoRecentMatchesMessage />
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredRecent.map((match) => (
-              <MatchCardErrorBoundary key={match.id}>
-                <MatchCard {...transformMatch(match)} />
-              </MatchCardErrorBoundary>
-            ))}
+            {filteredRecent.slice(0, 2).map((match) => {
+              const transformedMatch = transformMatch(match);
+              if (!transformedMatch) return null;
+              return (
+                <MatchCardErrorBoundary key={match.id}>
+                  <MatchCard {...transformedMatch} />
+                </MatchCardErrorBoundary>
+              );
+            })}
           </div>
         )}
       </section>

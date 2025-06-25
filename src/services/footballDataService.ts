@@ -27,7 +27,8 @@ import { getFootballDataConfig } from '@/lib/config';
 import type { 
   Match, 
   Team,
-  Competition
+  Competition,
+  MatchCardProps
 } from '@/types/match';
 
 // Competition IDs for different tournaments
@@ -665,6 +666,58 @@ export class FootballDataService {
       console.error('Error fetching Betis season summary:', error);
       return null;
     }
+  }
+
+  /**
+   * Transform raw API match data to MatchCardProps format
+   */
+  private transformMatchToCardProps(match: Match): MatchCardProps {
+    const isHome = match.homeTeam.id === REAL_BETIS_TEAM_ID;
+    const opponent = isHome ? match.awayTeam : match.homeTeam;
+    
+    // Determine result text
+    let result: string | undefined;
+    if (match.score?.winner === 'DRAW') {
+      result = 'Empate';
+    } else if (match.score?.winner === 'HOME_TEAM') {
+      result = 'Victoria Local';
+    } else if (match.score?.winner === 'AWAY_TEAM') {
+      result = 'Victoria Visitante';
+    }
+    
+    return {
+      id: match.id,
+      opponent: opponent.name,
+      date: match.utcDate,
+      venue: isHome ? 'Estadio Benito Villamarín' : 'Estadio del Adversario',
+      competition: match.competition.name,
+      isHome,
+      result,
+      status: match.status,
+      matchday: match.matchday,
+      opponentCrest: opponent.crest,
+      competitionEmblem: match.competition.emblem,
+      score: match.score?.fullTime ? {
+        home: match.score.fullTime.home,
+        away: match.score.fullTime.away
+      } : undefined
+    };
+  }
+
+  /**
+   * Get recent Betis results formatted for MatchCard component
+   */
+  async getRecentBetisResultsForCards(limit: number = 5, offset: number = 0): Promise<MatchCardProps[]> {
+    const matches = await this.getRecentBetisResults(limit, offset);
+    return matches.map(match => this.transformMatchToCardProps(match));
+  }
+
+  /**
+   * Get upcoming Betis matches formatted for MatchCard component
+   */
+  async getUpcomingBetisMatchesForCards(limit: number = 5, offset: number = 0): Promise<MatchCardProps[]> {
+    const matches = await this.getUpcomingBetisMatches(limit, offset);
+    return matches.map(match => this.transformMatchToCardProps(match));
   }
 }
 
