@@ -1,0 +1,76 @@
+{
+  "currentMatch": {
+    "opponent": "Real Madrid",
+    "date": "2025-06-28T20:00:00",
+    "competition": "LaLiga"
+  },
+  "entries": [
+    {
+      "id": "rsvp_1719580800000_abc123def",
+      "name": "Fran González",
+      "email": "fran@example.com",
+      "attendees": 2,
+      "message": "¡Nos vemos allí! Llevo a mi hermano que está visitando Edimburgo.",
+      "dietaryRequirements": "",
+      "whatsappInterest": true,
+      "matchDate": "2025-06-28T20:00:00",
+      "submittedAt": "2025-06-25T10:30:00.000Z"
+    },
+    {
+      "id": "rsvp_1719584400000_xyz789ghi",
+      "name": "Isabel Martín",
+      "email": "isabel@example.com",
+      "attendees": 1,
+      "message": "",
+      "dietaryRequirements": "Vegetariana",
+      "whatsappInterest": false,
+      "matchDate": "2025-06-28T20:00:00",
+      "submittedAt": "2025-06-25T11:45:00.000Z"
+    },
+    {
+      "id": "rsvp_1719588000000_mno456pqr",
+      "name": "Carlos Rodríguez",
+      "email": "carlos@example.com",
+      "attendees": 3,
+      "message": "Vengo con dos colegas del trabajo. ¡Esperamos que el Betis gane!",
+      "dietaryRequirements": "",
+      "whatsappInterest": true,
+      "matchDate": "2025-06-28T20:00:00",
+      "submittedAt": "2025-06-25T12:15:00.000Z"
+    },
+    {
+      "id": "rsvp_1719591600000_stu789vwx",
+      "name": "María Fernández",
+      "email": "maria@example.com",
+      "attendees": 1,
+      "message": "Primera vez que vengo, ¿hay que llegar muy pronto?",
+      "dietaryRequirements": "",
+      "whatsappInterest": true,
+      "matchDate": "2025-06-28T20:00:00",
+      "submittedAt": "2025-06-25T13:00:00.000Z"
+    },
+    {
+      "id": "rsvp_1719595200000_jkl012mno",
+      "name": "José Luis Pérez",
+      "email": "joseluis@example.com",
+      "attendees": 2,
+      "message": "Vengo con mi pareja. Ella no es muy del fútbol pero le gusta el ambiente.",
+      "dietaryRequirements": "Sin gluten",
+      "whatsappInterest": false,
+      "matchDate": "2025-06-28T20:00:00",
+      "submittedAt": "2025-06-25T14:20:00.000Z"
+    },
+    {
+      "id": "rsvp_1719598800000_pqr345stu",
+      "name": "Ana García",
+      "email": "ana@example.com",
+      "attendees": 1,
+      "message": "¡Viva er Betis manque pierda!",
+      "dietaryRequirements": "",
+      "whatsappInterest": true,
+      "matchDate": "2025-06-28T20:00:00",
+      "submittedAt": "2025-06-25T15:10:00.000Z"
+    }
+  ],
+  "totalAttendees": 10
+}
