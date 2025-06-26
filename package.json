@@ -11,6 +11,7 @@
     "test-api-football": "npx tsx scripts/test-api-football.ts"
   },
   "dependencies": {
+    "@vercel/analytics": "^1.5.0",
     "lucide-react": "^0.522.0",
     "next": "15.3.4",
     "react": "^19.0.0",
