@@ -1,0 +1,44 @@
+{
+  "voting": {
+    "active": true,
+    "totalVotes": 0,
+    "endDate": "2025-07-31T23:59:59.000Z",
+    "options": [
+      {
+        "id": "design_1",
+        "name": "\"No busques más que no hay\"",
+        "description": "Lema clásico de la peña con diseño tradicional",
+        "image": "/images/coleccionables/camiseta-design-1.jpg",
+        "votes": 0,
+        "voters": []
+      },
+      {
+        "id": "design_2", 
+        "name": "\"Béticos en Escocia\"",
+        "description": "Diseño que combina el escudo del Betis con la bandera escocesa",
+        "image": "/images/coleccionables/camiseta-design-2.jpg",
+        "votes": 0,
+        "voters": []
+      },
+      {
+        "id": "design_3",
+        "name": "\"Polwarth Tavern\"",
+        "description": "Homenaje a nuestro hogar en Edimburgo",
+        "image": "/images/coleccionables/camiseta-design-3.jpg",
+        "votes": 0,
+        "voters": []
+      }
+    ]
+  },
+  "preOrders": {
+    "active": true,
+    "totalOrders": 0,
+    "endDate": "2025-08-15T23:59:59.000Z",
+    "minimumOrders": 20,
+    "orders": []
+  },
+  "stats": {
+    "lastUpdated": "2025-06-26T10:00:00.000Z",
+    "totalInteractions": 0
+  }
+}

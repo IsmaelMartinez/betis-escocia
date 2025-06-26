@@ -1,0 +1,239 @@
+import { NextRequest, NextResponse } from 'next/server';
+import fs from 'fs';
+import path from 'path';
+
+interface Voter {
+  name: string;
+  email: string;
+  votedAt: string;
+}
+
+interface VotingOption {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  votes: number;
+  voters: Voter[];
+}
+
+interface PreOrder {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  size: string;
+  quantity: number;
+  preferredDesign?: string;
+  message?: string;
+  submittedAt: string;
+  status: string;
+}
+
+interface VotingData {
+  voting: {
+    active: boolean;
+    totalVotes: number;
+    endDate: string;
+    options: VotingOption[];
+  };
+  preOrders: {
+    active: boolean;
+    totalOrders: number;
+    endDate: string;
+    minimumOrders: number;
+    orders: PreOrder[];
+  };
+  stats: {
+    lastUpdated: string;
+    totalInteractions: number;
+  };
+}
+
+const VOTING_DATA_FILE = path.join(process.cwd(), 'data', 'camiseta-voting.json');
+
+// Ensure data directory exists
+function ensureDataDirectory() {
+  const dataDir = path.dirname(VOTING_DATA_FILE);
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+}
+
+// Read voting data
+function readVotingData(): VotingData {
+  ensureDataDirectory();
+  
+  if (!fs.existsSync(VOTING_DATA_FILE)) {
+    const initialData = {
+      voting: {
+        active: true,
+        totalVotes: 0,
+        endDate: "2025-07-31T23:59:59.000Z",
+        options: [
+          {
+            id: "design_1",
+            name: "\"No busques más que no hay\"",
+            description: "Lema clásico de la peña con diseño tradicional",
+            image: "/images/coleccionables/camiseta-design-1.jpg",
+            votes: 0,
+            voters: []
+          },
+          {
+            id: "design_2", 
+            name: "\"Béticos en Escocia\"",
+            description: "Diseño que combina el escudo del Betis con la bandera escocesa",
+            image: "/images/coleccionables/camiseta-design-2.jpg",
+            votes: 0,
+            voters: []
+          },
+          {
+            id: "design_3",
+            name: "\"Polwarth Tavern\"",
+            description: "Homenaje a nuestro hogar en Edimburgo",
+            image: "/images/coleccionables/camiseta-design-3.jpg",
+            votes: 0,
+            voters: []
+          }
+        ]
+      },
+      preOrders: {
+        active: true,
+        totalOrders: 0,
+        endDate: "2025-08-15T23:59:59.000Z",
+        minimumOrders: 20,
+        orders: []
+      },
+      stats: {
+        lastUpdated: new Date().toISOString(),
+        totalInteractions: 0
+      }
+    };
+    
+    fs.writeFileSync(VOTING_DATA_FILE, JSON.stringify(initialData, null, 2));
+    return initialData;
+  }
+  
+  const content = fs.readFileSync(VOTING_DATA_FILE, 'utf8');
+  return JSON.parse(content);
+}
+
+// Write voting data
+function writeVotingData(data: VotingData) {
+  ensureDataDirectory();
+  data.stats.lastUpdated = new Date().toISOString();
+  fs.writeFileSync(VOTING_DATA_FILE, JSON.stringify(data, null, 2));
+}
+
+export async function GET() {
+  try {
+    const data = readVotingData();
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error('Error reading voting data:', error);
+    return NextResponse.json(
+      { error: 'Error reading voting data' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const data = readVotingData();
+    
+    if (body.action === 'vote') {
+      // Handle voting
+      const { designId, voter } = body;
+      
+      // Check if user already voted
+      const alreadyVoted = data.voting.options.some((option: VotingOption) =>
+        option.voters.some((v: Voter) => v.email === voter.email)
+      );
+      
+      if (alreadyVoted) {
+        return NextResponse.json(
+          { error: 'Ya has votado anteriormente' },
+          { status: 400 }
+        );
+      }
+      
+      // Add vote
+      const option = data.voting.options.find((opt: VotingOption) => opt.id === designId);
+      if (!option) {
+        return NextResponse.json(
+          { error: 'Diseño no encontrado' },
+          { status: 400 }
+        );
+      }
+      
+      option.votes += 1;
+      option.voters.push({
+        ...voter,
+        votedAt: new Date().toISOString()
+      });
+      
+      data.voting.totalVotes += 1;
+      data.stats.totalInteractions += 1;
+      
+      writeVotingData(data);
+      
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Voto registrado correctamente',
+        totalVotes: data.voting.totalVotes
+      });
+      
+    } else if (body.action === 'preOrder') {
+      // Handle pre-order
+      const { orderData } = body;
+      
+      // Check if user already has a pre-order
+      const existingOrder = data.preOrders.orders.find((order: PreOrder) => 
+        order.email === orderData.email
+      );
+      
+      if (existingOrder) {
+        return NextResponse.json(
+          { error: 'Ya tienes un pre-pedido registrado' },
+          { status: 400 }
+        );
+      }
+      
+      // Add pre-order
+      const newOrder = {
+        id: `preorder_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        ...orderData,
+        submittedAt: new Date().toISOString(),
+        status: 'pending'
+      };
+      
+      data.preOrders.orders.push(newOrder);
+      data.preOrders.totalOrders += 1;
+      data.stats.totalInteractions += 1;
+      
+      writeVotingData(data);
+      
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Pre-pedido registrado correctamente',
+        orderId: newOrder.id,
+        totalOrders: data.preOrders.totalOrders
+      });
+      
+    } else {
+      return NextResponse.json(
+        { error: 'Acción no válida' },
+        { status: 400 }
+      );
+    }
+    
+  } catch (error) {
+    console.error('Error processing request:', error);
+    return NextResponse.json(
+      { error: 'Error processing request' },
+      { status: 500 }
+    );
+  }
+}

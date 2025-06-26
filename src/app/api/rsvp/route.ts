@@ -8,7 +8,6 @@ interface RSVPEntry {
   email: string;
   attendees: number;
   message?: string;
-  dietaryRequirements?: string;
   whatsappInterest: boolean;
   matchDate: string;
   submittedAt: string;
@@ -88,7 +87,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, attendees, message, dietaryRequirements, whatsappInterest } = body;
+    const { name, email, attendees, message, whatsappInterest } = body;
 
     // Validation
     if (!name || !email || !attendees) {
@@ -139,7 +138,6 @@ export async function POST(request: NextRequest) {
       email: email.toLowerCase().trim(),
       attendees: parseInt(attendees),
       message: message?.trim() ?? '',
-      dietaryRequirements: dietaryRequirements?.trim() ?? '',
       whatsappInterest: Boolean(whatsappInterest),
       matchDate: data.currentMatch.date,
       submittedAt: new Date().toISOString()

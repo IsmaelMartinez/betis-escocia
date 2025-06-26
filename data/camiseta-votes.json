@@ -1,0 +1,74 @@
+{
+  "voting": {
+    "active": true,
+    "startDate": "2025-06-26T00:00:00.000Z",
+    "endDate": "2025-08-01T23:59:59.000Z",
+    "totalVotes": 0,
+    "designs": [
+      {
+        "id": "design_1",
+        "name": "\"No busques más que no hay\"",
+        "description": "Lema clásico de la peña",
+        "image": "/images/coleccionables/camiseta-design-1.jpg",
+        "votes": 0,
+        "percentage": 0
+      },
+      {
+        "id": "design_2",
+        "name": "\"Béticos en Escocia\"",
+        "description": "Diseño con bandera escocesa",
+        "image": "/images/coleccionables/camiseta-design-2.jpg",
+        "votes": 0,
+        "percentage": 0
+      },
+      {
+        "id": "design_3",
+        "name": "\"Polwarth Tavern\"",
+        "description": "Homenaje a nuestro hogar",
+        "image": "/images/coleccionables/camiseta-design-3.jpg",
+        "votes": 0,
+        "percentage": 0
+      }
+    ]
+  },
+  "preOrders": [
+    {
+      "id": "preorder_1719580800000_abc123",
+      "name": "María González",
+      "email": "maria.g@example.com",
+      "phone": "+44 7123 456789",
+      "designChoice": "design_1",
+      "size": "M",
+      "quantity": 1,
+      "collection": "polwarth",
+      "submittedAt": "2025-06-25T10:30:00.000Z",
+      "status": "pending"
+    },
+    {
+      "id": "preorder_1719584400000_xyz789",
+      "name": "Carlos Ruiz",
+      "email": "carlos.ruiz@example.com",
+      "designChoice": "design_2",
+      "size": "L",
+      "quantity": 2,
+      "collection": "stadium",
+      "submittedAt": "2025-06-25T11:15:00.000Z",
+      "status": "confirmed"
+    }
+  ],
+  "stats": {
+    "totalPreOrders": 2,
+    "totalQuantity": 3,
+    "collectionBreakdown": {
+      "polwarth": 1,
+      "stadium": 2
+    },
+    "sizeBreakdown": {
+      "S": 0,
+      "M": 1,
+      "L": 2,
+      "XL": 0,
+      "XXL": 0
+    }
+  }
+}

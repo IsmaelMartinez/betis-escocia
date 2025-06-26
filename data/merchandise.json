@@ -1,126 +1,141 @@
 {
   "items": [
     {
-      "id": "merch_001",
+      "id": "coll_001",
       "name": "Bufanda Peña Bética Escocesa",
       "description": "Bufanda oficial de la peña con los colores del Betis y el logo de Escocia. Perfecta para los partidos en el Polwarth Tavern. Material de alta calidad que te mantendrá abrigado durante los fríos inviernos escoceses.",
       "price": 15.99,
-      "images": ["/images/merch/bufanda-1.jpg", "/images/merch/bufanda-2.jpg"],
-      "category": "accessories",
+      "images": [
+        "/images/coleccionables/bufanda-1.jpg",
+        "/images/coleccionables/bufanda-2.jpg"
+      ],
+      "category": "collectibles",
+      "type": "bufanda",
       "sizes": [],
-      "colors": ["Verde y Blanco"],
+      "colors": [
+        "Verde y Blanco"
+      ],
       "inStock": true,
-      "featured": true
+      "featured": true,
+      "collection": {
+        "polwarth": true,
+        "stadium": true,
+        "shipping": false
+      }
     },
     {
-      "id": "merch_002",
-      "name": "Camiseta \"No busques más que no hay\"",
-      "description": "Camiseta con el lema oficial de la peña. Diseño exclusivo con los colores béticos y tipografía personalizada. 100% algodón de calidad premium.",
+      "id": "coll_002",
+      "name": "Camiseta Peña Bética Escocesa",
+      "description": "Camiseta oficial de la peña. Vota por tu diseño favorito y pre-ordena para saber cuántas producir. Recogida en la peña o en visitas al estadio.",
       "price": 22.50,
-      "images": ["/images/merch/camiseta-1.jpg", "/images/merch/camiseta-2.jpg"],
+      "images": [
+        "/images/coleccionables/camiseta-options.jpg"
+      ],
       "category": "clothing",
-      "sizes": ["S", "M", "L", "XL", "XXL"],
-      "colors": ["Verde", "Blanco"],
-      "inStock": true,
-      "featured": true
+      "type": "camiseta",
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "colors": [
+        "Verde",
+        "Blanco"
+      ],
+      "inStock": false,
+      "featured": true,
+      "preOrder": true,
+      "voting": {
+        "active": true,
+        "options": [
+          {
+            "id": "design_1",
+            "name": "\"No busques más que no hay\"",
+            "description": "Lema clásico de la peña",
+            "image": "/images/coleccionables/camiseta-design-1.jpg",
+            "votes": 0
+          },
+          {
+            "id": "design_2",
+            "name": "\"Béticos en Escocia\"",
+            "description": "Diseño con bandera escocesa",
+            "image": "/images/coleccionables/camiseta-design-2.jpg",
+            "votes": 0
+          },
+          {
+            "id": "design_3",
+            "name": "\"Polwarth Tavern\"",
+            "description": "Homenaje a nuestro hogar",
+            "image": "/images/coleccionables/camiseta-design-3.jpg",
+            "votes": 0
+          }
+        ]
+      },
+      "collection": {
+        "polwarth": true,
+        "stadium": true,
+        "shipping": false
+      }
     },
     {
-      "id": "merch_003",
+      "id": "coll_003",
       "name": "Llavero Betis-Escocia",
       "description": "Llavero metálico con el escudo del Betis y la bandera de Escocia. Diseño exclusivo que representa la unión de nuestra pasión bética con nuestra nueva tierra escocesa.",
       "price": 5.99,
-      "images": ["/images/merch/llavero-1.jpg"],
+      "images": [
+        "/images/coleccionables/llavero-1.jpg"
+      ],
       "category": "accessories",
+      "type": "llavero",
       "sizes": [],
-      "colors": ["Metálico"],
+      "colors": [
+        "Metálico"
+      ],
       "inStock": true,
-      "featured": false
+      "featured": false,
+      "collection": {
+        "polwarth": true,
+        "stadium": true,
+        "shipping": false
+      }
     },
     {
-      "id": "merch_004",
+      "id": "coll_004",
       "name": "Parche Bordado Peña",
       "description": "Parche bordado de alta calidad para coser en chaquetas, mochilas o camisetas. Muestra tu pertenencia a la peña allá donde vayas. Incluye instrucciones de cosido.",
       "price": 8.99,
-      "images": ["/images/merch/parche-1.jpg", "/images/merch/parche-2.jpg"],
+      "images": [
+        "/images/coleccionables/parche-1.jpg",
+        "/images/coleccionables/parche-2.jpg"
+      ],
       "category": "accessories",
-      "sizes": ["8cm x 6cm"],
-      "colors": ["Verde y Blanco"],
+      "type": "parche",
+      "sizes": [
+        "8cm x 6cm"
+      ],
+      "colors": [
+        "Verde y Blanco"
+      ],
       "inStock": true,
-      "featured": false
-    },
-    {
-      "id": "merch_005",
-      "name": "Gorra \"Béticos en Escocia\"",
-      "description": "Gorra ajustable con visera, perfecta para mostrar tu pasión bética bajo el sol escocés (cuando aparezca). Bordado de calidad profesional.",
-      "price": 18.99,
-      "images": ["/images/merch/gorra-1.jpg"],
-      "category": "clothing",
-      "sizes": ["Ajustable"],
-      "colors": ["Verde", "Blanco", "Negro"],
-      "inStock": false,
-      "featured": false
-    },
-    {
-      "id": "merch_006",
-      "name": "Pin Coleccionable Polwarth",
-      "description": "Pin metálico conmemorativo del Polwarth Tavern, nuestro hogar en Edimburgo. Edición limitada para los verdaderos miembros de la peña.",
-      "price": 4.50,
-      "images": ["/images/merch/pin-1.jpg"],
-      "category": "collectibles",
-      "sizes": [],
-      "colors": ["Dorado"],
-      "inStock": true,
-      "featured": true
-    },
-    {
-      "id": "merch_007",
-      "name": "Sudadera con Capucha Edinburgh Bética",
-      "description": "Sudadera premium con capucha y diseño exclusivo que combina el skyline de Edimburgo con elementos béticos. Perfecta para los días fríos.",
-      "price": 35.99,
-      "images": ["/images/merch/sudadera-1.jpg", "/images/merch/sudadera-2.jpg"],
-      "category": "clothing",
-      "sizes": ["S", "M", "L", "XL", "XXL"],
-      "colors": ["Verde", "Negro"],
-      "inStock": true,
-      "featured": true
-    },
-    {
-      "id": "merch_008",
-      "name": "Taza \"Polwarth Tavern\"",
-      "description": "Taza de cerámica personalizada con el logo del Polwarth Tavern y el escudo del Betis. Ideal para el café antes del partido.",
-      "price": 12.99,
-      "images": ["/images/merch/taza-1.jpg"],
-      "category": "collectibles",
-      "sizes": ["350ml"],
-      "colors": ["Blanco", "Verde"],
-      "inStock": true,
-      "featured": false
-    },
-    {
-      "id": "merch_009",
-      "name": "Polo Elegante Peña",
-      "description": "Polo de corte elegante para eventos especiales de la peña. Bordado discreto del logo en el pecho. Perfecto para cenas benéficas y eventos formales.",
-      "price": 28.50,
-      "images": ["/images/merch/polo-1.jpg"],
-      "category": "clothing",
-      "sizes": ["S", "M", "L", "XL"],
-      "colors": ["Verde Oscuro", "Blanco"],
-      "inStock": true,
-      "featured": false
-    },
-    {
-      "id": "merch_010",
-      "name": "Pegatinas Pack Bético",
-      "description": "Pack de 10 pegatinas variadas con diseños béticos y escoceses. Perfectas para personalizar tu portátil, móvil o cualquier superficie.",
-      "price": 6.99,
-      "images": ["/images/merch/pegatinas-1.jpg"],
-      "category": "accessories",
-      "sizes": ["Variado"],
-      "colors": ["Multicolor"],
-      "inStock": true,
-      "featured": false
+      "featured": false,
+      "collection": {
+        "polwarth": true,
+        "stadium": true,
+        "shipping": false
+      }
     }
   ],
-  "categories": ["clothing", "accessories", "collectibles"],
-  "totalItems": 10
+  "categories": [
+    "clothing",
+    "accessories",
+    "collectibles"
+  ],
+  "totalItems": 4,
+  "collectionInfo": {
+    "polwarth": "Recogida en Polwarth Tavern durante los partidos",
+    "stadium": "Recogida en visitas al estadio (cuando viajemos)",
+    "noShipping": "No enviamos por correo - solo recogida en persona"
+  }
 }

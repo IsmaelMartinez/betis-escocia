@@ -13,7 +13,6 @@ export default function RSVPForm({ onSuccess }: RSVPFormProps) {
     email: '',
     attendees: 1,
     message: '',
-    dietaryRequirements: '',
     whatsappInterest: false
   });
   
@@ -45,7 +44,6 @@ export default function RSVPForm({ onSuccess }: RSVPFormProps) {
         email: '',
         attendees: 1,
         message: '',
-        dietaryRequirements: '',
         whatsappInterest: false
       });
       
@@ -172,22 +170,6 @@ export default function RSVPForm({ onSuccess }: RSVPFormProps) {
             onChange={handleInputChange}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-green focus:border-transparent"
             placeholder="¿Alguna pregunta o comentario?"
-          />
-        </div>
-
-        {/* Dietary Requirements */}
-        <div>
-          <label htmlFor="dietaryRequirements" className="block text-sm font-medium text-gray-700 mb-2">
-            Restricciones alimentarias (opcional)
-          </label>
-          <input
-            type="text"
-            id="dietaryRequirements"
-            name="dietaryRequirements"
-            value={formData.dietaryRequirements}
-            onChange={handleInputChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-green focus:border-transparent"
-            placeholder="Ej: vegetariano, celíaco, etc."
           />
         </div>
 

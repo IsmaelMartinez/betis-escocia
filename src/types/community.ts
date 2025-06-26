@@ -6,7 +6,6 @@ export interface RSVPEntry {
   email: string;
   attendees: number;
   message?: string;
-  dietaryRequirements?: string;
   whatsappInterest: boolean;
   matchDate: string;
   submittedAt: string;
@@ -114,7 +113,6 @@ export interface RSVPFormData {
   email: string;
   attendees: number;
   message?: string;
-  dietaryRequirements?: string;
   whatsappInterest: boolean;
 }
 

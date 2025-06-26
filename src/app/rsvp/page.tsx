@@ -200,7 +200,7 @@ export default function RSVPPage() {
               <div className="space-y-2 text-lg">
                 <p>📍 15 Polwarth Pl, Edinburgh EH11 1NH</p>
                 <p>🕕 Llegada recomendada: 30 min antes</p>
-                <p>🍺 Bar completo y comida disponible</p>
+                <p>🍺 Bar completo con ambiente bético</p>
               </div>
             </div>
             <div>

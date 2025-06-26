@@ -9,7 +9,7 @@ const navigation = [
   { name: 'Inicio', href: '/', nameEn: 'Home' },
   { name: 'RSVP', href: '/rsvp', nameEn: 'RSVP' },
   { name: 'Clasificación', href: '/clasificacion', nameEn: 'Standings' },
-  { name: 'Tienda', href: '/tienda', nameEn: 'Shop' },
+  { name: 'Coleccionables', href: '/coleccionables', nameEn: 'Collectibles' },
   { name: 'Galería', href: '/galeria', nameEn: 'Gallery' },
   { name: 'Nosotros', href: '/nosotros', nameEn: 'About' },
   { name: 'Contacto', href: '/contacto', nameEn: 'Contact' },
