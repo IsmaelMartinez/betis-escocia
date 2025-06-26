@@ -21,9 +21,10 @@ Created: December 2024
 
 - **T16.3-T16.6**: Admin dashboard and email notifications for RSVP
 - **T21**: Visual Assets & Voting Enhancement - Create product images and improve voting system
+- **T22**: Social Media Integration - Replace photo uploads with Instagram/Facebook feeds
 - **Future**: Advanced admin features, analytics dashboard, automated email responses
 
-### 📊 **PROGRESS**: **95% COMPLETE** - Full community platform operational, visual assets pending
+### 📊 **PROGRESS**: **93% COMPLETE** - Full community platform operational, visual assets and social integration pending
 
 ## 🎯 **NEW DIRECTION: COMMUNITY ENGAGEMENT PLATFORM**
 
@@ -31,7 +32,7 @@ Created: December 2024
 
 - **RSVP System**: Members confirm attendance at Polwarth Tavern ✨
 - **Merchandise Showcase**: Display and promote peña merchandise 🛍️
-- **Photo Tagging**: Encourage fans to share match day photos with merch 📸
+- **Social Media Integration**: Live Instagram/Facebook feeds replacing photo uploads �
 - **Contact Forms**: Easy communication with the peña organizers 📝
 - **Community Building**: Foster stronger connections among members 🤝
 
@@ -47,7 +48,7 @@ Created: December 2024
 
 - 🎪 **RSVP System**: "¿Vienes al Polwarth?" - Let members confirm attendance
 - 🛍️ **Coleccionables de la Peña**: Display bufanda, camiseta, llavero, parche with collection system
-- 📸 **Photo Tagging**: Encourage fans to share match day photos wearing peña collectibles
+- � **Social Media Feeds**: Live Instagram/Facebook integration instead of photo uploads
 - 📝 **Contact Forms**: Easy way to reach organizers with questions/suggestions
 - 🤝 **Community Building**: Foster connections between Edinburgh-based Béticos
 
@@ -100,6 +101,34 @@ Created: December 2024
 
 - [x] T18.1: Mention and help fans to tag photos with merchandise for facebook and instagram ✅
 
+### T22: Social Media Integration & Photo Gallery Replacement 📱 **HIGH PRIORITY** 🚧 **IN PROGRESS**
+
+- [ ] T22.1: Remove photo upload functionality
+  - [ ] T22.1a: Remove PhotoUploadForm component
+  - [ ] T22.1b: Remove /api/photos route and functionality
+  - [ ] T22.1c: Remove photo upload from galeria page
+  - [ ] T22.1d: Clean up photo-related data files and types
+- [ ] T22.2: Integrate Instagram feed in redes-sociales
+  - [ ] T22.2a: Add Instagram embed API integration
+  - [ ] T22.2b: Create Instagram feed component with hashtag filtering
+  - [ ] T22.2c: Display recent posts tagged with #BetisEscocia #PeñaBéticaEscocesa
+  - [ ] T22.2d: Add Instagram Stories integration for live match content
+- [ ] T22.3: Integrate Facebook feed in redes-sociales
+  - [ ] T22.3a: Add Facebook Graph API integration
+  - [ ] T22.3b: Create Facebook posts feed component
+  - [ ] T22.3c: Display latest posts from Peña Bética Escocesa page
+  - [ ] T22.3d: Add Facebook Events integration for match viewing events
+- [ ] T22.4: Enhanced social media experience
+  - [ ] T22.4a: Create unified social media dashboard in /redes-sociales
+  - [ ] T22.4b: Add "Follow Us" buttons with direct links
+  - [ ] T22.4c: Create social media posting guide with optimal times
+  - [ ] T22.4d: Add QR codes for easy social media following
+- [ ] T22.5: Transform galeria page
+  - [ ] T22.5a: Convert galeria to social media showcase
+  - [ ] T22.5b: Add Instagram grid view of community posts
+  - [ ] T22.5c: Create Facebook photo albums integration
+  - [ ] T22.5d: Add social media contest and engagement features
+
 ### T19: Enhanced Contact & Communication 📝 ✅ **COMPLETED**
 
 - [x] T19.1: Replace simple contact with multi-purpose form system ✅
@@ -150,22 +179,31 @@ Created: December 2024
 
 - `src/app/rsvp/page.tsx` - RSVP form for Polwarth attendance ✅
 - `src/app/coleccionables/page.tsx` - Merchandise showcase and voting system ✅
-- `src/app/galeria/page.tsx` - Photo gallery with merch tagging ✅
+- `src/app/galeria/page.tsx` - Photo gallery with merch tagging ✅ ➡️ **TO BE REPLACED** with social media feeds
+- `src/app/redes-sociales/page.tsx` - Social media tagging guide ✅ ➡️ **TO BE ENHANCED** with live feeds
 - `src/components/RSVPForm.tsx` - Interactive RSVP component ✅
 - `src/components/MerchandiseCard.tsx` - Product display component ✅
-- `src/components/PhotoUploadForm.tsx` - Photo submission component ✅
+- `src/components/PhotoUploadForm.tsx` - Photo submission component ✅ ➡️ **TO BE REMOVED**
 - `src/components/OrderForm.tsx` - Order/pre-order form component ✅
 - `src/app/api/rsvp/route.ts` - RSVP form handler ✅
 - `src/app/api/merchandise/route.ts` - Merchandise catalog handler ✅
 - `src/app/api/orders/route.ts` - Merchandise order handler ✅
-- `src/app/api/photos/route.ts` - Photo upload and gallery handler ✅
+- `src/app/api/photos/route.ts` - Photo upload and gallery handler ✅ ➡️ **TO BE REMOVED**
 - `src/app/api/camiseta-voting/route.ts` - Camiseta design voting system ✅
 - `src/types/community.ts` - Community feature type definitions ✅
 - `data/rsvp.json` - RSVP storage ✅
 - `data/merchandise.json` - Merchandise catalog storage ✅
 - `data/orders.json` - Orders storage ✅
-- `data/photos.json` - Photo submissions storage ✅
+- `data/photos.json` - Photo submissions storage ✅ ➡️ **TO BE REMOVED**
 - `data/camiseta-voting.json` - Voting system data ✅
+
+### 🔄 **NEW SOCIAL MEDIA FEATURES** 🚧 **PENDING** (T22)
+
+- `src/components/InstagramFeed.tsx` - Instagram posts integration ⏳
+- `src/components/FacebookFeed.tsx` - Facebook posts integration ⏳
+- `src/components/SocialMediaDashboard.tsx` - Unified social feeds ⏳
+- `src/app/api/instagram/route.ts` - Instagram API integration ⏳
+- `src/app/api/facebook/route.ts` - Facebook Graph API integration ⏳
 
 ### 🔄 **FILES TO MODIFY** ✅ **COMPLETED** (Remove Matches UI)
 
@@ -188,6 +226,10 @@ Created: December 2024
 - All "La Porra de Fran" related files and references
 - Match system documentation from `README.md`
 - Navigation links to `/partidos` and `/porra`
+- ~~Photo upload functionality~~ ➡️ **NEW**: Replace with social media integration (T22)
+  - `src/components/PhotoUploadForm.tsx` - Remove photo upload component
+  - `src/app/api/photos/route.ts` - Remove photo upload API
+  - `data/photos.json` - Remove photo upload data storage
 
 ---
 
