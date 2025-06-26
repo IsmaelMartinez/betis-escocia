@@ -103,11 +103,11 @@ Created: December 2024
 
 ### T22: Social Media Integration & Photo Gallery Replacement 📱 **HIGH PRIORITY** 🚧 **IN PROGRESS**
 
-- [ ] T22.1: Remove photo upload functionality
-  - [ ] T22.1a: Remove PhotoUploadForm component
-  - [ ] T22.1b: Remove /api/photos route and functionality
-  - [ ] T22.1c: Remove photo upload from galeria page
-  - [ ] T22.1d: Clean up photo-related data files and types
+- [x] T22.1: Remove photo upload functionality ✅ **COMPLETED**
+  - [x] T22.1a: Remove PhotoUploadForm component ✅
+  - [x] T22.1b: Remove /api/photos route and functionality ✅
+  - [x] T22.1c: Remove photo upload from galeria page ✅
+  - [x] T22.1d: Clean up photo-related data files and types ✅
 - [ ] T22.2: Integrate Instagram feed in redes-sociales
   - [ ] T22.2a: Add Instagram embed API integration
   - [ ] T22.2b: Create Instagram feed component with hashtag filtering

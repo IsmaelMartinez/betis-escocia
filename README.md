@@ -95,13 +95,13 @@ Official Peña Bética Escocesa gear to show your colors:
 - **Parches** (Patches): Customize your jacket or backpack
 - **Camisetas** (T-shirts): Limited edition peña designs
 
-### 📸 Photo Gallery - "Mérch in Action"
+### 📸 Social Media Gallery
 
-Share your match day experiences:
-- Upload photos wearing your peña merchandise
-- Tag yourself at games with other members
-- Create lasting memories of our community
-- Photo of the month contests
+Connect and share your match day experiences:
+- Follow us on Instagram and Facebook for live updates
+- Tag @penabetiscaescocesa in your posts wearing peña merchandise
+- Use our hashtags to be featured in our gallery
+- Join our vibrant social media community
 
 ## ⚽ Match Information
 

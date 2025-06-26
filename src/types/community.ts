@@ -58,29 +58,12 @@ export interface MerchandiseOrder {
   };
 }
 
-// Photo submission and gallery types
-export interface PhotoSubmission {
-  id: string;
-  name: string;
-  email: string;
-  caption: string;
-  merchandiseItems: string[];
-  location: string;
-  matchDate: string;
-  imageUrl: string;
-  approved: boolean;
-  featured: boolean;
-  timestamp: string;
-  moderatedAt?: string;
-  moderatedBy?: string;
-}
-
 export interface ContactFormSubmission {
   id: string;
   name: string;
   email: string;
   phone?: string;
-  type: 'general' | 'rsvp' | 'merchandise' | 'photo' | 'whatsapp' | 'feedback';
+  type: 'general' | 'rsvp' | 'merchandise' | 'whatsapp' | 'feedback';
   subject: string;
   message: string;
   submittedAt: string;
@@ -103,7 +86,6 @@ export interface CommunityStats {
   totalRSVPs: number;
   averageAttendance: number;
   totalOrders: number;
-  totalPhotos: number;
   monthlyGrowth: number;
 }
 
@@ -135,19 +117,8 @@ export interface MerchandiseOrderFormData {
   };
 }
 
-export interface PhotoSubmissionFormData {
-  submitterName: string;
-  submitterEmail: string;
-  image: File;
-  caption?: string;
-  tags: string[];
-  merchandiseVisible: string[];
-  matchDate?: string;
-  location?: string;
-}
-
 export interface ContactFormData {
-  type: 'general' | 'rsvp' | 'merchandise' | 'photo' | 'whatsapp';
+  type: 'general' | 'rsvp' | 'merchandise' | 'whatsapp';
   name: string;
   email: string;
   phone?: string;
@@ -177,12 +148,6 @@ export interface MerchandiseResponse extends APIResponse {
   items?: MerchandiseItem[];
   totalItems?: number;
   categories?: string[];
-}
-
-export interface PhotoGalleryResponse extends APIResponse {
-  photos?: PhotoSubmission[];
-  totalPhotos?: number;
-  tags?: string[];
 }
 
 export interface Order {

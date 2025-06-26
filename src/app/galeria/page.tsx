@@ -1,491 +1,302 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { Camera, Search, Upload, Eye, Star, Calendar } from 'lucide-react';
-import PhotoUploadForm from '@/components/PhotoUploadForm';
-
-interface PhotoSubmission {
-  id: string;
-  name: string;
-  email: string;
-  caption: string;
-  merchandiseItems: string[];
-  location: string;
-  matchDate: string;
-  imageUrl: string;
-  approved: boolean;
-  featured: boolean;
-  timestamp: string;
-  moderatedAt?: string;
-  moderatedBy?: string;
-}
+import { Camera, Hash, ExternalLink, Heart, MessageCircle, Share2 } from 'lucide-react';
 
 export default function GalleryPage() {
-  const [photos, setPhotos] = useState<PhotoSubmission[]>([]);
-  const [filteredPhotos, setFilteredPhotos] = useState<PhotoSubmission[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedMerchandise, setSelectedMerchandise] = useState<string>('all');
-  const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
-  const [showUploadForm, setShowUploadForm] = useState(false);
-  const [selectedPhoto, setSelectedPhoto] = useState<PhotoSubmission | null>(null);
-
-  // Fetch photos on component mount
-  useEffect(() => {
-    fetchPhotos();
-  }, []);
-
-  // Filter photos when filters change
-  useEffect(() => {
-    let filtered = photos.filter(photo => photo.approved);
-
-    if (searchTerm) {
-      filtered = filtered.filter(photo =>
-        photo.caption.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        photo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        photo.location.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (selectedMerchandise !== 'all') {
-      filtered = filtered.filter(photo =>
-        photo.merchandiseItems.includes(selectedMerchandise)
-      );
-    }
-
-    if (showFeaturedOnly) {
-      filtered = filtered.filter(photo => photo.featured);
-    }
-
-    setFilteredPhotos(filtered);
-  }, [photos, searchTerm, selectedMerchandise, showFeaturedOnly]);
-
-  const fetchPhotos = async () => {
-    try {
-      const response = await fetch('/api/photos');
-      if (response.ok) {
-        const data = await response.json();
-        setPhotos(data);
-      }
-    } catch (error) {
-      console.error('Error fetching photos:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleUploadSuccess = () => {
-    setShowUploadForm(false);
-    fetchPhotos(); // Refresh photos after successful upload
-  };
-
-  const merchandiseOptions = [
-    'Bufanda Real Betis Escocia',
-    'Llavero Escudo Bético',
-    'Parche Bordado',
-    'Camiseta Peña Bética',
-    'Gorro de Invierno',
-    'Pin Conmemorativo',
-    'Sudadera Peña',
-    'Pulsera Verde y Blanca'
-  ];
-
-  const featuredPhotos = filteredPhotos.filter(photo => photo.featured);
-  const regularPhotos = filteredPhotos.filter(photo => !photo.featured);
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="bg-betis-green text-white py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Camera className="h-16 w-16 mx-auto mb-4" />
-          <h1 className="text-4xl sm:text-5xl font-black mb-4">
-            Galería Bética
-          </h1>
-          <p className="text-xl opacity-90 mb-8">
-            Fotos de nuestra familia bética en Escocia luciendo los colores verdes y blancos
-          </p>
-          
-          <button
-            onClick={() => setShowUploadForm(true)}
-            className="bg-betis-gold hover:bg-betis-gold-dark text-betis-dark px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
-          >
-            <Upload className="h-5 w-5 inline mr-2" />
-            Subir Foto
-          </button>
-        </div>
-      </section>
-
-      {/* Search and Filters */}
-      <section className="py-8 bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-4 items-center">
-            {/* Search */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Buscar fotos..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-green focus:border-transparent"
-              />
-            </div>
-
-            {/* Merchandise Filter */}
-            <select
-              value={selectedMerchandise}
-              onChange={(e) => setSelectedMerchandise(e.target.value)}
-              className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-green focus:border-transparent"
-            >
-              <option value="all">Todos los productos</option>
-              {merchandiseOptions.map(item => (
-                <option key={item} value={item}>{item}</option>
-              ))}
-            </select>
-
-            {/* Featured Toggle */}
-            <label className="flex items-center space-x-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={showFeaturedOnly}
-                onChange={(e) => setShowFeaturedOnly(e.target.checked)}
-                className="h-5 w-5 text-betis-green border-gray-300 rounded focus:ring-betis-green"
-              />
-              <span className="text-gray-700 font-medium flex items-center">
-                <Star className="h-4 w-4 mr-1 text-yellow-500" />
-                Solo destacadas
-              </span>
-            </label>
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Page Header */}
+        <div className="text-center mb-12">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Camera className="text-betis-green" size={32} />
+            <h1 className="text-4xl font-bold text-gray-900">Galería Social</h1>
           </div>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Discover our vibrant community through Instagram and Facebook! See the latest photos, 
+            updates, and match day moments shared by fellow béticos in Edinburgh.
+          </p>
+        </div>
 
-          {/* Results count */}
-          <div className="mt-4 text-center">
-            <p className="text-gray-600">
-              {filteredPhotos.length} {filteredPhotos.length === 1 ? 'foto' : 'fotos'}
-              {searchTerm && ` encontradas para "${searchTerm}"`}
-              {selectedMerchandise !== 'all' && ` con "${selectedMerchandise}"`}
-              {showFeaturedOnly && ' destacadas'}
+        {/* Social Media Integration Info */}
+        <div className="bg-gradient-to-r from-betis-green to-green-600 rounded-lg p-8 text-white mb-8">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Share Your Betis Moments!</h2>
+            <p className="text-lg mb-6 opacity-90">
+              Tag us in your photos wearing peña merchandise or at Polwarth Tavern to be featured in our community feeds
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Photos */}
-      {featuredPhotos.length > 0 && (
-        <section className="py-12 bg-white">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center mb-8 text-gray-900 flex items-center justify-center">
-              <Star className="h-8 w-8 mr-3 text-yellow-500" />
-              Fotos Destacadas
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredPhotos.map(photo => (
-                <PhotoCard
-                  key={photo.id}
-                  photo={photo}
-                  onClick={() => setSelectedPhoto(photo)}
-                  featured
-                />
-              ))}
+            <div className="flex flex-wrap justify-center gap-4">
+              <div className="flex items-center gap-2 bg-white bg-opacity-20 px-4 py-2 rounded-lg">
+                <span className="text-sm">📸</span>
+                <span className="font-medium">@penabetiscaescocesa</span>
+              </div>
+              <div className="flex items-center gap-2 bg-white bg-opacity-20 px-4 py-2 rounded-lg">
+                <span className="text-sm">📘</span>
+                <span className="font-medium">Peña Bética Escocesa</span>
+              </div>
+              <div className="flex items-center gap-2 bg-white bg-opacity-20 px-4 py-2 rounded-lg">
+                <Hash size={20} />
+                <span className="font-medium">#PenaBetiscaEscocesa</span>
+              </div>
+              <div className="flex items-center gap-2 bg-white bg-opacity-20 px-4 py-2 rounded-lg">
+                <Hash size={20} />
+                <span className="font-medium">#BetisEdinburgh</span>
+              </div>
             </div>
           </div>
-        </section>
-      )}
-
-      {/* Regular Photos */}
-      <section className="py-12 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          {!showFeaturedOnly && featuredPhotos.length > 0 && (
-            <h2 className="text-3xl font-bold text-center mb-8 text-gray-900">
-              Todas las Fotos
-            </h2>
-          )}
-          
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="inline-block w-8 h-8 border-2 border-betis-green border-t-transparent rounded-full animate-spin mb-4"></div>
-              <p className="text-gray-600">Cargando fotos...</p>
-            </div>
-          ) : regularPhotos.length === 0 && featuredPhotos.length === 0 ? (
-            <div className="text-center py-12">
-              <Camera className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-gray-900 mb-2">No hay fotos disponibles</h3>
-              <p className="text-gray-600 mb-6">
-                {searchTerm || selectedMerchandise !== 'all' || showFeaturedOnly
-                  ? 'Prueba a cambiar los filtros o ser el primero en subir una foto.'
-                  : 'Sé el primero en compartir una foto bética.'}
-              </p>
-              <button
-                onClick={() => setShowUploadForm(true)}
-                className="bg-betis-green text-white px-6 py-3 rounded-lg font-bold hover:bg-green-700 transition-colors"
-              >
-                <Upload className="h-5 w-5 inline mr-2" />
-                Subir Primera Foto
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {regularPhotos.map(photo => (
-                <PhotoCard
-                  key={photo.id}
-                  photo={photo}
-                  onClick={() => setSelectedPhoto(photo)}
-                />
-              ))}
-            </div>
-          )}
         </div>
-      </section>
 
-      {/* Call to Action */}
-      <section className="py-16 bg-betis-green text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-6">📸 ¡Comparte tus Fotos Béticas!</h2>
-          <p className="text-xl opacity-90 mb-8">
-            Cada foto que compartes ayuda a que más béticos se unan a nuestra familia escocesa
+        {/* Coming Soon Notice */}
+        <div className="bg-white rounded-lg shadow-md p-8 mb-8 text-center border-l-4 border-betis-green">
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">🚧 Social Media Integration Coming Soon!</h3>
+          <p className="text-gray-600 mb-6">
+            We&apos;re working on integrating Instagram and Facebook feeds to automatically display photos from our community. 
+            In the meantime, follow us on social media to stay connected!
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => setShowUploadForm(true)}
-              className="bg-white text-betis-green px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105"
-            >
-              📸 Subir Foto
-            </button>
+          <div className="flex justify-center gap-4">
             <a
-              href="/redes-sociales"
-              className="border-2 border-white text-white hover:bg-white hover:text-betis-green px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
+              href="https://instagram.com/penabetiscaescocesa"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-pink-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-pink-700 transition-colors"
             >
-              📱 Guía de Redes Sociales
+              <span>📸</span>
+              Follow on Instagram
+              <ExternalLink size={16} />
+            </a>
+            <a
+              href="https://facebook.com/penabetiscaescocesa"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            >
+              <span>📘</span>
+              Follow on Facebook
+              <ExternalLink size={16} />
             </a>
           </div>
         </div>
-      </section>
 
-      {/* Upload Form Modal */}
-      {showUploadForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <PhotoUploadForm
-              onSuccess={handleUploadSuccess}
-              onClose={() => setShowUploadForm(false)}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Photo Detail Modal */}
-      {selectedPhoto && (
-        <PhotoDetailModal
-          photo={selectedPhoto}
-          onClose={() => setSelectedPhoto(null)}
-        />
-      )}
-    </div>
-  );
-}
-
-// Photo Card Component
-interface PhotoCardProps {
-  photo: PhotoSubmission;
-  onClick: () => void;
-  featured?: boolean;
-}
-
-function PhotoCard({ photo, onClick, featured = false }: PhotoCardProps) {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  return (
-    <div
-      className={`bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl ${
-        featured ? 'ring-2 ring-yellow-400' : ''
-      }`}
-      onClick={onClick}
-    >
-      {featured && (
-        <div className="bg-yellow-400 text-yellow-900 px-3 py-1 text-sm font-bold text-center flex items-center justify-center">
-          <Star className="h-4 w-4 mr-1" />
-          Destacada
-        </div>
-      )}
-      
-      <div className="relative">
-        <Image
-          src={photo.imageUrl}
-          alt={photo.caption || 'Foto bética'}
-          width={400}
-          height={256}
-          className="w-full h-64 object-cover"
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
-          <Eye className="h-8 w-8 text-white opacity-0 hover:opacity-100 transition-opacity duration-300" />
-        </div>
-      </div>
-      
-      <div className="p-4">
-        <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">
-          {photo.caption || 'Foto sin descripción'}
-        </h3>
-        
-        <div className="space-y-2 text-sm text-gray-600">
-          <div className="flex items-center">
-            <Camera className="h-4 w-4 mr-2" />
-            <span>{photo.name}</span>
-          </div>
-          
-          {photo.location && (
-            <div className="flex items-center">
-              <span className="mr-2">📍</span>
-              <span>{photo.location}</span>
+        {/* Mock Social Media Feed Preview */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Instagram Preview */}
+          <div className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4 text-white">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">📸</span>
+                <h3 className="font-bold text-lg">Instagram Feed</h3>
+              </div>
             </div>
-          )}
-          
-          <div className="flex items-center">
-            <Calendar className="h-4 w-4 mr-2" />
-            <span>{formatDate(photo.timestamp)}</span>
-          </div>
-        </div>
-        
-        {photo.merchandiseItems.length > 0 && (
-          <div className="mt-3 pt-3 border-t border-gray-200">
-            <div className="flex flex-wrap gap-1">
-              {photo.merchandiseItems.slice(0, 2).map((item, index) => (
-                <span
-                  key={index}
-                  className="inline-block bg-betis-green/10 text-betis-green text-xs px-2 py-1 rounded-full"
-                >
-                  {item}
-                </span>
-              ))}
-              {photo.merchandiseItems.length > 2 && (
-                <span className="inline-block bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">
-                  +{photo.merchandiseItems.length - 2} más
-                </span>
-              )}
+            <div className="p-6">
+              <div className="space-y-4">
+                {/* Mock Instagram Posts */}
+                <div className="border rounded-lg p-4 bg-gray-50">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-8 h-8 bg-betis-green rounded-full flex items-center justify-center text-white font-bold text-sm">
+                      PB
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">@penabetiscaescocesa</p>
+                      <p className="text-xs text-gray-500">2 hours ago</p>
+                    </div>
+                  </div>
+                  <div className="bg-gray-200 h-32 rounded-lg mb-3 flex items-center justify-center">
+                    <Camera className="text-gray-400" size={32} />
+                  </div>
+                  <div className="flex items-center gap-4 mb-2">
+                    <Heart size={16} className="text-red-500" />
+                    <MessageCircle size={16} className="text-gray-600" />
+                    <Share2 size={16} className="text-gray-600" />
+                  </div>
+                  <p className="text-sm">
+                    <span className="font-medium">15 likes</span>
+                  </p>
+                  <p className="text-sm mt-1">
+                    Ready for today&apos;s match at Polwarth! 💚🤍 #BetisEdinburgh #PenaBetiscaEscocesa
+                  </p>
+                </div>
+
+                <div className="border rounded-lg p-4 bg-gray-50">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-8 h-8 bg-betis-green rounded-full flex items-center justify-center text-white font-bold text-sm">
+                      PB
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">@penabetiscaescocesa</p>
+                      <p className="text-xs text-gray-500">1 day ago</p>
+                    </div>
+                  </div>
+                  <div className="bg-gray-200 h-32 rounded-lg mb-3 flex items-center justify-center">
+                    <Camera className="text-gray-400" size={32} />
+                  </div>
+                  <div className="flex items-center gap-4 mb-2">
+                    <Heart size={16} className="text-red-500" />
+                    <MessageCircle size={16} className="text-gray-600" />
+                    <Share2 size={16} className="text-gray-600" />
+                  </div>
+                  <p className="text-sm">
+                    <span className="font-medium">23 likes</span>
+                  </p>
+                  <p className="text-sm mt-1">
+                    New merchandise arrived! Check out our coleccionables 📦✨ #BetisEdinburgh
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
-// Photo Detail Modal Component
-interface PhotoDetailModalProps {
-  photo: PhotoSubmission;
-  onClose: () => void;
-}
+          {/* Facebook Preview */}
+          <div className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div className="bg-blue-600 p-4 text-white">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">📘</span>
+                <h3 className="font-bold text-lg">Facebook Feed</h3>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                {/* Mock Facebook Posts */}
+                <div className="border rounded-lg p-4 bg-gray-50">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-8 h-8 bg-betis-green rounded-full flex items-center justify-center text-white font-bold text-sm">
+                      PB
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">Peña Bética Escocesa</p>
+                      <p className="text-xs text-gray-500">3 hours ago</p>
+                    </div>
+                  </div>
+                  <div className="bg-gray-200 h-32 rounded-lg mb-3 flex items-center justify-center">
+                    <Camera className="text-gray-400" size={32} />
+                  </div>
+                  <p className="text-sm mb-3">
+                    Great turnout at Polwarth Tavern today! Thanks to everyone who joined us to support Real Betis. 
+                    The atmosphere was incredible! 💚🤍
+                  </p>
+                  <div className="flex items-center gap-4 text-gray-600 text-sm">
+                    <span className="flex items-center gap-1">
+                      <Heart size={14} className="text-red-500" />
+                      18
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <MessageCircle size={14} />
+                      5 comments
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Share2 size={14} />
+                      2 shares
+                    </span>
+                  </div>
+                </div>
 
-function PhotoDetailModal({ photo, onClose }: PhotoDetailModalProps) {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-ES', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900">Detalle de la Foto</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-3xl font-bold"
-          >
-            ×
-          </button>
+                <div className="border rounded-lg p-4 bg-gray-50">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-8 h-8 bg-betis-green rounded-full flex items-center justify-center text-white font-bold text-sm">
+                      PB
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">Peña Bética Escocesa</p>
+                      <p className="text-xs text-gray-500">2 days ago</p>
+                    </div>
+                  </div>
+                  <p className="text-sm mb-3">
+                    🎉 Event Alert! Join us this Sunday at Polwarth Tavern for the big match. 
+                    RSVP on our website to let us know you&apos;re coming!
+                  </p>
+                  <div className="flex items-center gap-4 text-gray-600 text-sm">
+                    <span className="flex items-center gap-1">
+                      <Heart size={14} className="text-red-500" />
+                      32
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <MessageCircle size={14} />
+                      8 comments
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Share2 size={14} />
+                      5 shares
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        
-        {/* Content */}
-        <div className="p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Photo */}
+
+        {/* Call to Action */}
+        <div className="bg-white rounded-lg shadow-md p-8 text-center">
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">Ready to Share Your Betis Pride?</h3>
+          <p className="text-gray-600 mb-6">
+            Join hundreds of béticos sharing their match day experiences, merchandise collections, and memories from Polwarth Tavern.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href="/coleccionables"
+              className="inline-flex items-center gap-2 bg-betis-green text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
+            >
+              View Our Merchandise
+            </a>
+            <a
+              href="/rsvp"
+              className="inline-flex items-center gap-2 bg-gray-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-700 transition-colors"
+            >
+              Join Us at Polwarth
+            </a>
+            <a
+              href="/redes-sociales"
+              className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            >
+              <Hash size={20} />
+              Social Media Guide
+            </a>
+          </div>
+        </div>
+
+        {/* Community Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <div className="bg-white rounded-lg shadow-md p-6 text-center">
+            <div className="text-3xl font-bold text-betis-green mb-2">700+</div>
+            <div className="text-gray-600">Total Followers</div>
+            <div className="flex justify-center gap-2 mt-2">
+              <span className="text-pink-600">📸</span>
+              <span className="text-blue-600">📘</span>
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow-md p-6 text-center">
+            <div className="text-3xl font-bold text-betis-green mb-2">150+</div>
+            <div className="text-gray-600">Photos Shared</div>
+            <div className="text-sm text-gray-500 mt-1">This Month</div>
+          </div>
+          <div className="bg-white rounded-lg shadow-md p-6 text-center">
+            <div className="text-3xl font-bold text-betis-green mb-2">25+</div>
+            <div className="text-gray-600">Active Members</div>
+            <div className="text-sm text-gray-500 mt-1">Edinburgh Area</div>
+          </div>
+        </div>
+
+        {/* Hashtag Guidelines */}
+        <div className="bg-gradient-to-r from-betis-green to-green-600 rounded-lg p-8 text-white mt-8">
+          <h3 className="text-2xl font-bold mb-4 text-center">📱 Social Media Guidelines</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              {photo.featured && (
-                <div className="bg-yellow-400 text-yellow-900 px-3 py-1 text-sm font-bold text-center flex items-center justify-center mb-4 rounded">
-                  <Star className="h-4 w-4 mr-1" />
-                  Foto Destacada
-                </div>
-              )}
-              <Image
-                src={photo.imageUrl}
-                alt={photo.caption || 'Foto bética'}
-                width={600}
-                height={400}
-                className="w-full rounded-lg shadow-lg"
-              />
+              <h4 className="font-bold mb-3">📸 What to Post:</h4>
+              <ul className="space-y-2 text-sm opacity-90">
+                <li>• Match day photos at Polwarth Tavern</li>
+                <li>• Merchandise collection photos</li>
+                <li>• Community events and gatherings</li>
+                <li>• Real Betis celebration moments</li>
+                <li>• Edinburgh Betis fan meetups</li>
+              </ul>
             </div>
-            
-            {/* Details */}
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  {photo.caption || 'Foto sin descripción'}
-                </h3>
-              </div>
-              
-              <div className="space-y-3">
-                <div className="flex items-center text-gray-700">
-                  <Camera className="h-5 w-5 mr-3 text-betis-green" />
-                  <span><strong>Autor:</strong> {photo.name}</span>
-                </div>
-                
-                {photo.location && (
-                  <div className="flex items-center text-gray-700">
-                    <span className="mr-3 text-betis-green">📍</span>
-                    <span><strong>Ubicación:</strong> {photo.location}</span>
-                  </div>
-                )}
-                
-                <div className="flex items-center text-gray-700">
-                  <Calendar className="h-5 w-5 mr-3 text-betis-green" />
-                  <span><strong>Fecha:</strong> {formatDate(photo.timestamp)}</span>
-                </div>
-                
-                {photo.matchDate && (
-                  <div className="flex items-center text-gray-700">
-                    <span className="mr-3 text-betis-green">⚽</span>
-                    <span><strong>Partido:</strong> {formatDate(photo.matchDate)}</span>
-                  </div>
-                )}
-              </div>
-              
-              {photo.merchandiseItems.length > 0 && (
-                <div>
-                  <h4 className="font-bold text-gray-900 mb-3">Merchandising Visible:</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {photo.merchandiseItems.map((item, index) => (
-                      <span
-                        key={index}
-                        className="inline-block bg-betis-green text-white text-sm px-3 py-1 rounded-full"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              <div className="pt-6 border-t border-gray-200">
-                <a
-                  href="/tienda"
-                  className="bg-betis-green text-white px-6 py-3 rounded-lg font-bold hover:bg-green-700 transition-colors inline-flex items-center"
-                >
-                  🛍️ Ver Productos en la Tienda
-                </a>
-              </div>
+            <div>
+              <h4 className="font-bold mb-3">🏷️ Tags to Use:</h4>
+              <ul className="space-y-2 text-sm opacity-90">
+                <li>• #PenaBetiscaEscocesa</li>
+                <li>• #BetisEdinburgh</li>
+                <li>• #RealBetis</li>
+                <li>• #PolwarthTavern</li>
+                <li>• @penabetiscaescocesa</li>
+              </ul>
             </div>
           </div>
         </div>
