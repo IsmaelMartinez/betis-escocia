@@ -17,7 +17,6 @@ interface RSVPData {
 export default function RSVPPage() {
   const [showForm, setShowForm] = useState(false);
   const [rsvpData, setRSVPData] = useState<RSVPData | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchRSVPData();
@@ -36,8 +35,6 @@ export default function RSVPPage() {
       }
     } catch (error) {
       console.error('Error fetching RSVP data:', error);
-    } finally {
-      setLoading(false);
     }
   };
 

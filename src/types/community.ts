@@ -78,16 +78,24 @@ export interface PhotoSubmission {
 
 export interface ContactFormSubmission {
   id: string;
-  type: 'general' | 'rsvp' | 'merchandise' | 'photo' | 'whatsapp';
   name: string;
   email: string;
   phone?: string;
+  type: 'general' | 'rsvp' | 'merchandise' | 'photo' | 'whatsapp' | 'feedback';
   subject: string;
   message: string;
   submittedAt: string;
   status: 'new' | 'read' | 'responded' | 'closed';
   responseMessage?: string;
   respondedAt?: string;
+}
+
+export interface ContactStats {
+  totalSubmissions: number;
+  responseRate: number;
+  averageResponseTime: number; // in hours
+  submissionsByType: Record<string, number>;
+  recentSubmissions: ContactFormSubmission[];
 }
 
 export interface CommunityStats {

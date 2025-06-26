@@ -1,0 +1,72 @@
+{
+  "submissions": [
+    {
+      "id": "contact_1719580800000_abc123def",
+      "name": "María González",
+      "email": "maria.g@example.com",
+      "phone": "+44 7123 456789",
+      "type": "whatsapp",
+      "subject": "Solicitud de invitación a WhatsApp",
+      "message": "Hola, me gustaría unirme al grupo de WhatsApp para estar al tanto de los eventos. Mi número es +44 7123 456789. ¡Gracias!",
+      "submittedAt": "2025-06-25T10:30:00.000Z",
+      "status": "new"
+    },
+    {
+      "id": "contact_1719584400000_xyz789ghi",
+      "name": "Carlos Ruiz",
+      "email": "carlos.ruiz@example.com",
+      "type": "merchandise",
+      "subject": "Consulta sobre bufanda",
+      "message": "¿Tenéis bufandas disponibles? Me interesaría comprar una. ¿Cuál es el precio y cómo puedo recogerla?",
+      "submittedAt": "2025-06-25T11:15:00.000Z",
+      "status": "responded"
+    },
+    {
+      "id": "contact_1719588000000_mno456pqr",
+      "name": "Ana Martínez",
+      "email": "ana.martinez@example.com",
+      "phone": "+34 678 901234",
+      "type": "general",
+      "subject": "Nueva en Edimburgo",
+      "message": "Hola, soy nueva en Edimburgo y me encantaría conocer gente bética. ¿Cuándo es el próximo partido? ¿Tengo que reservar o puedo ir directamente?",
+      "submittedAt": "2025-06-25T12:45:00.000Z",
+      "status": "read"
+    },
+    {
+      "id": "contact_1719591600000_stu789vwx",
+      "name": "José Luis Fernández",
+      "email": "joseluis@example.com",
+      "type": "photo",
+      "subject": "Fotos del último partido",
+      "message": "Tengo unas fotos muy buenas del último partido en el Polwarth. ¿Cómo puedo enviarlas para la galería? También las he subido a mi Instagram.",
+      "submittedAt": "2025-06-25T14:20:00.000Z",
+      "status": "new"
+    },
+    {
+      "id": "contact_1719595200000_abc567def",
+      "name": "Laura Sánchez",
+      "email": "laura.s@example.com",
+      "type": "feedback",
+      "subject": "Sugerencia para la web",
+      "message": "Me encanta la nueva web, está genial. Una sugerencia: ¿se podría añadir un calendario con todos los partidos del mes? Así sería más fácil planificar.",
+      "submittedAt": "2025-06-25T15:50:00.000Z",
+      "status": "new"
+    },
+    {
+      "id": "contact_1719598800000_ghi012jkl",
+      "name": "Miguel Torres",
+      "email": "miguel.torres@example.com",
+      "phone": "+44 7987 654321",
+      "type": "rsvp",
+      "subject": "Problema con confirmación",
+      "message": "Hola, intenté confirmar asistencia para el próximo partido pero creo que no se envió bien el formulario. Somos 3 personas. ¿Podéis confirmármelo?",
+      "submittedAt": "2025-06-25T16:30:00.000Z",
+      "status": "responded"
+    }
+  ],
+  "stats": {
+    "totalSubmissions": 6,
+    "responseRate": 33.3,
+    "averageResponseTime": 18
+  }
+}
