@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Star, Package, MapPin, Vote, ShoppingBag, Users, Calendar } from 'lucide-react';
+import { Star, Package, MapPin, Vote, ShoppingBag, Calendar } from 'lucide-react';
 import MerchandiseCard from '@/components/MerchandiseCard';
+import OrderForm from '@/components/OrderForm';
 import type { MerchandiseItem } from '@/types/community';
+import Image from 'next/image';
 
 interface VotingOption {
   id: string;
@@ -39,19 +41,40 @@ export default function ColeccionablesPage() {
   const [loading, setLoading] = useState(true);
   const [selectedType, setSelectedType] = useState<string>('all');
   const [showVotingModal, setShowVotingModal] = useState(false);
-  const [showPreOrderModal, setShowPreOrderModal] = useState(false);
+  const [timeLeft, setTimeLeft] = useState('');
+  const [selectedPreOrderItem, setSelectedPreOrderItem] = useState<MerchandiseItem | null>(null);
 
   useEffect(() => {
     fetchColeccionables();
     fetchVotingData();
   }, []);
 
+  useEffect(() => {
+    if (votingData?.voting.active) {
+      const interval = setInterval(() => {
+        const end = new Date(votingData.voting.endDate).getTime();
+        const now = Date.now();
+        const diff = end - now;
+        if (diff <= 0) {
+          setTimeLeft('00:00:00');
+          clearInterval(interval);
+        } else {
+          const h = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, '0');
+          const m = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+          const s = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
+          setTimeLeft(`${h}:${m}:${s}`);
+        }
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [votingData]);
+
   const fetchColeccionables = async () => {
     try {
       const response = await fetch('/api/merchandise');
       if (response.ok) {
         const data = await response.json();
-        setItems(data.items || []);
+        setItems(data.items ?? []);
       }
     } catch (error) {
       console.error('Error fetching coleccionables:', error);
@@ -170,6 +193,7 @@ export default function ColeccionablesPage() {
                 <Vote className="w-6 h-6" />
                 🗳️ ¡Vota por el diseño de la camiseta!
               </h2>
+              {timeLeft && <p className="text-sm text-red-600 mb-1">Tiempo restante: {timeLeft}</p>}
               <p className="text-blue-600">
                 Necesitamos al menos {votingData.preOrders.minimumOrders} pre-pedidos para producir las camisetas.
               </p>
@@ -178,22 +202,30 @@ export default function ColeccionablesPage() {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-4 mb-6">
-              {votingData.voting.options.map((option) => (
-                <div key={option.id} className="bg-white rounded-lg p-4 text-center border border-gray-200">
-                  <div className="relative w-full h-48 mb-3 bg-gray-100 rounded-lg overflow-hidden">
-                    <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                      <Package className="w-16 h-16" />
+            <div className="grid md:grid-cols-2 gap-4 mb-6">
+              {votingData.voting.options.map((option) => {
+                const percent = votingData.voting.totalVotes
+                  ? Math.round((option.votes / votingData.voting.totalVotes) * 100)
+                  : 0;
+                return (
+                  <div key={option.id} className="bg-white rounded-lg p-4 text-center border border-gray-200">
+                    <div className="relative w-full h-48 mb-3 bg-gray-100 rounded-lg overflow-hidden">
+                      <Image
+                        src={option.image}
+                        alt={option.name}
+                        fill
+                        className="object-cover"
+                      />
                     </div>
+                    <h3 className="font-bold text-gray-800 mb-1">{option.name}</h3>
+                    <p className="text-sm text-gray-600 mb-2">{option.description}</p>
+                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden mb-2">
+                      <div className="bg-blue-600 h-full" style={{ width: `${percent}%` }} />
+                    </div>
+                    <span className="text-sm font-semibold text-blue-600">{percent}% ({option.votes} votos)</span>
                   </div>
-                  <h3 className="font-bold text-gray-800 mb-2">{option.name}</h3>
-                  <p className="text-sm text-gray-600 mb-3">{option.description}</p>
-                  <div className="flex items-center justify-center gap-2 text-blue-600">
-                    <Users className="w-4 h-4" />
-                    <span className="font-semibold">{option.votes} votos</span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -205,7 +237,10 @@ export default function ColeccionablesPage() {
                 Votar por diseño
               </button>
               <button
-                onClick={() => setShowPreOrderModal(true)}
+                onClick={() => {
+                  const camiseta = items.find((i) => i.type === 'camiseta');
+                  if (camiseta) setSelectedPreOrderItem(camiseta);
+                }}
                 className="flex items-center justify-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
               >
                 <ShoppingBag className="w-4 h-4" />
@@ -271,9 +306,10 @@ export default function ColeccionablesPage() {
         />
       )}
 
-      {showPreOrderModal && (
+      {selectedPreOrderItem && (
         <PreOrderModal
-          onClose={() => setShowPreOrderModal(false)}
+          item={selectedPreOrderItem}
+          onClose={() => setSelectedPreOrderItem(null)}
         />
       )}
     </div>
@@ -303,22 +339,20 @@ function VotingModal({ onClose }: VotingModalProps) {
 }
 
 interface PreOrderModalProps {
+  item: MerchandiseItem;
   readonly onClose: () => void;
 }
 
-function PreOrderModal({ onClose }: PreOrderModalProps) {
+function PreOrderModal({ item, onClose }: Readonly<PreOrderModalProps>) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full">
-        <h3 className="text-xl font-bold mb-4">Pre-pedido de Camiseta</h3>
-        <p className="text-gray-600 mb-4">Funcionalidad de pre-pedido en desarrollo...</p>
-        <button
-          onClick={onClose}
-          className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
-        >
-          Cerrar
-        </button>
-      </div>
+      <OrderForm
+        productId={item.id}
+        productName={item.name}
+        price={item.price}
+        isInStock={item.inStock}
+        onClose={onClose}
+      />
     </div>
   );
 }

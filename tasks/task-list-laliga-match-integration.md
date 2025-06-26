@@ -19,9 +19,11 @@ Created: December 2024
 
 ### 🚧 **REMAINING TASKS**
 
+#### Current Focus: T21 Visual Assets & Voting Enhancement 🎨
+
 - **T16.3-T16.6**: Admin dashboard and email notifications for RSVP
 - **T21**: Visual Assets & Voting Enhancement - Create product images and improve voting system
-- **T22**: Social Media Integration - Replace photo uploads with Instagram/Facebook feeds
+- **T22**: Social Media Integration - (Deferred) Replace photo uploads with social media feeds
 - **Future**: Advanced admin features, analytics dashboard, automated email responses
 
 ### 📊 **PROGRESS**: **93% COMPLETE** - Full community platform operational, visual assets and social integration pending
@@ -81,16 +83,15 @@ Created: December 2024
   - [ ] T21.1b: Design and create llavero product images
   - [ ] T21.1c: Design and create parche product images
   - [ ] T21.1d: Create placeholder merchandise showcase images
-- [ ] T21.2: Create camiseta design voting images
+- [ ] T21.2: Create camiseta design voting images (2 opciones)
   - [ ] T21.2a: Design "No busques más que no hay" camiseta mockup
   - [ ] T21.2b: Design "Béticos en Escocia" camiseta with Scottish flag elements
-  - [ ] T21.2c: Design "Polwarth Tavern" camiseta with tavern tribute
-  - [ ] T21.2d: Create voting comparison layout for designs
+  - [ ] T21.2c: Create voting comparison layout for designs
 - [ ] T21.3: Enhance voting system functionality
-  - [ ] T21.3a: Add quantity selection to pre-order form ("¿Cuántas quieres?")
-  - [ ] T21.3b: Add size selection integration with quantity
-  - [ ] T21.3c: Update voting results display with better visuals
-  - [ ] T21.3d: Add voting deadline countdown timer
+  - [x] T21.3a: Add quantity selection to pre-order form ("¿Cuántas quieres?")
+  - [x] T21.3b: Add size selection integration with quantity
+  - [x] T21.3c: Update voting results display with better visuals
+  - [x] T21.3d: Add voting deadline countdown timer
 - [ ] T21.4: Improve merchandise visual presentation
   - [ ] T21.4a: Create image gallery for each coleccionable
   - [ ] T21.4b: Add zoom functionality for product images
@@ -128,6 +129,22 @@ Created: December 2024
   - [ ] T22.5b: Add Instagram grid view of community posts
   - [ ] T22.5c: Create Facebook photo albums integration
   - [ ] T22.5d: Add social media contest and engagement features
+
+### T23: Content Enrichment & Club History 📝 **NEW**
+
+- [ ] T23.1: Add external links to navigation/footer
+  - [ ] Add X (Twitter) link [@rbetisescocia](https://x.com/rbetisescocia)
+  - [ ] Add BetisWeb forum link [Peña Bética Escocesa forum post](https://www.betisweb.com/foro/principal/betis-fan-s-of-the-universe/6621126-pena-betica-escocesa-no-busques-mas-que-no-hay)
+  - [ ] Add Manquepierda blog link [La afición del Betis: elogios a Escocia y al Betis](https://www.manquepierda.com/blog/la-aficion-del-betis-objetivo-elogios/)
+  - [ ] Add Beticos en Escocia blog link [Beticos en Escocia Blog](https://beticosenescocia.blogspot.com/)
+  - [ ] Add ABC article link [ABC: Peña Bética Escocesa en Escocia](https://www.abc.es/deportes/alfinaldelapalmera/noticias-betis/sevi-pena-betica-no-busques-mas-no-embajada-recibe-suyos-escocia-202112091615_noticia.html)
+  - [ ] Add LaLiga recognition link [LaLiga: Conoce a la Peña Bética de Escocia](https://www.laliga.com/noticias/conoce-a-la-pena-betica-de-escocia-no-busques-mas-que-no-hay)
+- [ ] T23.2: Update copy to use real member names
+  - [ ] Mention Juan as a regular attendee at the Betis stadium in Sevilla
+  - [ ] Mention Jose Mari as Peña president in intro/about
+- [ ] T23.3: Research and draft "Historia de la Peña" section using provided sources
+- [ ] T23.4: Create `/historia` page with club history narrative and citations
+- [ ] T23.5: Update main navigation to include "Historia" link
 
 ### T19: Enhanced Contact & Communication 📝 ✅ **COMPLETED**
 
@@ -233,29 +250,20 @@ Created: December 2024
 
 ---
 
-## 📝 **IMPLEMENTATION NOTES**
-
-### Community Platform Priorities
-
-1. **Community First**: Focus on connecting Edinburgh-based Betis fans
-2. **Mobile-First Forms**: All interaction forms must work perfectly on mobile
-3. **Simple & Effective**: Easy RSVP, merch showcase, photo sharing
-4. **Spanish/English**: Bilingual support for international and local fans
-5. **Polwarth-Centric**: Emphasize the tavern as the community hub
-
-### Development Approach ✅ **PROGRESS UPDATE**
-
-- **Phase 1**: Remove matches UI, implement RSVP system (T16, T20) ✅ **COMPLETED**
-- **Phase 2**: Add merchandise showcase and ordering (T17) ✅ **COMPLETED**
-- **Phase 3**: Photo tagging and community gallery (T18) 🚧 **IN PROGRESS**
-- **Phase 4**: Enhanced communication tools (T19) ⏳ **PENDING**
-
-**Current Status**: **Phases 1-2 Complete** | **Working on Phase 3**
-
-### Technical Considerations
+## Technical Considerations
 
 - Keep existing match API infrastructure (hidden, for future use)
 - Use same UI patterns and components where possible
 - Maintain mobile-first responsive design
 - Add form validation and error handling
-- Consider simple database for RSVPs and orders (start with email/forms)
+- Consider simple database for RSVP responses and orders (start with email/forms)
+
+### 📝 **IMPLEMENTATION NOTES** ✅ **PROGRESS UPDATE**
+
+- **Phase 1**: Remove matches UI, implement RSVP system (T16, T20) ✅ **COMPLETED**
+- **Phase 2**: Add merchandise showcase and ordering (T17) ✅ **COMPLETED**
+- **Phase 3**: Photo tagging and community gallery (T18) ✅ **COMPLETED**
+- **Phase 4**: Enhanced communication tools (T19) ✅ **COMPLETED**
+- **Phase 5**: Visual Assets & Voting Enhancement (T21) 🚧 **IN PROGRESS**
+
+**Current Status**: **Phases 1-4 Complete** | **Working on Phase 5**
