@@ -20,9 +20,10 @@ Created: December 2024
 ### 🚧 **REMAINING TASKS**
 
 - **T16.3-T16.6**: Admin dashboard and email notifications for RSVP
+- **T21**: Visual Assets & Voting Enhancement - Create product images and improve voting system
 - **Future**: Advanced admin features, analytics dashboard, automated email responses
 
-### 📊 **PROGRESS**: **98% COMPLETE** - Full community platform operational and refined
+### 📊 **PROGRESS**: **95% COMPLETE** - Full community platform operational, visual assets pending
 
 ## 🎯 **NEW DIRECTION: COMMUNITY ENGAGEMENT PLATFORM**
 
@@ -71,6 +72,29 @@ Created: December 2024
 - [x] T17.6: Update navigation from "Tienda" to "Coleccionables" ✅
 - [x] T17.7: Rename page and routes to reflect "recuerdos/coleccionables" concept ✅
 - [x] T17.8: Update content to emphasize peña memorabilia rather than commercial shop ✅
+
+### T21: Visual Assets & Voting Enhancement 🎨 **HIGH PRIORITY** 🚧 **IN PROGRESS**
+
+- [ ] T21.1: Create merchandise product images for all coleccionables
+  - [ ] T21.1a: Design and create bufanda product images (2 angles)
+  - [ ] T21.1b: Design and create llavero product images
+  - [ ] T21.1c: Design and create parche product images
+  - [ ] T21.1d: Create placeholder merchandise showcase images
+- [ ] T21.2: Create camiseta design voting images
+  - [ ] T21.2a: Design "No busques más que no hay" camiseta mockup
+  - [ ] T21.2b: Design "Béticos en Escocia" camiseta with Scottish flag elements
+  - [ ] T21.2c: Design "Polwarth Tavern" camiseta with tavern tribute
+  - [ ] T21.2d: Create voting comparison layout for designs
+- [ ] T21.3: Enhance voting system functionality
+  - [ ] T21.3a: Add quantity selection to pre-order form ("¿Cuántas quieres?")
+  - [ ] T21.3b: Add size selection integration with quantity
+  - [ ] T21.3c: Update voting results display with better visuals
+  - [ ] T21.3d: Add voting deadline countdown timer
+- [ ] T21.4: Improve merchandise visual presentation
+  - [ ] T21.4a: Create image gallery for each coleccionable
+  - [ ] T21.4b: Add zoom functionality for product images
+  - [ ] T21.4c: Create "collection points" visual guide (Polwarth + Stadium)
+  - [ ] T21.4d: Add visual stock indicators for each item
 
 ### T18: Photo Tagging & Social Features 📸 ✅ **COMPLETED**
 
@@ -125,7 +149,7 @@ Created: December 2024
 ### 🆕 **NEW COMMUNITY FEATURES** ✅ **COMPLETED**
 
 - `src/app/rsvp/page.tsx` - RSVP form for Polwarth attendance ✅
-- `src/app/tienda/page.tsx` - Merchandise showcase and ordering ✅
+- `src/app/coleccionables/page.tsx` - Merchandise showcase and voting system ✅
 - `src/app/galeria/page.tsx` - Photo gallery with merch tagging ✅
 - `src/components/RSVPForm.tsx` - Interactive RSVP component ✅
 - `src/components/MerchandiseCard.tsx` - Product display component ✅
@@ -135,11 +159,13 @@ Created: December 2024
 - `src/app/api/merchandise/route.ts` - Merchandise catalog handler ✅
 - `src/app/api/orders/route.ts` - Merchandise order handler ✅
 - `src/app/api/photos/route.ts` - Photo upload and gallery handler ✅
+- `src/app/api/camiseta-voting/route.ts` - Camiseta design voting system ✅
 - `src/types/community.ts` - Community feature type definitions ✅
 - `data/rsvp.json` - RSVP storage ✅
 - `data/merchandise.json` - Merchandise catalog storage ✅
 - `data/orders.json` - Orders storage ✅
 - `data/photos.json` - Photo submissions storage ✅
+- `data/camiseta-voting.json` - Voting system data ✅
 
 ### 🔄 **FILES TO MODIFY** ✅ **COMPLETED** (Remove Matches UI)
 
