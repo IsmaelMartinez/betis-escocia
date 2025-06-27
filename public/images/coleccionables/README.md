@@ -6,16 +6,13 @@ This directory contains product images for the Peña Bética Escocesa merchandis
 
 ### Merchandise Products
 - `bufanda-1.jpg` - Main bufanda product image
-- `bufanda-2.jpg` - Alternative angle/detail of bufanda
+- `bufanda-2.jpg` - Alternative bufanda with the slogan in scots "Dinnae seek mair – there’s nae mair tae be foun’"
 - `llavero-1.jpg` - Keychain product image
-- `llavero-2.jpg` - Alternative angle of keychain
 - `parche-1.jpg` - Patch product image
-- `parche-2.jpg` - Alternative angle/detail of patch
 
 ### Camiseta Design Voting
-- `camiseta-design-1.jpg` - "No busques más que no hay" design mockup
-- `camiseta-design-2.jpg` - "Béticos en Escocia" design with Scottish elements
-- `camiseta-design-3.jpg` - "Polwarth Tavern" tribute design
+- `camiseta-1.png` - "Béticos en Escocia" design with Scottish elements
+- `camiseta-2.png` - "No busques más que no hay" design mockup
 - `camiseta-options.jpg` - Overview of all available options
 
 ### Collection Points

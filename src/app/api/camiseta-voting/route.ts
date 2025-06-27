@@ -73,9 +73,9 @@ function readVotingData(): VotingData {
       options: [
         {
           id: "design_1",
-          name: "DINNAE SEEK MAIR – THERE’S NAE MAIR TAE BE FOUN’",
+          name: "Dinnae seek mair – there’s nae mair tae be foun’",
           description: "Lema clásico de la peña en escocés",
-          image: "/images/coleccionables/camiseta-design-1.jpg",
+          image: "/images/coleccionables/camiseta-1.png",
           votes: 0,
           voters: []
         },
@@ -83,7 +83,7 @@ function readVotingData(): VotingData {
           id: "design_2",
           name: "\"No busques más que no hay\"",
           description: "Lema clásico de la peña",
-          image: "/images/coleccionables/camiseta-design-2.jpg",
+          image: "/images/coleccionables/camiseta-2.png",
           votes: 0,
           voters: []
         }
