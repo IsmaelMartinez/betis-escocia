@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, MapPin, Video, ExternalLink } from 'lucide-react';
+import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash } from 'lucide-react';
 import BetisLogo from '@/components/BetisLogo';
 
 const navigation = [
@@ -165,24 +165,27 @@ export default function Layout({ children }: LayoutProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-300 hover:text-betis-green transition-colors"
+                  title="Facebook"
                 >
-                  <ExternalLink size={24} />
+                  <MessageCircle size={24} />
                 </a>
                 <a
                   href="https://www.instagram.com/rbetisescocia/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-300 hover:text-betis-green transition-colors"
+                  title="Instagram"
                 >
-                  <ExternalLink size={24} />
+                  <Camera size={24} />
                 </a>
                 <a
                   href="https://x.com/rbetisescocia"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-300 hover:text-betis-green transition-colors"
+                  title="X (Twitter)"
                 >
-                  <ExternalLink size={24} />
+                  <Hash size={24} />
                 </a>
                 <a
                   href="https://www.youtube.com/beticosenescocia"
