@@ -95,6 +95,61 @@ export default function SocialTaggingGuide() {
         </div>
       </section>
 
+      {/* Quick Actions Section */}
+      <section className="py-12 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center mb-8 text-gray-900">
+            ⚡ Quick Actions
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <button
+              onClick={() => copyToClipboard('@penabetiscaescocesa', 'quick-instagram')}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105"
+            >
+              <Instagram className="w-6 h-6 mx-auto mb-2" />
+              <div className="text-sm font-semibold">Instagram Handle</div>
+              <div className="text-xs opacity-80">@penabetiscaescocesa</div>
+            </button>
+            
+            <button
+              onClick={() => copyToClipboard('#PenaBetiscaEscocesa #BetisEdinburgh #RealBetis', 'quick-hashtags')}
+              className="bg-betis-green text-white p-4 rounded-xl hover:bg-green-700 transition-all duration-300 transform hover:scale-105"
+            >
+              <Tag className="w-6 h-6 mx-auto mb-2" />
+              <div className="text-sm font-semibold">Essential Tags</div>
+              <div className="text-xs opacity-80">Copy main hashtags</div>
+            </button>
+            
+            <button
+              onClick={() => copyToClipboard('¡Viva el Betis! 💚🤍 #ManquePierda #BetisEscocia', 'quick-celebration')}
+              className="bg-yellow-500 text-white p-4 rounded-xl hover:bg-yellow-600 transition-all duration-300 transform hover:scale-105"
+            >
+              <div className="text-2xl mb-2">🎉</div>
+              <div className="text-sm font-semibold">Celebration</div>
+              <div className="text-xs opacity-80">Quick victory post</div>
+            </button>
+            
+            <a
+              href="/coleccionables"
+              className="bg-blue-600 text-white p-4 rounded-xl hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 text-center"
+            >
+              <div className="text-2xl mb-2">📦</div>
+              <div className="text-sm font-semibold">Show Merch</div>
+              <div className="text-xs opacity-80">Tag our products</div>
+            </a>
+          </div>
+          
+          {copiedText.startsWith('quick-') && (
+            <div className="mt-4 text-center">
+              <div className="inline-flex items-center bg-green-100 text-green-800 px-4 py-2 rounded-lg">
+                <Check className="w-4 h-4 mr-2" />
+                ¡Copiado al portapapeles!
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* Instagram Section */}
       <section className="py-12 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -314,6 +369,123 @@ export default function SocialTaggingGuide() {
             >
               📱 Síguenos en Instagram
             </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Enhanced Social Media Section */}
+      <section className="py-16 bg-gradient-to-br from-betis-green to-green-700">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              📱 Follow Us & Stay Connected
+            </h2>
+            <p className="text-xl text-green-100 max-w-3xl mx-auto">
+              Join our community on social media! Get the latest updates, share your match day moments, and connect with béticos across Scotland.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            {/* Instagram Card */}
+            <div className="bg-white rounded-2xl p-8 shadow-xl">
+              <div className="text-center">
+                <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Instagram className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Instagram</h3>
+                <p className="text-gray-600 mb-4">@penabetiscaescocesa</p>
+                <p className="text-sm text-gray-500 mb-6">Share your match day photos, merchandise, and Betis pride!</p>
+                
+                {/* QR Code Placeholder */}
+                <div className="bg-gray-100 w-32 h-32 mx-auto mb-4 rounded-lg flex items-center justify-center">
+                  <div className="text-4xl">📱</div>
+                </div>
+                <p className="text-xs text-gray-400 mb-4">Scan to follow us</p>
+                
+                <div className="space-y-3">
+                  <a
+                    href="https://instagram.com/penabetiscaescocesa"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block bg-gradient-to-r from-purple-500 to-pink-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-pink-700 transition-all duration-300 transform hover:scale-105"
+                  >
+                    📸 Follow on Instagram
+                  </a>
+                  <div className="text-xs text-gray-500">
+                    Best posting times: 6-8pm weekdays, 12-2pm weekends
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Facebook Card */}
+            <div className="bg-white rounded-2xl p-8 shadow-xl">
+              <div className="text-center">
+                <div className="bg-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Facebook className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Facebook</h3>
+                <p className="text-gray-600 mb-4">Peña Bética Escocesa</p>
+                <p className="text-sm text-gray-500 mb-6">Official page for events, announcements, and community discussions</p>
+                
+                {/* QR Code Placeholder */}
+                <div className="bg-gray-100 w-32 h-32 mx-auto mb-4 rounded-lg flex items-center justify-center">
+                  <div className="text-4xl">📘</div>
+                </div>
+                <p className="text-xs text-gray-400 mb-4">Scan to follow us</p>
+                
+                <div className="space-y-3">
+                  <a
+                    href="https://facebook.com/penabetiscaescocesa"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"
+                  >
+                    📘 Follow on Facebook
+                  </a>
+                  <div className="text-xs text-gray-500">
+                    Best posting times: 7-9pm weekdays, 1-3pm weekends
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Social Media Guidelines */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-white">
+            <h3 className="text-2xl font-bold text-center mb-8">📋 Social Media Guidelines</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <div className="text-4xl mb-3">📸</div>
+                <h4 className="font-bold mb-2">What to Post</h4>
+                <ul className="text-sm space-y-1 opacity-90">
+                  <li>• Match day at Polwarth</li>
+                  <li>• Merchandise photos</li>
+                  <li>• Celebration moments</li>
+                  <li>• Community meetups</li>
+                </ul>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl mb-3">🏷️</div>
+                <h4 className="font-bold mb-2">Essential Hashtags</h4>
+                <ul className="text-sm space-y-1 opacity-90">
+                  <li>• #PenaBetiscaEscocesa</li>
+                  <li>• #BetisEdinburgh</li>
+                  <li>• #RealBetis</li>
+                  <li>• #PolwarthTavern</li>
+                </ul>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl mb-3">⏰</div>
+                <h4 className="font-bold mb-2">Optimal Times</h4>
+                <ul className="text-sm space-y-1 opacity-90">
+                  <li>• Match days: 2hrs before</li>
+                  <li>• Weekdays: 6-8pm</li>
+                  <li>• Weekends: 12-3pm</li>
+                  <li>• Events: Day before</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </section>
