@@ -28,7 +28,7 @@
       "description": "Camiseta oficial de la peña. Vota por tu diseño favorito y pre-ordena para saber cuántas producir. Recogida en la peña o en visitas al estadio.",
       "price": 22.50,
       "images": [
-        "/images/coleccionables/camiseta-options.jpg"
+        "/images/coleccionables/camiseta-options.svg"
       ],
       "category": "clothing",
       "type": "camiseta",
@@ -77,7 +77,7 @@
       "description": "Llavero metálico con el escudo del Betis y la bandera de Escocia. Diseño exclusivo que representa la unión de nuestra pasión bética con nuestra nueva tierra escocesa.",
       "price": 5.99,
       "images": [
-        "/images/coleccionables/llavero-1.jpg"
+        "/images/coleccionables/llavero-1.svg"
       ],
       "category": "accessories",
       "type": "llavero",
@@ -99,8 +99,8 @@
       "description": "Parche bordado de alta calidad para coser en chaquetas, mochilas o camisetas. Muestra tu pertenencia a la peña allá donde vayas. Incluye instrucciones de cosido.",
       "price": 8.99,
       "images": [
-        "/images/coleccionables/parche-1.jpg",
-        "/images/coleccionables/parche-2.jpg"
+        "/images/coleccionables/parche-1.svg",
+        "/images/coleccionables/parche-2.svg"
       ],
       "category": "accessories",
       "type": "parche",

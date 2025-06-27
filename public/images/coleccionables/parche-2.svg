@@ -1,0 +1,28 @@
+<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="400" fill="#f8f9fa"/>
+  
+  <!-- Patch from Behind (showing back details) -->
+  <rect x="80" y="120" width="240" height="160" rx="20" ry="20" 
+        fill="#E8E8E8" stroke="#CCCCCC" stroke-width="3"/>
+  
+  <!-- Stitching Lines -->
+  <path d="M 100 140 L 300 140 M 100 160 L 300 160 M 100 260 L 300 260 M 100 280 L 300 280" 
+        stroke="#999999" stroke-width="2" stroke-dasharray="5,5"/>
+  
+  <!-- Vertical Stitching -->
+  <path d="M 100 140 L 100 280 M 120 140 L 120 280 M 280 140 L 280 280 M 300 140 L 300 280" 
+        stroke="#999999" stroke-width="2" stroke-dasharray="5,5"/>
+  
+  <!-- Instructions Text -->
+  <text x="200" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#666">INSTRUCCIONES:</text>
+  <text x="200" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">1. Colocar en la posición deseada</text>
+  <text x="200" y="215" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">2. Coser por todo el borde</text>
+  <text x="200" y="230" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">3. Usar hilo del mismo color</text>
+  <text x="200" y="245" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">4. Puntadas pequeñas y uniformes</text>
+  
+  <!-- Bottom Labels -->
+  <text x="200" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#00A651">VISTA POSTERIOR</text>
+  <text x="200" y="340" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#666">Instrucciones de cosido</text>
+  <text x="200" y="360" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#666">Material: Hilo bordado premium</text>
+</svg>

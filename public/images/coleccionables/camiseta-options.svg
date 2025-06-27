@@ -1,0 +1,55 @@
+<svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="600" height="400" fill="#f8f9fa"/>
+  
+  <!-- Title -->
+  <text x="300" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#00A651">VOTA TU DISEÑO FAVORITO</text>
+  <text x="300" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#666">Camiseta Oficial Peña Bética Escocesa</text>
+  
+  <!-- Design 1 (Left) -->
+  <g transform="translate(100, 80)">
+    <!-- T-Shirt Outline -->
+    <path d="M 20 40 L 30 40 L 30 30 L 40 30 Q 50 20 70 20 Q 90 20 100 30 L 110 30 L 110 40 L 120 40 L 130 50 L 130 60 L 120 60 L 120 200 L 20 200 L 20 60 L 10 60 L 10 50 Z" 
+          fill="#00A651" stroke="#FFFFFF" stroke-width="2"/>
+    
+    <!-- Text on shirt -->
+    <text x="70" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="6" font-weight="bold" fill="#FFFFFF">DINNAE SEEK</text>
+    <text x="70" y="95" text-anchor="middle" font-family="Arial, sans-serif" font-size="6" fill="#FFFFFF">MAIR</text>
+    
+    <!-- Scottish elements -->
+    <rect x="55" y="110" width="30" height="8" fill="#FFFFFF"/>
+    <path d="M 55 110 L 85 118 M 85 110 L 55 118" stroke="#005EB8" stroke-width="1"/>
+    
+    <text x="70" y="140" text-anchor="middle" font-family="Arial, sans-serif" font-size="4" fill="#FFFFFF">ESCOCIA</text>
+  </g>
+  
+  <!-- VS Text -->
+  <text x="300" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#00A651">VS</text>
+  
+  <!-- Design 2 (Right) -->
+  <g transform="translate(400, 80)">
+    <!-- T-Shirt Outline -->
+    <path d="M 20 40 L 30 40 L 30 30 L 40 30 Q 50 20 70 20 Q 90 20 100 30 L 110 30 L 110 40 L 120 40 L 130 50 L 130 60 L 120 60 L 120 200 L 20 200 L 20 60 L 10 60 L 10 50 Z" 
+          fill="#FFFFFF" stroke="#00A651" stroke-width="2"/>
+    
+    <!-- Text on shirt -->
+    <text x="70" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="5" font-weight="bold" fill="#00A651">"NO BUSQUES MÁS</text>
+    <text x="70" y="95" text-anchor="middle" font-family="Arial, sans-serif" font-size="5" font-weight="bold" fill="#00A651">QUE NO HAY"</text>
+    
+    <!-- Central circle -->
+    <circle cx="70" cy="115" r="12" fill="#00A651"/>
+    <text x="70" y="119" text-anchor="middle" font-family="Arial, sans-serif" font-size="4" font-weight="bold" fill="#FFFFFF">RBB</text>
+    
+    <text x="70" y="140" text-anchor="middle" font-family="Arial, sans-serif" font-size="4" fill="#00A651">EDINBURGH</text>
+  </g>
+  
+  <!-- Labels -->
+  <text x="170" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#00A651">DISEÑO 1</text>
+  <text x="170" y="340" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Escocés</text>
+  
+  <text x="470" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#00A651">DISEÑO 2</text>
+  <text x="470" y="340" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#666">Clásico</text>
+  
+  <!-- Voting info -->
+  <text x="300" y="370" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#666">¡Vota en la página de coleccionables!</text>
+</svg>

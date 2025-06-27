@@ -1,0 +1,49 @@
+<svg width="400" height="500" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="500" fill="#f8f9fa"/>
+  
+  <!-- T-Shirt Outline -->
+  <path d="M 100 80 L 120 80 L 120 60 L 140 60 Q 160 40 200 40 Q 240 40 260 60 L 280 60 L 280 80 L 300 80 L 320 100 L 320 120 L 300 120 L 300 400 L 100 400 L 100 120 L 80 120 L 80 100 Z" 
+        fill="#00A651" stroke="#FFFFFF" stroke-width="4"/>
+  
+  <!-- Neck Opening -->
+  <path d="M 140 60 Q 160 80 200 80 Q 240 80 260 60" 
+        fill="none" stroke="#FFFFFF" stroke-width="3"/>
+  
+  <!-- Main Text Design -->
+  <text x="200" y="150" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="bold" fill="#FFFFFF">DINNAE SEEK MAIR</text>
+  <text x="200" y="180" text-anchor="middle" font-family="Georgia, serif" font-size="12" fill="#FFFFFF">THERE'S NAE MAIR</text>
+  <text x="200" y="210" text-anchor="middle" font-family="Georgia, serif" font-size="12" fill="#FFFFFF">TAE BE FOUN'</text>
+  
+  <!-- Scottish Thistle Design Elements -->
+  <g transform="translate(150, 240)">
+    <path d="M 0 0 L -10 -15 L -5 -25 L 5 -25 L 10 -15 Z" fill="#FFFFFF"/>
+    <circle cx="0" cy="-10" r="3" fill="#FFD700"/>
+    <path d="M -2 -5 L 2 -5 M -1 0 L 1 0" stroke="#00A651" stroke-width="2"/>
+  </g>
+  
+  <g transform="translate(250, 240)">
+    <path d="M 0 0 L -10 -15 L -5 -25 L 5 -25 L 10 -15 Z" fill="#FFFFFF"/>
+    <circle cx="0" cy="-10" r="3" fill="#FFD700"/>
+    <path d="M -2 -5 L 2 -5 M -1 0 L 1 0" stroke="#00A651" stroke-width="2"/>
+  </g>
+  
+  <!-- Peña Name -->
+  <text x="200" y="280" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#FFFFFF">PEÑA BÉTICA ESCOCESA</text>
+  <text x="200" y="300" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#FFFFFF">EDINBURGH • ESCOCIA</text>
+  
+  <!-- Scottish Flag Elements (Small) -->
+  <g transform="translate(120, 320)">
+    <rect width="20" height="12" fill="#FFFFFF"/>
+    <path d="M 0 0 L 20 12 M 20 0 L 0 12" stroke="#005EB8" stroke-width="2"/>
+  </g>
+  
+  <g transform="translate(260, 320)">
+    <rect width="20" height="12" fill="#FFFFFF"/>
+    <path d="M 0 0 L 20 12 M 20 0 L 0 12" stroke="#005EB8" stroke-width="2"/>
+  </g>
+  
+  <!-- Bottom Label -->
+  <text x="200" y="450" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#00A651">DISEÑO 1: ESCOCÉS</text>
+  <text x="200" y="470" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#666">Lema tradicional en scots</text>
+</svg>

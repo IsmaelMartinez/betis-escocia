@@ -1,0 +1,41 @@
+<svg width="400" height="500" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="500" fill="#f8f9fa"/>
+  
+  <!-- T-Shirt Outline -->
+  <path d="M 100 80 L 120 80 L 120 60 L 140 60 Q 160 40 200 40 Q 240 40 260 60 L 280 60 L 280 80 L 300 80 L 320 100 L 320 120 L 300 120 L 300 400 L 100 400 L 100 120 L 80 120 L 80 100 Z" 
+        fill="#FFFFFF" stroke="#00A651" stroke-width="4"/>
+  
+  <!-- Neck Opening -->
+  <path d="M 140 60 Q 160 80 200 80 Q 240 80 260 60" 
+        fill="none" stroke="#00A651" stroke-width="3"/>
+  
+  <!-- Main Text Design -->
+  <text x="200" y="140" text-anchor="middle" font-family="Georgia, serif" font-size="16" font-weight="bold" fill="#00A651">"NO BUSQUES MÁS</text>
+  <text x="200" y="170" text-anchor="middle" font-family="Georgia, serif" font-size="16" font-weight="bold" fill="#00A651">QUE NO HAY"</text>
+  
+  <!-- Central Logo/Shield -->
+  <circle cx="200" cy="220" r="25" fill="#00A651"/>
+  <text x="200" y="215" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#FFFFFF">REAL</text>
+  <text x="200" y="228" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" font-weight="bold" fill="#FFFFFF">BETIS</text>
+  
+  <!-- Decorative Elements -->
+  <path d="M 160 250 Q 180 260 200 250 Q 220 260 240 250" stroke="#00A651" stroke-width="3" fill="none"/>
+  
+  <!-- Scottish Flag Integration -->
+  <g transform="translate(200, 280)">
+    <rect x="-30" y="-10" width="60" height="20" fill="#005EB8" opacity="0.3"/>
+    <path d="M -30 -10 L 30 10 M 30 -10 L -30 10" stroke="#005EB8" stroke-width="2" opacity="0.7"/>
+  </g>
+  
+  <!-- Peña Name -->
+  <text x="200" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#00A651">BÉTICOS EN ESCOCIA</text>
+  <text x="200" y="340" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#00A651">EDINBURGH</text>
+  
+  <!-- Year Founded -->
+  <text x="200" y="365" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#00A651">EST. 2010</text>
+  
+  <!-- Bottom Label -->
+  <text x="200" y="450" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#00A651">DISEÑO 2: CLÁSICO</text>
+  <text x="200" y="470" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#666">Lema original de Silvio</text>
+</svg>
