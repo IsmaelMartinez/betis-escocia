@@ -102,21 +102,21 @@ export default function Nosotros() {
                 El Comienzo
               </h3>
               <p className="text-gray-800 leading-relaxed mb-6 text-base">
-                Todo empezó en 2018 cuando un grupo de béticos residentes en Edinburgh nos dimos cuenta 
-                de que estábamos viendo el fútbol solos en casa. ¿La solución? Encontrar un pub 
-                que nos acogiera y crear nuestra propia familia bética en Escocia.
+                Todo empezó el 4 de diciembre de 2010 cuando Juan Morata y José María Conde 
+                se encontraron casualmente jugando fútbol en Edimburgo. Ambos llevaban la camiseta 
+                del Betis, y esa coincidencia fue el inicio de una gran amistad bética.
               </p>
               <p className="text-gray-800 leading-relaxed mb-6 text-base">
-                El Polwarth Tavern se convirtió en nuestro hogar. Los dueños, aunque no entendían 
-                mucho de fútbol español, nos recibieron con los brazos abiertos. Y así comenzó 
-                nuestra aventura.
+                La idea de crear la peña surgió durante una charla en un pub, y así nació la 
+                primera peña oficial del Real Betis en el Reino Unido. Desde entonces, hemos 
+                pasado por diferentes sedes hasta encontrar nuestro hogar actual en Polwarth Tavern.
               </p>
               <div className="bg-betis-green/10 rounded-lg p-4 border-l-4 border-betis-green">
                 <p className="text-betis-green font-semibold">
-                  &ldquo;Desde el primer día supimos que esto iba a ser especial. No solo por el fútbol, 
-                  sino por las personas que íbamos a conocer.&rdquo;
+                  &ldquo;La idea de crear el club de fans vino tomando algo en un pub. 
+                  Simplemente lo decidieron así. ¡Literalmente!&rdquo;
                 </p>
-                <p className="text-sm text-gray-800 mt-2 font-medium">- Fran, fundador</p>
+                <p className="text-sm text-gray-800 mt-2 font-medium">- Fuente: LaLiga oficial</p>
               </div>
             </div>
 
@@ -126,23 +126,23 @@ export default function Nosotros() {
                 La Comunidad
               </h3>
               <p className="text-gray-800 leading-relaxed mb-6 text-base">
-                Lo que empezó como 4 o 5 personas viendo fútbol, se convirtió en una verdadera 
-                familia. Béticos de toda España que viven en Escocia, estudiantes de intercambio, 
-                turistas de paso... todos son bienvenidos.
+                Lo que empezó como dos amigos béticos encontrándose por casualidad, se convirtió 
+                en una verdadera familia. Desde 2010, hemos acogido a béticos de toda España que 
+                viven en Escocia, estudiantes de intercambio, turistas de paso... todos son bienvenidos.
               </p>
               <p className="text-gray-800 leading-relaxed mb-6 text-base">
-                Hemos celebrado bodas, nacimientos, ascensos profesionales y, por supuesto, 
-                títulos del Betis. También hemos llorado derrotas juntos y nos hemos consolado 
-                con una cerveza y la certeza de que &ldquo;el año que viene será el nuestro&rdquo;.
+                Con José Mari como presidente desde 2013, hemos celebrado ascensos, títulos, bodas 
+                y nacimientos juntos. También hemos llorado derrotas y nos hemos consolado con una 
+                cerveza y la certeza de que &ldquo;el año que viene será el nuestro&rdquo;.
               </p>
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center p-4 bg-betis-green/5 rounded-lg">
-                  <div className="text-2xl font-black text-betis-green">50+</div>
+                  <div className="text-2xl font-black text-betis-green">25+</div>
                   <div className="text-sm text-gray-700 font-medium">Miembros activos</div>
                 </div>
                 <div className="text-center p-4 bg-betis-green/5 rounded-lg">
-                  <div className="text-2xl font-black text-betis-green">200+</div>
-                  <div className="text-sm text-gray-700 font-medium">Eventos vividos</div>
+                  <div className="text-2xl font-black text-betis-green">14</div>
+                  <div className="text-sm text-gray-700 font-medium">Años de historia</div>
                 </div>
               </div>
             </div>
@@ -199,7 +199,7 @@ export default function Nosotros() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {foundingMembers.map((member) => (
               <div key={member.name} className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 text-center transform hover:scale-105 transition-all duration-300">
                 <div className="text-4xl mb-4">{member.emoji}</div>
