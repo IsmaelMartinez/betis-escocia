@@ -29,6 +29,7 @@ export interface MerchandiseItem {
   price: number;
   images: string[];
   category: 'clothing' | 'accessories' | 'collectibles';
+  type?: string;
   sizes?: string[];
   colors?: string[];
   inStock: boolean;

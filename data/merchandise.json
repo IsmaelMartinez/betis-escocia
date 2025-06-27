@@ -6,8 +6,8 @@
       "description": "Bufanda oficial de la peña con los colores del Betis y el logo de Escocia. Perfecta para los partidos en el Polwarth Tavern. Material de alta calidad que te mantendrá abrigado durante los fríos inviernos escoceses.",
       "price": 15.99,
       "images": [
-        "/images/coleccionables/bufanda-1.jpg",
-        "/images/coleccionables/bufanda-2.jpg"
+        "/images/coleccionables/bufanda-1.png",
+        "/images/coleccionables/bufanda-2.png"
       ],
       "category": "collectibles",
       "type": "bufanda",
@@ -125,6 +125,28 @@
         "stadium": true,
         "shipping": false
       }
+    },
+    {
+      "id": "coll_005",
+      "name": "Bufanda Peña Bética Escocesa (Ángulo Detalle)",
+      "description": "Detalle en primer plano de la bufanda oficial de la peña, mostrando texturas y flecos.",
+      "price": 15.99,
+      "images": [
+        "/images/coleccionables/bufanda-2.png"
+      ],
+      "category": "collectibles",
+      "type": "bufanda",
+      "sizes": [],
+      "colors": [
+        "Verde y Blanco"
+      ],
+      "inStock": true,
+      "featured": true,
+      "collection": {
+        "polwarth": true,
+        "stadium": true,
+        "shipping": false
+      }
     }
   ],
   "categories": [
@@ -132,7 +154,7 @@
     "accessories",
     "collectibles"
   ],
-  "totalItems": 4,
+  "totalItems": 5,
   "collectionInfo": {
     "polwarth": "Recogida en Polwarth Tavern durante los partidos",
     "stadium": "Recogida en visitas al estadio (cuando viajemos)",

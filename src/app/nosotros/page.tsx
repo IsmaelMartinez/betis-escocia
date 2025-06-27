@@ -6,26 +6,20 @@ export default function Nosotros() {
     {
       name: "Fran",
       role: "Fundador y organizador",
-      description: "El alma de nuestra peña. Siempre con una sonrisa y listo para organizar.",
+      description: "Inició la peña en 2018 en Polwarth Tavern, coordinando a los béticos en Escocia.",
       emoji: "👑"
     },
     {
-      name: "Isabel",
-      role: "Coordinadora de eventos",
-      description: "Se encarga de que todo esté perfecto para cada evento y reunión.",
-      emoji: "🎯"
+      name: "Jose Mari",
+      role: "Presidente",
+      description: "Líder oficial de la peña y enlace con Real Betis, dirige la visión y eventos.",
+      emoji: "🛡️"
     },
     {
-      name: "Carlos",
-      role: "Experto en estadísticas",
-      description: "Conoce cada dato del Betis desde los años 80. Una enciclopedia andante.",
-      emoji: "📊"
-    },
-    {
-      name: "María",
-      role: "Embajadora social",
-      description: "Siempre dispuesta a recibir a los nuevos béticos que llegan a Escocia.",
-      emoji: "🤝"
+      name: "Juan",
+      role: "Coordinador de viajes",
+      description: "Asiduo del Benito Villamarín, organiza quedadas en Sevilla y aporta la pasión de la grada.",
+      emoji: "⚽"
     }
   ];
 

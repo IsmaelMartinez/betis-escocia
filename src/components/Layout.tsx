@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, MapPin, Facebook, Instagram, Video } from 'lucide-react';
+import { Menu, X, MapPin, Facebook, Instagram, Twitter, Video } from 'lucide-react';
 import BetisLogo from '@/components/BetisLogo';
 
 const navigation = [
@@ -13,6 +13,7 @@ const navigation = [
   { name: 'Galería', href: '/galeria', nameEn: 'Gallery' },
   { name: 'Nosotros', href: '/nosotros', nameEn: 'About' },
   { name: 'Contacto', href: '/contacto', nameEn: 'Contact' },
+  { name: 'Historia', href: '/historia', nameEn: 'History' }
 ];
 
 interface LayoutProps {
@@ -127,6 +128,14 @@ export default function Layout({ children }: LayoutProps) {
                   className="text-gray-300 hover:text-betis-green transition-colors"
                 >
                   <Instagram size={24} />
+                </a>
+                <a
+                  href="https://x.com/rbetisescocia"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-300 hover:text-betis-green transition-colors"
+                >
+                  <Twitter size={24} />
                 </a>
                 <a
                   href="https://www.youtube.com/beticosenescocia"

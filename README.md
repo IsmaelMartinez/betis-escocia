@@ -23,7 +23,7 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 - **Backend**: Next.js API Routes (Serverless)
 - **Database**: JSON file storage (easily upgradeable)
 - **Deployment**: Vercel with GitHub Actions
-- **Styling**: Custom Real Betis color scheme
+- **Performance Monitoring**: Vercel Speed Insights (`@vercel/speed-insights`) for front-end performance metrics
 
 ## 🚀 Getting Started
 
@@ -35,22 +35,37 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 ### Installation
 
 1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/pena-betica-escocesa.git
-cd pena-betica-escocesa
-```
+
+    ```bash
+    # Clone and enter directory
+    ```bash
+    git clone https://github.com/yourusername/pena-betica-escocesa.git
+    cd pena-betica-escocesa
+    ```
 
 2. Install dependencies:
-```bash
-npm install
-```
 
-3. Run the development server:
-```bash
-npm run dev
-```
+    ```bash
+    npm install
+    ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+3. Install Vercel Speed Insights:
+
+    ```bash
+    npm install @vercel/speed-insights
+    ```
+
+4. Run the development server:
+
+    ```bash
+    npm run dev
+    ```
+
+5. Open the local site:
+
+    Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+    > For more on integrating the Speed Insights component, see the [Vercel Speed Insights Quickstart](https://vercel.com/docs/speed-insights/quickstart#add-the-speedinsights-component-to-your-app).
 
 ## 📁 Project Structure
 
