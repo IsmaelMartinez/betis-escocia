@@ -1,10 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
-import Layout from '@/components/Layout';
 
 export default function HistoriaPage() {
   return (
-    <Layout>
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Header */}
@@ -172,6 +170,5 @@ export default function HistoriaPage() {
       </section>
         </div>
       </div>
-    </Layout>
   );
 }
