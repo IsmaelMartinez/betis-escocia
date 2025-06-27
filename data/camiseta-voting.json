@@ -8,7 +8,7 @@
             "id": "design_1",
             "name": "Dinnae seek mair – there’s nae mair tae be foun’",
             "description": "Lema clásico de la peña en escocés",
-            "image": "/images/coleccionables/camiseta-1.svg",
+            "image": "/images/coleccionables/camiseta-1.png",
             "votes": 0,
             "voters": []
         },
@@ -16,7 +16,7 @@
             "id": "design_2",
             "name": "\"No busques más que no hay\"",
             "description": "Lema clásico de la peña",
-            "image": "/images/coleccionables/camiseta-2.svg",
+            "image": "/images/coleccionables/camiseta-2.png",
             "votes": 0,
             "voters": []
         }

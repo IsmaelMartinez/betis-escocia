@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Star, Package, MapPin, Vote, ShoppingBag, Calendar } from 'lucide-react';
+import { Star, Package, MapPin, Vote, ShoppingBag, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
 import MerchandiseCard from '@/components/MerchandiseCard';
 import OrderForm from '@/components/OrderForm';
 import CollectionPointsGuide from '@/components/CollectionPointsGuide';
@@ -44,6 +44,7 @@ export default function ColeccionablesPage() {
   const [showVotingModal, setShowVotingModal] = useState(false);
   const [timeLeft, setTimeLeft] = useState('');
   const [selectedPreOrderItem, setSelectedPreOrderItem] = useState<MerchandiseItem | null>(null);
+  const [showVotingExpanded, setShowVotingExpanded] = useState(false);
 
   useEffect(() => {
     fetchColeccionables();
@@ -158,14 +159,9 @@ export default function ColeccionablesPage() {
             </div>
             <div>
               <h3 className="font-semibold mb-2">🏟️ En el estadio</h3>
-              <p>Cuando viajemos a Sevilla o a partidos fuera. Te avisaremos por WhatsApp.</p>
+                <p>Cuando Juan va a los partidos en Sevilla. Coordinar previamente por WhatsApp si Juan va al partido.</p>
             </div>
           </div>
-        </div>
-
-        {/* Collection Points Guide */}
-        <div className="mb-8">
-          <CollectionPointsGuide />
         </div>
 
         {/* Type Filters */}
@@ -193,66 +189,82 @@ export default function ColeccionablesPage() {
 
         {/* Special Camiseta Section */}
         {(selectedType === 'all' || selectedType === 'camiseta') && votingData?.voting.active && (
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-6 mb-8">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-blue-800 mb-2 flex items-center justify-center gap-2">
-                <Vote className="w-6 h-6" />
-                🗳️ ¡Vota por el diseño de la camiseta!
-              </h2>
-              {timeLeft && <p className="text-sm text-red-600 mb-1">Tiempo restante: {timeLeft}</p>}
-              <p className="text-blue-600">
-                Necesitamos al menos {votingData.preOrders.minimumOrders} pre-pedidos para producir las camisetas.
-              </p>
-              <p className="text-sm text-blue-500 mt-1">
-                Pedidos actuales: {votingData.preOrders.totalOrders} | Votos totales: {votingData.voting.totalVotes}
-              </p>
-            </div>
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg overflow-hidden mb-8">
+            <button
+              onClick={() => setShowVotingExpanded(!showVotingExpanded)}
+              className="w-full p-6 text-left hover:bg-blue-100 transition-colors"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-blue-800 mb-2 flex items-center gap-2">
+                    <Vote className="w-6 h-6" />
+                    🗳️ ¡Vota por el diseño de la camiseta!
+                  </h2>
+                  {timeLeft && <p className="text-sm text-red-600 mb-1">Tiempo restante: {timeLeft}</p>}
+                  <p className="text-blue-600">
+                    Necesitamos al menos {votingData.preOrders.minimumOrders} pre-pedidos para producir las camisetas.
+                  </p>
+                  <p className="text-sm text-blue-500 mt-1">
+                    Pedidos actuales: {votingData.preOrders.totalOrders} | Votos totales: {votingData.voting.totalVotes}
+                  </p>
+                </div>
+                {showVotingExpanded ? (
+                  <ChevronUp className="h-6 w-6 text-blue-600" />
+                ) : (
+                  <ChevronDown className="h-6 w-6 text-blue-600" />
+                )}
+              </div>
+            </button>
 
-            <div className="grid md:grid-cols-2 gap-4 mb-6">
-              {votingData.voting.options.map((option) => {
-                const percent = votingData.voting.totalVotes
-                  ? Math.round((option.votes / votingData.voting.totalVotes) * 100)
-                  : 0;
-                return (
-                  <div key={option.id} className="bg-white rounded-lg p-4 text-center border border-gray-200">
-                    <div className="relative w-full h-48 mb-3 bg-gray-100 rounded-lg overflow-hidden">
-                      <Image
-                        src={option.image}
-                        alt={option.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <h3 className="font-bold text-gray-800 mb-1">{option.name}</h3>
-                    <p className="text-sm text-gray-600 mb-2">{option.description}</p>
-                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden mb-2">
-                      <div className="bg-blue-600 h-full" style={{ width: `${percent}%` }} />
-                    </div>
-                    <span className="text-sm font-semibold text-blue-600">{percent}% ({option.votes} votos)</span>
-                  </div>
-                );
-              })}
-            </div>
+            {showVotingExpanded && (
+              <div className="p-6 pt-0">
+                <div className="grid md:grid-cols-2 gap-4 mb-6">
+                  {votingData.voting.options.map((option) => {
+                    const percent = votingData.voting.totalVotes
+                      ? Math.round((option.votes / votingData.voting.totalVotes) * 100)
+                      : 0;
+                    return (
+                      <div key={option.id} className="bg-white rounded-lg p-4 text-center border border-gray-200">
+                        <div className="relative w-full h-48 mb-3 bg-gray-100 rounded-lg overflow-hidden">
+                          <Image
+                            src={option.image}
+                            alt={option.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <h3 className="font-bold text-gray-800 mb-1">{option.name}</h3>
+                        <p className="text-sm text-gray-600 mb-2">{option.description}</p>
+                        <div className="h-2 bg-gray-200 rounded-full overflow-hidden mb-2">
+                          <div className="bg-blue-600 h-full" style={{ width: `${percent}%` }} />
+                        </div>
+                        <span className="text-sm font-semibold text-blue-600">{percent}% ({option.votes} votos)</span>
+                      </div>
+                    );
+                  })}
+                </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={() => setShowVotingModal(true)}
-                className="flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <Vote className="w-4 h-4" />
-                Votar por diseño
-              </button>
-              <button
-                onClick={() => {
-                  const camiseta = items.find((i) => i.type === 'camiseta');
-                  if (camiseta) setSelectedPreOrderItem(camiseta);
-                }}
-                className="flex items-center justify-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
-              >
-                <ShoppingBag className="w-4 h-4" />
-                Pre-pedir camiseta
-              </button>
-            </div>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <button
+                    onClick={() => setShowVotingModal(true)}
+                    className="flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <Vote className="w-4 h-4" />
+                    Votar por diseño
+                  </button>
+                  <button
+                    onClick={() => {
+                      const camiseta = items.find((i) => i.type === 'camiseta');
+                      if (camiseta) setSelectedPreOrderItem(camiseta);
+                    }}
+                    className="flex items-center justify-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+                  >
+                    <ShoppingBag className="w-4 h-4" />
+                    Pre-pedir camiseta
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -302,6 +314,13 @@ export default function ColeccionablesPage() {
               </ul>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Collection Points Guide */}
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <CollectionPointsGuide />
         </div>
       </section>
 
