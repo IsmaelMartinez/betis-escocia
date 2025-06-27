@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { Instagram, Facebook, Copy, Check, Camera, Share2, Tag } from 'lucide-react';
+import InstagramFeed from '@/components/InstagramFeed';
+import FacebookFeed from '@/components/FacebookFeed';
 
 export default function SocialTaggingGuide() {
   const [copiedText, setCopiedText] = useState<string>('');
@@ -16,7 +18,7 @@ export default function SocialTaggingGuide() {
   const instagramTemplates = [
     {
       title: "Foto con Merchandising",
-      template: "🔥 Orgulloso de ser bético en Escocia! 🏴󠁧󠁢󠁳󠁣󠁴󠁿💚 #RealBetis #BetisEscocia #MerchBético #Edinburgh #ManquePierda"
+      template: "🔥 Orgulloso de ser bético en Escocia! 🏴💚 #RealBetis #BetisEscocia #MerchBético #Edinburgh #ManquePierda"
     },
     {
       title: "Partido en el Polwarth",
@@ -24,7 +26,7 @@ export default function SocialTaggingGuide() {
     },
     {
       title: "Celebración",
-      template: "¡GOOOOOL DEL BETIS! 🎉⚽ Celebrando como siempre en Edinburgh 🏴󠁧󠁢󠁳󠁣󠁴󠁿💚 #RealBetis #BetisGol #PeñaBéticaEscocesa #ManquePierda"
+      template: "¡GOOOOOL DEL BETIS! 🎉⚽ Celebrando como siempre en Edinburgh 🏴💚 #RealBetis #BetisGol #PeñaBéticaEscocesa #ManquePierda"
     }
   ];
 
@@ -35,7 +37,7 @@ export default function SocialTaggingGuide() {
     },
     {
       title: "Nuevo Merchandising",
-      template: "¡Mirad qué preciosidad! 😍 Nuevo merchandising de la Peña Bética Escocesa. Nada como lucir los colores verdiblanco por las tierras escocesas 🏴󠁧󠁢󠁳󠁣󠁴󠁿💚\n\n#MerchBético #BetisEscocia #PeñaBéticaEscocesa #RealBetis"
+      template: "¡Mirad qué preciosidad! 😍 Nuevo merchandising de la Peña Bética Escocesa. Nada como lucir los colores verdiblanco por las tierras escocesas 🏴💚\n\n#MerchBético #BetisEscocia #PeñaBéticaEscocesa #RealBetis"
     }
   ];
 
@@ -312,6 +314,28 @@ export default function SocialTaggingGuide() {
             >
               📱 Síguenos en Instagram
             </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Live Social Media Feeds */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              📱 Live Social Media Feeds
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              See the latest content from our community! Real posts from our Instagram and Facebook feeds.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Instagram Feed */}
+            <InstagramFeed maxPosts={8} showHeader={true} compactMode={false} />
+            
+            {/* Facebook Feed */}
+            <FacebookFeed maxPosts={8} showHeader={true} compactMode={false} />
           </div>
         </div>
       </section>

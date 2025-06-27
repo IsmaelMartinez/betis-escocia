@@ -1,6 +1,8 @@
 'use client';
 
-import { Camera, Hash, ExternalLink, Heart, MessageCircle, Share2 } from 'lucide-react';
+import { Camera, Hash, ExternalLink } from 'lucide-react';
+import InstagramFeed from '@/components/InstagramFeed';
+import FacebookFeed from '@/components/FacebookFeed';
 
 export default function GalleryPage() {
   return (
@@ -46,12 +48,11 @@ export default function GalleryPage() {
           </div>
         </div>
 
-        {/* Coming Soon Notice */}
+        {/* Social Media Integration Active */}
         <div className="bg-white rounded-lg shadow-md p-8 mb-8 text-center border-l-4 border-betis-green">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">🚧 Social Media Integration Coming Soon!</h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">� Live Social Media Feeds</h3>
           <p className="text-gray-600 mb-6">
-            We&apos;re working on integrating Instagram and Facebook feeds to automatically display photos from our community. 
-            In the meantime, follow us on social media to stay connected!
+            See the latest content from our Instagram and Facebook feeds! Real posts from our community members and official updates from the peña.
           </p>
           <div className="flex justify-center gap-4">
             <a
@@ -77,150 +78,13 @@ export default function GalleryPage() {
           </div>
         </div>
 
-        {/* Mock Social Media Feed Preview */}
+        {/* Live Social Media Feeds */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Instagram Preview */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4 text-white">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">📸</span>
-                <h3 className="font-bold text-lg">Instagram Feed</h3>
-              </div>
-            </div>
-            <div className="p-6">
-              <div className="space-y-4">
-                {/* Mock Instagram Posts */}
-                <div className="border rounded-lg p-4 bg-gray-50">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 bg-betis-green rounded-full flex items-center justify-center text-white font-bold text-sm">
-                      PB
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">@penabetiscaescocesa</p>
-                      <p className="text-xs text-gray-500">2 hours ago</p>
-                    </div>
-                  </div>
-                  <div className="bg-gray-200 h-32 rounded-lg mb-3 flex items-center justify-center">
-                    <Camera className="text-gray-400" size={32} />
-                  </div>
-                  <div className="flex items-center gap-4 mb-2">
-                    <Heart size={16} className="text-red-500" />
-                    <MessageCircle size={16} className="text-gray-600" />
-                    <Share2 size={16} className="text-gray-600" />
-                  </div>
-                  <p className="text-sm">
-                    <span className="font-medium">15 likes</span>
-                  </p>
-                  <p className="text-sm mt-1">
-                    Ready for today&apos;s match at Polwarth! 💚🤍 #BetisEdinburgh #PenaBetiscaEscocesa
-                  </p>
-                </div>
-
-                <div className="border rounded-lg p-4 bg-gray-50">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 bg-betis-green rounded-full flex items-center justify-center text-white font-bold text-sm">
-                      PB
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">@penabetiscaescocesa</p>
-                      <p className="text-xs text-gray-500">1 day ago</p>
-                    </div>
-                  </div>
-                  <div className="bg-gray-200 h-32 rounded-lg mb-3 flex items-center justify-center">
-                    <Camera className="text-gray-400" size={32} />
-                  </div>
-                  <div className="flex items-center gap-4 mb-2">
-                    <Heart size={16} className="text-red-500" />
-                    <MessageCircle size={16} className="text-gray-600" />
-                    <Share2 size={16} className="text-gray-600" />
-                  </div>
-                  <p className="text-sm">
-                    <span className="font-medium">23 likes</span>
-                  </p>
-                  <p className="text-sm mt-1">
-                    New merchandise arrived! Check out our coleccionables 📦✨ #BetisEdinburgh
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Facebook Preview */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <div className="bg-blue-600 p-4 text-white">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">📘</span>
-                <h3 className="font-bold text-lg">Facebook Feed</h3>
-              </div>
-            </div>
-            <div className="p-6">
-              <div className="space-y-4">
-                {/* Mock Facebook Posts */}
-                <div className="border rounded-lg p-4 bg-gray-50">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 bg-betis-green rounded-full flex items-center justify-center text-white font-bold text-sm">
-                      PB
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">Peña Bética Escocesa</p>
-                      <p className="text-xs text-gray-500">3 hours ago</p>
-                    </div>
-                  </div>
-                  <div className="bg-gray-200 h-32 rounded-lg mb-3 flex items-center justify-center">
-                    <Camera className="text-gray-400" size={32} />
-                  </div>
-                  <p className="text-sm mb-3">
-                    Great turnout at Polwarth Tavern today! Thanks to everyone who joined us to support Real Betis. 
-                    The atmosphere was incredible! 💚🤍
-                  </p>
-                  <div className="flex items-center gap-4 text-gray-600 text-sm">
-                    <span className="flex items-center gap-1">
-                      <Heart size={14} className="text-red-500" />
-                      18
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <MessageCircle size={14} />
-                      5 comments
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Share2 size={14} />
-                      2 shares
-                    </span>
-                  </div>
-                </div>
-
-                <div className="border rounded-lg p-4 bg-gray-50">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 bg-betis-green rounded-full flex items-center justify-center text-white font-bold text-sm">
-                      PB
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">Peña Bética Escocesa</p>
-                      <p className="text-xs text-gray-500">2 days ago</p>
-                    </div>
-                  </div>
-                  <p className="text-sm mb-3">
-                    🎉 Event Alert! Join us this Sunday at Polwarth Tavern for the big match. 
-                    RSVP on our website to let us know you&apos;re coming!
-                  </p>
-                  <div className="flex items-center gap-4 text-gray-600 text-sm">
-                    <span className="flex items-center gap-1">
-                      <Heart size={14} className="text-red-500" />
-                      32
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <MessageCircle size={14} />
-                      8 comments
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Share2 size={14} />
-                      5 shares
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Instagram Feed */}
+          <InstagramFeed maxPosts={6} showHeader={true} compactMode={false} />
+          
+          {/* Facebook Feed */}
+          <FacebookFeed maxPosts={6} showHeader={true} compactMode={false} />
         </div>
 
         {/* Call to Action */}
