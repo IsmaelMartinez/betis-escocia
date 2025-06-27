@@ -5,6 +5,8 @@ import Image from 'next/image';
 import { ShoppingCart, Star, Eye, Package } from 'lucide-react';
 import type { MerchandiseItem } from '@/types/community';
 import OrderForm from './OrderForm';
+import ImageGallery from './ImageGallery';
+import StockIndicator from './StockIndicator';
 
 interface MerchandiseCardProps {
   readonly item: MerchandiseItem;
@@ -14,8 +16,9 @@ export default function MerchandiseCard({ item }: MerchandiseCardProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
   const [showOrderForm, setShowOrderForm] = useState(false);
-  const [selectedSize, setSelectedSize] = useState(item.sizes?.[0] || '');
-  const [selectedColor, setSelectedColor] = useState(item.colors?.[0] || '');
+  const [showImageGallery, setShowImageGallery] = useState(false);
+  const [selectedSize, setSelectedSize] = useState(item.sizes?.[0] ?? '');
+  const [selectedColor, setSelectedColor] = useState(item.colors?.[0] ?? '');
 
   const handleOrderClick = () => {
     setShowOrderForm(true);
@@ -62,12 +65,24 @@ export default function MerchandiseCard({ item }: MerchandiseCardProps) {
             {getCategoryLabel(item.category)}
           </div>
 
+          {/* Image Gallery Button */}
+          {item.images.length > 1 && (
+            <button
+              onClick={() => setShowImageGallery(true)}
+              className="absolute top-3 left-1/2 transform -translate-x-1/2 bg-black/50 hover:bg-black/70 text-white px-3 py-1 rounded-full text-xs font-medium transition-colors flex items-center gap-1"
+              title="Ver galería"
+            >
+              <Eye className="h-3 w-3" />
+              {item.images.length} fotos
+            </button>
+          )}
+
           {/* Image Indicators */}
           {item.images.length > 1 && (
             <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-1">
               {item.images.map((_, index) => (
                 <button
-                  key={index}
+                  key={`indicator-${item.id}-${index}`}
                   onClick={() => setSelectedImageIndex(index)}
                   className={`w-2 h-2 rounded-full transition-colors duration-200 ${
                     index === selectedImageIndex ? 'bg-white' : 'bg-white/50'
@@ -85,9 +100,11 @@ export default function MerchandiseCard({ item }: MerchandiseCardProps) {
           <h3 className="text-lg font-bold text-gray-900 mb-1 line-clamp-2">
             {item.name}
           </h3>
-          <p className="text-sm text-gray-600 line-clamp-2">
+          <p className="text-sm text-gray-600 line-clamp-2 mb-2">
             {item.description}
           </p>
+          {/* Stock Indicator */}
+          <StockIndicator stock={item.inStock ? 15 : 0} maxStock={20} className="mb-2" />
         </div>
 
         {/* Price */}
@@ -100,9 +117,9 @@ export default function MerchandiseCard({ item }: MerchandiseCardProps) {
         {/* Size Selection */}
         {item.sizes && item.sizes.length > 0 && (
           <div className="mb-3">
-            <label className="text-xs font-medium text-gray-700 mb-1 block">
+            <div className="text-xs font-medium text-gray-700 mb-1 block">
               Talla:
-            </label>
+            </div>
             <div className="flex flex-wrap gap-1">
               {item.sizes.map(size => (
                 <button
@@ -124,9 +141,9 @@ export default function MerchandiseCard({ item }: MerchandiseCardProps) {
         {/* Color Selection */}
         {item.colors && item.colors.length > 0 && (
           <div className="mb-4">
-            <label className="text-xs font-medium text-gray-700 mb-1 block">
+            <div className="text-xs font-medium text-gray-700 mb-1 block">
               Color:
-            </label>
+            </div>
             <div className="flex flex-wrap gap-1">
               {item.colors.map(color => (
                 <button
@@ -178,7 +195,11 @@ export default function MerchandiseCard({ item }: MerchandiseCardProps) {
       {showDetails && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen px-4 text-center">
-            <div className="fixed inset-0 bg-black opacity-50" onClick={() => setShowDetails(false)}></div>
+            <button
+              className="fixed inset-0 bg-black opacity-50 cursor-pointer"
+              onClick={() => setShowDetails(false)}
+              aria-label="Cerrar detalles"
+            />
             
             <div className="relative bg-white rounded-2xl max-w-2xl w-full p-6 text-left">
               <div className="flex justify-between items-start mb-4">
@@ -263,6 +284,15 @@ export default function MerchandiseCard({ item }: MerchandiseCardProps) {
           price={item.price}
           isInStock={item.inStock}
           onClose={() => setShowOrderForm(false)}
+        />
+      )}
+
+      {/* Image Gallery Modal */}
+      {showImageGallery && (
+        <ImageGallery
+          images={item.images}
+          productName={item.name}
+          onClose={() => setShowImageGallery(false)}
         />
       )}
     </div>

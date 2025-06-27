@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Star, Package, MapPin, Vote, ShoppingBag, Calendar } from 'lucide-react';
 import MerchandiseCard from '@/components/MerchandiseCard';
 import OrderForm from '@/components/OrderForm';
+import CollectionPointsGuide from '@/components/CollectionPointsGuide';
 import type { MerchandiseItem } from '@/types/community';
 import Image from 'next/image';
 
@@ -160,6 +161,11 @@ export default function ColeccionablesPage() {
               <p>Cuando viajemos a Sevilla o a partidos fuera. Te avisaremos por WhatsApp.</p>
             </div>
           </div>
+        </div>
+
+        {/* Collection Points Guide */}
+        <div className="mb-8">
+          <CollectionPointsGuide />
         </div>
 
         {/* Type Filters */}
