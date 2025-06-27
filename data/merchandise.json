@@ -6,8 +6,7 @@
       "description": "Bufanda oficial de la peña con los colores del Betis y el logo de Escocia. Perfecta para los partidos en el Polwarth Tavern. Material de alta calidad que te mantendrá abrigado durante los fríos inviernos escoceses.",
       "price": 15.99,
       "images": [
-        "/images/coleccionables/bufanda-1.png",
-        "/images/coleccionables/bufanda-2.png"
+        "/images/coleccionables/bufanda-1.png"
       ],
       "category": "collectibles",
       "type": "bufanda",
@@ -52,23 +51,16 @@
         "options": [
           {
             "id": "design_1",
-            "name": "\"No busques más que no hay\"",
-            "description": "Lema clásico de la peña",
+            "name": "DINNAE SEEK MAIR – THERE’S NAE MAIR TAE BE FOUN’",
+            "description": "Lema clásico de la peña en escocés",
             "image": "/images/coleccionables/camiseta-design-1.jpg",
             "votes": 0
-          },
-          {
+            },
+            {
             "id": "design_2",
-            "name": "\"Béticos en Escocia\"",
-            "description": "Diseño con bandera escocesa",
+            "name": "\"No busques más que no hay\"",
+            "description": "Lema clásico de la peña",
             "image": "/images/coleccionables/camiseta-design-2.jpg",
-            "votes": 0
-          },
-          {
-            "id": "design_3",
-            "name": "\"Polwarth Tavern\"",
-            "description": "Homenaje a nuestro hogar",
-            "image": "/images/coleccionables/camiseta-design-3.jpg",
             "votes": 0
           }
         ]
