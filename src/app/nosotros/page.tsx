@@ -4,55 +4,55 @@ import { Users, Heart } from 'lucide-react';
 export default function Nosotros() {
   const foundingMembers = [
     {
-      name: "Fran",
-      role: "Fundador y organizador",
-      description: "Inició la peña en 2018 en Polwarth Tavern, coordinando a los béticos en Escocia.",
+      name: "José María Conde (José Mari)",
+      role: "Co-fundador y Presidente",
+      description: "Co-fundador de la peña en 2010 junto con Juan. Presidente desde 2013 y líder de la comunidad bética en Escocia.",
       emoji: "👑"
     },
     {
-      name: "Jose Mari",
-      role: "Presidente",
-      description: "Líder oficial de la peña y enlace con Real Betis, dirige la visión y eventos.",
-      emoji: "🛡️"
+      name: "Juan Morata",
+      role: "Co-fundador",
+      description: "Co-fundador de la peña en 2010. Regresó a España por motivos profesionales. Asiduo del Benito Villamarín en Sevilla.",
+      emoji: "⚽"
     },
     {
-      name: "Juan",
-      role: "Coordinador de viajes",
-      description: "Asiduo del Benito Villamarín, organiza quedadas en Sevilla y aporta la pasión de la grada.",
-      emoji: "⚽"
+      name: "Javi Guerra",
+      role: "Vicepresidente",
+      description: "Vicepresidente activo de la peña, colabora en la organización y promoción de las actividades béticas.",
+      emoji: "🛡️"
     }
   ];
 
   const milestones = [
     {
+      year: "2010",
+      event: "Fundación histórica",
+      description: "4 de diciembre - Juan Morata y José María Conde fundan la primera peña oficial del Betis en Reino Unido."
+    },
+    {
+      year: "2011",
+      event: "El ascenso que cambió todo",
+      description: "Con el ascenso del Betis, la peña toma forma en The Cuckoo's Nest. Los partidos por fin se ven en TV."
+    },
+    {
+      year: "2013",
+      event: "José Mari toma las riendas",
+      description: "Juan regresa a España y José Mari queda como presidente único, cargo que mantiene hasta hoy."
+    },
+    {
+      year: "2015",
+      event: "Nueva casa en Polwarth",
+      description: "Tras problemas con The Cuckoo's Nest, encontramos nuestro hogar actual: Polwarth Tavern."
+    },
+    {
       year: "2018",
-      event: "Fundación de la peña",
-      description: "Un grupo de béticos residentes en Edinburgh decidimos crear nuestro espacio."
-    },
-    {
-      year: "2019",
-      event: "Primera reunión oficial",
-      description: "Fran organiza la primera reunión que se convertiría en nuestra tradición."
-    },
-    {
-      year: "2020",
-      event: "Consolidación digital",
-      description: "Durante la pandemia, mantuvimos viva la llama bética online."
+      event: "Reconocimiento de LaLiga",
+      description: "LaLiga nos destaca oficialmente como 'bastión' del betismo en Escocia."
     },
     {
       year: "2021",
-      event: "Regreso al Polwarth",
-      description: "Vuelta a nuestro hogar para ver la remontada histórica ante el Villarreal."
-    },
-    {
-      year: "2022",
-      event: "Copa del Rey",
-      description: "Celebramos la Copa del Rey como si estuviéramos en La Palmera."
-    },
-    {
-      year: "2024",
-      event: "Reconocimiento LaLiga",
-      description: "LaLiga nos destaca como peña ejemplar internacional."
+      event: "ABC nos cita",
+      description: "ABC Sevilla nos reconoce como 'embajada que recibe a los suyos en Escocia'."
     }
   ];
 
@@ -77,7 +77,7 @@ export default function Nosotros() {
           </p>
           
           <p className="text-lg max-w-3xl mx-auto text-white leading-relaxed font-medium drop-shadow-xl">
-            Desde 2018, hemos sido el hogar de todos los béticos en Escocia. 
+            Desde 2010, hemos sido el hogar de todos los béticos en Escocia. 
             Una historia de pasión, amistad y amor incondicional por los colores verdes y blancos.
           </p>
         </div>

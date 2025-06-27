@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, MapPin, Facebook, Instagram, Twitter, Video } from 'lucide-react';
+import { Menu, X, MapPin, Video, ExternalLink } from 'lucide-react';
 import BetisLogo from '@/components/BetisLogo';
 
 const navigation = [
@@ -88,7 +88,7 @@ export default function Layout({ children }: LayoutProps) {
       {/* Footer */}
       <footer className="bg-gray-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* About */}
             <div>
               <h3 className="font-bold text-lg mb-4 text-betis-green">No busques más que no hay</h3>
@@ -109,17 +109,64 @@ export default function Layout({ children }: LayoutProps) {
               </div>
             </div>
 
+            {/* External Links */}
+            <div>
+              <h3 className="font-bold text-lg mb-4 text-betis-green">Enlaces útiles</h3>
+              <div className="space-y-2 text-sm">
+                <a
+                  href="https://www.betisweb.com/foro/principal/betis-fan-s-of-the-universe/6621126-pena-betica-escocesa-no-busques-mas-que-no-hay"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-gray-300 hover:text-betis-green transition-colors"
+                >
+                  BetisWeb Forum
+                </a>
+                <a
+                  href="https://beticosenescocia.blogspot.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-gray-300 hover:text-betis-green transition-colors"
+                >
+                  Béticos en Escocia Blog
+                </a>
+                <a
+                  href="https://www.laliga.com/noticias/conoce-a-la-pena-betica-de-escocia-no-busques-mas-que-no-hay"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-gray-300 hover:text-betis-green transition-colors"
+                >
+                  LaLiga Reconocimiento
+                </a>
+                <a
+                  href="https://www.abc.es/deportes/alfinaldelapalmera/noticias-betis/sevi-pena-betica-no-busques-mas-no-embajada-recibe-suyos-escocia-202112091615_noticia.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-gray-300 hover:text-betis-green transition-colors"
+                >
+                  ABC Sevilla
+                </a>
+                <a
+                  href="https://www.manquepierda.com/blog/la-aficion-del-betis-objetivo-elogios/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-gray-300 hover:text-betis-green transition-colors"
+                >
+                  Manquepierda Blog
+                </a>
+              </div>
+            </div>
+
             {/* Social */}
             <div>
               <h3 className="font-bold text-lg mb-4 text-betis-green">Síguenos</h3>
-              <div className="flex space-x-4">
+              <div className="flex flex-wrap gap-4">
                 <a
                   href="https://www.facebook.com/groups/beticosenescocia/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-300 hover:text-betis-green transition-colors"
                 >
-                  <Facebook size={24} />
+                  <ExternalLink size={24} />
                 </a>
                 <a
                   href="https://www.instagram.com/rbetisescocia/"
@@ -127,7 +174,7 @@ export default function Layout({ children }: LayoutProps) {
                   rel="noopener noreferrer"
                   className="text-gray-300 hover:text-betis-green transition-colors"
                 >
-                  <Instagram size={24} />
+                  <ExternalLink size={24} />
                 </a>
                 <a
                   href="https://x.com/rbetisescocia"
@@ -135,7 +182,7 @@ export default function Layout({ children }: LayoutProps) {
                   rel="noopener noreferrer"
                   className="text-gray-300 hover:text-betis-green transition-colors"
                 >
-                  <Twitter size={24} />
+                  <ExternalLink size={24} />
                 </a>
                 <a
                   href="https://www.youtube.com/beticosenescocia"

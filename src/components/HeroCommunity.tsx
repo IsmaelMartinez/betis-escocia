@@ -39,7 +39,7 @@ export default function HeroCommunity() {
             {/* Official-style description box */}
             <div className="bg-white rounded-lg p-8 mb-8 border-l-4 border-betis-green shadow-lg">
               <p className="text-xl leading-relaxed text-gray-700 mb-6">
-                <strong className="text-betis-green">15 años</strong> compartiendo la pasión por el Betis desde Edimburgo. 
+                <strong className="text-betis-green">Más de 14 años</strong> compartiendo la pasión por el Betis desde Edimburgo. 
                 Aquí encontrarás <strong className="text-betis-green">amigos de verdad</strong>, momentos únicos 
                 y el cariño de una comunidad que te acoge como en casa.
               </p>
