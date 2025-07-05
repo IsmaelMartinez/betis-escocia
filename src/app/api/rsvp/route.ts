@@ -1,17 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { join } from 'path';
-import { writeFile, readFile, mkdir } from 'fs/promises';
-
-interface RSVPEntry {
-  id: string;
-  name: string;
-  email: string;
-  attendees: number;
-  message?: string;
-  whatsappInterest: boolean;
-  matchDate: string;
-  submittedAt: string;
-}
+import { supabase, type RSVP, type RSVPInsert } from '@/lib/supabase';
 
 interface RSVPData {
   currentMatch: {
@@ -19,7 +7,7 @@ interface RSVPData {
     date: string;
     competition: string;
   };
-  entries: RSVPEntry[];
+  entries: RSVP[];
   totalAttendees: number;
 }
 
