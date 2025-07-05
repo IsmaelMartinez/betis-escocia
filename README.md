@@ -20,8 +20,8 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 ## 🛠️ Tech Stack
 
 - **Frontend**: Next.js 15, TypeScript, Tailwind CSS
-- **Backend**: Next.js API Routes (Serverless)
-- **Database**: JSON file storage (easily upgradeable)
+- **Backend**: Next.js API Routes + Supabase (PostgreSQL)
+- **Database**: Supabase (GDPR-compliant with auto-cleanup)
 - **Deployment**: Vercel with GitHub Actions
 - **Performance Monitoring**: Vercel Speed Insights (`@vercel/speed-insights`) for front-end performance metrics
 
@@ -37,8 +37,6 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 1. Clone the repository:
 
     ```bash
-    # Clone and enter directory
-    ```bash
     git clone https://github.com/yourusername/pena-betica-escocesa.git
     cd pena-betica-escocesa
     ```
@@ -48,6 +46,32 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
     ```bash
     npm install
     ```
+
+3. Set up Supabase:
+
+    - Create a [Supabase account](https://supabase.com)
+    - Create a new project
+    - Copy your project URL and anon key
+    - Create `.env.local` file:
+
+    ```bash
+    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+    ```
+
+    - Run the SQL setup scripts in your Supabase SQL Editor:
+      - `sql/create_rsvp_table.sql`
+      - `sql/add_missing_rsvp_columns.sql`
+
+4. Run the development server:
+
+    ```bash
+    npm run dev
+    ```
+
+5. Open the local site:
+
+    Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 3. Install Vercel Speed Insights:
 
@@ -73,23 +97,31 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 src/
 ├── app/                 # Next.js App Router pages
 │   ├── api/            # Serverless API routes
+│   │   ├── rsvp/       # RSVP system (Supabase-powered)
+│   │   ├── contact/    # Contact forms (JSON-based)
+│   │   └── merchandise/# Merchandise system (JSON-based)
 │   ├── rsvp/           # RSVP attendance confirmation
-│   ├── tienda/         # Merchandise showcase
+│   ├── coleccionables/ # Merchandise showcase
 │   └── galeria/        # Photo gallery
 ├── components/         # Reusable UI components
 │   ├── Layout.tsx      # Main layout wrapper
 │   ├── Hero.tsx        # Homepage hero section
 │   ├── RSVPForm.tsx    # RSVP confirmation component
 │   └── MerchandiseCard.tsx # Merch display component
-├── lib/               # Utilities and types
-│   ├── types.ts       # TypeScript definitions
-│   └── utils.ts       # Helper functions
+├── lib/               # Utilities and services
+│   ├── supabase.ts    # Supabase client and types
+│   └── config.ts      # Configuration utilities
 └── globals.css        # Global styles with Betis branding
 
-data/
-├── rsvp.json          # RSVP attendance data
-├── merch.json         # Merchandise catalog
-└── content.json       # General content
+sql/                   # Database setup scripts
+├── create_rsvp_table.sql        # Initial RSVP table
+├── add_missing_rsvp_columns.sql # Schema updates
+└── cleanup_old_rsvps.sql        # Data retention policies
+
+data/                  # JSON data storage (non-critical features)
+├── merchandise.json   # Merchandise catalog
+├── orders.json        # Order submissions
+└── contact.json       # Contact form submissions
 ```
 
 ## 🎪 Community Features
