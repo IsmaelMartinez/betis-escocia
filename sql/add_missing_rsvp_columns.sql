@@ -9,22 +9,18 @@ CREATE INDEX idx_rsvps_match_date ON rsvps(match_date);
 -- Update the cleanup function to work with the new schema
 -- Drop the existing function first (it had a different return type)
 DROP FUNCTION IF EXISTS cleanup_old_rsvps();
-
 -- Create the updated cleanup function
 CREATE OR REPLACE FUNCTION cleanup_old_rsvps() RETURNS INTEGER AS $$
 DECLARE deleted_count INTEGER;
-BEGIN
-    -- Delete RSVPs older than 1 month
-    DELETE FROM rsvps 
-    WHERE created_at < NOW() - INTERVAL '1 month';
-    
-    -- Get count of deleted rows
-    GET DIAGNOSTICS deleted_count = ROW_COUNT;
-    
-    -- Log the cleanup operation
-    RAISE NOTICE 'Deleted % old RSVP records', deleted_count;
-    
-    RETURN deleted_count;
+BEGIN -- Delete RSVPs older than 1 month
+DELETE FROM rsvps
+WHERE created_at < NOW() - INTERVAL '1 month';
+-- Get count of deleted rows
+GET DIAGNOSTICS deleted_count = ROW_COUNT;
+-- Log the cleanup operation
+RAISE NOTICE 'Deleted % old RSVP records',
+deleted_count;
+RETURN deleted_count;
 END;
 $$ LANGUAGE plpgsql;
 -- Grant execute permission on the function
