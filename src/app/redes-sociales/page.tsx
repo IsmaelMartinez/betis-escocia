@@ -103,12 +103,12 @@ export default function SocialTaggingGuide() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <button
-              onClick={() => copyToClipboard('@penabetiscaescocesa', 'quick-instagram')}
+              onClick={() => copyToClipboard('@rbetisescocia', 'quick-instagram')}
               className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105"
             >
               <Instagram className="w-6 h-6 mx-auto mb-2" />
               <div className="text-sm font-semibold">Instagram Handle</div>
-              <div className="text-xs opacity-80">@penabetiscaescocesa</div>
+              <div className="text-xs opacity-80">@rbetisescocia</div>
             </button>
             
             <button
@@ -393,7 +393,7 @@ export default function SocialTaggingGuide() {
                   <Instagram className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Instagram</h3>
-                <p className="text-gray-600 mb-4">@penabetiscaescocesa</p>
+                <p className="text-gray-600 mb-4">@rbetisescocia</p>
                 <p className="text-sm text-gray-500 mb-6">Share your match day photos, merchandise, and Betis pride!</p>
                 
                 {/* QR Code Placeholder */}
@@ -425,7 +425,7 @@ export default function SocialTaggingGuide() {
                   <Facebook className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Facebook</h3>
-                <p className="text-gray-600 mb-4">Peña Bética Escocesa</p>
+                <p className="text-gray-600 mb-4">Béticos en Escocia (Grupo)</p>
                 <p className="text-sm text-gray-500 mb-6">Official page for events, announcements, and community discussions</p>
                 
                 {/* QR Code Placeholder */}
@@ -436,12 +436,12 @@ export default function SocialTaggingGuide() {
                 
                 <div className="space-y-3">
                   <a
-                    href="https://facebook.com/penabetiscaescocesa"
+                    href="https://www.facebook.com/groups/beticosenescocia/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105"
                   >
-                    📘 Follow on Facebook
+                    📘 Join our Facebook Group
                   </a>
                   <div className="text-xs text-gray-500">
                     Best posting times: 7-9pm weekdays, 1-3pm weekends
