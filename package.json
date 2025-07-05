@@ -11,6 +11,7 @@
     "test-api-football": "npx tsx scripts/test-api-football.ts"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.50.3",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "lucide-react": "^0.522.0",
