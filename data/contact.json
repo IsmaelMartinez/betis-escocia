@@ -62,10 +62,20 @@
       "message": "Hola, intenté confirmar asistencia para el próximo partido pero creo que no se envió bien el formulario. Somos 3 personas. ¿Podéis confirmármelo?",
       "submittedAt": "2025-06-25T16:30:00.000Z",
       "status": "responded"
+    },
+    {
+      "id": "contact_1751752554821_7ukcs10yy",
+      "name": "Test Contact",
+      "email": "test@contact.com",
+      "type": "general",
+      "subject": "Test Subject",
+      "message": "Testing contact form functionality",
+      "submittedAt": "2025-07-05T21:55:54.821Z",
+      "status": "new"
     }
   ],
   "stats": {
-    "totalSubmissions": 6,
+    "totalSubmissions": 7,
     "responseRate": 33.3,
     "averageResponseTime": 18
   }

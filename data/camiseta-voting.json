@@ -1,25 +1,29 @@
 {
   "voting": {
     "active": true,
-    "totalVotes": 0,
+    "totalVotes": 1,
     "endDate": "2025-07-31T23:59:59.000Z",
     "options": [
-        {
-            "id": "design_1",
-            "name": "Dinnae seek mair – there’s nae mair tae be foun’",
-            "description": "Lema clásico de la peña en escocés",
-            "image": "/images/coleccionables/camiseta-1.png",
-            "votes": 0,
-            "voters": []
-        },
-        {
-            "id": "design_2",
-            "name": "\"No busques más que no hay\"",
-            "description": "Lema clásico de la peña",
-            "image": "/images/coleccionables/camiseta-2.png",
-            "votes": 0,
-            "voters": []
-        }
+      {
+        "id": "design_1",
+        "name": "Dinnae seek mair – there’s nae mair tae be foun’",
+        "description": "Lema clásico de la peña en escocés",
+        "image": "/images/coleccionables/camiseta-1.png",
+        "votes": 1,
+        "voters": [
+          {
+            "votedAt": "2025-07-05T21:56:34.137Z"
+          }
+        ]
+      },
+      {
+        "id": "design_2",
+        "name": "\"No busques más que no hay\"",
+        "description": "Lema clásico de la peña",
+        "image": "/images/coleccionables/camiseta-2.png",
+        "votes": 0,
+        "voters": []
+      }
     ]
   },
   "preOrders": {
@@ -30,7 +34,7 @@
     "orders": []
   },
   "stats": {
-    "lastUpdated": "2025-06-26T10:00:00.000Z",
-    "totalInteractions": 0
+    "lastUpdated": "2025-07-05T21:56:34.137Z",
+    "totalInteractions": 1
   }
 }
