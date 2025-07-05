@@ -10,12 +10,18 @@ export interface RSVP {
   id: number
   name: string
   email: string
+  attendees: number
   message?: string
+  whatsapp_interest: boolean
+  match_date: string
   created_at: string
 }
 
 export interface RSVPInsert {
   name: string
   email: string
+  attendees: number
   message?: string
+  whatsapp_interest: boolean
+  match_date: string
 }

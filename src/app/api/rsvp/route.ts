@@ -1,63 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase, type RSVP, type RSVPInsert } from '@/lib/supabase';
 
-interface RSVPData {
-  currentMatch: {
-    opponent: string;
-    date: string;
-    competition: string;
-  };
-  entries: RSVP[];
-  totalAttendees: number;
-}
+// Default current match info (this could be moved to env vars or a separate config)
+const DEFAULT_MATCH = {
+  opponent: "Real Madrid",
+  date: "2025-06-28T20:00:00",
+  competition: "LaLiga"
+};
 
-const dataPath = join(process.cwd(), 'data', 'rsvp.json');
-
-// Helper function to ensure data directory exists
-async function ensureDataDirectory() {
-  try {
-    const dataDir = join(process.cwd(), 'data');
-    await mkdir(dataDir, { recursive: true });
-  } catch {
-    // Directory might already exist, ignore error
-  }
-}
-
-// Helper function to read RSVP data
-async function readRSVPData(): Promise<RSVPData> {
-  try {
-    const fileContent = await readFile(dataPath, 'utf-8');
-    return JSON.parse(fileContent);
-  } catch {
-    // If file doesn't exist, return default structure
-    return {
-      currentMatch: {
-        opponent: "Real Madrid",
-        date: "2025-06-28T20:00:00",
-        competition: "LaLiga"
-      },
-      entries: [],
-      totalAttendees: 0
-    };
-  }
-}
-
-// Helper function to write RSVP data
-async function writeRSVPData(data: RSVPData): Promise<void> {
-  await ensureDataDirectory();
-  await writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');
+// Helper function to get current match date for filtering
+function getCurrentMatchDate(): string {
+  // For now, we'll use the default match date
+  // In the future, this could be dynamically determined from upcoming matches
+  return DEFAULT_MATCH.date;
 }
 
 // GET - Retrieve current RSVP data
 export async function GET() {
   try {
-    const data = await readRSVPData();
+    // Get all RSVPs for the current match
+    const currentMatchDate = getCurrentMatchDate();
+    const { data: rsvps, error } = await supabase
+      .from('rsvps')
+      .select('*')
+      .eq('match_date', currentMatchDate)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error('Error reading RSVP data from Supabase:', error);
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Error al obtener datos de confirmaciones' 
+        },
+        { status: 500 }
+      );
+    }
+
+    // Calculate total attendees
+    const totalAttendees = rsvps?.reduce((total: number, entry: RSVP) => total + entry.attendees, 0) ?? 0;
     
     return NextResponse.json({
       success: true,
-      currentMatch: data.currentMatch,
-      totalAttendees: data.totalAttendees,
-      confirmedCount: data.entries.length
+      currentMatch: DEFAULT_MATCH,
+      totalAttendees,
+      confirmedCount: rsvps?.length || 0
     });
   } catch (error) {
     console.error('Error reading RSVP data:', error);
@@ -100,16 +87,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Read current data
-    const data = await readRSVPData();
+    const currentMatchDate = getCurrentMatchDate();
 
     // Check if email already exists for current match
-    const existingEntry = data.entries.find(entry => 
-      entry.email.toLowerCase() === email.toLowerCase() && 
-      entry.matchDate === data.currentMatch.date
-    );
+    const { data: existingRSVPs, error: checkError } = await supabase
+      .from('rsvps')
+      .select('id')
+      .eq('email', email.toLowerCase().trim())
+      .eq('match_date', currentMatchDate);
 
-    if (existingEntry) {
+    if (checkError) {
+      console.error('Error checking existing RSVP:', checkError);
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Error interno del servidor al verificar confirmación existente' 
+        },
+        { status: 500 }
+      );
+    }
+
+    if (existingRSVPs && existingRSVPs.length > 0) {
       return NextResponse.json(
         { 
           success: false, 
@@ -120,32 +118,57 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new RSVP entry
-    const newEntry: RSVPEntry = {
-      id: `rsvp_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
+    const newEntry: RSVPInsert = {
       name: name.trim(),
       email: email.toLowerCase().trim(),
       attendees: parseInt(attendees),
       message: message?.trim() ?? '',
-      whatsappInterest: Boolean(whatsappInterest),
-      matchDate: data.currentMatch.date,
-      submittedAt: new Date().toISOString()
+      whatsapp_interest: Boolean(whatsappInterest),
+      match_date: currentMatchDate
     };
 
-    // Add to entries and update total
-    data.entries.push(newEntry);
-    data.totalAttendees = data.entries.reduce((total, entry) => total + entry.attendees, 0);
+    const { error: insertError } = await supabase
+      .from('rsvps')
+      .insert(newEntry);
 
-    // Save updated data
-    await writeRSVPData(data);
+    if (insertError) {
+      console.error('Error inserting RSVP:', insertError);
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Error interno del servidor al procesar la confirmación' 
+        },
+        { status: 500 }
+      );
+    }
 
-    // Log for admin purposes (in a real app, you might send email notification here)
-    console.log(`New RSVP: ${name} (${email}) - ${attendees} attendees for ${data.currentMatch.opponent}`);
+    // Get updated totals for the current match
+    const { data: allRSVPs, error: countError } = await supabase
+      .from('rsvps')
+      .select('attendees')
+      .eq('match_date', currentMatchDate);
+
+    if (countError) {
+      console.error('Error getting RSVP counts:', countError);
+      // Still return success since the RSVP was created, just with placeholder counts
+      return NextResponse.json({
+        success: true,
+        message: 'Confirmación recibida correctamente',
+        totalAttendees: parseInt(attendees),
+        confirmedCount: 1
+      });
+    }
+
+    const totalAttendees = allRSVPs?.reduce((total: number, entry: { attendees: number }) => total + entry.attendees, 0) ?? 0;
+
+    // Log for admin purposes
+    console.log(`New RSVP: ${name} (${email}) - ${attendees} attendees for ${DEFAULT_MATCH.opponent}`);
 
     return NextResponse.json({
       success: true,
       message: 'Confirmación recibida correctamente',
-      totalAttendees: data.totalAttendees,
-      confirmedCount: data.entries.length
+      totalAttendees,
+      confirmedCount: allRSVPs?.length ?? 0
     });
 
   } catch (error) {
@@ -177,21 +200,28 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const data = await readRSVPData();
+    let deleteQuery = supabase.from('rsvps').delete();
     
-    // Find and remove entry
-    const initialLength = data.entries.length;
-    data.entries = data.entries.filter(entry => {
-      if (entryId) {
-        return entry.id !== entryId;
-      }
-      if (email) {
-        return entry.email.toLowerCase() !== email.toLowerCase();
-      }
-      return true;
-    });
+    if (entryId) {
+      deleteQuery = deleteQuery.eq('id', parseInt(entryId));
+    } else if (email) {
+      deleteQuery = deleteQuery.eq('email', email.toLowerCase());
+    }
 
-    if (data.entries.length === initialLength) {
+    const { data: deletedRSVPs, error: deleteError } = await deleteQuery.select();
+
+    if (deleteError) {
+      console.error('Error deleting RSVP:', deleteError);
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Error interno del servidor al eliminar confirmación' 
+        },
+        { status: 500 }
+      );
+    }
+
+    if (!deletedRSVPs || deletedRSVPs.length === 0) {
       return NextResponse.json(
         { 
           success: false, 
@@ -201,16 +231,31 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Recalculate total attendees
-    data.totalAttendees = data.entries.reduce((total, entry) => total + entry.attendees, 0);
+    // Get updated totals for the current match
+    const currentMatchDate = getCurrentMatchDate();
+    const { data: remainingRSVPs, error: countError } = await supabase
+      .from('rsvps')
+      .select('attendees')
+      .eq('match_date', currentMatchDate);
 
-    await writeRSVPData(data);
+    if (countError) {
+      console.error('Error getting updated RSVP counts:', countError);
+      // Still return success since the deletion happened
+      return NextResponse.json({
+        success: true,
+        message: 'Confirmación eliminada correctamente',
+        totalAttendees: 0,
+        confirmedCount: 0
+      });
+    }
+
+    const totalAttendees = remainingRSVPs?.reduce((total: number, entry: { attendees: number }) => total + entry.attendees, 0) ?? 0;
 
     return NextResponse.json({
       success: true,
       message: 'Confirmación eliminada correctamente',
-      totalAttendees: data.totalAttendees,
-      confirmedCount: data.entries.length
+      totalAttendees,
+      confirmedCount: remainingRSVPs?.length ?? 0
     });
 
   } catch (error) {
