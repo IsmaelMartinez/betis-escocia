@@ -5,6 +5,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
+import { withFeatureFlag } from '@/lib/featureProtection';
 
 export const metadata: Metadata = {
   title: 'Clasificación de La Liga - Peña Bética Escocesa',
@@ -279,7 +280,7 @@ async function StandingsContent() {
 }
 
 // Main page component with error boundary and loading
-export default async function StandingsPage() {
+async function StandingsPage() {
   return (
     <ErrorBoundary>
       <Suspense fallback={
@@ -292,3 +293,6 @@ export default async function StandingsPage() {
     </ErrorBoundary>
   );
 }
+
+// Export the protected component
+export default withFeatureFlag(StandingsPage, 'showClasificacion');

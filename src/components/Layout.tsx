@@ -4,17 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash } from 'lucide-react';
 import BetisLogo from '@/components/BetisLogo';
-
-const navigation = [
-  { name: 'Inicio', href: '/', nameEn: 'Home' },
-  { name: 'RSVP', href: '/rsvp', nameEn: 'RSVP' },
-  { name: 'Clasificación', href: '/clasificacion', nameEn: 'Standings' },
-  { name: 'Coleccionables', href: '/coleccionables', nameEn: 'Collectibles' },
-  { name: 'Galería', href: '/galeria', nameEn: 'Gallery' },
-  { name: 'Nosotros', href: '/nosotros', nameEn: 'About' },
-  { name: 'Contacto', href: '/contacto', nameEn: 'Contact' },
-  { name: 'Historia', href: '/historia', nameEn: 'History' }
-];
+import { getEnabledNavigationItems, getFeatureFlagsStatus } from '@/lib/featureFlags';
 
 interface LayoutProps {
   readonly children: React.ReactNode;
@@ -22,6 +12,12 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  // Use feature flags to determine which navigation items to show
+  const enabledNavigation = getEnabledNavigationItems();
+  
+  // Debug information (only shown in development with debug flag)
+  const debugInfo = getFeatureFlagsStatus();
 
   return (
     <div className="min-h-screen bg-white">
@@ -40,7 +36,7 @@ export default function Layout({ children }: LayoutProps) {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-6">
-              {navigation.map((item) => (
+              {enabledNavigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
@@ -65,7 +61,7 @@ export default function Layout({ children }: LayoutProps) {
         {isMenuOpen && (
           <div className="md:hidden bg-betis-green border-t border-white/20">
             <div className="px-4 py-2 space-y-1">
-              {navigation.map((item) => (
+              {enabledNavigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
@@ -206,6 +202,18 @@ export default function Layout({ children }: LayoutProps) {
           </div>
         </div>
       </footer>
+
+      {/* Debug Info (Development Only) */}
+      {debugInfo && (
+        <div className="fixed bottom-4 right-4 bg-gray-900 text-white p-3 rounded text-xs max-w-xs z-50">
+          <div className="font-bold">Feature Flags Debug</div>
+          <div>Environment: {debugInfo.environment}</div>
+          <div>Enabled: {debugInfo.enabledFeatures.join(', ')}</div>
+          {debugInfo.disabledFeatures.length > 0 && (
+            <div>Disabled: {debugInfo.disabledFeatures.join(', ')}</div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
