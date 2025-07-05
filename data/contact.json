@@ -72,10 +72,32 @@
       "message": "Testing contact form functionality",
       "submittedAt": "2025-07-05T21:55:54.821Z",
       "status": "new"
+    },
+    {
+      "id": "contact_1751752785099_827kn1qni",
+      "name": "Ismael Martinez Ramos",
+      "email": "ismaelmartinez@gmail.com",
+      "phone": "07533030784",
+      "type": "general",
+      "subject": "fafdfdas",
+      "message": "fafdsfsda",
+      "submittedAt": "2025-07-05T21:59:45.099Z",
+      "status": "new"
+    },
+    {
+      "id": "contact_1751752813519_a5jn8f9jo",
+      "name": "Ismael Martinez Ramos",
+      "email": "ismaelmartinez@gmail.com",
+      "phone": "07533030784",
+      "type": "rsvp",
+      "subject": "Consulta sfdkfdskjdfsobre eventos",
+      "message": "fdsadfsdsf",
+      "submittedAt": "2025-07-05T22:00:13.519Z",
+      "status": "new"
     }
   ],
   "stats": {
-    "totalSubmissions": 7,
+    "totalSubmissions": 9,
     "responseRate": 33.3,
     "averageResponseTime": 18
   }

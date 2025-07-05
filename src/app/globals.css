@@ -36,6 +36,31 @@ body {
   }
 }
 
+/* Force light mode for form elements to ensure readability */
+input, select, textarea {
+  color: #1f2937 !important;
+  background-color: #ffffff !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #6b7280 !important;
+}
+
+/* Ensure labels and form text are visible in all modes */
+label {
+  color: #374151 !important;
+}
+
+/* Ensure form containers have proper backgrounds */
+form {
+  background-color: transparent;
+}
+
+.form-container {
+  background-color: #ffffff;
+  color: #1f2937;
+}
+
 /* Custom utility classes for Real Betis branding */
 .bg-betis-green { background-color: var(--betis-green); }
 .bg-betis-green-dark { background-color: var(--betis-green-dark); }
