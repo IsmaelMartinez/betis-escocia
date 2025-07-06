@@ -1,6 +1,13 @@
 /**
- * Feature Flags Configuration
- * Use these flags to enable/disable features across the application
+ * Feature Flags Configuration - SECURE BY DEFAULT
+ * 
+ * SECURITY PRINCIPLE: ALL features are hidden by default unless explicitly enabled.
+ * This ensures that no features are accidentally exposed in production.
+ * 
+ * To enable a feature, set the environment variable to 'true':
+ * NEXT_PUBLIC_FEATURE_EXAMPLE=true
+ * 
+ * If not set or set to anything other than 'true', the feature remains hidden.
  */
 
 interface FeatureFlags {
@@ -22,18 +29,19 @@ interface FeatureFlags {
 }
 
 // Default feature flags configuration
+// ALL FEATURES ARE HIDDEN BY DEFAULT - SECURE BY DEFAULT APPROACH
 const defaultFlags: FeatureFlags = {
-  // Core navigation features
-  showClasificacion: true,
-  showColeccionables: true,
-  showGaleria: true,
-  showRSVP: true,
+  // Core navigation features - hidden by default for security
+  showClasificacion: false,
+  showColeccionables: false,
+  showGaleria: false,
+  showRSVP: false, // Even RSVP is now hidden by default
   
-  // Additional features
-  showSocialMedia: true,
-  showHistory: true,
-  showNosotros: true,
-  showContacto: true,
+  // Additional features - all hidden by default
+  showSocialMedia: false,
+  showHistory: false, // Hidden by default
+  showNosotros: false, // Hidden by default
+  showContacto: false, // Hidden by default
   
   // Development/testing features
   showDebugInfo: false,
@@ -53,15 +61,15 @@ const environmentFlags: Partial<FeatureFlags> = {
     showDebugInfo: Boolean(process.env.NEXT_PUBLIC_DEBUG_MODE),
   }),
   
-  // Feature-specific environment variables
-  showClasificacion: process.env.NEXT_PUBLIC_FEATURE_CLASIFICACION !== 'false',
-  showColeccionables: process.env.NEXT_PUBLIC_FEATURE_COLECCIONABLES !== 'false',
-  showGaleria: process.env.NEXT_PUBLIC_FEATURE_GALERIA !== 'false',
-  showRSVP: process.env.NEXT_PUBLIC_FEATURE_RSVP !== 'false',
-  showSocialMedia: process.env.NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA !== 'false',
-  showHistory: process.env.NEXT_PUBLIC_FEATURE_HISTORY !== 'false',
-  showNosotros: process.env.NEXT_PUBLIC_FEATURE_NOSOTROS !== 'false',
-  showContacto: process.env.NEXT_PUBLIC_FEATURE_CONTACTO !== 'false',
+  // Feature-specific environment variables - ALL must be explicitly set to 'true' to enable
+  showClasificacion: process.env.NEXT_PUBLIC_FEATURE_CLASIFICACION === 'true',
+  showColeccionables: process.env.NEXT_PUBLIC_FEATURE_COLECCIONABLES === 'true',
+  showGaleria: process.env.NEXT_PUBLIC_FEATURE_GALERIA === 'true',
+  showRSVP: process.env.NEXT_PUBLIC_FEATURE_RSVP === 'true', // Must be explicitly enabled
+  showSocialMedia: process.env.NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA === 'true',
+  showHistory: process.env.NEXT_PUBLIC_FEATURE_HISTORY === 'true', // Must be explicitly enabled
+  showNosotros: process.env.NEXT_PUBLIC_FEATURE_NOSOTROS === 'true', // Must be explicitly enabled
+  showContacto: process.env.NEXT_PUBLIC_FEATURE_CONTACTO === 'true',
 };
 
 // Merge default flags with environment overrides

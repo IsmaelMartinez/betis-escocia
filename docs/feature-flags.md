@@ -2,67 +2,83 @@
 
 This file shows how to control which features are visible in the application using environment variables.
 
+## 🔒 SECURE BY DEFAULT APPROACH
+
+**ALL FEATURES ARE HIDDEN BY DEFAULT** unless explicitly enabled via environment variables. This provides maximum security and control over which features are visible in production.
+
 ## Available Feature Flags
 
+### All Features (Hidden by Default - Require Explicit Enablement)
 - `NEXT_PUBLIC_FEATURE_CLASIFICACION` - Shows/hides the Clasificación (Standings) page
 - `NEXT_PUBLIC_FEATURE_COLECCIONABLES` - Shows/hides the Coleccionables (Collectibles) page  
 - `NEXT_PUBLIC_FEATURE_GALERIA` - Shows/hides the Galería (Gallery) page
 - `NEXT_PUBLIC_FEATURE_RSVP` - Shows/hides the RSVP page
 - `NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA` - Shows/hides social media features
+- `NEXT_PUBLIC_FEATURE_CONTACTO` - Shows/hides the Contacto (Contact) page
 - `NEXT_PUBLIC_FEATURE_HISTORY` - Shows/hides the Historia (History) page
 - `NEXT_PUBLIC_FEATURE_NOSOTROS` - Shows/hides the Nosotros (About) page
-- `NEXT_PUBLIC_FEATURE_CONTACTO` - Shows/hides the Contacto (Contact) page
 
 ## Usage
 
-### To Hide a Feature
+### To Enable Any Feature
 
-Set the environment variable to `false`:
-
-```bash
-NEXT_PUBLIC_FEATURE_CLASIFICACION=false
-NEXT_PUBLIC_FEATURE_COLECCIONABLES=false
-NEXT_PUBLIC_FEATURE_GALERIA=false
-NEXT_PUBLIC_FEATURE_RSVP=false
-```
-
-### To Show a Feature
-
-Set the environment variable to `true` or omit it entirely (defaults to `true`):
+**EVERY feature must be explicitly set to `true` to be visible:**
 
 ```bash
 NEXT_PUBLIC_FEATURE_CLASIFICACION=true
-# OR simply omit the variable for default behavior
+NEXT_PUBLIC_FEATURE_COLECCIONABLES=true
+NEXT_PUBLIC_FEATURE_GALERIA=true
+NEXT_PUBLIC_FEATURE_RSVP=true
+NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=true
+NEXT_PUBLIC_FEATURE_CONTACTO=true
+NEXT_PUBLIC_FEATURE_HISTORY=true
+NEXT_PUBLIC_FEATURE_NOSOTROS=true
 ```
+
+### Default Behavior (No Environment Variables)
+
+Without any environment variables set, the application will show:
+- ✅ **Always Visible**: Home page only
+- ❌ **Hidden**: ALL other pages and features (RSVP, About, History, Standings, Collectibles, Gallery, Social Media, Contact)
 
 ### Common Scenarios
 
-#### Hide Everything Except Core Pages (Home, Contact, About)
+#### Minimal Setup (Home + RSVP + About)
 ```bash
-NEXT_PUBLIC_FEATURE_CLASIFICACION=false
-NEXT_PUBLIC_FEATURE_COLECCIONABLES=false
-NEXT_PUBLIC_FEATURE_GALERIA=false
-NEXT_PUBLIC_FEATURE_RSVP=false
-NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=false
-NEXT_PUBLIC_FEATURE_HISTORY=false
+NEXT_PUBLIC_FEATURE_RSVP=true
+NEXT_PUBLIC_FEATURE_NOSOTROS=true
 ```
 
-#### Show Only RSVP and Contact (Minimal Setup)
+#### Community Features Only (No Merchandise/Gallery)
 ```bash
-NEXT_PUBLIC_FEATURE_CLASIFICACION=false
-NEXT_PUBLIC_FEATURE_COLECCIONABLES=false
-NEXT_PUBLIC_FEATURE_GALERIA=false
 NEXT_PUBLIC_FEATURE_RSVP=true
-NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=false
-NEXT_PUBLIC_FEATURE_HISTORY=false
-NEXT_PUBLIC_FEATURE_NOSOTROS=false
+NEXT_PUBLIC_FEATURE_NOSOTROS=true
+NEXT_PUBLIC_FEATURE_HISTORY=true
 NEXT_PUBLIC_FEATURE_CONTACTO=true
+NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=true
+```
+
+#### Full Feature Set (Everything Enabled)
+
+```bash
+NEXT_PUBLIC_FEATURE_CLASIFICACION=true
+NEXT_PUBLIC_FEATURE_COLECCIONABLES=true
+NEXT_PUBLIC_FEATURE_GALERIA=true
+NEXT_PUBLIC_FEATURE_RSVP=true
+NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=true
+NEXT_PUBLIC_FEATURE_CONTACTO=true
+NEXT_PUBLIC_FEATURE_HISTORY=true
+NEXT_PUBLIC_FEATURE_NOSOTROS=true
 ```
 
 #### Hide Work-in-Progress Features
+
 ```bash
-NEXT_PUBLIC_FEATURE_GALERIA=false
-NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=false
+# Only enable core pages (Home automatically visible)
+NEXT_PUBLIC_FEATURE_RSVP=true
+NEXT_PUBLIC_FEATURE_NOSOTROS=true
+NEXT_PUBLIC_FEATURE_CONTACTO=true
+# All other features remain hidden (not set)
 ```
 
 ## Development
@@ -85,13 +101,14 @@ In your Vercel project settings, add these environment variables:
 
 1. Go to your Vercel project dashboard
 2. Navigate to Settings → Environment Variables
-3. Add the feature flags you want to control:
+3. Add the feature flags you want to enable (only set to `true` for features you want visible):
 
-```
-NEXT_PUBLIC_FEATURE_CLASIFICACION = false
-NEXT_PUBLIC_FEATURE_COLECCIONABLES = false
-NEXT_PUBLIC_FEATURE_GALERIA = false
-NEXT_PUBLIC_FEATURE_RSVP = true
+```bash
+NEXT_PUBLIC_FEATURE_CLASIFICACION=true
+NEXT_PUBLIC_FEATURE_RSVP=true
+NEXT_PUBLIC_FEATURE_NOSOTROS=true
+NEXT_PUBLIC_FEATURE_CONTACTO=true
+# Other features not set = hidden by default
 ```
 
 ### Production vs Development
