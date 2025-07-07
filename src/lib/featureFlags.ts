@@ -21,6 +21,7 @@ interface FeatureFlags {
   showSocialMedia: boolean;
   showHistory: boolean;
   showNosotros: boolean;
+  showUnete: boolean;
   showContacto: boolean;
   
   // Development/testing features
@@ -40,7 +41,8 @@ const defaultFlags: FeatureFlags = {
   // Additional features - all hidden by default
   showSocialMedia: false,
   showHistory: false, // Hidden by default
-  showNosotros: false, // Hidden by default
+  showNosotros: true, // Enabled by default
+  showUnete: true, // Enabled by default
   showContacto: false, // Hidden by default
   
   // Development/testing features
@@ -69,6 +71,7 @@ const environmentFlags: Partial<FeatureFlags> = {
   showSocialMedia: process.env.NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA === 'true',
   showHistory: process.env.NEXT_PUBLIC_FEATURE_HISTORY === 'true', // Must be explicitly enabled
   showNosotros: process.env.NEXT_PUBLIC_FEATURE_NOSOTROS === 'true', // Must be explicitly enabled
+  showUnete: process.env.NEXT_PUBLIC_FEATURE_UNETE === 'true', // Must be explicitly enabled
   showContacto: process.env.NEXT_PUBLIC_FEATURE_CONTACTO === 'true',
 };
 
@@ -123,16 +126,16 @@ export function getEnabledNavigationItems() {
       feature: 'showNosotros' as keyof FeatureFlags
     },
     { 
+      name: 'Únete', 
+      href: '/unete', 
+      nameEn: 'Join',
+      feature: 'showUnete' as keyof FeatureFlags
+    },
+    { 
       name: 'Contacto', 
       href: '/contacto', 
       nameEn: 'Contact',
       feature: 'showContacto' as keyof FeatureFlags
-    },
-    { 
-      name: 'Historia', 
-      href: '/historia', 
-      nameEn: 'History',
-      feature: 'showHistory' as keyof FeatureFlags
     }
   ];
 

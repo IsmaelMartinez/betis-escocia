@@ -399,7 +399,7 @@ export default function ContactPage() {
               <h3 className="text-lg font-bold mb-3 text-betis-green">¿Cómo funciona la tienda?</h3>
               <p className="text-gray-700 mb-6">
                 Puedes ver los productos online y hacer pre-pedidos. Te contactamos 
-                para confirmar y coordinar entrega o recogida.
+                para confirmar y coordinar recogida.
               </p>
 
               <h3 className="text-lg font-bold mb-3 text-betis-green">¿Puedo enviar fotos?</h3>
