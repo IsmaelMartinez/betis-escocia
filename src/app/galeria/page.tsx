@@ -2,7 +2,7 @@
 
 import { Camera, Hash, ExternalLink } from 'lucide-react';
 import InstagramFeed from '@/components/InstagramFeed';
-import FacebookFeed from '@/components/FacebookFeed';
+import FacebookPagePlugin from '@/components/FacebookPagePlugin';
 
 export default function GalleryPage() {
   return (
@@ -83,8 +83,14 @@ export default function GalleryPage() {
           {/* Instagram Feed */}
           <InstagramFeed maxPosts={6} showHeader={true} compactMode={false} />
           
-          {/* Facebook Feed */}
-          <FacebookFeed maxPosts={6} showHeader={true} compactMode={false} />
+          {/* Facebook Page Plugin */}
+          <FacebookPagePlugin 
+            showHeader={true} 
+            height={400}
+            adaptContainerWidth={true}
+            showFacepile={true}
+            tabs="timeline"
+          />
         </div>
 
         {/* Call to Action */}

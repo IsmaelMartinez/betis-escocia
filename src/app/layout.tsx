@@ -37,6 +37,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* Facebook SDK */}
+        <div id="fb-root"></div>
+        <script 
+          async 
+          defer 
+          crossOrigin="anonymous" 
+          src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v23.0"
+        ></script>
+        
         <OfflineDetector />
         <Layout>
           {children}

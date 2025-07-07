@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Instagram, Facebook, Copy, Check, Camera, Share2, Tag } from 'lucide-react';
 import InstagramFeed from '@/components/InstagramFeed';
-import FacebookFeed from '@/components/FacebookFeed';
+import FacebookPagePlugin from '@/components/FacebookPagePlugin';
 
 export default function SocialTaggingGuide() {
   const [copiedText, setCopiedText] = useState<string>('');
@@ -506,8 +506,14 @@ export default function SocialTaggingGuide() {
             {/* Instagram Feed */}
             <InstagramFeed maxPosts={8} showHeader={true} compactMode={false} />
             
-            {/* Facebook Feed */}
-            <FacebookFeed maxPosts={8} showHeader={true} compactMode={false} />
+            {/* Facebook Page Plugin */}
+            <FacebookPagePlugin 
+              showHeader={true} 
+              height={500}
+              adaptContainerWidth={true}
+              showFacepile={true}
+              tabs="timeline"
+            />
           </div>
         </div>
       </section>

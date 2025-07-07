@@ -96,11 +96,24 @@ Created: December 2024
 
 ### 🔮 **OPTIONAL FUTURE ENHANCEMENTS**
 
-#### T31: Advanced Social Media Integration **🚧 OPTIONAL**
-- [ ] T31.1: Instagram grid view of community posts
-- [ ] T31.2: Facebook photo albums integration
+#### T31: Advanced Social Media Integration **🚧 IN PROGRESS**
+- [ ] T31.1: Instagram grid view of community posts (placeholder created, API integration pending)
+- [x] T31.2: Facebook Group feed integration with official embed ✅ **COMPLETED**
 - [ ] T31.3: Social media contest and engagement features
 - [ ] T31.4: Automated social media posting
+
+**Facebook Integration Details:**
+- ✅ Facebook Page Plugin implemented with JavaScript SDK
+- ✅ Group URL: https://www.facebook.com/groups/beticosenescocia/
+- ✅ SDK Script: `https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v23.0`
+- ✅ Plugin shows timeline, facepile, and adapts to container width
+- ✅ Integrated into `/galeria` and `/redes-sociales` pages
+- ✅ Created `FacebookPagePlugin` component with official Facebook embed code
+
+**Instagram Integration Status:**
+- ✅ Instagram placeholder component created (`InstagramEmbed`)
+- 🔄 Instagram API integration requires Business/Creator account setup
+- 🔄 Alternative: Individual post embeds (no full feed available natively)
 
 #### T32: Advanced Features **🚧 OPTIONAL**
 - [ ] T32.1: Multi-language support (Spanish/English toggle)
