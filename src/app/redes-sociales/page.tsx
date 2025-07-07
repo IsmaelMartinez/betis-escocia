@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Instagram, Facebook, Copy, Check, Camera, Share2, Tag } from 'lucide-react';
-import InstagramFeed from '@/components/InstagramFeed';
+import InstagramEmbed from '@/components/InstagramEmbed';
 import FacebookPagePlugin from '@/components/FacebookPagePlugin';
 
 export default function SocialTaggingGuide() {
@@ -404,7 +404,7 @@ export default function SocialTaggingGuide() {
                 
                 <div className="space-y-3">
                   <a
-                    href="https://instagram.com/penabetiscaescocesa"
+                    href="https://instagram.com/rbetisescocia"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block bg-gradient-to-r from-purple-500 to-pink-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-pink-700 transition-all duration-300 transform hover:scale-105"
@@ -503,8 +503,8 @@ export default function SocialTaggingGuide() {
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Instagram Feed */}
-            <InstagramFeed maxPosts={8} showHeader={true} compactMode={false} />
+            {/* Instagram Embed */}
+            <InstagramEmbed showHeader={true} />
             
             {/* Facebook Page Plugin */}
             <FacebookPagePlugin 

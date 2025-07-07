@@ -37,11 +37,11 @@ Created: December 2024
 - [x] T25.1: Remove unused JSON data handling code and file system dependencies ✅
 - [x] T25.2: Clean up unused imports and dependencies (fs/promises, path utilities) ✅
 - [x] T25.3: Update error handling to be Supabase-specific with user-friendly messages ✅
-- [ ] T25.4: Optimize components and reduce technical debt 🚧
+- [x] T25.4: Optimize components and reduce technical debt ✅ **SOCIAL MEDIA CLEANUP COMPLETED**
 - [x] T25.5: Update documentation and README to reflect Supabase architecture ✅
 - [x] T25.6: Remove migration scripts and temporary development files ✅
 
-#### 🗄️ **T34: Complete Database Migration to Supabase** **🚨 HIGH PRIORITY**
+#### 🗄️ **T34: Core Database Migration to Supabase** **🚨 HIGH PRIORITY**
 
 - [x] T34.1: RSVP System - Migrated to Supabase with full functionality ✅
 - [ ] T34.2: Contact Forms - Migrate from JSON file system to Supabase tables
@@ -60,21 +60,17 @@ Created: December 2024
   - Create `voting_campaigns`, `votes`, and `pre_orders` tables
   - Implement voting logic with duplicate prevention
   - Update `/api/camiseta-voting` route to use Supabase instead of `data/camiseta-voting.json`
-- [ ] T34.6: Porra System - Migrate predictions system from JSON to Supabase
-  - Create `porra_campaigns` and `porra_entries` tables
-  - Add match result tracking and winner calculation
-  - Update `/api/porra` route to use Supabase instead of `data/porra.json`
-- [ ] T34.7: Update Supabase schema with all required tables and RLS policies
-  - Design comprehensive database schema for all systems
+- [ ] T34.6: Update Supabase schema with core tables and RLS policies
+  - Design database schema for Contact, Orders, Merchandise, and Voting systems
   - Implement Row Level Security for data protection
   - Add indexes for performance optimization
-- [ ] T34.8: Data migration scripts for existing JSON data to Supabase
+- [ ] T34.7: Data migration scripts for existing JSON data to Supabase
   - Create scripts to migrate existing data from JSON files
   - Ensure data integrity during migration process
   - Backup and validate migrated data
-- [ ] T34.9: Remove all file system dependencies after successful migration
-  - Remove all `fs`, `path`, and file system imports
-  - Delete unused JSON data files
+- [ ] T34.8: Remove file system dependencies for migrated systems
+  - Remove `fs`, `path`, and file system imports from migrated APIs
+  - Delete unused JSON data files (except porra.json)
   - Clean up data directory and file handling utilities
 
 #### 🧪 **T26: Testing & Quality Assurance** **� IN PROGRESS**
@@ -149,10 +145,13 @@ Created: December 2024
 **Instagram Integration Details:**
 - ✅ Real Instagram post embedded using official Instagram embed code
 - ✅ Post URL: https://www.instagram.com/p/DKE4avDMvGH/
+- ✅ Instagram Account: @rbetisescocia (https://www.instagram.com/rbetisescocia)
+- ✅ Single post embed instead of feed to prevent loading failures
 - ✅ Automatic Instagram script loading and processing
 - ✅ Full embed with all Instagram styling and functionality
 - ✅ Responsive design that adapts to container width
 - ✅ Created `InstagramEmbed` component with TypeScript types
+- ✅ Removed old `InstagramFeed` component that was causing multiple post loading failures
 
 #### T32: Advanced Features **🚧 OPTIONAL**
 - [ ] T32.1: Multi-language support (Spanish/English toggle)
@@ -161,13 +160,22 @@ Created: December 2024
 - [ ] T32.4: Event calendar integration
 - [ ] T32.5: Merchandise inventory management
 
-#### T35: Enhanced Feature Flag Management **🚧 OPTIONAL**
-- [ ] T35.1: Integrate with Vercel Feature Flags for production control
-- [ ] T35.2: Evaluate LaunchDarkly or similar service for advanced targeting
-- [ ] T35.3: Consider open-source alternatives (Unleash, Flagsmith, PostHog)
-- [ ] T35.4: Add percentage-based rollouts and A/B testing capabilities
-- [ ] T35.5: User segmentation and targeted feature releases
-- [ ] T35.6: Analytics integration for feature usage tracking
+#### T35: Future System Evaluation **🔍 EVALUATION PHASE**
+- [ ] T35.1: Evaluate Porra (predictions) system necessity and user demand
+  - Analyze current usage patterns and community interest
+  - Decide whether to migrate to Supabase or discontinue
+  - If keeping: Create `porra_campaigns` and `porra_entries` tables
+  - If keeping: Update `/api/porra` route to use Supabase
+- [ ] T35.2: Assess other optional features based on community feedback
+- [ ] T35.3: Review and optimize existing systems performance
+
+#### T36: Enhanced Feature Flag Management **🚧 OPTIONAL**
+- [ ] T36.1: Integrate with Vercel Feature Flags for production control
+- [ ] T36.2: Evaluate LaunchDarkly or similar service for advanced targeting
+- [ ] T36.3: Consider open-source alternatives (Unleash, Flagsmith, PostHog)
+- [ ] T36.4: Add percentage-based rollouts and A/B testing capabilities
+- [ ] T36.5: User segmentation and targeted feature releases
+- [ ] T36.6: Analytics integration for feature usage tracking
 
 ### 📊 **PROGRESS**: **85% COMPLETE** - Core RSVP functionality complete, database migration for other systems required
 
@@ -198,20 +206,22 @@ Created: December 2024
 ### 🚨 **CRITICAL DISCOVERY: INCOMPLETE DATABASE MIGRATION**
 
 **Current State Analysis (July 2025):**
-While working on error handling improvements, discovered that **only the RSVP system** has been fully migrated to Supabase. The following systems are still using JSON file storage and need immediate migration:
+While working on error handling improvements, discovered that **only the RSVP system** has been fully migrated to Supabase. The following **core business systems** are still using JSON file storage and need immediate migration:
 
-#### 📝 **APIs Still Using File System:**
+#### 📝 **Core APIs Requiring Migration:**
 1. **Contact Forms** (`/api/contact`) - Stores submissions in `data/contact.json`
 2. **Orders System** (`/api/orders`) - Stores merchandise orders in `data/orders.json`  
 3. **Merchandise Catalog** (`/api/merchandise`) - Product data in `data/merchandise.json`
 4. **Voting System** (`/api/camiseta-voting`) - Voting data in `data/camiseta-voting.json`
-5. **Porra System** (`/api/porra`) - Predictions in `data/porra.json`
+
+#### 🔍 **Systems Under Evaluation:**
+5. **Porra System** (`/api/porra`) - Predictions in `data/porra.json` - **DEFERRED FOR EVALUATION**
 
 #### 🔍 **Impact Assessment:**
-- **Data Persistence**: All non-RSVP data is stored locally and won't persist in production
+- **Data Persistence**: Core business data is stored locally and won't persist in production
 - **Scalability**: File system approach doesn't scale and isn't production-ready
-- **GDPR Compliance**: Missing auto-cleanup and data retention policies
-- **Admin Dashboard**: Can't fully function without database backend
+- **GDPR Compliance**: Missing auto-cleanup and data retention policies for core systems
+- **Admin Dashboard**: Can't fully function without database backend for orders and merchandise
 - **Backup & Recovery**: No database-level backup for critical business data
 
 ### 🧹 **FILES REQUIRING CLEANUP**
@@ -272,18 +282,17 @@ While working on error handling improvements, discovered that **only the RSVP sy
 
 ## 🎯 **NEXT STEPS PRIORITY ORDER**
 
-### Phase 1: Critical Database Migration (IMMEDIATE - This Week)
+### Phase 1: Core Database Migration (IMMEDIATE - This Week)
 1. **T34.2**: Migrate Contact Forms to Supabase
 2. **T34.3**: Migrate Orders System to Supabase  
 3. **T34.4**: Migrate Merchandise Catalog to Supabase
 4. **T34.5**: Migrate Voting System to Supabase
-5. **T34.6**: Migrate Porra System to Supabase
-6. **T34.7**: Update Supabase schema with all tables
+5. **T34.6**: Update Supabase schema with core tables
 
 ### Phase 2: Code Cleanup & Optimization (Following Week)
-1. **T25.4**: Optimize components and reduce technical debt
-2. **T34.9**: Remove all file system dependencies
-3. **T34.8**: Clean up migration scripts and temporary files
+1. **T34.7**: Data migration scripts for existing JSON data
+2. **T34.8**: Remove file system dependencies for migrated systems
+3. **T25.4**: Optimize components and reduce technical debt (if not completed)
 
 ### Phase 3: Quality Assurance & Testing (Week 3)
 1. **T26.4-T26.6**: Complete testing suite for all systems
@@ -295,10 +304,16 @@ While working on error handling improvements, discovered that **only the RSVP sy
 2. **T28**: Performance optimization and admin features
 3. **T29**: Advanced community features
 
+### Phase 5: Future Evaluation (Later)
+1. **T35.1**: Evaluate Porra system necessity and user demand
+2. **T35.2**: Assess other optional features based on community feedback
+3. **T35.3**: Consider advanced features like multi-language support
+
 ### 🚨 **CRITICAL PATH DEPENDENCIES:**
-- **Database Migration must be completed first** - All other systems depend on Supabase
-- **Production deployment blocked** until file system dependencies are removed
-- **Admin dashboard incomplete** without database backend for all systems
+- **Core Database Migration must be completed first** - Production deployment depends on it
+- **File system dependencies must be removed** for production readiness
+- **Admin dashboard incomplete** without database backend for orders and merchandise
+- **Porra system deferred** - Will evaluate necessity after core systems are stable
 
 ---
 

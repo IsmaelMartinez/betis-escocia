@@ -1,7 +1,7 @@
 'use client';
 
 import { Camera, Hash, ExternalLink } from 'lucide-react';
-import InstagramFeed from '@/components/InstagramFeed';
+import InstagramEmbed from '@/components/InstagramEmbed';
 import FacebookPagePlugin from '@/components/FacebookPagePlugin';
 
 export default function GalleryPage() {
@@ -30,7 +30,7 @@ export default function GalleryPage() {
             <div className="flex flex-wrap justify-center gap-4">
               <div className="flex items-center gap-2 bg-white bg-opacity-20 px-4 py-2 rounded-lg">
                 <span className="text-sm">📸</span>
-                <span className="font-medium">@penabetiscaescocesa</span>
+                <span className="font-medium">@rbetisescocia</span>
               </div>
               <div className="flex items-center gap-2 bg-white bg-opacity-20 px-4 py-2 rounded-lg">
                 <span className="text-sm">📘</span>
@@ -56,7 +56,7 @@ export default function GalleryPage() {
           </p>
           <div className="flex justify-center gap-4">
             <a
-              href="https://instagram.com/penabetiscaescocesa"
+              href="https://instagram.com/rbetisescocia"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-pink-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-pink-700 transition-colors"
@@ -80,8 +80,8 @@ export default function GalleryPage() {
 
         {/* Live Social Media Feeds */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Instagram Feed */}
-          <InstagramFeed maxPosts={6} showHeader={true} compactMode={false} />
+          {/* Instagram Embed */}
+          <InstagramEmbed showHeader={true} />
           
           {/* Facebook Page Plugin */}
           <FacebookPagePlugin 
@@ -162,7 +162,7 @@ export default function GalleryPage() {
                 <li>• #BetisEdinburgh</li>
                 <li>• #RealBetis</li>
                 <li>• #PolwarthTavern</li>
-                <li>• @penabetiscaescocesa</li>
+                <li>• @rbetisescocia</li>
               </ul>
             </div>
           </div>

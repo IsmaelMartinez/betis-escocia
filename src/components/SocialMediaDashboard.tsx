@@ -2,17 +2,15 @@
 
 import { useState } from 'react';
 import { Camera, Users, Hash, ExternalLink } from 'lucide-react';
-import InstagramFeed from './InstagramFeed';
-import FacebookFeed from './FacebookFeed';
+import InstagramEmbed from './InstagramEmbed';
+import FacebookPagePlugin from './FacebookPagePlugin';
 
 interface SocialMediaDashboardProps {
   readonly showHashtags?: boolean;
-  readonly maxPostsPerPlatform?: number;
 }
 
 export default function SocialMediaDashboard({ 
-  showHashtags = true, 
-  maxPostsPerPlatform = 3 
+  showHashtags = true
 }: SocialMediaDashboardProps) {
   const [activeTab, setActiveTab] = useState<'instagram' | 'facebook' | 'both'>('both');
 
@@ -160,20 +158,17 @@ export default function SocialMediaDashboard({
       <div className="space-y-8">
         {(activeTab === 'both' || activeTab === 'instagram') && (
           <div className="bg-white rounded-lg shadow-md p-6">
-            <InstagramFeed 
-              maxPosts={maxPostsPerPlatform} 
+            <InstagramEmbed 
               showHeader={activeTab === 'both'}
-              compactMode={activeTab === 'both'}
             />
           </div>
         )}
 
         {(activeTab === 'both' || activeTab === 'facebook') && (
           <div className="bg-white rounded-lg shadow-md p-6">
-            <FacebookFeed 
-              maxPosts={maxPostsPerPlatform} 
+            <FacebookPagePlugin 
               showHeader={activeTab === 'both'}
-              compactMode={activeTab === 'both'}
+              height={400}
             />
           </div>
         )}
