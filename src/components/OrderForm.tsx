@@ -1,27 +1,37 @@
 'use client';
 
 import { useState } from 'react';
+import { FormSuccessMessage, FormErrorMessage, FormLoadingMessage } from '@/components/MessageComponent';
+import Field, { ValidatedInput, ValidatedSelect, ValidatedTextarea } from '@/components/Field';
+import { useFormValidation, commonValidationRules } from '@/lib/formValidation';
+import { User, Mail, Phone, MessageSquare, Package } from 'lucide-react';
 
 interface OrderFormProps {
-  productId: string;
-  productName: string;
-  price: number;
-  isInStock: boolean;
-  onClose: () => void;
+  readonly productId: string;
+  readonly productName: string;
+  readonly price: number;
+  readonly isInStock: boolean;
+  readonly onClose: () => void;
 }
 
-interface OrderFormData {
-  name: string;
-  email: string;
-  phone: string;
-  quantity: number;
-  size?: string;
-  message: string;
-  contactMethod: 'email' | 'whatsapp';
-}
+const orderValidationRules = {
+  name: commonValidationRules.name,
+  email: commonValidationRules.email,
+  phone: { ...commonValidationRules.phone, required: true },
+  quantity: { required: true },
+  size: { required: false },
+  message: { ...commonValidationRules.message, required: false }
+};
 
 export default function OrderForm({ productId, productName, price, isInStock, onClose }: OrderFormProps) {
-  const [formData, setFormData] = useState<OrderFormData>({
+  const {
+    data: formData,
+    errors,
+    touched,
+    updateField,
+    touchField,
+    validateAll
+  } = useFormValidation({
     name: '',
     email: '',
     phone: '',
@@ -29,7 +39,7 @@ export default function OrderForm({ productId, productName, price, isInStock, on
     size: '',
     message: '',
     contactMethod: 'email'
-  });
+  }, orderValidationRules);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -40,6 +50,18 @@ export default function OrderForm({ productId, productName, price, isInStock, on
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Add size validation if needed
+    const currentRules = { ...orderValidationRules };
+    if (needsSize) {
+      currentRules.size = { required: true };
+    }
+    
+    const validation = validateAll();
+    if (!validation.isValid) {
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
@@ -49,7 +71,7 @@ export default function OrderForm({ productId, productName, price, isInStock, on
         productName,
         price,
         quantity: formData.quantity,
-        totalPrice: price * formData.quantity,
+        totalPrice: price * (formData.quantity as number),
         customerInfo: {
           name: formData.name,
           email: formData.email,
@@ -88,217 +110,229 @@ export default function OrderForm({ productId, productName, price, isInStock, on
     }
   };
 
-  const handleInputChange = (field: keyof OrderFormData, value: string | number) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  const handleInputChange = (field: string, value: string | number) => {
+    updateField(field, value);
+  };
+
+  const handleBlur = (field: string) => {
+    touchField(field);
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-bold text-green-800">
-              {isInStock ? 'Realizar Pedido' : 'Pre-Reservar'}
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-xl font-bold text-gray-900">
+              {isInStock ? 'Hacer Pedido' : 'Pre-pedido'}
             </h3>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 text-2xl"
+              className="text-gray-400 hover:text-gray-600 text-2xl"
             >
               ×
             </button>
           </div>
 
-          <div className="mb-4 p-3 bg-gray-50 rounded">
-            <h4 className="font-semibold text-green-800">{productName}</h4>
-            <p className="text-sm text-gray-600">
-              Precio: €{price} {!isInStock && '(Pre-reserva)'}
-            </p>
-          </div>
+          {submitStatus === 'success' ? (
+            <FormSuccessMessage
+              title="¡Pedido Enviado!"
+              message={`Tu ${isInStock ? 'pedido' : 'pre-pedido'} de ${productName} ha sido enviado. Te contactaremos pronto para confirmar los detalles.`}
+            />
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Product Info */}
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-800">{productName}</h4>
+                <p className="text-betis-green font-bold">€{price}</p>
+                {!isInStock && (
+                  <p className="text-orange-600 text-sm mt-1">
+                    ⚠️ Pre-pedido - Te contactaremos cuando esté disponible
+                  </p>
+                )}
+              </div>
 
-          {submitStatus === 'success' && (
-            <div className="mb-4 p-3 bg-green-100 border border-green-300 rounded text-green-800">
-              ¡{isInStock ? 'Pedido' : 'Pre-reserva'} enviado correctamente! Te contactaremos pronto.
-            </div>
-          )}
-
-          {submitStatus === 'error' && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-300 rounded text-red-800">
-              Error al enviar el {isInStock ? 'pedido' : 'pre-reserva'}. Inténtalo de nuevo.
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                Nombre Completo *
-              </label>
-              <input
-                id="name"
-                type="text"
+              {/* Personal Information */}
+              <Field
+                label="Nombre completo"
+                htmlFor="order-name"
                 required
-                value={formData.name}
-                onChange={(e) => handleInputChange('name', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                placeholder="Tu nombre completo"
-              />
-            </div>
+                icon={<User className="h-4 w-4" />}
+                error={errors.name}
+                touched={touched.name}
+              >
+                <ValidatedInput
+                  type="text"
+                  id="order-name"
+                  value={formData.name as string}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  onBlur={() => handleBlur('name')}
+                  placeholder="Tu nombre completo"
+                  error={errors.name}
+                  touched={touched.name}
+                />
+              </Field>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email *
-              </label>
-              <input
-                id="email"
-                type="email"
+              <Field
+                label="Email"
+                htmlFor="order-email"
                 required
-                value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                placeholder="tu@email.com"
-              />
-            </div>
+                icon={<Mail className="h-4 w-4" />}
+                error={errors.email}
+                touched={touched.email}
+              >
+                <ValidatedInput
+                  type="email"
+                  id="order-email"
+                  value={formData.email as string}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  onBlur={() => handleBlur('email')}
+                  placeholder="tu@email.com"
+                  error={errors.email}
+                  touched={touched.email}
+                />
+              </Field>
 
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                Teléfono
-              </label>
-              <input
-                id="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => handleInputChange('phone', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                placeholder="+44 o +34 número"
-              />
-            </div>
+              <Field
+                label="Teléfono"
+                htmlFor="order-phone"
+                required
+                icon={<Phone className="h-4 w-4" />}
+                error={errors.phone}
+                touched={touched.phone}
+              >
+                <ValidatedInput
+                  type="tel"
+                  id="order-phone"
+                  value={formData.phone as string}
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
+                  onBlur={() => handleBlur('phone')}
+                  placeholder="+34 123 456 789"
+                  error={errors.phone}
+                  touched={touched.phone}
+                />
+              </Field>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-1">
-                  Cantidad *
-                </label>
-                <select
-                  id="quantity"
+              {/* Order Details */}
+              <div className="grid grid-cols-2 gap-4">
+                <Field
+                  label="Cantidad"
+                  htmlFor="order-quantity"
                   required
-                  value={formData.quantity}
-                  onChange={(e) => handleInputChange('quantity', parseInt(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  icon={<Package className="h-4 w-4" />}
+                  error={errors.quantity}
+                  touched={touched.quantity}
                 >
-                  {[1,2,3,4,5].map(num => (
-                    <option key={num} value={num}>{num}</option>
-                  ))}
-                </select>
-              </div>
-
-              {needsSize && (
-                <div>
-                  <label htmlFor="size" className="block text-sm font-medium text-gray-700 mb-1">
-                    Talla *
-                  </label>
-                  <select
-                    id="size"
-                    required={needsSize}
-                    value={formData.size}
-                    onChange={(e) => handleInputChange('size', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  <ValidatedSelect
+                    id="order-quantity"
+                    value={formData.quantity as number}
+                    onChange={(e) => handleInputChange('quantity', parseInt(e.target.value))}
+                    onBlur={() => handleBlur('quantity')}
+                    error={errors.quantity}
+                    touched={touched.quantity}
                   >
-                    <option value="">Seleccionar</option>
-                    <option value="XS">XS</option>
-                    <option value="S">S</option>
-                    <option value="M">M</option>
-                    <option value="L">L</option>
-                    <option value="XL">XL</option>
-                    <option value="XXL">XXL</option>
-                  </select>
-                </div>
-              )}
-            </div>
+                    {[1, 2, 3, 4, 5].map(num => (
+                      <option key={num} value={num}>{num}</option>
+                    ))}
+                  </ValidatedSelect>
+                </Field>
 
-            <div>
-              <fieldset>
-                <legend className="block text-sm font-medium text-gray-700 mb-1">
-                  Método de Contacto Preferido
-                </legend>
-                <div className="flex space-x-4">
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      value="email"
-                      checked={formData.contactMethod === 'email'}
-                      onChange={(e) => handleInputChange('contactMethod', e.target.value)}
-                      className="mr-2"
-                    />
-                    {' '}Email
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      value="whatsapp"
-                      checked={formData.contactMethod === 'whatsapp'}
-                      onChange={(e) => handleInputChange('contactMethod', e.target.value)}
-                      className="mr-2"
-                    />
-                    {' '}WhatsApp
-                  </label>
-                </div>
-              </fieldset>
-            </div>
-
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                Mensaje Adicional
-              </label>
-              <textarea
-                id="message"
-                value={formData.message}
-                onChange={(e) => handleInputChange('message', e.target.value)}
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                placeholder="Cualquier comentario o petición especial..."
-              />
-            </div>
-
-            <div className="border-t pt-4">
-              <div className="flex justify-between items-center mb-3">
-                <span className="font-semibold">Total:</span>
-                <span className="font-bold text-lg text-green-800">
-                  €{(price * formData.quantity).toFixed(2)}
-                </span>
+                {needsSize && (
+                  <Field
+                    label="Talla"
+                    htmlFor="order-size"
+                    required
+                    error={errors.size}
+                    touched={touched.size}
+                  >
+                    <ValidatedSelect
+                      id="order-size"
+                      value={formData.size as string}
+                      onChange={(e) => handleInputChange('size', e.target.value)}
+                      onBlur={() => handleBlur('size')}
+                      error={errors.size}
+                      touched={touched.size}
+                    >
+                      <option value="">Selecciona talla</option>
+                      <option value="S">S</option>
+                      <option value="M">M</option>
+                      <option value="L">L</option>
+                      <option value="XL">XL</option>
+                      <option value="XXL">XXL</option>
+                    </ValidatedSelect>
+                  </Field>
+                )}
               </div>
-              
+
+              {/* Contact Method */}
+              <Field
+                label="Método de contacto preferido"
+                htmlFor="order-contact"
+                required
+              >
+                <ValidatedSelect
+                  id="order-contact"
+                  value={formData.contactMethod as string}
+                  onChange={(e) => handleInputChange('contactMethod', e.target.value)}
+                >
+                  <option value="email">Email</option>
+                  <option value="whatsapp">WhatsApp</option>
+                </ValidatedSelect>
+              </Field>
+
+              {/* Message */}
+              <Field
+                label="Mensaje adicional (opcional)"
+                htmlFor="order-message"
+                icon={<MessageSquare className="h-4 w-4" />}
+                error={errors.message}
+                touched={touched.message}
+              >
+                <ValidatedTextarea
+                  id="order-message"
+                  rows={3}
+                  value={formData.message as string}
+                  onChange={(e) => handleInputChange('message', e.target.value)}
+                  onBlur={() => handleBlur('message')}
+                  placeholder="Instrucciones especiales, preguntas..."
+                  error={errors.message}
+                  touched={touched.message}
+                />
+              </Field>
+
+              {/* Total */}
+              <div className="bg-betis-green/10 p-4 rounded-lg">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold">Total:</span>
+                  <span className="text-betis-green font-bold text-lg">
+                    €{(price * (formData.quantity as number)).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Error Message */}
+              {submitStatus === 'error' && (
+                <FormErrorMessage 
+                  message="Error al enviar el pedido. Por favor, inténtalo de nuevo."
+                />
+              )}
+
+              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`w-full py-3 px-4 rounded-md font-semibold ${
-                  isSubmitting
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-green-600 text-white hover:bg-green-700'
-                } transition-colors`}
+                className="w-full bg-betis-green hover:bg-green-700 disabled:bg-gray-400 text-white py-3 px-6 rounded-lg font-bold transition-colors duration-200 disabled:cursor-not-allowed"
               >
-                {isSubmitting 
-                  ? 'Enviando...' 
-                  : (() => {
-                      if (isInStock) {
-                        return 'Enviar Pedido';
-                      }
-                      return 'Enviar Pre-Reserva';
-                    })()
-                }
+                {isSubmitting ? (
+                  <FormLoadingMessage message="Enviando pedido..." className="text-white" />
+                ) : (
+                  <>
+                    {isInStock ? '🛒 Enviar Pedido' : '📋 Enviar Pre-pedido'}
+                  </>
+                )}
               </button>
-            </div>
-          </form>
-
-          <div className="mt-4 text-xs text-gray-500">
-            <p>
-              {isInStock 
-                ? 'Te contactaremos para confirmar el pedido y coordinar la entrega/recogida.'
-                : 'Te contactaremos cuando el producto esté disponible.'
-              }
-            </p>
-          </div>
+            </form>
+          )}
         </div>
       </div>
     </div>

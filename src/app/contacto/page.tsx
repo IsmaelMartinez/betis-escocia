@@ -8,11 +8,10 @@ import {
   Package, 
   Camera, 
   MessageCircle, 
-  HelpCircle,
-  CheckCircle,
-  AlertCircle
+  HelpCircle
 } from 'lucide-react';
 import { withFeatureFlag } from '@/lib/featureProtection';
+import { FormSuccessMessage, FormErrorMessage, FormLoadingMessage } from '@/components/MessageComponent';
 
 interface ContactFormData {
   name: string;
@@ -217,17 +216,18 @@ function ContactPage() {
             </div>
 
             {submitStatus === 'success' && (
-              <div className="mb-6 p-4 bg-green-100 border border-green-300 rounded-lg flex items-center text-green-800">
-                <CheckCircle className="h-5 w-5 mr-3" />
-                ¡Mensaje enviado correctamente! Te responderemos pronto.
-              </div>
+              <FormSuccessMessage
+                title="¡Mensaje enviado!"
+                message="Te responderemos pronto."
+                className="mb-6"
+              />
             )}
 
             {submitStatus === 'error' && (
-              <div className="mb-6 p-4 bg-red-100 border border-red-300 rounded-lg flex items-center text-red-800">
-                <AlertCircle className="h-5 w-5 mr-3" />
-                {errorMessage || 'Error al enviar el mensaje. Inténtalo de nuevo.'}
-              </div>
+              <FormErrorMessage
+                message={errorMessage || 'Error al enviar el mensaje. Inténtalo de nuevo.'}
+                className="mb-6"
+              />
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -352,10 +352,7 @@ function ContactPage() {
                 className="w-full bg-betis-green hover:bg-green-700 disabled:bg-gray-400 text-white py-4 px-6 rounded-lg font-bold text-lg transition-colors duration-200 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
-                  <span className="flex items-center justify-center space-x-2">
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Enviando...</span>
-                  </span>
+                  <FormLoadingMessage message="Enviando mensaje..." className="text-white" />
                 ) : (
                   <>
                     <Send className="h-5 w-5 inline mr-2" />
