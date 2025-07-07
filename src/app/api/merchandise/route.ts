@@ -16,7 +16,8 @@ async function ensureDataDirectory() {
   try {
     const dataDir = join(process.cwd(), 'data');
     await mkdir(dataDir, { recursive: true });
-  } catch {
+  } catch (error) {
+    console.error('Error creating data directory:', error);
     // Directory might already exist, ignore error
   }
 }
@@ -26,7 +27,8 @@ async function readMerchandiseData(): Promise<MerchandiseData> {
   try {
     const fileContent = await readFile(dataPath, 'utf-8');
     return JSON.parse(fileContent);
-  } catch {
+  } catch (error) {
+    console.error('Error reading merchandise data:', error);
     // If file doesn't exist, return default structure with sample items
     return {
       items: [
@@ -148,10 +150,24 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error reading merchandise data:', error);
+    
+    // Provide more specific error messages
+    let errorMessage = 'Error al cargar los productos de la tienda';
+    
+    if (error && typeof error === 'object' && 'code' in error) {
+      if (error.code === 'ENOENT') {
+        errorMessage = 'No se encontraron productos en la tienda';
+      } else if (error.code === 'EACCES') {
+        errorMessage = 'Error de permisos al acceder a los productos';
+      }
+    } else if (error instanceof SyntaxError) {
+      errorMessage = 'Error en el formato de los datos de productos';
+    }
+    
     return NextResponse.json(
       { 
         success: false, 
-        error: 'Error al obtener productos de la tienda' 
+        error: errorMessage 
       },
       { status: 500 }
     );
@@ -235,10 +251,22 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error adding merchandise item:', error);
+    
+    // Provide more specific error messages
+    let errorMessage = 'Error interno al añadir el producto';
+    
+    if (error instanceof SyntaxError) {
+      errorMessage = 'Los datos del producto no son válidos';
+    } else if (error && typeof error === 'object' && 'code' in error && (error.code === 'ENOENT' || error.code === 'EACCES')) {
+      errorMessage = 'Error de almacenamiento. Inténtalo de nuevo.';
+    } else if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' && error.message.includes('space')) {
+      errorMessage = 'Error de espacio de almacenamiento. Contacta al administrador.';
+    }
+    
     return NextResponse.json(
       { 
         success: false, 
-        error: 'Error interno del servidor al añadir el producto' 
+        error: errorMessage 
       },
       { status: 500 }
     );
@@ -289,10 +317,24 @@ export async function PUT(request: NextRequest) {
 
   } catch (error) {
     console.error('Error updating merchandise item:', error);
+    
+    // Provide more specific error messages
+    let errorMessage = 'Error al actualizar el producto';
+    
+    if (error instanceof SyntaxError) {
+      errorMessage = 'Los datos de actualización no son válidos';
+    } else if (error && typeof error === 'object' && 'code' in error) {
+      if (error.code === 'ENOENT') {
+        errorMessage = 'No se encontraron los datos del producto';
+      } else if (error.code === 'EACCES') {
+        errorMessage = 'Error de permisos al actualizar el producto';
+      }
+    }
+    
     return NextResponse.json(
       { 
         success: false, 
-        error: 'Error interno del servidor' 
+        error: errorMessage 
       },
       { status: 500 }
     );
@@ -341,10 +383,22 @@ export async function DELETE(request: NextRequest) {
 
   } catch (error) {
     console.error('Error deleting merchandise item:', error);
+    
+    // Provide more specific error messages
+    let errorMessage = 'Error al eliminar el producto';
+    
+    if (error && typeof error === 'object' && 'code' in error) {
+      if (error.code === 'ENOENT') {
+        errorMessage = 'No se encontraron los datos del producto a eliminar';
+      } else if (error.code === 'EACCES') {
+        errorMessage = 'Error de permisos al eliminar el producto';
+      }
+    }
+    
     return NextResponse.json(
       { 
         success: false, 
-        error: 'Error interno del servidor' 
+        error: errorMessage 
       },
       { status: 500 }
     );

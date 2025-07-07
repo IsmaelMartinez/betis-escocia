@@ -36,7 +36,7 @@ Created: December 2024
 
 - [x] T25.1: Remove unused JSON data handling code and file system dependencies ✅
 - [x] T25.2: Clean up unused imports and dependencies (fs/promises, path utilities) ✅
-- [ ] T25.3: Update error handling to be Supabase-specific with user-friendly messages 🚧
+- [x] T25.3: Update error handling to be Supabase-specific with user-friendly messages ✅
 - [ ] T25.4: Optimize components and reduce technical debt 🚧
 - [x] T25.5: Update documentation and README to reflect Supabase architecture ✅
 - [x] T25.6: Remove migration scripts and temporary development files ✅
@@ -96,24 +96,27 @@ Created: December 2024
 
 ### 🔮 **OPTIONAL FUTURE ENHANCEMENTS**
 
-#### T31: Advanced Social Media Integration **🚧 IN PROGRESS**
-- [ ] T31.1: Instagram grid view of community posts (placeholder created, API integration pending)
-- [x] T31.2: Facebook Group feed integration with official embed ✅ **COMPLETED**
+#### T31: Advanced Social Media Integration **✅ COMPLETED**
+- [x] T31.1: Instagram post embed with official Instagram embed code ✅ **COMPLETED**
+- [x] T31.2: Facebook Group feed integration with iframe embed ✅ **COMPLETED**
 - [ ] T31.3: Social media contest and engagement features
 - [ ] T31.4: Automated social media posting
 
 **Facebook Integration Details:**
-- ✅ Facebook Page Plugin implemented with JavaScript SDK
+- ✅ Facebook Group iframe implemented with official Facebook Group plugin
 - ✅ Group URL: https://www.facebook.com/groups/beticosenescocia/
-- ✅ SDK Script: `https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v23.0`
-- ✅ Plugin shows timeline, facepile, and adapts to container width
+- ✅ Uses Facebook Group plugin instead of Page plugin for better group integration
+- ✅ Fallback messaging for accessibility and compatibility
 - ✅ Integrated into `/galeria` and `/redes-sociales` pages
-- ✅ Created `FacebookPagePlugin` component with official Facebook embed code
+- ✅ Created `FacebookPagePlugin` component with iframe embed
 
-**Instagram Integration Status:**
-- ✅ Instagram placeholder component created (`InstagramEmbed`)
-- 🔄 Instagram API integration requires Business/Creator account setup
-- 🔄 Alternative: Individual post embeds (no full feed available natively)
+**Instagram Integration Details:**
+- ✅ Real Instagram post embedded using official Instagram embed code
+- ✅ Post URL: https://www.instagram.com/p/DKE4avDMvGH/
+- ✅ Automatic Instagram script loading and processing
+- ✅ Full embed with all Instagram styling and functionality
+- ✅ Responsive design that adapts to container width
+- ✅ Created `InstagramEmbed` component with TypeScript types
 
 #### T32: Advanced Features **🚧 OPTIONAL**
 - [ ] T32.1: Multi-language support (Spanish/English toggle)

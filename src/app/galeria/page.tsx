@@ -87,9 +87,6 @@ export default function GalleryPage() {
           <FacebookPagePlugin 
             showHeader={true} 
             height={400}
-            adaptContainerWidth={true}
-            showFacepile={true}
-            tabs="timeline"
           />
         </div>
 

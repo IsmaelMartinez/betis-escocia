@@ -7,29 +7,29 @@ interface FacebookPagePluginProps {
   showHeader?: boolean;
   width?: number;
   height?: number;
-  tabs?: string;
-  hideCover?: boolean;
-  showFacepile?: boolean;
-  smallHeader?: boolean;
-  adaptContainerWidth?: boolean;
+}
+
+// Extend window type for Facebook SDK
+declare global {
+  interface Window {
+    FB?: {
+      XFBML: {
+        parse: () => void;
+      };
+    };
+  }
 }
 
 export default function FacebookPagePlugin({
   showHeader = true,
   width = 380,
   height = 500,
-  tabs = "timeline",
-  hideCover = false,
-  showFacepile = true,
-  smallHeader = false,
-  adaptContainerWidth = true
 }: FacebookPagePluginProps) {
   
   useEffect(() => {
     // Parse Facebook XFBML when component mounts
-    if (typeof window !== 'undefined' && (window as any).FB) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).FB.XFBML.parse();
+    if (typeof window !== 'undefined' && window.FB) {
+      window.FB.XFBML.parse();
     }
   }, []);
 
@@ -48,25 +48,23 @@ export default function FacebookPagePlugin({
       )}
       
       <div className="p-4">
-        <div 
-          className="fb-page" 
-          data-href="https://www.facebook.com/groups/beticosenescocia/" 
-          data-tabs={tabs}
-          data-width={adaptContainerWidth ? "" : width.toString()}
-          data-height={height.toString()}
-          data-small-header={smallHeader.toString()}
-          data-adapt-container-width={adaptContainerWidth.toString()}
-          data-hide-cover={hideCover.toString()}
-          data-show-facepile={showFacepile.toString()}
-        >
-          <blockquote 
-            cite="https://www.facebook.com/groups/beticosenescocia/" 
-            className="fb-xfbml-parse-ignore"
-          >
-            <a href="https://www.facebook.com/groups/beticosenescocia/">
-              Béticos en Escocia - Facebook Group
-            </a>
-          </blockquote>
+        {/* Facebook Group Embed */}
+        <div className="mb-4">
+          <iframe
+            src="https://www.facebook.com/plugins/group.php?href=https%3A%2F%2Fwww.facebook.com%2Fgroups%2Fbeticosenescocia%2F&width=340&show_social_context=true&appId"
+            width={width}
+            height={height}
+            style={{ border: 'none', overflow: 'hidden' }}
+            scrolling="no"
+            frameBorder="0"
+            allowFullScreen={true}
+            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+          ></iframe>
+        </div>
+        
+        {/* Fallback message */}
+        <div className="text-center text-gray-600 text-sm">
+          <p>Si no puedes ver el contenido, visita nuestro grupo directamente en Facebook.</p>
         </div>
       </div>
       
@@ -78,7 +76,7 @@ export default function FacebookPagePlugin({
           className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
         >
           <Facebook className="h-4 w-4" />
-          Ver en Facebook
+          Ver Grupo en Facebook
         </a>
       </div>
     </div>

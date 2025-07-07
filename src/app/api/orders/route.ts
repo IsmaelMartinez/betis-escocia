@@ -32,8 +32,9 @@ async function getOrders(): Promise<Order[]> {
     await fs.access(ordersFile);
     const data = await fs.readFile(ordersFile, 'utf8');
     return JSON.parse(data);
-  } catch {
-    // Orders file not found, return empty array
+  } catch (error) {
+    console.error('Error reading orders data:', error);
+    // Orders file not found or other error, return empty array
     return [];
   }
 }
@@ -66,8 +67,22 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(filteredOrders);
   } catch (error) {
     console.error('Error fetching orders:', error);
+    
+    // Provide more specific error messages
+    let errorMessage = 'Error al cargar los pedidos';
+    
+    if (error && typeof error === 'object' && 'code' in error) {
+      if (error.code === 'ENOENT') {
+        errorMessage = 'No se encontraron pedidos previos';
+      } else if (error.code === 'EACCES') {
+        errorMessage = 'Error de permisos al acceder a los datos de pedidos';
+      }
+    } else if (error instanceof SyntaxError) {
+      errorMessage = 'Error en el formato de los datos de pedidos';
+    }
+    
     return NextResponse.json(
-      { error: 'Error al obtener los pedidos' },
+      { error: errorMessage },
       { status: 500 }
     );
   }
@@ -122,8 +137,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(newOrder, { status: 201 });
   } catch (error) {
     console.error('Error creating order:', error);
+    
+    // Provide more specific error messages
+    let errorMessage = 'Error interno al procesar tu pedido';
+    
+    if (error instanceof SyntaxError) {
+      errorMessage = 'Los datos del pedido no son válidos. Por favor, revisa la información.';
+    } else if (error && typeof error === 'object' && 'code' in error && (error.code === 'ENOENT' || error.code === 'EACCES')) {
+      errorMessage = 'Error de almacenamiento. Por favor, inténtalo de nuevo.';
+    } else if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' && error.message.includes('space')) {
+      errorMessage = 'Error de espacio de almacenamiento. Contacta al administrador.';
+    }
+    
     return NextResponse.json(
-      { error: 'Error al crear el pedido' },
+      { error: errorMessage },
       { status: 500 }
     );
   }
@@ -178,8 +205,22 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(updatedOrder);
   } catch (error) {
     console.error('Error updating order:', error);
+    
+    // Provide more specific error messages
+    let errorMessage = 'Error al actualizar el estado del pedido';
+    
+    if (error instanceof SyntaxError) {
+      errorMessage = 'Los datos de actualización no son válidos';
+    } else if (error && typeof error === 'object' && 'code' in error) {
+      if (error.code === 'ENOENT') {
+        errorMessage = 'No se encontraron los datos del pedido';
+      } else if (error.code === 'EACCES') {
+        errorMessage = 'Error de permisos al actualizar el pedido';
+      }
+    }
+    
     return NextResponse.json(
-      { error: 'Error al actualizar el pedido' },
+      { error: errorMessage },
       { status: 500 }
     );
   }
@@ -219,8 +260,20 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ message: 'Pedido eliminado correctamente' });
   } catch (error) {
     console.error('Error deleting order:', error);
+    
+    // Provide more specific error messages
+    let errorMessage = 'Error al eliminar el pedido';
+    
+    if (error && typeof error === 'object' && 'code' in error) {
+      if (error.code === 'ENOENT') {
+        errorMessage = 'No se encontraron los datos del pedido a eliminar';
+      } else if (error.code === 'EACCES') {
+        errorMessage = 'Error de permisos al eliminar el pedido';
+      }
+    }
+    
     return NextResponse.json(
-      { error: 'Error al eliminar el pedido' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

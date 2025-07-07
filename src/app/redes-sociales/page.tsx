@@ -510,9 +510,6 @@ export default function SocialTaggingGuide() {
             <FacebookPagePlugin 
               showHeader={true} 
               height={500}
-              adaptContainerWidth={true}
-              showFacepile={true}
-              tabs="timeline"
             />
           </div>
         </div>

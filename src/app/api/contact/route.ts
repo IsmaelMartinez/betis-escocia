@@ -32,7 +32,8 @@ async function readContactData(): Promise<ContactData> {
     
     const data = await fs.readFile(CONTACT_FILE_PATH, 'utf-8');
     return JSON.parse(data);
-  } catch {
+  } catch (error) {
+    console.error('Error reading contact data:', error);
     return {
       submissions: [],
       stats: {
@@ -106,9 +107,21 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error processing contact form:', error);
+    
+    // Provide more specific error messages based on the error type
+    let errorMessage = 'Error interno del servidor al procesar tu mensaje';
+    
+    if (error instanceof SyntaxError) {
+      errorMessage = 'Los datos enviados no son válidos. Por favor, revisa el formulario.';
+    } else if (error && typeof error === 'object' && 'code' in error && (error.code === 'ENOENT' || error.code === 'EACCES')) {
+      errorMessage = 'Error de almacenamiento temporal. Por favor, inténtalo de nuevo.';
+    } else if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' && error.message.includes('space')) {
+      errorMessage = 'Error de espacio de almacenamiento. Por favor, contacta al administrador.';
+    }
+    
     return NextResponse.json({ 
       success: false,
-      error: 'Error interno del servidor' 
+      error: errorMessage 
     }, { status: 500 });
   }
 }
@@ -126,10 +139,24 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Error reading contact data:', error);
+    
+    // Provide more specific error messages
+    let errorMessage = 'Error al cargar los datos de contacto';
+    
+    if (error && typeof error === 'object' && 'code' in error) {
+      if (error.code === 'ENOENT') {
+        errorMessage = 'No se encontraron datos de contacto previos';
+      } else if (error.code === 'EACCES') {
+        errorMessage = 'Error de permisos al acceder a los datos';
+      }
+    } else if (error instanceof SyntaxError) {
+      errorMessage = 'Error en el formato de los datos almacenados';
+    }
+    
     return NextResponse.json(
       { 
         success: false, 
-        error: 'Error al obtener datos de contacto' 
+        error: errorMessage 
       },
       { status: 500 }
     );

@@ -103,11 +103,26 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error('Error fetching matches:', error);
+    
+    // Provide more specific error messages
+    let errorMessage = 'Error interno al cargar los partidos';
+    
+    if (error && typeof error === 'object' && 'code' in error) {
+      if (error.code === 'ENOENT') {
+        errorMessage = 'No se encontraron datos de partidos';
+      } else if (error.code === 'EACCES') {
+        errorMessage = 'Error de permisos al acceder a los datos de partidos';
+      }
+    } else if (error instanceof SyntaxError) {
+      errorMessage = 'Error en el formato de los datos de partidos';
+    } else if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' && (error.message.includes('network') || error.message.includes('fetch'))) {
+      errorMessage = 'Error de conexión al obtener datos de partidos';
+    }
 
     return NextResponse.json(
       {
         success: false,
-        error: 'Error interno del servidor al obtener los eventos',
+        error: errorMessage,
         matches: [],
         count: 0,
       },

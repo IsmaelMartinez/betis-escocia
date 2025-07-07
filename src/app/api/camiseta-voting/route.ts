@@ -123,8 +123,22 @@ export async function GET() {
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error reading voting data:', error);
+    
+    // Provide more specific error messages
+    let errorMessage = 'Error al cargar los datos de votación';
+    
+    if (error && typeof error === 'object' && 'code' in error) {
+      if (error.code === 'ENOENT') {
+        errorMessage = 'No se encontraron datos de votación previos';
+      } else if (error.code === 'EACCES') {
+        errorMessage = 'Error de permisos al acceder a los datos de votación';
+      }
+    } else if (error instanceof SyntaxError) {
+      errorMessage = 'Error en el formato de los datos de votación';
+    }
+    
     return NextResponse.json(
-      { error: 'Error reading voting data' },
+      { error: errorMessage },
       { status: 500 }
     );
   }
@@ -146,7 +160,10 @@ export async function POST(request: NextRequest) {
       
       if (alreadyVoted) {
         return NextResponse.json(
-          { error: 'Ya has votado anteriormente' },
+          { 
+            success: false,
+            error: 'Ya has votado anteriormente. Solo se permite un voto por persona.' 
+          },
           { status: 400 }
         );
       }
@@ -155,7 +172,10 @@ export async function POST(request: NextRequest) {
       const option = data.voting.options.find((opt: VotingOption) => opt.id === designId);
       if (!option) {
         return NextResponse.json(
-          { error: 'Diseño no encontrado' },
+          { 
+            success: false,
+            error: 'El diseño seleccionado no existe. Por favor, recarga la página.' 
+          },
           { status: 400 }
         );
       }
@@ -188,7 +208,10 @@ export async function POST(request: NextRequest) {
       
       if (existingOrder) {
         return NextResponse.json(
-          { error: 'Ya tienes un pre-pedido registrado' },
+          { 
+            success: false,
+            error: 'Ya tienes un pre-pedido registrado. Solo se permite un pre-pedido por persona.' 
+          },
           { status: 400 }
         );
       }
@@ -216,15 +239,33 @@ export async function POST(request: NextRequest) {
       
     } else {
       return NextResponse.json(
-        { error: 'Acción no válida' },
+        { 
+          success: false,
+          error: 'Acción no válida. Solo se permiten acciones de voto o pre-pedido.' 
+        },
         { status: 400 }
       );
     }
     
   } catch (error) {
     console.error('Error processing request:', error);
+    
+    // Provide more specific error messages
+    let errorMessage = 'Error interno al procesar la solicitud';
+    
+    if (error instanceof SyntaxError) {
+      errorMessage = 'Los datos enviados no son válidos. Por favor, revisa la información.';
+    } else if (error && typeof error === 'object' && 'code' in error && (error.code === 'ENOENT' || error.code === 'EACCES')) {
+      errorMessage = 'Error de almacenamiento. Por favor, inténtalo de nuevo.';
+    } else if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' && error.message.includes('space')) {
+      errorMessage = 'Error de espacio de almacenamiento. Contacta al administrador.';
+    }
+    
     return NextResponse.json(
-      { error: 'Error processing request' },
+      { 
+        success: false,
+        error: errorMessage 
+      },
       { status: 500 }
     );
   }
