@@ -53,10 +53,6 @@ export default function Unete() {
     {
       question: "¿Hay ambiente familiar?",
       answer: "Totalmente. Vienen padres con hijos, parejas, estudiantes, trabajadores... Es un ambiente muy sano y acogedor."
-    },
-    {
-      question: "¿Se puede participar en La Porra sin ser miembro?",
-      answer: "Sí, cualquiera puede participar en La Porra. Es una forma divertida de conocerse y formar parte del grupo."
     }
   ];
 
