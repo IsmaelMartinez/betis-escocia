@@ -63,15 +63,20 @@ const environmentFlags: Partial<FeatureFlags> = {
     showDebugInfo: Boolean(process.env.NEXT_PUBLIC_DEBUG_MODE),
   }),
   
-  // Feature-specific environment variables - ALL must be explicitly set to 'true' to enable
+  // Feature-specific environment variables - respect defaults when not set
   showClasificacion: process.env.NEXT_PUBLIC_FEATURE_CLASIFICACION === 'true',
   showColeccionables: process.env.NEXT_PUBLIC_FEATURE_COLECCIONABLES === 'true',
   showGaleria: process.env.NEXT_PUBLIC_FEATURE_GALERIA === 'true',
   showRSVP: process.env.NEXT_PUBLIC_FEATURE_RSVP === 'true', // Must be explicitly enabled
   showSocialMedia: process.env.NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA === 'true',
   showHistory: process.env.NEXT_PUBLIC_FEATURE_HISTORY === 'true', // Must be explicitly enabled
-  showNosotros: process.env.NEXT_PUBLIC_FEATURE_NOSOTROS === 'true', // Must be explicitly enabled
-  showUnete: process.env.NEXT_PUBLIC_FEATURE_UNETE === 'true', // Must be explicitly enabled
+  // For features with default=true, only override if explicitly set to 'false'
+  ...(process.env.NEXT_PUBLIC_FEATURE_NOSOTROS !== undefined && {
+    showNosotros: process.env.NEXT_PUBLIC_FEATURE_NOSOTROS === 'true'
+  }),
+  ...(process.env.NEXT_PUBLIC_FEATURE_UNETE !== undefined && {
+    showUnete: process.env.NEXT_PUBLIC_FEATURE_UNETE === 'true'
+  }),
   showContacto: process.env.NEXT_PUBLIC_FEATURE_CONTACTO === 'true',
 };
 
