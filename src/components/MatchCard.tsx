@@ -138,7 +138,7 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
   // Determine team display information - always show local (home) team on left, visitor (away) on right
   const localTeam = isHome ? {
     name: 'Real Betis',
-    crest: '/images/real_betis_official.svg',
+    crest: '/images/logo_no_texto.jpg',
     isBetis: true
   } : {
     name: opponent,
@@ -152,7 +152,7 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
     isBetis: false
   } : {
     name: 'Real Betis',
-    crest: '/images/real_betis_official.svg',
+    crest: '/images/logo_no_texto.jpg',
     isBetis: true
   };
 

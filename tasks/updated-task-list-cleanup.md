@@ -41,18 +41,20 @@ Created: December 2024
 - [x] T25.5: Update documentation and README to reflect Supabase architecture ✅
 - [x] T25.6: Remove migration scripts and temporary development files ✅
 
-#### 🏁 **T36: Feature Flag Enforcement & Logo Update** **🚨 HIGH PRIORITY**
+#### 🏁 **T36: Feature Flag Enforcement & Logo Update** **✅ COMPLETED**
 
-- [ ] T36.1: Audit and fix feature flag enforcement across all pages and components
-  - Fix main page sections that bypass feature flags (eventos, clasificacion, rsvp, contact)
-  - Audit all navigation buttons and links for proper feature flag respect
-  - Ensure all disabled features return 404 or redirect when accessed directly
-  - Update components to conditionally render based on feature flags
-- [ ] T36.2: Update site logo and favicon
-  - Replace current logo with logo_no_texto.jpg for cleaner appearance
-  - Convert logo to .ico format for browser favicon
-  - Update all logo references across the application
-  - Ensure responsive logo display across different screen sizes
+- [x] T36.1: Audit and fix feature flag enforcement across all pages and components ✅
+  - Fixed main page sections that bypassed feature flags (eventos, clasificacion, rsvp, contact)
+  - Audited all navigation buttons and links for proper feature flag respect
+  - Ensured all disabled features return 404 or redirect when accessed directly
+  - Updated components to conditionally render based on feature flags
+  - Added withFeatureFlag protection to all pages (rsvp, contacto, coleccionables, galeria, historia, redes-sociales)
+  - Extended feature flags to include showPorra and showRedesSociales
+- [x] T36.2: Update site logo and favicon ✅
+  - Replaced current logo with logo_no_texto.jpg for cleaner appearance
+  - Updated favicon to use new logo in metadata
+  - Updated all logo references across the application (BetisLogo, MatchCard)
+  - Ensured responsive logo display across different screen sizes
 
 #### 🗄️ **T34: Core Database Migration to Supabase** **🚨 HIGH PRIORITY**
 

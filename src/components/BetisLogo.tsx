@@ -11,8 +11,8 @@ interface BetisLogoProps {
 export default function BetisLogo({ width = 80, height = 80, className = "" }: BetisLogoProps) {
   return (
     <Image
-      src="/images/real_betis_official.svg"
-      alt="Real Betis"
+      src="/images/logo_no_texto.jpg"
+      alt="Peña Bética Escocesa"
       width={width}
       height={height}
       className={`rounded-lg shadow-md ${className}`}
