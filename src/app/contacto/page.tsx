@@ -12,6 +12,7 @@ import {
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
+import { withFeatureFlag } from '@/lib/featureProtection';
 
 interface ContactFormData {
   name: string;
@@ -67,7 +68,7 @@ const formTypes = [
   }
 ];
 
-export default function ContactPage() {
+function ContactPage() {
   const [formData, setFormData] = useState<ContactFormData>({
     name: '',
     email: '',
@@ -471,3 +472,5 @@ export default function ContactPage() {
     </div>
   );
 }
+
+export default withFeatureFlag(ContactPage, 'showContacto');

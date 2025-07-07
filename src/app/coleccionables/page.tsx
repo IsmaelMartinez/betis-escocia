@@ -7,6 +7,7 @@ import OrderForm from '@/components/OrderForm';
 import CollectionPointsGuide from '@/components/CollectionPointsGuide';
 import type { MerchandiseItem } from '@/types/community';
 import Image from 'next/image';
+import { withFeatureFlag } from '@/lib/featureProtection';
 
 interface VotingOption {
   id: string;
@@ -36,7 +37,7 @@ interface VotingData {
   };
 }
 
-export default function ColeccionablesPage() {
+function ColeccionablesPage() {
   const [items, setItems] = useState<MerchandiseItem[]>([]);
   const [votingData, setVotingData] = useState<VotingData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -381,3 +382,5 @@ function PreOrderModal({ item, onClose }: Readonly<PreOrderModalProps>) {
     </div>
   );
 }
+
+export default withFeatureFlag(ColeccionablesPage, 'showColeccionables');

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Calendar, MapPin, Users, Clock, CheckCircle } from 'lucide-react';
 import RSVPForm from '@/components/RSVPForm';
+import { withFeatureFlag } from '@/lib/featureProtection';
 
 interface RSVPData {
   currentMatch: {
@@ -14,7 +15,7 @@ interface RSVPData {
   confirmedCount: number;
 }
 
-export default function RSVPPage() {
+function RSVPPage() {
   const [showForm, setShowForm] = useState(false);
   const [rsvpData, setRSVPData] = useState<RSVPData | null>(null);
 
@@ -217,3 +218,5 @@ export default function RSVPPage() {
     </div>
   );
 }
+
+export default withFeatureFlag(RSVPPage, 'showRSVP');

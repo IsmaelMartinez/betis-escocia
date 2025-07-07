@@ -2,6 +2,7 @@ import Link from 'next/link';
 import HeroCommunity from '@/components/HeroCommunity';
 import MatchCard from '@/components/MatchCard';
 import BetisPositionWidget from '@/components/BetisPositionWidget';
+import { FeatureWrapper } from '@/lib/featureProtection';
 
 export default function Home() {
   // Mock data for demo
@@ -78,9 +79,11 @@ export default function Home() {
             </div>
             
             {/* Betis position widget */}
-            <div className="lg:col-span-1">
-              <BetisPositionWidget />
-            </div>
+            <FeatureWrapper feature="showClasificacion">
+              <div className="lg:col-span-1">
+                <BetisPositionWidget />
+              </div>
+            </FeatureWrapper>
           </div>
           
           {/* Family welcome info */}
@@ -103,12 +106,14 @@ export default function Home() {
                 >
                   📍 Cómo llegar
                 </a>
-                <Link
-                  href="/rsvp"
-                  className="border-2 border-betis-green text-betis-green hover:bg-betis-green hover:text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300"
-                >
-                  ¿Vienes al próximo partido?
-                </Link>
+                <FeatureWrapper feature="showRSVP">
+                  <Link
+                    href="/rsvp"
+                    className="border-2 border-betis-green text-betis-green hover:bg-betis-green hover:text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300"
+                  >
+                    ¿Vienes al próximo partido?
+                  </Link>
+                </FeatureWrapper>
               </div>
             </div>
           </div>
@@ -146,17 +151,19 @@ export default function Home() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
-            <Link
-              href="/unete"
-              className="group bg-betis-gold hover:bg-betis-gold-dark text-betis-black px-10 py-5 rounded-2xl font-black text-xl shadow-2xl hover:shadow-betis-gold/25 transition-all duration-300 transform hover:scale-105"
-            >
-              <span className="flex items-center">
-                💬 Contáctanos
-                <svg className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </span>
-            </Link>
+            <FeatureWrapper feature="showUnete">
+              <Link
+                href="/unete"
+                className="group bg-betis-gold hover:bg-betis-gold-dark text-betis-black px-10 py-5 rounded-2xl font-black text-xl shadow-2xl hover:shadow-betis-gold/25 transition-all duration-300 transform hover:scale-105"
+              >
+                <span className="flex items-center">
+                  💬 Contáctanos
+                  <svg className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </Link>
+            </FeatureWrapper>
             
             <a
               href="https://www.facebook.com/groups/beticosenescocia/"

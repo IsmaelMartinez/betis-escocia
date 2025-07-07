@@ -41,6 +41,19 @@ Created: December 2024
 - [x] T25.5: Update documentation and README to reflect Supabase architecture ✅
 - [x] T25.6: Remove migration scripts and temporary development files ✅
 
+#### 🏁 **T36: Feature Flag Enforcement & Logo Update** **🚨 HIGH PRIORITY**
+
+- [ ] T36.1: Audit and fix feature flag enforcement across all pages and components
+  - Fix main page sections that bypass feature flags (eventos, clasificacion, rsvp, contact)
+  - Audit all navigation buttons and links for proper feature flag respect
+  - Ensure all disabled features return 404 or redirect when accessed directly
+  - Update components to conditionally render based on feature flags
+- [ ] T36.2: Update site logo and favicon
+  - Replace current logo with logo_no_texto.jpg for cleaner appearance
+  - Convert logo to .ico format for browser favicon
+  - Update all logo references across the application
+  - Ensure responsive logo display across different screen sizes
+
 #### 🗄️ **T34: Core Database Migration to Supabase** **🚨 HIGH PRIORITY**
 
 - [x] T34.1: RSVP System - Migrated to Supabase with full functionality ✅

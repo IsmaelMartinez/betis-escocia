@@ -23,6 +23,8 @@ interface FeatureFlags {
   showNosotros: boolean;
   showUnete: boolean;
   showContacto: boolean;
+  showPorra: boolean;
+  showRedesSociales: boolean;
   
   // Development/testing features
   showDebugInfo: boolean;
@@ -44,6 +46,8 @@ const defaultFlags: FeatureFlags = {
   showNosotros: true, // Enabled by default
   showUnete: true, // Enabled by default
   showContacto: false, // Hidden by default
+  showPorra: false, // Hidden by default
+  showRedesSociales: false, // Hidden by default
   
   // Development/testing features
   showDebugInfo: false,
@@ -78,6 +82,8 @@ const environmentFlags: Partial<FeatureFlags> = {
     showUnete: process.env.NEXT_PUBLIC_FEATURE_UNETE === 'true'
   }),
   showContacto: process.env.NEXT_PUBLIC_FEATURE_CONTACTO === 'true',
+  showPorra: process.env.NEXT_PUBLIC_FEATURE_PORRA === 'true',
+  showRedesSociales: process.env.NEXT_PUBLIC_FEATURE_REDES_SOCIALES === 'true',
 };
 
 // Merge default flags with environment overrides
@@ -125,6 +131,12 @@ export function getEnabledNavigationItems() {
       feature: 'showGaleria' as keyof FeatureFlags
     },
     { 
+      name: 'Historia', 
+      href: '/historia', 
+      nameEn: 'History',
+      feature: 'showHistory' as keyof FeatureFlags
+    },
+    { 
       name: 'Nosotros', 
       href: '/nosotros', 
       nameEn: 'About',
@@ -141,6 +153,18 @@ export function getEnabledNavigationItems() {
       href: '/contacto', 
       nameEn: 'Contact',
       feature: 'showContacto' as keyof FeatureFlags
+    },
+    { 
+      name: 'Porra', 
+      href: '/porra', 
+      nameEn: 'Porra',
+      feature: 'showPorra' as keyof FeatureFlags
+    },
+    { 
+      name: 'Redes Sociales', 
+      href: '/redes-sociales', 
+      nameEn: 'Social Media',
+      feature: 'showRedesSociales' as keyof FeatureFlags
     }
   ];
 

@@ -4,8 +4,9 @@ import { useState } from 'react';
 import { Instagram, Facebook, Copy, Check, Camera, Share2, Tag } from 'lucide-react';
 import InstagramEmbed from '@/components/InstagramEmbed';
 import FacebookPagePlugin from '@/components/FacebookPagePlugin';
+import { withFeatureFlag } from '@/lib/featureProtection';
 
-export default function SocialTaggingGuide() {
+function SocialTaggingGuide() {
   const [copiedText, setCopiedText] = useState<string>('');
 
   const hashtags = {
@@ -517,3 +518,5 @@ export default function SocialTaggingGuide() {
     </div>
   );
 }
+
+export default withFeatureFlag(SocialTaggingGuide, 'showRedesSociales');
