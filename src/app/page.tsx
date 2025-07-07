@@ -1,125 +1,13 @@
 import Link from 'next/link';
 import HeroCommunity from '@/components/HeroCommunity';
-import MatchCard from '@/components/MatchCard';
-import BetisPositionWidget from '@/components/BetisPositionWidget';
 import { FeatureWrapper } from '@/lib/featureProtection';
 
 export default function Home() {
-  // Mock data for demo
-  const upcomingMatches = [
-    {
-      id: 1001,
-      opponent: "Sevilla FC",
-      date: "2025-07-15T20:00:00Z",
-      venue: "Estadio Benito Villamarín",
-      competition: "La Liga",
-      isHome: true,
-      status: "SCHEDULED" as const,
-      watchParty: {
-        location: "Polwarth Tavern",
-        address: "15 Polwarth Pl, Edinburgh EH11 1NH",
-        time: "19:30"
-      }
-    },
-    {
-      id: 1002,
-      opponent: "Atlético Madrid",
-      date: "2025-07-22T16:15:00Z",
-      venue: "Cívitas Metropolitano",
-      competition: "La Liga",
-      isHome: false,
-      status: "SCHEDULED" as const,
-      watchParty: {
-        location: "Polwarth Tavern",
-        address: "15 Polwarth Pl, Edinburgh EH11 1NH",
-        time: "16:00"
-      }
-    }
-  ];
-
+  
   return (
     <>
       <HeroCommunity />
       
-      {/* Upcoming Matches */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center px-6 py-3 rounded-full bg-betis-green/10 border-2 border-betis-green/20 mb-8">
-              <span className="text-betis-green font-bold text-lg">📅 Nuestras citas familiares</span>
-            </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6">
-              Próximos Eventos
-            </h2>
-            <div className="bg-white rounded-3xl p-8 max-w-4xl mx-auto shadow-lg border border-gray-100">
-              <p className="text-xl text-gray-700 leading-relaxed">
-                Cada evento es una reunión familiar en el Polwarth Tavern. 
-                Ven a compartir emociones, risas y ese cariño que solo una familia bética puede ofrecer.
-              </p>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {/* Matches section */}
-            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {upcomingMatches.map((match) => (
-                <div key={`${match.opponent}-${match.date}`} className="transform hover:scale-105 transition-all duration-300">
-                  <MatchCard
-                    id={match.id}
-                    opponent={match.opponent}
-                    date={match.date}
-                    venue={match.venue}
-                    competition={match.competition}
-                    isHome={match.isHome}
-                    status={match.status}
-                    watchParty={match.watchParty}
-                  />
-                </div>
-              ))}
-            </div>
-            
-            {/* Betis position widget */}
-            <FeatureWrapper feature="showClasificacion">
-              <div className="lg:col-span-1">
-                <BetisPositionWidget />
-              </div>
-            </FeatureWrapper>
-          </div>
-          
-          {/* Family welcome info */}
-          <div className="mt-16 text-center">
-            <div className="bg-gradient-to-r from-betis-green/5 to-betis-gold/5 rounded-3xl p-8 max-w-4xl mx-auto border border-betis-green/20">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                � ¿Primera vez en nuestra casa?
-              </h3>
-              <p className="text-gray-700 mb-6 leading-relaxed">
-                Llega 30 minutos antes del partido. Pregunta por cualquiera de la familia, 
-                te haremos sitio y en cinco minutos ya serás uno más. El ambiente es familiar, 
-                relajado y siempre con una sonrisa.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
-                  href="https://maps.google.com/maps?q=Polwarth+Tavern+Edinburgh"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-betis-green hover:bg-betis-green-dark text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300"
-                >
-                  📍 Cómo llegar
-                </a>
-                <FeatureWrapper feature="showRSVP">
-                  <Link
-                    href="/rsvp"
-                    className="border-2 border-betis-green text-betis-green hover:bg-betis-green hover:text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300"
-                  >
-                    ¿Vienes al próximo partido?
-                  </Link>
-                </FeatureWrapper>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Join Us CTA */}
       <section className="py-20 bg-gradient-to-br from-betis-green via-betis-green-dark to-betis-black text-white relative overflow-hidden">
         {/* Background pattern */}

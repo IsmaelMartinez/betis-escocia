@@ -159,7 +159,7 @@ export default function Unete() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
             <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center">
               <MapPin className="h-12 w-12 text-betis-green mx-auto mb-6" />
               <h3 className="text-xl font-bold text-gray-900 mb-4">Ubicación</h3>
@@ -177,23 +177,6 @@ export default function Unete() {
                 <MapPin className="h-4 w-4 mr-2" />
                 Ver en Maps
               </a>
-            </div>
-
-            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center">
-              <Clock className="h-12 w-12 text-betis-green mx-auto mb-6" />
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Horarios</h3>
-              <p className="text-gray-800 mb-4 leading-relaxed">
-                <strong className="text-gray-900">30 minutos antes</strong><br />
-                de cada partido del Betis<br />
-                (Liga, Copa, Europa)
-              </p>
-              <Link
-                href="/partidos"
-                className="inline-flex items-center bg-betis-green hover:bg-betis-green-dark text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300"
-              >
-                <Calendar className="h-4 w-4 mr-2" />
-                Ver partidos
-              </Link>
             </div>
 
             <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center">
