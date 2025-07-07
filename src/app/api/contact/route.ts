@@ -1,55 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import { supabase, type ContactSubmissionInsert } from '@/lib/supabase';
 
-interface ContactSubmission {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  type: 'general' | 'rsvp' | 'merchandise' | 'photo' | 'whatsapp' | 'feedback';
-  subject: string;
-  message: string;
-  submittedAt: string;
-  status: 'new' | 'read' | 'responded' | 'closed';
-}
-
-interface ContactData {
-  submissions: ContactSubmission[];
-  stats: {
-    totalSubmissions: number;
-    responseRate: number;
-    averageResponseTime: number; // in hours
-  };
-}
-
-const CONTACT_FILE_PATH = path.join(process.cwd(), 'data', 'contact.json');
-
-async function readContactData(): Promise<ContactData> {
-  try {
-    const dataDir = path.dirname(CONTACT_FILE_PATH);
-    await fs.mkdir(dataDir, { recursive: true });
-    
-    const data = await fs.readFile(CONTACT_FILE_PATH, 'utf-8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error('Error reading contact data:', error);
-    return {
-      submissions: [],
-      stats: {
-        totalSubmissions: 0,
-        responseRate: 0,
-        averageResponseTime: 24
-      }
-    };
-  }
-}
-
-async function writeContactData(data: ContactData): Promise<void> {
-  const dataDir = path.dirname(CONTACT_FILE_PATH);
-  await fs.mkdir(dataDir, { recursive: true });
-  await fs.writeFile(CONTACT_FILE_PATH, JSON.stringify(data, null, 2));
-}
+// Supabase-based contact operations - no file system needed
 
 export async function POST(request: NextRequest) {
   try {
@@ -72,30 +24,31 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // Read current data
-    const data = await readContactData();
-
-    // Create new submission
-    const newSubmission: ContactSubmission = {
-      id: `contact_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
+    // Create new submission for Supabase
+    const newSubmission: ContactSubmissionInsert = {
       name: name.trim(),
       email: email.toLowerCase().trim(),
-      phone: phone?.trim(),
+      phone: phone?.trim() || null,
       type: type ?? 'general',
       subject: subject.trim(),
       message: message.trim(),
-      submittedAt: new Date().toISOString(),
       status: 'new'
     };
 
-    // Add to submissions
-    data.submissions.push(newSubmission);
-    
-    // Update stats
-    data.stats.totalSubmissions = data.submissions.length;
+    // Insert into Supabase
+    const { error: insertError } = await supabase
+      .from('contact_submissions')
+      .insert(newSubmission)
+      .select()
+      .single();
 
-    // Save updated data
-    await writeContactData(data);
+    if (insertError) {
+      console.error('Error inserting contact submission:', insertError);
+      return NextResponse.json({
+        success: false,
+        error: 'Error interno del servidor al procesar tu mensaje'
+      }, { status: 500 });
+    }
 
     // Log for admin purposes (in a real app, you might send email notification here)
     console.log(`New contact submission: ${name} (${email}) - Type: ${type ?? 'general'} - Subject: ${subject}`);
@@ -108,15 +61,19 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error processing contact form:', error);
     
-    // Provide more specific error messages based on the error type
+    // Provide more specific error messages for Supabase operations
     let errorMessage = 'Error interno del servidor al procesar tu mensaje';
     
     if (error instanceof SyntaxError) {
       errorMessage = 'Los datos enviados no son válidos. Por favor, revisa el formulario.';
-    } else if (error && typeof error === 'object' && 'code' in error && (error.code === 'ENOENT' || error.code === 'EACCES')) {
-      errorMessage = 'Error de almacenamiento temporal. Por favor, inténtalo de nuevo.';
-    } else if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' && error.message.includes('space')) {
-      errorMessage = 'Error de espacio de almacenamiento. Por favor, contacta al administrador.';
+    } else if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
+      if (error.message.includes('network') || error.message.includes('fetch')) {
+        errorMessage = 'Error de conexión con la base de datos. Por favor, inténtalo de nuevo.';
+      } else if (error.message.includes('timeout')) {
+        errorMessage = 'Tiempo de espera agotado. Por favor, inténtalo de nuevo.';
+      } else if (error.message.includes('duplicate') || error.message.includes('unique')) {
+        errorMessage = 'Ya existe un mensaje similar. Por favor, verifica tu información.';
+      }
     }
     
     return NextResponse.json({ 
@@ -126,31 +83,58 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET - Retrieve contact data (for admin purposes)
+// GET - Retrieve contact statistics (for admin purposes)
 export async function GET() {
   try {
-    const data = await readContactData();
+    // Get total submissions count
+    const { count: totalSubmissions, error: countError } = await supabase
+      .from('contact_submissions')
+      .select('*', { count: 'exact', head: true });
+
+    if (countError) {
+      console.error('Error getting total submissions count:', countError);
+      return NextResponse.json({
+        success: false,
+        error: 'Error al obtener estadísticas de contacto'
+      }, { status: 500 });
+    }
+
+    // Get new submissions count
+    const { count: newSubmissions, error: newCountError } = await supabase
+      .from('contact_submissions')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'new');
+
+    if (newCountError) {
+      console.error('Error getting new submissions count:', newCountError);
+      return NextResponse.json({
+        success: false,
+        error: 'Error al obtener estadísticas de contacto'
+      }, { status: 500 });
+    }
     
     return NextResponse.json({
       success: true,
-      totalSubmissions: data.stats.totalSubmissions,
-      newSubmissions: data.submissions.filter(s => s.status === 'new').length,
-      stats: data.stats
+      totalSubmissions: totalSubmissions || 0,
+      newSubmissions: newSubmissions || 0,
+      stats: {
+        totalSubmissions: totalSubmissions || 0,
+        responseRate: 0, // TODO: Calculate based on actual response data
+        averageResponseTime: 24 // TODO: Calculate based on actual response times
+      }
     });
   } catch (error) {
-    console.error('Error reading contact data:', error);
+    console.error('Error reading contact statistics:', error);
     
-    // Provide more specific error messages
-    let errorMessage = 'Error al cargar los datos de contacto';
+    // Provide more specific error messages for Supabase
+    let errorMessage = 'Error interno al obtener estadísticas de contacto';
     
-    if (error && typeof error === 'object' && 'code' in error) {
-      if (error.code === 'ENOENT') {
-        errorMessage = 'No se encontraron datos de contacto previos';
-      } else if (error.code === 'EACCES') {
-        errorMessage = 'Error de permisos al acceder a los datos';
+    if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
+      if (error.message.includes('network') || error.message.includes('fetch')) {
+        errorMessage = 'Error de conexión con la base de datos';
+      } else if (error.message.includes('timeout')) {
+        errorMessage = 'Tiempo de espera agotado al obtener estadísticas';
       }
-    } else if (error instanceof SyntaxError) {
-      errorMessage = 'Error en el formato de los datos almacenados';
     }
     
     return NextResponse.json(
