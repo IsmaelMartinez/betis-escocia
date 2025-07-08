@@ -20,7 +20,6 @@ export function convertDatabaseMatchToCardProps(
     id: dbMatch.id,
     opponent: dbMatch.opponent,
     date: dbMatch.date_time,
-    venue: dbMatch.venue,
     competition: dbMatch.competition,
     isHome: dbMatch.home_away === 'home',
     status: (dbMatch.status as 'SCHEDULED' | 'FINISHED' | 'IN_PLAY' | 'PAUSED' | 'POSTPONED' | 'SUSPENDED' | 'CANCELLED' | 'AWARDED' | 'TIMED') || (isUpcoming ? 'SCHEDULED' : 'FINISHED'),
