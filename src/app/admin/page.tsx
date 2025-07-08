@@ -34,9 +34,6 @@ export default function AdminPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
-  const [individualMatchId, setIndividualMatchId] = useState<string>('');
-  const [syncingIndividual, setSyncingIndividual] = useState(false);
-  const [individualSyncMessage, setIndividualSyncMessage] = useState<string | null>(null);
   const [currentView, setCurrentView] = useState<AdminView>('dashboard');
   const [matchFormData, setMatchFormData] = useState<MatchFormData>({ mode: 'create' });
   const [matches, setMatches] = useState<Match[]>([]);
@@ -122,43 +119,6 @@ export default function AdminPage() {
       setSyncing(false);
       // Clear message after 5 seconds
       setTimeout(() => setSyncMessage(null), 5000);
-    }
-  };
-
-  const handleSyncIndividualMatch = async () => {
-    if (!individualMatchId.trim()) {
-      setIndividualSyncMessage('Por favor, introduce un ID de partido válido');
-      setTimeout(() => setIndividualSyncMessage(null), 3000);
-      return;
-    }
-
-    setSyncingIndividual(true);
-    setIndividualSyncMessage(null);
-    
-    try {
-      const response = await fetch(`/api/admin/sync-match/${individualMatchId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        setIndividualSyncMessage(`✅ ${result.message}`);
-        setIndividualMatchId(''); // Clear the input
-        await fetchStats(); // Refresh data after sync
-      } else {
-        setIndividualSyncMessage(`❌ Error: ${result.message}`);
-      }
-    } catch (error) {
-      console.error('Error syncing individual match:', error);
-      setIndividualSyncMessage('❌ Error al sincronizar el partido');
-    } finally {
-      setSyncingIndividual(false);
-      // Clear message after 5 seconds
-      setTimeout(() => setIndividualSyncMessage(null), 5000);
     }
   };
 
