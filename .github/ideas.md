@@ -1,4 +1,8 @@
+# Ideas for Peña Bética Escocesa Website
+
 This document provides a list of ideas and features for the Peña Bética Escocesa website. It serves as a brainstorming space for future enhancements and functionalities.
+
+## Ideas
 
 * Find where it is shown on tv in the UK and Spain, maybe provide some links to the channels or streaming services.
 
