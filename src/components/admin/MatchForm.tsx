@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Match, MatchInsert, MatchUpdate } from '@/lib/supabase';
+import { generateCSRFToken, sanitizeInput } from '@/lib/security';
 
 // Note: This component should be wrapped with FeatureWrapper for 'showAdmin' flag
 // when used in admin pages to ensure proper access control
@@ -35,8 +36,14 @@ export default function MatchForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [csrfToken, setCsrfToken] = useState<string>('');
 
-  // Validation
+  // Generate CSRF token on mount
+  useEffect(() => {
+    setCsrfToken(generateCSRFToken());
+  }, []);
+
+  // Validation with security checks
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
@@ -44,13 +51,23 @@ export default function MatchForm({
       newErrors.date_time = 'Fecha y hora son requeridas';
     }
 
-    if (!formData.opponent.trim()) {
+    const sanitizedOpponent = sanitizeInput(formData.opponent);
+    if (!sanitizedOpponent.trim()) {
       newErrors.opponent = 'Oponente es requerido';
+    } else if (sanitizedOpponent.length > 100) {
+      newErrors.opponent = 'Nombre del oponente demasiado largo';
     }
 
-
-    if (!formData.competition.trim()) {
+    const sanitizedCompetition = sanitizeInput(formData.competition);
+    if (!sanitizedCompetition.trim()) {
       newErrors.competition = 'Competición es requerida';
+    } else if (sanitizedCompetition.length > 100) {
+      newErrors.competition = 'Nombre de competición demasiado largo';
+    }
+
+    const sanitizedNotes = sanitizeInput(formData.notes);
+    if (sanitizedNotes.length > 500) {
+      newErrors.notes = 'Notas demasiado largas (máximo 500 caracteres)';
     }
 
     setErrors(newErrors);
@@ -69,10 +86,11 @@ export default function MatchForm({
     try {
       const submitData = {
         date_time: new Date(formData.date_time).toISOString(),
-        opponent: formData.opponent.trim(),
-        competition: formData.competition.trim(),
+        opponent: sanitizeInput(formData.opponent).trim(),
+        competition: sanitizeInput(formData.competition).trim(),
         home_away: formData.home_away,
-        notes: formData.notes.trim() || undefined
+        notes: sanitizeInput(formData.notes).trim() || undefined,
+        csrfToken // Include CSRF token
       };
 
       const result = await onSubmit(submitData);
@@ -139,6 +157,9 @@ export default function MatchForm({
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* CSRF Token */}
+        <input type="hidden" name="csrfToken" value={csrfToken} />
+        
         {/* Date and Time */}
         <div>
           <label htmlFor="date_time" className="block text-sm font-medium text-gray-700">

@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+import { sanitizeInput, validateEmail, validateInputLength } from '@/lib/security';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -39,7 +40,7 @@ export function validateForm(data: Record<string, unknown>, rules: ValidationRul
 }
 
 export function validateField(value: unknown, rule: ValidationRule): string | null {
-  const stringValue = String(value ?? '').trim();
+  const stringValue = sanitizeInput(String(value ?? ''));
   
   // Required validation
   if (rule.required && !stringValue) {
@@ -51,13 +52,12 @@ export function validateField(value: unknown, rule: ValidationRule): string | nu
     return null;
   }
   
-  // Length validations
-  if (rule.minLength && stringValue.length < rule.minLength) {
-    return `Mínimo ${rule.minLength} caracteres`;
-  }
-  
-  if (rule.maxLength && stringValue.length > rule.maxLength) {
-    return `Máximo ${rule.maxLength} caracteres`;
+  // Length validations with security check
+  if (rule.minLength || rule.maxLength) {
+    const lengthValidation = validateInputLength(stringValue, rule.minLength, rule.maxLength);
+    if (!lengthValidation.isValid) {
+      return lengthValidation.error;
+    }
   }
   
   // Pattern validation
@@ -95,8 +95,9 @@ export const commonValidationRules = {
     required: true,
     pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     custom: (value: string) => {
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        return 'Ingresa un email válido';
+      const emailValidation = validateEmail(value);
+      if (!emailValidation.isValid) {
+        return emailValidation.error;
       }
       return null;
     }

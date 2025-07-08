@@ -1,14 +1,47 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase, type ContactSubmissionInsert } from '@/lib/supabase';
 import { emailService, type ContactEmailData } from '@/lib/emailService';
+import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, getClientIP } from '@/lib/security';
 
 // Supabase-based contact operations - no file system needed
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, phone, type, subject, message } = await request.json();
+    const body = await request.json();
+    const { name, email, phone, type, subject, message } = sanitizeObject(body);
+
+    // Rate limiting
+    const clientIP = getClientIP(request);
+    const rateLimit = checkRateLimit(clientIP, { windowMs: 15 * 60 * 1000, maxRequests: 3 });
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { success: false, error: 'Demasiadas solicitudes. Por favor, intenta de nuevo más tarde.' },
+        { status: 429 }
+      );
+    }
     
-    // Validation
+    // Security validations
+    const nameValidation = validateInputLength(name, 2, 50);
+    if (!nameValidation.isValid) {
+      return NextResponse.json({ success: false, error: nameValidation.error }, { status: 400 });
+    }
+
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
+      return NextResponse.json({ success: false, error: emailValidation.error }, { status: 400 });
+    }
+
+    const subjectValidation = validateInputLength(subject, 3, 100);
+    if (!subjectValidation.isValid) {
+      return NextResponse.json({ success: false, error: subjectValidation.error }, { status: 400 });
+    }
+
+    const messageValidation = validateInputLength(message, 5, 1000);
+    if (!messageValidation.isValid) {
+      return NextResponse.json({ success: false, error: messageValidation.error }, { status: 400 });
+    }
+
+    // Required fields validation
     if (!name || !email || !subject || !message) {
       return NextResponse.json({ 
         success: false,
@@ -16,13 +49,15 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json({ 
-        success: false,
-        error: 'Por favor introduce un email válido' 
-      }, { status: 400 });
+    // Validate phone if provided
+    if (phone && phone.trim()) {
+      const phoneRegex = /^[+]?[\d\s-()]{9,15}$/;
+      if (!phoneRegex.test(phone)) {
+        return NextResponse.json({ 
+          success: false,
+          error: 'Formato de teléfono inválido' 
+        }, { status: 400 });
+      }
     }
 
     // Create new submission for Supabase

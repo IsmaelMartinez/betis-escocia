@@ -1,9 +1,20 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { FootballDataService } from '@/services/footballDataService';
 import { supabase } from '@/lib/supabase';
+import { checkRateLimit, getClientIP } from '@/lib/security';
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
+    // Rate limiting for admin operations
+    const clientIP = getClientIP(request);
+    const rateLimit = checkRateLimit(`admin-sync-${clientIP}`, { windowMs: 60 * 60 * 1000, maxRequests: 10 });
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { success: false, error: 'Demasiadas solicitudes de sincronización. Intenta de nuevo más tarde.' },
+        { status: 429 }
+      );
+    }
+    
     // Simple authentication check - in production, use proper authentication
     // For now, we'll allow any request. In production, add proper auth
     // Initialize the football data service

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase, type RSVP } from '@/lib/supabase';
 import { emailService, type RSVPEmailData } from '@/lib/emailService';
+import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, getClientIP } from '@/lib/security';
 
 // Default current match info (this could be moved to env vars or a separate config)
 const DEFAULT_MATCH = {
@@ -119,9 +120,35 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, attendees, message, whatsappInterest, matchId } = body;
+    const { name, email, attendees, message, whatsappInterest, matchId } = sanitizeObject(body);
 
-    // Validation
+    // Rate limiting
+    const clientIP = getClientIP(request);
+    const rateLimit = checkRateLimit(clientIP, { windowMs: 15 * 60 * 1000, maxRequests: 5 });
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { success: false, error: 'Demasiadas solicitudes. Por favor, intenta de nuevo más tarde.' },
+        { status: 429 }
+      );
+    }
+
+    // Security validations
+    const nameValidation = validateInputLength(name, 2, 50);
+    if (!nameValidation.isValid) {
+      return NextResponse.json({ success: false, error: nameValidation.error }, { status: 400 });
+    }
+
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
+      return NextResponse.json({ success: false, error: emailValidation.error }, { status: 400 });
+    }
+
+    const messageValidation = validateInputLength(message, 0, 500);
+    if (!messageValidation.isValid) {
+      return NextResponse.json({ success: false, error: messageValidation.error }, { status: 400 });
+    }
+
+    // Required fields validation
     if (!name || !email || !attendees) {
       return NextResponse.json(
         { 
@@ -132,13 +159,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    // Validate attendees count
+    const attendeesNum = parseInt(attendees);
+    if (isNaN(attendeesNum) || attendeesNum < 1 || attendeesNum > 10) {
       return NextResponse.json(
         { 
           success: false, 
-          error: 'Por favor introduce un email válido' 
+          error: 'Número de asistentes debe ser entre 1 y 10' 
         },
         { status: 400 }
       );
