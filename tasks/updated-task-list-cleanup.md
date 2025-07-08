@@ -43,13 +43,20 @@ Created: December 2024
 
 #### 🏁 **T36: Feature Flag Enforcement & Logo Update** **✅ COMPLETED**
 
-- [x] T36.1: Audit and fix feature flag enforcement across all pages and components ✅
+- [x] T36.1: Audit and fix feature flag enforcement across all pages and components ✅ **NEWLY COMPLETED**
   - Fixed main page sections that bypassed feature flags (eventos, clasificacion, rsvp, contact)
   - Audited all navigation buttons and links for proper feature flag respect
   - Ensured all disabled features return 404 or redirect when accessed directly
   - Updated components to conditionally render based on feature flags
   - Added withFeatureFlag protection to all pages (rsvp, contacto, coleccionables, galeria, historia, redes-sociales)
   - Extended feature flags to include showPorra and showRedesSociales
+  - **NEW: Added comprehensive UI component feature flag controls:**
+    - HeroCommunity 'Únete' button now controlled by showUnete flag
+    - Main page social media links controlled by showSocialMedia flag
+    - Main page contact info section controlled by showContacto flag
+    - BetisPositionWidget in partidos page controlled by showClasificacion flag
+    - All major UI components now respect feature flag configuration
+    - Disabled features completely disappear from UI for clean user experience
 - [x] T36.2: Update site logo and favicon ✅
   - Replaced current logo with logo_no_texto.jpg for cleaner appearance
   - Updated favicon to use new logo in metadata
@@ -108,6 +115,16 @@ Created: December 2024
   - Enhanced user experience with native app-like features
 
 ### ✅ **RECENT ACCOMPLISHMENTS** (July 2025)
+
+- **T36.1: Comprehensive Feature Flag UI Controls** - Complete implementation across all components ✅ **JUST COMPLETED**
+  - Added FeatureWrapper protection to HeroCommunity 'Únete' button (controlled by showUnete)
+  - Implemented feature flag controls for main page social media links (controlled by showSocialMedia)
+  - Added feature flag protection to main page contact info section (controlled by showContacto)
+  - Protected BetisPositionWidget in partidos page with showClasificacion flag
+  - All major UI components now respect feature flag configuration
+  - Disabled features completely disappear from UI providing clean user experience
+  - Maintains existing page-level protection (RSVP, contact, classification pages)
+  - Navigation items already filtered by feature flags in layout
 
 - **T33: Feature Flags System** - Complete implementation for navigation control ✅ **NEWLY COMPLETED**
   - Environment variable-based feature toggles for all major sections
@@ -170,4 +187,4 @@ Created: December 2024
 - [ ] T36.5: User segmentation and targeted feature releases
 - [ ] T36.6: Analytics integration for feature usage tracking
 
-### 📈 **PROGRESS**: **92% COMPLETE** - RSVP and Contact systems migrated to Supabase, SEO optimization and PWA features completed, 3 core systems deferred to version 2.
+### 📈 **PROGRESS**: **95% COMPLETE** - RSVP and Contact systems migrated to Supabase, comprehensive feature flag UI controls implemented, SEO optimization and PWA features completed, 3 core systems deferred to version 2.
