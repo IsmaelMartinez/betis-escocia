@@ -25,15 +25,15 @@ export default function Home() {
             <span className="text-betis-gold font-medium text-sm">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Bienvenidos a Escocia</span>
           </div>
           
-          <h2 className="text-4xl sm:text-5xl font-black mb-6 text-white drop-shadow-2xl">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 lg:mb-6 text-white drop-shadow-2xl">
             ¿Estás de visita en Escocia?
           </h2>
           
-          <p className="text-xl sm:text-2xl mb-4 font-semibold text-betis-gold drop-shadow-xl">
+          <p className="text-lg sm:text-xl lg:text-2xl mb-3 lg:mb-4 font-semibold text-betis-gold drop-shadow-xl">
             ¡Únete a nosotros en el Polwarth Tavern!
           </p>
           
-          <p className="text-lg mb-12 max-w-3xl mx-auto text-white font-medium leading-relaxed drop-shadow-xl">
+          <p className="text-base sm:text-lg mb-8 lg:mb-12 max-w-3xl mx-auto text-white font-medium leading-relaxed drop-shadow-xl">
             Todos los béticos son bienvenidos. No importa de dónde vengas, 
             aquí tienes una familia que comparte tu pasión por el Betis.
           </p>

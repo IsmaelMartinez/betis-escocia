@@ -27,30 +27,30 @@ export default function HeroCommunity() {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-20 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Left side - Main message in official style */}
           <div>
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black mb-8 leading-tight text-betis-black">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 lg:mb-8 leading-tight text-betis-black">
               <span className="block">MÁS QUE</span>
               <span className="block text-betis-green">UNA PEÑA</span>
-              <span className="block text-gray-600 text-3xl sm:text-4xl lg:text-5xl mt-4">UNA FAMILIA</span>
+              <span className="block text-gray-600 text-2xl sm:text-3xl md:text-4xl lg:text-5xl mt-2 lg:mt-4">UNA FAMILIA</span>
             </h1>
             
             {/* Official-style description box */}
-            <div className="bg-white rounded-lg p-8 mb-8 border-l-4 border-betis-green shadow-lg">
-              <p className="text-xl leading-relaxed text-gray-700 mb-6">
+            <div className="bg-white rounded-lg p-6 lg:p-8 mb-6 lg:mb-8 border-l-4 border-betis-green shadow-lg">
+              <p className="text-lg lg:text-xl leading-relaxed text-gray-700 mb-4 lg:mb-6">
                 <strong className="text-betis-green">Más de 14 años</strong> compartiendo la pasión por el Betis desde Edimburgo. 
                 Aquí encontrarás <strong className="text-betis-green">amigos de verdad</strong>, momentos únicos 
                 y el cariño de una comunidad que te acoge como en casa.
               </p>
-              <p className="text-lg text-gray-600">
+              <p className="text-base lg:text-lg text-gray-600">
                 Ya seas de Sevilla, de cualquier parte de España, o incluso escocés... 
                 si llevas el Betis en el corazón, <strong className="text-betis-green">ya eres de los nuestros</strong>.
               </p>
             </div>
 
             {/* Key features - official card style */}
-            <div className="grid grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-6 lg:mb-8">
               <div className="card-betis">
                 <Coffee className="h-8 w-8 text-betis-green mb-4" />
                 <h3 className="font-bold text-betis-black mb-2 text-lg">AMBIENTE FAMILIAR</h3>

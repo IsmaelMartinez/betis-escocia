@@ -29,8 +29,8 @@ export default function Layout({ children }: LayoutProps) {
             <Link href="/" className="flex items-center space-x-2">
               <BetisLogo width={32} height={32} className="bg-white rounded-full p-1" />
               <div className="text-white">
-                <h1 className="font-bold text-lg sm:text-xl">No busques más</h1>
-                <p className="text-xs opacity-90">que no hay</p>
+                <h1 className="font-bold text-base sm:text-lg lg:text-xl">No busques más</h1>
+                <p className="text-xs opacity-90 hidden xs:block">que no hay</p>
               </div>
             </Link>
 
@@ -59,13 +59,13 @@ export default function Layout({ children }: LayoutProps) {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden bg-betis-green border-t border-white/20">
-            <div className="px-4 py-2 space-y-1">
+          <div className="md:hidden bg-betis-green-dark border-t border-white/20">
+            <div className="px-4 py-4 space-y-2">
               {enabledNavigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="block px-3 py-2 text-white hover:text-betis-gold transition-colors duration-200"
+                  className="block px-4 py-3 text-white hover:text-betis-gold hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
@@ -84,11 +84,11 @@ export default function Layout({ children }: LayoutProps) {
       {/* Footer */}
       <footer className="bg-gray-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* About */}
-            <div>
+            <div className="sm:col-span-2 lg:col-span-1">
               <h3 className="font-bold text-lg mb-4 text-betis-green">No busques más que no hay</h3>
-              <p className="text-gray-300 text-sm">
+              <p className="text-gray-300 text-sm leading-relaxed">
                 La peña del Real Betis en Edimburgo. Nos vemos en el Polwarth Tavern para cada partido.
               </p>
             </div>
