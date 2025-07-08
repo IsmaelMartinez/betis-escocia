@@ -68,19 +68,33 @@ Implement a static partidos section where users can see league games for the cur
   - [x] 5.3.1 Add navigation link from clasificacion to partidos
   - [x] 5.3.2 Ensure link respects feature flag visibility
 
-## 6. Testing and Validation
-- [ ] 6.1 Test database operations
-  - [ ] 6.1.1 Test CRUD operations on matches table
-  - [ ] 6.1.2 Test relationship with RSVP system
-  - [ ] 6.1.3 Validate data integrity and constraints
-- [ ] 6.2 Test UI components
-  - [ ] 6.2.1 Test MatchCard component with database data
-  - [ ] 6.2.2 Test responsive design
-  - [ ] 6.2.3 Test admin interface functionality
-- [ ] 6.3 Integration testing
-  - [ ] 6.3.1 Test complete flow: database → UI display
-  - [ ] 6.3.2 Test RSVP integration
-  - [ ] 6.3.3 Test feature flag toggling
+## 6. Database Integration Fixes
+- [x] 6.1 Fix partidos page data source priority
+  - [x] 6.1.1 Make database the primary data source for partidos page
+  - [x] 6.1.2 Move API data to expandable section for backup/comparison
+  - [x] 6.1.3 Update page layout to prioritize UpcomingMatches component
+- [ ] 6.2 Complete database integration
+  - [ ] 6.2.1 Replace static JSON data with database queries
+  - [ ] 6.2.2 Update FilteredMatches to support database data alongside API
+  - [ ] 6.2.3 Create hybrid data loader for seamless API + DB integration
+- [ ] 6.3 Football-Data.org API Integration
+  - [ ] 6.3.1 Create script to sync LaLiga matches from API to database
+  - [ ] 6.3.2 Implement automatic data synchronization
+  - [ ] 6.3.3 Handle data conflicts and duplicates
+
+## 7. Testing and Validation
+- [x] 7.1 Test database operations
+  - [x] 7.1.1 Test CRUD operations on matches table (✅ friendly matches inserted)
+  - [x] 7.1.2 Test relationship with RSVP system
+  - [x] 7.1.3 Validate data integrity and constraints
+- [x] 7.2 Test UI components
+  - [x] 7.2.1 Test MatchCard component with database data
+  - [x] 7.2.2 Test responsive design
+  - [ ] 7.2.3 Test admin interface functionality
+- [ ] 7.3 Integration testing
+  - [x] 7.3.1 Test complete flow: database → UI display (✅ UpcomingMatches works)
+  - [ ] 7.3.2 Test RSVP integration
+  - [ ] 7.3.3 Test feature flag toggling
 
 ---
 

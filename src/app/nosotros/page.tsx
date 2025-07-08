@@ -195,7 +195,7 @@ export default function Nosotros() {
               NUESTROS PILARES
             </h2>
             <p className="text-xl text-gray-800 max-w-3xl mx-auto">
-              Las personas que hacen que todo funcione y que cada domingo sea especial
+              Las personas que hacen que todo funcione y que cada partido sea especial
             </p>
           </div>
 

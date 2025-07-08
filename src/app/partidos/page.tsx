@@ -95,29 +95,40 @@ export default async function MatchesPage() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Main content - matches */}
             <div className="lg:col-span-3 space-y-12">
-              {/* Database-driven upcoming matches */}
+              {/* Database-driven upcoming matches - PRIMARY DATA SOURCE */}
               <ApiErrorBoundary>
                 <UpcomingMatches 
-                  limit={5}
+                  limit={10}
                   showViewAllLink={false}
                   className=""
                 />
               </ApiErrorBoundary>
               
-              {/* Divider */}
-              <div className="border-t border-gray-200 pt-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Otros Partidos</h2>
-                
-                {/* API-driven matches for comparison/backup */}
-                <ApiErrorBoundary>
-                  <FilteredMatches 
-                    upcomingMatches={upcoming} 
-                    recentMatches={recent}
-                    conferenceMatches={conference}
-                    friendlyMatches={friendlies}
-                  />
-                </ApiErrorBoundary>
-              </div>
+              {/* Optional: API-driven matches for backup/additional data */}
+              {(upcoming.length > 0 || recent.length > 0) && (
+                <div className="border-t border-gray-200 pt-8">
+                  <details className="group">
+                    <summary className="cursor-pointer list-none">
+                      <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center group-open:text-gray-900">
+                        <span className="mr-2 transition-transform group-open:rotate-90">▶</span>
+                        Datos Adicionales de la API
+                        <span className="ml-2 text-sm font-normal text-gray-500">(Click para expandir)</span>
+                      </h2>
+                    </summary>
+                    
+                    <div className="mt-4">
+                      <ApiErrorBoundary>
+                        <FilteredMatches 
+                          upcomingMatches={upcoming} 
+                          recentMatches={recent}
+                          conferenceMatches={conference}
+                          friendlyMatches={friendlies}
+                        />
+                      </ApiErrorBoundary>
+                    </div>
+                  </details>
+                </div>
+              )}
             </div>
             
             {/* Sidebar - Betis Position Widget */}
