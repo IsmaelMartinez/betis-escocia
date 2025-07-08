@@ -309,7 +309,7 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
                   </span>
                 </h3>
                 
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
                   {competitionMatches.map((match) => {
                     const cardProps = convertDatabaseMatchToCardProps(match);
                     

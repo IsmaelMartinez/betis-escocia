@@ -124,10 +124,10 @@ Implement a static partidos section where users can see league games for the cur
   - [x] 10.2.3 Ensure proper spacing and visual hierarchy
 
 ## 11. LaLiga Data Integration
-- [ ] 11.1 Football-Data.org API integration
-  - [ ] 11.1.1 Create script to fetch LaLiga matches for current season
-  - [ ] 11.1.2 Import Real Betis matches automatically to database
-  - [ ] 11.1.3 Handle data mapping and transformation
+- [x] 11.1 Football-Data.org API integration
+  - [x] 11.1.1 Create script to fetch LaLiga matches for current season
+  - [x] 11.1.2 Import Real Betis matches automatically to database
+  - [x] 11.1.3 Handle data mapping and transformation
 - [ ] 11.2 Data synchronization
   - [ ] 11.2.1 Implement automatic sync mechanism
   - [ ] 11.2.2 Handle duplicate detection and updates

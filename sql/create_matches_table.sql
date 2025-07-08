@@ -10,7 +10,9 @@ CREATE TABLE matches (
     home_away VARCHAR(10) NOT NULL CHECK (home_away IN ('home', 'away')),
     notes TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    external_id BIGINT,
+    external_source VARCHAR(100)
 );
 
 -- Create indexes for efficient queries
