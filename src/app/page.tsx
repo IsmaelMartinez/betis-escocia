@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import HeroCommunity from '@/components/HeroCommunity';
 import UpcomingMatchesWidget from '@/components/UpcomingMatchesWidget';
+import ClassificationWidget from '@/components/ClassificationWidget';
 import { FeatureWrapper } from '@/lib/featureProtection';
 
 export default function Home() {
@@ -9,28 +10,22 @@ export default function Home() {
     <>
       <HeroCommunity />
       
-      {/* Upcoming Matches Widget */}
-      <FeatureWrapper feature="showPartidos">
-        <section className="py-16 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2">
-                <div className="mb-8">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-4">⚽ Próximos Partidos</h2>
-                  <p className="text-gray-600 text-lg">
-                    Únete a nosotros en el Polwarth Tavern para animar al Betis. 
-                    ¡La cerveza es mejor con compañía bética!
-                  </p>
-                </div>
-              </div>
-              
-              <div className="lg:col-span-1">
-                <UpcomingMatchesWidget className="" />
-              </div>
-            </div>
+      {/* Upcoming Matches and Classification Widgets */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Upcoming Matches */}
+            <FeatureWrapper feature="showPartidos">
+              <UpcomingMatchesWidget className="" />
+            </FeatureWrapper>
+            
+            {/* Classification */}
+            <FeatureWrapper feature="showClasificacion">
+              <ClassificationWidget className="" />
+            </FeatureWrapper>
           </div>
-        </section>
-      </FeatureWrapper>
+        </div>
+      </section>
       
       {/* Join Us CTA */}
       <section className="py-20 bg-gradient-to-br from-betis-green via-betis-green-dark to-betis-black text-white relative overflow-hidden">

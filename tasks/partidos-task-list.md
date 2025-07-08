@@ -114,14 +114,14 @@ Implement a static partidos section where users can see league games for the cur
   - [x] 9.2.3 Real-time update of counts when RSVPs are submitted
 
 ## 10. Homepage Layout Improvements
-- [ ] 10.1 Enhanced main page layout
-  - [ ] 10.1.1 Show next 2 games side by side instead of stacked
-  - [ ] 10.1.2 Add classification widget to main page
-  - [ ] 10.1.3 Optimize layout for desktop and mobile responsiveness
-- [ ] 10.2 Widget improvements
-  - [ ] 10.2.1 Update UpcomingMatchesWidget to display 2 matches horizontally
-  - [ ] 10.2.2 Integrate classification widget alongside matches
-  - [ ] 10.2.3 Ensure proper spacing and visual hierarchy
+- [x] 10.1 Enhanced main page layout
+  - [x] 10.1.1 Show next 2 games side by side instead of stacked
+  - [x] 10.1.2 Add classification widget to main page
+  - [x] 10.1.3 Optimize layout for desktop and mobile responsiveness
+- [x] 10.2 Widget improvements
+  - [x] 10.2.1 Update UpcomingMatchesWidget to display 2 matches horizontally
+  - [x] 10.2.2 Integrate classification widget alongside matches
+  - [x] 10.2.3 Ensure proper spacing and visual hierarchy
 
 ## 11. LaLiga Data Integration
 - [ ] 11.1 Football-Data.org API integration

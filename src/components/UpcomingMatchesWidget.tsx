@@ -142,7 +142,7 @@ export default function UpcomingMatchesWidget({
         </Link>
       </div>
       
-      <div className="space-y-4">
+      <div className={`${matches.length > 1 ? 'grid grid-cols-1 md:grid-cols-2 gap-4' : 'space-y-4'}`}>
         {matches.map((match, index) => {
           // Convert to simplified card format for widget
           const matchDate = new Date(match.date_time);
