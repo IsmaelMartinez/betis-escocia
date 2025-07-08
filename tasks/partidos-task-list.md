@@ -56,17 +56,17 @@ Implement a static partidos section where users can see league games for the cur
   - [x] 4.3.3 Show RSVP count if available
 
 ## 5. Page Integration and Navigation
-- [ ] 5.1 Update main partidos page
-  - [ ] 5.1.1 Add UpcomingMatches component to existing page
-  - [ ] 5.1.2 Integrate admin controls (protected by feature flags)
-  - [ ] 5.1.3 Ensure page works with existing FilteredMatches component
-- [ ] 5.2 Add widget for main page
-  - [ ] 5.2.1 Create compact UpcomingMatchesWidget component using MatchCard
-  - [ ] 5.2.2 Add to main page with FeatureWrapper protection
-  - [ ] 5.2.3 Add "Ver todos los partidos" link to full page
-- [ ] 5.3 Link from clasificacion page
-  - [ ] 5.3.1 Add navigation link from clasificacion to partidos
-  - [ ] 5.3.2 Ensure link respects feature flag visibility
+- [x] 5.1 Update main partidos page
+  - [x] 5.1.1 Add UpcomingMatches component to existing page
+  - [x] 5.1.2 Integrate admin controls (protected by feature flags)
+  - [x] 5.1.3 Ensure page works with existing FilteredMatches component
+- [x] 5.2 Add widget for main page
+  - [x] 5.2.1 Create compact UpcomingMatchesWidget component using MatchCard
+  - [x] 5.2.2 Add to main page with FeatureWrapper protection
+  - [x] 5.2.3 Add "Ver todos los partidos" link to full page
+- [x] 5.3 Link from clasificacion page
+  - [x] 5.3.1 Add navigation link from clasificacion to partidos
+  - [x] 5.3.2 Ensure link respects feature flag visibility
 
 ## 6. Testing and Validation
 - [ ] 6.1 Test database operations

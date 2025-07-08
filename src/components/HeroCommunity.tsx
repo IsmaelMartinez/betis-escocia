@@ -129,7 +129,7 @@ export default function HeroCommunity() {
                   <div className="bg-gray-100 rounded-lg aspect-square flex items-center justify-center border border-gray-200">
                     <div className="text-center">
                       <span className="text-4xl mb-2 block">⚽</span>
-                      <span className="text-gray-600 text-sm font-bold">CADA DOMINGO</span>
+                      <span className="text-gray-600 text-sm font-bold">CADA PARTIDO</span>
                     </div>
                   </div>
                   <div className="bg-betis-green/10 rounded-lg aspect-square flex items-center justify-center border border-betis-green/20">

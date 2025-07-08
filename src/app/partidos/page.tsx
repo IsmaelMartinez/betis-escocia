@@ -1,9 +1,11 @@
 import { ApiErrorBoundary } from '@/components/ErrorBoundary';
 import FilteredMatches from '@/components/FilteredMatches';
 import BetisPositionWidget from '@/components/BetisPositionWidget';
+import UpcomingMatches from '@/components/UpcomingMatches';
 import { FeatureWrapper } from '@/lib/featureProtection';
 import { notFound } from 'next/navigation';
 import { isFeatureEnabled } from '@/lib/featureFlags';
+import Link from 'next/link';
 
 // Fetch data at build time and revalidate every 30 minutes
 async function getMatches() {
@@ -72,6 +74,18 @@ export default async function MatchesPage() {
           <p className="text-xl opacity-90 max-w-2xl mx-auto">
             Todos los partidos se ven en el Polwarth Tavern. ¡No te pierdas ni uno!
           </p>
+          
+          {/* Admin controls */}
+          <FeatureWrapper feature="showAdmin">
+            <div className="mt-6">
+              <Link
+                href="/admin/matches"
+                className="bg-white/20 hover:bg-white/30 text-white px-6 py-2 rounded-lg font-medium transition-colors inline-flex items-center"
+              >
+                ⚙️ Gestionar Partidos
+              </Link>
+            </div>
+          </FeatureWrapper>
         </div>
       </section>
 
@@ -80,15 +94,30 @@ export default async function MatchesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Main content - matches */}
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-3 space-y-12">
+              {/* Database-driven upcoming matches */}
               <ApiErrorBoundary>
-                <FilteredMatches 
-                  upcomingMatches={upcoming} 
-                  recentMatches={recent}
-                  conferenceMatches={conference}
-                  friendlyMatches={friendlies}
+                <UpcomingMatches 
+                  limit={5}
+                  showViewAllLink={false}
+                  className=""
                 />
               </ApiErrorBoundary>
+              
+              {/* Divider */}
+              <div className="border-t border-gray-200 pt-8">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Otros Partidos</h2>
+                
+                {/* API-driven matches for comparison/backup */}
+                <ApiErrorBoundary>
+                  <FilteredMatches 
+                    upcomingMatches={upcoming} 
+                    recentMatches={recent}
+                    conferenceMatches={conference}
+                    friendlyMatches={friendlies}
+                  />
+                </ApiErrorBoundary>
+              </div>
             </div>
             
             {/* Sidebar - Betis Position Widget */}

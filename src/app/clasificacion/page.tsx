@@ -5,7 +5,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
-import { withFeatureFlag } from '@/lib/featureProtection';
+import { withFeatureFlag, FeatureWrapper } from '@/lib/featureProtection';
 
 export const metadata: Metadata = {
   title: 'Clasificación de La Liga - Peña Bética Escocesa',
@@ -267,12 +267,14 @@ async function StandingsContent() {
 
         {/* Actions */}
         <div className="mt-8 flex justify-center">
-          <Link
-            href="/partidos"
-            className="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-md"
-          >
-            Ver Partidos del Betis
-          </Link>
+          <FeatureWrapper feature="showPartidos">
+            <Link
+              href="/partidos"
+              className="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-md"
+            >
+              Ver Partidos del Betis
+            </Link>
+          </FeatureWrapper>
         </div>
       </div>
     </div>
