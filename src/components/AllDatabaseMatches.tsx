@@ -13,6 +13,7 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('all');
+  const [competitionFilter, setCompetitionFilter] = useState<string>('all');
 
   useEffect(() => {
     async function fetchAllMatches() {
@@ -43,14 +44,20 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
     const now = new Date();
     const matchDate = new Date(match.date_time);
     
-    switch (filter) {
-      case 'upcoming':
-        return matchDate > now;
-      case 'past':
-        return matchDate <= now;
-      default:
-        return true;
-    }
+    const passesTimeFilter = (() => {
+      switch (filter) {
+        case 'upcoming':
+          return matchDate > now;
+        case 'past':
+          return matchDate <= now;
+        default:
+          return true;
+      }
+    })();
+
+    const passesCompetitionFilter = competitionFilter === 'all' || match.competition === competitionFilter;
+
+    return passesTimeFilter && passesCompetitionFilter;
   });
 
   // Calculate counts for filter buttons
@@ -58,13 +65,21 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
   const upcomingMatches = matches.filter(m => new Date(m.date_time) > new Date());
   const pastMatches = matches.filter(m => new Date(m.date_time) <= new Date());
   
+  // Get available competitions from all matches
+  const availableCompetitions = Array.from(new Set(matches.map(m => m.competition))).sort();
+
   // Get the actual count based on what will be displayed (considering limits)
   const getDisplayCount = (filterType: 'all' | 'upcoming' | 'past'): number => {
     const targetMatches = filterType === 'all' ? allMatches : 
                          filterType === 'upcoming' ? upcomingMatches : pastMatches;
     
+    // Apply competition filter
+    const competitionFilteredMatches = competitionFilter === 'all' 
+      ? targetMatches 
+      : targetMatches.filter(m => m.competition === competitionFilter);
+    
     // Group by competition and apply same logic as processedMatchesByCompetition
-    const grouped = targetMatches.reduce((acc, match) => {
+    const grouped = competitionFilteredMatches.reduce((acc, match) => {
       if (!acc[match.competition]) {
         acc[match.competition] = [];
       }
@@ -276,56 +291,83 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
           >
             Pasados ({getDisplayCount('past')})
           </button>
-        </div>
-      </div>
-      
-      {filteredMatches.length === 0 ? (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
-          <div className="text-gray-400 text-4xl mb-4">📅</div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
-            No hay partidos {filter === 'upcoming' ? 'próximos' : 'pasados'}
-          </h3>
-          <p className="text-gray-600">
-            {filter === 'upcoming' 
-              ? 'No hay próximos partidos programados.' 
-              : 'No hay partidos pasados registrados.'
-            }
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-8">
-          {Object.entries(processedMatchesByCompetition).map(([competition, competitionMatches]) => {
-            // Check if we're showing limited results for friendly games
-            const isLimitedFriendly = competition === 'Amistoso Pretemporada' && 
-              (filter === 'upcoming' || filter === 'all') &&
-              filteredMatches.filter(m => m.competition === competition && new Date(m.date_time) > new Date()).length > 2;
+    </div>
+  </div>
+
+  {/* Competition Filter buttons */}
+  <div className="flex space-x-2 my-4">
+    <button
+      onClick={() => setCompetitionFilter('all')}
+      className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+        competitionFilter === 'all' 
+          ? 'bg-betis-green text-white' 
+          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+      }`}
+    >
+      Todas
+    </button>
+    {availableCompetitions.map((competition) => (
+      <button
+        key={competition}
+        onClick={() => setCompetitionFilter(competition)}
+        className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+          competitionFilter === competition 
+            ? 'bg-betis-green text-white' 
+            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+        }`}
+      >
+        {competition}
+      </button>
+    ))}
+  </div>
+  
+  {filteredMatches.length === 0 ? (
+    <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
+      <div className="text-gray-400 text-4xl mb-4">📅</div>
+      <h3 className="text-lg font-medium text-gray-900 mb-2">
+        No hay partidos {filter === 'upcoming' ? 'próximos' : 'pasados'}
+      </h3>
+      <p className="text-gray-600">
+        {filter === 'upcoming' 
+          ? 'No hay próximos partidos programados.' 
+          : 'No hay partidos pasados registrados.'
+        }
+      </p>
+    </div>
+  ) : (
+    <div className="space-y-8">
+      {Object.entries(processedMatchesByCompetition).map(([competition, competitionMatches]) => {
+        // Check if we're showing limited results for friendly games
+        const isLimitedFriendly = competition === 'Amistoso Pretemporada' && 
+          (filter === 'upcoming' || filter === 'all') &&
+          filteredMatches.filter(m => m.competition === competition && new Date(m.date_time) > new Date()).length > 2;
+        
+        return (
+          <div key={competition} className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+              🏆 {competition}
+              <span className="ml-2 text-sm font-normal text-gray-600">
+                ({competitionMatches.length} partidos{isLimitedFriendly ? ' - próximos 2' : ''})
+              </span>
+            </h3>
             
-            return (
-              <div key={competition} className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                  🏆 {competition}
-                  <span className="ml-2 text-sm font-normal text-gray-600">
-                    ({competitionMatches.length} partidos{isLimitedFriendly ? ' - próximos 2' : ''})
-                  </span>
-                </h3>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+              {competitionMatches.map((match) => {
+                const cardProps = convertDatabaseMatchToCardProps(match);
                 
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-                  {competitionMatches.map((match) => {
-                    const cardProps = convertDatabaseMatchToCardProps(match);
-                    
-                    return (
-                      <MatchCard 
-                        key={match.id}
-                        {...cardProps}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+                return (
+                  <MatchCard 
+                    key={match.id}
+                    {...cardProps}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  )}
     </div>
   );
 }
