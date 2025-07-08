@@ -9,22 +9,43 @@ const DEFAULT_MATCH = {
   competition: "LaLiga"
 };
 
-// Helper function to get current match date for filtering
-function getCurrentMatchDate(): string {
-  // For now, we'll use the default match date
-  // In the future, this could be dynamically determined from upcoming matches
-  return DEFAULT_MATCH.date;
+// Helper function to get current upcoming match for RSVP
+async function getCurrentUpcomingMatch() {
+  // Query the database for upcoming matches
+  const { data, error } = await supabase
+    .from('matches')
+    .select('id, opponent, date_time, competition')
+    .gte('date_time', new Date().toISOString())
+    .order('date_time', { ascending: true })
+    .limit(1);
+
+  if (error) {
+    console.error('Error fetching upcoming match:', error);
+    return DEFAULT_MATCH;
+  }
+
+  if (data && data.length > 0) {
+    const nextMatch = data[0];
+    return {
+      opponent: nextMatch.opponent,
+      date: nextMatch.date_time,
+      competition: nextMatch.competition
+    };
+  }
+  return DEFAULT_MATCH;
 }
 
 // GET - Retrieve current RSVP data
 export async function GET() {
   try {
+    // Get current upcoming match
+    const currentMatch = await getCurrentUpcomingMatch();
+    
     // Get all RSVPs for the current match
-    const currentMatchDate = getCurrentMatchDate();
     const { data: rsvps, error } = await supabase
       .from('rsvps')
       .select('*')
-      .eq('match_date', currentMatchDate)
+      .eq('match_date', currentMatch.date)
       .order('created_at', { ascending: true });
 
     if (error) {
@@ -43,7 +64,7 @@ export async function GET() {
     
     return NextResponse.json({
       success: true,
-      currentMatch: DEFAULT_MATCH,
+      currentMatch: currentMatch,
       totalAttendees,
       confirmedCount: rsvps?.length || 0
     });
@@ -88,7 +109,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const currentMatchDate = getCurrentMatchDate();
+    const currentMatch = await getCurrentUpcomingMatch();
+    const currentMatchDate = currentMatch.date;
 
     // Check if email already exists for current match
     const { data: existingRSVPs, error: checkError } = await supabase
@@ -179,7 +201,7 @@ export async function POST(request: NextRequest) {
     const totalAttendees = allRSVPs?.reduce((total: number, entry: { attendees: number }) => total + entry.attendees, 0) ?? 0;
 
     // Log for admin purposes
-    console.log(`New RSVP: ${name} (${email}) - ${attendees} attendees for ${DEFAULT_MATCH.opponent}`);
+    console.log(`New RSVP: ${name} (${email}) - ${attendees} attendees for ${currentMatch.opponent}`);
 
     return NextResponse.json({
       success: true,
@@ -249,7 +271,8 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Get updated totals for the current match
-    const currentMatchDate = getCurrentMatchDate();
+    const currentMatch = await getCurrentUpcomingMatch();
+    const currentMatchDate = currentMatch.date;
     const { data: remainingRSVPs, error: countError } = await supabase
       .from('rsvps')
       .select('attendees')

@@ -197,33 +197,6 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
     isBetis: true
   };
 
-  // Helper function to render team crest
-  const renderTeamCrest = (team: { name: string; crest?: string; isBetis: boolean }) => {
-    if (team.isBetis) {
-      return (
-        <BetisLogo width={32} height={32} className="object-contain rounded" />
-      );
-    }
-    
-    if (team.crest) {
-      return (
-        <Image
-          src={team.crest}
-          alt={`${team.name} logo`}
-          width={32}
-          height={32}
-          className="object-contain rounded"
-          unoptimized
-        />
-      );
-    }
-    
-    return (
-      <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-        <Trophy className="h-4 w-4 text-gray-400" />
-      </div>
-    );
-  };
 
   return (
     <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-200">
@@ -258,8 +231,6 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
                   <p className={`font-bold text-lg ${localTeam.isBetis ? 'text-betis-green' : ''}`}>
                     {localTeam.name}
                   </p>
-                  {renderTeamCrest(localTeam)}
-                </div>
                 <p className="text-sm text-gray-600">Local</p>
               </div>
               
@@ -271,10 +242,9 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
               {/* Visitor Team (always on right) */}
               <div className="text-left flex-1">
                 <div className="flex items-center justify-start space-x-2 mb-1">
-                  {renderTeamCrest(visitorTeam)}
-                  <p className={`font-bold text-lg ${visitorTeam.isBetis ? 'text-betis-green' : ''}`}>
+                  cp className={`font-bold text-lg ${visitorTeam.isBetis ? 'text-betis-green' : ''}`}e
                     {visitorTeam.name}
-                  </p>
+                  c/pe
                 </div>
                 <p className="text-sm text-gray-600">Visitante</p>
               </div>

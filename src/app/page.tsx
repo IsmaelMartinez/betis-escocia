@@ -45,7 +45,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/20"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-500 backdrop-blur-sm mb-8">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-600 backdrop-blur-sm mb-8">
             <span className="text-white font-medium text-sm">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Bienvenidos a Escocia</span>
           </div>
           
@@ -94,9 +94,6 @@ export default function Home() {
               >
                 <span className="flex items-center">
                   📺 YouTube
-                  <svg className="ml-2 h-5 w-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                  </svg>
                 </span>
               </a>
             </FeatureWrapper>
@@ -105,7 +102,7 @@ export default function Home() {
           {/* Contact info */}
           <FeatureWrapper feature="showContacto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+              <div className="bg-green-600 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
                 <h3 className="text-lg font-bold mb-3 text-betis-gold">📍 Ubicación</h3>
                 <p className="text-sm text-gray-200">
                   Polwarth Tavern<br />
@@ -114,7 +111,7 @@ export default function Home() {
                 </p>
               </div>
               
-              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+              <div className="bg-green-600 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
                 <h3 className="text-lg font-bold mb-3 text-betis-gold">⏰ Horarios</h3>
                 <p className="text-sm text-gray-200">
                   30 min antes del evento<br />
@@ -123,7 +120,7 @@ export default function Home() {
                 </p>
               </div>
               
-              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+              <div className="bg-green-600 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
                 <h3 className="text-lg font-bold mb-3 text-betis-gold">💚 Ambiente</h3>
                 <p className="text-sm text-gray-200">
                   100% bético<br />

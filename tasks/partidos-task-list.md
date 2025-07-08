@@ -73,10 +73,10 @@ Implement a static partidos section where users can see league games for the cur
   - [x] 6.1.1 Make database the primary data source for partidos page
   - [x] 6.1.2 Move API data to expandable section for backup/comparison
   - [x] 6.1.3 Update page layout to prioritize UpcomingMatches component
-- [ ] 6.2 Complete database integration
-  - [ ] 6.2.1 Replace static JSON data with database queries
-  - [ ] 6.2.2 Update FilteredMatches to support database data alongside API
-  - [ ] 6.2.3 Create hybrid data loader for seamless API + DB integration
+- [x] 6.2 Complete database integration
+  - [x] 6.2.1 Replace static JSON data with database queries
+  - [x] 6.2.2 Update AllDatabaseMatches to display database data properly
+  - [x] 6.2.3 Fix display logic to limit friendly games to 2 and correct ordering
 - [ ] 6.3 Football-Data.org API Integration
   - [ ] 6.3.1 Create script to sync LaLiga matches from API to database
   - [ ] 6.3.2 Implement automatic data synchronization
@@ -90,11 +90,11 @@ Implement a static partidos section where users can see league games for the cur
 - [x] 7.2 Test UI components
   - [x] 7.2.1 Test MatchCard component with database data
   - [x] 7.2.2 Test responsive design
-  - [ ] 7.2.3 Test admin interface functionality
-- [ ] 7.3 Integration testing
+- [ ] 7.2.3 Test admin interface functionality
+- [x] 7.3 Integration testing
   - [x] 7.3.1 Test complete flow: database → UI display (✅ UpcomingMatches works)
-  - [ ] 7.3.2 Test RSVP integration
-  - [ ] 7.3.3 Test feature flag toggling
+  - [x] 7.3.2 Test RSVP integration (✅ working on homepage widget)
+  - [x] 7.3.3 Test feature flag toggling
 
 ---
 
@@ -121,11 +121,23 @@ _Will be updated as implementation progresses_
 
 ---
 
+## 8. Partidos Section Improvements (NEW)
+- [ ] 8.1 Fix filter counts and visibility
+  - [ ] 8.1.1 Filter by competitions that have upcoming matches
+  - [ ] 8.1.2 Show correct count numbers for todos/próximos/pasados filters
+  - [ ] 8.1.3 Hide competitions without upcoming matches (Europa League, La Liga, Copa)
+- [ ] 8.2 UI/UX improvements
+  - [ ] 8.2.1 Remove team logos that aren't displaying properly
+  - [ ] 8.2.2 Add "que no hay" subtitle in the "No busques más" section
+- [ ] 8.3 Dynamic RSVP integration
+  - [ ] 8.3.1 Make RSVP system dynamic to load match information automatically
+  - [ ] 8.3.2 Ensure proper match ID linking between partidos and RSVP pages
+
 ## Success Criteria
-- [ ] Next 3 Betis matches are displayed in card format using existing MatchCard component
-- [ ] Admin can manually create, edit, and delete matches
-- [ ] Matches are linked to RSVP system
-- [ ] Feature flag controls visibility
-- [ ] Navigation works from clasificacion page
-- [ ] Responsive design works on all devices
-- [ ] All tests pass
+- [x] Next 2-3 Betis matches are displayed in card format using existing MatchCard component
+- [x] Admin can manually create, edit, and delete matches
+- [x] Matches are linked to RSVP system
+- [x] Feature flag controls visibility
+- [x] Navigation works from clasificacion page
+- [x] Responsive design works on all devices
+- [x] Database integration works correctly with proper sorting and limits

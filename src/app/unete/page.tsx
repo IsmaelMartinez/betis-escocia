@@ -64,7 +64,7 @@ export default function Unete() {
         <div className="absolute inset-0 bg-black/20"></div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div className="inline-flex items-center px-6 py-3 rounded-full bg-green-500 backdrop-blur-sm mb-8">
+          <div className="inline-flex items-center px-6 py-3 rounded-full bg-green-600 backdrop-blur-sm mb-8">
             <span className="text-white font-bold text-lg">🤝 Únete a la familia</span>
           </div>
           
