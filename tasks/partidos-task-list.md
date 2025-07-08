@@ -12,12 +12,12 @@ Implement a static partidos section where users can see league games for the cur
   - [x] 1.1.1 Design schema with fields: id, date_time, opponent, venue, competition, home_away, notes, created_at, updated_at
   - [x] 1.1.2 Create SQL migration file for matches table
   - [x] 1.1.3 Add TypeScript interfaces for Match data types
-- [ ] 1.2 Extend Supabase configuration
-  - [ ] 1.2.1 Add Match interface to supabase.ts
-  - [ ] 1.2.2 Create helper functions for CRUD operations on matches
-- [ ] 1.3 Link matches to RSVP system
-  - [ ] 1.3.1 Update RSVP table to include match_id foreign key
-  - [ ] 1.3.2 Create relationship between matches and RSVPs
+- [x] 1.2 Extend Supabase configuration
+  - [x] 1.2.1 Add Match interface to supabase.ts
+  - [x] 1.2.2 Create helper functions for CRUD operations on matches
+- [x] 1.3 Link matches to RSVP system
+  - [x] 1.3.1 Update RSVP table to include match_id foreign key
+  - [x] 1.3.2 Create relationship between matches and RSVPs
 
 ## 2. Feature Flag Implementation
 - [ ] 2.1 Add showPartidos feature flag

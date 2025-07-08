@@ -91,3 +91,163 @@ export interface ContactSubmissionInsert {
   message: string
   status?: 'new' | 'read' | 'responded' | 'closed'
 }
+
+// Match CRUD operations
+export async function getMatches(limit?: number) {
+  const query = supabase
+    .from('matches')
+    .select('*')
+    .order('date_time', { ascending: true })
+  
+  if (limit) {
+    query.limit(limit)
+  }
+  
+  const { data, error } = await query
+  
+  if (error) {
+    console.error('Error fetching matches:', error)
+    return null
+  }
+  
+  return data as Match[]
+}
+
+export async function getUpcomingMatches(limit = 3) {
+  const { data, error } = await supabase
+    .from('matches')
+    .select('*')
+    .gte('date_time', new Date().toISOString())
+    .order('date_time', { ascending: true })
+    .limit(limit)
+  
+  if (error) {
+    console.error('Error fetching upcoming matches:', error)
+    return null
+  }
+  
+  return data as Match[]
+}
+
+export async function getMatch(id: number) {
+  const { data, error } = await supabase
+    .from('matches')
+    .select('*')
+    .eq('id', id)
+    .single()
+  
+  if (error) {
+    console.error('Error fetching match:', error)
+    return null
+  }
+  
+  return data as Match
+}
+
+export async function createMatch(match: MatchInsert) {
+  const { data, error } = await supabase
+    .from('matches')
+    .insert([match])
+    .select()
+    .single()
+  
+  if (error) {
+    console.error('Error creating match:', error)
+    return { success: false, error: error.message }
+  }
+  
+  return { success: true, data: data as Match }
+}
+
+export async function updateMatch(id: number, updates: MatchUpdate) {
+  const { data, error } = await supabase
+    .from('matches')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single()
+  
+  if (error) {
+    console.error('Error updating match:', error)
+    return { success: false, error: error.message }
+  }
+  
+  return { success: true, data: data as Match }
+}
+
+export async function deleteMatch(id: number) {
+  const { error } = await supabase
+    .from('matches')
+    .delete()
+    .eq('id', id)
+  
+  if (error) {
+    console.error('Error deleting match:', error)
+    return { success: false, error: error.message }
+  }
+  
+  return { success: true }
+}
+
+// Get match with RSVP counts
+export async function getMatchWithRSVPCounts(id: number) {
+  const { data, error } = await supabase
+    .from('matches')
+    .select(`
+      *,
+      rsvps:rsvp_submissions(
+        id,
+        attendees
+      )
+    `)
+    .eq('id', id)
+    .single()
+  
+  if (error) {
+    console.error('Error fetching match with RSVP counts:', error)
+    return null
+  }
+  
+  // Calculate totals
+  const rsvpCount = data.rsvps?.length || 0
+  const totalAttendees = data.rsvps?.reduce((sum: number, rsvp: any) => sum + rsvp.attendees, 0) || 0
+  
+  return {
+    ...data,
+    rsvp_count: rsvpCount,
+    total_attendees: totalAttendees
+  }
+}
+
+// Get upcoming matches with RSVP counts
+export async function getUpcomingMatchesWithRSVPCounts(limit = 3) {
+  const { data, error } = await supabase
+    .from('matches')
+    .select(`
+      *,
+      rsvps:rsvp_submissions(
+        id,
+        attendees
+      )
+    `)
+    .gte('date_time', new Date().toISOString())
+    .order('date_time', { ascending: true })
+    .limit(limit)
+  
+  if (error) {
+    console.error('Error fetching upcoming matches with RSVP counts:', error)
+    return null
+  }
+  
+  // Calculate totals for each match
+  return data.map(match => {
+    const rsvpCount = match.rsvps?.length || 0
+    const totalAttendees = match.rsvps?.reduce((sum: number, rsvp: any) => sum + rsvp.attendees, 0) || 0
+    
+    return {
+      ...match,
+      rsvp_count: rsvpCount,
+      total_attendees: totalAttendees
+    }
+  })
+}
