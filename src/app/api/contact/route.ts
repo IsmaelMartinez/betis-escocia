@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase, type ContactSubmissionInsert } from '@/lib/supabase';
+import { emailService, type ContactEmailData } from '@/lib/emailService';
 
 // Supabase-based contact operations - no file system needed
 
@@ -50,7 +51,23 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    // Log for admin purposes (in a real app, you might send email notification here)
+    // Send email notification to admin (non-blocking)
+    const emailData: ContactEmailData = {
+      name: newSubmission.name,
+      email: newSubmission.email,
+      phone: newSubmission.phone || undefined,
+      type: newSubmission.type,
+      subject: newSubmission.subject,
+      message: newSubmission.message
+    };
+    
+    // Send notification asynchronously (don't wait for it)
+    emailService.sendContactNotification(emailData).catch(error => {
+      console.error('Failed to send contact notification email:', error);
+      // Don't fail the API request if email fails
+    });
+
+    // Log for admin purposes
     console.log(`New contact submission: ${name} (${email}) - Type: ${type ?? 'general'} - Subject: ${subject}`);
 
     return NextResponse.json({ 

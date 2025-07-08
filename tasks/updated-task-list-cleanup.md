@@ -169,8 +169,17 @@ Created: December 2024
 
 #### 📊 **T29: Admin Features & Monitoring** **⚡ MEDIUM PRIORITY**
 
-- [ ] T29.1: Complete admin dashboard for RSVP management and statistics
-- [ ] T29.2: Email notifications for new RSVPs and orders
+- [x] T29.1: Complete admin dashboard for RSVP management and statistics ✅ **JUST COMPLETED**
+  - Comprehensive admin dashboard with real-time statistics
+  - CSV export functionality for RSVPs and contacts
+  - Recent activity feeds with detailed information
+  - Secure feature flag control (hidden by default)
+- [x] T29.2: Email notifications for new RSVPs and orders ✅ **JUST COMPLETED**
+  - Email notification service with HTML and text templates
+  - Integrated notifications into RSVP and contact API routes
+  - Non-blocking async email sending (doesn't affect API performance)
+  - Support for Resend API (easily configurable for other services)
+  - Branded email templates with admin action links
 - [ ] T29.4: Data export capabilities for admin users
 - [ ] T29.5: GDPR compliance tools and user data management
 

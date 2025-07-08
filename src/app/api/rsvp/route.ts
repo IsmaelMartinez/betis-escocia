@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase, type RSVP, type RSVPInsert } from '@/lib/supabase';
+import { emailService, type RSVPEmailData } from '@/lib/emailService';
 
 // Default current match info (this could be moved to env vars or a separate config)
 const DEFAULT_MATCH = {
@@ -141,6 +142,22 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    // Send email notification to admin (non-blocking)
+    const emailData: RSVPEmailData = {
+      name: newEntry.name,
+      email: newEntry.email,
+      attendees: newEntry.attendees,
+      matchDate: newEntry.match_date,
+      message: newEntry.message,
+      whatsappInterest: newEntry.whatsapp_interest
+    };
+    
+    // Send notification asynchronously (don't wait for it)
+    emailService.sendRSVPNotification(emailData).catch(error => {
+      console.error('Failed to send RSVP notification email:', error);
+      // Don't fail the API request if email fails
+    });
 
     // Get updated totals for the current match
     const { data: allRSVPs, error: countError } = await supabase

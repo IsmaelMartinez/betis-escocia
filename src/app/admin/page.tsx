@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase, RSVP, ContactSubmission } from '@/lib/supabase';
-import { Users, Mail, Calendar, TrendingUp, Download, RefreshCw } from 'lucide-react';
+import { Users, Mail, TrendingUp, Download, RefreshCw } from 'lucide-react';
 import Card, { CardHeader, CardBody } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -257,7 +257,7 @@ export default function AdminPage() {
                         <span className="font-medium"> Partido:</span> {new Date(rsvp.match_date).toLocaleDateString('es-ES')}
                       </div>
                       {rsvp.message && (
-                        <div className="text-sm text-gray-600 mt-2 italic">"{rsvp.message}"</div>
+                        <div className="text-sm text-gray-600 mt-2 italic">&ldquo;{rsvp.message}&rdquo;</div>
                       )}
                     </div>
                   ))}
