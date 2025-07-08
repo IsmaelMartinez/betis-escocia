@@ -103,6 +103,36 @@ Implement a static partidos section where users can see league games for the cur
   - [x] 8.1.3 Clean up unused imports and linting issues
   - [x] 8.1.4 Restart development server after fixes
 
+## 9. RSVP System Enhancements
+- [x] 9.1 Smart match selection for RSVP
+  - [x] 9.1.1 Show next upcoming game by default when no match_id is passed
+  - [x] 9.1.2 Allow users to select different games for RSVP
+  - [x] 9.1.3 Add dropdown/selector for available upcoming matches
+- [x] 9.2 Improve RSVP visibility
+  - [x] 9.2.1 Show attendee count next to "Confirmar Asistencia" button (e.g., "Confirmar Asistencia (5)")
+  - [x] 9.2.2 Update MatchCard component to display current RSVP counts
+  - [x] 9.2.3 Real-time update of counts when RSVPs are submitted
+
+## 10. Homepage Layout Improvements
+- [ ] 10.1 Enhanced main page layout
+  - [ ] 10.1.1 Show next 2 games side by side instead of stacked
+  - [ ] 10.1.2 Add classification widget to main page
+  - [ ] 10.1.3 Optimize layout for desktop and mobile responsiveness
+- [ ] 10.2 Widget improvements
+  - [ ] 10.2.1 Update UpcomingMatchesWidget to display 2 matches horizontally
+  - [ ] 10.2.2 Integrate classification widget alongside matches
+  - [ ] 10.2.3 Ensure proper spacing and visual hierarchy
+
+## 11. LaLiga Data Integration
+- [ ] 11.1 Football-Data.org API integration
+  - [ ] 11.1.1 Create script to fetch LaLiga matches for current season
+  - [ ] 11.1.2 Import Real Betis matches automatically to database
+  - [ ] 11.1.3 Handle data mapping and transformation
+- [ ] 11.2 Data synchronization
+  - [ ] 11.2.1 Implement automatic sync mechanism
+  - [ ] 11.2.2 Handle duplicate detection and updates
+  - [ ] 11.2.3 Add manual sync trigger for admin users
+
 ---
 
 ## Relevant Files

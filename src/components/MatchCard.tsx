@@ -312,7 +312,7 @@ const MatchCard: React.FC<MatchCardProps> = (props) => {
               href={`/rsvp?match=${id}`}
               className="block w-full bg-betis-green hover:bg-green-700 text-white text-center py-2 px-4 rounded-md font-medium transition-colors text-sm"
             >
-              📝 Confirmar Asistencia
+              📝 Confirmar Asistencia{rsvpInfo && rsvpInfo.totalAttendees > 0 ? ` (${rsvpInfo.totalAttendees})` : ''}
             </Link>
           </div>
         )}

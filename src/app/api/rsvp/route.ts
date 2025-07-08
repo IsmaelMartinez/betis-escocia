@@ -36,16 +36,51 @@ async function getCurrentUpcomingMatch() {
 }
 
 // GET - Retrieve current RSVP data
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    // Get current upcoming match
-    const currentMatch = await getCurrentUpcomingMatch();
+    const { searchParams } = new URL(request.url);
+    const matchId = searchParams.get('match');
+    
+    let currentMatch;
+    let matchDate;
+    
+    if (matchId) {
+      // Get specific match by ID
+      const { data: matchData, error: matchError } = await supabase
+        .from('matches')
+        .select('id, opponent, date_time, competition')
+        .eq('id', parseInt(matchId))
+        .single();
+        
+      if (matchError || !matchData) {
+        console.error('Error fetching specific match:', matchError);
+        return NextResponse.json(
+          { 
+            success: false, 
+            error: 'Partido no encontrado' 
+          },
+          { status: 404 }
+        );
+      }
+      
+      currentMatch = {
+        id: matchData.id,
+        opponent: matchData.opponent,
+        date: matchData.date_time,
+        competition: matchData.competition
+      };
+      matchDate = matchData.date_time;
+    } else {
+      // Get current upcoming match
+      currentMatch = await getCurrentUpcomingMatch();
+      matchDate = currentMatch.date;
+    }
     
     // Get all RSVPs for the current match
     const { data: rsvps, error } = await supabase
       .from('rsvps')
       .select('*')
-      .eq('match_date', currentMatch.date)
+      .eq('match_date', matchDate)
       .order('created_at', { ascending: true });
 
     if (error) {

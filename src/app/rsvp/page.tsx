@@ -1,12 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Calendar, MapPin, Users, Clock, CheckCircle } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { Calendar, MapPin, Users, Clock, CheckCircle, ChevronDown } from 'lucide-react';
 import RSVPForm from '@/components/RSVPForm';
 import { withFeatureFlag } from '@/lib/featureProtection';
+import { getUpcomingMatchesWithRSVPCounts, Match } from '@/lib/supabase';
 
 interface RSVPData {
   currentMatch: {
+    id?: number;
     opponent: string;
     date: string;
     competition: string;
@@ -15,13 +18,45 @@ interface RSVPData {
   confirmedCount: number;
 }
 
+interface MatchWithRSVP extends Match {
+  rsvp_count: number;
+  total_attendees: number;
+}
+
 function RSVPPage() {
   const [showForm, setShowForm] = useState(false);
   const [rsvpData, setRSVPData] = useState<RSVPData | null>(null);
+  const [availableMatches, setAvailableMatches] = useState<MatchWithRSVP[]>([]);
+  const [selectedMatchId, setSelectedMatchId] = useState<number | null>(null);
+  const [showMatchSelector, setShowMatchSelector] = useState(false);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    fetchRSVPData();
-  }, []);
+    const matchId = searchParams.get('match');
+    if (matchId) {
+      setSelectedMatchId(parseInt(matchId));
+    }
+    fetchAvailableMatches();
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (selectedMatchId) {
+      fetchRSVPDataForMatch(selectedMatchId);
+    } else {
+      fetchRSVPData();
+    }
+  }, [selectedMatchId]);
+
+  const fetchAvailableMatches = async () => {
+    try {
+      const matches = await getUpcomingMatchesWithRSVPCounts(10);
+      if (matches) {
+        setAvailableMatches(matches as MatchWithRSVP[]);
+      }
+    } catch (error) {
+      console.error('Error fetching available matches:', error);
+    }
+  };
 
   const fetchRSVPData = async () => {
     try {
@@ -39,9 +74,38 @@ function RSVPPage() {
     }
   };
 
+  const fetchRSVPDataForMatch = async (matchId: number) => {
+    try {
+      const response = await fetch(`/api/rsvp?match=${matchId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setRSVPData({
+          currentMatch: data.currentMatch,
+          totalAttendees: data.totalAttendees,
+          confirmedCount: data.confirmedCount
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching RSVP data for match:', error);
+    }
+  };
+
   const handleRSVPSuccess = () => {
     setShowForm(false);
-    fetchRSVPData(); // Refresh data after successful submission
+    if (selectedMatchId) {
+      fetchRSVPDataForMatch(selectedMatchId);
+    } else {
+      fetchRSVPData();
+    }
+    fetchAvailableMatches(); // Refresh match data
+  };
+
+  const handleMatchSelect = (matchId: number) => {
+    setSelectedMatchId(matchId);
+    setShowMatchSelector(false);
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.set('match', matchId.toString());
+    window.history.pushState({}, '', newUrl.toString());
   };
 
   const formatDate = (dateString: string) => {
@@ -85,7 +149,45 @@ function RSVPPage() {
       <section className="py-12 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-gradient-to-r from-betis-green to-green-600 rounded-3xl p-8 text-white text-center mb-8">
-            <h2 className="text-2xl font-bold mb-6">Próximo Partido</h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">Próximo Partido</h2>
+              {availableMatches.length > 1 && (
+                <div className="relative">
+                  <button
+                    onClick={() => setShowMatchSelector(!showMatchSelector)}
+                    className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+                  >
+                    <span className="text-sm font-medium">Cambiar partido</span>
+                    <ChevronDown className={`h-4 w-4 transition-transform ${showMatchSelector ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {showMatchSelector && (
+                    <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 min-w-64 z-10">
+                      {availableMatches.map((match) => (
+                        <button
+                          key={match.id}
+                          onClick={() => handleMatchSelect(match.id)}
+                          className="w-full text-left px-4 py-3 hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg border-b border-gray-100 last:border-b-0"
+                        >
+                          <div className="text-gray-900 font-medium">{match.opponent}</div>
+                          <div className="text-gray-500 text-sm">
+                            {new Date(match.date_time).toLocaleDateString('es-ES', {
+                              day: '2-digit',
+                              month: 'short',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })} • {match.competition}
+                          </div>
+                          <div className="text-betis-green text-xs font-medium">
+                            {match.total_attendees} béticos confirmados
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               {/* Teams */}
@@ -134,7 +236,7 @@ function RSVPPage() {
                 onClick={() => setShowForm(true)}
                 className="bg-betis-green hover:bg-green-700 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
-                ✋ ¡Confirmar Asistencia!
+                ✋ ¡Confirmar Asistencia! ({rsvpData?.totalAttendees ?? 0})
               </button>
             ) : (
               <div className="max-w-2xl mx-auto">
