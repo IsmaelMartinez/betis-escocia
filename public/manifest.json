@@ -1,0 +1,128 @@
+{
+  "name": "Peña Bética Escocesa - No busques más que no hay",
+  "short_name": "Betis Escocia",
+  "description": "La peña del Real Betis en Edimburgo, Escocia. Más de 14 años compartiendo la pasión bética en el Polwarth Tavern.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#00A651",
+  "theme_color": "#00A651",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "es",
+  "dir": "ltr",
+  "categories": ["sports", "social", "community"],
+  "icons": [
+    {
+      "src": "/images/logo_no_texto.jpg",
+      "sizes": "72x72",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/logo_no_texto.jpg",
+      "sizes": "96x96",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/logo_no_texto.jpg",
+      "sizes": "128x128",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/logo_no_texto.jpg",
+      "sizes": "144x144",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/logo_no_texto.jpg",
+      "sizes": "152x152",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/logo_no_texto.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/logo_no_texto.jpg",
+      "sizes": "384x384",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/logo_no_texto.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/images/logo_no_texto.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Página principal de la Peña Bética Escocesa"
+    },
+    {
+      "src": "/images/logo_no_texto.jpg",
+      "sizes": "750x1334",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Vista móvil de la Peña Bética Escocesa"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Próximos Partidos",
+      "short_name": "Partidos",
+      "description": "Ver próximos partidos del Betis",
+      "url": "/",
+      "icons": [
+        {
+          "src": "/images/logo_no_texto.jpg",
+          "sizes": "192x192",
+          "type": "image/jpeg"
+        }
+      ]
+    },
+    {
+      "name": "RSVP",
+      "short_name": "RSVP",
+      "description": "Confirmar asistencia a eventos",
+      "url": "/rsvp",
+      "icons": [
+        {
+          "src": "/images/logo_no_texto.jpg",
+          "sizes": "192x192",
+          "type": "image/jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Contacto",
+      "short_name": "Contacto",
+      "description": "Contactar con la peña",
+      "url": "/contacto",
+      "icons": [
+        {
+          "src": "/images/logo_no_texto.jpg",
+          "sizes": "192x192",
+          "type": "image/jpeg"
+        }
+      ]
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "web",
+      "url": "https://betis-escocia.vercel.app"
+    }
+  ],
+  "prefer_related_applications": false
+}

@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+
+# Main pages
+Allow: /nosotros
+Allow: /unete
+Allow: /contacto
+Allow: /rsvp
+Allow: /galeria
+Allow: /coleccionables
+Allow: /partidos
+Allow: /clasificacion
+
+# Block admin or sensitive pages (none currently)
+# Disallow: /admin
+
+# Sitemap location
+Sitemap: https://betis-escocia.vercel.app/sitemap.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1

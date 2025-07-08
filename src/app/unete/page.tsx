@@ -286,7 +286,7 @@ export default function Unete() {
               href="https://www.facebook.com/groups/beticosenescocia/"
               target="_blank"
               rel="noopener noreferrer"
-              className="border-2 border-white text-white hover:bg-white hover:text-betis-green px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
+              className="bg-blue-600 text-white hover:bg-blue-700 hover:text-betis-green px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
             >
               💬 Contactar por Facebook
             </a>
