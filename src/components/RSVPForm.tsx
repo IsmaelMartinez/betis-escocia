@@ -8,6 +8,7 @@ import { useFormValidation, commonValidationRules } from '@/lib/formValidation';
 
 interface RSVPFormProps {
   readonly onSuccess?: () => void;
+  readonly selectedMatchId?: number;
 }
 
 const rsvpValidationRules = {
@@ -17,7 +18,7 @@ const rsvpValidationRules = {
   message: { ...commonValidationRules.message, required: false }
 };
 
-export default function RSVPForm({ onSuccess }: RSVPFormProps) {
+export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) {
   const {
     data: formData,
     errors,
@@ -50,7 +51,8 @@ export default function RSVPForm({ onSuccess }: RSVPFormProps) {
     setSubmitStatus('idle');
 
     try {
-      const response = await fetch('/api/rsvp', {
+      const apiUrl = selectedMatchId ? `/api/rsvp?match=${selectedMatchId}` : '/api/rsvp';
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

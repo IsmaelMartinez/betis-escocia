@@ -133,6 +133,17 @@ Implement a static partidos section where users can see league games for the cur
   - [ ] 11.2.2 Handle duplicate detection and updates
   - [ ] 11.2.3 Add manual sync trigger for admin users
 
+## 12. Admin Panel Enhancements
+- [x] 12.1 Complete admin page functionality
+  - [x] 12.1.1 Add tabbed interface for Dashboard and Partidos
+  - [x] 12.1.2 Integrate MatchForm and MatchesList components
+  - [x] 12.1.3 Implement full CRUD operations for matches
+  - [x] 12.1.4 Add match statistics to dashboard
+- [x] 12.2 Fix homepage layout and classification widget
+  - [x] 12.2.1 Adjust homepage layout to 3/4 for matches, 1/4 for classification
+  - [x] 12.2.2 Fix ClassificationWidget API token issue
+  - [x] 12.2.3 Create API route for standings data
+
 ---
 
 ## Relevant Files

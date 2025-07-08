@@ -24,7 +24,7 @@ interface MatchWithRSVP extends Match {
 }
 
 function RSVPPage() {
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(true); // Show form by default
   const [rsvpData, setRSVPData] = useState<RSVPData | null>(null);
   const [availableMatches, setAvailableMatches] = useState<MatchWithRSVP[]>([]);
   const [selectedMatchId, setSelectedMatchId] = useState<number | null>(null);
@@ -49,7 +49,7 @@ function RSVPPage() {
 
   const fetchAvailableMatches = async () => {
     try {
-      const matches = await getUpcomingMatchesWithRSVPCounts(10);
+      const matches = await getUpcomingMatchesWithRSVPCounts(2); // Only next 2 matches
       if (matches) {
         setAvailableMatches(matches as MatchWithRSVP[]);
       }
@@ -240,7 +240,7 @@ function RSVPPage() {
               </button>
             ) : (
               <div className="max-w-2xl mx-auto">
-                <RSVPForm onSuccess={handleRSVPSuccess} />
+                <RSVPForm onSuccess={handleRSVPSuccess} selectedMatchId={selectedMatchId || undefined} />
               </div>
             )}
           </div>

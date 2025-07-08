@@ -165,18 +165,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (existingRSVPs && existingRSVPs.length > 0) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Este email ya ha confirmado asistencia para este partido' 
-        },
-        { status: 400 }
-      );
-    }
+    const isUpdate = existingRSVPs && existingRSVPs.length > 0;
 
     // Create new RSVP entry
-    const newEntry: RSVPInsert = {
+    const rsvpData = {
       name: name.trim(),
       email: email.toLowerCase().trim(),
       attendees: parseInt(attendees),
@@ -185,16 +177,29 @@ export async function POST(request: NextRequest) {
       match_date: currentMatchDate
     };
 
-    const { error: insertError } = await supabase
-      .from('rsvps')
-      .insert(newEntry);
+    let operationError;
+    if (isUpdate) {
+      // Update existing RSVP
+      const { error: updateError } = await supabase
+        .from('rsvps')
+        .update(rsvpData)
+        .eq('email', email.toLowerCase().trim())
+        .eq('match_date', currentMatchDate);
+      operationError = updateError;
+    } else {
+      // Insert new RSVP
+      const { error: insertError } = await supabase
+        .from('rsvps')
+        .insert(rsvpData);
+      operationError = insertError;
+    }
 
-    if (insertError) {
-      console.error('Error inserting RSVP:', insertError);
+    if (operationError) {
+      console.error(`Error ${isUpdate ? 'updating' : 'inserting'} RSVP:`, operationError);
       return NextResponse.json(
         { 
           success: false, 
-          error: 'Error interno del servidor al procesar la confirmación' 
+          error: `Error interno del servidor al ${isUpdate ? 'actualizar' : 'procesar'} la confirmación` 
         },
         { status: 500 }
       );
@@ -202,12 +207,12 @@ export async function POST(request: NextRequest) {
 
     // Send email notification to admin (non-blocking)
     const emailData: RSVPEmailData = {
-      name: newEntry.name,
-      email: newEntry.email,
-      attendees: newEntry.attendees,
-      matchDate: newEntry.match_date,
-      message: newEntry.message,
-      whatsappInterest: newEntry.whatsapp_interest
+      name: rsvpData.name,
+      email: rsvpData.email,
+      attendees: rsvpData.attendees,
+      matchDate: rsvpData.match_date,
+      message: rsvpData.message,
+      whatsappInterest: rsvpData.whatsapp_interest
     };
     
     // Send notification asynchronously (don't wait for it)
@@ -236,11 +241,11 @@ export async function POST(request: NextRequest) {
     const totalAttendees = allRSVPs?.reduce((total: number, entry: { attendees: number }) => total + entry.attendees, 0) ?? 0;
 
     // Log for admin purposes
-    console.log(`New RSVP: ${name} (${email}) - ${attendees} attendees for ${currentMatch.opponent}`);
+    console.log(`${isUpdate ? 'Updated' : 'New'} RSVP: ${name} (${email}) - ${attendees} attendees for ${currentMatch.opponent}`);
 
     return NextResponse.json({
       success: true,
-      message: 'Confirmación recibida correctamente',
+      message: isUpdate ? 'Confirmación actualizada correctamente' : 'Confirmación recibida correctamente',
       totalAttendees,
       confirmedCount: allRSVPs?.length ?? 0
     });
