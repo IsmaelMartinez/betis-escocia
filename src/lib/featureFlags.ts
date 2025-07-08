@@ -76,24 +76,46 @@ const environmentFlags: Partial<FeatureFlags> = {
   }),
   
   // Feature-specific environment variables - respect defaults when not set
-  showClasificacion: process.env.NEXT_PUBLIC_FEATURE_CLASIFICACION === 'true',
-  showColeccionables: process.env.NEXT_PUBLIC_FEATURE_COLECCIONABLES === 'true',
-  showGaleria: process.env.NEXT_PUBLIC_FEATURE_GALERIA === 'true',
-  showRSVP: process.env.NEXT_PUBLIC_FEATURE_RSVP === 'true', // Must be explicitly enabled
-  showPartidos: process.env.NEXT_PUBLIC_FEATURE_PARTIDOS === 'true', // Must be explicitly enabled
-  showSocialMedia: process.env.NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA === 'true',
-  showHistory: process.env.NEXT_PUBLIC_FEATURE_HISTORY === 'true', // Must be explicitly enabled
-  // For features with default=true, only override if explicitly set to 'false'
-  ...(process.env.NEXT_PUBLIC_FEATURE_NOSOTROS !== undefined && {
-    showNosotros: process.env.NEXT_PUBLIC_FEATURE_NOSOTROS === 'true'
-  }),
-  ...(process.env.NEXT_PUBLIC_FEATURE_UNETE !== undefined && {
-    showUnete: process.env.NEXT_PUBLIC_FEATURE_UNETE === 'true'
-  }),
-  showContacto: process.env.NEXT_PUBLIC_FEATURE_CONTACTO === 'true',
-  showPorra: process.env.NEXT_PUBLIC_FEATURE_PORRA === 'true',
-  showRedesSociales: process.env.NEXT_PUBLIC_FEATURE_REDES_SOCIALES === 'true',
-  showAdmin: process.env.NEXT_PUBLIC_FEATURE_ADMIN === 'true',
+  showClasificacion: process.env.NEXT_PUBLIC_FEATURE_CLASIFICACION !== undefined 
+    ? process.env.NEXT_PUBLIC_FEATURE_CLASIFICACION === 'true'
+    : defaultFlags.showClasificacion,
+  showColeccionables: process.env.NEXT_PUBLIC_FEATURE_COLECCIONABLES !== undefined 
+    ? process.env.NEXT_PUBLIC_FEATURE_COLECCIONABLES === 'true'
+    : defaultFlags.showColeccionables,
+  showGaleria: process.env.NEXT_PUBLIC_FEATURE_GALERIA !== undefined 
+    ? process.env.NEXT_PUBLIC_FEATURE_GALERIA === 'true'
+    : defaultFlags.showGaleria,
+  showRSVP: process.env.NEXT_PUBLIC_FEATURE_RSVP !== undefined 
+    ? process.env.NEXT_PUBLIC_FEATURE_RSVP === 'true'
+    : defaultFlags.showRSVP,
+  showPartidos: process.env.NEXT_PUBLIC_FEATURE_PARTIDOS !== undefined 
+    ? process.env.NEXT_PUBLIC_FEATURE_PARTIDOS === 'true'
+    : defaultFlags.showPartidos,
+  showSocialMedia: process.env.NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA !== undefined 
+    ? process.env.NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA === 'true'
+    : defaultFlags.showSocialMedia,
+  showHistory: process.env.NEXT_PUBLIC_FEATURE_HISTORY !== undefined 
+    ? process.env.NEXT_PUBLIC_FEATURE_HISTORY === 'true'
+    : defaultFlags.showHistory,
+  // All remaining features follow the same pattern
+  showNosotros: process.env.NEXT_PUBLIC_FEATURE_NOSOTROS !== undefined 
+    ? process.env.NEXT_PUBLIC_FEATURE_NOSOTROS === 'true'
+    : defaultFlags.showNosotros,
+  showUnete: process.env.NEXT_PUBLIC_FEATURE_UNETE !== undefined 
+    ? process.env.NEXT_PUBLIC_FEATURE_UNETE === 'true'
+    : defaultFlags.showUnete,
+  showContacto: process.env.NEXT_PUBLIC_FEATURE_CONTACTO !== undefined 
+    ? process.env.NEXT_PUBLIC_FEATURE_CONTACTO === 'true'
+    : defaultFlags.showContacto,
+  showPorra: process.env.NEXT_PUBLIC_FEATURE_PORRA !== undefined 
+    ? process.env.NEXT_PUBLIC_FEATURE_PORRA === 'true'
+    : defaultFlags.showPorra,
+  showRedesSociales: process.env.NEXT_PUBLIC_FEATURE_REDES_SOCIALES !== undefined 
+    ? process.env.NEXT_PUBLIC_FEATURE_REDES_SOCIALES === 'true'
+    : defaultFlags.showRedesSociales,
+  showAdmin: process.env.NEXT_PUBLIC_FEATURE_ADMIN !== undefined 
+    ? process.env.NEXT_PUBLIC_FEATURE_ADMIN === 'true'
+    : defaultFlags.showAdmin,
 };
 
 // Merge default flags with environment overrides
