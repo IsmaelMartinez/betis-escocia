@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { MapPin, Users, Heart, Coffee, Smile } from 'lucide-react';
+import { FeatureWrapper } from '@/lib/featureProtection';
 
 export default function HeroCommunity() {
   return (
@@ -63,7 +64,8 @@ export default function HeroCommunity() {
               </div>
             </div>
 
-            {/* CTA buttons - official style */}
+{/* CTA buttons - official style */}
+          <FeatureWrapper feature="showUnete">
             <div className="flex flex-col sm:flex-row gap-4">
               <Link 
                 href="/unete"
@@ -73,6 +75,7 @@ export default function HeroCommunity() {
                 ÚNETE A LA FAMILIA
               </Link>
             </div>
+          </FeatureWrapper>
           </div>
 
           {/* Right side - Community showcase in official style */}

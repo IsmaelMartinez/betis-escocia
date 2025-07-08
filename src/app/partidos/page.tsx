@@ -1,6 +1,7 @@
 import { ApiErrorBoundary } from '@/components/ErrorBoundary';
 import FilteredMatches from '@/components/FilteredMatches';
 import BetisPositionWidget from '@/components/BetisPositionWidget';
+import { FeatureWrapper } from '@/lib/featureProtection';
 
 // Fetch data at build time and revalidate every 30 minutes
 async function getMatches() {
@@ -84,11 +85,13 @@ export default async function MatchesPage() {
             </div>
             
             {/* Sidebar - Betis Position Widget */}
-            <div className="lg:col-span-1">
-              <div className="sticky top-8">
-                <BetisPositionWidget />
+            <FeatureWrapper feature="showClasificacion">
+              <div className="lg:col-span-1">
+                <div className="sticky top-8">
+                  <BetisPositionWidget />
+                </div>
               </div>
-            </div>
+            </FeatureWrapper>
           </div>
         </div>
       </section>
