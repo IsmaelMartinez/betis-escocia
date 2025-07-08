@@ -182,11 +182,29 @@ _Will be updated as implementation progresses_
   - [x] 8.3.2 Ensure proper match ID linking between partidos and RSVP pages
 
 ## 9. Competition Type Filters (NEW)
-- [ ] 9.1 Add competition type filters to partidos page
-  - [ ] 9.1.1 Add filter buttons for different competition types (Amistoso Pretemporada, LaLiga, Copa del Rey, etc.)
-  - [ ] 9.1.2 Show only competitions that have matches in the database
-  - [ ] 9.1.3 Combine competition filters with existing time-based filters (Todos/Próximos/Pasados)
-  - [ ] 9.1.4 Update filter counts to reflect competition-specific matches
+- [x] 9.1 Add competition type filters to partidos page
+  - [x] 9.1.1 Add filter buttons for different competition types (Amistoso Pretemporada, LaLiga, Copa del Rey, etc.)
+  - [x] 9.1.2 Show only competitions that have matches in the database
+  - [x] 9.1.3 Combine competition filters with existing time-based filters (Todos/Próximos/Pasados)
+  - [x] 9.1.4 Update filter counts to reflect competition-specific matches
+
+## 10. Admin Panel and RSVP System Fixes (NEW)
+- [x] 10.1 Fix admin panel CRUD operations
+  - [x] 10.1.1 Fix edit match "JSON object requested, multiple rows returned" error
+  - [x] 10.1.2 Fix create match "new row violates row-level security policy" error
+  - [x] 10.1.3 Fix delete match functionality
+  - [x] 10.1.4 Add SQL policies to allow anonymous CRUD operations on matches table
+- [x] 10.2 Fix RSVP system match association
+  - [x] 10.2.1 Ensure RSVP submissions include match_id in database
+  - [x] 10.2.2 Update RSVP API to handle match_id parameter
+  - [x] 10.2.3 Fix RSVP form to pass selectedMatchId to backend
+
+## 11. Enhanced RSVP Integration (NEW)
+- [x] 11.1 Add RSVP buttons to all match cards
+  - [x] 11.1.1 Update MatchCard component to include RSVP button
+  - [x] 11.1.2 Link RSVP button to specific match ID
+  - [x] 11.1.3 Display current RSVP count on each match card
+  - [x] 11.1.4 Show RSVP counts in match selection dropdown
 
 ## Success Criteria
 - [x] Next 2-3 Betis matches are displayed in card format using existing MatchCard component

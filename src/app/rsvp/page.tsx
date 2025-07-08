@@ -173,9 +173,6 @@ function RSVPPage() {
                               minute: '2-digit'
                             })} • {match.competition}
                           </div>
-                          <div className="text-betis-green text-xs font-medium">
-                            {match.total_attendees} béticos confirmados
-                          </div>
                         </button>
                       ))}
                     </div>

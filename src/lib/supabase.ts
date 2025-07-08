@@ -280,3 +280,60 @@ export async function getUpcomingMatchesWithRSVPCounts(limit = 2) {
     }
   })
 }
+
+// Get all matches with RSVP counts
+export async function getAllMatchesWithRSVPCounts(limit?: number) {
+  const query = supabase
+    .from('matches')
+    .select(`
+      *,
+      rsvps:rsvp_submissions(
+        id,
+        attendees
+      )
+    `)
+    .order('date_time', { ascending: true })
+  
+  if (limit) {
+    query.limit(limit)
+  }
+  
+  const { data, error } = await query
+  
+  // If there's an error with RSVP join, fallback to matches only
+  if (error) {
+    console.warn('RSVP data not available, fetching matches only:', error)
+    const fallbackResult = await (limit ? 
+      supabase.from('matches').select('*').order('date_time', { ascending: true }).limit(limit) :
+      supabase.from('matches').select('*').order('date_time', { ascending: true })
+    )
+    
+    if (fallbackResult.error) {
+      console.error('Error fetching matches:', fallbackResult.error)
+      return null
+    }
+    
+    // Return matches with zero RSVP counts
+    return fallbackResult.data.map(match => ({
+      ...match,
+      rsvp_count: 0,
+      total_attendees: 0
+    }))
+  }
+  
+  // Calculate totals for each match
+  if (!data) {
+    return []
+  }
+  
+  return data.map(match => {
+    const rsvpCount = match.rsvps?.length || 0
+    const totalAttendees = match.rsvps?.reduce((sum: number, rsvp: { attendees: number }) => sum + rsvp.attendees, 0) || 0
+    
+    return {
+      ...match,
+      rsvp_count: rsvpCount,
+      total_attendees: totalAttendees
+    }
+  })
+}

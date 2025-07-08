@@ -155,19 +155,6 @@ async function StandingsContent() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <nav className="mb-6" aria-label="Navegación de migas de pan">
-            <ol className="flex items-center space-x-2 text-sm text-gray-600">
-              <li>
-                <Link href="/" className="hover:text-green-600 transition-colors">
-                  Inicio
-                </Link>
-              </li>
-              <li className="text-gray-400">/</li>
-              <li className="text-gray-900 font-medium">
-                Clasificación
-              </li>
-            </ol>
-          </nav>
 
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
             <div>

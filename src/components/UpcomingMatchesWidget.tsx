@@ -202,8 +202,8 @@ export default function UpcomingMatchesWidget({
                 <p className="text-xs text-gray-600">{match.venue}</p>
               </div>
 
-              {/* RSVP info and action for upcoming matches - only show for first match */}
-              {isUpcoming && index === 0 && (
+              {/* RSVP info and action for upcoming matches */}
+              {isUpcoming && (
                 <div className="border-t border-gray-100 pt-3">
                   {match.rsvp_count > 0 && (
                     <div className="text-center mb-2">

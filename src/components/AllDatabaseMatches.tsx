@@ -1,15 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getMatches, Match } from '@/lib/supabase';
+import { getAllMatchesWithRSVPCounts, Match } from '@/lib/supabase';
 import MatchCard, { convertDatabaseMatchToCardProps } from './MatchCard';
+
+interface MatchWithRSVP extends Match {
+  rsvp_count: number;
+  total_attendees: number;
+}
 
 interface AllDatabaseMatchesProps {
   className?: string;
 }
 
 export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatchesProps) {
-  const [matches, setMatches] = useState<Match[]>([]);
+  const [matches, setMatches] = useState<MatchWithRSVP[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('all');
@@ -21,10 +26,10 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
         setIsLoading(true);
         setError(null);
         
-        const data = await getMatches(); // Get all matches without limit
+        const data = await getAllMatchesWithRSVPCounts(); // Get all matches with RSVP counts
         
         if (data) {
-          setMatches(data);
+          setMatches(data as MatchWithRSVP[]);
         } else {
           setMatches([]);
         }
@@ -85,7 +90,7 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
       }
       acc[match.competition].push(match);
       return acc;
-    }, {} as Record<string, Match[]>);
+    }, {} as Record<string, MatchWithRSVP[]>);
     
     let totalCount = 0;
     Object.entries(grouped).forEach(([competition, competitionMatches]) => {
@@ -124,7 +129,7 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
     }
     acc[match.competition].push(match);
     return acc;
-  }, {} as Record<string, Match[]>);
+  }, {} as Record<string, MatchWithRSVP[]>);
 
   // Sort and limit matches within each competition
   const processedMatchesByCompetition = Object.entries(matchesByCompetition).reduce((acc, [competition, competitionMatches]) => {
@@ -142,7 +147,7 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
       new Date(b.date_time).getTime() - new Date(a.date_time).getTime()
     );
     
-    let finalMatches: Match[] = [];
+    let finalMatches: MatchWithRSVP[] = [];
     
     if (filter === 'upcoming') {
       // For upcoming matches, only show competitions that have upcoming matches
@@ -170,7 +175,7 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
     }
     
     return acc;
-  }, {} as Record<string, Match[]>);
+  }, {} as Record<string, MatchWithRSVP[]>);
 
   // Loading state
   if (isLoading) {
@@ -353,7 +358,7 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
             
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
               {competitionMatches.map((match) => {
-                const cardProps = convertDatabaseMatchToCardProps(match);
+                const cardProps = convertDatabaseMatchToCardProps(match, match.rsvp_count, match.total_attendees, true);
                 
                 return (
                   <MatchCard 

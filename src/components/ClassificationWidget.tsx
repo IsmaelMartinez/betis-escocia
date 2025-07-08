@@ -122,10 +122,10 @@ export default function ClassificationWidget({ className = '' }: ClassificationW
 
   const positionBadge = getPositionBadge(betisEntry.position);
 
-  // Get teams around Betis (2 above, Betis, 2 below)
+  // Get teams around Betis (1 above, Betis, 1 below)
   const betisIndex = standings.findIndex(entry => entry.team.id === 90);
-  const startIndex = Math.max(0, betisIndex - 2);
-  const endIndex = Math.min(standings.length, betisIndex + 3);
+  const startIndex = Math.max(0, betisIndex - 1);
+  const endIndex = Math.min(standings.length, betisIndex + 2);
   const displayStandings = standings.slice(startIndex, endIndex);
 
   return (
@@ -135,16 +135,10 @@ export default function ClassificationWidget({ className = '' }: ClassificationW
           <Trophy className="h-5 w-5 mr-2 text-yellow-500" />
           Clasificación
         </h2>
-        <Link
-          href="/clasificacion"
-          className="text-betis-green hover:text-green-700 font-medium text-sm flex items-center"
-        >
-          Ver completa →
-        </Link>
       </div>
 
       {/* Betis highlight */}
-      <div className="bg-gradient-to-r from-betis-green to-green-600 rounded-lg p-4 text-white mb-6">
+      <div className="bg-betis-green rounded-lg p-4 text-white mb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Image
