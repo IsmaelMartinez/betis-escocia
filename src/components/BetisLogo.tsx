@@ -6,9 +6,10 @@ interface BetisLogoProps {
   readonly width?: number;
   readonly height?: number;
   readonly className?: string;
+  readonly priority?: boolean;
 }
 
-export default function BetisLogo({ width = 80, height = 80, className = "" }: BetisLogoProps) {
+export default function BetisLogo({ width = 80, height = 80, className = "", priority = false }: BetisLogoProps) {
   return (
     <Image
       src="/images/logo_no_texto.jpg"
@@ -16,7 +17,9 @@ export default function BetisLogo({ width = 80, height = 80, className = "" }: B
       width={width}
       height={height}
       className={`rounded-lg shadow-md ${className}`}
-      unoptimized
+      priority={priority}
+      sizes={`${width}px`}
+      quality={90}
     />
   );
 }

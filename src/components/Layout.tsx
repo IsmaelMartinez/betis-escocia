@@ -27,7 +27,7 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex justify-between items-center py-4">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-2">
-              <BetisLogo width={32} height={32} className="bg-white rounded-full p-1" />
+              <BetisLogo width={32} height={32} className="bg-white rounded-full p-1" priority={true} />
               <div className="text-white">
                 <h1 className="font-bold text-base sm:text-lg lg:text-xl">No busques más</h1>
                 <p className="text-xs opacity-90 hidden xs:block">que no hay</p>

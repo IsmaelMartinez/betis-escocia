@@ -3,6 +3,30 @@
 import Link from 'next/link';
 import { MapPin, Users, Heart, Coffee, Smile } from 'lucide-react';
 import { FeatureWrapper } from '@/lib/featureProtection';
+import dynamic from 'next/dynamic';
+
+// Lazy load components that are below the fold
+const CommunityStats = dynamic(() => import('./CommunityStats'), {
+  loading: () => (
+    <div className="bg-gray-50 rounded-lg p-6 text-center border border-gray-200 animate-pulse">
+      <div className="grid grid-cols-3 gap-4 mb-4">
+        <div>
+          <div className="h-8 bg-gray-200 rounded mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded"></div>
+        </div>
+        <div>
+          <div className="h-8 bg-gray-200 rounded mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded"></div>
+        </div>
+        <div>
+          <div className="h-8 bg-gray-200 rounded mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+      <div className="h-4 bg-gray-200 rounded"></div>
+    </div>
+  ),
+});
 
 export default function HeroCommunity() {
   return (
@@ -115,25 +139,7 @@ export default function HeroCommunity() {
               </div>
 
               {/* Stats section - official style */}
-              <div className="bg-gray-50 rounded-lg p-6 text-center border border-gray-200">
-                <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div>
-                    <div className="text-2xl font-black text-betis-green">150+</div>
-                    <div className="text-xs text-gray-600 font-medium uppercase">MIEMBROS</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-black text-betis-green">15</div>
-                    <div className="text-xs text-gray-600 font-medium uppercase">AÑOS</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-black text-betis-green">∞</div>
-                    <div className="text-xs text-gray-600 font-medium uppercase">RECUERDOS</div>
-                  </div>
-                </div>
-                <p className="text-sm text-gray-600 italic">
-                  &ldquo;Como estar en casa pero viendo el Betis&rdquo;
-                </p>
-              </div>
+              <CommunityStats />
             </div>
 
             {/* Floating Betis element */}
