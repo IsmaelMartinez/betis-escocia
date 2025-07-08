@@ -77,12 +77,20 @@ export async function GET(request: NextRequest) {
       matchDate = currentMatch.date;
     }
     
-    // Get all RSVPs for the current match
-    const { data: rsvps, error } = await supabase
+    // Get all RSVPs for the current match using match_id if available
+    let rsvpQuery = supabase
       .from('rsvps')
       .select('*')
-      .eq('match_date', matchDate)
       .order('created_at', { ascending: true });
+    
+    if (matchId && currentMatch.id) {
+      rsvpQuery = rsvpQuery.eq('match_id', currentMatch.id);
+    } else {
+      // Fallback to match_date for backwards compatibility
+      rsvpQuery = rsvpQuery.eq('match_date', matchDate);
+    }
+    
+    const { data: rsvps, error } = await rsvpQuery;
 
     if (error) {
       console.error('Error reading RSVP data from Supabase:', error);
@@ -143,9 +151,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: emailValidation.error }, { status: 400 });
     }
 
-    const messageValidation = validateInputLength(message, 0, 500);
-    if (!messageValidation.isValid) {
-      return NextResponse.json({ success: false, error: messageValidation.error }, { status: 400 });
+    // Validate message if provided
+    if (message && typeof message === 'string') {
+      const messageValidation = validateInputLength(message, 0, 500);
+      if (!messageValidation.isValid) {
+        return NextResponse.json({ success: false, error: messageValidation.error }, { status: 400 });
+      }
     }
 
     // Required fields validation
@@ -160,7 +171,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate attendees count
-    const attendeesNum = parseInt(attendees);
+    const attendeesNum = typeof attendees === 'number' ? attendees : parseInt(attendees);
     if (isNaN(attendeesNum) || attendeesNum < 1 || attendeesNum > 10) {
       return NextResponse.json(
         { 
@@ -234,12 +245,12 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Check if email already exists for current match
+    // Check if email already exists for current match using match_id
     const { data: existingRSVPs, error: checkError } = await supabase
       .from('rsvps')
       .select('id')
       .eq('email', email.toLowerCase().trim())
-      .eq('match_date', currentMatchDate);
+      .eq('match_id', currentMatchId);
 
     if (checkError) {
       console.error('Error checking existing RSVP:', checkError);
@@ -253,6 +264,7 @@ export async function POST(request: NextRequest) {
     }
 
     const isUpdate = existingRSVPs && existingRSVPs.length > 0;
+    const existingRSVPId = isUpdate ? existingRSVPs[0].id : null;
 
     // Create new RSVP entry
     const rsvpData = {
@@ -266,20 +278,37 @@ export async function POST(request: NextRequest) {
     };
 
     let operationError;
+    let resultData;
+    
     if (isUpdate) {
-      // Update existing RSVP
-      const { error: updateError } = await supabase
+      // Delete existing RSVP and insert new one (workaround for update issues)
+      const { error: deleteError } = await supabase
         .from('rsvps')
-        .update(rsvpData)
-        .eq('email', email.toLowerCase().trim())
-        .eq('match_date', currentMatchDate);
-      operationError = updateError;
+        .delete()
+        .eq('id', existingRSVPId);
+      
+      if (deleteError) {
+        console.error('Error deleting existing RSVP:', deleteError);
+        operationError = deleteError;
+      } else {
+        // Insert the updated RSVP
+        const { data: insertData, error: insertError } = await supabase
+          .from('rsvps')
+          .insert(rsvpData)
+          .select();
+        
+        operationError = insertError;
+        resultData = insertData;
+      }
     } else {
       // Insert new RSVP
-      const { error: insertError } = await supabase
+      const { data: insertData, error: insertError } = await supabase
         .from('rsvps')
-        .insert(rsvpData);
+        .insert(rsvpData)
+        .select();
+      
       operationError = insertError;
+      resultData = insertData;
     }
 
     if (operationError) {
@@ -309,11 +338,11 @@ export async function POST(request: NextRequest) {
       // Don't fail the API request if email fails
     });
 
-    // Get updated totals for the current match
+    // Get updated totals for the current match using match_id
     const { data: allRSVPs, error: countError } = await supabase
       .from('rsvps')
       .select('attendees')
-      .eq('match_date', currentMatchDate);
+      .eq('match_id', currentMatchId);
 
     if (countError) {
       console.error('Error getting RSVP counts:', countError);

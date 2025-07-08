@@ -32,7 +32,6 @@ const nextConfig = {
   // Security improvements
   poweredByHeader: false,
   reactStrictMode: true,
-  swcMinify: true,
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },

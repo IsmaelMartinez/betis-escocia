@@ -213,7 +213,7 @@ export async function getMatchWithRSVPCounts(id: number) {
     .from('matches')
     .select(`
       *,
-      rsvps:rsvps!match_id(
+      rsvps(
         id,
         attendees
       )
@@ -244,7 +244,7 @@ export async function getUpcomingMatchesWithRSVPCounts(limit = 2) {
     .from('matches')
     .select(`
       *,
-      rsvps:rsvps!match_id(
+      rsvps(
         id,
         attendees
       )
@@ -256,6 +256,7 @@ export async function getUpcomingMatchesWithRSVPCounts(limit = 2) {
   // If there's an error with RSVP join, fallback to matches only
   if (error) {
     console.warn('RSVP data not available, fetching matches only:', error)
+    
     const fallbackResult = await supabase
       .from('matches')
       .select('*')
@@ -299,7 +300,7 @@ export async function getAllMatchesWithRSVPCounts(limit?: number) {
     .from('matches')
     .select(`
       *,
-      rsvps:rsvps!match_id(
+      rsvps(
         id,
         attendees
       )
@@ -309,22 +310,23 @@ export async function getAllMatchesWithRSVPCounts(limit?: number) {
   if (limit) {
     query.limit(limit)
   }
-  
+
   const { data, error } = await query
-  
+
   // If there's an error with RSVP join, fallback to matches only
   if (error) {
     console.warn('RSVP data not available, fetching matches only:', error)
+
     const fallbackResult = await (limit ? 
       supabase.from('matches').select('*').order('date_time', { ascending: true }).limit(limit) :
       supabase.from('matches').select('*').order('date_time', { ascending: true })
     )
-    
+
     if (fallbackResult.error) {
       console.error('Error fetching matches:', fallbackResult.error)
       return null
     }
-    
+
     // Return matches with zero RSVP counts
     return fallbackResult.data.map(match => ({
       ...match,
@@ -332,16 +334,16 @@ export async function getAllMatchesWithRSVPCounts(limit?: number) {
       total_attendees: 0
     }))
   }
-  
+
   // Calculate totals for each match
   if (!data) {
     return []
   }
-  
+
   return data.map(match => {
     const rsvpCount = match.rsvps?.length || 0
     const totalAttendees = match.rsvps?.reduce((sum: number, rsvp: { attendees: number }) => sum + rsvp.attendees, 0) || 0
-    
+
     return {
       ...match,
       rsvp_count: rsvpCount,

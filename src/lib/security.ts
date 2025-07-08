@@ -187,7 +187,7 @@ export const CSP_DIRECTIVES = {
   'style-src': "'self' 'unsafe-inline'",
   'img-src': "'self' data: https: blob:",
   'font-src': "'self' data:",
-  'connect-src': "'self' https://api.supabase.io https://vercel.live",
+  'connect-src': "'self' https://*.supabase.co https://api.supabase.io https://vercel.live",
   'frame-src': "'self' https://www.facebook.com",
   'object-src': "'none'",
   'base-uri': "'self'",
