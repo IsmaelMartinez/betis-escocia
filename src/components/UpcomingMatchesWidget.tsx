@@ -197,10 +197,6 @@ export default function UpcomingMatchesWidget({
                 </div>
               </div>
 
-              {/* Venue */}
-              <div className="text-center mb-3">
-                <p className="text-xs text-gray-600">{match.venue}</p>
-              </div>
 
               {/* RSVP info and action for upcoming matches */}
               {isUpcoming && (

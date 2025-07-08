@@ -203,7 +203,7 @@ export type MatchFilters = {
   dateFrom?: string;
   dateTo?: string;
   competition?: string[];
-  venue?: 'home' | 'away' | 'all';
+  homeAway?: 'home' | 'away' | 'all';
   limit?: number;
   offset?: number;
 };

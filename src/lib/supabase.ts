@@ -10,7 +10,6 @@ export interface Match {
   id: number
   date_time: string
   opponent: string
-  venue: string
   competition: string
   home_away: 'home' | 'away'
   notes?: string
@@ -28,7 +27,6 @@ export interface Match {
 export interface MatchInsert {
   date_time: string
   opponent: string
-  venue: string
   competition: string
   home_away: 'home' | 'away'
   notes?: string
@@ -44,7 +42,6 @@ export interface MatchInsert {
 export interface MatchUpdate {
   date_time?: string
   opponent?: string
-  venue?: string
   competition?: string
   home_away?: 'home' | 'away'
   notes?: string

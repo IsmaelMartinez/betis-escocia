@@ -27,44 +27,11 @@ function transformMatch(match: Match, isUpcoming: boolean = false) {
   const opponent = isBetisHome ? match.awayTeam.name : match.homeTeam.name;
   const opponentCrest = isBetisHome ? match.awayTeam.crest : match.homeTeam.crest;
   
-  // Get venue information
-  const getVenue = () => {
-    if (isBetisHome) {
-      return "Estadio Benito Villamarín";
-    } else {
-      // Known opponent stadiums
-      const stadiums: Record<string, string> = {
-        'FC Barcelona': 'Camp Nou',
-        'Real Madrid CF': 'Santiago Bernabéu',
-        'Atlético Madrid': 'Riyadh Air Metropolitano',
-        'Sevilla FC': 'Ramón Sánchez-Pizjuán',
-        'Valencia CF': 'Mestalla',
-        'Athletic Bilbao': 'San Mamés',
-        'Real Sociedad': 'Reale Arena',
-        'Villarreal CF': 'Estadio de la Cerámica',
-        'CA Osasuna': 'El Sadar',
-        'Celta Vigo': 'Abanca-Balaídos',
-        'RCD Espanyol': 'RCDE Stadium',
-        'Getafe CF': 'Coliseum',
-        'Deportivo Alavés': 'Mendizorroza',
-        'Girona FC': 'Montilivi',
-        'UD Las Palmas': 'Estadio Gran Canaria',
-        'Rayo Vallecano': 'Campo de Fútbol de Vallecas',
-        'RCD Mallorca': 'Son Moix',
-        'CD Leganés': 'Butarque',
-        'Real Valladolid CF': 'José Zorrilla'
-      };
-      
-      const opponentName = isBetisHome ? match.awayTeam.name : match.homeTeam.name;
-      return stadiums[opponentName] || `Estadio de ${opponentName}`;
-    }
-  };
 
   return {
     id: match.id,
     opponent,
     date: match.utcDate,
-    venue: getVenue(),
     competition: match.competition?.name || 'Unknown',
     competitionLogo: match.competition?.emblem || '',
     isHome: isBetisHome,

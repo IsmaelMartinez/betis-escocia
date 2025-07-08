@@ -49,9 +49,6 @@ export default function MatchForm({
       newErrors.opponent = 'Oponente es requerido';
     }
 
-    if (!formData.venue.trim()) {
-      newErrors.venue = 'Sede es requerida';
-    }
 
     if (!formData.competition.trim()) {
       newErrors.competition = 'Competición es requerida';
@@ -182,7 +179,7 @@ export default function MatchForm({
         {/* Venue */}
         <div>
           <label htmlFor="venue" className="block text-sm font-medium text-gray-700">
-            Sede *
+            Sede (opcional)
           </label>
           <input
             type="text"
@@ -192,7 +189,6 @@ export default function MatchForm({
             onChange={handleChange}
             placeholder="ej. Estadio Benito Villamarín, Santiago Bernabéu"
             className={inputClassName}
-            required
           />
           {errors.venue && <p className={errorClassName}>{errors.venue}</p>}
         </div>

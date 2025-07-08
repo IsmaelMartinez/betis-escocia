@@ -729,7 +729,6 @@ export class FootballDataService {
       id: match.id,
       opponent: opponent.name,
       date: match.utcDate,
-      venue: isHome ? 'Estadio Benito Villamarín' : 'Estadio del Adversario',
       competition: match.competition.name,
       isHome,
       result,

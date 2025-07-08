@@ -9,7 +9,7 @@ Implement a static partidos section where users can see league games for the cur
 
 ## 1. Database Setup and Data Models
 - [x] 1.1 Create database table for storing match data
-  - [x] 1.1.1 Design schema with fields: id, date_time, opponent, venue, competition, home_away, notes, created_at, updated_at
+  - [x] 1.1.1 Design schema with fields: id, date_time, opponent, competition, home_away, notes, created_at, updated_at
   - [x] 1.1.2 Create SQL migration file for matches table
   - [x] 1.1.3 Add TypeScript interfaces for Match data types
 - [x] 1.2 Extend Supabase configuration
@@ -31,7 +31,7 @@ Implement a static partidos section where users can see league games for the cur
 ## 3. Admin Interface Components
 - [x] 3.1 Create match CRUD form
   - [x] 3.1.1 Design form for creating/editing matches with all required fields
-  - [x] 3.1.2 Add validation for date/time, opponent, venue, competition
+  - [x] 3.1.2 Add validation for date/time, opponent, competition
   - [x] 3.1.3 Add submit/cancel/delete functionality
 - [x] 3.2 Create admin matches list component
   - [x] 3.2.1 Display all matches in admin-friendly table/list format
