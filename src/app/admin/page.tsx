@@ -1,19 +1,30 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase, RSVP, ContactSubmission } from '@/lib/supabase';
-import { Users, Mail, TrendingUp, Download, RefreshCw } from 'lucide-react';
+import { supabase, RSVP, ContactSubmission, Match, createMatch, updateMatch, deleteMatch, getMatches } from '@/lib/supabase';
+import { Users, Mail, TrendingUp, Download, RefreshCw, Calendar, Plus } from 'lucide-react';
 import Card, { CardHeader, CardBody } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import MessageComponent from '@/components/MessageComponent';
+import { FeatureWrapper } from '@/lib/featureProtection';
+import MatchForm from '@/components/admin/MatchForm';
+import MatchesList from '@/components/admin/MatchesList';
 
 interface AdminStats {
   totalRSVPs: number;
   totalAttendees: number;
   totalContacts: number;
+  totalMatches: number;
   recentRSVPs: RSVP[];
   recentContacts: ContactSubmission[];
+}
+
+type AdminView = 'dashboard' | 'matches' | 'match-form';
+
+interface MatchFormData {
+  mode: 'create' | 'edit';
+  match?: Match;
 }
 
 export default function AdminPage() {
@@ -21,6 +32,9 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [currentView, setCurrentView] = useState<AdminView>('dashboard');
+  const [matchFormData, setMatchFormData] = useState<MatchFormData>({ mode: 'create' });
+  const [matches, setMatches] = useState<Match[]>([]);
 
   const fetchStats = async () => {
     try {
@@ -42,10 +56,15 @@ export default function AdminPage() {
 
       if (contactError) throw contactError;
 
+      // Fetch matches data
+      const matchesData = await getMatches();
+      setMatches(matchesData || []);
+
       // Calculate stats
       const totalRSVPs = rsvpData?.length || 0;
       const totalAttendees = rsvpData?.reduce((sum, rsvp) => sum + rsvp.attendees, 0) || 0;
       const totalContacts = contactData?.length || 0;
+      const totalMatches = matchesData?.length || 0;
       const recentRSVPs = rsvpData?.slice(0, 5) || [];
       const recentContacts = contactData?.slice(0, 5) || [];
 
@@ -53,6 +72,7 @@ export default function AdminPage() {
         totalRSVPs,
         totalAttendees,
         totalContacts,
+        totalMatches,
         recentRSVPs,
         recentContacts
       });
@@ -68,6 +88,51 @@ export default function AdminPage() {
   const handleRefresh = async () => {
     setRefreshing(true);
     await fetchStats();
+  };
+
+  // Match management functions
+  const handleCreateMatch = async (data: any) => {
+    const result = await createMatch(data);
+    if (result.success) {
+      setCurrentView('matches');
+      await fetchStats(); // Refresh data
+    }
+    return result;
+  };
+
+  const handleUpdateMatch = async (data: any) => {
+    if (!matchFormData.match) return { success: false, error: 'No match selected' };
+    
+    const result = await updateMatch(matchFormData.match.id, data);
+    if (result.success) {
+      setCurrentView('matches');
+      await fetchStats(); // Refresh data
+    }
+    return result;
+  };
+
+  const handleDeleteMatch = async (matchId: number) => {
+    const result = await deleteMatch(matchId);
+    if (result.success) {
+      await fetchStats(); // Refresh data
+    }
+    return result;
+  };
+
+  const handleEditMatch = (match: Match) => {
+    setMatchFormData({ mode: 'edit', match });
+    setCurrentView('match-form');
+  };
+
+  const handleDeleteMatchFromForm = async () => {
+    if (!matchFormData.match) return { success: false, error: 'No match selected' };
+    
+    const result = await deleteMatch(matchFormData.match.id);
+    if (result.success) {
+      setCurrentView('matches');
+      await fetchStats(); // Refresh data
+    }
+    return result;
   };
 
   const exportRSVPs = async () => {
@@ -158,21 +223,61 @@ export default function AdminPage() {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-black text-betis-black">Panel de Administración</h1>
-              <p className="text-gray-600 mt-2">Gestión de RSVPs y contactos de la Peña Bética</p>
+              <p className="text-gray-600 mt-2">
+                {currentView === 'dashboard' && 'Gestión de RSVPs, contactos y partidos de la Peña Bética'}
+                {currentView === 'matches' && 'Gestión de partidos'}
+                {currentView === 'match-form' && (matchFormData.mode === 'create' ? 'Crear nuevo partido' : 'Editar partido')}
+              </p>
             </div>
-            <Button
-              onClick={handleRefresh}
-              variant="outline"
-              leftIcon={<RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />}
-              isLoading={refreshing}
-            >
-              Actualizar
-            </Button>
+            <div className="flex items-center space-x-3">
+              <Button
+                onClick={handleRefresh}
+                variant="outline"
+                leftIcon={<RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />}
+                isLoading={refreshing}
+              >
+                Actualizar
+              </Button>
+            </div>
+          </div>
+          
+          {/* Navigation */}
+          <div className="mt-6 border-b border-gray-200">
+            <nav className="-mb-px flex space-x-8">
+              <button
+                onClick={() => setCurrentView('dashboard')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  currentView === 'dashboard'
+                    ? 'border-betis-green text-betis-green'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <Users className="h-4 w-4 inline mr-2" />
+                Dashboard
+              </button>
+              
+              <FeatureWrapper feature="showPartidos">
+                <button
+                  onClick={() => setCurrentView('matches')}
+                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                    currentView === 'matches'
+                      ? 'border-betis-green text-betis-green'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  <Calendar className="h-4 w-4 inline mr-2" />
+                  Partidos
+                </button>
+              </FeatureWrapper>
+            </nav>
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* Content based on current view */}
+        {currentView === 'dashboard' && (
+          <>
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card className="hover-lift">
             <CardBody className="text-center">
               <div className="mx-auto w-12 h-12 bg-betis-green/10 rounded-lg flex items-center justify-center mb-4">
@@ -202,6 +307,18 @@ export default function AdminPage() {
               <div className="text-sm text-gray-600">Mensajes de Contacto</div>
             </CardBody>
           </Card>
+
+          <FeatureWrapper feature="showPartidos">
+            <Card className="hover-lift">
+              <CardBody className="text-center">
+                <div className="mx-auto w-12 h-12 bg-betis-green/10 rounded-lg flex items-center justify-center mb-4">
+                  <Calendar className="h-6 w-6 text-betis-green" />
+                </div>
+                <div className="text-3xl font-black text-betis-black mb-2">{stats?.totalMatches}</div>
+                <div className="text-sm text-gray-600">Partidos Programados</div>
+              </CardBody>
+            </Card>
+          </FeatureWrapper>
         </div>
 
         {/* Export Actions */}
@@ -302,6 +419,46 @@ export default function AdminPage() {
             </CardBody>
           </Card>
         </div>
+            </>
+        )}
+
+        {/* Matches Management View */}
+        {currentView === 'matches' && (
+          <FeatureWrapper feature="showPartidos">
+            <div className="mb-6">
+              <Button
+                onClick={() => {
+                  setMatchFormData({ mode: 'create' });
+                  setCurrentView('match-form');
+                }}
+                variant="primary"
+                leftIcon={<Plus className="h-4 w-4" />}
+              >
+                Crear Nuevo Partido
+              </Button>
+            </div>
+            
+            <MatchesList 
+              matches={matches} 
+              onEdit={handleEditMatch}
+              onDelete={handleDeleteMatch}
+              isLoading={loading}
+            />
+          </FeatureWrapper>
+        )}
+
+        {/* Match Form View */}
+        {currentView === 'match-form' && (
+          <FeatureWrapper feature="showPartidos">
+            <MatchForm
+              match={matchFormData.match}
+              onSubmit={matchFormData.mode === 'create' ? handleCreateMatch : handleUpdateMatch}
+              onCancel={() => setCurrentView('matches')}
+              onDelete={matchFormData.mode === 'edit' ? handleDeleteMatchFromForm : undefined}
+              isLoading={loading}
+            />
+          </FeatureWrapper>
+        )}
       </div>
     </div>
   );

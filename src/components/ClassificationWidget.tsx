@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FootballDataService, StandingEntry } from '@/services/footballDataService';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Trophy, TrendingUp, TrendingDown } from 'lucide-react';
+
+// Import types from footballDataService
+import type { StandingEntry } from '@/services/footballDataService';
 
 interface ClassificationWidgetProps {
   className?: string;
@@ -40,15 +42,15 @@ export default function ClassificationWidget({ className = '' }: ClassificationW
         setIsLoading(true);
         setError(null);
         
-        const service = new FootballDataService();
-        const standingsData = await service.getLaLigaStandings();
+        const response = await fetch('/api/standings');
+        const data = await response.json();
         
-        if (standingsData) {
-          setStandings(standingsData.table);
-          const betis = standingsData.table.find(entry => entry.team.id === 90);
+        if (response.ok && data.standings) {
+          setStandings(data.standings.table);
+          const betis = data.standings.table.find((entry: StandingEntry) => entry.team.id === 90);
           setBetisEntry(betis || null);
         } else {
-          setError('No se pudieron cargar las clasificaciones');
+          setError(data.error || 'No se pudieron cargar las clasificaciones');
         }
       } catch (err) {
         console.error('Error fetching standings:', err);

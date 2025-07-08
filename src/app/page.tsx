@@ -13,16 +13,20 @@ export default function Home() {
       {/* Upcoming Matches and Classification Widgets */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Upcoming Matches */}
-            <FeatureWrapper feature="showPartidos">
-              <UpcomingMatchesWidget className="" />
-            </FeatureWrapper>
+            <div className="lg:col-span-3">
+              <FeatureWrapper feature="showPartidos">
+                <UpcomingMatchesWidget className="" />
+              </FeatureWrapper>
+            </div>
             
             {/* Classification */}
-            <FeatureWrapper feature="showClasificacion">
-              <ClassificationWidget className="" />
-            </FeatureWrapper>
+            <div className="lg:col-span-1">
+              <FeatureWrapper feature="showClasificacion">
+                <ClassificationWidget className="" />
+              </FeatureWrapper>
+            </div>
           </div>
         </div>
       </section>
