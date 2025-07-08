@@ -41,19 +41,19 @@ Implement a static partidos section where users can see league games for the cur
   - [x] 3.3.1 Wrap admin components with FeatureWrapper for showAdmin flag
 
 ## 4. Match Display Components
-- [ ] 4.1 Enhance existing MatchCard component (reuse from partidos page)
-  - [ ] 4.1.1 Ensure it supports our database match schema
-  - [ ] 4.1.2 Add RSVP integration if not already present
-  - [ ] 4.1.3 Verify responsive design for mobile/desktop
-- [ ] 4.2 Create UpcomingMatches component
-  - [ ] 4.2.1 Fetch and display next 3 matches from database
-  - [ ] 4.2.2 Reuse MatchCard component for display
-  - [ ] 4.2.3 Handle loading and error states
-  - [ ] 4.2.4 Add empty state when no matches available
-- [ ] 4.3 Add RSVP integration to match cards
-  - [ ] 4.3.1 Add RSVP button/link to each match card
-  - [ ] 4.3.2 Link to RSVP form with pre-filled match information
-  - [ ] 4.3.3 Show RSVP count if available
+- [x] 4.1 Enhance existing MatchCard component (reuse from partidos page)
+  - [x] 4.1.1 Ensure it supports our database match schema
+  - [x] 4.1.2 Add RSVP integration if not already present
+  - [x] 4.1.3 Verify responsive design for mobile/desktop
+- [x] 4.2 Create UpcomingMatches component
+  - [x] 4.2.1 Fetch and display next 3 matches from database
+  - [x] 4.2.2 Reuse MatchCard component for display
+  - [x] 4.2.3 Handle loading and error states
+  - [x] 4.2.4 Add empty state when no matches available
+- [x] 4.3 Add RSVP integration to match cards
+  - [x] 4.3.1 Add RSVP button/link to each match card
+  - [x] 4.3.2 Link to RSVP form with pre-filled match information
+  - [x] 4.3.3 Show RSVP count if available
 
 ## 5. Page Integration and Navigation
 - [ ] 5.1 Update main partidos page

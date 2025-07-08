@@ -162,6 +162,12 @@ export interface WatchParty {
   time: string;
 }
 
+// RSVP information for matches
+export interface RSVPInfo {
+  rsvpCount: number;
+  totalAttendees: number;
+}
+
 // Enhanced match card props
 export interface MatchCardProps {
   readonly id: number;
@@ -180,6 +186,7 @@ export interface MatchCardProps {
     away: number | null;
   };
   readonly watchParty?: WatchParty;
+  readonly rsvpInfo?: RSVPInfo;
 }
 
 // Service method return types

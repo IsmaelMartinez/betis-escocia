@@ -4,10 +4,46 @@ import { Calendar, MapPin, Clock, Trophy, Users } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { MatchCardProps } from '@/types/match';
+import type { Match as DatabaseMatch } from '@/lib/supabase';
 import BetisLogo from '@/components/BetisLogo';
+
+// Adapter function to convert database match to MatchCardProps
+export function convertDatabaseMatchToCardProps(
+  dbMatch: DatabaseMatch, 
+  rsvpCount?: number,
+  totalAttendees?: number
+): MatchCardProps {
+  const isUpcoming = new Date(dbMatch.date_time) > new Date();
+  
+  return {
+    id: dbMatch.id,
+    opponent: dbMatch.opponent,
+    date: dbMatch.date_time,
+    venue: dbMatch.venue,
+    competition: dbMatch.competition,
+    isHome: dbMatch.home_away === 'home',
+    status: isUpcoming ? 'SCHEDULED' : 'FINISHED',
+    result: isUpcoming ? undefined : 'FINALIZADO',
+    // Add watch party info for upcoming matches (Polwarth Tavern)
+    watchParty: isUpcoming ? {
+      location: 'Polwarth Tavern',
+      address: '15 Polwarth Pl, Edinburgh EH11 1NH',
+      time: new Date(dbMatch.date_time).toLocaleTimeString('es-ES', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      })
+    } : undefined,
+    // Add RSVP info if available
+    rsvpInfo: (rsvpCount !== undefined && totalAttendees !== undefined) ? {
+      rsvpCount,
+      totalAttendees
+    } : undefined
+  };
+}
 
 export default function MatchCard(props: Readonly<MatchCardProps>) {
   const { 
+    id,
     opponent, 
     date, 
     venue, 
@@ -19,7 +55,8 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
     opponentCrest,
     competitionEmblem,
     score,
-    watchParty 
+    watchParty,
+    rsvpInfo
   } = props;
 
   const isUpcoming = status === 'SCHEDULED' || status === 'TIMED' || new Date(date) > new Date();
@@ -263,7 +300,7 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
 
         {/* Watch party info for upcoming matches */}
         {isUpcoming && watchParty && (
-          <div className="bg-scotland-blue/10 rounded-lg p-3">
+          <div className="bg-scotland-blue/10 rounded-lg p-3 mb-4">
             <h4 className="font-semibold text-scotland-blue mb-2 flex items-center">
               <Clock className="h-4 w-4 mr-1" />
               ¡Nos vemos aquí!
@@ -277,6 +314,42 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
               <p className="text-betis-green font-medium ml-4">
                 📍 Llega a las {watchParty.time}
               </p>
+            </div>
+          </div>
+        )}
+
+        {/* RSVP section for upcoming matches */}
+        {isUpcoming && (
+          <div className="border-t border-gray-200 pt-4">
+            {rsvpInfo && (
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-sm text-gray-600">
+                  <span className="font-medium text-betis-green">{rsvpInfo.rsvpCount}</span> confirmaciones
+                  {rsvpInfo.totalAttendees > 0 && (
+                    <span className="ml-2">
+                      • <span className="font-medium text-betis-green">{rsvpInfo.totalAttendees}</span> asistentes
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
+            
+            <div className="flex space-x-2">
+              <Link 
+                href={`/rsvp?match=${id}`}
+                className="flex-1 bg-betis-green hover:bg-green-700 text-white text-center py-2 px-4 rounded-md font-medium transition-colors text-sm"
+                onClick={(e) => e.stopPropagation()}
+              >
+                📝 Confirmar Asistencia
+              </Link>
+              
+              <Link 
+                href={`/partidos`}
+                className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-center py-2 px-4 rounded-md font-medium transition-colors text-sm"
+                onClick={(e) => e.stopPropagation()}
+              >
+                ℹ️ Detalles
+              </Link>
             </div>
           </div>
         )}
