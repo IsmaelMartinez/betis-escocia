@@ -38,12 +38,12 @@ interface FeatureFlags {
 // Default feature flags configuration
 // ALL FEATURES ARE HIDDEN BY DEFAULT - SECURE BY DEFAULT APPROACH
 const defaultFlags: FeatureFlags = {
-  // Core navigation features - hidden by default for security
-  showClasificacion: false,
+  // Core navigation features - now enabled by default to give the guys something to dream
+  showClasificacion: true, // Enabled by default
   showColeccionables: false,
   showGaleria: false,
-  showRSVP: false, // Even RSVP is now hidden by default
-  showPartidos: false, // Hidden by default
+  showRSVP: true, // Enabled by default - let's give the guys something to dream
+  showPartidos: true, // Enabled by default - let's give the guys something to dream
   
   // Additional features - all hidden by default
   showSocialMedia: false,
