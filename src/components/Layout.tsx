@@ -196,6 +196,20 @@ export default function Layout({ children }: LayoutProps) {
           </div>
 
           <div className="border-t border-gray-700 mt-8 pt-8 text-center">
+            <div className="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-6 mb-4">
+              <a 
+                href="/gdpr" 
+                className="text-gray-400 hover:text-betis-green text-sm transition-colors"
+              >
+                Protección de Datos
+              </a>
+              <a 
+                href="mailto:admin@betis-escocia.com" 
+                className="text-gray-400 hover:text-betis-green text-sm transition-colors"
+              >
+                Contacto Admin
+              </a>
+            </div>
             <p className="text-gray-400 text-sm">
               © 2025 Peña Bética Escocesa. ¡Viva er Betis manque pierda!
             </p>

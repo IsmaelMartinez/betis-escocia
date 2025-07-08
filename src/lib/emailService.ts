@@ -1,12 +1,6 @@
 // Email notification service for admin alerts
 // This service sends notifications when new RSVPs or contacts are submitted
 
-interface EmailNotification {
-  type: 'rsvp' | 'contact';
-  data: any;
-  timestamp: string;
-}
-
 interface RSVPEmailData {
   name: string;
   email: string;
