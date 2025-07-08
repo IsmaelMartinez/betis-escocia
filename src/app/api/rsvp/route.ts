@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase, type RSVP, type RSVPInsert } from '@/lib/supabase';
+import { supabase, type RSVP } from '@/lib/supabase';
 import { emailService, type RSVPEmailData } from '@/lib/emailService';
 
 // Default current match info (this could be moved to env vars or a separate config)

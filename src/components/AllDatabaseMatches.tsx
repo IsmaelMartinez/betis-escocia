@@ -17,8 +17,10 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
   const [matches, setMatches] = useState<MatchWithRSVP[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('all');
+  const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('upcoming');
   const [competitionFilter, setCompetitionFilter] = useState<string>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [matchesPerPage] = useState(20);
 
   useEffect(() => {
     async function fetchAllMatches() {
@@ -72,6 +74,11 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
   
   // Get available competitions from all matches
   const availableCompetitions = Array.from(new Set(matches.map(m => m.competition))).sort();
+  
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter, competitionFilter]);
 
   // Get the actual count based on what will be displayed (considering limits)
   const getDisplayCount = (filterType: 'all' | 'upcoming' | 'past'): number => {
@@ -93,7 +100,7 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
     }, {} as Record<string, MatchWithRSVP[]>);
     
     let totalCount = 0;
-    Object.entries(grouped).forEach(([competition, competitionMatches]) => {
+    Object.entries(grouped).forEach(([, competitionMatches]) => {
       const now = new Date();
       const compUpcoming = competitionMatches.filter(match => new Date(match.date_time) > now);
       const compPast = competitionMatches.filter(match => new Date(match.date_time) <= now);
@@ -160,6 +167,119 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
     
     return acc;
   }, {} as Record<string, MatchWithRSVP[]>);
+
+  // Apply pagination to processedMatchesByCompetition
+  const allProcessedMatches = Object.values(processedMatchesByCompetition).flat();
+  const totalMatches = allProcessedMatches.length;
+  const totalPages = Math.ceil(totalMatches / matchesPerPage);
+  const startIndex = (currentPage - 1) * matchesPerPage;
+  const endIndex = startIndex + matchesPerPage;
+  
+  // Paginate matches while maintaining competition grouping
+  const paginatedMatches = allProcessedMatches.slice(startIndex, endIndex);
+  
+  // Re-group paginated matches by competition
+  const paginatedMatchesByCompetition = paginatedMatches.reduce((acc, match) => {
+    if (!acc[match.competition]) {
+      acc[match.competition] = [];
+    }
+    acc[match.competition].push(match);
+    return acc;
+  }, {} as Record<string, MatchWithRSVP[]>);
+
+  // Pagination component
+  const PaginationComponent = () => {
+    if (totalPages <= 1) return null;
+    
+    const pageNumbers = [];
+    const maxVisiblePages = 5;
+    
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+    
+    return (
+      <div className="flex items-center justify-between mt-8 px-4">
+        <div className="text-sm text-gray-600">
+          Mostrando {startIndex + 1}-{Math.min(endIndex, totalMatches)} de {totalMatches} partidos
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          {/* Previous page button */}
+          <button
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+              currentPage === 1
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            ← Anterior
+          </button>
+          
+          {/* Page numbers */}
+          {startPage > 1 && (
+            <>
+              <button
+                onClick={() => setCurrentPage(1)}
+                className="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300"
+              >
+                1
+              </button>
+              {startPage > 2 && <span className="text-gray-500">...</span>}
+            </>
+          )}
+          
+          {pageNumbers.map(pageNumber => (
+            <button
+              key={pageNumber}
+              onClick={() => setCurrentPage(pageNumber)}
+              className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                pageNumber === currentPage
+                  ? 'bg-betis-green text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              {pageNumber}
+            </button>
+          ))}
+          
+          {endPage < totalPages && (
+            <>
+              {endPage < totalPages - 1 && <span className="text-gray-500">...</span>}
+              <button
+                onClick={() => setCurrentPage(totalPages)}
+                className="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300"
+              >
+                {totalPages}
+              </button>
+            </>
+          )}
+          
+          {/* Next page button */}
+          <button
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+              currentPage === totalPages
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            Siguiente →
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   // Loading state
   if (isLoading) {
@@ -324,33 +444,38 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
       </p>
     </div>
   ) : (
-    <div className="space-y-8">
-      {Object.entries(processedMatchesByCompetition).map(([competition, competitionMatches]) => {
-        return (
-          <div key={competition} className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-              🏆 {competition}
-              <span className="ml-2 text-sm font-normal text-gray-600">
-                ({competitionMatches.length} partidos)
-              </span>
-            </h3>
-            
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-              {competitionMatches.map((match) => {
-                const cardProps = convertDatabaseMatchToCardProps(match, match.rsvp_count, match.total_attendees, true);
-                
-                return (
-                  <MatchCard 
-                    key={match.id}
-                    {...cardProps}
-                  />
-                );
-              })}
+    <>
+      <div className="space-y-8">
+        {Object.entries(paginatedMatchesByCompetition).map(([competition, competitionMatches]) => {
+          return (
+            <div key={competition} className="bg-white rounded-lg shadow-md p-6">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                🏆 {competition}
+                <span className="ml-2 text-sm font-normal text-gray-600">
+                  ({competitionMatches.length} partidos en esta página)
+                </span>
+              </h3>
+              
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+                {competitionMatches.map((match) => {
+                  const cardProps = convertDatabaseMatchToCardProps(match, match.rsvp_count, match.total_attendees, true);
+                  
+                  return (
+                    <MatchCard 
+                      key={match.id}
+                      {...cardProps}
+                    />
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        );
-      })}
-    </div>
+          );
+        })}
+      </div>
+      
+      {/* Pagination Component */}
+      <PaginationComponent />
+    </>
   )}
     </div>
   );

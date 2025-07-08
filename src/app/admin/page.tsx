@@ -91,7 +91,7 @@ export default function AdminPage() {
   };
 
   // Match management functions
-  const handleCreateMatch = async (data: any) => {
+  const handleCreateMatch = async (data: Parameters<typeof createMatch>[0]) => {
     const result = await createMatch(data);
     if (result.success) {
       setCurrentView('matches');
@@ -100,7 +100,7 @@ export default function AdminPage() {
     return result;
   };
 
-  const handleUpdateMatch = async (data: any) => {
+  const handleUpdateMatch = async (data: Parameters<typeof updateMatch>[1]) => {
     if (!matchFormData.match) return { success: false, error: 'No match selected' };
     
     const result = await updateMatch(matchFormData.match.id, data);
@@ -109,6 +109,15 @@ export default function AdminPage() {
       await fetchStats(); // Refresh data
     }
     return result;
+  };
+
+  // Combined handler for match form that handles both create and update
+  const handleMatchFormSubmit = async (data: Parameters<typeof createMatch>[0] | Parameters<typeof updateMatch>[1]) => {
+    if (matchFormData.mode === 'create') {
+      return handleCreateMatch(data as Parameters<typeof createMatch>[0]);
+    } else {
+      return handleUpdateMatch(data as Parameters<typeof updateMatch>[1]);
+    }
   };
 
   const handleDeleteMatch = async (matchId: number) => {
@@ -452,7 +461,7 @@ export default function AdminPage() {
           <FeatureWrapper feature="showPartidos">
             <MatchForm
               match={matchFormData.match}
-              onSubmit={matchFormData.mode === 'create' ? handleCreateMatch : handleUpdateMatch}
+              onSubmit={handleMatchFormSubmit}
               onCancel={() => setCurrentView('matches')}
               onDelete={matchFormData.mode === 'edit' ? handleDeleteMatchFromForm : undefined}
               isLoading={loading}

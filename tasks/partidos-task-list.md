@@ -213,8 +213,8 @@ _Will be updated as implementation progresses_
 - [x] 12.2 Execute LaLiga match import
   - [x] 12.2.1 Run import script to populate database with historical matches (2023-24, 2024-25)
   - [x] 12.2.2 Import upcoming season matches (2025-26 season: 38 matches)
-  - [ ] 12.2.3 Verify imported matches display correctly in UI
-  - [ ] 12.2.4 Test RSVP functionality with imported matches
+  - [x] 12.2.3 Verify imported matches display correctly in UI
+  - [x] 12.2.4 Test RSVP functionality with imported matches
 
 ## 13. Match Data Enhancements (NEW)
 - [x] 13.1 Remove friendly match limits
@@ -227,6 +227,19 @@ _Will be updated as implementation progresses_
 - [x] 13.3 Update stadium information
   - [x] 13.3.1 Change Betis home venue from "Benito Villamarín" to "La Cartuja"
   - [x] 13.3.2 Update all existing match records with correct venue
+
+## 14. UI Improvements and Pagination (NEW)
+- [x] 14.1 Add pagination to partidos page
+  - [x] 14.1.1 Implement pagination component with page controls
+  - [x] 14.1.2 Add matches per page limit (default: 20 matches)
+  - [x] 14.1.3 Add pagination info (showing X of Y matches)
+- [x] 14.2 Improve default filter behavior
+  - [x] 14.2.1 Change default filter from 'todos' to 'proximos' (upcoming matches)
+  - [ ] 14.2.2 Update URL routing to support filter state
+- [x] 14.3 Complete remaining import verification tasks
+  - [x] 14.3.1 Verify imported matches display correctly in UI
+  - [x] 14.3.2 Test RSVP functionality with imported matches
+  - [x] 14.3.3 Verify match results and scores display properly
 
 ## Success Criteria
 - [x] Next 2-3 Betis matches are displayed in card format using existing MatchCard component

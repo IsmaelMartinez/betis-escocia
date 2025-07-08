@@ -23,10 +23,10 @@ export function convertDatabaseMatchToCardProps(
     venue: dbMatch.venue,
     competition: dbMatch.competition,
     isHome: dbMatch.home_away === 'home',
-    status: (dbMatch.status as any) || (isUpcoming ? 'SCHEDULED' : 'FINISHED'),
+    status: (dbMatch.status as 'SCHEDULED' | 'FINISHED' | 'IN_PLAY' | 'PAUSED' | 'POSTPONED' | 'SUSPENDED' | 'CANCELLED' | 'AWARDED' | 'TIMED') || (isUpcoming ? 'SCHEDULED' : 'FINISHED'),
     result: dbMatch.result || (isUpcoming ? undefined : 'FINALIZADO'),
     matchday: dbMatch.matchday,
-    score: (dbMatch.home_score !== null && dbMatch.away_score !== null) ? {
+    score: (dbMatch.home_score !== null && dbMatch.away_score !== null && dbMatch.home_score !== undefined && dbMatch.away_score !== undefined) ? {
       home: dbMatch.home_score,
       away: dbMatch.away_score
     } : undefined,

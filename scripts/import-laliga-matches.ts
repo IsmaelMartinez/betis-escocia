@@ -44,13 +44,16 @@ function convertApiMatchToDatabase(apiMatch: ApiMatch): MatchInsert {
   let awayScore: number | undefined;
   
   if (apiMatch.status === 'FINISHED' && apiMatch.score?.fullTime) {
-    homeScore = apiMatch.score.fullTime.home;
-    awayScore = apiMatch.score.fullTime.away;
+    const homeScoreValue = apiMatch.score.fullTime.home;
+    const awayScoreValue = apiMatch.score.fullTime.away;
     
-    if (homeScore !== null && awayScore !== null) {
-      if (homeScore > awayScore) {
+    if (homeScoreValue !== null && awayScoreValue !== null) {
+      homeScore = homeScoreValue;
+      awayScore = awayScoreValue;
+      
+      if (homeScoreValue > awayScoreValue) {
         result = isBetisHome ? 'HOME_WIN' : 'AWAY_WIN';
-      } else if (homeScore < awayScore) {
+      } else if (homeScoreValue < awayScoreValue) {
         result = isBetisHome ? 'AWAY_WIN' : 'HOME_WIN';
       } else {
         result = 'DRAW';
