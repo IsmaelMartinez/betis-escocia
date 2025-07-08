@@ -64,7 +64,6 @@ function convertApiMatchToDatabase(apiMatch: ApiMatch): MatchInsert {
   return {
     opponent: isBetisHome ? apiMatch.awayTeam.name : apiMatch.homeTeam.name,
     date_time: apiMatch.utcDate,
-    venue: isBetisHome ? 'La Cartuja' : 'Campo del adversario',
     competition: apiMatch.competition.name,
     home_away: isBetisHome ? 'home' : 'away',
     notes: `Jornada ${apiMatch.matchday || 'N/A'} - Importado desde Football-Data.org`,

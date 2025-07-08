@@ -5,7 +5,6 @@ CREATE TABLE matches (
     id BIGSERIAL PRIMARY KEY,
     date_time TIMESTAMPTZ NOT NULL,
     opponent VARCHAR(100) NOT NULL,
-    venue VARCHAR(200) NOT NULL,
     competition VARCHAR(100) NOT NULL,
     home_away VARCHAR(10) NOT NULL CHECK (home_away IN ('home', 'away')),
     notes TEXT,

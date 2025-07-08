@@ -13,7 +13,7 @@ interface MatchesListProps {
   isLoading?: boolean;
 }
 
-type SortField = 'date_time' | 'opponent' | 'venue' | 'competition' | 'home_away';
+type SortField = 'date_time' | 'opponent' | 'competition' | 'home_away';
 type SortDirection = 'asc' | 'desc';
 
 export default function MatchesList({ 
@@ -43,7 +43,6 @@ export default function MatchesList({
     const filtered = matches.filter(match => {
       const matchesText = filterText === '' || 
         match.opponent.toLowerCase().includes(filterText.toLowerCase()) ||
-        match.venue.toLowerCase().includes(filterText.toLowerCase()) ||
         match.notes?.toLowerCase().includes(filterText.toLowerCase());
       
       const matchesCompetition = competitionFilter === '' || match.competition === competitionFilter;
@@ -159,7 +158,7 @@ export default function MatchesList({
               id="search"
               value={filterText}
               onChange={(e) => setFilterText(e.target.value)}
-              placeholder="Oponente, sede, notas..."
+              placeholder="Oponente, notas..."
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-betis-green focus:border-betis-green"
             />
           </div>
@@ -235,12 +234,6 @@ export default function MatchesList({
               </th>
               <th 
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                onClick={() => handleSort('venue')}
-              >
-                Sede <SortIcon field="venue" />
-              </th>
-              <th 
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                 onClick={() => handleSort('competition')}
               >
                 Competición <SortIcon field="competition" />
@@ -269,9 +262,6 @@ export default function MatchesList({
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{match.opponent}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{match.venue}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">

@@ -1,15 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { FootballDataService } from '@/services/footballDataService';
 import { supabase } from '@/lib/supabase';
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     // Simple authentication check - in production, use proper authentication
-    const { authorization } = Object.fromEntries(request.headers.entries());
-    
     // For now, we'll allow any request. In production, add proper auth
-    console.log('🔄 Starting manual LaLiga match sync...');
-    
     // Initialize the football data service
     const footballService = new FootballDataService();
     
@@ -17,12 +13,8 @@ export async function POST(request: NextRequest) {
     const currentYear = new Date().getFullYear();
     const seasons = [currentYear.toString(), (currentYear + 1).toString()];
     
-    console.log(`📅 Fetching matches for seasons: ${seasons.join(', ')}`);
-    
     // Fetch matches from the API
     const matches = await footballService.getBetisMatchesForSeasons(seasons, 50);
-    
-    console.log(`📊 Found ${matches.length} matches from API`);
     
     let importedCount = 0;
     let updatedCount = 0;
@@ -65,7 +57,6 @@ export async function POST(request: NextRequest) {
         const dbMatch = {
           opponent: isBetisHome ? match.awayTeam.name : match.homeTeam.name,
           date_time: match.utcDate,
-          venue: isBetisHome ? 'La Cartuja' : 'Campo del adversario',
           competition: match.competition.name,
           home_away: isBetisHome ? 'home' : 'away',
           notes: `Jornada ${match.matchday || 'N/A'} - Sincronizado desde Football-Data.org`,
@@ -117,7 +108,6 @@ export async function POST(request: NextRequest) {
       errors: errorCount
     };
     
-    console.log('✅ Sync completed:', summary);
     
     return NextResponse.json({
       success: true,

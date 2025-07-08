@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase, RSVP, ContactSubmission, Match, createMatch, updateMatch, deleteMatch, getMatches } from '@/lib/supabase';
-import { Users, Mail, TrendingUp, Download, RefreshCw, Calendar, Plus, Sync } from 'lucide-react';
+import { Users, Mail, TrendingUp, Download, RefreshCw, Calendar, Plus, RotateCcw } from 'lucide-react';
 import Card, { CardHeader, CardBody } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -275,7 +275,7 @@ export default function AdminPage() {
                 <Button
                   onClick={handleSyncMatches}
                   variant="secondary"
-                  leftIcon={<Sync className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />}
+                  leftIcon={<RotateCcw className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />}
                   isLoading={syncing}
                 >
                   Sincronizar Partidos
@@ -501,7 +501,7 @@ export default function AdminPage() {
               <Button
                 onClick={handleSyncMatches}
                 variant="secondary"
-                leftIcon={<Sync className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />}
+                leftIcon={<RotateCcw className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />}
                 isLoading={syncing}
               >
                 Sincronizar desde LaLiga

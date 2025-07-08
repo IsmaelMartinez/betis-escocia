@@ -6,9 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "test-api": "npx tsx scripts/test-api.ts",
-    "test-api-football": "npx tsx scripts/test-api-football.ts"
+    "lint": "next lint"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.3",

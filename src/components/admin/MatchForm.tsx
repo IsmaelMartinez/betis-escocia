@@ -27,7 +27,6 @@ export default function MatchForm({
   const [formData, setFormData] = useState({
     date_time: match?.date_time ? new Date(match.date_time).toISOString().slice(0, 16) : '',
     opponent: match?.opponent || '',
-    venue: match?.venue || '',
     competition: match?.competition || '',
     home_away: match?.home_away || 'home' as const,
     notes: match?.notes || ''
@@ -71,7 +70,6 @@ export default function MatchForm({
       const submitData = {
         date_time: new Date(formData.date_time).toISOString(),
         opponent: formData.opponent.trim(),
-        venue: formData.venue.trim(),
         competition: formData.competition.trim(),
         home_away: formData.home_away,
         notes: formData.notes.trim() || undefined
@@ -176,22 +174,6 @@ export default function MatchForm({
           {errors.opponent && <p className={errorClassName}>{errors.opponent}</p>}
         </div>
 
-        {/* Venue */}
-        <div>
-          <label htmlFor="venue" className="block text-sm font-medium text-gray-700">
-            Sede (opcional)
-          </label>
-          <input
-            type="text"
-            id="venue"
-            name="venue"
-            value={formData.venue}
-            onChange={handleChange}
-            placeholder="ej. Estadio Benito Villamarín, Santiago Bernabéu"
-            className={inputClassName}
-          />
-          {errors.venue && <p className={errorClassName}>{errors.venue}</p>}
-        </div>
 
         {/* Competition */}
         <div>

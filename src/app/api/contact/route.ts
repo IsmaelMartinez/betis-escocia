@@ -67,8 +67,6 @@ export async function POST(request: NextRequest) {
       // Don't fail the API request if email fails
     });
 
-    // Log for admin purposes
-    console.log(`New contact submission: ${name} (${email}) - Type: ${type ?? 'general'} - Subject: ${subject}`);
 
     return NextResponse.json({ 
       success: true, 
