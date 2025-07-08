@@ -10,7 +10,7 @@ interface MatchesListProps {
   matches: Match[];
   onEdit: (match: Match) => void;
   onDelete: (matchId: number) => Promise<{ success: boolean; error?: string }>;
-  onSync?: (matchId: number) => Promise<{ success: boolean; error?: string }>;
+  onSync?: (externalId: number) => Promise<{ success: boolean; error?: string }>;
   isLoading?: boolean;
 }
 
@@ -120,7 +120,7 @@ export default function MatchesList({
 
   // Handle sync
   const handleSync = async (match: Match) => {
-    if (!onSync) return;
+    if (!onSync || !match.external_id) return;
     
     if (!confirm(`¿Estás seguro de que quieres sincronizar el partido contra ${match.opponent}?`)) {
       return;
@@ -129,7 +129,7 @@ export default function MatchesList({
     setSyncingIds(prev => new Set(prev).add(match.id));
     
     try {
-      const result = await onSync(match.id);
+      const result = await onSync(match.external_id);
       
       if (!result.success) {
         alert(`Error al sincronizar: ${result.error}`);
@@ -318,7 +318,7 @@ export default function MatchesList({
                       >
                         ✏️ Editar
                       </button>
-                      {onSync && (
+                      {onSync && match.external_id && (
                         <button
                           onClick={() => handleSync(match)}
                           disabled={isDeleting || isSyncing || isLoading}
