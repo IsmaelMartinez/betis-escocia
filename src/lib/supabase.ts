@@ -210,7 +210,7 @@ export async function getMatchWithRSVPCounts(id: number) {
   
   // Calculate totals
   const rsvpCount = data.rsvps?.length || 0
-  const totalAttendees = data.rsvps?.reduce((sum: number, rsvp: any) => sum + rsvp.attendees, 0) || 0
+  const totalAttendees = data.rsvps?.reduce((sum: number, rsvp: { attendees: number }) => sum + rsvp.attendees, 0) || 0
   
   return {
     ...data,
@@ -222,7 +222,7 @@ export async function getMatchWithRSVPCounts(id: number) {
 // Get upcoming matches with RSVP counts
 export async function getUpcomingMatchesWithRSVPCounts(limit = 2) {
   // First, try to get matches with RSVP data
-  let { data, error } = await supabase
+  const { data, error } = await supabase
     .from('matches')
     .select(`
       *,
@@ -259,9 +259,13 @@ export async function getUpcomingMatchesWithRSVPCounts(limit = 2) {
   }
   
   // Calculate totals for each match
+  if (!data) {
+    return []
+  }
+  
   return data.map(match => {
     const rsvpCount = match.rsvps?.length || 0
-    const totalAttendees = match.rsvps?.reduce((sum: number, rsvp: any) => sum + rsvp.attendees, 0) || 0
+    const totalAttendees = match.rsvps?.reduce((sum: number, rsvp: { attendees: number }) => sum + rsvp.attendees, 0) || 0
     
     return {
       ...match,

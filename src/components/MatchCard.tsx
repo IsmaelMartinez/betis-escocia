@@ -1,11 +1,11 @@
 'use client';
 
-import { Calendar, MapPin, Clock, Trophy, Users } from 'lucide-react';
+import React from 'react';
+import { Calendar, MapPin, Clock, Users } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { MatchCardProps } from '@/types/match';
 import type { Match as DatabaseMatch } from '@/lib/supabase';
-import BetisLogo from '@/components/BetisLogo';
 
 // Adapter function to convert database match to MatchCardProps
 export function convertDatabaseMatchToCardProps(
@@ -44,7 +44,7 @@ export function convertDatabaseMatchToCardProps(
   };
 }
 
-export default function MatchCard(props: Readonly<MatchCardProps>) {
+const MatchCard: React.FC<MatchCardProps> = (props) => {
   const { 
     id,
     opponent, 
@@ -231,6 +231,7 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
                   <p className={`font-bold text-lg ${localTeam.isBetis ? 'text-betis-green' : ''}`}>
                     {localTeam.name}
                   </p>
+                </div>
                 <p className="text-sm text-gray-600">Local</p>
               </div>
               
@@ -242,9 +243,9 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
               {/* Visitor Team (always on right) */}
               <div className="text-left flex-1">
                 <div className="flex items-center justify-start space-x-2 mb-1">
-                  cp className={`font-bold text-lg ${visitorTeam.isBetis ? 'text-betis-green' : ''}`}e
+                  <p className={`font-bold text-lg ${visitorTeam.isBetis ? 'text-betis-green' : ''}`}>
                     {visitorTeam.name}
-                  c/pe
+                  </p>
                 </div>
                 <p className="text-sm text-gray-600">Visitante</p>
               </div>
@@ -318,4 +319,6 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
       </div>
     </div>
   );
-}
+};
+
+export default MatchCard;

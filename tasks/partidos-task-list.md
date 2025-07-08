@@ -96,6 +96,13 @@ Implement a static partidos section where users can see league games for the cur
   - [x] 7.3.2 Test RSVP integration (✅ working on homepage widget)
   - [x] 7.3.3 Test feature flag toggling
 
+## 8. Bug Fixes and Maintenance
+- [x] 8.1 Fix JSX parsing errors in MatchCard component
+  - [x] 8.1.1 Fix Unicode-encoded JSX tags (\u003c, \u003e) to proper angle brackets
+  - [x] 8.1.2 Fix TypeScript errors in component files
+  - [x] 8.1.3 Clean up unused imports and linting issues
+  - [x] 8.1.4 Restart development server after fixes
+
 ---
 
 ## Relevant Files
@@ -122,16 +129,16 @@ _Will be updated as implementation progresses_
 ---
 
 ## 8. Partidos Section Improvements (NEW)
-- [ ] 8.1 Fix filter counts and visibility
-  - [ ] 8.1.1 Filter by competitions that have upcoming matches
-  - [ ] 8.1.2 Show correct count numbers for todos/próximos/pasados filters
-  - [ ] 8.1.3 Hide competitions without upcoming matches (Europa League, La Liga, Copa)
-- [ ] 8.2 UI/UX improvements
-  - [ ] 8.2.1 Remove team logos that aren't displaying properly
-  - [ ] 8.2.2 Add "que no hay" subtitle in the "No busques más" section
-- [ ] 8.3 Dynamic RSVP integration
-  - [ ] 8.3.1 Make RSVP system dynamic to load match information automatically
-  - [ ] 8.3.2 Ensure proper match ID linking between partidos and RSVP pages
+- [x] 8.1 Fix filter counts and visibility
+  - [x] 8.1.1 Filter by competitions that have upcoming matches
+  - [x] 8.1.2 Show correct count numbers for todos/próximos/pasados filters
+  - [x] 8.1.3 Hide competitions without upcoming matches (Europa League, La Liga, Copa)
+- [x] 8.2 UI/UX improvements
+  - [x] 8.2.1 Remove team logos that aren't displaying properly
+  - [x] 8.2.2 Add "que no hay" subtitle in the "No busques más" section
+- [x] 8.3 Dynamic RSVP integration
+  - [x] 8.3.1 Make RSVP system dynamic to load match information automatically
+  - [x] 8.3.2 Ensure proper match ID linking between partidos and RSVP pages
 
 ## Success Criteria
 - [x] Next 2-3 Betis matches are displayed in card format using existing MatchCard component

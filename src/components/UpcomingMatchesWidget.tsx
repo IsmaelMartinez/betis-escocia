@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { getUpcomingMatchesWithRSVPCounts, Match } from '@/lib/supabase';
-import MatchCard, { convertDatabaseMatchToCardProps } from './MatchCard';
 import Link from 'next/link';
 
 interface UpcomingMatchesWidgetProps {

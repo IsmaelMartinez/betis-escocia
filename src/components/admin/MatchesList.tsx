@@ -40,7 +40,7 @@ export default function MatchesList({
 
   // Filter and sort matches
   const filteredAndSortedMatches = useMemo(() => {
-    let filtered = matches.filter(match => {
+    const filtered = matches.filter(match => {
       const matchesText = filterText === '' || 
         match.opponent.toLowerCase().includes(filterText.toLowerCase()) ||
         match.venue.toLowerCase().includes(filterText.toLowerCase()) ||
@@ -54,8 +54,8 @@ export default function MatchesList({
 
     // Sort
     filtered.sort((a, b) => {
-      let aValue = a[sortField];
-      let bValue = b[sortField];
+      let aValue: string | number = a[sortField];
+      let bValue: string | number = b[sortField];
 
       if (sortField === 'date_time') {
         aValue = new Date(aValue as string).getTime();
