@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Layout from "@/components/Layout";
@@ -17,6 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://betis-escocia.vercel.app'),
   title: {
     default: "No busques más que no hay - Peña Bética Escocesa",
     template: "%s | Peña Bética Escocesa"
@@ -88,17 +89,18 @@ export const metadata: Metadata = {
     description: "La peña del Real Betis en Edimburgo, Escocia. Más de 14 años compartiendo la pasión bética.",
     images: ["/images/logo_no_texto.jpg"],
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 5,
-  },
   verification: {
     google: process.env.GOOGLE_SITE_VERIFICATION,
   },
   category: "Sports",
   classification: "Community Organization",
   referrer: "origin-when-cross-origin",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({
