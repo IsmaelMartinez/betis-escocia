@@ -129,26 +129,21 @@ function RSVPPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-betis-green to-green-700 text-white py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="mb-8">
-            <div className="inline-block bg-white/20 backdrop-blur-sm rounded-2xl p-6 mb-6">
-              <Calendar className="h-12 w-12 mx-auto mb-4" />
-              <h1 className="text-4xl sm:text-5xl font-black mb-4">
-                ¿Vienes al Polwarth?
-              </h1>
-              <p className="text-xl opacity-90">
-                Confirma tu asistencia para el próximo partido
-              </p>
-            </div>
-          </div>
+      <div className="bg-betis-green text-white py-12 px-4">
+        <div className="max-w-6xl mx-auto text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            ¿Vienes al Polwarth?
+          </h1>
+          <p className="text-xl md:text-2xl text-green-100 mb-6">
+            Confirma tu asistencia para el próximo partido
+          </p>
         </div>
-      </section>
+      </div>
 
       {/* Next Match Info */}
       <section className="py-12 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-betis-green to-green-600 rounded-3xl p-8 text-white text-center mb-8">
+          <div className="bg-green-600 rounded-3xl p-8 text-white text-center mb-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold">Próximo Partido</h2>
               {availableMatches.length > 1 && (
@@ -193,16 +188,10 @@ function RSVPPage() {
               {/* Teams */}
               <div className="flex items-center justify-center space-x-4">
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-2 mx-auto">
-                    <span className="text-betis-green font-bold text-lg">RB</span>
-                  </div>
                   <p className="font-bold">Real Betis</p>
                 </div>
                 <div className="text-2xl font-bold">VS</div>
                 <div className="text-center">
-                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-2 mx-auto">
-                    <span className="text-purple-600 font-bold text-lg">RM</span>
-                  </div>
                   <p className="font-bold">{nextMatch.opponent}</p>
                 </div>
               </div>

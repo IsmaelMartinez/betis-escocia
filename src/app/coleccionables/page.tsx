@@ -123,7 +123,7 @@ function ColeccionablesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-white">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-green-600 to-green-700 text-white py-12 px-4">
+      <div className="bg-betis-green text-white py-12 px-4">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             🟢⚪ Coleccionables de la Peña
@@ -131,15 +131,16 @@ function ColeccionablesPage() {
           <p className="text-xl md:text-2xl text-green-100 mb-6">
             Recuerdos únicos de la Peña Bética Escocesa
           </p>
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 max-w-2xl mx-auto">
+          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 max-w-2xl mx-auto">
             <div className="flex items-center justify-center gap-4 text-sm md:text-base">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4" />
                 <span>Recogida en Polwarth</span>
               </div>
+              o 
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
-                <span>O en visitas al estadio</span>
+                <span>Recogida en el estadio</span>
               </div>
             </div>
           </div>

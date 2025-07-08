@@ -119,7 +119,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, attendees, message, whatsappInterest } = body;
+    const { name, email, attendees, message, whatsappInterest, matchId } = body;
 
     // Validation
     if (!name || !email || !attendees) {
@@ -144,8 +144,68 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const currentMatch = await getCurrentUpcomingMatch();
-    const currentMatchDate = currentMatch.date;
+    let currentMatch;
+    let currentMatchDate;
+    let currentMatchId;
+
+    if (matchId) {
+      // Get specific match by ID
+      const { data: matchData, error: matchError } = await supabase
+        .from('matches')
+        .select('id, opponent, date_time, competition')
+        .eq('id', parseInt(matchId))
+        .maybeSingle();
+        
+      if (matchError || !matchData) {
+        console.error('Error fetching specific match:', matchError);
+        return NextResponse.json(
+          { 
+            success: false, 
+            error: 'Partido no encontrado' 
+          },
+          { status: 404 }
+        );
+      }
+      
+      currentMatch = {
+        id: matchData.id,
+        opponent: matchData.opponent,
+        date: matchData.date_time,
+        competition: matchData.competition
+      };
+      currentMatchDate = matchData.date_time;
+      currentMatchId = matchData.id;
+    } else {
+      // Get current upcoming match
+      const { data, error } = await supabase
+        .from('matches')
+        .select('id, opponent, date_time, competition')
+        .gte('date_time', new Date().toISOString())
+        .order('date_time', { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      if (error || !data) {
+        console.error('Error fetching upcoming match:', error);
+        // Fallback to default match
+        currentMatch = {
+          opponent: "Real Madrid",
+          date: "2025-06-28T20:00:00",
+          competition: "LaLiga"
+        };
+        currentMatchDate = "2025-06-28T20:00:00";
+        currentMatchId = null;
+      } else {
+        currentMatch = {
+          id: data.id,
+          opponent: data.opponent,
+          date: data.date_time,
+          competition: data.competition
+        };
+        currentMatchDate = data.date_time;
+        currentMatchId = data.id;
+      }
+    }
 
     // Check if email already exists for current match
     const { data: existingRSVPs, error: checkError } = await supabase
@@ -174,7 +234,8 @@ export async function POST(request: NextRequest) {
       attendees: parseInt(attendees),
       message: message?.trim() ?? '',
       whatsapp_interest: Boolean(whatsappInterest),
-      match_date: currentMatchDate
+      match_date: currentMatchDate,
+      match_id: currentMatchId
     };
 
     let operationError;

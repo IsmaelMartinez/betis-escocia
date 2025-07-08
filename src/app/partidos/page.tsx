@@ -18,7 +18,6 @@ export default function MatchesPage() {
       <section className="bg-betis-green text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl font-bold mb-2">📅 Partidos del Betis</h1>
-          <p className="text-lg opacity-75 mb-4">que no hay</p>
           <p className="text-xl opacity-90 max-w-2xl mx-auto">
             Todos los partidos se ven en el Polwarth Tavern. ¡No te pierdas ni uno!
           </p>

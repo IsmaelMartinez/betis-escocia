@@ -57,7 +57,7 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, matchId: selectedMatchId }),
       });
 
       if (!response.ok) {
