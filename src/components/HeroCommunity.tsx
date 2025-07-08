@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { MapPin, Users, Calendar, Heart, Coffee, Smile } from 'lucide-react';
+import { MapPin, Users, Heart, Coffee, Smile } from 'lucide-react';
 
 export default function HeroCommunity() {
   return (

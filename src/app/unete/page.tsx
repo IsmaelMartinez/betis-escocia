@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { MapPin, Clock, Users, Heart, MessageCircle, Calendar } from 'lucide-react';
+import { MapPin, Users, MessageCircle, Heart } from 'lucide-react';
 
 export default function Unete() {
   const steps = [
