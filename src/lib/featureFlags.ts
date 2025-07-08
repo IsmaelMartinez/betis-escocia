@@ -26,6 +26,9 @@ interface FeatureFlags {
   showPorra: boolean;
   showRedesSociales: boolean;
   
+  // Admin features
+  showAdmin: boolean;
+  
   // Development/testing features
   showDebugInfo: boolean;
   showBetaFeatures: boolean;
@@ -48,6 +51,9 @@ const defaultFlags: FeatureFlags = {
   showContacto: false, // Hidden by default
   showPorra: false, // Hidden by default
   showRedesSociales: false, // Hidden by default
+  
+  // Admin features - secure by default
+  showAdmin: false, // Hidden by default
   
   // Development/testing features
   showDebugInfo: false,
@@ -84,6 +90,7 @@ const environmentFlags: Partial<FeatureFlags> = {
   showContacto: process.env.NEXT_PUBLIC_FEATURE_CONTACTO === 'true',
   showPorra: process.env.NEXT_PUBLIC_FEATURE_PORRA === 'true',
   showRedesSociales: process.env.NEXT_PUBLIC_FEATURE_REDES_SOCIALES === 'true',
+  showAdmin: process.env.NEXT_PUBLIC_FEATURE_ADMIN === 'true',
 };
 
 // Merge default flags with environment overrides
@@ -165,6 +172,12 @@ export function getEnabledNavigationItems() {
       href: '/redes-sociales', 
       nameEn: 'Social Media',
       feature: 'showRedesSociales' as keyof FeatureFlags
+    },
+    { 
+      name: 'Admin', 
+      href: '/admin', 
+      nameEn: 'Admin',
+      feature: 'showAdmin' as keyof FeatureFlags
     }
   ];
 
