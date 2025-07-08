@@ -181,6 +181,13 @@ _Will be updated as implementation progresses_
   - [x] 8.3.1 Make RSVP system dynamic to load match information automatically
   - [x] 8.3.2 Ensure proper match ID linking between partidos and RSVP pages
 
+## 9. Competition Type Filters (NEW)
+- [ ] 9.1 Add competition type filters to partidos page
+  - [ ] 9.1.1 Add filter buttons for different competition types (Amistoso Pretemporada, LaLiga, Copa del Rey, etc.)
+  - [ ] 9.1.2 Show only competitions that have matches in the database
+  - [ ] 9.1.3 Combine competition filters with existing time-based filters (Todos/Próximos/Pasados)
+  - [ ] 9.1.4 Update filter counts to reflect competition-specific matches
+
 ## Success Criteria
 - [x] Next 2-3 Betis matches are displayed in card format using existing MatchCard component
 - [x] Admin can manually create, edit, and delete matches
