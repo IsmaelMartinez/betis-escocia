@@ -20,13 +20,13 @@ Implement a static partidos section where users can see league games for the cur
   - [x] 1.3.2 Create relationship between matches and RSVPs
 
 ## 2. Feature Flag Implementation
-- [ ] 2.1 Add showPartidos feature flag
-  - [ ] 2.1.1 Update FeatureFlags interface in featureFlags.ts
-  - [ ] 2.1.2 Add showPartidos to defaultFlags (set to false - hidden by default)
-  - [ ] 2.1.3 Add environment variable support for NEXT_PUBLIC_FEATURE_PARTIDOS
-- [ ] 2.2 Update navigation system
-  - [ ] 2.2.1 Add Partidos to getEnabledNavigationItems function
-  - [ ] 2.2.2 Ensure partidos page is protected by feature flag
+- [x] 2.1 Add showPartidos feature flag
+  - [x] 2.1.1 Update FeatureFlags interface in featureFlags.ts
+  - [x] 2.1.2 Add showPartidos to defaultFlags (set to false - hidden by default)
+  - [x] 2.1.3 Add environment variable support for NEXT_PUBLIC_FEATURE_PARTIDOS
+- [x] 2.2 Update navigation system
+  - [x] 2.2.1 Add Partidos to getEnabledNavigationItems function
+  - [x] 2.2.2 Ensure partidos page is protected by feature flag
 
 ## 3. Admin Interface Components
 - [ ] 3.1 Create match CRUD form

@@ -16,6 +16,7 @@ interface FeatureFlags {
   showColeccionables: boolean;
   showGaleria: boolean;
   showRSVP: boolean;
+  showPartidos: boolean;
   
   // Additional features
   showSocialMedia: boolean;
@@ -42,6 +43,7 @@ const defaultFlags: FeatureFlags = {
   showColeccionables: false,
   showGaleria: false,
   showRSVP: false, // Even RSVP is now hidden by default
+  showPartidos: false, // Hidden by default
   
   // Additional features - all hidden by default
   showSocialMedia: false,
@@ -78,6 +80,7 @@ const environmentFlags: Partial<FeatureFlags> = {
   showColeccionables: process.env.NEXT_PUBLIC_FEATURE_COLECCIONABLES === 'true',
   showGaleria: process.env.NEXT_PUBLIC_FEATURE_GALERIA === 'true',
   showRSVP: process.env.NEXT_PUBLIC_FEATURE_RSVP === 'true', // Must be explicitly enabled
+  showPartidos: process.env.NEXT_PUBLIC_FEATURE_PARTIDOS === 'true', // Must be explicitly enabled
   showSocialMedia: process.env.NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA === 'true',
   showHistory: process.env.NEXT_PUBLIC_FEATURE_HISTORY === 'true', // Must be explicitly enabled
   // For features with default=true, only override if explicitly set to 'false'
@@ -124,6 +127,12 @@ export function getEnabledNavigationItems() {
       href: '/clasificacion', 
       nameEn: 'Standings',
       feature: 'showClasificacion' as keyof FeatureFlags
+    },
+    { 
+      name: 'Partidos', 
+      href: '/partidos', 
+      nameEn: 'Matches',
+      feature: 'showPartidos' as keyof FeatureFlags
     },
     { 
       name: 'Coleccionables', 

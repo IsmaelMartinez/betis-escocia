@@ -2,6 +2,8 @@ import { ApiErrorBoundary } from '@/components/ErrorBoundary';
 import FilteredMatches from '@/components/FilteredMatches';
 import BetisPositionWidget from '@/components/BetisPositionWidget';
 import { FeatureWrapper } from '@/lib/featureProtection';
+import { notFound } from 'next/navigation';
+import { isFeatureEnabled } from '@/lib/featureFlags';
 
 // Fetch data at build time and revalidate every 30 minutes
 async function getMatches() {
@@ -54,6 +56,11 @@ async function getMatches() {
 }
 
 export default async function MatchesPage() {
+  // Check if partidos feature is enabled
+  if (!isFeatureEnabled('showPartidos')) {
+    notFound();
+  }
+
   const { upcoming, recent, conference, friendlies } = await getMatches();
 
   return (
