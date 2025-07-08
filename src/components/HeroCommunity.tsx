@@ -76,13 +76,13 @@ export default function HeroCommunity() {
 
             {/* Key features - official card style */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-6 lg:mb-8">
-              <div className="bg-white rounded-lg p-6 border border-gray-200 hover:border-betis-green transition-colors shadow-sm">
-                <Coffee className="h-8 w-8 text-betis-green mb-4" />
+              <div className="group bg-white rounded-lg p-6 border border-gray-200 hover:border-betis-green hover:shadow-lg transition-all duration-300 shadow-sm transform hover:-translate-y-1 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+                <Coffee className="h-8 w-8 text-betis-green mb-4 group-hover:scale-110 transition-transform duration-300" />
                 <h3 className="font-bold text-betis-black mb-2 text-lg">AMBIENTE FAMILIAR</h3>
                 <p className="text-sm text-gray-600">Niños bienvenidos, ambiente relajado y acogedor</p>
               </div>
-              <div className="bg-white rounded-lg p-6 border border-gray-200 hover:border-betis-green transition-colors shadow-sm">
-                <Smile className="h-8 w-8 text-betis-green mb-4" />
+              <div className="group bg-white rounded-lg p-6 border border-gray-200 hover:border-betis-green hover:shadow-lg transition-all duration-300 shadow-sm transform hover:-translate-y-1 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
+                <Smile className="h-8 w-8 text-betis-green mb-4 group-hover:scale-110 transition-transform duration-300" />
                 <h3 className="font-bold text-betis-black mb-2 text-lg">SIEMPRE CON HUMOR</h3>
                 <p className="text-sm text-gray-600">Ganemos o perdamos, aquí se ríe y se disfruta</p>
               </div>
@@ -93,10 +93,13 @@ export default function HeroCommunity() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link 
                 href="/unete"
-                className="bg-betis-green hover:bg-betis-green-dark text-white px-8 py-4 rounded-lg font-bold text-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center shadow-lg"
+                className="group bg-betis-green hover:bg-betis-green-dark text-white px-8 py-4 rounded-lg font-bold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-betis-green/25 flex items-center justify-center shadow-lg"
               >
-                <Heart className="mr-3 h-5 w-5" />
-                ÚNETE A LA FAMILIA
+                <Heart className="mr-3 h-5 w-5 group-hover:animate-pulse" />
+                <span className="relative overflow-hidden">
+                  ÚNETE A LA FAMILIA
+                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+                </span>
               </Link>
             </div>
           </FeatureWrapper>
