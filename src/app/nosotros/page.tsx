@@ -208,7 +208,7 @@ export default function Nosotros() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-20 bg-gradient-to-r from-betis-green to-betis-green-dark text-white relative">
+      <section className="py-20 bg-betis-green text-white relative">
         {/* Background overlay for better text readability */}
         <div className="absolute inset-0 bg-black/20"></div>
         
@@ -229,7 +229,7 @@ export default function Nosotros() {
             </Link>
             <Link
               href="/rsvp"
-              className="border-2 border-white text-white hover:bg-white hover:text-betis-green px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+              className="text-white hover:bg-green-700 bg-green-600 hover:text-betis-green px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
               📅 Próximos eventos
             </Link>

@@ -439,7 +439,7 @@ export default function AdminPage() {
                   <Calendar className="h-6 w-6 text-betis-green" />
                 </div>
                 <div className="text-3xl font-black text-betis-black mb-2">{stats?.totalMatches}</div>
-                <div className="text-sm text-gray-600">Partidos Programados</div>
+                <div className="text-sm text-gray-600">Partidos Guardados</div>
               </CardBody>
             </Card>
           </FeatureWrapper>
@@ -471,57 +471,6 @@ export default function AdminPage() {
             </CardBody>
           </Card>
         </div>
-
-        {/* Individual Match Sync */}
-        <FeatureWrapper feature="showPartidos">
-          <div className="mb-8">
-            <Card>
-              <CardHeader>
-                <h2 className="text-xl font-bold text-betis-black">Sincronizar Partido Individual</h2>
-              </CardHeader>
-              <CardBody>
-                <div className="space-y-4">
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="flex-1">
-                      <label htmlFor="matchId" className="block text-sm font-medium text-gray-700 mb-2">
-                        ID del Partido
-                      </label>
-                      <input
-                        type="text"
-                        id="matchId"
-                        value={individualMatchId}
-                        onChange={(e) => setIndividualMatchId(e.target.value)}
-                        placeholder="Ej: 88"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-betis-green focus:border-transparent"
-                      />
-                    </div>
-                    <div className="flex items-end">
-                      <Button
-                        onClick={handleSyncIndividualMatch}
-                        variant="primary"
-                        leftIcon={<RotateCcw className={`h-4 w-4 ${syncingIndividual ? 'animate-spin' : ''}`} />}
-                        isLoading={syncingIndividual}
-                      >
-                        Sincronizar
-                      </Button>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    Introduce el ID numérico del partido para actualizar sus datos desde la API de Football-Data.org.
-                  </p>
-                  {individualSyncMessage && (
-                    <div className="mt-4">
-                      <MessageComponent 
-                        type={individualSyncMessage.includes('❌') ? 'error' : 'success'} 
-                        message={individualSyncMessage} 
-                      />
-                    </div>
-                  )}
-                </div>
-              </CardBody>
-            </Card>
-          </div>
-        </FeatureWrapper>
 
         {/* Recent Data */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -610,15 +559,6 @@ export default function AdminPage() {
                 leftIcon={<Plus className="h-4 w-4" />}
               >
                 Crear Nuevo Partido
-              </Button>
-              
-              <Button
-                onClick={handleSyncMatches}
-                variant="secondary"
-                leftIcon={<RotateCcw className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />}
-                isLoading={syncing}
-              >
-                Sincronizar desde LaLiga
               </Button>
             </div>
             
