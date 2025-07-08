@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Calendar, MapPin, Users, Clock, CheckCircle, ChevronDown } from 'lucide-react';
 import RSVPForm from '@/components/RSVPForm';
 import { withFeatureFlag } from '@/lib/featureProtection';
 import { getUpcomingMatchesWithRSVPCounts, Match } from '@/lib/supabase';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface RSVPData {
   currentMatch: {
@@ -307,4 +308,13 @@ function RSVPPage() {
   );
 }
 
-export default withFeatureFlag(RSVPPage, 'showRSVP');
+// Wrapper component to handle Suspense boundary
+function RSVPPageWithSuspense() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <RSVPPage />
+    </Suspense>
+  );
+}
+
+export default withFeatureFlag(RSVPPageWithSuspense, 'showRSVP');

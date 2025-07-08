@@ -213,7 +213,7 @@ export async function getMatchWithRSVPCounts(id: number) {
     .from('matches')
     .select(`
       *,
-      rsvps:rsvp_submissions(
+      rsvps:rsvps!match_id(
         id,
         attendees
       )
@@ -244,7 +244,7 @@ export async function getUpcomingMatchesWithRSVPCounts(limit = 2) {
     .from('matches')
     .select(`
       *,
-      rsvps:rsvp_submissions(
+      rsvps:rsvps!match_id(
         id,
         attendees
       )
@@ -299,7 +299,7 @@ export async function getAllMatchesWithRSVPCounts(limit?: number) {
     .from('matches')
     .select(`
       *,
-      rsvps:rsvp_submissions(
+      rsvps:rsvps!match_id(
         id,
         attendees
       )

@@ -21,7 +21,7 @@ import { resolve } from 'path';
 dotenv.config({ path: resolve(process.cwd(), '.env.local') });
 
 import { FootballDataService, REAL_BETIS_TEAM_ID } from '../src/services/footballDataService';
-import { supabase, type Match as DatabaseMatch, type MatchInsert } from '../src/lib/supabase';
+import { supabase, type MatchInsert } from '../src/lib/supabase';
 import type { Match as ApiMatch } from '../src/types/match';
 
 interface ImportStats {

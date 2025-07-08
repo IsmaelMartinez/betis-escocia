@@ -9,9 +9,10 @@ export async function POST() {
     // Initialize the football data service
     const footballService = new FootballDataService();
     
-    // Get current and upcoming season matches
-    const currentYear = new Date().getFullYear();
-    const seasons = [currentYear.toString(), (currentYear + 1).toString()];
+    // Get current and previous season matches
+    // Use current year like the working script
+    const currentSeason = new Date().getFullYear();
+    const seasons = [currentSeason.toString(), (currentSeason - 1).toString(), '2023'];
     
     // Fetch matches from the API
     const matches = await footballService.getBetisMatchesForSeasons(seasons, 50);

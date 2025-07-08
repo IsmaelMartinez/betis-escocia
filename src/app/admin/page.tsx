@@ -34,6 +34,9 @@ export default function AdminPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
+  const [individualMatchId, setIndividualMatchId] = useState<string>('');
+  const [syncingIndividual, setSyncingIndividual] = useState(false);
+  const [individualSyncMessage, setIndividualSyncMessage] = useState<string | null>(null);
   const [currentView, setCurrentView] = useState<AdminView>('dashboard');
   const [matchFormData, setMatchFormData] = useState<MatchFormData>({ mode: 'create' });
   const [matches, setMatches] = useState<Match[]>([]);
@@ -119,6 +122,66 @@ export default function AdminPage() {
       setSyncing(false);
       // Clear message after 5 seconds
       setTimeout(() => setSyncMessage(null), 5000);
+    }
+  };
+
+  const handleSyncIndividualMatch = async () => {
+    if (!individualMatchId.trim()) {
+      setIndividualSyncMessage('Por favor, introduce un ID de partido válido');
+      setTimeout(() => setIndividualSyncMessage(null), 3000);
+      return;
+    }
+
+    setSyncingIndividual(true);
+    setIndividualSyncMessage(null);
+    
+    try {
+      const response = await fetch(`/api/admin/sync-match/${individualMatchId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setIndividualSyncMessage(`✅ ${result.message}`);
+        setIndividualMatchId(''); // Clear the input
+        await fetchStats(); // Refresh data after sync
+      } else {
+        setIndividualSyncMessage(`❌ Error: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error syncing individual match:', error);
+      setIndividualSyncMessage('❌ Error al sincronizar el partido');
+    } finally {
+      setSyncingIndividual(false);
+      // Clear message after 5 seconds
+      setTimeout(() => setIndividualSyncMessage(null), 5000);
+    }
+  };
+
+  const handleSyncMatchFromTable = async (matchId: number): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const response = await fetch(`/api/admin/sync-match/${matchId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        await fetchStats(); // Refresh data after sync
+        return { success: true };
+      } else {
+        return { success: false, error: result.message };
+      }
+    } catch (error) {
+      console.error('Error syncing match from table:', error);
+      return { success: false, error: 'Error al sincronizar el partido' };
     }
   };
 
@@ -409,6 +472,57 @@ export default function AdminPage() {
           </Card>
         </div>
 
+        {/* Individual Match Sync */}
+        <FeatureWrapper feature="showPartidos">
+          <div className="mb-8">
+            <Card>
+              <CardHeader>
+                <h2 className="text-xl font-bold text-betis-black">Sincronizar Partido Individual</h2>
+              </CardHeader>
+              <CardBody>
+                <div className="space-y-4">
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex-1">
+                      <label htmlFor="matchId" className="block text-sm font-medium text-gray-700 mb-2">
+                        ID del Partido
+                      </label>
+                      <input
+                        type="text"
+                        id="matchId"
+                        value={individualMatchId}
+                        onChange={(e) => setIndividualMatchId(e.target.value)}
+                        placeholder="Ej: 88"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-betis-green focus:border-transparent"
+                      />
+                    </div>
+                    <div className="flex items-end">
+                      <Button
+                        onClick={handleSyncIndividualMatch}
+                        variant="primary"
+                        leftIcon={<RotateCcw className={`h-4 w-4 ${syncingIndividual ? 'animate-spin' : ''}`} />}
+                        isLoading={syncingIndividual}
+                      >
+                        Sincronizar
+                      </Button>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Introduce el ID numérico del partido para actualizar sus datos desde la API de Football-Data.org.
+                  </p>
+                  {individualSyncMessage && (
+                    <div className="mt-4">
+                      <MessageComponent 
+                        type={individualSyncMessage.includes('❌') ? 'error' : 'success'} 
+                        message={individualSyncMessage} 
+                      />
+                    </div>
+                  )}
+                </div>
+              </CardBody>
+            </Card>
+          </div>
+        </FeatureWrapper>
+
         {/* Recent Data */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Recent RSVPs */}
@@ -512,6 +626,7 @@ export default function AdminPage() {
               matches={matches} 
               onEdit={handleEditMatch}
               onDelete={handleDeleteMatch}
+              onSync={handleSyncMatchFromTable}
               isLoading={loading}
             />
           </FeatureWrapper>

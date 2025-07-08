@@ -10,6 +10,7 @@ interface MatchesListProps {
   matches: Match[];
   onEdit: (match: Match) => void;
   onDelete: (matchId: number) => Promise<{ success: boolean; error?: string }>;
+  onSync?: (matchId: number) => Promise<{ success: boolean; error?: string }>;
   isLoading?: boolean;
 }
 
@@ -20,6 +21,7 @@ export default function MatchesList({
   matches, 
   onEdit, 
   onDelete, 
+  onSync,
   isLoading = false 
 }: MatchesListProps) {
   const [sortField, setSortField] = useState<SortField>('date_time');
@@ -29,6 +31,7 @@ export default function MatchesList({
   const [homeAwayFilter, setHomeAwayFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [deletingIds, setDeletingIds] = useState<Set<number>>(new Set());
+  const [syncingIds, setSyncingIds] = useState<Set<number>>(new Set());
 
   const itemsPerPage = 10;
 
@@ -108,6 +111,34 @@ export default function MatchesList({
       alert('Error al eliminar el partido');
     } finally {
       setDeletingIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(match.id);
+        return newSet;
+      });
+    }
+  };
+
+  // Handle sync
+  const handleSync = async (match: Match) => {
+    if (!onSync) return;
+    
+    if (!confirm(`¿Estás seguro de que quieres sincronizar el partido contra ${match.opponent}?`)) {
+      return;
+    }
+
+    setSyncingIds(prev => new Set(prev).add(match.id));
+    
+    try {
+      const result = await onSync(match.id);
+      
+      if (!result.success) {
+        alert(`Error al sincronizar: ${result.error}`);
+      }
+    } catch (error) {
+      console.error('Error syncing match:', error);
+      alert('Error al sincronizar el partido');
+    } finally {
+      setSyncingIds(prev => {
         const newSet = new Set(prev);
         newSet.delete(match.id);
         return newSet;
@@ -253,6 +284,7 @@ export default function MatchesList({
             {paginatedMatches.map((match) => {
               const { date, time } = formatDate(match.date_time);
               const isDeleting = deletingIds.has(match.id);
+              const isSyncing = syncingIds.has(match.id);
               
               return (
                 <tr key={match.id} className="hover:bg-gray-50">
@@ -281,14 +313,23 @@ export default function MatchesList({
                     <div className="flex space-x-2">
                       <button
                         onClick={() => onEdit(match)}
-                        disabled={isDeleting || isLoading}
+                        disabled={isDeleting || isSyncing || isLoading}
                         className="text-betis-green hover:text-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         ✏️ Editar
                       </button>
+                      {onSync && (
+                        <button
+                          onClick={() => handleSync(match)}
+                          disabled={isDeleting || isSyncing || isLoading}
+                          className="text-yellow-600 hover:text-yellow-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isSyncing ? '⏳ Sincronizando...' : '🔄 Sincronizar'}
+                        </button>
+                      )}
                       <button
                         onClick={() => handleDelete(match)}
-                        disabled={isDeleting || isLoading}
+                        disabled={isDeleting || isSyncing || isLoading}
                         className="text-red-600 hover:text-red-800 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isDeleting ? '⏳ Eliminando...' : '🗑️ Eliminar'}
