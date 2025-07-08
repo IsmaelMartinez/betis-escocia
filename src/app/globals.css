@@ -76,6 +76,46 @@ form {
 .bg-scotland-blue { background-color: var(--scotland-blue); }
 .text-scotland-blue { color: var(--scotland-blue); }
 
+/* Enhanced brand consistency utilities */
+.btn-betis-primary {
+  @apply bg-betis-green hover:bg-betis-green-dark text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-betis;
+}
+
+.btn-betis-secondary {
+  @apply border-2 border-betis-green text-betis-green hover:bg-betis-green hover:text-white font-bold py-3 px-6 rounded-xl transition-all duration-300;
+}
+
+.btn-betis-gold {
+  @apply bg-betis-gold hover:bg-betis-gold-dark text-betis-black font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-gold;
+}
+
+.card-betis {
+  @apply bg-white rounded-2xl p-6 shadow-lg border border-gray-200 hover:shadow-betis-lg transition-all duration-300;
+}
+
+.card-betis-featured {
+  @apply bg-gradient-to-br from-betis-green/5 to-betis-gold/5 rounded-2xl p-8 border border-betis-green/20 shadow-xl;
+}
+
+.text-gradient-betis {
+  background: linear-gradient(135deg, var(--betis-green) 0%, var(--betis-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.badge-betis {
+  @apply inline-flex items-center px-4 py-2 rounded-full bg-betis-green/10 border border-betis-green/20 text-betis-green font-medium text-sm;
+}
+
+.section-heading {
+  @apply text-4xl sm:text-5xl font-black text-gray-900 mb-6 text-center;
+}
+
+.section-subheading {
+  @apply text-xl text-gray-700 mb-8 text-center max-w-3xl mx-auto leading-relaxed;
+}
+
 /* Enhanced contrast utilities */
 .text-shadow-lg { text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); }
 .text-shadow-xl { text-shadow: 0 6px 12px rgba(0, 0, 0, 0.7); }
