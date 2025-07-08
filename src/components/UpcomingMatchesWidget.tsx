@@ -27,8 +27,8 @@ export default function UpcomingMatchesWidget({
         setIsLoading(true);
         setError(null);
         
-        // Only get next 3 matches for the widget
-        const data = await getUpcomingMatchesWithRSVPCounts(3);
+        // Only get next 2 matches for the widget
+        const data = await getUpcomingMatchesWithRSVPCounts(2);
         
         if (data) {
           setMatches(data as MatchWithRSVP[]);
@@ -56,7 +56,7 @@ export default function UpcomingMatchesWidget({
         </div>
         
         <div className="space-y-4">
-          {Array.from({ length: 3 }).map((_, index) => (
+          {Array.from({ length: 2 }).map((_, index) => (
             <div key={index} className="border border-gray-200 rounded-lg p-4 animate-pulse">
               <div className="flex items-center justify-between mb-3">
                 <div className="h-4 bg-gray-300 rounded w-24"></div>
@@ -203,8 +203,8 @@ export default function UpcomingMatchesWidget({
                 <p className="text-xs text-gray-600">{match.venue}</p>
               </div>
 
-              {/* RSVP info and action for upcoming matches */}
-              {isUpcoming && (
+              {/* RSVP info and action for upcoming matches - only show for first match */}
+              {isUpcoming && index === 0 && (
                 <div className="border-t border-gray-100 pt-3">
                   {match.rsvp_count > 0 && (
                     <div className="text-center mb-2">
@@ -219,20 +219,12 @@ export default function UpcomingMatchesWidget({
                     </div>
                   )}
                   
-                  <div className="flex space-x-2">
-                    <Link
-                      href={`/rsvp?match=${match.id}`}
-                      className="flex-1 bg-betis-green hover:bg-green-700 text-white text-center py-2 px-3 rounded text-xs font-medium transition-colors"
-                    >
-                      📝 RSVP
-                    </Link>
-                    <Link
-                      href="/partidos"
-                      className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-center py-2 px-3 rounded text-xs font-medium transition-colors"
-                    >
-                      Detalles
-                    </Link>
-                  </div>
+                  <Link
+                    href={`/rsvp?match=${match.id}`}
+                    className="block w-full bg-betis-green hover:bg-green-700 text-white text-center py-2 px-3 rounded text-xs font-medium transition-colors"
+                  >
+                    📝 Confirmar Asistencia
+                  </Link>
                 </div>
               )}
             </div>

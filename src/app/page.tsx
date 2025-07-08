@@ -45,8 +45,8 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/20"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-betis-gold/20 border border-betis-gold/30 backdrop-blur-sm mb-8">
-            <span className="text-betis-gold font-medium text-sm">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Bienvenidos a Escocia</span>
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-500 backdrop-blur-sm mb-8">
+            <span className="text-white font-medium text-sm">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Bienvenidos a Escocia</span>
           </div>
           
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 lg:mb-6 text-white drop-shadow-2xl">
@@ -69,10 +69,7 @@ export default function Home() {
                 className="bg-betis-gold hover:bg-betis-gold-dark text-betis-black px-10 py-5 rounded-2xl font-black text-xl shadow-2xl hover:shadow-betis-gold/25 transition-all duration-300 transform hover:scale-105 group"
               >
                 <span className="flex items-center">
-                  💬 Contáctanos
-                  <svg className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                  💬 Únete
                 </span>
               </Link>
             </FeatureWrapper>
@@ -82,13 +79,10 @@ export default function Home() {
                 href="https://www.facebook.com/groups/beticosenescocia/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group bg-white/10 backdrop-blur-sm border-2 border-white/30 hover:bg-white/20 px-10 py-5 rounded-2xl font-bold text-xl text-white hover:text-betis-gold transition-all duration-300 transform hover:scale-105"
+                className="group bg-blue-500 backdrop-blur-sm hover:bg-blue-600 px-10 py-5 rounded-2xl font-bold text-xl text-white hover:text-betis-gold transition-all duration-300 transform hover:scale-105"
               >
                 <span className="flex items-center">
                   📘 Facebook
-                  <svg className="ml-2 h-5 w-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                  </svg>
                 </span>
               </a>
               
@@ -96,7 +90,7 @@ export default function Home() {
                 href="https://www.youtube.com/beticosenescocia"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group bg-white/10 backdrop-blur-sm border-2 border-white/30 hover:bg-white/20 px-10 py-5 rounded-2xl font-bold text-xl text-white hover:text-betis-gold transition-all duration-300 transform hover:scale-105"
+                className="group bg-red-500 backdrop-blur-sm hover:bg-red-600 px-10 py-5 rounded-2xl font-bold text-xl text-white hover:text-betis-gold transition-all duration-300 transform hover:scale-105"
               >
                 <span className="flex items-center">
                   📺 YouTube

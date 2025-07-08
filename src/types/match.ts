@@ -187,6 +187,7 @@ export interface MatchCardProps {
   };
   readonly watchParty?: WatchParty;
   readonly rsvpInfo?: RSVPInfo;
+  readonly showRSVP?: boolean;
 }
 
 // Service method return types

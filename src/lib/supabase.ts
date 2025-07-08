@@ -113,7 +113,7 @@ export async function getMatches(limit?: number) {
   return data as Match[]
 }
 
-export async function getUpcomingMatches(limit = 3) {
+export async function getUpcomingMatches(limit = 2) {
   const { data, error } = await supabase
     .from('matches')
     .select('*')
@@ -220,8 +220,9 @@ export async function getMatchWithRSVPCounts(id: number) {
 }
 
 // Get upcoming matches with RSVP counts
-export async function getUpcomingMatchesWithRSVPCounts(limit = 3) {
-  const { data, error } = await supabase
+export async function getUpcomingMatchesWithRSVPCounts(limit = 2) {
+  // First, try to get matches with RSVP data
+  let { data, error } = await supabase
     .from('matches')
     .select(`
       *,
@@ -234,9 +235,27 @@ export async function getUpcomingMatchesWithRSVPCounts(limit = 3) {
     .order('date_time', { ascending: true })
     .limit(limit)
   
+  // If there's an error with RSVP join, fallback to matches only
   if (error) {
-    console.error('Error fetching upcoming matches with RSVP counts:', error)
-    return null
+    console.warn('RSVP data not available, fetching matches only:', error)
+    const fallbackResult = await supabase
+      .from('matches')
+      .select('*')
+      .gte('date_time', new Date().toISOString())
+      .order('date_time', { ascending: true })
+      .limit(limit)
+    
+    if (fallbackResult.error) {
+      console.error('Error fetching upcoming matches:', fallbackResult.error)
+      return null
+    }
+    
+    // Return matches with zero RSVP counts
+    return fallbackResult.data.map(match => ({
+      ...match,
+      rsvp_count: 0,
+      total_attendees: 0
+    }))
   }
   
   // Calculate totals for each match

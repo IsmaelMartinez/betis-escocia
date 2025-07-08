@@ -11,7 +11,8 @@ import BetisLogo from '@/components/BetisLogo';
 export function convertDatabaseMatchToCardProps(
   dbMatch: DatabaseMatch, 
   rsvpCount?: number,
-  totalAttendees?: number
+  totalAttendees?: number,
+  showRSVP: boolean = true
 ): MatchCardProps {
   const isUpcoming = new Date(dbMatch.date_time) > new Date();
   
@@ -37,7 +38,9 @@ export function convertDatabaseMatchToCardProps(
     rsvpInfo: (rsvpCount !== undefined && totalAttendees !== undefined) ? {
       rsvpCount,
       totalAttendees
-    } : undefined
+    } : undefined,
+    // Control RSVP button visibility
+    showRSVP
   };
 }
 
@@ -56,7 +59,8 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
     competitionEmblem,
     score,
     watchParty,
-    rsvpInfo
+    rsvpInfo,
+    showRSVP
   } = props;
 
   const isUpcoming = status === 'SCHEDULED' || status === 'TIMED' || new Date(date) > new Date();
@@ -222,8 +226,7 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
   };
 
   return (
-    <Link href={`/clasificacion`} className="block">
-      <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-200 cursor-pointer">
+    <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-200">
         {/* Competition header with emblem */}
         <div className={`${getCompetitionColor(competition)} text-white px-4 py-2 flex items-center justify-between`}>
           <div className="flex items-center space-x-2">
@@ -319,7 +322,7 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
         )}
 
         {/* RSVP section for upcoming matches */}
-        {isUpcoming && (
+        {isUpcoming && showRSVP && (
           <div className="border-t border-gray-200 pt-4">
             {rsvpInfo && (
               <div className="flex items-center justify-between mb-3">
@@ -334,27 +337,15 @@ export default function MatchCard(props: Readonly<MatchCardProps>) {
               </div>
             )}
             
-            <div className="flex space-x-2">
-              <Link 
-                href={`/rsvp?match=${id}`}
-                className="flex-1 bg-betis-green hover:bg-green-700 text-white text-center py-2 px-4 rounded-md font-medium transition-colors text-sm"
-                onClick={(e) => e.stopPropagation()}
-              >
-                📝 Confirmar Asistencia
-              </Link>
-              
-              <Link 
-                href={`/partidos`}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-center py-2 px-4 rounded-md font-medium transition-colors text-sm"
-                onClick={(e) => e.stopPropagation()}
-              >
-                ℹ️ Detalles
-              </Link>
-            </div>
+            <Link 
+              href={`/rsvp?match=${id}`}
+              className="block w-full bg-betis-green hover:bg-green-700 text-white text-center py-2 px-4 rounded-md font-medium transition-colors text-sm"
+            >
+              📝 Confirmar Asistencia
+            </Link>
           </div>
         )}
       </div>
     </div>
-    </Link>
   );
 }

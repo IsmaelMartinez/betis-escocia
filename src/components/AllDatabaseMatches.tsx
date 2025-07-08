@@ -23,11 +23,7 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
         const data = await getMatches(); // Get all matches without limit
         
         if (data) {
-          // Sort by date (most recent first)
-          const sortedMatches = data.sort((a, b) => 
-            new Date(b.date_time).getTime() - new Date(a.date_time).getTime()
-          );
-          setMatches(sortedMatches);
+          setMatches(data);
         } else {
           setMatches([]);
         }
@@ -57,12 +53,55 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
     }
   });
 
-  // Group matches by competition
+  // Group matches by competition and apply proper sorting and limits
   const matchesByCompetition = filteredMatches.reduce((acc, match) => {
     if (!acc[match.competition]) {
       acc[match.competition] = [];
     }
     acc[match.competition].push(match);
+    return acc;
+  }, {} as Record<string, Match[]>);
+
+  // Sort and limit matches within each competition
+  const processedMatchesByCompetition = Object.entries(matchesByCompetition).reduce((acc, [competition, competitionMatches]) => {
+    const now = new Date();
+    
+    // Separate upcoming and past matches
+    const upcomingMatches = competitionMatches.filter(match => new Date(match.date_time) > now);
+    const pastMatches = competitionMatches.filter(match => new Date(match.date_time) <= now);
+    
+    // Sort upcoming matches (earliest first) and past matches (most recent first)
+    const sortedUpcoming = upcomingMatches.sort((a, b) => 
+      new Date(a.date_time).getTime() - new Date(b.date_time).getTime()
+    );
+    const sortedPast = pastMatches.sort((a, b) => 
+      new Date(b.date_time).getTime() - new Date(a.date_time).getTime()
+    );
+    
+    let finalMatches: Match[] = [];
+    
+    if (filter === 'upcoming') {
+      // For upcoming matches, limit friendly games to 2, others no limit
+      if (competition === 'Amistoso Pretemporada') {
+        finalMatches = sortedUpcoming.slice(0, 2);
+      } else {
+        finalMatches = sortedUpcoming;
+      }
+    } else if (filter === 'past') {
+      finalMatches = sortedPast;
+    } else {
+      // For 'all' filter, show limited upcoming + all past
+      if (competition === 'Amistoso Pretemporada') {
+        finalMatches = [...sortedUpcoming.slice(0, 2), ...sortedPast];
+      } else {
+        finalMatches = [...sortedUpcoming, ...sortedPast];
+      }
+    }
+    
+    if (finalMatches.length > 0) {
+      acc[competition] = finalMatches;
+    }
+    
     return acc;
   }, {} as Record<string, Match[]>);
 
@@ -203,29 +242,36 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
         </div>
       ) : (
         <div className="space-y-8">
-          {Object.entries(matchesByCompetition).map(([competition, competitionMatches]) => (
-            <div key={competition} className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                🏆 {competition}
-                <span className="ml-2 text-sm font-normal text-gray-600">
-                  ({competitionMatches.length} partidos)
-                </span>
-              </h3>
-              
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {competitionMatches.map((match) => {
-                  const cardProps = convertDatabaseMatchToCardProps(match);
-                  
-                  return (
-                    <MatchCard 
-                      key={match.id}
-                      {...cardProps}
-                    />
-                  );
-                })}
+          {Object.entries(processedMatchesByCompetition).map(([competition, competitionMatches]) => {
+            // Check if we're showing limited results for friendly games
+            const isLimitedFriendly = competition === 'Amistoso Pretemporada' && 
+              (filter === 'upcoming' || filter === 'all') &&
+              filteredMatches.filter(m => m.competition === competition && new Date(m.date_time) > new Date()).length > 2;
+            
+            return (
+              <div key={competition} className="bg-white rounded-lg shadow-md p-6">
+                <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                  🏆 {competition}
+                  <span className="ml-2 text-sm font-normal text-gray-600">
+                    ({competitionMatches.length} partidos{isLimitedFriendly ? ' - próximos 2' : ''})
+                  </span>
+                </h3>
+                
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {competitionMatches.map((match) => {
+                    const cardProps = convertDatabaseMatchToCardProps(match);
+                    
+                    return (
+                      <MatchCard 
+                        key={match.id}
+                        {...cardProps}
+                      />
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

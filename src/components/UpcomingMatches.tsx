@@ -164,11 +164,15 @@ export default function UpcomingMatches({
       )}
       
       <div className="space-y-6">
-        {matches.map((match) => {
+        {matches.map((match, index) => {
+          // Only show RSVP link for the first (next) upcoming match
+          const showRSVP = index === 0;
+          
           const cardProps = convertDatabaseMatchToCardProps(
             match, 
             match.rsvp_count, 
-            match.total_attendees
+            match.total_attendees,
+            showRSVP
           );
           
           return (
