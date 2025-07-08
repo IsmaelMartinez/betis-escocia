@@ -20,7 +20,7 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('upcoming');
   const [competitionFilter, setCompetitionFilter] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const [matchesPerPage] = useState(20);
+  const [matchesPerPage] = useState(6);
 
   useEffect(() => {
     async function fetchAllMatches() {

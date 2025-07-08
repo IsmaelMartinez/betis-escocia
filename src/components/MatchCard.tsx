@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Calendar, MapPin, Clock, Users } from 'lucide-react';
+import { Calendar, Clock, Users } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { MatchCardProps } from '@/types/match';
@@ -54,7 +54,6 @@ const MatchCard: React.FC<MatchCardProps> = (props) => {
     id,
     opponent, 
     date, 
-    venue, 
     competition, 
     isHome, 
     result, 
@@ -257,16 +256,11 @@ const MatchCard: React.FC<MatchCardProps> = (props) => {
             </div>
           </div>
 
-        {/* Date and venue */}
+        {/* Date */}
         <div className="space-y-2 mb-4">
           <div className="flex items-center justify-center space-x-2 text-gray-600">
             <Calendar className="h-4 w-4" />
             <span className="text-sm">{formatDate(date)}</span>
-          </div>
-          
-          <div className="flex items-center justify-center space-x-2 text-gray-600">
-            <MapPin className="h-4 w-4" />
-            <span className="text-sm">{venue}</span>
           </div>
         </div>
 

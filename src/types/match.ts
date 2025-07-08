@@ -141,7 +141,7 @@ export interface ProcessedMatch {
   id: number;
   opponent: string;
   date: string;
-  venue: string;
+  venue?: string; // Made optional since we're not displaying it
   competition: string;
   isHome: boolean;
   result?: string;
@@ -173,7 +173,7 @@ export interface MatchCardProps {
   readonly id: number;
   readonly opponent: string;
   readonly date: string;
-  readonly venue: string;
+  readonly venue?: string; // Made optional since we're not displaying it
   readonly competition: string;
   readonly isHome: boolean;
   readonly result?: string;
