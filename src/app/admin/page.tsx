@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase, RSVP, ContactSubmission, Match, createMatch, updateMatch, deleteMatch, getMatches } from '@/lib/supabase';
-import { Users, Mail, TrendingUp, Download, RefreshCw, Calendar, Plus } from 'lucide-react';
+import { Users, Mail, TrendingUp, Download, RefreshCw, Calendar, Plus, Sync } from 'lucide-react';
 import Card, { CardHeader, CardBody } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -32,6 +32,8 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
   const [currentView, setCurrentView] = useState<AdminView>('dashboard');
   const [matchFormData, setMatchFormData] = useState<MatchFormData>({ mode: 'create' });
   const [matches, setMatches] = useState<Match[]>([]);
@@ -88,6 +90,36 @@ export default function AdminPage() {
   const handleRefresh = async () => {
     setRefreshing(true);
     await fetchStats();
+  };
+
+  const handleSyncMatches = async () => {
+    setSyncing(true);
+    setSyncMessage(null);
+    
+    try {
+      const response = await fetch('/api/admin/sync-matches', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setSyncMessage(result.message);
+        await fetchStats(); // Refresh data after sync
+      } else {
+        setSyncMessage(`Error: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error syncing matches:', error);
+      setSyncMessage('Error al sincronizar partidos');
+    } finally {
+      setSyncing(false);
+      // Clear message after 5 seconds
+      setTimeout(() => setSyncMessage(null), 5000);
+    }
   };
 
   // Match management functions
@@ -239,6 +271,16 @@ export default function AdminPage() {
               </p>
             </div>
             <div className="flex items-center space-x-3">
+              <FeatureWrapper feature="showPartidos">
+                <Button
+                  onClick={handleSyncMatches}
+                  variant="secondary"
+                  leftIcon={<Sync className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />}
+                  isLoading={syncing}
+                >
+                  Sincronizar Partidos
+                </Button>
+              </FeatureWrapper>
               <Button
                 onClick={handleRefresh}
                 variant="outline"
@@ -281,6 +323,16 @@ export default function AdminPage() {
             </nav>
           </div>
         </div>
+
+        {/* Sync Message */}
+        {syncMessage && (
+          <div className="mb-6">
+            <MessageComponent 
+              type={syncMessage.includes('Error') ? 'error' : 'success'} 
+              message={syncMessage} 
+            />
+          </div>
+        )}
 
         {/* Content based on current view */}
         {currentView === 'dashboard' && (
@@ -434,7 +486,7 @@ export default function AdminPage() {
         {/* Matches Management View */}
         {currentView === 'matches' && (
           <FeatureWrapper feature="showPartidos">
-            <div className="mb-6">
+            <div className="mb-6 flex justify-between items-center">
               <Button
                 onClick={() => {
                   setMatchFormData({ mode: 'create' });
@@ -444,6 +496,15 @@ export default function AdminPage() {
                 leftIcon={<Plus className="h-4 w-4" />}
               >
                 Crear Nuevo Partido
+              </Button>
+              
+              <Button
+                onClick={handleSyncMatches}
+                variant="secondary"
+                leftIcon={<Sync className={`h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />}
+                isLoading={syncing}
+              >
+                Sincronizar desde LaLiga
               </Button>
             </div>
             

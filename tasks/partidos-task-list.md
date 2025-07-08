@@ -127,10 +127,14 @@ Implement a static partidos section where users can see league games for the cur
   - [x] 11.1.1 Create script to fetch LaLiga matches for current season
   - [x] 11.1.2 Import Real Betis matches automatically to database
   - [x] 11.1.3 Handle data mapping and transformation
-- [ ] 11.2 Data synchronization
-  - [ ] 11.2.1 Implement automatic sync mechanism
-  - [ ] 11.2.2 Handle duplicate detection and updates
-  - [ ] 11.2.3 Add manual sync trigger for admin users
+- [x] 11.2 Data synchronization
+  - [x] 11.2.1 Implement manual sync mechanism (automatic sync deferred)
+  - [x] 11.2.2 Handle duplicate detection and updates
+  - [x] 11.2.3 Add manual sync trigger for admin users
+    - ✅ Added `/api/admin/sync-matches` endpoint for manual sync
+    - ✅ Added sync button to admin dashboard and matches view
+    - ✅ Includes success/error message feedback and loading states
+    - ✅ Refreshes match data after successful sync
 
 ## 12. Admin Panel Enhancements
 - [x] 12.1 Complete admin page functionality
