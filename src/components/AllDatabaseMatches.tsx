@@ -101,21 +101,13 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
       if (filterType === 'upcoming') {
         // For upcoming filter, only count if there are upcoming matches
         if (compUpcoming.length > 0) {
-          if (competition === 'Amistoso Pretemporada') {
-            totalCount += Math.min(compUpcoming.length, 2);
-          } else {
-            totalCount += compUpcoming.length;
-          }
+          totalCount += compUpcoming.length;
         }
       } else if (filterType === 'past') {
         totalCount += compPast.length;
       } else {
         // For 'all' filter
-        if (competition === 'Amistoso Pretemporada') {
-          totalCount += Math.min(compUpcoming.length, 2) + compPast.length;
-        } else {
-          totalCount += compUpcoming.length + compPast.length;
-        }
+        totalCount += compUpcoming.length + compPast.length;
       }
     });
     
@@ -152,21 +144,13 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
     if (filter === 'upcoming') {
       // For upcoming matches, only show competitions that have upcoming matches
       if (sortedUpcoming.length > 0) {
-        if (competition === 'Amistoso Pretemporada') {
-          finalMatches = sortedUpcoming.slice(0, 2);
-        } else {
-          finalMatches = sortedUpcoming;
-        }
+        finalMatches = sortedUpcoming;
       }
     } else if (filter === 'past') {
       finalMatches = sortedPast;
     } else {
-      // For 'all' filter, show limited upcoming + all past, but only if there are any matches
-      if (competition === 'Amistoso Pretemporada') {
-        finalMatches = [...sortedUpcoming.slice(0, 2), ...sortedPast];
-      } else {
-        finalMatches = [...sortedUpcoming, ...sortedPast];
-      }
+      // For 'all' filter, show all upcoming + all past matches
+      finalMatches = [...sortedUpcoming, ...sortedPast];
     }
     
     // Only add to result if there are matches to show
@@ -342,17 +326,12 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
   ) : (
     <div className="space-y-8">
       {Object.entries(processedMatchesByCompetition).map(([competition, competitionMatches]) => {
-        // Check if we're showing limited results for friendly games
-        const isLimitedFriendly = competition === 'Amistoso Pretemporada' && 
-          (filter === 'upcoming' || filter === 'all') &&
-          filteredMatches.filter(m => m.competition === competition && new Date(m.date_time) > new Date()).length > 2;
-        
         return (
           <div key={competition} className="bg-white rounded-lg shadow-md p-6">
             <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
               🏆 {competition}
               <span className="ml-2 text-sm font-normal text-gray-600">
-                ({competitionMatches.length} partidos{isLimitedFriendly ? ' - próximos 2' : ''})
+                ({competitionMatches.length} partidos)
               </span>
             </h3>
             

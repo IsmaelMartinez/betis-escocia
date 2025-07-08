@@ -18,6 +18,11 @@ export interface Match {
   updated_at: string
   external_id?: number
   external_source?: string
+  result?: string
+  home_score?: number
+  away_score?: number
+  status?: string
+  matchday?: number
 }
 
 export interface MatchInsert {
@@ -29,6 +34,11 @@ export interface MatchInsert {
   notes?: string
   external_id?: number
   external_source?: string
+  result?: string
+  home_score?: number
+  away_score?: number
+  status?: string
+  matchday?: number
 }
 
 export interface MatchUpdate {
@@ -40,6 +50,11 @@ export interface MatchUpdate {
   notes?: string
   external_id?: number
   external_source?: string
+  result?: string
+  home_score?: number
+  away_score?: number
+  status?: string
+  matchday?: number
 }
 
 // Type definition for match RSVP counts view

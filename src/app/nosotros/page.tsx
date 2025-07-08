@@ -59,29 +59,20 @@ export default function Nosotros() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-betis-green via-betis-green-dark to-betis-black text-white py-20 relative">
-        {/* Background overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/20"></div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div className="inline-flex items-center px-6 py-3 rounded-full bg-betis-gold/30 border border-betis-gold/50 backdrop-blur-sm mb-8">
-            <span className="text-betis-gold font-bold text-lg">💚 Nuestra historia</span>
-          </div>
-          
-          <h1 className="text-4xl sm:text-6xl font-black mb-6 text-white drop-shadow-xl">
+      <div className="bg-betis-green text-white py-12 px-4">
+        <div className="max-w-6xl mx-auto text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Nosotros
           </h1>
-          
           <p className="text-xl sm:text-2xl mb-6 font-bold text-betis-gold drop-shadow-lg">
             Más que una peña, somos familia
           </p>
-          
           <p className="text-lg max-w-3xl mx-auto text-white leading-relaxed font-medium drop-shadow-xl">
             Desde 2010, hemos sido el hogar de todos los béticos en Escocia. 
             Una historia de pasión, amistad y amor incondicional por los colores verdes y blancos.
           </p>
         </div>
-      </section>
+      </div>
 
       {/* Our Story */}
       <section className="py-20 bg-gray-50">

@@ -77,10 +77,10 @@ Implement a static partidos section where users can see league games for the cur
   - [x] 6.2.1 Replace static JSON data with database queries
   - [x] 6.2.2 Update AllDatabaseMatches to display database data properly
   - [x] 6.2.3 Fix display logic to limit friendly games to 2 and correct ordering
-- [ ] 6.3 Football-Data.org API Integration
-  - [ ] 6.3.1 Create script to sync LaLiga matches from API to database
-  - [ ] 6.3.2 Implement automatic data synchronization
-  - [ ] 6.3.3 Handle data conflicts and duplicates
+- [x] 6.3 Football-Data.org API Integration
+  - [x] 6.3.1 Create script to sync LaLiga matches from API to database
+  - [x] 6.3.2 Implement automatic data synchronization
+  - [x] 6.3.3 Handle data conflicts and duplicates
 
 ## 7. Testing and Validation
 - [x] 7.1 Test database operations
@@ -205,6 +205,28 @@ _Will be updated as implementation progresses_
   - [x] 11.1.2 Link RSVP button to specific match ID
   - [x] 11.1.3 Display current RSVP count on each match card
   - [x] 11.1.4 Show RSVP counts in match selection dropdown
+
+## 12. LaLiga Match Import Execution (NEW)
+- [x] 12.1 Database preparation for import
+  - [x] 12.1.1 Apply SQL migration to add external_id and external_source columns
+  - [x] 12.1.2 Create unique constraints to prevent duplicate imports
+- [x] 12.2 Execute LaLiga match import
+  - [x] 12.2.1 Run import script to populate database with historical matches (2023-24, 2024-25)
+  - [x] 12.2.2 Import upcoming season matches (2025-26 season: 38 matches)
+  - [ ] 12.2.3 Verify imported matches display correctly in UI
+  - [ ] 12.2.4 Test RSVP functionality with imported matches
+
+## 13. Match Data Enhancements (NEW)
+- [x] 13.1 Remove friendly match limits
+  - [x] 13.1.1 Show all upcoming friendly matches instead of limiting to 2
+  - [x] 13.1.2 Remove "próximos 2" limitation from UI
+- [x] 13.2 Add match results and scores
+  - [x] 13.2.1 Add result, score, and status fields to database
+  - [x] 13.2.2 Update import script to pull match results from API
+  - [x] 13.2.3 Update MatchCard component to display scores for finished matches
+- [x] 13.3 Update stadium information
+  - [x] 13.3.1 Change Betis home venue from "Benito Villamarín" to "La Cartuja"
+  - [x] 13.3.2 Update all existing match records with correct venue
 
 ## Success Criteria
 - [x] Next 2-3 Betis matches are displayed in card format using existing MatchCard component

@@ -23,8 +23,13 @@ export function convertDatabaseMatchToCardProps(
     venue: dbMatch.venue,
     competition: dbMatch.competition,
     isHome: dbMatch.home_away === 'home',
-    status: isUpcoming ? 'SCHEDULED' : 'FINISHED',
-    result: isUpcoming ? undefined : 'FINALIZADO',
+    status: (dbMatch.status as any) || (isUpcoming ? 'SCHEDULED' : 'FINISHED'),
+    result: dbMatch.result || (isUpcoming ? undefined : 'FINALIZADO'),
+    matchday: dbMatch.matchday,
+    score: (dbMatch.home_score !== null && dbMatch.away_score !== null) ? {
+      home: dbMatch.home_score,
+      away: dbMatch.away_score
+    } : undefined,
     // Add watch party info for upcoming matches (Polwarth Tavern)
     watchParty: isUpcoming ? {
       location: 'Polwarth Tavern',

@@ -241,6 +241,46 @@ export class FootballDataService {
   }
 
   /**
+   * Get Real Betis matches for specific seasons
+   * Allows importing from multiple seasons including future ones like 2025/26
+   */
+  async getBetisMatchesForSeasons(seasons: string[], limit: number = 100): Promise<Match[]> {
+    try {
+      const allMatches: Match[] = [];
+      
+      // Primary competitions: La Liga and Champions League
+      // Copa del Rey attempted but may fail in free tier
+      const availableCompetitions = [COMPETITIONS.LALIGA, COMPETITIONS.CHAMPIONS, COMPETITIONS.COPA_REY];
+      
+      for (const competitionCode of availableCompetitions) {
+        for (const season of seasons) {
+          try {
+            const response = await this.fetchApi<ApiResponse<Match>>(`/competitions/${competitionCode}/matches?season=${season}`);
+            
+            if (response.matches) {
+              // Filter for Real Betis matches
+              const betisMatches = response.matches.filter(match => 
+                match.homeTeam.id === REAL_BETIS_TEAM_ID || match.awayTeam.id === REAL_BETIS_TEAM_ID
+              );
+              allMatches.push(...betisMatches);
+            }
+          } catch {
+            // Continue with other competitions/seasons if one fails
+            console.debug(`No matches found for ${competitionCode} season ${season}`);
+          }
+        }
+      }
+
+      // Sort by date (most recent first) and apply limit
+      const sortedMatches = allMatches.toSorted((a, b) => new Date(b.utcDate).getTime() - new Date(a.utcDate).getTime());
+      return sortedMatches.slice(0, limit);
+    } catch (error) {
+      console.error('Error fetching Betis matches for seasons:', error);
+      return [];
+    }
+  }
+
+  /**
    * Get upcoming Real Betis matches
    * Uses competitions endpoint as teams/{id}/matches is restricted in free tier
    * Note: status=SCHEDULED filter may hit rate limits, so we filter manually
