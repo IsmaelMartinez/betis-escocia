@@ -29,16 +29,16 @@ Implement a static partidos section where users can see league games for the cur
   - [x] 2.2.2 Ensure partidos page is protected by feature flag
 
 ## 3. Admin Interface Components
-- [ ] 3.1 Create match CRUD form
-  - [ ] 3.1.1 Design form for creating/editing matches with all required fields
-  - [ ] 3.1.2 Add validation for date/time, opponent, venue, competition
-  - [ ] 3.1.3 Add submit/cancel/delete functionality
-- [ ] 3.2 Create admin matches list component
-  - [ ] 3.2.1 Display all matches in admin-friendly table/list format
-  - [ ] 3.2.2 Add edit/delete actions for each match
-  - [ ] 3.2.3 Add pagination and filtering capabilities
-- [ ] 3.3 Protect admin components with feature flags
-  - [ ] 3.3.1 Wrap admin components with FeatureWrapper for showAdmin flag
+- [x] 3.1 Create match CRUD form
+  - [x] 3.1.1 Design form for creating/editing matches with all required fields
+  - [x] 3.1.2 Add validation for date/time, opponent, venue, competition
+  - [x] 3.1.3 Add submit/cancel/delete functionality
+- [x] 3.2 Create admin matches list component
+  - [x] 3.2.1 Display all matches in admin-friendly table/list format
+  - [x] 3.2.2 Add edit/delete actions for each match
+  - [x] 3.2.3 Add pagination and filtering capabilities
+- [x] 3.3 Protect admin components with feature flags
+  - [x] 3.3.1 Wrap admin components with FeatureWrapper for showAdmin flag
 
 ## 4. Match Display Components
 - [ ] 4.1 Enhance existing MatchCard component (reuse from partidos page)
