@@ -1,69 +1,16 @@
 import { ApiErrorBoundary } from '@/components/ErrorBoundary';
-import FilteredMatches from '@/components/FilteredMatches';
 import BetisPositionWidget from '@/components/BetisPositionWidget';
-import UpcomingMatches from '@/components/UpcomingMatches';
+import AllDatabaseMatches from '@/components/AllDatabaseMatches';
 import { FeatureWrapper } from '@/lib/featureProtection';
 import { notFound } from 'next/navigation';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import Link from 'next/link';
 
-// Fetch data at build time and revalidate every 30 minutes
-async function getMatches() {
-  try {
-    const baseUrl = process.env.VERCEL_URL 
-      ? `https://${process.env.VERCEL_URL}` 
-      : 'http://localhost:3000';
-    
-    const [upcomingRes, recentRes, conferenceRes, friendliesRes] = await Promise.all([
-      fetch(`${baseUrl}/api/matches?type=upcoming`, { 
-        next: { revalidate: 1800 } // 30 minutes
-      }),
-      fetch(`${baseUrl}/api/matches?type=recent`, { 
-        next: { revalidate: 1800 } // 30 minutes
-      }),
-      fetch(`${baseUrl}/api/matches?type=conference`, { 
-        next: { revalidate: 1800 } // 30 minutes
-      }),
-      fetch(`${baseUrl}/api/matches?type=friendlies`, { 
-        next: { revalidate: 1800 } // 30 minutes
-      })
-    ]);
-
-    if (!upcomingRes.ok || !recentRes.ok || !conferenceRes.ok || !friendliesRes.ok) {
-      throw new Error('Failed to fetch matches');
-    }
-
-    const [upcomingData, recentData, conferenceData, friendliesData] = await Promise.all([
-      upcomingRes.json(),
-      recentRes.json(),
-      conferenceRes.json(),
-      friendliesRes.json()
-    ]);
-
-    return {
-      upcoming: upcomingData.matches ?? [],
-      recent: recentData.matches ?? [],
-      conference: conferenceData.matches ?? [],
-      friendlies: friendliesData.matches ?? []
-    };
-  } catch (error) {
-    console.error('Error fetching matches:', error);
-    return {
-      upcoming: [],
-      recent: [],
-      conference: [],
-      friendlies: []
-    };
-  }
-}
-
-export default async function MatchesPage() {
+export default function MatchesPage() {
   // Check if partidos feature is enabled
   if (!isFeatureEnabled('showPartidos')) {
     notFound();
   }
-
-  const { upcoming, recent, conference, friendlies } = await getMatches();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -93,42 +40,11 @@ export default async function MatchesPage() {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            {/* Main content - matches */}
-            <div className="lg:col-span-3 space-y-12">
-              {/* Database-driven upcoming matches - PRIMARY DATA SOURCE */}
+            {/* Main content - matches from database */}
+            <div className="lg:col-span-3">
               <ApiErrorBoundary>
-                <UpcomingMatches 
-                  limit={10}
-                  showViewAllLink={false}
-                  className=""
-                />
+                <AllDatabaseMatches />
               </ApiErrorBoundary>
-              
-              {/* Optional: API-driven matches for backup/additional data */}
-              {(upcoming.length > 0 || recent.length > 0) && (
-                <div className="border-t border-gray-200 pt-8">
-                  <details className="group">
-                    <summary className="cursor-pointer list-none">
-                      <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center group-open:text-gray-900">
-                        <span className="mr-2 transition-transform group-open:rotate-90">▶</span>
-                        Datos Adicionales de la API
-                        <span className="ml-2 text-sm font-normal text-gray-500">(Click para expandir)</span>
-                      </h2>
-                    </summary>
-                    
-                    <div className="mt-4">
-                      <ApiErrorBoundary>
-                        <FilteredMatches 
-                          upcomingMatches={upcoming} 
-                          recentMatches={recent}
-                          conferenceMatches={conference}
-                          friendlyMatches={friendlies}
-                        />
-                      </ApiErrorBoundary>
-                    </div>
-                  </details>
-                </div>
-              )}
             </div>
             
             {/* Sidebar - Betis Position Widget */}
