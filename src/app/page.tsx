@@ -42,7 +42,7 @@ export default function Home() {
             <FeatureWrapper feature="showUnete">
               <Link
                 href="/unete"
-                className="btn-betis-gold px-10 py-5 text-xl group"
+                className="bg-betis-gold hover:bg-betis-gold-dark text-betis-black px-10 py-5 rounded-2xl font-black text-xl shadow-2xl hover:shadow-betis-gold/25 transition-all duration-300 transform hover:scale-105 group"
               >
                 <span className="flex items-center">
                   💬 Contáctanos

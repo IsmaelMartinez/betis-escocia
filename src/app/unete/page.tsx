@@ -160,7 +160,7 @@ export default function Unete() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-            <div className="card-betis text-center">
+            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center">
               <MapPin className="h-12 w-12 text-betis-green mx-auto mb-6" />
               <h3 className="text-xl font-bold text-gray-900 mb-4">Ubicación</h3>
               <p className="text-gray-800 mb-4 leading-relaxed">
@@ -172,14 +172,14 @@ export default function Unete() {
                 href="https://maps.google.com/maps?q=Polwarth+Tavern+Edinburgh"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-betis-primary inline-flex items-center"
+                className="inline-flex items-center bg-betis-green hover:bg-betis-green-dark text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300"
               >
                 <MapPin className="h-4 w-4 mr-2" />
                 Ver en Maps
               </a>
             </div>
 
-            <div className="card-betis text-center">
+            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center">
               <Users className="h-12 w-12 text-betis-green mx-auto mb-6" />
               <h3 className="text-xl font-bold text-gray-900 mb-4">Contacto</h3>
               <p className="text-gray-800 mb-4 leading-relaxed">
@@ -191,7 +191,7 @@ export default function Unete() {
                 href="https://www.facebook.com/groups/beticosenescocia/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-betis-primary inline-flex items-center"
+                className="inline-flex items-center bg-betis-green hover:bg-betis-green-dark text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300"
               >
                 <MessageCircle className="h-4 w-4 mr-2" />
                 Contactar
