@@ -32,9 +32,9 @@ const nextConfig = {
   // Security improvements
   poweredByHeader: false,
   reactStrictMode: true,
-  experimental: {
-    optimizePackageImports: ['lucide-react'],
-  },
+  // experimental: {
+  //   optimizePackageImports: ['lucide-react'],
+  // },
 };
 
 module.exports = nextConfig;
