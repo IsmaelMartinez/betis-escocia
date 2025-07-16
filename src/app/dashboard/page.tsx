@@ -2,6 +2,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { getUserRSVPs, getUserContactSubmissions, getUserSubmissionCounts } from '@/lib/supabase';
 import { User, Calendar, MessageSquare, PieChart, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 
 export default async function DashboardPage() {
   const user = await currentUser();
@@ -95,7 +96,7 @@ export default async function DashboardPage() {
                           <p className="font-medium text-gray-900">{rsvp.match_date}</p>
                           <p className="text-sm text-gray-600">{rsvp.attendees} asistentes</p>
                           {rsvp.message && (
-                            <p className="text-sm text-gray-500 mt-1">"{rsvp.message}"</p>
+                          <p className="text-sm text-gray-500 mt-1">&ldquo;{rsvp.message}&rdquo;</p>
                           )}
                         </div>
                         <span className="text-xs text-gray-400">
@@ -114,12 +115,12 @@ export default async function DashboardPage() {
                 <div className="text-center py-8">
                   <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                   <p className="text-gray-500">No hay RSVPs registrados</p>
-                  <a 
+                  <Link 
                     href="/rsvp" 
                     className="text-betis-green hover:text-betis-green/80 text-sm font-medium inline-flex items-center mt-2"
                   >
                     Confirmar asistencia <ExternalLink className="h-3 w-3 ml-1" />
-                  </a>
+                  </Link>
                 </div>
               )}
             </div>
@@ -167,12 +168,12 @@ export default async function DashboardPage() {
                 <div className="text-center py-8">
                   <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                   <p className="text-gray-500">No hay mensajes enviados</p>
-                  <a 
+                  <Link 
                     href="/contacto" 
                     className="text-betis-green hover:text-betis-green/80 text-sm font-medium inline-flex items-center mt-2"
                   >
                     Enviar mensaje <ExternalLink className="h-3 w-3 ml-1" />
-                  </a>
+                  </Link>
                 </div>
               )}
             </div>
@@ -217,27 +218,27 @@ export default async function DashboardPage() {
           <div className="bg-betis-green text-white rounded-lg p-6">
             <h2 className="text-xl font-bold mb-4">Acciones Rápidas</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <a 
+              <Link 
                 href="/rsvp" 
                 className="bg-white/20 hover:bg-white/30 text-white p-4 rounded-lg transition-colors inline-flex items-center"
               >
                 <Calendar className="h-5 w-5 mr-2" />
                 Confirmar Asistencia
-              </a>
-              <a 
+              </Link>
+              <Link 
                 href="/contacto" 
                 className="bg-white/20 hover:bg-white/30 text-white p-4 rounded-lg transition-colors inline-flex items-center"
               >
                 <MessageSquare className="h-5 w-5 mr-2" />
                 Enviar Mensaje
-              </a>
-              <a 
+              </Link>
+              <Link 
                 href="/partidos" 
                 className="bg-white/20 hover:bg-white/30 text-white p-4 rounded-lg transition-colors inline-flex items-center"
               >
                 <ExternalLink className="h-5 w-5 mr-2" />
                 Ver Partidos
-              </a>
+              </Link>
             </div>
           </div>
         </div>
