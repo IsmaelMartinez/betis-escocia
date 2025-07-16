@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash } from 'lucide-react';
+import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash, User, LogIn, LogOut, UserPlus } from 'lucide-react';
 import BetisLogo from '@/components/BetisLogo';
-import { getEnabledNavigationItems, getFeatureFlagsStatus } from '@/lib/featureFlags';
+import { getEnabledNavigationItems, getFeatureFlagsStatus, isFeatureEnabled } from '@/lib/featureFlags';
+import { useUser, useClerk } from '@clerk/nextjs';
 
 interface LayoutProps {
   readonly children: React.ReactNode;
@@ -12,12 +13,23 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   
   // Use feature flags to determine which navigation items to show
   const enabledNavigation = getEnabledNavigationItems();
   
+  // Authentication state
+  const { user, isLoaded } = useUser();
+  const { signOut } = useClerk();
+  const isAuthEnabled = isFeatureEnabled('showClerkAuth');
+  
   // Debug information (only shown in development with debug flag)
   const debugInfo = getFeatureFlagsStatus();
+  
+  const handleSignOut = async () => {
+    await signOut();
+    setIsUserMenuOpen(false);
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -35,7 +47,7 @@ export default function Layout({ children }: LayoutProps) {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-6">
+            <nav className="hidden md:flex items-center space-x-6">
               {enabledNavigation.map((item) => (
                 <Link
                   key={item.name}
@@ -45,6 +57,58 @@ export default function Layout({ children }: LayoutProps) {
                   {item.name}
                 </Link>
               ))}
+              
+              {/* Authentication Links */}
+              {isAuthEnabled && isLoaded && (
+                <div className="flex items-center space-x-4">
+                  {user ? (
+                    <div className="relative">
+                      <button
+                        onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                        className="flex items-center space-x-2 text-white hover:text-betis-gold transition-colors duration-200"
+                      >
+                        <User size={20} />
+                        <span className="font-medium">{user.firstName || 'Usuario'}</span>
+                      </button>
+                      
+                      {isUserMenuOpen && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                          <Link
+                            href="/dashboard"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            onClick={() => setIsUserMenuOpen(false)}
+                          >
+                            Dashboard
+                          </Link>
+                          <button
+                            onClick={handleSignOut}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            Cerrar Sesión
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex items-center space-x-4">
+                      <Link
+                        href="/sign-in"
+                        className="flex items-center space-x-1 text-white hover:text-betis-gold transition-colors duration-200 font-medium"
+                      >
+                        <LogIn size={18} />
+                        <span>Iniciar Sesión</span>
+                      </Link>
+                      <Link
+                        href="/sign-up"
+                        className="flex items-center space-x-1 bg-betis-gold text-betis-green px-3 py-1 rounded-md hover:bg-betis-gold/90 transition-colors duration-200 font-medium"
+                      >
+                        <UserPlus size={18} />
+                        <span>Registro</span>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              )}
             </nav>
 
             {/* Mobile menu button */}
@@ -71,6 +135,53 @@ export default function Layout({ children }: LayoutProps) {
                   {item.name}
                 </Link>
               ))}
+              
+              {/* Authentication Links - Mobile */}
+              {isAuthEnabled && isLoaded && (
+                <div className="border-t border-white/20 pt-4 mt-4">
+                  {user ? (
+                    <div className="space-y-2">
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-gold hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <User size={20} />
+                        <span>Dashboard</span>
+                      </Link>
+                      <button
+                        onClick={() => {
+                          handleSignOut();
+                          setIsMenuOpen(false);
+                        }}
+                        className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-gold hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg w-full text-left"
+                      >
+                        <LogOut size={20} />
+                        <span>Cerrar Sesión</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Link
+                        href="/sign-in"
+                        className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-gold hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <LogIn size={20} />
+                        <span>Iniciar Sesión</span>
+                      </Link>
+                      <Link
+                        href="/sign-up"
+                        className="flex items-center space-x-3 px-4 py-3 bg-betis-gold text-betis-green hover:bg-betis-gold/90 rounded-lg transition-all duration-200 font-medium text-lg"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <UserPlus size={20} />
+                        <span>Registro</span>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}

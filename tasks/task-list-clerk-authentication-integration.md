@@ -58,10 +58,10 @@ Created: July 2025
 - [x] T3.6: Test email consistency across all authentication providers
 
 ### T4: User Navigation Integration
-- [ ] T4.1: Add conditional sign-in/sign-up links to main navigation
-- [ ] T4.2: Create user menu dropdown for authenticated users
-- [ ] T4.3: Add logout functionality
-- [ ] T4.4: Implement auto-redirect for protected content
+- [x] T4.1: Add conditional sign-in/sign-up links to main navigation
+- [x] T4.2: Create user menu dropdown for authenticated users
+- [x] T4.3: Add logout functionality
+- [x] T4.4: Implement auto-redirect for protected content
 
 ---
 
