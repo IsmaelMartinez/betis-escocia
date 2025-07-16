@@ -29,6 +29,9 @@ const isPublicRoute = createRouteMatcher([
   '/api/porra'
 ]);
 
+// Protected routes that require authentication
+const isProtectedRoute = createRouteMatcher(['/dashboard(.*)', '/api/clerk(.*)']);
+
 const isAdminRoute = createRouteMatcher(['/admin(.*)', '/api/admin(.*)']);
 
 export default clerkMiddleware(async (auth, request) => {
@@ -55,14 +58,17 @@ export default clerkMiddleware(async (auth, request) => {
   // Get user info
   const { userId } = await auth();
   
-  // If user is not authenticated and trying to access protected routes
-  if (!userId && !isPublicRoute(request)) {
-    return NextResponse.redirect(new URL('/sign-in', request.url));
-  }
-  
   // If user is authenticated but trying to access sign-in/sign-up
   if (userId && (pathname === '/sign-in' || pathname === '/sign-up')) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
+  
+  // Protected routes (dashboard, etc.) - require authentication
+  if (isProtectedRoute(request)) {
+    if (!userId) {
+      return NextResponse.redirect(new URL('/sign-in', request.url));
+    }
+    return response;
   }
   
   // Admin route protection - will be enhanced with role checking in later tasks
@@ -71,6 +77,11 @@ export default clerkMiddleware(async (auth, request) => {
       return NextResponse.redirect(new URL('/sign-in', request.url));
     }
     // Role-based access control will be added in Phase 3 (T9)
+  }
+  
+  // If user is not authenticated and trying to access non-public routes
+  if (!userId && !isPublicRoute(request)) {
+    return NextResponse.redirect(new URL('/sign-in', request.url));
   }
   
   return response;

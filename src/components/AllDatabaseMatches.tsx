@@ -206,35 +206,38 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
     }
     
     return (
-      <div className="flex items-center justify-between mt-8 px-4">
-        <div className="text-sm text-gray-600">
+      <div className="mt-8 px-4">
+        {/* Info text - centered on mobile */}
+        <div className="text-sm text-gray-600 text-center mb-4 md:mb-0">
           Mostrando {startIndex + 1}-{Math.min(endIndex, totalMatches)} de {totalMatches} partidos
         </div>
         
-        <div className="flex items-center space-x-2">
+        {/* Pagination controls */}
+        <div className="flex items-center justify-center space-x-1 sm:space-x-2 overflow-x-auto">
           {/* Previous page button */}
           <button
             onClick={() => setCurrentPage(currentPage - 1)}
             disabled={currentPage === 1}
-            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+            className={`px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               currentPage === 1
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            ← Anterior
+            <span className="hidden sm:inline">← Anterior</span>
+            <span className="sm:hidden">←</span>
           </button>
           
-          {/* Page numbers */}
+          {/* Page numbers - responsive */}
           {startPage > 1 && (
             <>
               <button
                 onClick={() => setCurrentPage(1)}
-                className="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300"
+                className="px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300"
               >
                 1
               </button>
-              {startPage > 2 && <span className="text-gray-500">...</span>}
+              {startPage > 2 && <span className="text-gray-500 text-xs sm:text-sm">...</span>}
             </>
           )}
           
@@ -242,7 +245,7 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
             <button
               key={pageNumber}
               onClick={() => setCurrentPage(pageNumber)}
-              className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+              className={`px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm font-medium transition-colors ${
                 pageNumber === currentPage
                   ? 'bg-betis-green text-white'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -254,10 +257,10 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
           
           {endPage < totalPages && (
             <>
-              {endPage < totalPages - 1 && <span className="text-gray-500">...</span>}
+              {endPage < totalPages - 1 && <span className="text-gray-500 text-xs sm:text-sm">...</span>}
               <button
                 onClick={() => setCurrentPage(totalPages)}
-                className="px-3 py-1 rounded-md text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300"
+                className="px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300"
               >
                 {totalPages}
               </button>
@@ -268,13 +271,14 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
           <button
             onClick={() => setCurrentPage(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+            className={`px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               currentPage === totalPages
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            Siguiente →
+            <span className="hidden sm:inline">Siguiente →</span>
+            <span className="sm:hidden">→</span>
           </button>
         </div>
       </div>
@@ -360,16 +364,16 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
 
   return (
     <div className={`${className}`}>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">
           Todos los Partidos 
           <span className="text-lg font-normal text-gray-600 ml-2">
             ({getDisplayCount(filter)} {filter === 'all' ? 'total' : filter === 'upcoming' ? 'próximos' : 'pasados'})
           </span>
         </h2>
         
-        {/* Filter buttons */}
-        <div className="flex space-x-2">
+        {/* Filter buttons - responsive */}
+        <div className="flex flex-wrap gap-2 mb-4">
           <button
             onClick={() => setFilter('all')}
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
@@ -400,35 +404,35 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
           >
             Pasados ({getDisplayCount('past')})
           </button>
-    </div>
-  </div>
+        </div>
 
-  {/* Competition Filter buttons */}
-  <div className="flex space-x-2 my-4">
-    <button
-      onClick={() => setCompetitionFilter('all')}
-      className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-        competitionFilter === 'all' 
-          ? 'bg-betis-green text-white' 
-          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-      }`}
-    >
-      Todas
-    </button>
-    {availableCompetitions.map((competition) => (
-      <button
-        key={competition}
-        onClick={() => setCompetitionFilter(competition)}
-        className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-          competitionFilter === competition 
-            ? 'bg-betis-green text-white' 
-            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-        }`}
-      >
-        {competition}
-      </button>
-    ))}
-  </div>
+        {/* Competition Filter buttons - responsive */}
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setCompetitionFilter('all')}
+            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+              competitionFilter === 'all' 
+                ? 'bg-betis-green text-white' 
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            Todas
+          </button>
+          {availableCompetitions.map((competition) => (
+            <button
+              key={competition}
+              onClick={() => setCompetitionFilter(competition)}
+              className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                competitionFilter === competition 
+                  ? 'bg-betis-green text-white' 
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              {competition}
+            </button>
+          ))}
+        </div>
+      </div>
   
   {filteredMatches.length === 0 ? (
     <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
