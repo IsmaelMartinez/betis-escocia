@@ -53,7 +53,7 @@ export default function Home() {
           </h2>
           
           <p className="text-lg sm:text-xl lg:text-2xl mb-3 lg:mb-4 font-semibold text-betis-gold drop-shadow-xl">
-            ¡Únete a nosotros en el Polwarth Tavern!
+            ¡Únete a nosotros en The Polwarth Tavern!
           </p>
           
           <p className="text-base sm:text-lg mb-8 lg:mb-12 max-w-3xl mx-auto text-white font-medium leading-relaxed drop-shadow-xl">
@@ -104,9 +104,9 @@ export default function Home() {
               <div className="bg-green-600 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
                 <h3 className="text-lg font-bold mb-3 text-betis-gold">📍 Ubicación</h3>
                 <p className="text-sm text-gray-200">
-                  Polwarth Tavern<br />
-                  15 Polwarth Pl<br />
-                  Edinburgh EH11 1NH
+                  The Polwarth Tavern<br />
+                  35 Polwarth Cres<br />
+                  Edinburgh EH11 1HR
                 </p>
               </div>
               

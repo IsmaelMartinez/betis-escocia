@@ -376,7 +376,7 @@ function ContactPage() {
             <div>
               <h3 className="text-lg font-bold mb-3 text-betis-green">¿Cómo puedo unirme a la peña?</h3>
               <p className="text-gray-700 mb-6">
-                Simplemente ven al Polwarth Tavern cualquier día que juegue el Betis. 
+                Simplemente ven a The Polwarth Tavern cualquier día que juegue el Betis. 
                 No hace falta ser socio, solo ganas de pasarlo bien.
               </p>
 
@@ -453,9 +453,9 @@ function ContactPage() {
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
               <HelpCircle className="h-12 w-12 mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-3">En persona</h3>
-              <p className="mb-4 opacity-90">Polwarth Tavern, Edinburgh</p>
+              <p className="mb-4 opacity-90">The Polwarth Tavern, Edinburgh</p>
               <a
-                href="https://maps.google.com/maps?q=Polwarth+Tavern+Edinburgh"
+                href="https://maps.google.com/maps?q=The+Polwarth+Tavern+Edinburgh"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-white text-betis-green px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition-colors"
