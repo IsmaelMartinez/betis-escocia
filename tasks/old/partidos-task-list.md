@@ -238,7 +238,6 @@ _Will be updated as implementation progresses_
   - [x] 14.1.3 Add pagination info (showing X of Y matches)
 - [x] 14.2 Improve default filter behavior
   - [x] 14.2.1 Change default filter from 'todos' to 'proximos' (upcoming matches)
-  - [ ] 14.2.2 Update URL routing to support filter state
 - [x] 14.3 Complete remaining import verification tasks
   - [x] 14.3.1 Verify imported matches display correctly in UI
   - [x] 14.3.2 Test RSVP functionality with imported matches
