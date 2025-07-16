@@ -5,6 +5,7 @@ import Layout from "@/components/Layout";
 import OfflineDetector from "@/components/OfflineDetector";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { ClerkProvider } from '@clerk/nextjs';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -131,9 +132,11 @@ export default function RootLayout({
         ></script>
         
         <OfflineDetector />
-        <Layout>
-          {children}
-        </Layout>
+        <ClerkProvider>
+          <Layout>
+            {children}
+          </Layout>
+        </ClerkProvider>
         <Analytics />
         <SpeedInsights />
       </body>

@@ -12,8 +12,6 @@ This document provides a list of ideas and features for the Peña Bética Escoce
 
 * Add a soylenti (rummors in turkish) page where rummors spread. Ceballos, again, is coming back to Betis, etc. It can be a fun page where people can share their opinions and rumors about the team. Fran mode to provide % values to the rumors.
 
-* British and Spanish version of the website.
-
 * Implement merchandise management system to allow users to buy Peña merchandise directly from the website.
 
 * Implement a voting system for Peña members to vote on various collection items (like t-shirts etc).
@@ -29,3 +27,23 @@ This document provides a list of ideas and features for the Peña Bética Escoce
 * Allow users to RSVP for events and view their RSVP history
 * Implement a simple contact form for user inquiries
 * Enable users to submit feedback and suggestions
+
+### **Multi-language Support**
+
+* Spanish/English toggle for all pages
+* Comprehensive translation of UI elements
+
+### **Push Notifications**
+  
+* Reminders for upcoming events and matches
+* Notifications for new blog posts or updates
+
+### **Community Profiles**
+
+* Member profiles with activity and participation history
+* Community recognition and points system
+
+### **Advanced Performance Enhancements**
+
+* Server-side rendering improvements
+* Further optimization of images and static assets

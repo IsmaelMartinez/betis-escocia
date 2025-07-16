@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useAuth, useUser } from '@clerk/nextjs';
 import { supabase, RSVP, ContactSubmission, Match, createMatch, updateMatch, deleteMatch, getMatches } from '@/lib/supabase';
-import { Users, Mail, TrendingUp, Download, RefreshCw, Calendar, Plus, RotateCcw } from 'lucide-react';
+import { Users, Mail, TrendingUp, Download, RefreshCw, Calendar, Plus, RotateCcw, LogOut } from 'lucide-react';
 import Card, { CardHeader, CardBody } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -10,6 +11,7 @@ import MessageComponent from '@/components/MessageComponent';
 import { FeatureWrapper } from '@/lib/featureProtection';
 import MatchForm from '@/components/admin/MatchForm';
 import MatchesList from '@/components/admin/MatchesList';
+import { useRouter } from 'next/navigation';
 
 interface AdminStats {
   totalRSVPs: number;
@@ -28,6 +30,9 @@ interface MatchFormData {
 }
 
 export default function AdminPage() {
+  const { isLoaded, isSignedIn, signOut } = useAuth();
+  const { user } = useUser();
+  const router = useRouter();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,6 +42,18 @@ export default function AdminPage() {
   const [currentView, setCurrentView] = useState<AdminView>('dashboard');
   const [matchFormData, setMatchFormData] = useState<MatchFormData>({ mode: 'create' });
   const [matches, setMatches] = useState<Match[]>([]);
+
+  // Redirect to sign-in if not authenticated
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push('/sign-in');
+    }
+  }, [isLoaded, isSignedIn, router]);
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push('/');
+  };
 
   const fetchStats = async () => {
     try {
@@ -260,15 +277,32 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    fetchStats();
-  }, []);
+    if (isSignedIn) {
+      fetchStats();
+    }
+  }, [isSignedIn]);
 
+  // Show loading while Clerk is loading
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <LoadingSpinner size="lg" label="Cargando autenticación..." />
+      </div>
+    );
+  }
+
+  // Show loading while fetching data
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <LoadingSpinner size="lg" label="Cargando panel de administración..." />
       </div>
     );
+  }
+
+  // Don't render anything if not signed in (redirect will handle this)
+  if (!isSignedIn) {
+    return null;
   }
 
   if (error) {
@@ -292,6 +326,11 @@ export default function AdminPage() {
                 {currentView === 'matches' && 'Gestión de partidos'}
                 {currentView === 'match-form' && (matchFormData.mode === 'create' ? 'Crear nuevo partido' : 'Editar partido')}
               </p>
+              {user && (
+                <p className="text-sm text-betis-green mt-1">
+                  Conectado como: {user.emailAddresses[0]?.emailAddress || user.firstName || 'Admin'}
+                </p>
+              )}
             </div>
             <div className="flex items-center space-x-3">
               <FeatureWrapper feature="showPartidos">
@@ -311,6 +350,13 @@ export default function AdminPage() {
                 isLoading={refreshing}
               >
                 Actualizar
+              </Button>
+              <Button
+                onClick={handleSignOut}
+                variant="outline"
+                leftIcon={<LogOut className="h-4 w-4" />}
+              >
+                Cerrar Sesión
               </Button>
             </div>
           </div>
