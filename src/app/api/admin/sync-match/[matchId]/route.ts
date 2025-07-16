@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { FootballDataService } from '@/services/footballDataService';
 import { supabase } from '@/lib/supabase';
 
@@ -9,7 +9,7 @@ export async function POST(
 ) {
   try {
     // Check authentication
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({
         success: false,

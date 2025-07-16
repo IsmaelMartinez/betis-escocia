@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
       .select('*')
       .order('created_at', { ascending: true });
     
-    if (matchId && currentMatch.id) {
+    if (matchId && 'id' in currentMatch && currentMatch.id) {
       rsvpQuery = rsvpQuery.eq('match_id', currentMatch.id);
     } else {
       // Fallback to match_date for backwards compatibility

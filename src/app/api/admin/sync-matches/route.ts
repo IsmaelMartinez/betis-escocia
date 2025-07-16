@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { FootballDataService } from '@/services/footballDataService';
 import { supabase } from '@/lib/supabase';
 import { checkRateLimit, getClientIP } from '@/lib/security';
@@ -7,7 +7,7 @@ import { checkRateLimit, getClientIP } from '@/lib/security';
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({
         success: false,
