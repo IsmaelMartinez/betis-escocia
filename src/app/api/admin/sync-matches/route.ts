@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs';
 import { FootballDataService } from '@/services/footballDataService';
 import { supabase } from '@/lib/supabase';
 import { checkRateLimit, getClientIP } from '@/lib/security';
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const { userId } = auth();
+    if (!userId) {
+      return NextResponse.json({
+        success: false,
+        message: 'Unauthorized: Authentication required'
+      }, { status: 401 });
+    }
+    
     // Rate limiting for admin operations
     const clientIP = getClientIP(request);
     const rateLimit = checkRateLimit(`admin-sync-${clientIP}`, { windowMs: 60 * 60 * 1000, maxRequests: 10 });
@@ -15,8 +25,6 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Simple authentication check - in production, use proper authentication
-    // For now, we'll allow any request. In production, add proper auth
     // Initialize the football data service
     const footballService = new FootballDataService();
     

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs';
 import { FootballDataService } from '@/services/footballDataService';
 import { supabase } from '@/lib/supabase';
 
@@ -7,6 +8,15 @@ export async function POST(
   { params }: { params: Promise<{ matchId: string }> }
 ) {
   try {
+    // Check authentication
+    const { userId } = auth();
+    if (!userId) {
+      return NextResponse.json({
+        success: false,
+        message: 'Unauthorized: Authentication required'
+      }, { status: 401 });
+    }
+    
     const { matchId } = await params;
     const matchIdNumber = parseInt(matchId);
     
