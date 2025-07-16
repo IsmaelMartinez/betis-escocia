@@ -2,10 +2,10 @@
   "about": {
     "title": "No busques más que no hay",
     "subtitle": "Peña Bética en Edimburgo, Escocia",
-    "description": "Somos la peña del Real Betis Balompié en Edimburgo, Escocia. Fundada en diciembre de 2010 por José María Conde y Juan Morata. Nos reunimos en el Polwarth Tavern para ver todos los partidos del Betis. No busques más que no hay - aquí está tu sitio si eres bético en Escocia.",
+    "description": "Somos la peña del Real Betis Balompié en Edimburgo, Escocia. Fundada en diciembre de 2010 por José María Conde y Juan Morata. Nos reunimos en The Polwarth Tavern para ver todos los partidos del Betis. No busques más que no hay - aquí está tu sitio si eres bético en Escocia.",
     "founded": "2010",
     "location": "Edinburgh, Scotland",
-    "homeVenue": "Polwarth Tavern",
+    "homeVenue": "The Polwarth Tavern",
     "founders": ["José María Conde", "Juan Morata"],
     "nameOrigin": "Inspirado en la canción de Silvio 'Betis', específicamente en las letras que inspiraron parte del nombre 'No busques más que no hay'."
   },
@@ -15,8 +15,8 @@
     "instagram": "https://www.instagram.com/rbetisescocia/",
     "youtube": "https://www.youtube.com/beticosenescocia",
     "venue": {
-      "name": "Polwarth Tavern",
-      "address": "15 Polwarth Pl, Edinburgh EH11 1NH, UK",
+      "name": "The Polwarth Tavern",
+      "address": "35 Polwarth Cres, Edinburgh EH11 1HR",
       "phone": "+44 131 229 3402"
     }
   },
