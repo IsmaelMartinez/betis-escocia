@@ -132,7 +132,12 @@ export default function RootLayout({
         ></script>
         
         <OfflineDetector />
-        <ClerkProvider>
+        <ClerkProvider
+          signInUrl="/sign-in"
+          signUpUrl="/sign-up"
+          afterSignInUrl="/dashboard"
+          afterSignUpUrl="/dashboard"
+        >
           <Layout>
             {children}
           </Layout>

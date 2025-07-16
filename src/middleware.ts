@@ -18,6 +18,8 @@ const isPublicRoute = createRouteMatcher([
   '/porra',
   '/redes-sociales',
   '/gdpr',
+  '/sign-in(.*)',
+  '/sign-up(.*)',
   '/api/contact',
   '/api/rsvp',
   '/api/matches',
@@ -30,9 +32,9 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 // Protected routes that require authentication
-const isProtectedRoute = createRouteMatcher(['/dashboard(.*)', '/api/clerk(.*)']);
+const isProtectedRoute = createRouteMatcher(['/dashboard(.*)']);
 
-const isAdminRoute = createRouteMatcher(['/admin(.*)', '/api/admin(.*)']);
+const isAdminRoute = createRouteMatcher(['/admin(.*)']);
 
 export default clerkMiddleware(async (auth, request) => {
   const { pathname } = request.nextUrl;
@@ -58,15 +60,11 @@ export default clerkMiddleware(async (auth, request) => {
   // Get user info
   const { userId } = await auth();
   
-  // If user is authenticated but trying to access sign-in/sign-up
-  if (userId && (pathname === '/sign-in' || pathname === '/sign-up')) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
-  
   // Protected routes (dashboard, etc.) - require authentication
   if (isProtectedRoute(request)) {
     if (!userId) {
-      return NextResponse.redirect(new URL('/sign-in', request.url));
+      // Let Clerk handle the redirect
+      return auth().redirectToSignIn({ returnBackUrl: request.url });
     }
     return response;
   }
@@ -74,16 +72,13 @@ export default clerkMiddleware(async (auth, request) => {
   // Admin route protection - will be enhanced with role checking in later tasks
   if (isAdminRoute(request)) {
     if (!userId) {
-      return NextResponse.redirect(new URL('/sign-in', request.url));
+      // Let Clerk handle the redirect
+      return auth().redirectToSignIn({ returnBackUrl: request.url });
     }
-    // Role-based access control will be added in Phase 3 (T9)
+    return response;
   }
   
-  // If user is not authenticated and trying to access non-public routes
-  if (!userId && !isPublicRoute(request)) {
-    return NextResponse.redirect(new URL('/sign-in', request.url));
-  }
-  
+  // Default: allow access for non-matched routes
   return response;
 });
 
