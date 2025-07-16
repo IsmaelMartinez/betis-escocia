@@ -278,7 +278,6 @@ export async function POST(request: NextRequest) {
     };
 
     let operationError;
-    let resultData;
     
     if (isUpdate) {
       // Delete existing RSVP and insert new one (workaround for update issues)
@@ -292,23 +291,21 @@ export async function POST(request: NextRequest) {
         operationError = deleteError;
       } else {
         // Insert the updated RSVP
-        const { data: insertData, error: insertError } = await supabase
+        const { error: insertError } = await supabase
           .from('rsvps')
           .insert(rsvpData)
           .select();
         
         operationError = insertError;
-        resultData = insertData;
       }
     } else {
       // Insert new RSVP
-      const { data: insertData, error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .from('rsvps')
         .insert(rsvpData)
         .select();
       
       operationError = insertError;
-      resultData = insertData;
     }
 
     if (operationError) {

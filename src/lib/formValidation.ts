@@ -56,7 +56,7 @@ export function validateField(value: unknown, rule: ValidationRule): string | nu
   if (rule.minLength || rule.maxLength) {
     const lengthValidation = validateInputLength(stringValue, rule.minLength, rule.maxLength);
     if (!lengthValidation.isValid) {
-      return lengthValidation.error;
+      return lengthValidation.error ?? 'Longitud inválida';
     }
   }
   
@@ -96,10 +96,7 @@ export const commonValidationRules = {
     pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     custom: (value: string) => {
       const emailValidation = validateEmail(value);
-      if (!emailValidation.isValid) {
-        return emailValidation.error;
-      }
-      return null;
+      return emailValidation.isValid ? null : (emailValidation.error ?? 'Invalid email');
     }
   },
   phone: {

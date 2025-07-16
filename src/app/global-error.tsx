@@ -40,7 +40,7 @@ export default function GlobalError({
               
               <Link
                 href="/"
-                className="inline-block bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors"
+                className="inline-block bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
               >
                 Volver al inicio
               </Link>

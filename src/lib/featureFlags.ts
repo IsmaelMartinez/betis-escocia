@@ -30,6 +30,9 @@ interface FeatureFlags {
   // Admin features
   showAdmin: boolean;
   
+  // Authentication features
+  showClerkAuth: boolean;
+  
   // Development/testing features
   showDebugInfo: boolean;
   showBetaFeatures: boolean;
@@ -57,9 +60,12 @@ const defaultFlags: FeatureFlags = {
   // Admin features - secure by default
   showAdmin: false, // Hidden by default
   
+  // Authentication features - secure by default
+  showClerkAuth: false, // Hidden by default
+  
   // Development/testing features
   showDebugInfo: false,
-  showBetaFeatures: false,
+  showBetaFeatures: false
 };
 
 // Environment-based overrides
@@ -116,6 +122,9 @@ const environmentFlags: Partial<FeatureFlags> = {
   showAdmin: process.env.NEXT_PUBLIC_FEATURE_ADMIN !== undefined 
     ? process.env.NEXT_PUBLIC_FEATURE_ADMIN === 'true'
     : defaultFlags.showAdmin,
+  showClerkAuth: process.env.NEXT_PUBLIC_FEATURE_CLERK_AUTH !== undefined 
+    ? process.env.NEXT_PUBLIC_FEATURE_CLERK_AUTH === 'true'
+    : defaultFlags.showClerkAuth,
 };
 
 // Merge default flags with environment overrides

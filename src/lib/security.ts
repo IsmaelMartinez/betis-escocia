@@ -27,14 +27,16 @@ export function sanitizeInput(input: string): string {
 }
 
 // Deep sanitize object properties
-export function sanitizeObject<T extends Record<string, any>>(obj: T): T {
+export function sanitizeObject<T extends Record<string, unknown>>(obj: T): T {
   const sanitized = { ...obj };
   
   for (const key in sanitized) {
     if (typeof sanitized[key] === 'string') {
-      sanitized[key] = sanitizeInput(sanitized[key]);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (sanitized as any)[key] = sanitizeInput(sanitized[key] as string);
     } else if (typeof sanitized[key] === 'object' && sanitized[key] !== null) {
-      sanitized[key] = sanitizeObject(sanitized[key]);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (sanitized as any)[key] = sanitizeObject(sanitized[key] as Record<string, unknown>);
     }
   }
   
@@ -183,12 +185,12 @@ export function getClientIP(request: Request): string {
 // Content Security Policy helpers
 export const CSP_DIRECTIVES = {
   'default-src': "'self'",
-  'script-src': "'self' 'unsafe-inline' 'unsafe-eval' https://connect.facebook.net https://vercel.live",
+  'script-src': "'self' 'unsafe-inline' 'unsafe-eval' https://connect.facebook.net https://vercel.live https://*.clerk.accounts.dev https://*.clerk.dev",
   'style-src': "'self' 'unsafe-inline'",
   'img-src': "'self' data: https: blob:",
   'font-src': "'self' data:",
-  'connect-src': "'self' https://*.supabase.co https://api.supabase.io https://vercel.live",
-  'frame-src': "'self' https://www.facebook.com",
+  'connect-src': "'self' https://*.supabase.co https://api.supabase.io https://vercel.live https://*.clerk.accounts.dev https://*.clerk.dev https://api.clerk.com",
+  'frame-src': "'self' https://www.facebook.com https://*.clerk.accounts.dev https://*.clerk.dev",
   'object-src': "'none'",
   'base-uri': "'self'",
   'form-action': "'self'",

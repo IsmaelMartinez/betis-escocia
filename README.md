@@ -22,6 +22,7 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 - **Frontend**: Next.js 15, TypeScript, Tailwind CSS
 - **Backend**: Next.js API Routes + Supabase (PostgreSQL)
 - **Database**: Supabase (GDPR-compliant with auto-cleanup)
+- **Authentication**: Clerk.com for user management and authentication
 - **Deployment**: Vercel with GitHub Actions
 - **Performance Monitoring**: Vercel Speed Insights (`@vercel/speed-insights`) for front-end performance metrics
 
@@ -52,44 +53,74 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
     - Create a [Supabase account](https://supabase.com)
     - Create a new project
     - Copy your project URL and anon key
+    - Run the SQL setup scripts in your Supabase SQL Editor:
+      - `sql/create_rsvp_table.sql`
+      - `sql/add_missing_rsvp_columns.sql`
+
+4. Set up Clerk Authentication:
+
+    - Create a [Clerk account](https://clerk.com)
+    - Create a new application
+    - Copy your publishable key and secret key
     - Create `.env.local` file:
 
     ```bash
     NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
     NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+    CLERK_SECRET_KEY=your_clerk_secret_key
+    
+    # Feature flag to enable/disable authentication
+    NEXT_PUBLIC_FEATURE_CLERK_AUTH=true
     ```
 
-    - Run the SQL setup scripts in your Supabase SQL Editor:
-      - `sql/create_rsvp_table.sql`
-      - `sql/add_missing_rsvp_columns.sql`
-
-4. Run the development server:
+5. Run the development server:
 
     ```bash
     npm run dev
     ```
 
-5. Open the local site:
-
-    Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-3. Install Vercel Speed Insights:
-
-    ```bash
-    npm install @vercel/speed-insights
-    ```
-
-4. Run the development server:
-
-    ```bash
-    npm run dev
-    ```
-
-5. Open the local site:
+6. Open the local site:
 
     Open [http://localhost:3000](http://localhost:3000) in your browser.
 
     > For more on integrating the Speed Insights component, see the [Vercel Speed Insights Quickstart](https://vercel.com/docs/speed-insights/quickstart#add-the-speedinsights-component-to-your-app).
+
+## 🔐 Authentication & User Management
+
+### Setting Up Admin Roles in Clerk
+
+1. **Access Clerk Dashboard**
+   - Log into your Clerk dashboard at https://dashboard.clerk.com
+   - Select your Peña Bética project
+
+2. **User Management**
+   - Navigate to "Users" section
+   - Find the user you want to make an admin
+   - Click on the user to view their profile
+
+3. **Assign Admin Role**
+   - In the user profile, go to "Metadata" tab
+   - Add a new metadata field:
+     - **Key**: `role`
+     - **Value**: `admin`
+   - Save the changes
+
+4. **Verify Role Assignment**
+   - The user will now have admin access on next login
+   - Check the admin dashboard to confirm access
+
+### User Types
+
+- **Admin Users**: Full access to admin dashboard, user management, and all features
+- **Regular Users**: Access to personal dashboard showing their RSVP/contact history
+- **Anonymous Users**: Can submit RSVPs and contact forms without authentication
+
+### Feature Flag Control
+
+Authentication features are controlled by the `NEXT_PUBLIC_FEATURE_CLERK_AUTH` environment variable:
+- `true`: Enable authentication features
+- `false` or unset: Disable authentication features (anonymous-only mode)
 
 ## 📁 Project Structure
 
