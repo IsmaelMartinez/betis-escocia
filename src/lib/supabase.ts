@@ -63,7 +63,7 @@ export interface MatchRSVPCount {
   rsvp_count: number
 }
 
-// Type definitions for our RSVP table (updated with match_id)
+// Type definitions for our RSVP table (updated with match_id and user_id)
 export interface RSVP {
   id: number
   name: string
@@ -73,6 +73,7 @@ export interface RSVP {
   whatsapp_interest: boolean
   match_date: string
   match_id?: number  // New field for linking to matches
+  user_id?: string   // New field for linking to authenticated users
   created_at: string
 }
 
@@ -84,6 +85,7 @@ export interface RSVPInsert {
   whatsapp_interest: boolean
   match_date: string
   match_id?: number  // New field for linking to matches
+  user_id?: string   // New field for linking to authenticated users
 }
 
 // Type definitions for our contact_submissions table
@@ -96,6 +98,7 @@ export interface ContactSubmission {
   subject: string
   message: string
   status: 'new' | 'read' | 'responded' | 'closed'
+  user_id?: string   // New field for linking to authenticated users
   created_at: string
   updated_at: string
 }
@@ -108,6 +111,7 @@ export interface ContactSubmissionInsert {
   subject: string
   message: string
   status?: 'new' | 'read' | 'responded' | 'closed'
+  user_id?: string   // New field for linking to authenticated users
 }
 
 // Match CRUD operations
@@ -292,6 +296,109 @@ export async function getUpcomingMatchesWithRSVPCounts(limit = 2) {
       total_attendees: totalAttendees
     }
   })
+}
+
+// User-specific database operations for authenticated users
+export async function getUserRSVPs(userId: string) {
+  const { data, error } = await supabase
+    .from('rsvps')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+  
+  if (error) {
+    console.error('Error fetching user RSVPs:', error)
+    return null
+  }
+  
+  return data as RSVP[]
+}
+
+export async function getUserContactSubmissions(userId: string) {
+  const { data, error } = await supabase
+    .from('contact_submissions')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+  
+  if (error) {
+    console.error('Error fetching user contact submissions:', error)
+    return null
+  }
+  
+  return data as ContactSubmission[]
+}
+
+export async function getUserSubmissionCounts(userId: string) {
+  const [rsvpCount, contactCount] = await Promise.all([
+    supabase
+      .from('rsvps')
+      .select('id', { count: 'exact' })
+      .eq('user_id', userId),
+    supabase
+      .from('contact_submissions')
+      .select('id', { count: 'exact' })
+      .eq('user_id', userId)
+  ])
+  
+  return {
+    rsvpCount: rsvpCount.count || 0,
+    contactCount: contactCount.count || 0,
+    totalSubmissions: (rsvpCount.count || 0) + (contactCount.count || 0)
+  }
+}
+
+// Email-based linking functions (used by webhook)
+export async function linkExistingSubmissionsToUser(userId: string, email: string) {
+  const results = await Promise.allSettled([
+    // Link RSVP submissions
+    supabase
+      .from('rsvps')
+      .update({ user_id: userId })
+      .eq('email', email)
+      .is('user_id', null),
+    
+    // Link contact submissions
+    supabase
+      .from('contact_submissions')
+      .update({ user_id: userId })
+      .eq('email', email)
+      .is('user_id', null)
+  ])
+  
+  const rsvpResult = results[0]
+  const contactResult = results[1]
+  
+  return {
+    rsvpLinked: rsvpResult.status === 'fulfilled' ? rsvpResult.value.count || 0 : 0,
+    contactLinked: contactResult.status === 'fulfilled' ? contactResult.value.count || 0 : 0,
+    errors: results.filter(r => r.status === 'rejected').map(r => (r as PromiseRejectedResult).reason)
+  }
+}
+
+export async function unlinkUserSubmissions(userId: string) {
+  const results = await Promise.allSettled([
+    // Unlink RSVP submissions
+    supabase
+      .from('rsvps')
+      .update({ user_id: null })
+      .eq('user_id', userId),
+    
+    // Unlink contact submissions
+    supabase
+      .from('contact_submissions')
+      .update({ user_id: null })
+      .eq('user_id', userId)
+  ])
+  
+  const rsvpResult = results[0]
+  const contactResult = results[1]
+  
+  return {
+    rsvpUnlinked: rsvpResult.status === 'fulfilled' ? rsvpResult.value.count || 0 : 0,
+    contactUnlinked: contactResult.status === 'fulfilled' ? contactResult.value.count || 0 : 0,
+    errors: results.filter(r => r.status === 'rejected').map(r => (r as PromiseRejectedResult).reason)
+  }
 }
 
 // Get all matches with RSVP counts
