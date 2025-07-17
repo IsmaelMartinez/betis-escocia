@@ -134,7 +134,7 @@ class FlagsmithManager {
 
           // If not in cache, get from Flagsmith
           this.performanceMetrics.apiCallCount++;
-          const value = flagsmith.getValue(flagName, defaultValue);
+          const value = flagsmith.getValue(flagName);
           
           // Normalize to boolean
           const boolValue = typeof value === 'boolean' ? value : value === 'true';

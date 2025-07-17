@@ -35,7 +35,7 @@ export interface FlagsmithErrorInfo {
 /**
  * Default flag values
  */
-export const DEFAULT_FLAG_VALUES: RecordcFlagsmithFeatureName, booleane = {
+export const DEFAULT_FLAG_VALUES: Record<FlagsmithFeatureName, boolean> = {
   'show-clasificacion': true,
   'show-coleccionables': true,
   'show-galeria': true,

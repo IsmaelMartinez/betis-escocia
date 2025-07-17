@@ -1,0 +1,61 @@
+{
+  "feature_flags": {
+    "showClasificacion": true,
+    "showColeccionables": true,
+    "showGaleria": true,
+    "showRSVP": true,
+    "showPartidos": true,
+    "showSocialMedia": true,
+    "showHistory": true,
+    "showNosotros": true,
+    "showUnete": true,
+    "showContacto": true,
+    "showPorra": false,
+    "showRedesSociales": false,
+    "showAdmin": false,
+    "showClerkAuth": false,
+    "showDebugInfo": true,
+    "showBetaFeatures": false
+  },
+  "flagsmith_mapping": {
+    "showClasificacion": "show-clasificacion",
+    "showColeccionables": "show-coleccionables",
+    "showGaleria": "show-galeria",
+    "showRSVP": "show-rsvp",
+    "showPartidos": "show-partidos",
+    "showSocialMedia": "show-social-media",
+    "showHistory": "show-history",
+    "showNosotros": "show-nosotros",
+    "showUnete": "show-unete",
+    "showContacto": "show-contacto",
+    "showPorra": "show-porra",
+    "showRedesSociales": "show-redes-sociales",
+    "showAdmin": "show-admin",
+    "showClerkAuth": "show-clerk-auth",
+    "showDebugInfo": "show-debug-info",
+    "showBetaFeatures": "show-beta-features"
+  },
+  "environment_variables": {
+    "NEXT_PUBLIC_FEATURE_CLASIFICACION": "true",
+    "NEXT_PUBLIC_FEATURE_COLECCIONABLES": "true",
+    "NEXT_PUBLIC_FEATURE_GALERIA": "true",
+    "NEXT_PUBLIC_FEATURE_RSVP": "true",
+    "NEXT_PUBLIC_FEATURE_PARTIDOS": "true",
+    "NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA": "true",
+    "NEXT_PUBLIC_FEATURE_CONTACTO": "true",
+    "NEXT_PUBLIC_FEATURE_HISTORY": "true",
+    "NEXT_PUBLIC_FEATURE_NOSOTROS": "true",
+    "NEXT_PUBLIC_FEATURE_UNETE": "true",
+    "NEXT_PUBLIC_FEATURE_PORRA": "false",
+    "NEXT_PUBLIC_FEATURE_REDES_SOCIALES": "false",
+    "NEXT_PUBLIC_FEATURE_ADMIN": "false",
+    "NEXT_PUBLIC_FEATURE_CLERK_AUTH": "false",
+    "NEXT_PUBLIC_DEBUG_MODE": "true"
+  },
+  "notes": {
+    "description": "Feature flags configuration for Betis app",
+    "status": "Using environment variable fallback until Flagsmith is properly configured",
+    "flagsmith_environment_id": "placeholder - needs real Flagsmith environment ID",
+    "fallback_behavior": "When Flagsmith fails, system falls back to environment variables defined in .env.local"
+  }
+}

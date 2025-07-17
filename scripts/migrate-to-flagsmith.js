@@ -10,6 +10,25 @@
 const path = require('path');
 const fs = require('fs');
 
+// Load environment variables from .env.local
+function loadEnvFile() {
+  const envPath = path.join(__dirname, '..', '.env.local');
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    const envLines = envContent.split('\n');
+    
+    envLines.forEach(line => {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith('#')) {
+        const [key, ...valueParts] = trimmed.split('=');
+        if (key && valueParts.length > 0) {
+          process.env[key] = valueParts.join('=');
+        }
+      }
+    });
+  }
+}
+
 // Import the migration utilities
 async function runMigration() {
   try {
@@ -170,4 +189,5 @@ async function runMigration() {
 }
 
 // Run the migration
+loadEnvFile();
 runMigration();

@@ -10,9 +10,10 @@ const flagsmithManager = new FlagsmithManager(flagsmithConfig);
  */
 export async function getAllFeatureFlags() {
   await flagsmithManager.initialize();
-  const flags = Object.keys(flagsmithConfig);
-  const values = await flagsmithManager.getMultipleValues(flags);
-  return values;
+  // This is a placeholder - you would need to implement the actual logic
+  // to get all available flags from your Flagsmith environment
+  const flags = {};
+  return flags;
 }
 
 /**
@@ -21,6 +22,8 @@ export async function getAllFeatureFlags() {
 export async function migrateFeatureFlags() {
   console.log('Migrating feature flags...');
   const featureFlags = await getAllFeatureFlags();
+  console.log('Feature flags migrated:', featureFlags);
   // Logic to process flags
+  return featureFlags;
 }
 
