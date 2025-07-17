@@ -4,7 +4,6 @@ import { useAuth, useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import MessageComponent from '@/components/MessageComponent';
 
 /**
  * Higher-order component that protects routes requiring admin role
@@ -23,6 +22,15 @@ export function withAdminRole<T extends object>(
       }
     }, [isLoaded, isSignedIn, router]);
 
+    // Check if user has admin role (fallback protection)
+    const userRole = user?.publicMetadata?.role;
+    
+    useEffect(() => {
+      if (isLoaded && isSignedIn && userRole !== 'admin') {
+        router.push('/dashboard');
+      }
+    }, [isLoaded, isSignedIn, userRole, router]);
+
     // Show loading while Clerk is loading
     if (!isLoaded) {
       return (
@@ -37,25 +45,11 @@ export function withAdminRole<T extends object>(
       return null;
     }
 
-    // Check if user has admin role
-    const userRole = user?.publicMetadata?.role;
+    // Show loading while redirecting non-admin users
     if (userRole !== 'admin') {
       return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-          <div className="max-w-md w-full">
-            <MessageComponent
-              type="error"
-              message="Acceso denegado. Solo los administradores pueden acceder a esta página."
-            />
-            <div className="mt-6 text-center">
-              <button
-                onClick={() => router.push('/dashboard')}
-                className="bg-betis-green hover:bg-betis-green/90 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-              >
-                Volver al Dashboard
-              </button>
-            </div>
-          </div>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <LoadingSpinner size="lg" label="Verificando permisos..." />
         </div>
       );
     }

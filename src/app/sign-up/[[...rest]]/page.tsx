@@ -2,6 +2,7 @@
 
 import { SignUp } from '@clerk/nextjs';
 import { isFeatureEnabled } from '@/lib/featureFlags';
+import Link from 'next/link';
 
 export default function SignUpPage() {
   // Check if authentication is enabled
@@ -28,12 +29,12 @@ export default function SignUpPage() {
                 Los usuarios deben ser creados manualmente por los administradores.
               </p>
               <div className="mt-6">
-                <a 
+                <Link 
                   href="/sign-in"
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-betis-green hover:bg-betis-green/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-betis-green"
                 >
                   Ir al Inicio de Sesión
-                </a>
+                </Link>
               </div>
             </div>
           </div>

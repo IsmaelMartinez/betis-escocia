@@ -81,6 +81,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Update user metadata and/or ban status
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updates: any = {};
     
     if (role !== undefined) {

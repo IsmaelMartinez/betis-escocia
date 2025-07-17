@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
-import { isAdmin } from './roleUtils';
+import { auth, currentUser } from '@clerk/nextjs/server';
+import type { User } from '@clerk/nextjs/server';
 
 /**
  * Middleware to protect admin API routes
@@ -12,18 +12,28 @@ export function withAdminApiProtection(
 ) {
   return async (req: NextRequest) => {
     try {
-      const { userId, user } = await auth();
+      const { userId } = await auth();
 
       // Check if user is authenticated
-      if (!userId || !user) {
+      if (!userId) {
         return NextResponse.json(
           { error: 'Unauthorized. Please sign in.' },
           { status: 401 }
         );
       }
 
+      // Get full user data with metadata
+      const user = await currentUser();
+      
+      if (!user) {
+        return NextResponse.json(
+          { error: 'Unauthorized. User not found.' },
+          { status: 401 }
+        );
+      }
+
       // Check if user has admin role
-      if (!isAdmin(user)) {
+      if (user.publicMetadata?.role !== 'admin') {
         return NextResponse.json(
           { error: 'Forbidden. Admin access required.' },
           { status: 403 }
@@ -47,14 +57,14 @@ export function withAdminApiProtection(
  * @returns Promise with user and admin status
  */
 export async function checkAdminRole(): Promise<{
-  user: any;
+  user: User | null;
   isAdmin: boolean;
   error?: string;
 }> {
   try {
-    const { userId, user } = await auth();
+    const { userId } = await auth();
 
-    if (!userId || !user) {
+    if (!userId) {
       return {
         user: null,
         isAdmin: false,
@@ -62,7 +72,22 @@ export async function checkAdminRole(): Promise<{
       };
     }
 
-    const isAdminUser = isAdmin(user);
+    // Fetch full user data with metadata
+    const user = await currentUser();
+    
+    if (!user) {
+      return {
+        user: null,
+        isAdmin: false,
+        error: 'Unauthorized. User not found.'
+      };
+    }
+
+
+    // Check admin role directly
+    const userRole = user.publicMetadata?.role;
+    const isAdminUser = userRole === 'admin';
+    
     return {
       user,
       isAdmin: isAdminUser,

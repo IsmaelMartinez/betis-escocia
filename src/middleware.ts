@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { getCSPHeader } from '@/lib/security';
-import { hasRole } from '@/lib/roleUtils';
 
 // Define route matchers
 const isPublicRoute = createRouteMatcher([
@@ -38,8 +37,6 @@ const isProtectedRoute = createRouteMatcher(['/dashboard(.*)']);
 const isAdminRoute = createRouteMatcher(['/admin(.*)', '/api/admin(.*)']);
 
 export default clerkMiddleware(async (auth, request) => {
-  const { pathname } = request.nextUrl;
-  
   // Add security headers to all responses
   const response = NextResponse.next();
   response.headers.set('X-Content-Type-Options', 'nosniff');
@@ -59,13 +56,13 @@ export default clerkMiddleware(async (auth, request) => {
   }
   
   // Get user info
-  const { userId } = await auth();
+  const { userId, user } = await auth();
   
   // Protected routes (dashboard, etc.) - require authentication
   if (isProtectedRoute(request)) {
     if (!userId) {
-      // Let Clerk handle the redirect
-      return auth().redirectToSignIn({ returnBackUrl: request.url });
+      // Redirect to sign-in page
+      return NextResponse.redirect(new URL('/sign-in', request.url));
     }
     return response;
   }
@@ -73,14 +70,18 @@ export default clerkMiddleware(async (auth, request) => {
   // Admin route protection - require authentication and admin role
   if (isAdminRoute(request)) {
     if (!userId) {
-      // Let Clerk handle the redirect
-      return auth().redirectToSignIn({ returnBackUrl: request.url });
+      // Redirect to sign-in page
+      return NextResponse.redirect(new URL('/sign-in', request.url));
     }
     
-    // Check if user has admin role
-    const { user } = await auth();
-    if (!user || !hasRole(user, 'admin')) {
-      // Redirect to dashboard if user doesn't have admin role
+    // For API routes, let the individual route handlers check the role
+    // since they need to use currentUser() to get full metadata
+    if (request.nextUrl.pathname.startsWith('/api/admin')) {
+      return response;
+    }
+    
+    // For page routes, check admin role in middleware
+    if (!user || !user.publicMetadata || user.publicMetadata.role !== 'admin') {
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
     
