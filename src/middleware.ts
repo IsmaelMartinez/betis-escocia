@@ -36,6 +36,13 @@ const isProtectedRoute = createRouteMatcher(['/dashboard(.*)']);
 
 const isAdminRoute = createRouteMatcher(['/admin(.*)', '/api/admin(.*)']);
 
+import { FlagsmithManager } from '@/lib/flagsmith';
+import { getFlagsmithConfig } from '@/lib/flagsmith/config';
+
+// Initialize Flagsmith
+const flagsmithConfig = getFlagsmithConfig();
+const flagsmithManager = new FlagsmithManager(flagsmithConfig);
+
 export default clerkMiddleware(async (auth, request) => {
   // Add security headers to all responses
   const response = NextResponse.next();

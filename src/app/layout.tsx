@@ -96,6 +96,10 @@ export const metadata: Metadata = {
   category: "Sports",
   classification: "Community Organization",
   referrer: "origin-when-cross-origin",
+  other: {
+    'preconnect': 'https://connect.facebook.net',
+    'dns-prefetch': 'https://www.facebook.com',
+  },
 };
 
 export const viewport: Viewport = {
@@ -111,14 +115,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <head>
-        {/* Performance optimizations */}
-        <link rel="preconnect" href="https://connect.facebook.net" />
-        <link rel="preconnect" href="https://vercel.live" />
-        <link rel="dns-prefetch" href="https://www.facebook.com" />
-        <link rel="dns-prefetch" href="https://www.instagram.com" />
-        <link rel="dns-prefetch" href="https://www.youtube.com" />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

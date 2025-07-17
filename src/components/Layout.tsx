@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash, User, LogIn, LogOut, UserPlus } from 'lucide-react';
 import BetisLogo from '@/components/BetisLogo';
@@ -14,6 +14,13 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [debugInfo, setDebugInfo] = useState<{
+    flags: Record<string, boolean>;
+    environment: string;
+    enabledFeatures: string[];
+    disabledFeatures: string[];
+    cacheStatus: { cached: boolean; expires: string };
+  } | null>(null);
   
   // Use feature flags to determine which navigation items to show
   const enabledNavigation = getEnabledNavigationItems();
@@ -23,8 +30,20 @@ export default function Layout({ children }: LayoutProps) {
   const { signOut } = useClerk();
   const isAuthEnabled = isFeatureEnabled('showClerkAuth');
   
-  // Debug information (only shown in development with debug flag)
-  const debugInfo = getFeatureFlagsStatus();
+  // Load debug information asynchronously
+  useEffect(() => {
+    const loadDebugInfo = async () => {
+      try {
+        const info = await getFeatureFlagsStatus();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        setDebugInfo(info as any);
+      } catch (error) {
+        console.error('Error loading debug info:', error);
+      }
+    };
+    
+    loadDebugInfo();
+  }, []);
   
   const handleSignOut = async () => {
     await signOut();

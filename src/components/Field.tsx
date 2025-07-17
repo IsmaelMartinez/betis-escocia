@@ -68,11 +68,12 @@ export function ValidatedInput({ error, touched, className = '', ...props }: Val
   
   const baseStyles = "w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-betis-green focus:border-transparent transition-colors";
   const errorStyles = hasError ? "border-red-500 focus:ring-red-500" : "border-gray-300";
+  const disabledStyles = props.disabled ? "bg-gray-100 text-gray-500 cursor-not-allowed" : "";
   
   return (
     <input
       {...props}
-      className={`${baseStyles} ${errorStyles} ${className}`}
+      className={`${baseStyles} ${errorStyles} ${disabledStyles} ${className}`}
       aria-invalid={hasError ? 'true' : 'false'}
       aria-describedby={hasError ? `${props.id}-error` : undefined}
     />

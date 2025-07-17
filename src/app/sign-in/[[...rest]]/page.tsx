@@ -1,6 +1,7 @@
 'use client';
 
 import { SignIn } from '@clerk/nextjs';
+import Link from 'next/link';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 
 export default function SignInPage() {
@@ -13,21 +14,27 @@ export default function SignInPage() {
         <div className="max-w-md w-full space-y-8">
           <div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-              Panel de Administración
+              Acceso No Disponible
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              Acceso exclusivo para la junta de la peña
+              La autenticación está deshabilitada en este momento.
             </p>
           </div>
           <div className="bg-white p-8 rounded-lg shadow-md">
-            <SignIn 
-              appearance={{
-                elements: {
-                  formButtonPrimary: 'bg-betis-green hover:bg-betis-green/90 text-white',
-                  card: 'shadow-none',
-                }
-              }}
-            />
+            <div className="text-center">
+              <p className="text-gray-700 mb-4">
+                El sistema de autenticación está temporalmente deshabilitado.
+              </p>
+              <p className="text-sm text-gray-500 mb-6">
+                Para acceder a las funciones de administración, contacta con la junta de la peña.
+              </p>
+              <Link 
+                href="/"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-betis-green hover:bg-betis-green/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-betis-green"
+              >
+                Volver al Inicio
+              </Link>
+            </div>
           </div>
         </div>
       </div>

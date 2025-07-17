@@ -5,6 +5,13 @@ import { User, Calendar, MessageSquare, PieChart, ExternalLink } from 'lucide-re
 import Link from 'next/link';
 
 export default async function DashboardPage() {
+  // Check if authentication is enabled
+  const isAuthEnabled = process.env.NEXT_PUBLIC_FEATURE_CLERK_AUTH === 'true';
+  
+  if (!isAuthEnabled) {
+    redirect('/');
+  }
+  
   const user = await currentUser();
   
   if (!user) {

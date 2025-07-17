@@ -30,10 +30,10 @@ export default function SignUpPage() {
               </p>
               <div className="mt-6">
                 <Link 
-                  href="/sign-in"
+                  href="/"
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-betis-green hover:bg-betis-green/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-betis-green"
                 >
-                  Ir al Inicio de Sesión
+                  Volver al Inicio
                 </Link>
               </div>
             </div>

@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { User, Mail, MessageSquare, Users } from 'lucide-react';
 import { FormSuccessMessage, FormErrorMessage, FormLoadingMessage } from '@/components/MessageComponent';
 import Field, { ValidatedInput, ValidatedSelect, ValidatedTextarea } from '@/components/Field';
 import { useFormValidation, commonValidationRules } from '@/lib/formValidation';
+import { useUser } from '@clerk/nextjs';
+import { isFeatureEnabled } from '@/lib/featureFlags';
 
 interface RSVPFormProps {
   readonly onSuccess?: () => void;
@@ -19,6 +21,9 @@ const rsvpValidationRules = {
 };
 
 export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) {
+  const { user } = useUser();
+  const isAuthEnabled = isFeatureEnabled('showClerkAuth');
+  
   const {
     data: formData,
     errors,
@@ -38,6 +43,19 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  
+  // Pre-fill form with user data when authenticated
+  useEffect(() => {
+    if (isAuthEnabled && user) {
+      const userName = user.firstName && user.lastName 
+        ? `${user.firstName} ${user.lastName}` 
+        : user.firstName || '';
+      const userEmail = user.emailAddresses[0]?.emailAddress || '';
+      
+      if (userName) updateField('name', userName);
+      if (userEmail) updateField('email', userEmail);
+    }
+  }, [user, isAuthEnabled, updateField]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,12 +70,18 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
 
     try {
       const apiUrl = selectedMatchId ? `/api/rsvp?match=${selectedMatchId}` : '/api/rsvp';
+      const submissionData = {
+        ...formData,
+        matchId: selectedMatchId,
+        ...(isAuthEnabled && user ? { userId: user.id } : {})
+      };
+      
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ...formData, matchId: selectedMatchId }),
+        body: JSON.stringify(submissionData),
       });
 
       if (!response.ok) {
@@ -107,6 +131,16 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
         <p className="text-gray-600">
           Rellena el formulario para que sepamos que vienes
         </p>
+        {isAuthEnabled && user && (
+          <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-sm text-green-800">
+              ✓ Conectado como {user.firstName} {user.lastName}
+            </p>
+            <p className="text-xs text-green-600 mt-1">
+              Tus datos se han rellenado automáticamente
+            </p>
+          </div>
+        )}
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -130,6 +164,7 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
             placeholder="Tu nombre y apellido"
             error={errors.name}
             touched={touched.name}
+            disabled={!!(isAuthEnabled && user)}
           />
         </Field>
 
@@ -153,6 +188,7 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
             placeholder="tu@email.com"
             error={errors.email}
             touched={touched.email}
+            disabled={!!(isAuthEnabled && user)}
           />
         </Field>
 

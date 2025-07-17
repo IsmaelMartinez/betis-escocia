@@ -1,5 +1,6 @@
 import { getCurrentUserInfo, testEmailConsistency, PROVIDER_CONFIG } from '@/lib/auth-test';
 import { currentUser } from '@clerk/nextjs/server';
+import Link from 'next/link';
 
 export default async function AuthTestPage() {
   const user = await currentUser();
@@ -11,12 +12,12 @@ export default async function AuthTestPage() {
         <div className="max-w-2xl w-full bg-white rounded-lg shadow-md p-8">
           <h1 className="text-2xl font-bold text-betis-black mb-4">Authentication Test</h1>
           <p className="text-gray-600 mb-6">Please sign in to test email consistency across providers.</p>
-          <a 
+          <Link 
             href="/sign-in"
             className="bg-betis-green text-white px-6 py-3 rounded-lg hover:bg-betis-green/90 transition-colors"
           >
             Sign In
-          </a>
+          </Link>
         </div>
       </div>
     );
@@ -96,18 +97,18 @@ export default async function AuthTestPage() {
 
           {/* Actions */}
           <div className="flex gap-4">
-            <a 
+            <Link 
               href="/dashboard"
               className="bg-betis-green text-white px-6 py-3 rounded-lg hover:bg-betis-green/90 transition-colors"
             >
               Go to Dashboard
-            </a>
-            <a 
+            </Link>
+            <Link 
               href="/sign-out"
               className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
             >
               Sign Out
-            </a>
+            </Link>
           </div>
         </div>
       </div>

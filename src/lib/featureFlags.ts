@@ -4,21 +4,23 @@
  * SECURITY PRINCIPLE: ALL features are hidden by default unless explicitly enabled.
  * This ensures that no features are accidentally exposed in production.
  * 
- * To enable a feature, set the environment variable to 'true':
- * NEXT_PUBLIC_FEATURE_EXAMPLE=true
+ * This implementation uses Flagsmith for feature flag management with fallback
+ * to environment variables during migration period.
  * 
- * If not set or set to anything other than 'true', the feature remains hidden.
+ * Migration Status: Using Flagsmith with environment variable fallback
  */
 
+import { FlagsmithFeatureName, LegacyFeatureName, FLAG_MIGRATION_MAP, NavigationItem } from './flagsmith/types';
+import { getValue, getMultipleValues, hasFeature, getFlagsmithManager } from './flagsmith/index';
+import { getFlagsmithConfig } from './flagsmith/config';
+
+// Legacy interface for backward compatibility
 interface FeatureFlags {
-  // Core navigation features
   showClasificacion: boolean;
   showColeccionables: boolean;
   showGaleria: boolean;
   showRSVP: boolean;
   showPartidos: boolean;
-  
-  // Additional features
   showSocialMedia: boolean;
   showHistory: boolean;
   showNosotros: boolean;
@@ -26,119 +28,219 @@ interface FeatureFlags {
   showContacto: boolean;
   showPorra: boolean;
   showRedesSociales: boolean;
-  
-  // Admin features
   showAdmin: boolean;
-  
-  // Authentication features
   showClerkAuth: boolean;
-  
-  // Development/testing features
   showDebugInfo: boolean;
   showBetaFeatures: boolean;
 }
 
-// Default feature flags configuration
-// ALL FEATURES ARE HIDDEN BY DEFAULT - SECURE BY DEFAULT APPROACH
-const defaultFlags: FeatureFlags = {
-  // Core navigation features - now enabled by default to give the guys something to dream
-  showClasificacion: true, // Enabled by default
-  showColeccionables: false,
-  showGaleria: false,
-  showRSVP: true, // Enabled by default - let's give the guys something to dream
-  showPartidos: true, // Enabled by default - let's give the guys something to dream
-  
-  // Additional features - all hidden by default
-  showSocialMedia: false,
-  showHistory: false, // Hidden by default
-  showNosotros: true, // Enabled by default
-  showUnete: true, // Enabled by default
-  showContacto: false, // Hidden by default
-  showPorra: false, // Hidden by default
-  showRedesSociales: false, // Hidden by default
-  
-  // Admin features - secure by default
-  showAdmin: false, // Hidden by default
-  
-  // Authentication features - secure by default
-  showClerkAuth: false, // Hidden by default
-  
-  // Development/testing features
-  showDebugInfo: false,
-  showBetaFeatures: false
-};
+// Cache for flag values to avoid repeated async calls
+let flagsCache: FeatureFlags | null = null;
+let cacheExpiry: number = 0;
+const CACHE_TTL = 30000; // 30 seconds
 
-// Environment-based overrides
-const environmentFlags: Partial<FeatureFlags> = {
-  // Production overrides
-  ...(process.env.NODE_ENV === 'production' && {
+/**
+ * Initialize Flagsmith (call this early in your app)
+ */
+export async function initializeFeatureFlags(): Promise<void> {
+  try {
+    const config = getFlagsmithConfig();
+    const manager = getFlagsmithManager(config);
+    await manager.initialize();
+    
+    // Clear cache to force refresh
+    flagsCache = null;
+    cacheExpiry = 0;
+    
+    console.log('[Feature Flags] Flagsmith initialized successfully');
+  } catch (error) {
+    console.error('[Feature Flags] Failed to initialize Flagsmith:', error);
+    // System will fall back to environment variables
+  }
+}
+
+/**
+ * Get all feature flags (with caching)
+ */
+export async function getFeatureFlags(): Promise<FeatureFlags> {
+  // Check cache first
+  if (flagsCache && Date.now() < cacheExpiry) {
+    return flagsCache;
+  }
+
+  try {
+    // Get all flags from Flagsmith
+    const flagNames: FlagsmithFeatureName[] = Object.values(FLAG_MIGRATION_MAP);
+    const flagValues = await getMultipleValues(flagNames);
+    
+    // Convert to legacy format
+    const flags: FeatureFlags = {
+      showClasificacion: flagValues['show-clasificacion'],
+      showColeccionables: flagValues['show-coleccionables'],
+      showGaleria: flagValues['show-galeria'],
+      showRSVP: flagValues['show-rsvp'],
+      showPartidos: flagValues['show-partidos'],
+      showSocialMedia: flagValues['show-social-media'],
+      showHistory: flagValues['show-history'],
+      showNosotros: flagValues['show-nosotros'],
+      showUnete: flagValues['show-unete'],
+      showContacto: flagValues['show-contacto'],
+      showPorra: flagValues['show-porra'],
+      showRedesSociales: flagValues['show-redes-sociales'],
+      showAdmin: flagValues['show-admin'],
+      showClerkAuth: flagValues['show-clerk-auth'],
+      showDebugInfo: flagValues['show-debug-info'],
+      showBetaFeatures: flagValues['show-beta-features']
+    };
+
+    // Cache the result
+    flagsCache = flags;
+    cacheExpiry = Date.now() + CACHE_TTL;
+    
+    return flags;
+  } catch (error) {
+    console.error('[Feature Flags] Error getting flags, using fallback:', error);
+    
+    // Return cached value if available
+    if (flagsCache) {
+      return flagsCache;
+    }
+    
+    // Fallback to environment variables
+    return getLegacyEnvironmentFlags();
+  }
+}
+
+/**
+ * Legacy environment variable fallback
+ */
+function getLegacyEnvironmentFlags(): FeatureFlags {
+  const defaultFlags: FeatureFlags = {
+    showClasificacion: true,
+    showColeccionables: false,
+    showGaleria: false,
+    showRSVP: true,
+    showPartidos: true,
+    showSocialMedia: false,
+    showHistory: false,
+    showNosotros: true,
+    showUnete: true,
+    showContacto: false,
+    showPorra: false,
+    showRedesSociales: false,
+    showAdmin: false,
+    showClerkAuth: false,
     showDebugInfo: false,
-    showBetaFeatures: false,
-  }),
-  
-  // Development overrides
-  ...(process.env.NODE_ENV === 'development' && {
-    showDebugInfo: Boolean(process.env.NEXT_PUBLIC_DEBUG_MODE),
-  }),
-  
-  // Feature-specific environment variables - respect defaults when not set
-  showClasificacion: process.env.NEXT_PUBLIC_FEATURE_CLASIFICACION !== undefined 
-    ? process.env.NEXT_PUBLIC_FEATURE_CLASIFICACION === 'true'
-    : defaultFlags.showClasificacion,
-  showColeccionables: process.env.NEXT_PUBLIC_FEATURE_COLECCIONABLES !== undefined 
-    ? process.env.NEXT_PUBLIC_FEATURE_COLECCIONABLES === 'true'
-    : defaultFlags.showColeccionables,
-  showGaleria: process.env.NEXT_PUBLIC_FEATURE_GALERIA !== undefined 
-    ? process.env.NEXT_PUBLIC_FEATURE_GALERIA === 'true'
-    : defaultFlags.showGaleria,
-  showRSVP: process.env.NEXT_PUBLIC_FEATURE_RSVP !== undefined 
-    ? process.env.NEXT_PUBLIC_FEATURE_RSVP === 'true'
-    : defaultFlags.showRSVP,
-  showPartidos: process.env.NEXT_PUBLIC_FEATURE_PARTIDOS !== undefined 
-    ? process.env.NEXT_PUBLIC_FEATURE_PARTIDOS === 'true'
-    : defaultFlags.showPartidos,
-  showSocialMedia: process.env.NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA !== undefined 
-    ? process.env.NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA === 'true'
-    : defaultFlags.showSocialMedia,
-  showHistory: process.env.NEXT_PUBLIC_FEATURE_HISTORY !== undefined 
-    ? process.env.NEXT_PUBLIC_FEATURE_HISTORY === 'true'
-    : defaultFlags.showHistory,
-  // All remaining features follow the same pattern
-  showNosotros: process.env.NEXT_PUBLIC_FEATURE_NOSOTROS !== undefined 
-    ? process.env.NEXT_PUBLIC_FEATURE_NOSOTROS === 'true'
-    : defaultFlags.showNosotros,
-  showUnete: process.env.NEXT_PUBLIC_FEATURE_UNETE !== undefined 
-    ? process.env.NEXT_PUBLIC_FEATURE_UNETE === 'true'
-    : defaultFlags.showUnete,
-  showContacto: process.env.NEXT_PUBLIC_FEATURE_CONTACTO !== undefined 
-    ? process.env.NEXT_PUBLIC_FEATURE_CONTACTO === 'true'
-    : defaultFlags.showContacto,
-  showPorra: process.env.NEXT_PUBLIC_FEATURE_PORRA !== undefined 
-    ? process.env.NEXT_PUBLIC_FEATURE_PORRA === 'true'
-    : defaultFlags.showPorra,
-  showRedesSociales: process.env.NEXT_PUBLIC_FEATURE_REDES_SOCIALES !== undefined 
-    ? process.env.NEXT_PUBLIC_FEATURE_REDES_SOCIALES === 'true'
-    : defaultFlags.showRedesSociales,
-  showAdmin: process.env.NEXT_PUBLIC_FEATURE_ADMIN !== undefined 
-    ? process.env.NEXT_PUBLIC_FEATURE_ADMIN === 'true'
-    : defaultFlags.showAdmin,
-  showClerkAuth: process.env.NEXT_PUBLIC_FEATURE_CLERK_AUTH !== undefined 
-    ? process.env.NEXT_PUBLIC_FEATURE_CLERK_AUTH === 'true'
-    : defaultFlags.showClerkAuth,
-};
+    showBetaFeatures: false
+  };
 
-// Merge default flags with environment overrides
-export const featureFlags: FeatureFlags = {
-  ...defaultFlags,
-  ...environmentFlags,
-};
+  const environmentFlags: Partial<FeatureFlags> = {
+    // Production overrides
+    ...(process.env.NODE_ENV === 'production' && {
+      showDebugInfo: false,
+      showBetaFeatures: false,
+    }),
+    
+    // Development overrides
+    ...(process.env.NODE_ENV === 'development' && {
+      showDebugInfo: Boolean(process.env.NEXT_PUBLIC_DEBUG_MODE),
+    }),
+    
+    // Feature-specific environment variables
+    showClasificacion: process.env.NEXT_PUBLIC_FEATURE_CLASIFICACION !== undefined 
+      ? process.env.NEXT_PUBLIC_FEATURE_CLASIFICACION === 'true'
+      : defaultFlags.showClasificacion,
+    showColeccionables: process.env.NEXT_PUBLIC_FEATURE_COLECCIONABLES !== undefined 
+      ? process.env.NEXT_PUBLIC_FEATURE_COLECCIONABLES === 'true'
+      : defaultFlags.showColeccionables,
+    showGaleria: process.env.NEXT_PUBLIC_FEATURE_GALERIA !== undefined 
+      ? process.env.NEXT_PUBLIC_FEATURE_GALERIA === 'true'
+      : defaultFlags.showGaleria,
+    showRSVP: process.env.NEXT_PUBLIC_FEATURE_RSVP !== undefined 
+      ? process.env.NEXT_PUBLIC_FEATURE_RSVP === 'true'
+      : defaultFlags.showRSVP,
+    showPartidos: process.env.NEXT_PUBLIC_FEATURE_PARTIDOS !== undefined 
+      ? process.env.NEXT_PUBLIC_FEATURE_PARTIDOS === 'true'
+      : defaultFlags.showPartidos,
+    showSocialMedia: process.env.NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA !== undefined 
+      ? process.env.NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA === 'true'
+      : defaultFlags.showSocialMedia,
+    showHistory: process.env.NEXT_PUBLIC_FEATURE_HISTORY !== undefined 
+      ? process.env.NEXT_PUBLIC_FEATURE_HISTORY === 'true'
+      : defaultFlags.showHistory,
+    showNosotros: process.env.NEXT_PUBLIC_FEATURE_NOSOTROS !== undefined 
+      ? process.env.NEXT_PUBLIC_FEATURE_NOSOTROS === 'true'
+      : defaultFlags.showNosotros,
+    showUnete: process.env.NEXT_PUBLIC_FEATURE_UNETE !== undefined 
+      ? process.env.NEXT_PUBLIC_FEATURE_UNETE === 'true'
+      : defaultFlags.showUnete,
+    showContacto: process.env.NEXT_PUBLIC_FEATURE_CONTACTO !== undefined 
+      ? process.env.NEXT_PUBLIC_FEATURE_CONTACTO === 'true'
+      : defaultFlags.showContacto,
+    showPorra: process.env.NEXT_PUBLIC_FEATURE_PORRA !== undefined 
+      ? process.env.NEXT_PUBLIC_FEATURE_PORRA === 'true'
+      : defaultFlags.showPorra,
+    showRedesSociales: process.env.NEXT_PUBLIC_FEATURE_REDES_SOCIALES !== undefined 
+      ? process.env.NEXT_PUBLIC_FEATURE_REDES_SOCIALES === 'true'
+      : defaultFlags.showRedesSociales,
+    showAdmin: process.env.NEXT_PUBLIC_FEATURE_ADMIN !== undefined 
+      ? process.env.NEXT_PUBLIC_FEATURE_ADMIN === 'true'
+      : defaultFlags.showAdmin,
+    showClerkAuth: process.env.NEXT_PUBLIC_FEATURE_CLERK_AUTH !== undefined 
+      ? process.env.NEXT_PUBLIC_FEATURE_CLERK_AUTH === 'true'
+      : defaultFlags.showClerkAuth,
+  };
 
-// Helper function to check if a feature is enabled
+  return { ...defaultFlags, ...environmentFlags };
+}
+
+/**
+ * Synchronous access to cached flags (for backward compatibility)
+ */
+export const featureFlags = new Proxy({} as FeatureFlags, {
+  get(target, prop) {
+    if (flagsCache && prop in flagsCache) {
+      return flagsCache[prop as keyof FeatureFlags];
+    }
+    
+    // Fallback to environment variables
+    const legacyFlags = getLegacyEnvironmentFlags();
+    return legacyFlags[prop as keyof FeatureFlags];
+  }
+});
+
+/**
+ * Helper function to check if a feature is enabled (backward compatibility)
+ */
 export function isFeatureEnabled(feature: keyof FeatureFlags): boolean {
   return featureFlags[feature];
 }
 
-// Helper function to get all enabled navigation items
+/**
+ * Async version of isFeatureEnabled for new implementations
+ */
+export async function isFeatureEnabledAsync(feature: keyof FeatureFlags): Promise<boolean> {
+  const flags = await getFeatureFlags();
+  return flags[feature];
+}
+
+/**
+ * Get a specific feature flag value using modern Flagsmith API
+ */
+export async function getFeatureFlag(flagName: FlagsmithFeatureName): Promise<boolean> {
+  return await getValue(flagName);
+}
+
+/**
+ * Check if a feature exists using modern Flagsmith API
+ */
+export async function hasFeatureFlag(flagName: FlagsmithFeatureName): Promise<boolean> {
+  return await hasFeature(flagName);
+}
+
+/**
+ * Helper function to get all enabled navigation items (backward compatibility)
+ */
 export function getEnabledNavigationItems() {
   const allNavigationItems = [
     { 
@@ -226,20 +328,78 @@ export function getEnabledNavigationItems() {
   );
 }
 
-// Debug helper for development
-export function getFeatureFlagsStatus() {
-  if (!isFeatureEnabled('showDebugInfo')) {
+/**
+ * Async version using modern Flagsmith API
+ */
+export async function getEnabledNavigationItemsAsync(): Promise<NavigationItem[]> {
+  const allNavigationItems: NavigationItem[] = [
+    { name: 'Inicio', href: '/', nameEn: 'Home', feature: null },
+    { name: 'RSVP', href: '/rsvp', nameEn: 'RSVP', feature: 'show-rsvp' },
+    { name: 'Clasificación', href: '/clasificacion', nameEn: 'Standings', feature: 'show-clasificacion' },
+    { name: 'Partidos', href: '/partidos', nameEn: 'Matches', feature: 'show-partidos' },
+    { name: 'Coleccionables', href: '/coleccionables', nameEn: 'Collectibles', feature: 'show-coleccionables' },
+    { name: 'Galería', href: '/galeria', nameEn: 'Gallery', feature: 'show-galeria' },
+    { name: 'Historia', href: '/historia', nameEn: 'History', feature: 'show-history' },
+    { name: 'Nosotros', href: '/nosotros', nameEn: 'About', feature: 'show-nosotros' },
+    { name: 'Únete', href: '/unete', nameEn: 'Join', feature: 'show-unete' },
+    { name: 'Contacto', href: '/contacto', nameEn: 'Contact', feature: 'show-contacto' },
+    { name: 'Porra', href: '/porra', nameEn: 'Porra', feature: 'show-porra' },
+    { name: 'Redes Sociales', href: '/redes-sociales', nameEn: 'Social Media', feature: 'show-redes-sociales' },
+    { name: 'Admin', href: '/admin', nameEn: 'Admin', feature: 'show-admin' }
+  ];
+
+  // Get all flags at once for better performance
+  const flags = await getFeatureFlags();
+  
+  return allNavigationItems.filter(item => {
+    if (item.feature === null) return true;
+    
+    // Convert new flag name to legacy format for lookup
+    const legacyFeature = Object.keys(FLAG_MIGRATION_MAP).find(
+      key => FLAG_MIGRATION_MAP[key as LegacyFeatureName] === item.feature
+    ) as keyof FeatureFlags;
+    
+    return legacyFeature ? flags[legacyFeature] : false;
+  });
+}
+
+/**
+ * Debug helper for development
+ */
+export async function getFeatureFlagsStatus() {
+  const flags = await getFeatureFlags();
+  
+  if (!flags.showDebugInfo) {
     return null;
   }
   
   return {
-    flags: featureFlags,
+    flags,
     environment: process.env.NODE_ENV,
-    enabledFeatures: Object.entries(featureFlags)
+    enabledFeatures: Object.entries(flags)
       .filter(([, enabled]) => enabled)
       .map(([feature]) => feature),
-    disabledFeatures: Object.entries(featureFlags)
+    disabledFeatures: Object.entries(flags)
       .filter(([, enabled]) => !enabled)
       .map(([feature]) => feature),
+    cacheStatus: {
+      cached: flagsCache !== null,
+      expires: new Date(cacheExpiry).toISOString()
+    }
   };
+}
+
+/**
+ * Clear the flags cache (useful for testing or manual refresh)
+ */
+export function clearFeatureFlagsCache(): void {
+  flagsCache = null;
+  cacheExpiry = 0;
+}
+
+/**
+ * Pre-load feature flags (call this early in your app lifecycle)
+ */
+export async function preloadFeatureFlags(): Promise<void> {
+  await getFeatureFlags();
 }

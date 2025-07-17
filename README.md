@@ -16,15 +16,18 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 - **Social media integration** (Facebook & Instagram)
 - **Bilingual content** (Spanish/English)
 - **Serverless architecture** for optimal performance
+- **Secure by default** feature flag system
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Next.js 15, TypeScript, Tailwind CSS
+- **Frontend**: Next.js 15, TypeScript, Tailwind CSS 4
 - **Backend**: Next.js API Routes + Supabase (PostgreSQL)
 - **Database**: Supabase (GDPR-compliant with auto-cleanup)
 - **Authentication**: Clerk.com for user management and authentication
+- **External APIs**: Football-Data.org for match data
+- **Feature Flags**: Flagsmith for feature management
 - **Deployment**: Vercel with GitHub Actions
-- **Performance Monitoring**: Vercel Speed Insights (`@vercel/speed-insights`) for front-end performance metrics
+- **Performance Monitoring**: Vercel Speed Insights and Analytics
 
 ## 🚀 Getting Started
 
@@ -121,6 +124,160 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 Authentication features are controlled by the `NEXT_PUBLIC_FEATURE_CLERK_AUTH` environment variable:
 - `true`: Enable authentication features
 - `false` or unset: Disable authentication features (anonymous-only mode)
+
+## 🚩 Feature Flags with Flagsmith
+
+The project uses Flagsmith for feature flag management, providing dynamic feature control without code deployments.
+
+### Setting Up Flagsmith
+
+1. **Create a Flagsmith Account**
+   - Sign up at [https://flagsmith.com](https://flagsmith.com)
+   - Create a new project
+   - Create environments (Development, Production)
+
+2. **Get Your Environment ID**
+   - Go to your Flagsmith dashboard
+   - Select your project and environment
+   - Copy the Environment ID from the settings
+
+3. **Configure Environment Variables**
+   
+   Add to your `.env.local` file:
+   ```bash
+   # Required: Flagsmith Environment ID
+   NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID=your_environment_id_here
+   
+   # Optional: Flagsmith API Configuration
+   NEXT_PUBLIC_FLAGSMITH_API_URL=https://edge.api.flagsmith.com/api/v1/
+   NEXT_PUBLIC_FLAGSMITH_TIMEOUT=2000
+   NEXT_PUBLIC_FLAGSMITH_CACHE_TTL=60000
+   
+   # Optional: Debug and Performance
+   NEXT_PUBLIC_FLAGSMITH_DEBUG=true
+   NEXT_PUBLIC_FLAGSMITH_METRICS=true
+   NEXT_PUBLIC_FLAGSMITH_OFFLINE=false
+   
+   # Debug Mode (shows feature flag status)
+   NEXT_PUBLIC_DEBUG_MODE=true
+   ```
+
+### Using Feature Flags in Code
+
+```typescript
+import { hasFeature, getValue, getMultipleValues } from '@/lib/flagsmith';
+
+// Check if a feature is enabled
+const isEnabled = await hasFeature('show-clasificacion');
+
+// Get a feature value with default
+const showGallery = await getValue('show-galeria', false);
+
+// Get multiple features at once
+const features = await getMultipleValues([
+  'show-clasificacion',
+  'show-partidos',
+  'show-galeria'
+]);
+```
+
+### Available Feature Flags
+
+| Flag Name | Description | Default |
+|-----------|-------------|----------|
+| `show-clasificacion` | Show league standings | `true` |
+| `show-coleccionables` | Show merchandise section | `true` |
+| `show-galeria` | Show photo gallery | `true` |
+| `show-rsvp` | Show RSVP system | `true` |
+| `show-partidos` | Show match information | `true` |
+| `show-social-media` | Show social media integration | `true` |
+| `show-history` | Show club history section | `true` |
+| `show-nosotros` | Show about us section | `true` |
+| `show-unete` | Show join us section | `true` |
+| `show-contacto` | Show contact section | `true` |
+| `show-admin` | Show admin dashboard | `false` |
+| `show-clerk-auth` | Enable Clerk authentication | `false` |
+| `show-debug-info` | Show debug information | `false` |
+| `show-beta-features` | Enable beta features | `false` |
+
+### Debugging Feature Flags
+
+#### 1. Enable Debug Mode
+```bash
+# In .env.local
+NEXT_PUBLIC_DEBUG_MODE=true
+NEXT_PUBLIC_FLAGSMITH_DEBUG=true
+```
+
+#### 2. Check Configuration Status
+```typescript
+import { getConfigStatus } from '@/lib/flagsmith/config';
+
+const status = getConfigStatus();
+console.log('Flagsmith Status:', status);
+```
+
+#### 3. Check System Status
+```typescript
+import { getSystemStatus } from '@/lib/flagsmith';
+
+const systemStatus = await getSystemStatus();
+console.log('System Status:', systemStatus);
+```
+
+#### 4. View Performance Metrics
+```typescript
+import { getFlagsmithManager } from '@/lib/flagsmith';
+
+const manager = getFlagsmithManager();
+const metrics = manager.getPerformanceMetrics();
+console.log('Performance Metrics:', metrics);
+```
+
+### Fallback Mechanisms
+
+The system includes multiple fallback layers:
+
+1. **Last Known Values**: Cached values from successful API calls
+2. **Configured Fallbacks**: Default values in `DEFAULT_FLAG_VALUES`
+3. **Environment Variables**: Legacy environment variable support
+4. **System Defaults**: Hard-coded safe defaults
+
+### Troubleshooting
+
+#### Common Issues
+
+1. **"Environment ID required" Error**
+   - Ensure `NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID` is set
+   - Check that the environment ID is valid (starts with appropriate prefix)
+
+2. **Features Not Updating**
+   - Clear browser cache and localStorage
+   - Check if cache TTL is too high
+   - Verify feature flags are published in Flagsmith dashboard
+
+3. **API Timeout Issues**
+   - Increase timeout: `NEXT_PUBLIC_FLAGSMITH_TIMEOUT=5000`
+   - Enable offline mode: `NEXT_PUBLIC_FLAGSMITH_OFFLINE=true`
+
+#### Debug Commands
+
+```bash
+# Check environment variables
+echo $NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID
+
+# Test configuration
+npm run dev
+# Then check browser console for Flagsmith logs
+```
+
+### Production Considerations
+
+- Use separate Flagsmith environments for development and production
+- Production environment IDs typically start with `ser_`
+- Set appropriate cache TTL values for production (60+ seconds)
+- Monitor error rates and fallback usage
+- Consider using Flagsmith's edge API for better performance
 
 ## 📁 Project Structure
 
@@ -246,6 +403,23 @@ The project includes automatic deployment via GitHub Actions. Set up these secre
 4. Follow mobile-first design principles
 5. Maintain Real Betis branding
 
+## 📚 Documentation
+
+### Developer Resources
+- [Developer Onboarding Guide](docs/development/onboarding.md)
+- [Implementation Guide](docs/development/IMPLEMENTATION.md)
+- [Feature Flags Documentation](docs/feature-flags.md)
+
+### Architecture Decisions
+- [ADR-001: Clerk Authentication](docs/adr/001-clerk-authentication.md)
+- [ADR-002: Football-Data.org API](docs/adr/002-football-api.md)
+- [ADR-003: Supabase Database](docs/adr/003-supabase-database.md)
+
+### Technical Documentation
+- [API Documentation](docs/api/)
+- [Security Implementation](docs/security/SECURITY.md)
+- [Database Documentation](docs/database-comparison.md)
+
 ## 📝 Contributing
 
 1. Fork the repository
@@ -253,6 +427,8 @@ The project includes automatic deployment via GitHub Actions. Set up these secre
 3. Make your changes
 4. Test thoroughly
 5. Submit a pull request
+
+For detailed contribution guidelines, see [Developer Onboarding Guide](docs/development/onboarding.md).
 
 ## 📄 License
 
