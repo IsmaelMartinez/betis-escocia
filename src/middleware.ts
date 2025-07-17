@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { getCSPHeader } from '@/lib/security';
+import { hasRole } from '@/lib/roleUtils';
 
 // Define route matchers
 const isPublicRoute = createRouteMatcher([
@@ -34,7 +35,7 @@ const isPublicRoute = createRouteMatcher([
 // Protected routes that require authentication
 const isProtectedRoute = createRouteMatcher(['/dashboard(.*)']);
 
-const isAdminRoute = createRouteMatcher(['/admin(.*)']);
+const isAdminRoute = createRouteMatcher(['/admin(.*)', '/api/admin(.*)']);
 
 export default clerkMiddleware(async (auth, request) => {
   const { pathname } = request.nextUrl;
@@ -69,12 +70,20 @@ export default clerkMiddleware(async (auth, request) => {
     return response;
   }
   
-  // Admin route protection - will be enhanced with role checking in later tasks
+  // Admin route protection - require authentication and admin role
   if (isAdminRoute(request)) {
     if (!userId) {
       // Let Clerk handle the redirect
       return auth().redirectToSignIn({ returnBackUrl: request.url });
     }
+    
+    // Check if user has admin role
+    const { user } = await auth();
+    if (!user || !hasRole(user, 'admin')) {
+      // Redirect to dashboard if user doesn't have admin role
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
+    
     return response;
   }
   

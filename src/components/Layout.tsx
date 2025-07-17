@@ -73,6 +73,15 @@ export default function Layout({ children }: LayoutProps) {
                       
                       {isUserMenuOpen && (
                         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                          {user.publicMetadata.role === 'admin' && (
+                            <Link
+                              href="/admin"
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => setIsUserMenuOpen(false)}
+                            >
+                              Admin
+                            </Link>
+                          )}
                           <Link
                             href="/dashboard"
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -141,6 +150,16 @@ export default function Layout({ children }: LayoutProps) {
                 <div className="border-t border-white/20 pt-4 mt-4">
                   {user ? (
                     <div className="space-y-2">
+                      {user.publicMetadata.role === 'admin' && (
+                        <Link
+                          href="/admin"
+                          className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-gold hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <User size={20} />
+                          <span>Admin</span>
+                        </Link>
+                      )}
                       <Link
                         href="/dashboard"
                         className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-gold hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
@@ -200,7 +219,7 @@ export default function Layout({ children }: LayoutProps) {
             <div className="sm:col-span-2 lg:col-span-1">
               <h3 className="font-bold text-lg mb-4 text-betis-green">No busques más que no hay</h3>
               <p className="text-gray-300 text-sm leading-relaxed">
-                La peña del Real Betis en Edimburgo. Nos vemos en el Polwarth Tavern para cada partido.
+                La peña del Real Betis en Edimburgo. Nos vemos en The Polwarth Tavern para cada partido.
               </p>
             </div>
 
@@ -210,9 +229,9 @@ export default function Layout({ children }: LayoutProps) {
               <div className="space-y-2 text-sm text-gray-300">
                 <div className="flex items-center space-x-2">
                   <MapPin size={16} />
-                  <span>Polwarth Tavern</span>
+                  <span>The Polwarth Tavern</span>
                 </div>
-                <p>15 Polwarth Pl, Edinburgh EH11 1NH</p>
+                <p>35 Polwarth Cres, Edinburgh EH11 1HR</p>
               </div>
             </div>
 

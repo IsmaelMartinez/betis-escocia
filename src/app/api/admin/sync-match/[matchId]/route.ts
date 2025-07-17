@@ -1,20 +1,20 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
 import { FootballDataService } from '@/services/footballDataService';
 import { supabase } from '@/lib/supabase';
+import { checkAdminRole } from '@/lib/adminApiProtection';
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ matchId: string }> }
 ) {
   try {
-    // Check authentication
-    const { userId } = await auth();
-    if (!userId) {
+    // Check admin role
+    const { user, isAdmin, error } = await checkAdminRole();
+    if (!isAdmin || error) {
       return NextResponse.json({
         success: false,
-        message: 'Unauthorized: Authentication required'
-      }, { status: 401 });
+        message: error || 'Admin access required'
+      }, { status: !user ? 401 : 403 });
     }
     
     const { matchId } = await params;

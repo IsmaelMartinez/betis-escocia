@@ -12,6 +12,7 @@ import { FeatureWrapper } from '@/lib/featureProtection';
 import MatchForm from '@/components/admin/MatchForm';
 import MatchesList from '@/components/admin/MatchesList';
 import { useRouter } from 'next/navigation';
+import { withAdminRole } from '@/lib/withAdminRole';
 
 interface AdminStats {
   totalRSVPs: number;
@@ -29,7 +30,7 @@ interface MatchFormData {
   match?: Match;
 }
 
-export default function AdminPage() {
+function AdminPage() {
   const { isLoaded, isSignedIn, signOut } = useAuth();
   const { user } = useUser();
   const router = useRouter();
@@ -594,3 +595,5 @@ export default function AdminPage() {
     </div>
   );
 }
+
+export default withAdminRole(AdminPage);
