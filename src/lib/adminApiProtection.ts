@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { hasRole } from './roleUtils';
+import { isAdmin } from './roleUtils';
 
 /**
  * Middleware to protect admin API routes
@@ -23,7 +23,7 @@ export function withAdminApiProtection(
       }
 
       // Check if user has admin role
-      if (!hasRole(user, 'admin')) {
+      if (!isAdmin(user)) {
         return NextResponse.json(
           { error: 'Forbidden. Admin access required.' },
           { status: 403 }
@@ -62,11 +62,11 @@ export async function checkAdminRole(): Promise<{
       };
     }
 
-    const isAdmin = hasRole(user, 'admin');
+    const isAdminUser = isAdmin(user);
     return {
       user,
-      isAdmin,
-      error: isAdmin ? undefined : 'Forbidden. Admin access required.'
+      isAdmin: isAdminUser,
+      error: isAdminUser ? undefined : 'Forbidden. Admin access required.'
     };
   } catch (error) {
     console.error('Admin role check error:', error);

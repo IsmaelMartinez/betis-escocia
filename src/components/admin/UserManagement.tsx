@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Users, UserCheck, UserX, Shield, Edit2, Trash2, Ban, CheckCircle } from 'lucide-react';
+import { Users, UserCheck, UserX, Shield, Trash2, Ban, CheckCircle, Crown, UserCog } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Card, { CardHeader, CardBody } from '@/components/ui/Card';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import MessageComponent from '@/components/MessageComponent';
+import { ROLES } from '@/lib/roleUtils';
 
 interface User {
   id: string;
@@ -112,16 +113,85 @@ export default function UserManagement({ className = '' }: UserManagementProps) 
     }
   };
 
+  const assignRole = async (userId: string, role: string) => {
+    try {
+      setUpdatingUser(userId);
+      const response = await fetch('/api/admin/roles', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId, role }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setMessage({ type: 'success', text: `Rol ${role} asignado correctamente` });
+        await fetchUsers(); // Refresh user list
+      } else {
+        setMessage({ type: 'error', text: data.message || 'Error assigning role' });
+      }
+    } catch (err) {
+      console.error('Error assigning role:', err);
+      setMessage({ type: 'error', text: 'Error assigning role' });
+    } finally {
+      setUpdatingUser(null);
+      // Clear message after 3 seconds
+      setTimeout(() => setMessage(null), 3000);
+    }
+  };
+
+  const removeRole = async (userId: string) => {
+    if (!confirm('¿Estás seguro de que quieres eliminar el rol de este usuario?')) {
+      return;
+    }
+
+    try {
+      setUpdatingUser(userId);
+      const response = await fetch('/api/admin/roles', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setMessage({ type: 'success', text: 'Rol eliminado correctamente' });
+        await fetchUsers(); // Refresh user list
+      } else {
+        setMessage({ type: 'error', text: data.message || 'Error removing role' });
+      }
+    } catch (err) {
+      console.error('Error removing role:', err);
+      setMessage({ type: 'error', text: 'Error removing role' });
+    } finally {
+      setUpdatingUser(null);
+      // Clear message after 3 seconds
+      setTimeout(() => setMessage(null), 3000);
+    }
+  };
+
   const getRoleBadge = (role: string) => {
     switch (role) {
-      case 'admin':
+      case ROLES.ADMIN:
         return (
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
             <Shield className="w-3 h-3 mr-1" />
             Admin
           </span>
         );
-      case 'user':
+      case ROLES.MODERATOR:
+        return (
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+            <Crown className="w-3 h-3 mr-1" />
+            Moderador
+          </span>
+        );
+      case ROLES.USER:
       default:
         return (
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -257,20 +327,48 @@ export default function UserManagement({ className = '' }: UserManagementProps) 
                       }
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
-                        {/* Role toggle */}
-                        <button
-                          onClick={() => updateUser(user.id, { role: user.role === 'admin' ? 'user' : 'admin' })}
-                          disabled={updatingUser === user.id}
-                          className={`inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white transition-colors ${
-                            user.role === 'admin' 
-                              ? 'bg-orange-600 hover:bg-orange-700' 
-                              : 'bg-blue-600 hover:bg-blue-700'
-                          } disabled:opacity-50`}
-                        >
-                          <Edit2 className="w-3 h-3 mr-1" />
-                          {user.role === 'admin' ? 'Quitar Admin' : 'Hacer Admin'}
-                        </button>
+                      <div className="flex flex-wrap gap-2">
+                        {/* Role Management */}
+                        <div className="flex space-x-1">
+                          {/* Make Admin */}
+                          {user.role !== ROLES.ADMIN && (
+                            <button
+                              onClick={() => assignRole(user.id, ROLES.ADMIN)}
+                              disabled={updatingUser === user.id}
+                              className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 transition-colors"
+                              title="Asignar rol de administrador"
+                            >
+                              <Shield className="w-3 h-3 mr-1" />
+                              Admin
+                            </button>
+                          )}
+                          
+                          {/* Make Moderator */}
+                          {user.role !== ROLES.MODERATOR && user.role !== ROLES.ADMIN && (
+                            <button
+                              onClick={() => assignRole(user.id, ROLES.MODERATOR)}
+                              disabled={updatingUser === user.id}
+                              className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                              title="Asignar rol de moderador"
+                            >
+                              <Crown className="w-3 h-3 mr-1" />
+                              Moderador
+                            </button>
+                          )}
+                          
+                          {/* Remove Special Role */}
+                          {(user.role === ROLES.ADMIN || user.role === ROLES.MODERATOR) && (
+                            <button
+                              onClick={() => removeRole(user.id)}
+                              disabled={updatingUser === user.id}
+                              className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-orange-600 hover:bg-orange-700 disabled:opacity-50 transition-colors"
+                              title="Quitar rol especial"
+                            >
+                              <UserCog className="w-3 h-3 mr-1" />
+                              Quitar Rol
+                            </button>
+                          )}
+                        </div>
 
                         {/* Ban/Unban toggle */}
                         <button
@@ -281,6 +379,7 @@ export default function UserManagement({ className = '' }: UserManagementProps) 
                               ? 'bg-green-600 hover:bg-green-700' 
                               : 'bg-yellow-600 hover:bg-yellow-700'
                           } disabled:opacity-50`}
+                          title={user.banned ? 'Desbloquear usuario' : 'Bloquear usuario'}
                         >
                           {user.banned ? <CheckCircle className="w-3 h-3 mr-1" /> : <Ban className="w-3 h-3 mr-1" />}
                           {user.banned ? 'Desbloquear' : 'Bloquear'}
@@ -291,6 +390,7 @@ export default function UserManagement({ className = '' }: UserManagementProps) 
                           onClick={() => deleteUser(user.id)}
                           disabled={updatingUser === user.id}
                           className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 transition-colors"
+                          title="Eliminar usuario permanentemente"
                         >
                           <Trash2 className="w-3 h-3 mr-1" />
                           Eliminar

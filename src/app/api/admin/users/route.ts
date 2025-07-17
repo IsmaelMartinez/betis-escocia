@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkAdminRole } from '@/lib/adminApiProtection';
-import { clerkClient } from '@clerk/nextjs/server';
+import { createClerkClient } from '@clerk/nextjs/server';
+
+const clerkClient = createClerkClient({
+  secretKey: process.env.CLERK_SECRET_KEY,
+});
 
 export async function GET(request: NextRequest) {
   try {
@@ -26,7 +30,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Transform user data for admin interface
-    const transformedUsers = users.map(user => ({
+    const transformedUsers = users.data.map(user => ({
       id: user.id,
       email: user.emailAddresses[0]?.emailAddress || '',
       firstName: user.firstName || '',
@@ -42,8 +46,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       users: transformedUsers,
-      totalCount: users.length,
-      hasMore: users.length === limit
+      totalCount: users.data.length,
+      hasMore: users.data.length === limit
     });
 
   } catch (error) {
