@@ -56,7 +56,7 @@ export default clerkMiddleware(async (auth, request) => {
   }
   
   // Get user info
-  const { userId, user } = await auth();
+  const { userId } = await auth();
   
   // Protected routes (dashboard, etc.) - require authentication
   if (isProtectedRoute(request)) {
@@ -67,22 +67,12 @@ export default clerkMiddleware(async (auth, request) => {
     return response;
   }
   
-  // Admin route protection - require authentication and admin role
+  // Admin route protection - require authentication only
+  // Role checking is handled by individual route handlers and HOCs
   if (isAdminRoute(request)) {
     if (!userId) {
       // Redirect to sign-in page
       return NextResponse.redirect(new URL('/sign-in', request.url));
-    }
-    
-    // For API routes, let the individual route handlers check the role
-    // since they need to use currentUser() to get full metadata
-    if (request.nextUrl.pathname.startsWith('/api/admin')) {
-      return response;
-    }
-    
-    // For page routes, check admin role in middleware
-    if (!user || !user.publicMetadata || user.publicMetadata.role !== 'admin') {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
     }
     
     return response;

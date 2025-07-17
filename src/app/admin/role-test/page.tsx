@@ -7,6 +7,7 @@ import { ROLES } from '@/lib/roleUtils';
 import { Shield, Crown, UserCheck, TestTube, CheckCircle, XCircle } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Card, { CardHeader, CardBody } from '@/components/ui/Card';
+import Image from 'next/image';
 
 interface RoleTest {
   test: string;
@@ -170,9 +171,11 @@ function RoleTestPage() {
         </CardHeader>
         <CardBody>
           <div className="flex items-center space-x-4">
-            <img
+            <Image
               src={user?.imageUrl || '/images/default-avatar.png'}
               alt="User"
+              width={48}
+              height={48}
               className="w-12 h-12 rounded-full"
             />
             <div>

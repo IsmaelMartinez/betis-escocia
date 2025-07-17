@@ -1,5 +1,6 @@
 import { createClerkClient } from '@clerk/nextjs/server';
 import { ROLES, Role } from './roleUtils';
+import type { User } from '@clerk/nextjs/server';
 
 const clerkClient = createClerkClient({
   secretKey: process.env.CLERK_SECRET_KEY,
@@ -14,7 +15,7 @@ const clerkClient = createClerkClient({
 export async function assignRole(userId: string, role: Role): Promise<{
   success: boolean;
   message: string;
-  user?: any;
+  user?: User;
 }> {
   try {
     // Validate role
@@ -54,7 +55,7 @@ export async function assignRole(userId: string, role: Role): Promise<{
 export async function removeAdminRole(userId: string): Promise<{
   success: boolean;
   message: string;
-  user?: any;
+  user?: User;
 }> {
   return assignRole(userId, ROLES.USER);
 }
@@ -68,7 +69,7 @@ export async function getUserRole(userId: string): Promise<{
   success: boolean;
   role?: Role;
   message?: string;
-  user?: any;
+  user?: User;
 }> {
   try {
     const user = await clerkClient.users.getUser(userId);

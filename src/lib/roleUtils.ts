@@ -1,4 +1,4 @@
-import { User } from "@clerk/nextjs/dist/types/server";
+import type { User } from "@clerk/nextjs/server";
 
 /**
  * Available roles in the system

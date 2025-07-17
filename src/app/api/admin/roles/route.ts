@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
 
     // Get current user info for validation
     const { userId: currentUserId } = await auth();
-    const currentUserRole = user.publicMetadata?.role as Role || ROLES.USER;
+    const currentUserRole = user?.publicMetadata?.role as Role || ROLES.USER;
 
     // Validate role change
     const validation = validateRoleChange(currentUserRole, role, userId, currentUserId || '');
@@ -110,13 +110,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: result.message,
-      user: {
+      user: result.user ? {
         id: result.user.id,
         email: result.user.emailAddresses[0]?.emailAddress || '',
         firstName: result.user.firstName || '',
         lastName: result.user.lastName || '',
         role: result.user.publicMetadata?.role || ROLES.USER
-      }
+      } : null
     });
 
   } catch (error) {
@@ -165,7 +165,7 @@ export async function DELETE(request: NextRequest) {
 
     // Get current user info for validation
     const { userId: currentUserId } = await auth();
-    const currentUserRole = user.publicMetadata?.role as Role || ROLES.USER;
+    const currentUserRole = user?.publicMetadata?.role as Role || ROLES.USER;
 
     // Validate role change (removing admin/moderator role)
     const validation = validateRoleChange(currentUserRole, ROLES.USER, userId, currentUserId || '');
@@ -189,13 +189,13 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: result.message,
-      user: {
+      user: result.user ? {
         id: result.user.id,
         email: result.user.emailAddresses[0]?.emailAddress || '',
         firstName: result.user.firstName || '',
         lastName: result.user.lastName || '',
         role: result.user.publicMetadata?.role || ROLES.USER
-      }
+      } : null
     });
 
   } catch (error) {

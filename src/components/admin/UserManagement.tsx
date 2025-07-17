@@ -7,6 +7,7 @@ import Card, { CardHeader, CardBody } from '@/components/ui/Card';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import MessageComponent from '@/components/MessageComponent';
 import { ROLES } from '@/lib/roleUtils';
+import Image from 'next/image';
 
 interface User {
   id: string;
@@ -299,10 +300,12 @@ export default function UserManagement({ className = '' }: UserManagementProps) 
                   <tr key={user.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <img
+                        <Image
                           className="h-10 w-10 rounded-full"
                           src={user.imageUrl || '/images/default-avatar.png'}
                           alt={`${user.firstName} ${user.lastName}`}
+                          width={40}
+                          height={40}
                         />
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
