@@ -11,6 +11,7 @@ import MessageComponent from '@/components/MessageComponent';
 import { FeatureWrapper } from '@/lib/featureProtection';
 import MatchForm from '@/components/admin/MatchForm';
 import MatchesList from '@/components/admin/MatchesList';
+import UserManagement from '@/components/admin/UserManagement';
 import { useRouter } from 'next/navigation';
 import { withAdminRole } from '@/lib/withAdminRole';
 
@@ -23,7 +24,7 @@ interface AdminStats {
   recentContacts: ContactSubmission[];
 }
 
-type AdminView = 'dashboard' | 'matches' | 'match-form';
+type AdminView = 'dashboard' | 'matches' | 'match-form' | 'users';
 
 interface MatchFormData {
   mode: 'create' | 'edit';
@@ -326,6 +327,7 @@ function AdminPage() {
                 {currentView === 'dashboard' && 'Gestión de RSVPs, contactos y partidos de la Peña Bética'}
                 {currentView === 'matches' && 'Gestión de partidos'}
                 {currentView === 'match-form' && (matchFormData.mode === 'create' ? 'Crear nuevo partido' : 'Editar partido')}
+                {currentView === 'users' && 'Gestión de usuarios y roles'}
               </p>
               {user && (
                 <p className="text-sm text-betis-green mt-1">
@@ -390,6 +392,18 @@ function AdminPage() {
                   Partidos
                 </button>
               </FeatureWrapper>
+              
+              <button
+                onClick={() => setCurrentView('users')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  currentView === 'users'
+                    ? 'border-betis-green text-betis-green'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <Users className="h-4 w-4 inline mr-2" />
+                Usuarios
+              </button>
             </nav>
           </div>
         </div>
@@ -590,6 +604,11 @@ function AdminPage() {
               isLoading={loading}
             />
           </FeatureWrapper>
+        )}
+
+        {/* Users Management View */}
+        {currentView === 'users' && (
+          <UserManagement />
         )}
       </div>
     </div>
