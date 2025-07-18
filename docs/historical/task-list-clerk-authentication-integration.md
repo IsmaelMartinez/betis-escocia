@@ -166,7 +166,6 @@ Created: July 2025
 ### **Authentication Pages**:
 - `src/app/sign-in/page.tsx` - ✅ Enhanced sign-in page with Clerk components and branding
 - `src/app/sign-up/page.tsx` - ✅ Enhanced sign-up page with feature flag protection
-- `src/app/auth-test/page.tsx` - ✅ Authentication provider testing page
 - `src/app/dashboard/page.tsx` - ✅ User dashboard with stats, history, and quick actions
 
 ### **Layout & Navigation**:
