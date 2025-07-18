@@ -157,7 +157,7 @@ Created: July 2025
 
 ### **Configuration Files**:
 - `src/middleware.ts` - ✅ Clerk middleware integration with route protection
-- `src/lib/featureFlags.ts` - Feature flag configuration
+- `src/lib/flagsmith/index.ts` - Feature flag configuration
 - `src/lib/security.ts` - ✅ CSP headers for Clerk domains
 - `src/lib/supabase.ts` - ✅ Database operations and user associations with user_id support
 - `.env.local` - ✅ Clerk environment variables and feature flags

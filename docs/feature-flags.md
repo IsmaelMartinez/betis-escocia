@@ -1,145 +1,69 @@
-# Feature Flags Environment Variables
+# Feature Flags with Flagsmith
 
-This file shows how to control which features are visible in the application using environment variables.
+This document outlines how to manage feature visibility using Flagsmith, our feature flag provider.
 
-## 🔒 SECURE BY DEFAULT APPROACH
+## 🚩 Feature Flag Management
 
-**ALL FEATURES ARE HIDDEN BY DEFAULT** unless explicitly enabled via environment variables. This provides maximum security and control over which features are visible in production.
+All feature flags are managed through the [Flagsmith dashboard](https://flagsmith.com/). This allows for real-time updates without requiring code deployments.
+
+### Key Concepts
+
+*   **Features are disabled by default:** A feature will only be enabled if its corresponding flag is active in the Flagsmith environment.
+*   **Environments:** We use separate Flagsmith environments for development, staging, and production to ensure proper testing and isolation.
+*   **Default Values:** Each flag has a default value configured in Flagsmith, which is served if the SDK fails to fetch the latest flag configurations.
 
 ## Available Feature Flags
 
-### All Features (Hidden by Default - Require Explicit Enablement)
-- `NEXT_PUBLIC_FEATURE_CLASIFICACION` - Shows/hides the Clasificación (Standings) page
-- `NEXT_PUBLIC_FEATURE_COLECCIONABLES` - Shows/hides the Coleccionables (Collectibles) page  
-- `NEXT_PUBLIC_FEATURE_GALERIA` - Shows/hides the Galería (Gallery) page
-- `NEXT_PUBLIC_FEATURE_RSVP` - Shows/hides the RSVP page
-- `NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA` - Shows/hides social media features
-- `NEXT_PUBLIC_FEATURE_CONTACTO` - Shows/hides the Contacto (Contact) page
-- `NEXT_PUBLIC_FEATURE_HISTORY` - Shows/hides the Historia (History) page
-- `NEXT_PUBLIC_FEATURE_NOSOTROS` - Shows/hides the Nosotros (About) page
+The following is a list of feature flags currently in use:
 
-## Usage
+*   `show-clasificacion` - Shows/hides the Clasificación (Standings) page
+*   `show-coleccionables` - Shows/hides the Coleccionables (Collectibles) page
+*   `show-galeria` - Shows/hides the Galería (Gallery) page
+*   `show-rsvp` - Shows/hides the RSVP page
+*   `show-partidos` - Shows/hides the Partidos (Matches) page
+*   `show-social-media` - Shows/hides social media features
+*   `show-history` - Shows/hides the Historia (History) page
+*   `show-nosotros` - Shows/hides the Nosotros (About) page
+*   `show-unete` - Shows/hides the Unete (Join Us) page
+*   `show-contacto` - Shows/hides the Contacto (Contact) page
+*   `show-redes-sociales` - Shows/hides the Redes Sociales (Social Media) page
+*   `show-admin` - Shows/hides the Admin dashboard
+*   `show-clerk-auth` - Enables Clerk authentication
 
-### To Enable Any Feature
+## Usage in Code
 
-**EVERY feature must be explicitly set to `true` to be visible:**
-
-```bash
-NEXT_PUBLIC_FEATURE_CLASIFICACION=true
-NEXT_PUBLIC_FEATURE_COLECCIONABLES=true
-NEXT_PUBLIC_FEATURE_GALERIA=true
-NEXT_PUBLIC_FEATURE_RSVP=true
-NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=true
-NEXT_PUBLIC_FEATURE_CONTACTO=true
-NEXT_PUBLIC_FEATURE_HISTORY=true
-NEXT_PUBLIC_FEATURE_NOSOTROS=true
-```
-
-### Default Behavior (No Environment Variables)
-
-Without any environment variables set, the application will show:
-- ✅ **Always Visible**: Home page only
-- ❌ **Hidden**: ALL other pages and features (RSVP, About, History, Standings, Collectibles, Gallery, Social Media, Contact)
-
-### Common Scenarios
-
-#### Minimal Setup (Home + RSVP + About)
-```bash
-NEXT_PUBLIC_FEATURE_RSVP=true
-NEXT_PUBLIC_FEATURE_NOSOTROS=true
-```
-
-#### Community Features Only (No Merchandise/Gallery)
-```bash
-NEXT_PUBLIC_FEATURE_RSVP=true
-NEXT_PUBLIC_FEATURE_NOSOTROS=true
-NEXT_PUBLIC_FEATURE_HISTORY=true
-NEXT_PUBLIC_FEATURE_CONTACTO=true
-NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=true
-```
-
-#### Full Feature Set (Everything Enabled)
-
-```bash
-NEXT_PUBLIC_FEATURE_CLASIFICACION=true
-NEXT_PUBLIC_FEATURE_COLECCIONABLES=true
-NEXT_PUBLIC_FEATURE_GALERIA=true
-NEXT_PUBLIC_FEATURE_RSVP=true
-NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=true
-NEXT_PUBLIC_FEATURE_CONTACTO=true
-NEXT_PUBLIC_FEATURE_HISTORY=true
-NEXT_PUBLIC_FEATURE_NOSOTROS=true
-```
-
-#### Hide Work-in-Progress Features
-
-```bash
-# Only enable core pages (Home automatically visible)
-NEXT_PUBLIC_FEATURE_RSVP=true
-NEXT_PUBLIC_FEATURE_NOSOTROS=true
-NEXT_PUBLIC_FEATURE_CONTACTO=true
-# All other features remain hidden (not set)
-```
-
-## Development
-
-### Debug Mode
-
-Enable debug mode to see which features are enabled/disabled:
-
-```bash
-NEXT_PUBLIC_DEBUG_MODE=true
-```
-
-This will show a debug panel in the bottom-right corner of the page in development mode.
-
-## Deployment
-
-### Vercel Environment Variables
-
-In your Vercel project settings, add these environment variables:
-
-1. Go to your Vercel project dashboard
-2. Navigate to Settings → Environment Variables
-3. Add the feature flags you want to enable (only set to `true` for features you want visible):
-
-```bash
-NEXT_PUBLIC_FEATURE_CLASIFICACION=true
-NEXT_PUBLIC_FEATURE_RSVP=true
-NEXT_PUBLIC_FEATURE_NOSOTROS=true
-NEXT_PUBLIC_FEATURE_CONTACTO=true
-# Other features not set = hidden by default
-```
-
-### Production vs Development
-
-You can set different values for different environments:
-
-- **Development**: Show all features for testing
-- **Preview**: Hide incomplete features
-- **Production**: Only show completed, stable features
-
-## Implementation Details
-
-The feature flags are implemented in `/src/lib/featureFlags.ts` and integrated into the navigation via `/src/components/Layout.tsx`.
-
-### Adding New Feature Flags
-
-1. Add the flag to the `FeatureFlags` interface in `featureFlags.ts`
-2. Add the default value to `defaultFlags`
-3. Add the environment variable override to `environmentFlags`
-4. Use `isFeatureEnabled('yourFeature')` in components to conditionally render
+To check if a feature is enabled, use the `hasFeature` function from `@/lib/flagsmith`.
 
 ### Example Component Usage
 
 ```tsx
-import { isFeatureEnabled } from '@/lib/featureFlags';
+import { hasFeature } from '@/lib/flagsmith';
 
 export default function MyComponent() {
-  if (!isFeatureEnabled('showMyFeature')) {
-    return null; // Hide the component
+  if (!hasFeature('my-feature-flag')) {
+    return null; // Hide the component if the flag is disabled
   }
-  
+
   return <div>My feature content</div>;
 }
 ```
+
+## Local Development
+
+To run the application with feature flags locally, you need to set the following environment variable in your `.env.local` file:
+
+```bash
+NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID=your_development_environment_id_here
+```
+
+You can find the environment ID in your Flagsmith project settings.
+
+### Debugging
+
+To enable debug logs for the Flagsmith SDK, set the following environment variable:
+
+```bash
+NEXT_PUBLIC_FLAGSMITH_DEBUG=true
+```
+
+This will output detailed information about flag evaluations to the browser console.

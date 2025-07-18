@@ -59,7 +59,6 @@ We chose **Flagsmith** as our feature flag provider for the following reasons:
 ### Neutral
 - **Feature parity**: Will maintain all current feature flag functionality
 - **Gradual migration**: Can migrate flags incrementally
-- **Fallback option**: Can maintain env vars as backup during transition
 
 ## Alternatives Considered
 ### Option 1: LaunchDarkly (Industry Standard)
@@ -83,8 +82,8 @@ We chose **Flagsmith** as our feature flag provider for the following reasons:
 - **Reason for rejection**: Too complex for current needs, requires DevOps expertise
 
 ## Implementation Notes
-- **Migration Strategy**: Gradual migration alongside existing env vars
-- **Fallback Mechanism**: Maintain env vars as backup during transition
+- **Migration Strategy**: Complete migration to Flagsmith.
+- **Fallback Mechanism**: Rely on default flag values configured within Flagsmith.
 - **Performance**: Implement caching to minimize API calls
 - **Integration**: Use Flagsmith JavaScript SDK with Next.js
 - **Configuration**: Environment-based configuration (dev/staging/prod)
@@ -92,7 +91,6 @@ We chose **Flagsmith** as our feature flag provider for the following reasons:
 ## References
 - [Feature Flag Provider Comparison](../../tasks/feature-flag-providers-comparison.md)
 - [Flagsmith Documentation](https://docs.flagsmith.com/)
-- [Current Feature Flag Implementation](../../src/lib/featureFlags.ts)
 - [Project Ideas](../../tasks/ideas.md)
 
 ## Review

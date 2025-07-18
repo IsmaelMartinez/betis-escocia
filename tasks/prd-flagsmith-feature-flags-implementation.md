@@ -14,7 +14,7 @@ This PRD outlines the implementation of Flagsmith as the feature flag provider f
 2. **Improve Team Collaboration**: Allow developers to manage flags through a user-friendly dashboard
 3. **Enable Advanced Targeting**: Support user-based and group-based feature targeting
 4. **Establish A/B Testing Foundation**: Set up infrastructure for future experimentation capabilities
-5. **Maintain System Reliability**: Ensure robust fallback mechanisms and performance optimization
+5. **Maintain System Reliability**: Ensure robust default value mechanisms and performance optimization
 6. **Complete Migration**: Fully replace environment variable system with Flagsmith integration
 
 ## User Stories
@@ -23,7 +23,7 @@ This PRD outlines the implementation of Flagsmith as the feature flag provider f
 - **US1**: As a developer, I want to toggle feature flags in real-time so that I can control feature visibility without deployments
 - **US2**: As a developer, I want to target specific users or groups so that I can roll out features gradually
 - **US3**: As a developer, I want to see flag usage analytics so that I can understand feature adoption
-- **US4**: As a developer, I want reliable fallback behavior so that the system remains stable if Flagsmith is unavailable
+- **US4**: As a developer, I want reliable default value behavior so that the system remains stable if Flagsmith is unavailable
 - **US5**: As a developer, I want clear documentation explaining the new Flagsmith system so that I can use it effectively
 - **US6**: As a developer, I want updated code examples and implementation guides so that I can integrate features correctly
 
@@ -44,7 +44,7 @@ This PRD outlines the implementation of Flagsmith as the feature flag provider f
 
 ### 2. Performance and Reliability
 6. **FR6**: The system must implement local caching to minimize API calls to Flagsmith
-7. **FR7**: The system must provide fallback to default values when Flagsmith is unavailable
+7. **FR7**: The system must use Flagsmith's default flag values as a fallback when the Flagsmith API is unavailable
 8. **FR8**: The system must handle network timeouts gracefully (max 2 seconds)
 9. **FR9**: The system must batch flag evaluations when possible to optimize performance
 10. **FR10**: The system must maintain response times under 50ms for cached flag evaluations
@@ -100,7 +100,6 @@ This PRD outlines the implementation of Flagsmith as the feature flag provider f
 - **Complete Migration**: Replace all environment variables in one implementation
 - **New API Implementation**: Implement new Flagsmith-based API methods
 - **Testing**: Comprehensive testing of all flag combinations
-- **Rollback Plan**: Ability to revert to environment variables if needed
 
 ### User Interface
 - **No UI Changes**: Implementation should be transparent to end users
@@ -173,9 +172,10 @@ This PRD outlines the implementation of Flagsmith as the feature flag provider f
 - Optimize performance and caching
 - Implement percentage-based rollouts
 
-### Phase 4: Testing and Deployment (Week 4)
+### Phase 4: Testing, Cleanup, and Deployment (Week 4)
 - Comprehensive testing of all flag combinations
 - Performance testing and optimization
+- Remove all migrated `NEXT_PUBLIC_FEATURE_*` environment variables from the codebase and environment configurations.
 - Documentation and developer onboarding
 - Production deployment and monitoring
 
@@ -232,15 +232,13 @@ export function getEnabledNavigationItems(): NavigationItem[];
 - **Caching Issues**: Stale flag values or cache invalidation problems
 
 ### Mitigation Strategies
-- **Fallback Mechanisms**: Default to environment variables if Flagsmith fails
+- **Fallback Mechanisms**: Rely on default flag values configured within Flagsmith when the API is unavailable.
 - **Local Caching**: Aggressive caching to minimize API calls
 - **Gradual Testing**: Comprehensive testing before full deployment
 - **Monitoring**: Real-time monitoring of flag performance and errors
 
 ### Rollback Plan
-- **Environment Variable Backup**: Maintain current system during transition
-- **Feature Toggle**: Ability to switch back to env vars via configuration
-- **Quick Deployment**: Automated rollback process within 5 minutes
+- In case of critical failure, a rollback will involve reverting the code changes from the feature branch and redeploying the previous stable version.
 
 ## Open Questions
 
@@ -255,7 +253,8 @@ export function getEnabledNavigationItems(): NavigationItem[];
 ### Technical Completion
 - [ ] Flagsmith SDK integrated and configured
 - [ ] All 14 feature flags migrated from environment variables
-- [ ] Caching and fallback mechanisms implemented
+- [ ] All `NEXT_PUBLIC_FEATURE_*` environment variables are removed from the project.
+- [ ] Caching and default value mechanisms implemented
 - [ ] TypeScript types and interfaces updated
 - [ ] Performance optimization completed
 
