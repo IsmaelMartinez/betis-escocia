@@ -24,10 +24,6 @@
 - Updated Vercel deployment instructions
 - Removed confusing "enabled by default" sections
 
-#### 4. Added Test Scripts
-- **`/scripts/test-feature-flags.js`**: Validates the secure-by-default behavior
-- **`/scripts/demo-feature-flags.js`**: Shows navigation with different configurations
-
 ### 🎯 Current Behavior
 
 #### Default State (No Environment Variables)
@@ -101,8 +97,6 @@ The feature flag system is now complete and secure. Future enhancements could in
 - `/src/components/Layout.tsx` - Navigation filtering (unchanged) 
 - `.env.local` - Environment variables updated
 - `/docs/feature-flags.md` - Documentation updated
-- `/scripts/test-feature-flags.js` - New validation script
-- `/scripts/demo-feature-flags.js` - New demo script
 
 ## 🎉 Mission Accomplished
 

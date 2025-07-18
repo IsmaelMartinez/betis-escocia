@@ -37,7 +37,6 @@
 - ✅ `/src/app/layout.tsx` - Facebook SDK configuration
 - ✅ `/src/app/galeria/page.tsx` - Gallery page with both integrations
 - ✅ `/src/app/redes-sociales/page.tsx` - Social media page with both integrations
-- ✅ `/scripts/test-social-media-integrations.js` - Integration test script
 
 ### Key Features:
 - **Facebook:** Group iframe with official Facebook plugin
