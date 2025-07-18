@@ -156,8 +156,8 @@ export default function Unete() {
               <h3 className="text-xl font-bold text-gray-900 mb-4">Ubicación</h3>
               <p className="text-gray-800 mb-4 leading-relaxed">
                 <strong className="text-gray-900">Polwarth Tavern</strong><br />
-                15 Polwarth Place<br />
-                Edinburgh EH11 1NH
+                35 Polwarth Cresace<br />
+                Edinburgh EH11 1HR
               </p>
               <a
                 href="https://maps.google.com/maps?q=Polwarth+Tavern+Edinburgh"

@@ -66,9 +66,9 @@ export default function MatchesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-white/10 rounded-lg p-6">
               <h3 className="text-xl font-semibold mb-4">Dirección</h3>
-              <p className="mb-2">15 Polwarth Pl</p>
-              <p className="mb-2">Edinburgh EH11 1NH</p>
-              <p>📞 +44 131 229 3402</p>
+              <p className="mb-2">35 Polwarth Cres</p>
+              <p className="mb-2">Edinburgh EH11 1HR</p>
+              <p>📞 +44 131 221 9906</p>
             </div>
             
             <div className="bg-white/10 rounded-lg p-6">

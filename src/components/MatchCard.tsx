@@ -32,7 +32,7 @@ export function convertDatabaseMatchToCardProps(
     // Add watch party info for upcoming matches (Polwarth Tavern)
     watchParty: isUpcoming ? {
       location: 'Polwarth Tavern',
-      address: '15 Polwarth Pl, Edinburgh EH11 1NH',
+      address: '35 Polwarth Cres, Edinburgh EH11 1HR',
       time: new Date(dbMatch.date_time).toLocaleTimeString('es-ES', { 
         hour: '2-digit', 
         minute: '2-digit' 

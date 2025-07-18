@@ -163,7 +163,7 @@ export default function HeroCommunity() {
               </p>
               <div className="text-sm opacity-90">
                 <MapPin className="inline h-4 w-4 mr-2" />
-                15 Polwarth Place, Edinburgh EH11 1NH
+                35 Polwarth Cresace, Edinburgh EH11 1HR
               </div>
             </div>
           </div>

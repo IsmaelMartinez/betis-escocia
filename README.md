@@ -381,10 +381,13 @@ The project maintains technical infrastructure for match data but prioritizes co
 
 ## 🏠 Polwarth Tavern
 
-**Our home in Edinburgh:**
-- Address: 15 Polwarth Pl, Edinburgh EH11 1NH
-- Phone: +44 131 229 3402
+- **Our home in Edinburgh:**
+-
+- Address: 35 Polwarth Cres, Edinburgh EH11 1HR
+- Phone: +44 131 221 9906
 - We watch every Betis match here!
+-
+
 
 ## 🌐 Deployment
 

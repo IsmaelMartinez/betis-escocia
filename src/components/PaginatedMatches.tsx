@@ -65,7 +65,7 @@ function transformMatch(match: Match, isUpcoming: boolean = false) {
     result: getResultString(),
     watchParty: isUpcoming ? {
       location: "Polwarth Tavern",
-      address: "15 Polwarth Pl, Edinburgh EH11 1NH",
+      address: "35 Polwarth Cres, Edinburgh EH11 1HR",
       time: "30 minutos antes del partido"
     } : undefined
   };

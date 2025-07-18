@@ -10,7 +10,7 @@ export default function CollectionPointsGuide() {
     {
       name: "Polwarth Tavern",
       icon: "🍺",
-      address: "Polwarth Gardens, Edinburgh EH11 1NH",
+      address: "35 Polwarth Cres, Edinburgh EH11 1HR",
       description: "Nuestro hogar bético en Edimburgo",
       times: [
         { day: "Días de partido", time: "Desde 2 horas antes del kick-off" },
