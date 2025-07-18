@@ -1,8 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
-import { withFeatureFlag } from '@/lib/featureProtection';
+import { isFeatureEnabled } from '@/lib/flags';
 
-function HistoriaPage() {
+export default function HistoriaPage() {
+  if (!isFeatureEnabled('show-history')) {
+    return null;
+  }
   return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-white py-8">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -174,4 +177,3 @@ function HistoriaPage() {
   );
 }
 
-export default withFeatureFlag(HistoriaPage, 'showHistory');

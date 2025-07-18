@@ -2,7 +2,7 @@ import Link from 'next/link';
 import HeroCommunity from '@/components/HeroCommunity';
 import UpcomingMatchesWidget from '@/components/UpcomingMatchesWidget';
 import ClassificationWidget from '@/components/ClassificationWidget';
-import { FeatureWrapper } from '@/lib/featureProtection';
+import { isFeatureEnabled } from '@/lib/flags';
 
 export default function Home() {
   
@@ -16,16 +16,12 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Upcoming Matches */}
             <div className="lg:col-span-3">
-              <FeatureWrapper feature="showPartidos">
-                <UpcomingMatchesWidget className="" />
-              </FeatureWrapper>
+              {isFeatureEnabled('show-partidos') && <UpcomingMatchesWidget className="" />}
             </div>
             
             {/* Classification */}
             <div className="lg:col-span-1">
-              <FeatureWrapper feature="showClasificacion">
-                <ClassificationWidget className="" />
-              </FeatureWrapper>
+              {isFeatureEnabled('show-clasificacion') && <ClassificationWidget className="" />}
             </div>
           </div>
         </div>
@@ -62,7 +58,7 @@ export default function Home() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
-            <FeatureWrapper feature="showUnete">
+            {isFeatureEnabled('show-unete') && (
               <Link
                 href="/unete"
                 className="bg-betis-gold hover:bg-betis-gold-dark text-betis-black px-10 py-5 rounded-2xl font-black text-xl shadow-2xl hover:shadow-betis-gold/25 transition-all duration-300 transform hover:scale-105 group"
@@ -71,35 +67,37 @@ export default function Home() {
                   💬 Únete
                 </span>
               </Link>
-            </FeatureWrapper>
+            )}
             
-            <FeatureWrapper feature="showSocialMedia">
-              <a
-                href="https://www.facebook.com/groups/beticosenescocia/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group bg-blue-500 backdrop-blur-sm hover:bg-blue-600 px-10 py-5 rounded-2xl font-bold text-xl text-white hover:text-betis-gold transition-all duration-300 transform hover:scale-105"
-              >
-                <span className="flex items-center">
-                  📘 Facebook
-                </span>
-              </a>
-              
-              <a
-                href="https://www.youtube.com/beticosenescocia"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group bg-red-500 backdrop-blur-sm hover:bg-red-600 px-10 py-5 rounded-2xl font-bold text-xl text-white hover:text-betis-gold transition-all duration-300 transform hover:scale-105"
-              >
-                <span className="flex items-center">
-                  📺 YouTube
-                </span>
-              </a>
-            </FeatureWrapper>
+            {isFeatureEnabled('show-social-media') && (
+              <>
+                <a
+                  href="https://www.facebook.com/groups/beticosenescocia/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group bg-blue-500 backdrop-blur-sm hover:bg-blue-600 px-10 py-5 rounded-2xl font-bold text-xl text-white hover:text-betis-gold transition-all duration-300 transform hover:scale-105"
+                >
+                  <span className="flex items-center">
+                    📘 Facebook
+                  </span>
+                </a>
+                
+                <a
+                  href="https://www.youtube.com/beticosenescocia/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group bg-red-500 backdrop-blur-sm hover:bg-red-600 px-10 py-5 rounded-2xl font-bold text-xl text-white hover:text-betis-gold transition-all duration-300 transform hover:scale-105"
+                >
+                  <span className="flex items-center">
+                    📺 YouTube
+                  </span>
+                </a>
+              </>
+            )}
           </div>
           
           {/* Contact info */}
-          <FeatureWrapper feature="showContacto">
+          {isFeatureEnabled('show-contacto') && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
               <div className="bg-green-600 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
                 <h3 className="text-lg font-bold mb-3 text-betis-gold">📍 Ubicación</h3>
@@ -128,7 +126,7 @@ export default function Home() {
                 </p>
               </div>
             </div>
-          </FeatureWrapper>
+          )}
         </div>
       </section>
     </>

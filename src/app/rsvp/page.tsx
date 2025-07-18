@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Calendar, MapPin, Users, Clock, CheckCircle, ChevronDown } from 'lucide-react';
 import RSVPForm from '@/components/RSVPForm';
-import { withFeatureFlag } from '@/lib/featureProtection';
+import { isFeatureEnabled } from '@/lib/flags';
 import { getUpcomingMatchesWithRSVPCounts, Match } from '@/lib/supabase';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
@@ -205,7 +205,7 @@ function RSVPPage() {
               <div className="text-center">
                 <MapPin className="h-8 w-8 mx-auto mb-2" />
                 <p className="font-bold">Polwarth Tavern</p>
-                <p className="text-sm opacity-90">15 Polwarth Pl, Edinburgh</p>
+                <p className="text-sm opacity-90">35 Polwarth Cres, Edinburgh</p>
                 <p className="text-sm opacity-90">Llegada: 19:30</p>
               </div>
             </div>
@@ -288,7 +288,7 @@ function RSVPPage() {
             <div>
               <h3 className="text-xl font-bold mb-4">Polwarth Tavern</h3>
               <div className="space-y-2 text-lg">
-                <p>📍 15 Polwarth Pl, Edinburgh EH11 1NH</p>
+                <p>📍 The Polwarth Tavern, 35 Polwarth Cres, Edinburgh EH11 1HR</p>
                 <p>🕕 Llegada recomendada: 30 min antes</p>
                 <p>🍺 Bar completo con ambiente bético</p>
               </div>
@@ -309,7 +309,12 @@ function RSVPPage() {
 }
 
 // Wrapper component to handle Suspense boundary
-function RSVPPageWithSuspense() {
+
+export default function RSVPPageWithSuspense() {
+  if (!isFeatureEnabled('show-rsvp')) {
+    return null;
+  }
+  
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <RSVPPage />
@@ -317,4 +322,3 @@ function RSVPPageWithSuspense() {
   );
 }
 
-export default withFeatureFlag(RSVPPageWithSuspense, 'showRSVP');

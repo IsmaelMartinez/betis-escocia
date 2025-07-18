@@ -5,7 +5,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
-import { withFeatureFlag, FeatureWrapper } from '@/lib/featureProtection';
+import { isFeatureEnabled } from '@/lib/flags';
 
 export const metadata: Metadata = {
   title: 'Clasificación de La Liga - Peña Bética Escocesa',
@@ -254,14 +254,14 @@ async function StandingsContent() {
 
         {/* Actions */}
         <div className="mt-8 flex justify-center">
-          <FeatureWrapper feature="showPartidos">
+          {isFeatureEnabled('show-partidos') && (
             <Link
               href="/partidos"
               className="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-md"
             >
               Ver Partidos del Betis
             </Link>
-          </FeatureWrapper>
+          )}
         </div>
       </div>
     </div>
@@ -269,7 +269,7 @@ async function StandingsContent() {
 }
 
 // Main page component with error boundary and loading
-async function StandingsPage() {
+async function StandingsPageInternal() {
   return (
     <ErrorBoundary>
       <Suspense fallback={
@@ -284,4 +284,20 @@ async function StandingsPage() {
 }
 
 // Export the protected component
-export default withFeatureFlag(StandingsPage, 'showClasificacion');
+export default function StandingsPage() {
+  if (!isFeatureEnabled('show-clasificacion')) {
+    return null;
+  }
+
+  return (
+    <ErrorBoundary>
+      <Suspense fallback={
+        <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center">
+          <LoadingSpinner />
+        </div>
+      }>
+        <StandingsContent />
+      </Suspense>
+    </ErrorBoundary>
+  );
+}

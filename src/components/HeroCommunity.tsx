@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { MapPin, Users, Heart, Coffee, Smile } from 'lucide-react';
-import { FeatureWrapper } from '@/lib/featureProtection';
+import { isFeatureEnabled } from '@/lib/flags';
 import dynamic from 'next/dynamic';
 
 // Lazy load components that are below the fold
@@ -89,7 +89,7 @@ export default function HeroCommunity() {
             </div>
 
 {/* CTA buttons - official style */}
-          <FeatureWrapper feature="showUnete">
+          {isFeatureEnabled('show-unete') && (
             <div className="flex flex-col sm:flex-row gap-4">
               <Link 
                 href="/unete"
@@ -101,7 +101,7 @@ export default function HeroCommunity() {
                 </span>
               </Link>
             </div>
-          </FeatureWrapper>
+          )}
           </div>
 
           {/* Right side - Community showcase in official style */}
@@ -163,7 +163,7 @@ export default function HeroCommunity() {
               </p>
               <div className="text-sm opacity-90">
                 <MapPin className="inline h-4 w-4 mr-2" />
-                15 Polwarth Place, Edinburgh EH11 1NH
+                The Polwarth Tavern, 35 Polwarth Cres, Edinburgh EH11 1HR
               </div>
             </div>
           </div>

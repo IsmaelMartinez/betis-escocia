@@ -3,9 +3,12 @@
 import { Camera, Hash, ExternalLink } from 'lucide-react';
 import InstagramEmbed from '@/components/InstagramEmbed';
 import FacebookPagePlugin from '@/components/FacebookPagePlugin';
-import { withFeatureFlag } from '@/lib/featureProtection';
+import { isFeatureEnabled } from '@/lib/flags';
 
-function GalleryPage() {
+export default function GalleryPage() {
+  if (!isFeatureEnabled('show-galeria')) {
+    return null;
+  }
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -173,4 +176,3 @@ function GalleryPage() {
   );
 }
 
-export default withFeatureFlag(GalleryPage, 'showGaleria');

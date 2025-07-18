@@ -2,11 +2,11 @@
 
 import { SignIn } from '@clerk/nextjs';
 import Link from 'next/link';
-import { isFeatureEnabled } from '@/lib/featureFlags';
+import { isFeatureEnabled } from '@/lib/flags';
 
 export default function SignInPage() {
   // Check if authentication is enabled
-  const isAuthEnabled = isFeatureEnabled('showClerkAuth');
+  const isAuthEnabled = isFeatureEnabled('show-clerk-auth');
   
   if (!isAuthEnabled) {
     return (

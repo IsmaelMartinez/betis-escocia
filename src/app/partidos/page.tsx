@@ -1,14 +1,13 @@
 import { ApiErrorBoundary } from '@/components/ErrorBoundary';
 import BetisPositionWidget from '@/components/BetisPositionWidget';
 import AllDatabaseMatches from '@/components/AllDatabaseMatches';
-import { FeatureWrapper } from '@/lib/featureProtection';
 import { notFound } from 'next/navigation';
-import { isFeatureEnabled } from '@/lib/featureFlags';
+import { isFeatureEnabled } from '@/lib/flags';
 import Link from 'next/link';
 
 export default function MatchesPage() {
   // Check if partidos feature is enabled
-  if (!isFeatureEnabled('showPartidos')) {
+  if (!isFeatureEnabled('show-partidos')) {
     notFound();
   }
 
@@ -23,7 +22,7 @@ export default function MatchesPage() {
           </p>
           
           {/* Admin controls */}
-          <FeatureWrapper feature="showAdmin">
+          {isFeatureEnabled('show-admin') && (
             <div className="mt-6">
               <Link
                 href="/admin/matches"
@@ -32,7 +31,7 @@ export default function MatchesPage() {
                 ⚙️ Gestionar Partidos
               </Link>
             </div>
-          </FeatureWrapper>
+          )}
         </div>
       </section>
 
@@ -48,13 +47,13 @@ export default function MatchesPage() {
             </div>
             
             {/* Sidebar - Betis Position Widget */}
-            <FeatureWrapper feature="showClasificacion">
+            {isFeatureEnabled('show-clasificacion') && (
               <div className="lg:col-span-1">
                 <div className="sticky top-8">
                   <BetisPositionWidget />
                 </div>
               </div>
-            </FeatureWrapper>
+            )}
           </div>
         </div>
       </section>

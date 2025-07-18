@@ -6,7 +6,7 @@ import { FormSuccessMessage, FormErrorMessage, FormLoadingMessage } from '@/comp
 import Field, { ValidatedInput, ValidatedSelect, ValidatedTextarea } from '@/components/Field';
 import { useFormValidation, commonValidationRules } from '@/lib/formValidation';
 import { useUser } from '@clerk/nextjs';
-import { isFeatureEnabled } from '@/lib/featureFlags';
+import { isFeatureEnabled } from '@/lib/flags';
 
 interface RSVPFormProps {
   readonly onSuccess?: () => void;
@@ -22,7 +22,7 @@ const rsvpValidationRules = {
 
 export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) {
   const { user } = useUser();
-  const isAuthEnabled = isFeatureEnabled('showClerkAuth');
+  const isAuthEnabled = isFeatureEnabled('show-clerk-auth');
   
   const {
     data: formData,

@@ -10,7 +10,7 @@ import {
   MessageCircle, 
   HelpCircle
 } from 'lucide-react';
-import { withFeatureFlag } from '@/lib/featureProtection';
+import { isFeatureEnabled } from '@/lib/flags';
 import { FormSuccessMessage, FormErrorMessage, FormLoadingMessage } from '@/components/MessageComponent';
 
 interface ContactFormData {
@@ -67,7 +67,10 @@ const formTypes = [
   }
 ];
 
-function ContactPage() {
+export default function ContactPage() {
+  if (!isFeatureEnabled('show-contacto')) {
+    return null;
+  }
   const [formData, setFormData] = useState<ContactFormData>({
     name: '',
     email: '',
@@ -470,4 +473,3 @@ function ContactPage() {
   );
 }
 
-export default withFeatureFlag(ContactPage, 'showContacto');

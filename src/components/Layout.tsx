@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash, User, LogIn, LogOut, UserPlus } from 'lucide-react';
 import BetisLogo from '@/components/BetisLogo';
-import { getEnabledNavigationItems, getFeatureFlagsStatus, isFeatureEnabled } from '@/lib/featureFlags';
+import { useFeatureFlag } from '@/lib/flags';
 import { useUser, useClerk } from '@clerk/nextjs';
+import DebugFlags from '@/components/DebugFlags';
 
 interface LayoutProps {
   readonly children: React.ReactNode;
@@ -14,41 +15,48 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [debugInfo, setDebugInfo] = useState<{
-    flags: Record<string, boolean>;
-    environment: string;
-    enabledFeatures: string[];
-    disabledFeatures: string[];
-    cacheStatus: { cached: boolean; expires: string };
-  } | null>(null);
-  
-  // Use feature flags to determine which navigation items to show
-  const enabledNavigation = getEnabledNavigationItems();
   
   // Authentication state
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
-  const isAuthEnabled = isFeatureEnabled('showClerkAuth');
+  const isAuthEnabled = useFeatureFlag('show-clerk-auth');
   
-  // Load debug information asynchronously
-  useEffect(() => {
-    const loadDebugInfo = async () => {
-      try {
-        const info = await getFeatureFlagsStatus();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setDebugInfo(info as any);
-      } catch (error) {
-        console.error('Error loading debug info:', error);
-      }
-    };
-    
-    loadDebugInfo();
-  }, []);
+  // Feature flags
+  const showRsvp = useFeatureFlag('show-rsvp');
+  const showClasificacion = useFeatureFlag('show-clasificacion');
+  const showPartidos = useFeatureFlag('show-partidos');
+  const showColeccionables = useFeatureFlag('show-coleccionables');
+  const showGaleria = useFeatureFlag('show-galeria');
+  const showHistory = useFeatureFlag('show-history');
+  const showNosotros = useFeatureFlag('show-nosotros');
+  const showUnete = useFeatureFlag('show-unete');
+  const showContacto = useFeatureFlag('show-contacto');
+  const showPorra = useFeatureFlag('show-porra');
+  const showRedesSociales = useFeatureFlag('show-redes-sociales');
+  const showAdmin = useFeatureFlag('show-admin');
   
   const handleSignOut = async () => {
     await signOut();
     setIsUserMenuOpen(false);
   };
+
+  const navigationItems = [
+    { name: 'Inicio', href: '/', enabled: true },
+    { name: 'RSVP', href: '/rsvp', enabled: showRsvp },
+    { name: 'Clasificación', href: '/clasificacion', enabled: showClasificacion },
+    { name: 'Partidos', href: '/partidos', enabled: showPartidos },
+    { name: 'Coleccionables', href: '/coleccionables', enabled: showColeccionables },
+    { name: 'Galería', href: '/galeria', enabled: showGaleria },
+    { name: 'Historia', href: '/historia', enabled: showHistory },
+    { name: 'Nosotros', href: '/nosotros', enabled: showNosotros },
+    { name: 'Únete', href: '/unete', enabled: showUnete },
+    { name: 'Contacto', href: '/contacto', enabled: showContacto },
+    { name: 'Porra', href: '/porra', enabled: showPorra },
+    { name: 'Redes Sociales', href: '/redes-sociales', enabled: showRedesSociales },
+    { name: 'Admin', href: '/admin', enabled: showAdmin },
+  ];
+
+  const enabledNavigation = navigationItems.filter((item) => item.enabled);
 
   return (
     <div className="min-h-screen bg-white">
@@ -366,17 +374,9 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </footer>
 
-      {/* Debug Info (Development Only) */}
-      {debugInfo && (
-        <div className="fixed bottom-4 right-4 bg-gray-900 text-white p-3 rounded text-xs max-w-xs z-50">
-          <div className="font-bold">Feature Flags Debug</div>
-          <div>Environment: {debugInfo.environment}</div>
-          <div>Enabled: {debugInfo.enabledFeatures.join(', ')}</div>
-          {debugInfo.disabledFeatures.length > 0 && (
-            <div>Disabled: {debugInfo.disabledFeatures.join(', ')}</div>
-          )}
-        </div>
-      )}
+      {/* Debug component for development */}
+      <DebugFlags />
+
     </div>
   );
 }

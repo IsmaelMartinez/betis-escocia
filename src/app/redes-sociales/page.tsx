@@ -4,9 +4,12 @@ import { useState } from 'react';
 import { Instagram, Facebook, Copy, Check, Camera, Share2, Tag } from 'lucide-react';
 import InstagramEmbed from '@/components/InstagramEmbed';
 import FacebookPagePlugin from '@/components/FacebookPagePlugin';
-import { withFeatureFlag } from '@/lib/featureProtection';
+import { isFeatureEnabled } from '@/lib/flags';
 
-function SocialTaggingGuide() {
+export default function SocialTaggingGuide() {
+  if (!isFeatureEnabled('show-redes-sociales')) {
+    return null;
+  }
   const [copiedText, setCopiedText] = useState<string>('');
 
   const hashtags = {
@@ -519,4 +522,3 @@ function SocialTaggingGuide() {
   );
 }
 
-export default withFeatureFlag(SocialTaggingGuide, 'showRedesSociales');

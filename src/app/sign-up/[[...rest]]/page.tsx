@@ -1,12 +1,12 @@
 'use client';
 
 import { SignUp } from '@clerk/nextjs';
-import { isFeatureEnabled } from '@/lib/featureFlags';
+import { isFeatureEnabled } from '@/lib/flags';
 import Link from 'next/link';
 
 export default function SignUpPage() {
   // Check if authentication is enabled
-  const isAuthEnabled = isFeatureEnabled('showClerkAuth');
+  const isAuthEnabled = isFeatureEnabled('show-clerk-auth');
   
   if (!isAuthEnabled) {
     return (

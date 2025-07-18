@@ -1,6 +1,49 @@
 # Feature Flags Environment Variables
 
-This file shows how to control which features are visible in the application using environment variables.
+This file shows how to control which features are visible in the application using e# Feature Flags Documentation
+
+## Overview
+
+This application uses a simplified environment variable-based feature flag system. All features are enabled by default unless explicitly disabled through environment variables.
+
+## How It Works
+
+The feature flag system is implemented in `/src/lib/flags.ts` with a single `isFeatureEnabled()` function that:
+
+1. Takes a feature name (with or without "show-" prefix)
+2. Converts it to the corresponding environment variable name
+3. Returns `true` unless the environment variable is explicitly set to "false"
+
+## Implementation
+
+The feature flags are implemented in `/src/lib/flags.ts` and integrated throughout the application via direct imports.
+
+### Adding a New Feature Flag
+
+To add a new feature flag:
+
+1. Use the `isFeatureEnabled()` function in your component:
+
+```typescript
+import { isFeatureEnabled } from '@/lib/flags';
+
+export default function MyComponent() {
+  if (!isFeatureEnabled('my-feature')) {
+    return null;
+  }
+  
+  return <div>My feature content</div>;
+}
+```
+
+2. Optionally set the environment variable to disable the feature:
+```bash
+NEXT_PUBLIC_FEATURE_MY_FEATURE=false
+```
+
+## Available Feature Flags
+
+All feature flags follow the pattern `NEXT_PUBLIC_FEATURE_<NAME>` where `<NAME>` is the uppercase version of the feature name with underscores instead of dashes.nt variables.
 
 ## 🔒 SECURE BY DEFAULT APPROACH
 
