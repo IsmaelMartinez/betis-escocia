@@ -114,7 +114,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let enabledNavigation: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const debugInfo: any = null;
   try {
     await initializeFeatureFlags();
     enabledNavigation = await getEnabledNavigationItemsAsync();
@@ -146,7 +149,7 @@ export default async function RootLayout({
           afterSignInUrl="/dashboard"
           afterSignUpUrl="/dashboard"
         >
-          <Layout enabledNavigation={enabledNavigation}>
+          <Layout enabledNavigation={enabledNavigation} debugInfo={debugInfo}>
             {children}
           </Layout>
         </ClerkProvider>

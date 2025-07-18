@@ -1,15 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash, User, LogIn, LogOut, UserPlus } from 'lucide-react';
 import BetisLogo from '@/components/BetisLogo';
-import { getFeatureFlagsStatus, isFeatureEnabled } from '@/lib/featureFlags';
+import { isFeatureEnabled } from '@/lib/featureFlags';
 import { useUser, useClerk } from '@clerk/nextjs';
 
 interface LayoutProps {
   readonly children: React.ReactNode;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly enabledNavigation: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly debugInfo: any;
 }
 
