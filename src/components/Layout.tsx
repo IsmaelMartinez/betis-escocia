@@ -4,14 +4,15 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash, User, LogIn, LogOut, UserPlus } from 'lucide-react';
 import BetisLogo from '@/components/BetisLogo';
-import { getEnabledNavigationItems, getFeatureFlagsStatus, isFeatureEnabled } from '@/lib/featureFlags';
+import { getFeatureFlagsStatus, isFeatureEnabled } from '@/lib/featureFlags';
 import { useUser, useClerk } from '@clerk/nextjs';
 
 interface LayoutProps {
   readonly children: React.ReactNode;
+  readonly enabledNavigation: any[];
 }
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ children, enabledNavigation }: LayoutProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [debugInfo, setDebugInfo] = useState<{
@@ -21,9 +22,6 @@ export default function Layout({ children }: LayoutProps) {
     disabledFeatures: string[];
     cacheStatus: { cached: boolean; expires: string };
   } | null>(null);
-  
-  // Use feature flags to determine which navigation items to show
-  const enabledNavigation = getEnabledNavigationItems();
   
   // Authentication state
   const { user, isLoaded } = useUser();

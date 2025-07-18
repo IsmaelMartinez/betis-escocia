@@ -6,6 +6,7 @@ import OfflineDetector from "@/components/OfflineDetector";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClerkProvider } from '@clerk/nextjs';
+import { getEnabledNavigationItemsAsync, initializeFeatureFlags } from '@/lib/featureFlags';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -108,11 +109,22 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let enabledNavigation: any[] = [];
+  try {
+    await initializeFeatureFlags();
+    enabledNavigation = await getEnabledNavigationItemsAsync();
+    console.log('[RootLayout] Flagsmith initialized successfully. Enabled Navigation:', enabledNavigation);
+  } catch (error) {
+    console.error('[RootLayout] Error during Flagsmith initialization or flag fetching:', error);
+    // Fallback to an empty array or default navigation items if initialization fails
+    enabledNavigation = []; 
+  }
+
   return (
     <html lang="es">
       <body
@@ -134,7 +146,7 @@ export default function RootLayout({
           afterSignInUrl="/dashboard"
           afterSignUpUrl="/dashboard"
         >
-          <Layout>
+          <Layout enabledNavigation={enabledNavigation}>
             {children}
           </Layout>
         </ClerkProvider>

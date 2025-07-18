@@ -5,7 +5,7 @@
  * fallback mechanisms, and performance optimizations.
  */
 
-import flagsmith from 'flagsmith';
+import flagsmith from 'flagsmith/isomorphic';
 import { FlagsmithConfig, FlagsmithFeatureName, FlagsmithPerformanceMetrics } from './types';
 // Caching logic removed; no local cache.
 import { getFallbackManager, withFallback, getEnvironmentVariableFallback } from './fallback';
@@ -45,16 +45,21 @@ class FlagsmithManager {
   private async performInitialization(): Promise<void> {
     try {
       const startTime = Date.now();
-      
-      await flagsmith.init({
-        environmentID: this.config.environmentID,
-        api: this.config.api,
-        enableLogs: this.config.enableLogs,
-        cacheFlags: this.config.cacheOptions?.skipAPI !== true,
-        ...(this.config.cacheOptions && {
-          cacheOptions: this.config.cacheOptions
-        })
-      });
+
+      // Ensure flagsmith.init is called only once per Node.js process
+      if (!(global as any).__flagsmithInitialized) {
+        await flagsmith.init({
+          environmentID: this.config.environmentID,
+          api: this.config.api,
+          enableLogs: this.config.enableLogs,
+          cacheFlags: this.config.cacheOptions?.skipAPI !== true,
+          ...(this.config.cacheOptions && {
+            cacheOptions: this.config.cacheOptions
+          })
+        });
+        (global as any).__flagsmithInitialized = true;
+        await flagsmith.getFlags();
+      }
 
       this.initialized = true;
       const initTime = Date.now() - startTime;
