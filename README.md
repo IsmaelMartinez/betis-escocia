@@ -340,6 +340,31 @@ The project includes automatic deployment via GitHub Actions. Set up these secre
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
+- `npm run test:e2e` - Run Playwright end-to-end tests in headless mode
+- `npm run test:e2e:headed` - Run Playwright end-to-end tests in headed mode (for debugging)
+
+### Running Playwright Tests Locally
+
+1.  **Ensure your development server is running:**
+    ```bash
+    npm run dev
+    ```
+2.  **Run the tests:**
+    ```bash
+    npm run test:e2e
+    ```
+    To see the browser UI during tests (for debugging):
+    ```bash
+    npm run test:e2e:headed
+    ```
+3.  **View Test Reports:** After the tests complete, an HTML report is generated. Open it with:
+    ```bash
+    npx playwright show-report
+    ```
+
+### Environment Variables for Playwright
+
+*   `PLAYWRIGHT_BASE_URL`: (Optional) Override the base URL for tests. Defaults to `http://localhost:3000`.
 
 ### Adding New Features
 

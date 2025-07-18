@@ -8,7 +8,7 @@ import { Suspense } from 'react';
 import { withFeatureFlag, FeatureWrapper } from '@/lib/featureProtection';
 
 export const metadata: Metadata = {
-  title: 'Clasificación de La Liga - Peña Bética Escocesa',
+  title: 'Clasificación de La Liga',
   description: 'Clasificación actual de La Liga Santander con la posición del Real Betis. Puntos, partidos jugados y estadísticas completas.',
 };
 
