@@ -7,7 +7,7 @@
 
 import flagsmith from 'flagsmith';
 import { FlagsmithConfig, FlagsmithFeatureName, FlagsmithPerformanceMetrics } from './types';
-import { getCache } from './cache';
+// Caching logic removed; no local cache.
 import { getFallbackManager, withFallback, getEnvironmentVariableFallback } from './fallback';
 
 class FlagsmithManager {
@@ -82,22 +82,9 @@ class FlagsmithManager {
       const result = await withFallback(
         flagName,
         async () => {
-          // Check cache first
-          const cache = getCache();
-          const cachedValue = cache.get(flagName);
-          
-          if (cachedValue !== null) {
-            return cachedValue;
-          }
-
-          // If not in cache, get from Flagsmith
+          // Direct feature check without caching
           this.performanceMetrics.apiCallCount++;
-          const hasFeature = flagsmith.hasFeature(flagName);
-          
-          // Cache the result
-          cache.set(flagName, hasFeature, this.config.cacheOptions?.ttl);
-          
-          return hasFeature;
+          return flagsmith.hasFeature(flagName);
         },
         this.getFallbackValue(flagName)
       );
@@ -124,25 +111,10 @@ class FlagsmithManager {
       const result = await withFallback(
         flagName,
         async () => {
-          // Check cache first
-          const cache = getCache();
-          const cachedValue = cache.get(flagName);
-          
-          if (cachedValue !== null) {
-            return cachedValue;
-          }
-
-          // If not in cache, get from Flagsmith
+          // Direct value retrieval without caching
           this.performanceMetrics.apiCallCount++;
           const value = flagsmith.getValue(flagName);
-          
-          // Normalize to boolean
-          const boolValue = typeof value === 'boolean' ? value : value === 'true';
-          
-          // Cache the result
-          cache.set(flagName, boolValue, this.config.cacheOptions?.ttl);
-          
-          return boolValue;
+          return typeof value === 'boolean' ? value : value === 'true';
         },
         defaultValue ?? this.getFallbackValue(flagName)
       );
@@ -201,9 +173,7 @@ class FlagsmithManager {
     try {
       await this.initialize();
       
-      // Clear cache
-      const cache = getCache();
-      cache.clear();
+      // Cache logic removed; no cache to clear.
       
       // Refresh Flagsmith flags
       await flagsmith.getFlags();
@@ -244,9 +214,7 @@ class FlagsmithManager {
       (this.performanceMetrics.flagEvaluationTime + evaluationTime) / 2;
     
     // Update cache hit rate
-    const cache = getCache();
-    const stats = cache.getStats();
-    this.performanceMetrics.cacheHitRate = stats.hitRate;
+    // Cache hit rate unavailable; caching disabled.
   }
 
   /**
@@ -260,15 +228,11 @@ class FlagsmithManager {
    * Get system status
    */
   async getSystemStatus() {
-    const cache = getCache();
-    const cacheStats = cache.getStats();
-    
     const fallbackManager = getFallbackManager();
     const fallbackStats = fallbackManager.getFallbackStats();
     
     return {
       initialized: this.initialized,
-      cache: cacheStats,
       fallback: fallbackStats,
       performance: this.performanceMetrics,
       config: {
@@ -293,9 +257,7 @@ class FlagsmithManager {
       errorCount: 0
     };
     
-    // Reset cache and fallback
-    const cache = getCache();
-    cache.clear();
+    // Cache reset logic removed.
     
     const fallbackManager = getFallbackManager();
     fallbackManager.reset();
