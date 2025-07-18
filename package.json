@@ -2,6 +2,9 @@
   "name": "betis",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -15,7 +18,7 @@
     "@vercel/speed-insights": "^1.2.0",
     "axios-rate-limit": "^1.4.0",
     "dotenv": "^17.1.0",
-    "flagsmith": "^10.0.0",
+    "flagsmith": "^9.2.0",
     "lucide-react": "^0.522.0",
     "next": "15.3.4",
     "react": "^19.0.0",
@@ -25,7 +28,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "axios": "^1.10.0",
