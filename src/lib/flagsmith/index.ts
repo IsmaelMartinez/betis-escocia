@@ -7,11 +7,10 @@
 
 import flagsmith from 'flagsmith/isomorphic';
 import { FlagsmithConfig, FlagsmithFeatureName, FlagsmithPerformanceMetrics } from './types';
-// Caching logic removed; no local cache.
-import { getFallbackManager, withFallback, getEnvironmentVariableFallback } from './fallback';
+// Fallback mechanism removed
 
 class FlagsmithManager {
-  private config: FlagsmithConfig;
+  private readonly config: FlagsmithConfig;
   private initialized: boolean = false;
   private performanceMetrics: FlagsmithPerformanceMetrics = {
     flagEvaluationTime: 0,
@@ -28,16 +27,11 @@ class FlagsmithManager {
   /**
    * Initialize Flagsmith SDK
    */
-  async initialize(): Promise<void> {
-    if (this.initialized) {
-      return;
-    }
-
+  public async initialize(): Promise<void> {
     // If already initializing, return the same promise
     if (this.initializationPromise) {
       return this.initializationPromise;
     }
-
     this.initializationPromise = this.performInitialization();
     await this.initializationPromise;
   }
@@ -47,18 +41,17 @@ class FlagsmithManager {
       const startTime = Date.now();
 
       // Ensure flagsmith.init is called only once per Node.js process
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (!(global as any).__flagsmithInitialized) {
         await flagsmith.init({
           environmentID: this.config.environmentID,
-          api: this.config.api,
-          enableLogs: this.config.enableLogs,
-          cacheFlags: this.config.cacheOptions?.skipAPI !== true,
-          ...(this.config.cacheOptions && {
-            cacheOptions: this.config.cacheOptions
-          })
+          // api: this.config.api,
+          // enableLogs: this.config.enableLogs
         });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (global as any).__flagsmithInitialized = true;
-        await flagsmith.getFlags();
+
+        flagsmith.getState();
       }
 
       this.initialized = true;
@@ -84,16 +77,9 @@ class FlagsmithManager {
       // Ensure SDK is initialized
       await this.initialize();
       
-      const result = await withFallback(
-        flagName,
-        async () => {
-          // Direct feature check without caching
-          this.performanceMetrics.apiCallCount++;
-          return flagsmith.hasFeature(flagName);
-        },
-        this.getFallbackValue(flagName)
-      );
-
+      await this.initialize();
+      this.performanceMetrics.apiCallCount++;
+      const result = flagsmith.hasFeature(flagName);
       this.updatePerformanceMetrics(startTime);
       return result;
     } catch (error) {
@@ -113,17 +99,10 @@ class FlagsmithManager {
       // Ensure SDK is initialized
       await this.initialize();
       
-      const result = await withFallback(
-        flagName,
-        async () => {
-          // Direct value retrieval without caching
-          this.performanceMetrics.apiCallCount++;
-          const value = flagsmith.getValue(flagName);
-          return typeof value === 'boolean' ? value : value === 'true';
-        },
-        defaultValue ?? this.getFallbackValue(flagName)
-      );
-
+      await this.initialize();
+      this.performanceMetrics.apiCallCount++;
+      const value = flagsmith.getValue(flagName);
+      const result = typeof value === 'boolean' ? value : value === 'true';
       this.updatePerformanceMetrics(startTime);
       return result;
     } catch (error) {
@@ -195,17 +174,10 @@ class FlagsmithManager {
   /**
    * Get fallback value for a flag
    */
-  private getFallbackValue(flagName: FlagsmithFeatureName): boolean {
-    const fallbackManager = getFallbackManager();
-    
-    // Try environment variable fallback first (for migration period)
-    const envFallback = getEnvironmentVariableFallback(flagName);
-    if (envFallback !== null) {
-      return envFallback;
-    }
-    
-    // Use fallback manager
-    return fallbackManager.getFallbackValue(flagName);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private getFallbackValue(_flagName: FlagsmithFeatureName): boolean {
+    // Fallback disabled: default to false
+    return false;
   }
 
   /**
@@ -233,12 +205,8 @@ class FlagsmithManager {
    * Get system status
    */
   async getSystemStatus() {
-    const fallbackManager = getFallbackManager();
-    const fallbackStats = fallbackManager.getFallbackStats();
-    
     return {
       initialized: this.initialized,
-      fallback: fallbackStats,
       performance: this.performanceMetrics,
       config: {
         environmentID: this.config.environmentID,
@@ -264,8 +232,7 @@ class FlagsmithManager {
     
     // Cache reset logic removed.
     
-    const fallbackManager = getFallbackManager();
-    fallbackManager.reset();
+    // Fallback mechanism removed; nothing to reset here.
   }
 }
 

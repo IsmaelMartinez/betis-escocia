@@ -10,38 +10,17 @@ import { useUser, useClerk } from '@clerk/nextjs';
 interface LayoutProps {
   readonly children: React.ReactNode;
   readonly enabledNavigation: any[];
+  readonly debugInfo: any;
 }
 
-export default function Layout({ children, enabledNavigation }: LayoutProps) {
+export default function Layout({ children, enabledNavigation, debugInfo }: LayoutProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [debugInfo, setDebugInfo] = useState<{
-    flags: Record<string, boolean>;
-    environment: string;
-    enabledFeatures: string[];
-    disabledFeatures: string[];
-    cacheStatus: { cached: boolean; expires: string };
-  } | null>(null);
   
   // Authentication state
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
   const isAuthEnabled = isFeatureEnabled('showClerkAuth');
-  
-  // Load debug information asynchronously
-  useEffect(() => {
-    const loadDebugInfo = async () => {
-      try {
-        const info = await getFeatureFlagsStatus();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setDebugInfo(info as any);
-      } catch (error) {
-        console.error('Error loading debug info:', error);
-      }
-    };
-    
-    loadDebugInfo();
-  }, []);
   
   const handleSignOut = async () => {
     await signOut();

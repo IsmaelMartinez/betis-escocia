@@ -146,19 +146,6 @@ The project uses Flagsmith for feature flag management, providing dynamic featur
    ```bash
    # Required: Flagsmith Environment ID
    NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID=your_environment_id_here
-   
-   # Optional: Flagsmith API Configuration
-   NEXT_PUBLIC_FLAGSMITH_API_URL=https://edge.api.flagsmith.com/api/v1/
-   NEXT_PUBLIC_FLAGSMITH_TIMEOUT=2000
-   NEXT_PUBLIC_FLAGSMITH_CACHE_TTL=60000
-   
-   # Optional: Debug and Performance
-   NEXT_PUBLIC_FLAGSMITH_DEBUG=true
-   NEXT_PUBLIC_FLAGSMITH_METRICS=true
-   NEXT_PUBLIC_FLAGSMITH_OFFLINE=false
-   
-   # Debug Mode (shows feature flag status)
-   NEXT_PUBLIC_DEBUG_MODE=true
    ```
 
 ### Using Feature Flags in Code
@@ -233,31 +220,7 @@ const metrics = manager.getPerformanceMetrics();
 console.log('Performance Metrics:', metrics);
 ```
 
-### Fallback Mechanisms
-
-The system includes multiple fallback layers:
-
-1. **Last Known Values**: Cached values from successful API calls
-2. **Configured Fallbacks**: Default values in `DEFAULT_FLAG_VALUES`
-3. **Environment Variables**: Legacy environment variable support
-4. **System Defaults**: Hard-coded safe defaults
-
 ### Troubleshooting
-
-#### Common Issues
-
-1. **"Environment ID required" Error**
-   - Ensure `NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID` is set
-   - Check that the environment ID is valid (starts with appropriate prefix)
-
-2. **Features Not Updating**
-   - Clear browser cache and localStorage
-   - Check if cache TTL is too high
-   - Verify feature flags are published in Flagsmith dashboard
-
-3. **API Timeout Issues**
-   - Increase timeout: `NEXT_PUBLIC_FLAGSMITH_TIMEOUT=5000`
-   - Enable offline mode: `NEXT_PUBLIC_FLAGSMITH_OFFLINE=true`
 
 #### Debug Commands
 
@@ -277,38 +240,6 @@ npm run dev
 - Set appropriate cache TTL values for production (60+ seconds)
 - Monitor error rates and fallback usage
 - Consider using Flagsmith's edge API for better performance
-
-## 📁 Project Structure
-
-```
-src/
-├── app/                 # Next.js App Router pages
-│   ├── api/            # Serverless API routes
-│   │   ├── rsvp/       # RSVP system (Supabase-powered)
-│   │   ├── contact/    # Contact forms (JSON-based)
-│   │   └── merchandise/# Merchandise system (JSON-based)
-│   ├── rsvp/           # RSVP attendance confirmation
-│   ├── coleccionables/ # Merchandise showcase
-│   └── galeria/        # Photo gallery
-├── components/         # Reusable UI components
-│   ├── Layout.tsx      # Main layout wrapper
-│   ├── Hero.tsx        # Homepage hero section
-│   ├── RSVPForm.tsx    # RSVP confirmation component
-│   └── MerchandiseCard.tsx # Merch display component
-├── lib/               # Utilities and services
-│   ├── supabase.ts    # Supabase client and types
-│   └── config.ts      # Configuration utilities
-└── globals.css        # Global styles with Betis branding
-
-sql/                   # Database setup scripts
-├── initial_setup.sql        # Initial database schema
-├── cleanup_old_rsvps.sql        # Data retention policies
-
-data/                  # JSON data storage (non-critical features)
-├── merchandise.json   # Merchandise catalog
-├── orders.json        # Order submissions
-└── contact.json       # Contact form submissions
-```
 
 ## 🗄️ Database Setup
 
@@ -351,22 +282,6 @@ Confirm your attendance for match viewing parties at Polwarth Tavern:
 - Automatic reminders and updates
 - Help us plan seating and atmosphere
 
-### �️ Merchandise Showcase
-
-Official Peña Bética Escocesa gear to show your colors:
-- **Bufandas** (Scarves): Show your support with our custom scarves
-- **Llaveros** (Keychains): Perfect for your keys or bag
-- **Parches** (Patches): Customize your jacket or backpack
-- **Camisetas** (T-shirts): Limited edition peña designs
-
-### 📸 Social Media Gallery
-
-Connect and share your match day experiences:
-- Follow us on Instagram and Facebook for live updates
-- Tag @penabetiscaescocesa in your posts wearing peña merchandise
-- Use our hashtags to be featured in our gallery
-- Join our vibrant social media community
-
 ## ⚽ Match Information
 
 While we focus on community features, basic match information is maintained for reference.
@@ -374,7 +289,7 @@ While we focus on community features, basic match information is maintained for 
 ### 📊 Data Sources
 
 - **La Liga & Copa del Rey**: Available via API integration
-- **UEFA Conference League**: Manually maintained
+- **UEFA**: Manually maintained
 - **Friendlies**: Manually maintained
 
 The project maintains technical infrastructure for match data but prioritizes community engagement features.
@@ -445,6 +360,7 @@ The project includes automatic deployment via GitHub Actions. Set up these secre
 - [ADR-001: Clerk Authentication](docs/adr/001-clerk-authentication.md)
 - [ADR-002: Football-Data.org API](docs/adr/002-football-api.md)
 - [ADR-003: Supabase Database](docs/adr/003-supabase-database.md)
+- [ADR-004: Flagsmith Feature Flags](docs/adr/004-flagsmith-feature-flags.md)
 
 ### Technical Documentation
 - [API Documentation](docs/api/)
