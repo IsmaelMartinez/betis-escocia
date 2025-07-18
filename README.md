@@ -388,7 +388,6 @@ The project maintains technical infrastructure for match data but prioritizes co
 - We watch every Betis match here!
 -
 
-
 ## 🌐 Deployment
 
 ### Vercel Setup

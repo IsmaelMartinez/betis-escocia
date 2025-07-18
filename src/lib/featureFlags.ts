@@ -26,7 +26,6 @@ interface FeatureFlags {
   showNosotros: boolean;
   showUnete: boolean;
   showContacto: boolean;
-  showPorra: boolean;
   showRedesSociales: boolean;
   showAdmin: boolean;
   showClerkAuth: boolean;
@@ -85,7 +84,6 @@ export async function getFeatureFlags(): Promise<FeatureFlags> {
       showNosotros: flagValues['show-nosotros'],
       showUnete: flagValues['show-unete'],
       showContacto: flagValues['show-contacto'],
-      showPorra: flagValues['show-porra'],
       showRedesSociales: flagValues['show-redes-sociales'],
       showAdmin: flagValues['show-admin'],
       showClerkAuth: flagValues['show-clerk-auth'],
@@ -126,7 +124,6 @@ function getLegacyEnvironmentFlags(): FeatureFlags {
     showNosotros: true,
     showUnete: true,
     showContacto: false,
-    showPorra: false,
     showRedesSociales: false,
     showAdmin: false,
     showClerkAuth: false,
@@ -177,9 +174,6 @@ function getLegacyEnvironmentFlags(): FeatureFlags {
     showContacto: process.env.NEXT_PUBLIC_FEATURE_CONTACTO !== undefined 
       ? process.env.NEXT_PUBLIC_FEATURE_CONTACTO === 'true'
       : defaultFlags.showContacto,
-    showPorra: process.env.NEXT_PUBLIC_FEATURE_PORRA !== undefined 
-      ? process.env.NEXT_PUBLIC_FEATURE_PORRA === 'true'
-      : defaultFlags.showPorra,
     showRedesSociales: process.env.NEXT_PUBLIC_FEATURE_REDES_SOCIALES !== undefined 
       ? process.env.NEXT_PUBLIC_FEATURE_REDES_SOCIALES === 'true'
       : defaultFlags.showRedesSociales,
@@ -304,12 +298,6 @@ export function getEnabledNavigationItems() {
       feature: 'showContacto' as keyof FeatureFlags
     },
     { 
-      name: 'Porra', 
-      href: '/porra', 
-      nameEn: 'Porra',
-      feature: 'showPorra' as keyof FeatureFlags
-    },
-    { 
       name: 'Redes Sociales', 
       href: '/redes-sociales', 
       nameEn: 'Social Media',
@@ -343,7 +331,6 @@ export async function getEnabledNavigationItemsAsync(): Promise<NavigationItem[]
     { name: 'Nosotros', href: '/nosotros', nameEn: 'About', feature: 'show-nosotros' },
     { name: 'Únete', href: '/unete', nameEn: 'Join', feature: 'show-unete' },
     { name: 'Contacto', href: '/contacto', nameEn: 'Contact', feature: 'show-contacto' },
-    { name: 'Porra', href: '/porra', nameEn: 'Porra', feature: 'show-porra' },
     { name: 'Redes Sociales', href: '/redes-sociales', nameEn: 'Social Media', feature: 'show-redes-sociales' },
     { name: 'Admin', href: '/admin', nameEn: 'Admin', feature: 'show-admin' }
   ];

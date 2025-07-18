@@ -51,7 +51,7 @@ This PRD outlines the implementation of Flagsmith as the feature flag provider f
 
 ### 3. Migration and Integration
 11. **FR11**: The system must completely replace all environment variable-based feature flags
-12. **FR12**: The system must migrate existing flags: `showClasificacion`, `showColeccionables`, `showGaleria`, `showRSVP`, `showPartidos`, `showSocialMedia`, `showHistory`, `showNosotros`, `showUnete`, `showContacto`, `showPorra`, `showRedesSociales`, `showAdmin`, `showClerkAuth`
+12. **FR12**: The system must migrate existing flags: `showClasificacion`, `showColeccionables`, `showGaleria`, `showRSVP`, `showPartidos`, `showSocialMedia`, `showHistory`, `showNosotros`, `showUnete`, `showContacto`, `showRedesSociales`, `showAdmin`, `showClerkAuth`
 13. **FR13**: The system must maintain existing default values for all flags during migration
 14. **FR14**: The system must support environment-specific configurations (dev/staging/prod)
 15. **FR15**: The system must provide migration utilities to sync existing env var values to Flagsmith
@@ -206,7 +206,6 @@ const flagsmithConfig = {
 - `NEXT_PUBLIC_FEATURE_NOSOTROS` → `show-nosotros`
 - `NEXT_PUBLIC_FEATURE_UNETE` → `show-unete`
 - `NEXT_PUBLIC_FEATURE_CONTACTO` → `show-contacto`
-- `NEXT_PUBLIC_FEATURE_PORRA` → `show-porra`
 - `NEXT_PUBLIC_FEATURE_REDES_SOCIALES` → `show-redes-sociales`
 - `NEXT_PUBLIC_FEATURE_ADMIN` → `show-admin`
 - `NEXT_PUBLIC_FEATURE_CLERK_AUTH` → `show-clerk-auth`
