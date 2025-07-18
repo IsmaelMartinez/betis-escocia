@@ -57,8 +57,7 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
     - Create a new project
     - Copy your project URL and anon key
     - Run the SQL setup scripts in your Supabase SQL Editor:
-      - `sql/create_rsvp_table.sql`
-      - `sql/add_missing_rsvp_columns.sql`
+      - `sql/initial_setup.sql`
 
 4. Set up Clerk Authentication:
 
@@ -302,14 +301,44 @@ src/
 └── globals.css        # Global styles with Betis branding
 
 sql/                   # Database setup scripts
-├── create_rsvp_table.sql        # Initial RSVP table
-├── add_missing_rsvp_columns.sql # Schema updates
-└── cleanup_old_rsvps.sql        # Data retention policies
+├── initial_setup.sql        # Initial database schema
+├── cleanup_old_rsvps.sql        # Data retention policies
 
 data/                  # JSON data storage (non-critical features)
 ├── merchandise.json   # Merchandise catalog
 ├── orders.json        # Order submissions
 └── contact.json       # Contact form submissions
+```
+
+## 🗄️ Database Setup
+
+### Initial Setup
+
+To set up the database schema, run the `initial_setup.sql` script in your Supabase SQL Editor. This script creates all necessary tables, indexes, and policies for the application.
+
+```sql
+-- Run this in the Supabase SQL Editor
+\i sql/initial_setup.sql
+```
+
+### Cleanup Function
+
+The `cleanup_old_rsvps.sql` script defines a function to delete RSVPs older than one month. You can run this function manually or schedule it using the `pg_cron` extension in Supabase.
+
+#### Manual Execution
+
+```sql
+-- Run this to clean up old RSVPs
+SELECT cleanup_old_rsvps();
+```
+
+#### Scheduled Execution (Optional)
+
+To schedule automatic cleanup, enable the `pg_cron` extension in your Supabase project and use the following command:
+
+```sql
+-- Schedule the cleanup function to run daily at 2 AM
+SELECT cron.schedule('cleanup-old-rsvps', '0 2 * * *', 'SELECT cleanup_old_rsvps();');
 ```
 
 ## 🎪 Community Features

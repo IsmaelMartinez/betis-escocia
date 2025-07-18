@@ -15,8 +15,6 @@ This document outlines the comprehensive testing plan for Task T11.4: Test admin
 - [ ] Test `/admin` route access with admin user
 - [ ] Test `/admin` route access with regular user (should redirect)
 - [ ] Test `/admin` route access with unauthenticated user (should redirect to sign-in)
-- [ ] Test `/admin/role-test` route access with admin user
-- [ ] Test `/admin/role-test` route access with regular user (should redirect)
 
 #### 1.2 API Route Protection
 - [ ] Test `/api/admin/users` GET with admin user

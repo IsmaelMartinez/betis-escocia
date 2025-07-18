@@ -213,7 +213,7 @@ Created: July 2025
 - **Role Assignment**: Complete admin interface for role management
 - **Security**: Role validation prevents privilege escalation
 - **API Endpoints**: `/api/admin/roles` for full CRUD operations
-- **Testing**: Role test page at `/admin/role-test` for verification
+- **Testing**: Removed role test page at `/admin/role-test` as it is no longer needed.
 - **Client/Server Split**: Proper separation of client and server utilities
 - **Validation**: Comprehensive role change validation with safety checks
 
