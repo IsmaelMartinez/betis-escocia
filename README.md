@@ -33,7 +33,7 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 22+ 
 - npm or yarn
 
 ### Installation

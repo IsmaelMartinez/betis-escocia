@@ -6,7 +6,7 @@ This guide will help you get started with the project quickly and efficiently.
 
 ## Prerequisites
 
-- Node.js 18+ installed
+- Node.js 22+ installed
 - npm or yarn package manager
 - Git for version control
 - Basic knowledge of Next.js, TypeScript, and React
@@ -30,27 +30,7 @@ Copy the example environment file:
 cp .env.example .env.local
 ```
 
-Fill in the required environment variables:
-```bash
-# Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-
-# Clerk Authentication
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-CLERK_SECRET_KEY=your_clerk_secret_key
-
-# Feature Flags
-NEXT_PUBLIC_FEATURE_CLERK_AUTH=true
-NEXT_PUBLIC_FEATURE_RSVP=true
-NEXT_PUBLIC_FEATURE_COLECCIONABLES=true
-NEXT_PUBLIC_FEATURE_GALERIA=true
-NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=true
-NEXT_PUBLIC_FEATURE_CONTACTO=true
-NEXT_PUBLIC_FEATURE_HISTORY=true
-NEXT_PUBLIC_FEATURE_NOSOTROS=true
-NEXT_PUBLIC_FEATURE_CLASIFICACION=true
-```
+Fill in the required environment variables
 
 ### 4. Run the Development Server
 ```bash
