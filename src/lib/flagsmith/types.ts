@@ -49,7 +49,6 @@ export type FlagsmithFeatureName =
   | 'show-nosotros'
   | 'show-unete'
   | 'show-contacto'
-  | 'show-porra'
   | 'show-redes-sociales'
   | 'show-admin'
   | 'show-clerk-auth'
@@ -68,7 +67,6 @@ export type LegacyFeatureName =
   | 'showNosotros'
   | 'showUnete'
   | 'showContacto'
-  | 'showPorra'
   | 'showRedesSociales'
   | 'showAdmin'
   | 'showClerkAuth'
@@ -87,7 +85,6 @@ export const FLAG_MIGRATION_MAP: Record<LegacyFeatureName, FlagsmithFeatureName>
   showNosotros: 'show-nosotros',
   showUnete: 'show-unete',
   showContacto: 'show-contacto',
-  showPorra: 'show-porra',
   showRedesSociales: 'show-redes-sociales',
   showAdmin: 'show-admin',
   showClerkAuth: 'show-clerk-auth',
@@ -107,7 +104,6 @@ export const ENV_VAR_MIGRATION_MAP: Record<string, FlagsmithFeatureName> = {
   'NEXT_PUBLIC_FEATURE_NOSOTROS': 'show-nosotros',
   'NEXT_PUBLIC_FEATURE_UNETE': 'show-unete',
   'NEXT_PUBLIC_FEATURE_CONTACTO': 'show-contacto',
-  'NEXT_PUBLIC_FEATURE_PORRA': 'show-porra',
   'NEXT_PUBLIC_FEATURE_REDES_SOCIALES': 'show-redes-sociales',
   'NEXT_PUBLIC_FEATURE_ADMIN': 'show-admin',
   'NEXT_PUBLIC_FEATURE_CLERK_AUTH': 'show-clerk-auth',
@@ -125,7 +121,6 @@ export const DEFAULT_FLAG_VALUES: Record<FlagsmithFeatureName, boolean> = {
   'show-nosotros': true,
   'show-unete': true,
   'show-contacto': false,
-  'show-porra': false,
   'show-redes-sociales': false,
   'show-admin': false,
   'show-clerk-auth': false,

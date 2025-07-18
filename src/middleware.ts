@@ -15,7 +15,6 @@ const isPublicRoute = createRouteMatcher([
   '/historia',
   '/nosotros',
   '/unete',
-  '/porra',
   '/redes-sociales',
   '/gdpr',
   '/sign-in(.*)',
@@ -28,7 +27,6 @@ const isPublicRoute = createRouteMatcher([
   '/api/camiseta-voting',
   '/api/merchandise',
   '/api/orders',
-  '/api/porra'
 ]);
 
 // Protected routes that require authentication

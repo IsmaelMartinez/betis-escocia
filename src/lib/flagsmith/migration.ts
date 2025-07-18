@@ -181,7 +181,6 @@ function getFlagDescription(flagName: FlagsmithFeatureName): string {
     'show-nosotros': 'Show about us page',
     'show-unete': 'Show join/membership page',
     'show-contacto': 'Show contact page',
-    'show-porra': 'Show betting pool functionality',
     'show-redes-sociales': 'Show social networks page',
     'show-admin': 'Show admin panel access',
     'show-clerk-auth': 'Show Clerk authentication system',

@@ -262,7 +262,6 @@ export function getEnvironmentVariableFallback(flagName: FlagsmithFeatureName): 
     'show-nosotros': 'NEXT_PUBLIC_FEATURE_NOSOTROS',
     'show-unete': 'NEXT_PUBLIC_FEATURE_UNETE',
     'show-contacto': 'NEXT_PUBLIC_FEATURE_CONTACTO',
-    'show-porra': 'NEXT_PUBLIC_FEATURE_PORRA',
     'show-redes-sociales': 'NEXT_PUBLIC_FEATURE_REDES_SOCIALES',
     'show-admin': 'NEXT_PUBLIC_FEATURE_ADMIN',
     'show-clerk-auth': 'NEXT_PUBLIC_FEATURE_CLERK_AUTH',
