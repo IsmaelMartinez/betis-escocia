@@ -1,20 +1,6 @@
 import { NextResponse } from 'next/server';
 import { FootballDataService } from '@/services/footballDataService';
-import fs from 'fs';
-import path from 'path';
 import type { Match, MatchCardProps } from '@/types/match';
-
-// Helper to read local match data as fallback
-const readLocalMatches = (): { upcoming: Match[], recent: Match[], conferenceLeague: Match[], friendlies: Match[] } => {
-  try {
-    const filePath = path.join(process.cwd(), 'data', 'matches.json');
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(fileContents);
-  } catch (error) {
-    console.error('Error reading local matches:', error);
-    return { upcoming: [], recent: [], conferenceLeague: [], friendlies: [] };
-  }
-};
 
 export async function GET(request: Request) {
   try {
@@ -42,56 +28,16 @@ export async function GET(request: Request) {
             matches = [...upcoming, ...recent];
             break;
           }
-          default: {
-            // For conference and friendlies, fall back to local data
-            const localMatches = readLocalMatches();
-            matches = type === 'conference' ? localMatches.conferenceLeague : localMatches.friendlies;
+          default:
+            matches = [];
             break;
-          }
         }
       } catch (apiError) {
-        console.error('Live API error, falling back to local data:', apiError);
-        // Fall back to local data if API fails
-        const localMatches = readLocalMatches();
-        switch (type) {
-          case 'upcoming':
-            matches = localMatches.upcoming;
-            break;
-          case 'recent':
-            matches = localMatches.recent;
-            break;
-          case 'conference':
-            matches = localMatches.conferenceLeague;
-            break;
-          case 'friendlies':
-            matches = localMatches.friendlies;
-            break;
-          default:
-            matches = [...localMatches.upcoming, ...localMatches.recent, ...localMatches.conferenceLeague, ...localMatches.friendlies];
-            break;
-        }
+        console.error('Live API error:', apiError);
+        matches = [];
       }
     } else {
-      // Use local JSON data (current behavior)
-      const allMatches = readLocalMatches();
-
-      switch (type) {
-        case 'upcoming':
-          matches = allMatches.upcoming;
-          break;
-        case 'recent':
-          matches = allMatches.recent;
-          break;
-        case 'conference':
-          matches = allMatches.conferenceLeague;
-          break;
-        case 'friendlies':
-          matches = allMatches.friendlies;
-          break;
-        default:
-          matches = [...allMatches.upcoming, ...allMatches.recent, ...allMatches.conferenceLeague, ...allMatches.friendlies];
-          break;
-      }
+      matches = [];
     }
 
     return NextResponse.json({
@@ -103,26 +49,11 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error('Error fetching matches:', error);
-    
-    // Provide more specific error messages
-    let errorMessage = 'Error interno al cargar los partidos';
-    
-    if (error && typeof error === 'object' && 'code' in error) {
-      if (error.code === 'ENOENT') {
-        errorMessage = 'No se encontraron datos de partidos';
-      } else if (error.code === 'EACCES') {
-        errorMessage = 'Error de permisos al acceder a los datos de partidos';
-      }
-    } else if (error instanceof SyntaxError) {
-      errorMessage = 'Error en el formato de los datos de partidos';
-    } else if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' && (error.message.includes('network') || error.message.includes('fetch'))) {
-      errorMessage = 'Error de conexión al obtener datos de partidos';
-    }
 
     return NextResponse.json(
       {
         success: false,
-        error: errorMessage,
+        error: 'Error interno al cargar los partidos',
         matches: [],
         count: 0,
       },
