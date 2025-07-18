@@ -1,7 +1,7 @@
 // Form validation utilities
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { sanitizeInput, validateEmail, validateInputLength } from '@/lib/security';
 
 export interface ValidationResult {
@@ -142,14 +142,14 @@ export function useFormValidation(initialData: Record<string, unknown>, rules: V
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   
-  const validateSingleField = (field: string, value: unknown) => {
+  const validateSingleField = useCallback((field: string, value: unknown) => {
     const rule = rules[field];
     if (!rule) return null;
     
     return validateField(value, rule);
-  };
+  }, [rules]);
   
-  const updateField = (field: string, value: unknown) => {
+  const updateField = useCallback((field: string, value: unknown) => {
     setData((prev: Record<string, unknown>) => ({ ...prev, [field]: value }));
     
     // Validate field if it has been touched
@@ -160,7 +160,7 @@ export function useFormValidation(initialData: Record<string, unknown>, rules: V
         [field]: error ?? ''
       }));
     }
-  };
+  }, [touched, validateSingleField]);
   
   const touchField = (field: string) => {
     setTouched((prev: Record<string, boolean>) => ({ ...prev, [field]: true }));
