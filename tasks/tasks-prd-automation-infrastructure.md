@@ -22,8 +22,7 @@
   - [ ] 1.1 Create `.github/workflows/enhanced-deploy.yml` with `quality-checks` job.
   - [ ] 1.2 Configure `quality-checks` job to run `npm run lint`.
   - [ ] 1.3 Configure `quality-checks` job to run `npm run type-check`.
-  - [ ] 1.4 Configure `quality-checks` job to run `npm run test:unit`.
-  - [ ] 1.5 Configure `quality-checks` job to run `npm run test:e2e`.
+  - [ ] 1.4 Configure `quality-checks` job to run `npm run test:e2e`.
   - [ ] 1.6 Configure `quality-checks` job to run `npm run lighthouse:accessibility`.
   - [ ] 1.7 Create `production-deployment` job in `enhanced-deploy.yml` dependent on `quality-checks`.
   - [ ] 1.8 Configure `production-deployment` job to run `npm run deploy:production` and `npm run health-check:production`.
