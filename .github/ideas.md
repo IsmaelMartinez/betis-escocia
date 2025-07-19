@@ -6,6 +6,15 @@ This document provides a list of ideas and features for the Peña Bética Escoce
 
 * Find where it is shown on tv in the UK and Spain, maybe provide some links to the channels or streaming services.
 
+### 🎮 **Engagement Games**
+
+*   **Daily Quiz:** A single multiple-choice question per day to keep users coming back.
+*   **Predict the Score:** Users predict match scores for upcoming games.
+*   **Trivia:** General knowledge quizzes about Real Betis or football.
+*   **Word Search:** Themed word search puzzles.
+*   **Guess the Lineup:** Users predict the starting lineup for upcoming matches.
+*   **Points System:** Implement a system where users earn points for playing games and engaging with the site.
+
 * Make the porra private only for Peña members, so that we don't get in a legal trouble with the gambling commission. Also it is a skill based game, not gambling. 50/50 split of the prize pool, 50% to the winner, 50% to the Peña (donation for the yearly celebration).
 
 * Provide a cheap AI assistant for the users that access the website. It can guide them through the website, help them with the porra, and answer questions about Real Betis.

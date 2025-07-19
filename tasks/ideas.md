@@ -32,7 +32,7 @@ This document provides a list of ideas and features for the Peña Bética Escoce
 * Add user profiles with basic information
 * Allow users to RSVP for events and view their RSVP history
 * Implement a simple contact form for user inquiries
-* Enable users to submit feedback and suggestions
+* Enable users to submit feedback and suggestions (Github Issues integration)
 
 ## 🌍 **Multi-language Support**
 
@@ -48,6 +48,13 @@ This document provides a list of ideas and features for the Peña Bética Escoce
 
 * Member profiles with activity and participation history
 * Community recognition and points system
+
+## 📅 **Games**
+
+* Add a simple game section with trivia or quizzes about Real Betis
+* Implement a "Guess the Lineup" game for matches
+* Implement a "Guess the Score" game for matches
+* Crossword puzzles related to Real Betis history and players
 
 ## ⚡ **Advanced Performance Enhancements**
 
