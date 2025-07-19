@@ -24,5 +24,11 @@ jobs:
         run: npm run type-check
       - name: Run E2E Tests
         run: npm run test:e2e
+      - name: Start Development Server
+        run: npm run dev &
+      - name: Wait for server to be ready
+        run: npx wait-on http://localhost:3000
       - name: Run Lighthouse Accessibility
         run: npm run lighthouse:accessibility
+      - name: Stop Development Server
+        run: kill $(lsof -t -i:3000) || true

@@ -13,7 +13,7 @@
     "type-check": "tsc --noEmit",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
-    "lighthouse:accessibility": "npx lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-report.json --view"
+    "lighthouse:accessibility": "npx lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-report.json"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.25.4",
@@ -41,6 +41,8 @@
     "eslint-config-next": "15.4.1",
     "tailwindcss": "^4",
     "tsx": "^4.20.3",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wait-on": "^7.0.1",
+    "lighthouse": "^12.8.0"
   }
 }
