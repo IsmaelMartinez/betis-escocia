@@ -48,3 +48,6 @@ playwright-report/
 
 # test results
 test-results/
+
+# lighthouse reports
+lighthouse-report.json
