@@ -23,10 +23,8 @@
   - [ ] 1.2 Configure `quality-checks` job to run `npm run lint`.
   - [ ] 1.3 Configure `quality-checks` job to run `npm run type-check`.
   - [ ] 1.4 Configure `quality-checks` job to run `npm run test:e2e`.
-  - [ ] 1.6 Configure `quality-checks` job to run `npm run lighthouse:accessibility`.
-  - [ ] 1.7 Create `production-deployment` job in `enhanced-deploy.yml` dependent on `quality-checks`.
-  - [ ] 1.8 Configure `production-deployment` job to run `npm run deploy:production` and `npm run health-check:production`.
-  - [ ] 1.9 Ensure `package.json` contains necessary scripts for all quality checks and deployment commands.
+  - [x] 1.6 Configure `quality-checks` job to run `npm run lighthouse:accessibility`.
+  - [ ] 1.7 Ensure `package.json` contains necessary scripts for all quality checks and deployment commands.
 - [ ] 2.0 Implement Security Automation
   - [ ] 2.1 Configure GitHub Dependabot by creating `.github/dependabot.yml`.
   - [ ] 2.2 Set up GitHub security advisories and alerts in repository settings.

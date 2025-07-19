@@ -24,4 +24,5 @@ jobs:
         run: npm run type-check
       - name: Run E2E Tests
         run: npm run test:e2e
-      # Quality checks will be added here in subsequent steps
+      - name: Run Lighthouse Accessibility
+        run: npm run lighthouse:accessibility
