@@ -9,6 +9,28 @@ on:
 jobs:
   quality-checks:
     runs-on: ubuntu-latest
+    env:
+      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+      CLERK_WEBHOOK_SECRET: ${{ secrets.CLERK_WEBHOOK_SECRET }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
+      FOOTBALL_DATA_API_URL: ${{ secrets.FOOTBALL_DATA_API_URL }}
+      ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+      FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+      EMAIL_API_KEY: ${{ secrets.EMAIL_API_KEY }}
+      NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID: ${{ secrets.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID }}
+      NEXT_PUBLIC_FLAGSMITH_API_URL: ${{ secrets.NEXT_PUBLIC_FLAGSMITH_API_URL }}
+      NEXT_PUBLIC_FLAGSMITH_TIMEOUT: ${{ secrets.NEXT_PUBLIC_FLAGSMITH_TIMEOUT }}
+      NEXT_PUBLIC_FLAGSMITH_CACHE_TTL: ${{ secrets.NEXT_PUBLIC_FLAGSMITH_CACHE_TTL }}
+      NEXT_PUBLIC_FLAGSMITH_SKIP_API: ${{ secrets.NEXT_PUBLIC_FLAGSMITH_SKIP_API }}
+      NEXT_PUBLIC_FLAGSMITH_DEBUG: ${{ secrets.NEXT_PUBLIC_FLAGSMITH_DEBUG }}
+      NEXT_PUBLIC_FLAGSMITH_METRICS: ${{ secrets.NEXT_PUBLIC_FLAGSMITH_METRICS }}
+      NEXT_PUBLIC_FLAGSMITH_OFFLINE: ${{ secrets.NEXT_PUBLIC_FLAGSMITH_OFFLINE }}
+      NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+      GOOGLE_SITE_VERIFICATION: ${{ secrets.GOOGLE_SITE_VERIFICATION }}
+      NEXT_PUBLIC_FEATURE_CLERK_AUTH: 'true' # Assuming we want to test auth
+      # Add other NEXT_PUBLIC_FEATURE_ flags here if you want to explicitly enable them for CI testing
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
@@ -24,10 +46,49 @@ jobs:
         run: npm run type-check
       - name: Run E2E Tests
         run: npm run test:e2e
-      - name: Start Development Server
-        run: npm run dev &
+      - name: Install lsof
+        run: sudo apt-get update && sudo apt-get install -y lsof
+      - name: Build Project
+        run: |
+          NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }} \
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }} \
+          FOOTBALL_DATA_API_URL=${{ secrets.FOOTBALL_DATA_API_URL }} \
+          NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID=${{ secrets.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID }} \
+          NEXT_PUBLIC_FLAGSMITH_API_URL=${{ secrets.NEXT_PUBLIC_FLAGSMITH_API_URL }} \
+          NEXT_PUBLIC_FLAGSMITH_TIMEOUT=${{ secrets.NEXT_PUBLIC_FLAGSMITH_TIMEOUT }} \
+          NEXT_PUBLIC_FLAGSMITH_CACHE_TTL=${{ secrets.NEXT_PUBLIC_FLAGSMITH_CACHE_TTL }} \
+          NEXT_PUBLIC_FLAGSMITH_SKIP_API=${{ secrets.NEXT_PUBLIC_FLAGSMITH_SKIP_API }} \
+          NEXT_PUBLIC_FLAGSMITH_DEBUG=${{ secrets.NEXT_PUBLIC_FLAGSMITH_DEBUG }} \
+          NEXT_PUBLIC_FLAGSMITH_METRICS=${{ secrets.NEXT_PUBLIC_FLAGSMITH_METRICS }} \
+          NEXT_PUBLIC_FLAGSMITH_OFFLINE=${{ secrets.NEXT_PUBLIC_FLAGSMITH_OFFLINE }} \
+          NEXT_PUBLIC_SITE_URL=${{ secrets.NEXT_PUBLIC_SITE_URL }} \
+          NEXT_PUBLIC_FEATURE_CLERK_AUTH=${{ secrets.NEXT_PUBLIC_FEATURE_CLERK_AUTH }} \
+          npm run build
+      - name: Start Built Project
+        run: |
+          CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }} \
+          CLERK_WEBHOOK_SECRET=${{ secrets.CLERK_WEBHOOK_SECRET }} \
+          NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }} \
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }} \
+          FOOTBALL_DATA_API_KEY=${{ secrets.FOOTBALL_DATA_API_KEY }} \
+          FOOTBALL_DATA_API_URL=${{ secrets.FOOTBALL_DATA_API_URL }} \
+          ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} \
+          FROM_EMAIL=${{ secrets.FROM_EMAIL }} \
+          EMAIL_API_KEY=${{ secrets.EMAIL_API_KEY }} \
+          NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID=${{ secrets.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID }} \
+          NEXT_PUBLIC_FLAGSMITH_API_URL=${{ secrets.NEXT_PUBLIC_FLAGSMITH_API_URL }} \
+          NEXT_PUBLIC_FLAGSMITH_TIMEOUT=${{ secrets.NEXT_PUBLIC_FLAGSMITH_TIMEOUT }} \
+          NEXT_PUBLIC_FLAGSMITH_CACHE_TTL=${{ secrets.NEXT_PUBLIC_FLAGSMITH_CACHE_TTL }} \
+          NEXT_PUBLIC_FLAGSMITH_SKIP_API=${{ secrets.NEXT_PUBLIC_FLAGSMITH_SKIP_API }} \
+          NEXT_PUBLIC_FLAGSMITH_DEBUG=${{ secrets.NEXT_PUBLIC_FLAGSMITH_DEBUG }} \
+          NEXT_PUBLIC_FLAGSMITH_METRICS=${{ secrets.NEXT_PUBLIC_FLAGSMITH_METRICS }} \
+          NEXT_PUBLIC_FLAGSMITH_OFFLINE=${{ secrets.NEXT_PUBLIC_FLAGSMITH_OFFLINE }} \
+          NEXT_PUBLIC_SITE_URL=${{ secrets.NEXT_PUBLIC_SITE_URL }} \
+          GOOGLE_SITE_VERIFICATION=${{ secrets.GOOGLE_SITE_VERIFICATION }} \
+          NEXT_PUBLIC_FEATURE_CLERK_AUTH=${{ secrets.NEXT_PUBLIC_FEATURE_CLERK_AUTH }} \
+          npm run start &
       - name: Wait for server to be ready
-        run: npx wait-on http://localhost:3000
+        run: npx wait-on http://localhost:3000 --timeout 120000 # Increased timeout to 2 minutes
       - name: Run Lighthouse Accessibility
         run: npm run lighthouse:accessibility
       - name: Stop Development Server
