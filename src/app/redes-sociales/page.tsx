@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState } from 'react';
 import { Instagram, Facebook, Copy, Check, Camera, Share2, Tag } from 'lucide-react';
 import InstagramEmbed from '@/components/InstagramEmbed';
