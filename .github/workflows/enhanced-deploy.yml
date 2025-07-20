@@ -20,24 +20,17 @@ jobs:
       FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
       EMAIL_API_KEY: ${{ secrets.EMAIL_API_KEY }}
       NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID: ${{ secrets.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID }}
-      NEXT_PUBLIC_FLAGSMITH_API_URL: ${{ secrets.NEXT_PUBLIC_FLAGSMITH_API_URL }}
-      NEXT_PUBLIC_FLAGSMITH_TIMEOUT: ${{ secrets.NEXT_PUBLIC_FLAGSMITH_TIMEOUT }}
-      NEXT_PUBLIC_FLAGSMITH_CACHE_TTL: ${{ secrets.NEXT_PUBLIC_FLAGSMITH_CACHE_TTL }}
-      NEXT_PUBLIC_FLAGSMITH_SKIP_API: ${{ secrets.NEXT_PUBLIC_FLAGSMITH_SKIP_API }}
-      NEXT_PUBLIC_FLAGSMITH_DEBUG: ${{ secrets.NEXT_PUBLIC_FLAGSMITH_DEBUG }}
-      NEXT_PUBLIC_FLAGSMITH_METRICS: ${{ secrets.NEXT_PUBLIC_FLAGSMITH_METRICS }}
-      NEXT_PUBLIC_FLAGSMITH_OFFLINE: ${{ secrets.NEXT_PUBLIC_FLAGSMITH_OFFLINE }}
       NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
       GOOGLE_SITE_VERIFICATION: ${{ secrets.GOOGLE_SITE_VERIFICATION }}
-      NEXT_PUBLIC_FEATURE_CLERK_AUTH: 'true' # Assuming we want to test auth
+      NEXT_PUBLIC_FEATURE_CLERK_AUTH: "true" # Assuming we want to test auth
       # Add other NEXT_PUBLIC_FEATURE_ flags here if you want to explicitly enable them for CI testing
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
       - name: Install dependencies
         run: npm ci
       - name: Run ESLint

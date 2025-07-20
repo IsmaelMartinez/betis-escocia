@@ -4,8 +4,10 @@ import type { Match } from '@/types/match';
 
 const API_KEY = process.env.FOOTBALL_DATA_API_KEY;
 const BASE_URL = process.env.FOOTBALL_DATA_API_URL || 'https://api.football-data.org/v4';
-export const REAL_BETIS_TEAM_ID = parseInt(process.env.REAL_BETIS_TEAM_ID || '90');
-export const LALIGA_COMPETITION_ID = process.env.LALIGA_COMPETITION_ID || 'PD';
+
+// Competition and Team Constants
+export const REAL_BETIS_TEAM_ID = 90;
+export const LALIGA_COMPETITION_ID = 'PD';
 
 // Helper function to determine current football season
 // Football seasons typically run from August to May/June

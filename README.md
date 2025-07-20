@@ -26,8 +26,16 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 - **Authentication**: Clerk.com for user management and authentication
 - **External APIs**: Football-Data.org for match data
 - **Feature Flags**: Flagsmith for feature management
-- **Deployment**: Vercel with GitHub Actions
 - **Performance Monitoring**: Vercel Speed Insights and Analytics
+
+### CI/CD & Automation
+
+- **CI/CD**: GitHub Actions (enhanced workflow for quality checks, build, and start)
+- **Dependency Management**: Dependabot for automated dependency updates
+- **Security Scanning**: GitHub Security Advisories and Dependabot
+- **Quality Gates**: ESLint, TypeScript, Playwright E2E, Lighthouse Accessibility
+
+- **Deployment**: Vercel with GitHub Actions
 
 ## 🚀 Getting Started
 

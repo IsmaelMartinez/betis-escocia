@@ -2,17 +2,9 @@
  * Environment Configuration Utility
  * Provides type-safe access to environment variables with validation
  */
-
 interface FootballDataConfig {
   apiKey: string;
   apiUrl: string;
-  realBetisTeamId: number;
-  competitions: {
-    laliga: string;
-    copaDelRey: string;
-    championsLeague: string;
-    europaLeague: string;
-  };
   rateLimit: {
     perMinute: number;
     cacheTtlHours: number;
@@ -35,13 +27,6 @@ export function getFootballDataConfig(): FootballDataConfig {
   return {
     apiKey,
     apiUrl: process.env.FOOTBALL_DATA_API_URL || 'https://api.football-data.org/v4',
-    realBetisTeamId: parseInt(process.env.REAL_BETIS_TEAM_ID || '559', 10),
-    competitions: {
-      laliga: process.env.LALIGA_COMPETITION_ID || 'PD',
-      copaDelRey: process.env.COPA_DEL_REY_COMPETITION_ID || 'CDR',
-      championsLeague: process.env.CHAMPIONS_LEAGUE_COMPETITION_ID || 'CL',
-      europaLeague: process.env.EUROPA_LEAGUE_COMPETITION_ID || 'EL',
-    },
     rateLimit: {
       perMinute: parseInt(process.env.API_RATE_LIMIT_PER_MINUTE || '10', 10),
       cacheTtlHours: parseInt(process.env.API_CACHE_TTL_HOURS || '24', 10),

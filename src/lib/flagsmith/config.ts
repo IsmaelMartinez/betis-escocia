@@ -67,8 +67,6 @@ export function getEnvironmentSettings() {
   return {
     isDevelopment,
     isProduction,
-    enableDebugLogs: isDevelopment || process.env.NEXT_PUBLIC_FLAGSMITH_DEBUG === 'true',
-    enablePerformanceMetrics: isDevelopment || process.env.NEXT_PUBLIC_FLAGSMITH_METRICS === 'true',
     apiTimeout: isProduction ? 2000 : 5000, // Shorter timeout in production
     cacheOptions: {
       ttl: isProduction ? 60000 : 30000, // 1 minute in prod, 30 seconds in dev

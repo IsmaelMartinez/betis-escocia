@@ -25,7 +25,7 @@ class EmailService {
   private apiKey?: string;
   
   constructor() {
-    this.adminEmail = process.env.ADMIN_EMAIL || 'admin@betis-escocia.com';
+    this.adminEmail = process.env.ADMIN_EMAIL || 'ismaelmartinez@gmail.com';
     this.fromEmail = process.env.FROM_EMAIL || 'noreply@betis-escocia.com';
     this.apiKey = process.env.EMAIL_API_KEY;
   }
