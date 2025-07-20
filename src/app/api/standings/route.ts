@@ -1,10 +1,54 @@
 import { NextResponse } from 'next/server';
 import { FootballDataService } from '@/services/footballDataService';
+import { supabase } from '@/lib/supabase';
 
-export const dynamic = 'force-dynamic'; // This route requires dynamic rendering
+export const dynamic = 'force-dynamic';
+
+const CACHE_DURATION_HOURS = 24;
+
+async function getCachedStandings() {
+  const { data, error } = await supabase
+    .from('classification_cache')
+    .select('data, last_updated')
+    .order('last_updated', { ascending: false })
+    .limit(1);
+
+  if (error) {
+    console.error('Error fetching cached standings:', error);
+    return null;
+  }
+
+  return data?.[0] || null;
+}
+
+async function setCachedStandings(standings: any) {
+  const { error } = await supabase
+    .from('classification_cache')
+    .insert({ data: standings, last_updated: new Date().toISOString() });
+
+  if (error) {
+    console.error('Error saving standings to cache:', error);
+  }
+}
 
 export async function GET() {
   try {
+    const cachedData = await getCachedStandings();
+    
+    if (cachedData) {
+      const lastUpdated = new Date(cachedData.last_updated);
+      const now = new Date();
+      const diffHours = (now.getTime() - lastUpdated.getTime()) / (1000 * 60 * 60);
+
+      if (diffHours < CACHE_DURATION_HOURS) {
+        return NextResponse.json({
+          standings: cachedData.data,
+          lastUpdated: cachedData.last_updated,
+          source: 'cache',
+        });
+      }
+    }
+
     const service = new FootballDataService();
     const standings = await service.getLaLigaStandings();
     
@@ -15,14 +59,16 @@ export async function GET() {
       );
     }
 
+    await setCachedStandings(standings);
+
     return NextResponse.json({
       standings: standings,
       lastUpdated: new Date().toISOString(),
+      source: 'api',
     });
   } catch (error) {
     console.error('Error fetching standings:', error);
     
-    // Provide more specific error messages
     let errorMessage = 'Error interno al cargar las clasificaciones';
     
     if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
