@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { FootballDataService } from '@/services/footballDataService';
+import { FootballDataService, StandingEntry } from '@/services/footballDataService';
 import { supabase } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
@@ -21,7 +21,7 @@ async function getCachedStandings() {
   return data?.[0] || null;
 }
 
-async function setCachedStandings(standings: any) {
+async function setCachedStandings(standings: { table: StandingEntry[] }) {
   const { error } = await supabase
     .from('classification_cache')
     .insert({ data: standings, last_updated: new Date().toISOString() });
