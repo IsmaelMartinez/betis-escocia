@@ -5,7 +5,12 @@ module.exports = {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
   collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.d.ts"],
-  testMatch: ["**/tests/**/*.(test|spec).{ts,tsx}"],
+  testMatch: [
+    "**/tests/integration/**/*.(test|spec).{ts,tsx}",
+    "**/tests/unit/**/*.(test|spec).{ts,tsx}",
+    // Exclude canary tests for now (they are empty placeholders)
+    // "**/tests/canary/**/*.(test|spec).{ts,tsx}",
+  ],
   transform: {
     "^.+\\.(ts|tsx)$": "ts-jest",
   },
