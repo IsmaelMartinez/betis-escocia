@@ -6,6 +6,8 @@ import { notFound } from 'next/navigation';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export default function MatchesPage() {
   // Check if partidos feature is enabled
   if (!isFeatureEnabled('showPartidos')) {
