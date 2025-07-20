@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState } from 'react';
 import { Shield, Download, Trash2, Mail } from 'lucide-react';
 import Card, { CardHeader, CardBody } from '@/components/ui/Card';
