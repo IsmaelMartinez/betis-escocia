@@ -16,7 +16,6 @@ jobs:
       FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
       FOOTBALL_DATA_API_URL: ${{ secrets.FOOTBALL_DATA_API_URL }}
       NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID: ${{ secrets.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID }}
-      NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
       GOOGLE_SITE_VERIFICATION: ${{ secrets.GOOGLE_SITE_VERIFICATION }}
       NEXT_PUBLIC_FEATURE_CLERK_AUTH: "true" # Assuming we want to test auth
       # Add other NEXT_PUBLIC_FEATURE_ flags here if you want to explicitly enable them for CI testing
