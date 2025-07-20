@@ -8,6 +8,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClerkProvider } from '@clerk/nextjs';
 import { getEnabledNavigationItemsAsync, initializeFeatureFlags } from '@/lib/featureFlags';
 
+export const dynamic = 'force-dynamic';
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
