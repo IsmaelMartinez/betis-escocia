@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from 'react';
 import { Star, Package, MapPin, Vote, ShoppingBag, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
 import MerchandiseCard from '@/components/MerchandiseCard';
