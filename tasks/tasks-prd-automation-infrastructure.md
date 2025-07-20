@@ -24,7 +24,8 @@
   - [ ] 1.3 Configure `quality-checks` job to run `npm run type-check`.
   - [ ] 1.4 Configure `quality-checks` job to run `npm run test:e2e`.
   - [x] 1.6 Configure `quality-checks` job to run `npm run lighthouse:accessibility`.
-  - [ ] 1.7 Ensure `package.json` contains necessary scripts for all quality checks and deployment commands.
+  - [ ] 1.7 Configure Vercel deployment from GitHub Actions.
+  - [ ] 1.8 Ensure `package.json` contains necessary scripts for all quality checks and deployment commands.
 - [ ] 2.0 Implement Security Automation
   - [ ] 2.1 Configure GitHub Dependabot by creating `.github/dependabot.yml`.
   - [ ] 2.2 Set up GitHub security advisories and alerts in repository settings.
