@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from 'react';
 import { useAuth, useUser } from '@clerk/nextjs';
 import { supabase, RSVP, ContactSubmission, Match, createMatch, updateMatch, deleteMatch, getMatches } from '@/lib/supabase';
