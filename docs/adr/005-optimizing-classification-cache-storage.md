@@ -2,7 +2,13 @@
 
 **1. Title:** Optimizing Classification Cache Storage
 
-**2. Status:** Proposed
+**2. Status:** Implemented
+
+**Implementation Notes:**
+- ✅ Testing infrastructure completed (Jest integration tests)
+- ✅ Upsert functionality implemented in `setCachedStandings`
+- ✅ CI/CD pipeline integration with GitHub Actions
+- 📅 Implemented: July 2025
 
 **3. Context:**
 The application's classification data is cached in the `classification_cache` Supabase table to reduce external API calls and improve response times. The current implementation of `setCachedStandings` in `src/app/api/standings/route.ts` inserts a new row into the `classification_cache` table every time the cache is updated (i.e., when the external API is called). This leads to an unbounded growth of the `classification_cache` table, storing multiple historical versions of the classification data, which is inefficient for a cache that only needs to store the latest valid data.
