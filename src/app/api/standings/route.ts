@@ -24,7 +24,7 @@ async function getCachedStandings() {
 async function setCachedStandings(standings: { table: StandingEntry[] }) {
   const { error } = await supabase
     .from('classification_cache')
-    .insert({ data: standings, last_updated: new Date().toISOString() });
+    .upsert({ id: 1, data: standings, last_updated: new Date().toISOString() }, { onConflict: 'id' });
 
   if (error) {
     console.error('Error saving standings to cache:', error);
