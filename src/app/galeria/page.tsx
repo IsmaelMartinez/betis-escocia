@@ -2,8 +2,6 @@
 
 export const dynamic = 'force-dynamic';
 
-export const dynamic = 'force-dynamic';
-
 import { Camera, Hash, ExternalLink } from 'lucide-react';
 import InstagramEmbed from '@/components/InstagramEmbed';
 import FacebookPagePlugin from '@/components/FacebookPagePlugin';
