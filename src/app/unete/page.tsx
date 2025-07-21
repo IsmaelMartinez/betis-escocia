@@ -281,14 +281,6 @@ export default function Unete() {
             >
               💬 Contactar por Facebook
             </a>
-            <a
-              href="https://www.youtube.com/beticosenescocia"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
-            >
-              📺 Ver en YouTube
-            </a>
           </div>
         </div>
       </section>

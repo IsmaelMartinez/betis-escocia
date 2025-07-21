@@ -292,14 +292,6 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                 >
                   ABC Sevilla
                 </a>
-                <a
-                  href="https://www.manquepierda.com/blog/la-aficion-del-betis-objetivo-elogios/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-gray-300 hover:text-betis-green transition-colors"
-                >
-                  Manquepierda Blog
-                </a>
               </div>
             </div>
 

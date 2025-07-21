@@ -23,18 +23,6 @@ export default function MatchesPage() {
           <p className="text-xl opacity-90 max-w-2xl mx-auto">
             Todos los partidos se ven en el Polwarth Tavern. ¡No te pierdas ni uno!
           </p>
-          
-          {/* Admin controls */}
-          <FeatureWrapper feature="showAdmin">
-            <div className="mt-6">
-              <Link
-                href="/admin/matches"
-                className="bg-white/20 hover:bg-white/30 text-white px-6 py-2 rounded-lg font-medium transition-colors inline-flex items-center"
-              >
-                ⚙️ Gestionar Partidos
-              </Link>
-            </div>
-          </FeatureWrapper>
         </div>
       </section>
 

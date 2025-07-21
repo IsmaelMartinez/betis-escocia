@@ -128,7 +128,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, attendees, message, whatsappInterest, matchId } = sanitizeObject(body);
+    const { name, email, attendees, message, whatsappInterest, matchId, userId } = sanitizeObject(body);
 
     // Rate limiting
     const clientIP = getClientIP(request);
@@ -274,7 +274,8 @@ export async function POST(request: NextRequest) {
       message: message?.trim() ?? '',
       whatsapp_interest: Boolean(whatsappInterest),
       match_date: currentMatchDate,
-      match_id: currentMatchId
+      match_id: currentMatchId,
+      user_id: userId || null // Include userId if present
     };
 
     let operationError;

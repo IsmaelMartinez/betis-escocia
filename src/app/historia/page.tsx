@@ -145,11 +145,6 @@ function HistoriaPage() {
                     BetisWeb: Foro de la Peña
                   </Link>
                 </li>
-                <li>
-                  <Link href="https://www.manquepierda.com/blog/la-aficion-del-betis-objetivo-elogios/" target="_blank" className="text-blue-600 hover:underline">
-                    Manquepierda: La afición del Betis
-                  </Link>
-                </li>
               </ul>
             </div>
           </div>
