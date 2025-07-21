@@ -297,7 +297,8 @@ function RSVPPage() {
               <h3 className="text-xl font-bold mb-4">Organización</h3>
               <div className="space-y-2 text-lg">
                 <p>📱 WhatsApp: Pregunta por el grupo</p>
-                <p>📧 Contacto a través del formulario</p>
+                <p>📧 Contacto a través de este formulario</p>
+                <p>🌐 Redes sociales: Síguenos en nuestras redes</p>
               </div>
             </div>
           </div>
