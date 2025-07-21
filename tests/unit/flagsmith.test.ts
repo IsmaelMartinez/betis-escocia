@@ -2,6 +2,7 @@
 import { getFeatureFlag, hasFeatureFlag } from '../../src/lib/featureFlags';
 import { resetFlagsmith } from '../../src/lib/flagsmith';
 import flagsmith from 'flagsmith/isomorphic';
+import { FlagsmithFeatureName } from '../../src/lib/flagsmith/types';
 
 // Mock the flagsmith/isomorphic module
 jest.mock('flagsmith/isomorphic');
@@ -33,21 +34,21 @@ describe('Flagsmith Feature Flag Defaults', () => {
   });
 
   it('should return false for hasFeatureFlag when Flagsmith returns default', async () => {
-    const featureName = 'test_feature';
+    const featureName: FlagsmithFeatureName = 'show-admin';
     const result = await hasFeatureFlag(featureName);
     expect(result).toBe(false);
     expect(flagsmith.hasFeature).toHaveBeenCalledWith(featureName);
   });
 
   it('should return false for getFeatureFlag when Flagsmith returns default', async () => {
-    const featureName = 'test_feature';
+    const featureName: FlagsmithFeatureName = 'show-admin';
     const result = await getFeatureFlag(featureName);
     expect(result).toBe(false);
     expect(flagsmith.getValue).toHaveBeenCalledWith(featureName);
   });
 
   it('should return true for hasFeatureFlag when Flagsmith is configured to return true', async () => {
-    const featureName = 'another_feature';
+    const featureName: FlagsmithFeatureName = 'show-rsvp';
     (flagsmith.hasFeature as jest.Mock).mockReturnValue(true);
     const result = await hasFeatureFlag(featureName);
     expect(result).toBe(true);
@@ -55,7 +56,7 @@ describe('Flagsmith Feature Flag Defaults', () => {
   });
 
   it('should return true for getFeatureFlag when Flagsmith is configured to return true', async () => {
-    const featureName = 'another_feature';
+    const featureName: FlagsmithFeatureName = 'show-rsvp';
     (flagsmith.getValue as jest.Mock).mockReturnValue(true);
     const result = await getFeatureFlag(featureName);
     expect(result).toBe(true);
