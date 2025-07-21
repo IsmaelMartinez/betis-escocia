@@ -7,6 +7,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ClerkProvider } from '@clerk/nextjs';
 import { getEnabledNavigationItemsAsync, initializeFeatureFlags } from '@/lib/featureFlags';
+import FlagsmithRefresher from '@/components/FlagsmithRefresher';
 
 export const dynamic = 'force-dynamic';
 
@@ -123,7 +124,7 @@ export default async function RootLayout({
   try {
     await initializeFeatureFlags();
     enabledNavigation = await getEnabledNavigationItemsAsync();
-    console.log('[RootLayout] Flagsmith initialized successfully. Enabled Navigation:', enabledNavigation);
+    console.debug('[RootLayout] Flagsmith initialized successfully. Enabled Navigation:', enabledNavigation);
   } catch (error) {
     console.error('[RootLayout] Error during Flagsmith initialization or flag fetching:', error);
     // Fallback to an empty array or default navigation items if initialization fails
@@ -151,6 +152,7 @@ export default async function RootLayout({
           afterSignInUrl="/dashboard"
           afterSignUpUrl="/dashboard"
         >
+          <FlagsmithRefresher />
           <Layout enabledNavigation={enabledNavigation} debugInfo={debugInfo}>
             {children}
           </Layout>

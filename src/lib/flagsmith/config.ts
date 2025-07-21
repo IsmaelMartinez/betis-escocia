@@ -30,6 +30,17 @@ export function getFlagsmithConfig(): FlagsmithConfig {
     }
   };
 
+  if (config.enableLogs) {
+    console.log('[Flagsmith Config] Current configuration:', {
+      environmentID: config.environmentID,
+      api: config.api,
+      enableLogs: config.enableLogs,
+      defaultTimeout: config.defaultTimeout,
+      cacheTTL: config.cacheOptions?.ttl,
+      skipAPI: config.cacheOptions?.skipAPI
+    });
+  }
+
   // Validate configuration
   validateConfig(config);
 

@@ -51,7 +51,7 @@ export async function initializeFeatureFlags(): Promise<void> {
     flagsCache = null;
     cacheExpiry = 0;
     
-    console.log('[Feature Flags] Flagsmith initialized successfully');
+    console.debug('[Feature Flags] Flagsmith initialized successfully');
   } catch (error) {
     console.error('[Feature Flags] Failed to initialize Flagsmith:', error);
     // System will fall back to environment variables

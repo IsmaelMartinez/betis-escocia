@@ -43,10 +43,14 @@ class FlagsmithManager {
       // Ensure flagsmith.init is called only once per Node.js process
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (!(global as any).__flagsmithInitialized) {
+        if (this.config.enableLogs) {
+          console.log('[Flagsmith] Initializing SDK...');
+        }
         await flagsmith.init({
           environmentID: this.config.environmentID,
-          // api: this.config.api,
-          // enableLogs: this.config.enableLogs
+          api: this.config.api,
+          enableLogs: this.config.enableLogs,
+          cacheOptions: this.config.cacheOptions
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (global as any).__flagsmithInitialized = true;
@@ -58,7 +62,7 @@ class FlagsmithManager {
       const initTime = Date.now() - startTime;
       
       if (this.config.enableLogs) {
-        console.log(`[Flagsmith] Initialized successfully in ${initTime}ms`);
+        console.log(`[Flagsmith] SDK Initialized successfully in ${initTime}ms`);
       }
     } catch (error) {
       console.error('[Flagsmith] Failed to initialize:', error);
@@ -163,6 +167,8 @@ class FlagsmithManager {
       await flagsmith.getFlags();
       
       if (this.config.enableLogs) {
+        console.log('[Flagsmith] Starting flags refresh...');
+        await flagsmith.getFlags();
         console.log('[Flagsmith] Flags refreshed successfully');
       }
     } catch (error) {

@@ -1,21 +1,44 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash, User, LogIn, LogOut, UserPlus } from 'lucide-react';
 import BetisLogo from '@/components/BetisLogo';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import { useUser, useClerk } from '@clerk/nextjs';
 
+
+import { getEnabledNavigationItemsAsync } from '@/lib/featureFlags';
+
 interface LayoutProps {
   readonly children: React.ReactNode;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  readonly enabledNavigation: any[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly debugInfo: any;
 }
 
-export default function Layout({ children, enabledNavigation, debugInfo }: LayoutProps) {
+export default function Layout({ children, debugInfo }: LayoutProps) {
+  const [enabledNavigation, setEnabledNavigation] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchNavigation = async () => {
+      const navItems = await getEnabledNavigationItemsAsync();
+      setEnabledNavigation(navItems);
+    };
+
+    fetchNavigation();
+
+    // Listen for custom event to re-fetch navigation
+    const handleFlagsUpdated = () => {
+      console.log('[Layout] Flags updated event received, re-fetching navigation.');
+      fetchNavigation();
+    };
+
+    window.addEventListener('flags-updated', handleFlagsUpdated);
+
+    return () => {
+      window.removeEventListener('flags-updated', handleFlagsUpdated);
+    };
+  }, []);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   
