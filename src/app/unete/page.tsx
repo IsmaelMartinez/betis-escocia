@@ -228,7 +228,7 @@ export default function Unete() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <div className="inline-block bg-betis-green text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
-              ❓ PREGUNTAS FRECUENTES
+              PREGUNTAS FRECUENTES
             </div>
             <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
               RESOLVEMOS TUS DUDAS

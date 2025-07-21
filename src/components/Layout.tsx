@@ -9,13 +9,20 @@ import { useUser, useClerk } from '@clerk/nextjs';
 import { getEnabledNavigationItemsAsync } from '@/lib/featureFlags';
 import { NavigationItem } from '@/lib/flagsmith/types';
 
+interface DebugInfo {
+  flags: Record<string, boolean>;
+  environment: string;
+  enabledFeatures: string[];
+  disabledFeatures: string[];
+  cacheStatus: {
+    cached: boolean;
+    expires: string;
+  };
+}
+
 interface LayoutProps {
   readonly children: React.ReactNode;
-  readonly debugInfo: {
-    environment: string;
-    enabledFeatures: string[];
-    disabledFeatures: string[];
-  };
+  readonly debugInfo: DebugInfo | null;
 }
 
 export default function Layout({ children, debugInfo }: LayoutProps) {
