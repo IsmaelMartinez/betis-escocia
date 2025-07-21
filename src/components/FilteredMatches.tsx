@@ -47,7 +47,7 @@ function transformMatch(match: Match, isUpcoming: boolean = false) {
     watchParty: isUpcoming ? {
       location: "Polwarth Tavern",
       address: "35 Polwarth Cres, Edinburgh EH11 1HR",
-      time: "30 minutos antes del partido"
+      time: "15 minutos antes del partido"
     } : undefined
   };
 }

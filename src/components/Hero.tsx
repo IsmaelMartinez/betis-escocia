@@ -194,7 +194,7 @@ export default function Hero() {
                   Llegada: 19:30
                 </p>
                 <p className="text-gray-300 text-sm mt-2">
-                  ¡30 minutos antes para asegurar sitio!
+                  ¡15 minutos antes para asegurar sitio!
                 </p>
               </div>
               <div className="bg-betis-gold text-betis-black px-6 py-3 rounded-xl font-black text-lg">

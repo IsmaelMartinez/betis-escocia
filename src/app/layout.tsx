@@ -153,7 +153,7 @@ export default async function RootLayout({
           afterSignUpUrl="/dashboard"
         >
           <FlagsmithRefresher />
-          <Layout enabledNavigation={enabledNavigation} debugInfo={debugInfo}>
+          <Layout debugInfo={debugInfo}>
             {children}
           </Layout>
         </ClerkProvider>

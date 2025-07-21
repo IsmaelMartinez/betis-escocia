@@ -6,18 +6,20 @@ import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash, User, LogIn, LogOu
 import BetisLogo from '@/components/BetisLogo';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import { useUser, useClerk } from '@clerk/nextjs';
-
-
 import { getEnabledNavigationItemsAsync } from '@/lib/featureFlags';
+import { NavigationItem } from '@/lib/flagsmith/types';
 
 interface LayoutProps {
   readonly children: React.ReactNode;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  readonly debugInfo: any;
+  readonly debugInfo: {
+    environment: string;
+    enabledFeatures: string[];
+    disabledFeatures: string[];
+  };
 }
 
 export default function Layout({ children, debugInfo }: LayoutProps) {
-  const [enabledNavigation, setEnabledNavigation] = useState<any[]>([]);
+  const [enabledNavigation, setEnabledNavigation] = useState<NavigationItem[]>([]);
 
   useEffect(() => {
     const fetchNavigation = async () => {

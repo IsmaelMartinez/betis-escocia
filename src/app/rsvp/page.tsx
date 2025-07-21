@@ -50,7 +50,7 @@ function RSVPPage() {
 
   const fetchAvailableMatches = async () => {
     try {
-      const matches = await getUpcomingMatchesWithRSVPCounts(2); // Only next 2 matches
+      const matches = await getUpcomingMatchesWithRSVPCounts(1); // Only 1 match
       if (matches) {
         setAvailableMatches(matches as MatchWithRSVP[]);
       }
@@ -289,14 +289,13 @@ function RSVPPage() {
               <h3 className="text-xl font-bold mb-4">Polwarth Tavern</h3>
               <div className="space-y-2 text-lg">
                 <p>📍 35 Polwarth Cres, Edinburgh EH11 1HR</p>
-                <p>🕕 Llegada recomendada: 30 min antes</p>
+                <p>🕕 Llegada recomendada: 15 min antes</p>
                 <p>🍺 Bar completo con ambiente bético</p>
               </div>
             </div>
             <div>
               <h3 className="text-xl font-bold mb-4">Organización</h3>
               <div className="space-y-2 text-lg">
-                <p>👑 Fran - Organizador principal</p>
                 <p>📱 WhatsApp: Pregunta por el grupo</p>
                 <p>📧 Contacto a través del formulario</p>
               </div>

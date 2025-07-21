@@ -4,7 +4,7 @@ import AllDatabaseMatches from '@/components/AllDatabaseMatches';
 import { FeatureWrapper } from '@/lib/featureProtection';
 import { notFound } from 'next/navigation';
 import { isFeatureEnabled } from '@/lib/featureFlags';
-import Link from 'next/link';
+
 
 export const dynamic = 'force-dynamic';
 

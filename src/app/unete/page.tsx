@@ -6,7 +6,7 @@ export default function Unete() {
     {
       number: 1,
       title: "Aparece en el Polwarth",
-      description: "Simplemente ven al Polwarth Tavern 30 minutos antes de cualquier partido del Betis.",
+      description: "Simplemente ven al Polwarth Tavern 15 minutos antes de cualquier partido del Betis.",
       icon: "📍",
       details: "No hace falta avisar ni reservar. Solo aparece y pregunta por cualquiera de la peña."
     },

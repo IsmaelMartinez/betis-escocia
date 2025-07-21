@@ -113,7 +113,7 @@ export default function Home() {
               <div className="bg-green-600 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
                 <h3 className="text-lg font-bold mb-3 text-betis-gold">⏰ Horarios</h3>
                 <p className="text-sm text-gray-200">
-                  30 min antes del evento<br />
+                  15 min antes del evento<br />
                   Todos los eventos<br />
                   Fútbol, reuniones, celebraciones
                 </p>

@@ -116,7 +116,7 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
     return (
       <FormSuccessMessage
         title="¡Confirmación Recibida!"
-        message="Gracias por confirmar tu asistencia. Te esperamos en el Polwarth Tavern. Recordatorio: Llega 30 minutos antes del partido para asegurar sitio."
+        message="Gracias por confirmar tu asistencia. Te esperamos en el Polwarth Tavern. Recordatorio: Llega 15 minutos antes del partido para asegurar sitio."
         className="text-center"
       />
     );
