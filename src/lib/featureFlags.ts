@@ -332,7 +332,6 @@ export async function getEnabledNavigationItemsAsync(): Promise<NavigationItem[]
     { name: 'Únete', href: '/unete', nameEn: 'Join', feature: 'show-unete' },
     { name: 'Contacto', href: '/contacto', nameEn: 'Contact', feature: 'show-contacto' },
     { name: 'Redes Sociales', href: '/redes-sociales', nameEn: 'Social Media', feature: 'show-redes-sociales' },
-    { name: 'Admin', href: '/admin', nameEn: 'Admin', feature: 'show-admin' }
   ];
 
   // Get all flags at once for better performance

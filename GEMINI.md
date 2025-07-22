@@ -14,6 +14,7 @@ This document provides a quick overview of the Betis project's key technologies 
 
 ## Key Data Handling Patterns:
 - **Supabase Integration:** `src/lib/supabase.ts` contains core CRUD operations and type definitions for interacting with Supabase tables (e.g., `matches`, `rsvps`, `contact_submissions`).
+  - **`contact_submissions` Table Schema:** This table now includes `phone` (VARCHAR(20)), `subject` (VARCHAR(255) NOT NULL), `type` (VARCHAR(50)), and `status` (VARCHAR(20) DEFAULT 'new') columns.
 - **JSON File Storage:** Some data, like `camiseta-votes.json` and `camiseta-voting.json`, is stored directly in JSON files within the `data/` directory. This is used for simpler, less dynamic data or voting mechanisms.
 - **User Linking:** Supabase tables (e.g., `rsvps`, `contact_submissions`) include a `user_id` field, indicating that user-specific data is linked via authentication. Functions like `linkExistingSubmissionsToUser` exist.
 
@@ -51,6 +52,8 @@ This document provides a quick overview of the Betis project's key technologies 
 
 ## Common Pitfalls and Solutions:
 - **Asynchronous Feature Flag Rendering:** When conditionally rendering UI elements based on asynchronous feature flag checks (e.g., `isFeatureEnabledAsync`), ensure the asynchronous call is handled within a `useEffect` hook. Store the feature flag status in a component's state and use that state for conditional rendering. Directly calling asynchronous functions in the render method will lead to incorrect behavior as the Promise object itself is truthy, not its resolved value.
+- **Supabase Row-Level Security (RLS) Policies:** Be mindful of RLS policies, especially when adding new columns or tables. An overly broad "deny all" policy can override more specific "allow" policies. Ensure explicit `INSERT` and `SELECT` policies are in place for relevant roles (e.g., `anon`, `authenticated`) to prevent unexpected `42501` errors. After making RLS changes, it might be necessary to refresh the Supabase schema cache (e.g., by restarting the Supabase project or waiting for cache invalidation).
+- **Clerk Authentication in Next.js API Routes:** When retrieving user information in Next.js API routes, use `getAuth(request)` from `@clerk/nextjs/server` to reliably get the `userId` for authenticated users, even if the route is publicly accessible. This ensures the `userId` is correctly populated in database submissions.
 
 ## Pointers for Future Interactions:
 - **Always check `src/lib/supabase.ts`** for database interaction patterns.
