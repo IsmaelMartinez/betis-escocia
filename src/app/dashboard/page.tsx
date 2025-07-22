@@ -3,10 +3,11 @@ import { redirect } from 'next/navigation';
 import { getUserRSVPs, getUserContactSubmissions, getUserSubmissionCounts } from '@/lib/supabase';
 import { User, Calendar, MessageSquare, PieChart, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
+import { isFeatureEnabledAsync } from '@/lib/featureFlags';
 
 export default async function DashboardPage() {
   // Check if authentication is enabled
-  const isAuthEnabled = process.env.NEXT_PUBLIC_FEATURE_CLERK_AUTH === 'true';
+  const isAuthEnabled = await isFeatureEnabledAsync('showClerkAuth');
   
   if (!isAuthEnabled) {
     redirect('/');
