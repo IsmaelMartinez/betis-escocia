@@ -334,6 +334,16 @@ export default function ContactPage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Personal Info */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {user && (
+                  <div className="text-center mt-4 p-3 bg-green-50 border border-green-200 rounded-lg col-span-full">
+                    <p className="text-sm text-green-800">
+                      ✓ Conectado como {user.firstName} {user.lastName}
+                    </p>
+                    <p className="text-xs text-green-600 mt-1">
+                      Tus datos se han rellenado automáticamente
+                    </p>
+                  </div>
+                )}
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                     Nombre completo *
