@@ -42,17 +42,22 @@
   - [x] 6.1 Create an admin page/component to display a list of contact submissions.
   - [x] 6.2 Implement functionality to mark submissions as 'in progress' or 'resolved'.
   - [x] 6.3 Ensure that users can view their own submissions on a dedicated page.
-  - [ ] 6.4 Verify that administrators can view all submissions.
-- [ ] 7.0 Authentication and Authorization for Contact Submissions
-  - [ ] 7.1 Investigate and implement the integration of Clerk authentication with Supabase, specifically focusing on passing the Clerk user's JWT to Supabase for authenticated operations.
-  - [ ] 7.2 Ensure that the `user_id` from Clerk is correctly passed and stored in Supabase for new contact submissions and updates.
-  - [ ] 7.3 Implement robust authorization checks to ensure only authenticated users can update their own contact submissions, and administrators can update all submissions.
-- [ ] 8.0 Enhance Admin UI for Contact Submissions
-  - [ ] 8.1 Implement filtering functionality for contact submissions in the admin UI by status (e.g., 'new', 'in progress', 'resolved'), with 'new' as the default filter.
-  - [ ] 8.2 When a contact submission's status is changed in the admin UI, ensure the `user_id` of the authenticated administrator making the change is logged.
-- [ ] 9.0 Conduct Comprehensive End-to-End Testing
-  - [ ] 9.1 Test contact form submission for authenticated and unauthenticated users, verifying correct `user_id` population.
-  - [ ] 9.2 Verify that submitted data appears correctly in the admin UI, including the `user_id`.
-  - [ ] 9.3 Test updating submission statuses in the admin UI, verifying the logging of the administrator's `user_id`.
-  - [ ] 9.4 Verify that users can see the updated status of their submissions.
-  - [ ] 9.5 Test the new filtering functionality for contact submissions by status in the admin UI.
+  - [x] 6.4 Verify that administrators can view all submissions.
+- [x] 7.0 Authentication and Authorization for Contact Submissions
+  - [x] 7.1 Investigate and implement the integration of Clerk authentication with Supabase, specifically focusing on passing the Clerk user's JWT to Supabase for authenticated operations. (ADR 006 created)
+  - [x] 7.2 Ensure that the `user_id` from Clerk is correctly passed and stored in Supabase for new contact submissions and updates.
+  - [x] 7.3 Implement robust authorization checks to ensure only authenticated users can update their own contact submissions, and administrators can update all submissions.
+- [x] 8.0 Enhance Admin UI for Contact Submissions
+  - [x] 8.1 Implement filtering functionality for contact submissions in the admin UI by status (e.g., 'new', 'in progress', 'resolved'), with 'new' as the default filter.
+  - [x] 8.2 When a contact submission's status is changed in the admin UI, ensure the `user_id` of the authenticated administrator making the change is logged.
+- [x] 9.0 Conduct Comprehensive End-to-End Testing (Manual)
+  - [x] 9.1 Test contact form submission for authenticated and unauthenticated users, verifying correct `user_id` population.
+  - [x] 9.2 Verify that submitted data appears correctly in the admin UI, including the `user_id`.
+  - [x] 9.3 Test updating submission statuses in the admin UI, verifying the logging of the administrator's `user_id`.
+  - [x] 9.4 Verify that users can see the updated status of their submissions.
+  - [x] 9.5 Test the new filtering functionality for contact submissions by status in the admin UI.
+
+- [x] 10.0 Implement Clerk-Supabase Webhook Integration
+  - [x] 10.1 Configure Clerk webhooks to send user events (created, updated, deleted) to the Next.js API route (`/api/webhooks/clerk`).
+  - [x] 10.2 Ensure `CLERK_WEBHOOK_SECRET` and `SUPABASE_SERVICE_ROLE_KEY` environment variables are correctly set.
+  - [x] 10.3 Test the webhook integration by creating, updating, and deleting users in Clerk and verifying corresponding changes in the Supabase `public.users` table.

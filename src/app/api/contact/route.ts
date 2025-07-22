@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase, type ContactSubmissionInsert } from '@/lib/supabase';
+import { supabase, type ContactSubmissionInsert, getAuthenticatedSupabaseClient } from '@/lib/supabase';
 import { emailService, type ContactEmailData } from '@/lib/emailService';
 import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, getClientIP } from '@/lib/security';
 import { getAuth } from '@clerk/nextjs/server';
@@ -10,7 +10,14 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { name, email, phone, type, subject, message } = sanitizeObject(body);
-    const { userId } = getAuth(request);
+    const { userId, sessionId, getToken } = getAuth(request);
+    let authenticatedSupabase;
+    if (userId) {
+      const clerkToken = await getToken({ template: 'supabase' });
+      if (clerkToken) {
+        authenticatedSupabase = getAuthenticatedSupabaseClient(clerkToken);
+      }
+    }
 
     // Rate limiting
     const clientIP = getClientIP(request);
@@ -75,7 +82,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Insert into Supabase
-    const { error: insertError } = await supabase
+    const { error: insertError } = await (authenticatedSupabase || supabase)
       .from('contact_submissions')
       .insert(newSubmission)
       .select()

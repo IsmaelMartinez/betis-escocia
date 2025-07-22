@@ -26,7 +26,7 @@ interface AdminStats {
   recentContacts: ContactSubmission[];
 }
 
-type AdminView = 'dashboard' | 'matches' | 'match-form' | 'users';
+type AdminView = 'dashboard' | 'matches' | 'match-form' | 'users' | 'contacts';
 
 interface MatchFormData {
   mode: 'create' | 'edit';
@@ -34,7 +34,7 @@ interface MatchFormData {
 }
 
 function AdminPage() {
-  const { isLoaded, isSignedIn, signOut } = useAuth();
+  const { isLoaded, isSignedIn, signOut, getToken } = useAuth();
   const { user } = useUser();
   const router = useRouter();
   const [stats, setStats] = useState<AdminStats | null>(null);
@@ -46,11 +46,23 @@ function AdminPage() {
   const [currentView, setCurrentView] = useState<AdminView>('dashboard');
   const [matchFormData, setMatchFormData] = useState<MatchFormData>({ mode: 'create' });
   const [matches, setMatches] = useState<Match[]>([]);
+  const [contactFilterStatus, setContactFilterStatus] = useState<ContactSubmission['status'] | 'all'>('new');
+  const [allContactSubmissions, setAllContactSubmissions] = useState<ContactSubmission[]>([]);
 
   const handleUpdateContactStatus = async (id: number, status: ContactSubmission['status']) => {
+    if (!user?.id) {
+      setError('User not authenticated.');
+      return;
+    }
     setRefreshing(true);
     try {
-      const result = await updateContactSubmissionStatus(id, status);
+      const clerkToken = await getToken();
+      if (!clerkToken) {
+        setError('Authentication token not available.');
+        setRefreshing(false);
+        return;
+      }
+      const result = await updateContactSubmissionStatus(id, status, user.id, clerkToken);
       if (result.success) {
         await fetchStats(); // Refresh data
       } else {
@@ -88,13 +100,17 @@ function AdminPage() {
 
       if (rsvpError) throw rsvpError;
 
-      // Fetch contact data
-      const { data: contactData, error: contactError } = await supabase
+      // Fetch all contact data
+      const { data: allContactData, error: allContactError } = await supabase
         .from('contact_submissions')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (contactError) throw contactError;
+      if (allContactError) throw allContactError;
+      setAllContactSubmissions(allContactData || []);
+
+      // Fetch recent contact data for dashboard
+      const recentContactData = (allContactData || []).slice(0, 5);
 
       // Fetch matches data
       const matchesData = await getMatches();
@@ -103,10 +119,10 @@ function AdminPage() {
       // Calculate stats
       const totalRSVPs = rsvpData?.length || 0;
       const totalAttendees = rsvpData?.reduce((sum, rsvp) => sum + rsvp.attendees, 0) || 0;
-      const totalContacts = contactData?.length || 0;
+      const totalContacts = allContactData?.length || 0;
       const totalMatches = matchesData?.length || 0;
       const recentRSVPs = rsvpData?.slice(0, 5) || [];
-      const recentContacts = contactData?.slice(0, 5) || [];
+      const recentContacts = recentContactData || [];
 
       setStats({
         totalRSVPs,
@@ -423,6 +439,17 @@ function AdminPage() {
                 <Users className="h-4 w-4 inline mr-2" />
                 Usuarios
               </button>
+              <button
+                onClick={() => setCurrentView('contacts')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  currentView === 'contacts'
+                    ? 'border-betis-green text-betis-green'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <Mail className="h-4 w-4 inline mr-2" />
+                Contactos
+              </button>
             </nav>
           </div>
         </div>
@@ -634,6 +661,35 @@ function AdminPage() {
         {/* Users Management View */}
         {currentView === 'users' && (
           <UserManagement />
+        )}
+
+        {/* Contacts Management View */}
+        {currentView === 'contacts' && (
+          <>
+            <div className="mb-6">
+              <label htmlFor="contactFilter" className="block text-sm font-medium text-gray-700 mb-2">
+                Filtrar por estado:
+              </label>
+              <select
+                id="contactFilter"
+                name="contactFilter"
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-betis-green focus:border-betis-green sm:text-sm rounded-md"
+                value={contactFilterStatus}
+                onChange={(e) => setContactFilterStatus(e.target.value as ContactSubmission['status'] | 'all')}
+              >
+                <option value="all">Todos</option>
+                <option value="new">Nuevos</option>
+                <option value="in progress">En Progreso</option>
+                <option value="resolved">Resueltos</option>
+              </select>
+            </div>
+            <ContactSubmissionsList
+              submissions={allContactSubmissions.filter(sub => contactFilterStatus === 'all' || sub.status === contactFilterStatus)}
+              onUpdateStatus={handleUpdateContactStatus}
+              isLoading={loading}
+              error={error}
+            />
+          </>
         )}
       </div>
     </div>

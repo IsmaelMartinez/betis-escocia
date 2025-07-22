@@ -1,9 +1,17 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+export function getAuthenticatedSupabaseClient(supabaseAccessToken: string): SupabaseClient {
+  return createClient(supabaseUrl, supabaseAnonKey, {
+    global: {
+      headers: { Authorization: `Bearer ${supabaseAccessToken}` },
+    },
+  });
+}
 
 // Type definitions for our matches table
 export interface Match {
@@ -101,6 +109,7 @@ export interface ContactSubmission {
   user_id?: string   // New field for linking to authenticated users
   created_at: string
   updated_at: string
+  updated_by?: string // New field to store the user who updated the submission
 }
 
 export interface ContactSubmissionInsert {
@@ -112,6 +121,7 @@ export interface ContactSubmissionInsert {
   message: string
   status?: 'new' | 'read' | 'responded' | 'closed'
   user_id?: string   // New field for linking to authenticated users
+  updated_by?: string // New field to store the user who updated the submission
 }
 
 // Match CRUD operations
@@ -401,16 +411,24 @@ export async function unlinkUserSubmissions(userId: string) {
   }
 }
 
-export async function updateContactSubmissionStatus(id: number, status: 'new' | 'in progress' | 'resolved') {
+export async function updateContactSubmissionStatus(id: number, status: 'new' | 'in progress' | 'resolved', adminUserId: string, clerkToken: string) {
   const response = await fetch(`/api/admin/contact-submissions/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${clerkToken}`,
     },
-    body: JSON.stringify({ status }),
+    body: JSON.stringify({ status, adminUserId }),
   });
 
-  const result = await response.json();
+  const responseText = await response.text();
+  let result;
+  try {
+    result = JSON.parse(responseText);
+  } catch (parseError) {
+    console.error('Failed to parse JSON response:', responseText, parseError);
+    return { success: false, error: 'Invalid JSON response from server.' };
+  }
 
   if (!response.ok) {
     console.error('Error updating contact submission status:', result.error);
