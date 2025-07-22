@@ -32,7 +32,17 @@
   - [x] 4.3 Ensure that the pre-populated `name` and `email` input fields remain editable by the user.
 - [ ] 5.0 Conduct Testing and Refinement
   - [x] 5.1 Manually test the display of contact highlights, verifying that only enabled features are shown.
-  - [ ] 5.2 Manually test the scroll-to-form functionality for all highlights, ensuring smooth navigation.
-  - [ ] 5.3 Test user data pre-population for both authenticated and unauthenticated users.
+  - [x] 5.2 Manually test the scroll-to-form functionality for all highlights, ensuring smooth navigation.
+  - [x] 5.3 Test user data pre-population for both authenticated and unauthenticated users.
   - [ ] 5.4 Verify that the contact form submission functionality still works correctly after all changes.
   - [ ] 5.5 Check the browser console for any new errors or warnings introduced by the changes.
+- [ ] 6.0 Implement Admin UI for Contact Submissions
+  - [ ] 6.1 Create an admin page/component to display a list of contact submissions.
+  - [ ] 6.2 Implement functionality to mark submissions as 'in progress' or 'resolved'.
+  - [ ] 6.3 Ensure that users can view their own submissions on a dedicated page.
+  - [ ] 6.4 Verify that administrators can view all submissions.
+- [ ] 7.0 Conduct End-to-End Testing for Submissions
+  - [ ] 7.1 Test contact form submission for authenticated and unauthenticated users.
+  - [ ] 7.2 Verify that submitted data appears correctly in the admin UI.
+  - [ ] 7.3 Test updating submission statuses in the admin UI.
+  - [ ] 7.4 Verify that users can see the updated status of their submissions.

@@ -152,8 +152,10 @@ DO $$ BEGIN IF NOT EXISTS (
     name VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL,
     message TEXT NOT NULL,
+    phone VARCHAR(20),
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    user_id TEXT
+    user_id TEXT,
+    status VARCHAR(20) DEFAULT 'new'
 );
 END IF;
 END $$;
