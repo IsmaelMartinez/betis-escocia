@@ -211,6 +211,8 @@ export default function ContactPage() {
 
   const selectedType = formTypes.find(type => type.id === formData.type);
 
+  const visibleFormTypes = formTypes.filter(type => !type.feature || highlightFeatures[type.id]);
+
   if (loadingFeatureFlag) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -267,7 +269,7 @@ export default function ContactPage() {
             💬 ¿Qué necesitas?
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <div className={`grid grid-cols-1 md:grid-cols-2 ${visibleFormTypes.length === 4 ? 'lg:grid-cols-2' : 'lg:grid-cols-3'} gap-6 mb-12`}>
             {formTypes.map((type) => {
               const Icon = type.icon;
               // Conditionally render based on feature flag

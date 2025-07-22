@@ -49,6 +49,9 @@ This document provides a quick overview of the Betis project's key technologies 
     *   Frontend components for game interaction and displaying scores/leaderboards.
 9.  **Internationalization (i18n):** If the audience is global, consider implementing i18n for content.
 
+## Common Pitfalls and Solutions:
+- **Asynchronous Feature Flag Rendering:** When conditionally rendering UI elements based on asynchronous feature flag checks (e.g., `isFeatureEnabledAsync`), ensure the asynchronous call is handled within a `useEffect` hook. Store the feature flag status in a component's state and use that state for conditional rendering. Directly calling asynchronous functions in the render method will lead to incorrect behavior as the Promise object itself is truthy, not its resolved value.
+
 ## Pointers for Future Interactions:
 - **Always check `src/lib/supabase.ts`** for database interaction patterns.
 - **Look for existing UI components in `src/components/`** before creating new ones.

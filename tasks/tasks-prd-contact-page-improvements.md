@@ -31,7 +31,7 @@
   - [x] 4.2 Implement a `useEffect` hook in `src/app/contacto/page.tsx` to pre-populate the `name` and `email` fields of the form state (`formData`) with the authenticated user's `firstName`, `lastName`, and `emailAddresses[0]?.emailAddress`.
   - [x] 4.3 Ensure that the pre-populated `name` and `email` input fields remain editable by the user.
 - [ ] 5.0 Conduct Testing and Refinement
-  - [ ] 5.1 Manually test the display of contact highlights, verifying that only enabled features are shown.
+  - [x] 5.1 Manually test the display of contact highlights, verifying that only enabled features are shown.
   - [ ] 5.2 Manually test the scroll-to-form functionality for all highlights, ensuring smooth navigation.
   - [ ] 5.3 Test user data pre-population for both authenticated and unauthenticated users.
   - [ ] 5.4 Verify that the contact form submission functionality still works correctly after all changes.
