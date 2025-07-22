@@ -188,14 +188,13 @@ export default function ContactPage() {
 
       if (response.ok) {
         setSubmitStatus('success');
-        setFormData({
-          name: '',
-          email: '',
+        setFormData(prev => ({
+          ...prev,
           phone: '',
           type: 'general',
           subject: '',
           message: ''
-        });
+        }));
       } else {
         setSubmitStatus('error');
         setErrorMessage(result.error ?? 'Error al enviar el mensaje');
