@@ -134,8 +134,8 @@ export default function ContactPage() {
       
       setFormData(prev => ({
         ...prev,
-        name: userName || prev.name,
-        email: userEmail || prev.email,
+        name: prev.name || userName,
+        email: prev.email || userEmail,
       }));
     }
   }, [user]);
@@ -347,7 +347,7 @@ export default function ContactPage() {
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-green focus:border-transparent"
                     placeholder="Tu nombre y apellido"
-                    disabled={!!user?.firstName}
+                    
                   />
                 </div>
 
@@ -364,7 +364,7 @@ export default function ContactPage() {
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-green focus:border-transparent"
                     placeholder="tu@email.com"
-                    disabled={!!user?.emailAddresses[0]?.emailAddress}
+                    
                   />
                 </div>
               </div>

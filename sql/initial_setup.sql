@@ -151,6 +151,8 @@ DO $$ BEGIN IF NOT EXISTS (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL,
+    subject VARCHAR(255) NOT NULL,
+    type VARCHAR(50),
     message TEXT NOT NULL,
     phone VARCHAR(20),
     created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -166,14 +168,25 @@ CREATE INDEX IF NOT EXISTS idx_contact_submissions_user_id_created_at ON contact
 -- Enable Row Level Security on the contact_submissions table
 ALTER TABLE public.contact_submissions ENABLE ROW LEVEL SECURITY;
 -- Create a default deny-all policy if it does not already exist
-DO $$ BEGIN IF NOT EXISTS (
+
+
+DO $ BEGIN IF NOT EXISTS (
     SELECT 1
     FROM pg_policies
-    WHERE policyname = 'Deny all access by default'
+    WHERE policyname = 'Allow public inserts on contact_submissions'
         AND tablename = 'contact_submissions'
-) THEN CREATE POLICY "Deny all access by default" ON public.contact_submissions FOR ALL USING (false);
+) THEN CREATE POLICY "Allow public inserts on contact_submissions" ON public.contact_submissions FOR INSERT TO anon, authenticated WITH CHECK (true);
 END IF;
-END $$;
+END $;
+
+DO $ BEGIN IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE policyname = 'Allow public reads on contact_submissions'
+        AND tablename = 'contact_submissions'
+) THEN CREATE POLICY "Allow public reads on contact_submissions" ON public.contact_submissions FOR SELECT TO anon, authenticated USING (true);
+END IF;
+END $;
 -- Enable Row Level Security on the matches table
 ALTER TABLE public.matches ENABLE ROW LEVEL SECURITY;
 -- Create or replace match_rsvp_counts view

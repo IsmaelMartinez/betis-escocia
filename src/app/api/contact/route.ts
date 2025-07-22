@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase, type ContactSubmissionInsert } from '@/lib/supabase';
 import { emailService, type ContactEmailData } from '@/lib/emailService';
 import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, getClientIP } from '@/lib/security';
+import { getAuth } from '@clerk/nextjs/server';
 
 // Supabase-based contact operations - no file system needed
 
@@ -9,6 +10,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { name, email, phone, type, subject, message } = sanitizeObject(body);
+    const { userId } = getAuth(request);
 
     // Rate limiting
     const clientIP = getClientIP(request);
@@ -68,7 +70,8 @@ export async function POST(request: NextRequest) {
       type: type ?? 'general',
       subject: subject.trim(),
       message: message.trim(),
-      status: 'new'
+      status: 'new',
+      user_id: userId || null
     };
 
     // Insert into Supabase
