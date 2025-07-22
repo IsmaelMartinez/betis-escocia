@@ -19,8 +19,8 @@
   - [x] 1.1 Review `src/app/contacto/page.tsx` to understand its current structure and identify areas for modification.
   - [x] 1.2 Ensure necessary imports (`useState`, `useEffect`, `useRef`, `useUser` from `@clerk/nextjs`, `isFeatureEnabled` from `@/lib/featureFlags`, `FlagsmithFeatureName` from `@/lib/flagsmith/types`) are present.
   - [x] 1.3 Add `"use client";` directive at the top of `src/app/contacto/page.tsx` if not already present.
-- [ ] 2.0 Implement Contact Highlights Display
-  - [ ] 2.1 Define the structure for contact highlights within `src/app/contacto/page.tsx`, including `id`, `name`, `description`, `icon`, `color`, and a `feature` property (of type `FlagsmithFeatureName | null`).
+- [x] 2.0 Implement Contact Highlights Display
+  - [x] 2.1 Define the structure for contact highlights within `src/app/contacto/page.tsx`, including `id`, `name`, `description`, `icon`, `color`, and a `feature` property (of type `FlagsmithFeatureName | null`).
   - [ ] 2.2 Modify the rendering of highlights in `src/app/contacto/page.tsx` to conditionally display them based on `isFeatureEnabled(type.feature)` for highlights with an associated feature flag.
 - [x] 3.0 Develop Scroll-to-Form Navigation
   - [x] 3.1 Add a `useRef` hook to the contact form section in `src/app/contacto/page.tsx` (e.g., `formRef = useRef<HTMLDivElement>(null)`).
