@@ -111,7 +111,7 @@ function AdminPage() {
       setAllContactSubmissions(allContactData || []);
 
       // Fetch recent contact data for dashboard
-      const recentContactData = (allContactData || []).slice(0, 5);
+      const recentContactData = (allContactData || []).filter(c => c.status === 'new').slice(0, 5);
 
       // Fetch matches data
       const matchesData = await getMatches();
@@ -578,7 +578,12 @@ function AdminPage() {
           {/* Recent Contacts */}
           <Card>
             <CardHeader>
-              <h2 className="text-xl font-bold text-betis-black">Contactos Recientes</h2>
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold text-betis-black">Contactos Recientes</h2>
+                <Button variant="outline" size="sm" onClick={() => setCurrentView('contacts')}>
+                  Ver Todos
+                </Button>
+              </div>
             </CardHeader>
             <CardBody>
               {stats?.recentContacts.length === 0 ? (
