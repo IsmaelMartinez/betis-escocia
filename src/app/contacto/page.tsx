@@ -84,6 +84,7 @@ export default function ContactPage() {
   const formRef = useRef<HTMLDivElement>(null);
   const [isContactFeatureEnabled, setIsContactFeatureEnabled] = useState(false);
   const [loadingFeatureFlag, setLoadingFeatureFlag] = useState(true);
+  const [highlightFeatures, setHighlightFeatures] = useState<Record<string, boolean>>({});
 
   console.log('[ContactPage] Initial state: loadingFeatureFlag=', loadingFeatureFlag, ' isContactFeatureEnabled=', isContactFeatureEnabled);
 
@@ -103,15 +104,24 @@ export default function ContactPage() {
   // Check feature flag on client-side
   useEffect(() => {
     console.log('[ContactPage] useEffect for feature flag check triggered.');
-    const checkFeature = async () => {
+    const checkFeatures = async () => {
       console.log('[ContactPage] Calling isFeatureEnabledAsync for showContacto...');
-      const enabled = await isFeatureEnabledAsync('showContacto');
-      console.log('[ContactPage] isFeatureEnabledAsync returned:', enabled);
-      setIsContactFeatureEnabled(enabled);
+      const contactEnabled = await isFeatureEnabledAsync('showContacto');
+      setIsContactFeatureEnabled(contactEnabled);
+
+      const featuresStatus: Record<string, boolean> = {};
+      for (const type of formTypes) {
+        if (type.feature) {
+          featuresStatus[type.id] = await isFeatureEnabledAsync(type.feature);
+        } else {
+          featuresStatus[type.id] = true; // Always enabled if no feature flag
+        }
+      }
+      setHighlightFeatures(featuresStatus);
       setLoadingFeatureFlag(false);
-      console.log('[ContactPage] Updated state: loadingFeatureFlag=false, isContactFeatureEnabled=', enabled);
+      console.log('[ContactPage] Updated state: loadingFeatureFlag=false, isContactFeatureEnabled=', contactEnabled, ' highlightFeatures=', featuresStatus);
     };
-    checkFeature();
+    checkFeatures();
   }, []);
 
   // Pre-populate form with user data when authenticated
@@ -261,7 +271,7 @@ export default function ContactPage() {
             {formTypes.map((type) => {
               const Icon = type.icon;
               // Conditionally render based on feature flag
-              if (type.feature && !isFeatureEnabledAsync(type.feature)) {
+              if (type.feature && !highlightFeatures[type.id]) {
                 return null;
               }
               return (
