@@ -47,7 +47,7 @@ function AdminPage() {
   const [currentView, setCurrentView] = useState<AdminView>('dashboard');
   const [matchFormData, setMatchFormData] = useState<MatchFormData>({ mode: 'create' });
   const [matches, setMatches] = useState<Match[]>([]);
-  const [contactFilterStatus, setContactFilterStatus] = useState<ContactSubmission['status'] | 'all'>('new');
+  const [contactFilterStatus, setContactFilterStatus] = useState<ContactSubmission['status'][]>(['new', 'in progress']);
   const [allContactSubmissions, setAllContactSubmissions] = useState<ContactSubmission[]>([]);
 
   const handleUpdateContactStatus = async (id: number, status: ContactSubmission['status']) => {
@@ -350,6 +350,14 @@ function AdminPage() {
       </div>
     );
   }
+
+  """  const handleContactFilterChange = (status: ContactSubmission['status']) => {
+    setContactFilterStatus(prev => 
+      prev.includes(status) 
+        ? prev.filter(s => s !== status)
+        : [...prev, status]
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -676,21 +684,20 @@ function AdminPage() {
               <label htmlFor="contactFilter" className="block text-sm font-medium text-gray-700 mb-2">
                 Filtrar por estado:
               </label>
-              <select
-                id="contactFilter"
-                name="contactFilter"
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-betis-green focus:border-betis-green sm:text-sm rounded-md"
-                value={contactFilterStatus}
-                onChange={(e) => setContactFilterStatus(e.target.value as ContactSubmission['status'] | 'all')}
-              >
-                <option value="all">Todos</option>
-                <option value="new">Nuevos</option>
-                <option value="in progress">En Progreso</option>
-                <option value="resolved">Resueltos</option>
-              </select>
+              <div className="flex space-x-2">
+                {(['new', 'in progress', 'resolved'] as const).map(status => (
+                  <Button
+                    key={status}
+                    variant={contactFilterStatus.includes(status) ? 'primary' : 'outline'}
+                    onClick={() => handleContactFilterChange(status)}
+                  >
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                  </Button>
+                ))}
+              </div>
             </div>
             <ContactSubmissionsList
-              submissions={allContactSubmissions.filter(sub => contactFilterStatus === 'all' || sub.status === contactFilterStatus)}
+              submissions={allContactSubmissions.filter(sub => contactFilterStatus.includes(sub.status))}
               onUpdateStatus={handleUpdateContactStatus}
               isLoading={loading}
               error={error}
@@ -701,5 +708,6 @@ function AdminPage() {
     </div>
   );
 }
+""
 
 export default withAdminRole(AdminPage);
