@@ -35,8 +35,8 @@
   - [x] 5.2 Manually test the scroll-to-form functionality for all highlights, ensuring smooth navigation.
   - [x] 5.3 Test user data pre-population for both authenticated and unauthenticated users.
   - [x] 5.4 Verify that the contact form submission functionality still works correctly after all changes.
-  - [ ] 5.5 Check the browser console for any new errors or warnings introduced by the changes.
-  - [ ] 5.6 Diagnose and resolve RLS policy caching issues for contact submissions.
+  - [x] 5.5 Check the browser console for any new errors or warnings introduced by the changes.
+  - [x] 5.6 Diagnose and resolve RLS policy caching issues for contact submissions.
   - [x] 5.7 Ensure `user_id` is populated for authenticated submissions.
 - [ ] 6.0 Implement Admin UI for Contact Submissions
   - [ ] 6.1 Create an admin page/component to display a list of contact submissions.
