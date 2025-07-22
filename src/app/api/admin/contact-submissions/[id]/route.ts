@@ -27,7 +27,7 @@ export async function PUT(request: NextRequest) {
       .update({ status: status })
       .eq('id', id)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error updating contact submission status:', error);
@@ -35,7 +35,7 @@ export async function PUT(request: NextRequest) {
     }
 
     if (!data) {
-      return NextResponse.json({ success: false, error: 'Submission not found' }, { status: 404 });
+      return NextResponse.json({ success: false, error: 'Submission not found or not authorized' }, { status: 404 });
     }
 
     return NextResponse.json({ success: true, data });
