@@ -14,6 +14,7 @@ import { FeatureWrapper } from '@/lib/featureProtection';
 import MatchForm from '@/components/admin/MatchForm';
 import MatchesList from '@/components/admin/MatchesList';
 import UserManagement from '@/components/admin/UserManagement';
+import ContactSubmissionsList from '@/components/admin/ContactSubmissionsList';
 import { useRouter } from 'next/navigation';
 import { withAdminRole } from '@/lib/withAdminRole';
 
