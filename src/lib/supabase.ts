@@ -401,6 +401,25 @@ export async function unlinkUserSubmissions(userId: string) {
   }
 }
 
+export async function updateContactSubmissionStatus(id: number, status: 'new' | 'in progress' | 'resolved') {
+  const response = await fetch(`/api/admin/contact-submissions/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ status }),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    console.error('Error updating contact submission status:', result.error);
+    return { success: false, error: result.error };
+  }
+
+  return { success: true, data: result.data as ContactSubmission };
+}
+
 // Get all matches with RSVP counts
 export async function getAllMatchesWithRSVPCounts(limit?: number) {
   const query = supabase
@@ -430,7 +449,7 @@ export async function getAllMatchesWithRSVPCounts(limit?: number) {
     )
 
     if (fallbackResult.error) {
-      console.error('Error fetching matches:', fallbackResult.error)
+      console.error('Error fetching upcoming matches:', fallbackResult.error)
       return null
     }
 
@@ -458,3 +477,4 @@ export async function getAllMatchesWithRSVPCounts(limit?: number) {
     }
   })
 }
+

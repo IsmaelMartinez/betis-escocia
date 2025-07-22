@@ -47,6 +47,23 @@ function AdminPage() {
   const [matchFormData, setMatchFormData] = useState<MatchFormData>({ mode: 'create' });
   const [matches, setMatches] = useState<Match[]>([]);
 
+  const handleUpdateContactStatus = async (id: number, status: ContactSubmission['status']) => {
+    setRefreshing(true);
+    try {
+      const result = await updateContactSubmissionStatus(id, status);
+      if (result.success) {
+        await fetchStats(); // Refresh data
+      } else {
+        setError(result.error || 'Error al actualizar el estado del contacto');
+      }
+    } catch (err) {
+      console.error('Error updating contact status:', err);
+      setError('Error al actualizar el estado del contacto');
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   // Redirect to sign-in if not authenticated
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -550,11 +567,17 @@ function AdminPage() {
                       </div>
                       <div className="text-sm text-gray-600 mb-1">{contact.email}</div>
                       <div className="text-sm mb-2">
-                        <span className="inline-block bg-betis-green/10 text-betis-green px-2 py-1 rounded text-xs font-medium mr-2">
-                          {contact.type}
-                        </span>
+                        <select
+                          value={contact.status}
+                          onChange={(e) => handleUpdateContactStatus(contact.id, e.target.value as ContactSubmission['status'])}
+                          className="inline-block bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-medium mr-2 focus:outline-none focus:ring-2 focus:ring-betis-green"
+                        >
+                          <option value="new">New</option>
+                          <option value="in progress">In Progress</option>
+                          <option value="resolved">Resolved</option>
+                        </select>
                         <span className="inline-block bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs font-medium">
-                          {contact.status}
+                          {contact.type}
                         </span>
                       </div>
                       <div className="text-sm font-medium text-gray-700 mb-1">{contact.subject}</div>
