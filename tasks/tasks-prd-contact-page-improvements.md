@@ -41,7 +41,7 @@
 - [ ] 6.0 Implement Admin UI for Contact Submissions
   - [x] 6.1 Create an admin page/component to display a list of contact submissions.
   - [x] 6.2 Implement functionality to mark submissions as 'in progress' or 'resolved'.
-  - [ ] 6.3 Ensure that users can view their own submissions on a dedicated page.
+  - [x] 6.3 Ensure that users can view their own submissions on a dedicated page.
   - [ ] 6.4 Verify that administrators can view all submissions.
 - [ ] 7.0 Conduct End-to-End Testing for Submissions
   - [ ] 7.1 Test contact form submission for authenticated and unauthenticated users.

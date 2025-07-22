@@ -187,6 +187,15 @@ DO $ BEGIN IF NOT EXISTS (
 ) THEN CREATE POLICY "Allow public reads on contact_submissions" ON public.contact_submissions FOR SELECT TO anon, authenticated USING (true);
 END IF;
 END $;
+
+DO $ BEGIN IF NOT EXISTS (
+    SELECT 1
+    FROM pg_policies
+    WHERE policyname = 'Allow authenticated updates on contact_submissions'
+        AND tablename = 'contact_submissions'
+) THEN CREATE POLICY "Allow authenticated updates on contact_submissions" ON public.contact_submissions FOR UPDATE TO authenticated USING (true);
+END IF;
+END $;
 -- Enable Row Level Security on the matches table
 ALTER TABLE public.matches ENABLE ROW LEVEL SECURITY;
 -- Create or replace match_rsvp_counts view

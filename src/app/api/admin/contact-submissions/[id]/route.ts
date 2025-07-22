@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { auth } from '@clerk/nextjs/server';
-import { isAdministrator } from '@/lib/roleUtils';
+import { auth, currentUser } from '@clerk/nextjs/server';
+import { isAdmin } from '@/lib/roleUtils';
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }) {
   try {
     const { userId } = auth();
+    const user = await currentUser();
 
-    if (!userId || !await isAdministrator(userId)) {
+    if (!userId || !user || !isAdmin(user)) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = context.params;
     const { status } = await request.json();
 
     if (!status || !['new', 'in progress', 'resolved'].includes(status)) {
