@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   Send, 
   MessageSquare, 
@@ -12,14 +12,17 @@ import {
   MessageCircle, 
   HelpCircle
 } from 'lucide-react';
-import { withFeatureFlag } from '@/lib/featureProtection';
 import { FormSuccessMessage, FormErrorMessage, FormLoadingMessage } from '@/components/MessageComponent';
+import { useUser } from '@clerk/nextjs';
+import { isFeatureEnabledAsync } from '@/lib/featureFlags';
+import { FlagsmithFeatureName } from '@/lib/flagsmith/types';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface ContactFormData {
   name: string;
   email: string;
   phone?: string;
-  type: 'general' | 'rsvp' | 'merchandise' | 'photo' | 'whatsapp' | 'feedback';
+  type: 'general' | 'rsvp' | 'coleccionables' | 'galeria' | 'whatsapp' | 'feedback';
   subject: string;
   message: string;
 }
@@ -30,46 +33,60 @@ const formTypes = [
     name: 'Consulta General',
     description: 'Preguntas generales sobre la peña',
     icon: MessageSquare,
-    color: 'bg-blue-500'
+    color: 'bg-blue-500',
+    feature: null // Always enabled
   },
   {
     id: 'rsvp' as const,
     name: 'Eventos y RSVP',
     description: 'Dudas sobre eventos y confirmaciones',
     icon: UserPlus,
-    color: 'bg-green-500'
+    color: 'bg-green-500',
+    feature: 'showRSVP' as keyof FlagsmithFeatureName
   },
   {
-    id: 'merchandise' as const,
-    name: 'Productos/Tienda',
+    id: 'coleccionables' as const,
+    name: 'Colleccionables/Tienda',
     description: 'Consultas sobre productos y pedidos',
     icon: Package,
-    color: 'bg-purple-500'
+    color: 'bg-purple-500',
+    feature: 'showColeccionables' as keyof FlagsmithFeatureName
   },
   {
-    id: 'photo' as const,
+    id: 'galeria' as const,
     name: 'Fotos y Galería',
     description: 'Envío de fotos o problemas con la galería',
     icon: Camera,
-    color: 'bg-pink-500'
+    color: 'bg-pink-500',
+    feature: 'showGaleria' as keyof FlagsmithFeatureName
   },
   {
     id: 'whatsapp' as const,
     name: 'Unirse a WhatsApp',
     description: 'Solicitar invitación al grupo de WhatsApp',
     icon: MessageCircle,
-    color: 'bg-green-600'
+    color: 'bg-green-600',
+    feature: null // Always enabled for now
   },
   {
     id: 'feedback' as const,
     name: 'Sugerencias Web',
     description: 'Mejoras y feedback sobre la web',
     icon: HelpCircle,
-    color: 'bg-orange-500'
+    color: 'bg-orange-500',
+    feature: null // Always enabled for now
   }
 ];
 
-function ContactPage() {
+export default function ContactPage() {
+  console.log('[ContactPage] Component rendering...');
+  const { user } = useUser();
+  const formRef = useRef<HTMLDivElement>(null);
+  const [isContactFeatureEnabled, setIsContactFeatureEnabled] = useState(false);
+  const [loadingFeatureFlag, setLoadingFeatureFlag] = useState(true);
+
+  console.log('[ContactPage] Initial state: loadingFeatureFlag=', loadingFeatureFlag, ' isContactFeatureEnabled=', isContactFeatureEnabled);
+
   const [formData, setFormData] = useState<ContactFormData>({
     name: '',
     email: '',
@@ -82,6 +99,36 @@ function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Check feature flag on client-side
+  useEffect(() => {
+    console.log('[ContactPage] useEffect for feature flag check triggered.');
+    const checkFeature = async () => {
+      console.log('[ContactPage] Calling isFeatureEnabledAsync for showContacto...');
+      const enabled = await isFeatureEnabledAsync('showContacto');
+      console.log('[ContactPage] isFeatureEnabledAsync returned:', enabled);
+      setIsContactFeatureEnabled(enabled);
+      setLoadingFeatureFlag(false);
+      console.log('[ContactPage] Updated state: loadingFeatureFlag=false, isContactFeatureEnabled=', enabled);
+    };
+    checkFeature();
+  }, []);
+
+  // Pre-populate form with user data when authenticated
+  useEffect(() => {
+    if (user) {
+      const userName = user.firstName && user.lastName 
+        ? `${user.firstName} ${user.lastName}` 
+        : user.firstName || '';
+      const userEmail = user.emailAddresses[0]?.emailAddress || '';
+      
+      setFormData(prev => ({
+        ...prev,
+        name: userName || prev.name,
+        email: userEmail || prev.email,
+      }));
+    }
+  }, [user]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -97,13 +144,15 @@ function ContactPage() {
       type,
       subject: getDefaultSubject(type)
     }));
+    // Scroll to form when type changes
+    formRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const getDefaultSubject = (type: ContactFormData['type']): string => {
     switch (type) {
       case 'rsvp': return 'Consulta sobre eventos';
-      case 'merchandise': return 'Consulta sobre productos';
-      case 'photo': return 'Envío de fotos';
+      case 'coleccionables': return 'Consulta sobre productos';
+      case 'galeria': return 'Envío de fotos';
       case 'whatsapp': return 'Solicitud de invitación a WhatsApp';
       case 'feedback': return 'Sugerencias para la web';
       default: return '';
@@ -152,6 +201,40 @@ function ContactPage() {
 
   const selectedType = formTypes.find(type => type.id === formData.type);
 
+  if (loadingFeatureFlag) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <LoadingSpinner size="lg" label="Cargando página de contacto..." />
+      </div>
+    );
+  }
+
+  if (!isContactFeatureEnabled) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8 text-center">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Página No Disponible
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            La página de contacto está deshabilitada en este momento.
+          </p>
+          <div className="bg-white p-8 rounded-lg shadow-md">
+            <p className="text-gray-700 mb-4">
+              Por favor, inténtalo de nuevo más tarde.
+            </p>
+            <a 
+              href="/"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-betis-green hover:bg-betis-green/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-betis-green"
+            >
+              Volver al Inicio
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
@@ -177,6 +260,10 @@ function ContactPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {formTypes.map((type) => {
               const Icon = type.icon;
+              // Conditionally render based on feature flag
+              if (type.feature && !isFeatureEnabledAsync(type.feature)) {
+                return null;
+              }
               return (
                 <button
                   key={type.id}
@@ -200,7 +287,7 @@ function ContactPage() {
       </section>
 
       {/* Contact Form */}
-      <section className="py-12 bg-gray-50">
+      <section ref={formRef} className="py-12 bg-gray-50">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <div className="text-center mb-8">
@@ -248,6 +335,7 @@ function ContactPage() {
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-green focus:border-transparent"
                     placeholder="Tu nombre y apellido"
+                    disabled={!!user?.firstName}
                   />
                 </div>
 
@@ -264,6 +352,7 @@ function ContactPage() {
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-green focus:border-transparent"
                     placeholder="tu@email.com"
+                    disabled={!!user?.emailAddresses[0]?.emailAddress}
                   />
                 </div>
               </div>
@@ -329,7 +418,7 @@ function ContactPage() {
                 </div>
               )}
 
-              {formData.type === 'photo' && (
+              {formData.type === 'galeria' && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <p className="text-blue-800 text-sm">
                     📸 <strong>Envío de fotos:</strong> Puedes adjuntar fotos directamente en la galería 
@@ -338,7 +427,7 @@ function ContactPage() {
                 </div>
               )}
 
-              {formData.type === 'merchandise' && (
+              {formData.type === 'coleccionables' && (
                 <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                   <p className="text-purple-800 text-sm">
                     🛍️ <strong>Consulta de productos:</strong> Especifica qué producto te interesa, 
@@ -471,5 +560,3 @@ function ContactPage() {
     </div>
   );
 }
-
-export default withFeatureFlag(ContactPage, 'showContacto');

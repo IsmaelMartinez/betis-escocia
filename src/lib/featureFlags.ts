@@ -64,6 +64,7 @@ export async function initializeFeatureFlags(): Promise<void> {
 export async function getFeatureFlags(): Promise<FeatureFlags> {
   // Check cache first
   if (flagsCache && Date.now() < cacheExpiry) {
+    console.debug('[Feature Flags] getFeatureFlags: Cache hit.', flagsCache);
     return flagsCache;
   }
 
@@ -90,6 +91,8 @@ export async function getFeatureFlags(): Promise<FeatureFlags> {
       showDebugInfo: flagValues['show-debug-info'],
       showBetaFeatures: flagValues['show-beta-features']
     };
+
+    console.debug('[Feature Flags] getFeatureFlags: Fetched flags from Flagsmith:', flags);
 
     // Cache the result
     flagsCache = flags;
@@ -214,7 +217,9 @@ export function isFeatureEnabled(feature: keyof FeatureFlags): boolean {
  * Async version of isFeatureEnabled for new implementations
  */
 export async function isFeatureEnabledAsync(feature: keyof FeatureFlags): Promise<boolean> {
+  console.debug('[Feature Flags] isFeatureEnabledAsync: Checking feature', feature);
   const flags = await getFeatureFlags();
+  console.debug('[Feature Flags] isFeatureEnabledAsync: Flags available', flags);
   return flags[feature];
 }
 
