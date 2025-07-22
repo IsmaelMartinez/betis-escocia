@@ -168,7 +168,12 @@ export default async function DashboardPage() {
                   ))}
                   {contactSubmissions.length > 5 && (
                     <p className="text-sm text-gray-500 text-center pt-2">
-                      y {contactSubmissions.length - 5} más...
+                      <Link 
+                        href="/dashboard/contact-submissions" 
+                        className="text-betis-green hover:text-betis-green/80 text-sm font-medium inline-flex items-center"
+                      >
+                        Ver todos los mensajes <ExternalLink className="h-3 w-3 ml-1" />
+                      </Link>
                     </p>
                   )}
                 </div>
