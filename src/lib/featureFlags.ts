@@ -308,12 +308,7 @@ export function getEnabledNavigationItems() {
       nameEn: 'Social Media',
       feature: 'showRedesSociales' as keyof FeatureFlags
     },
-    { 
-      name: 'Admin', 
-      href: '/admin', 
-      nameEn: 'Admin',
-      feature: 'showAdmin' as keyof FeatureFlags
-    }
+    
   ];
 
   return allNavigationItems.filter(item => 
