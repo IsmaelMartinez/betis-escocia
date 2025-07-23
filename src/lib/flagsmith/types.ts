@@ -125,7 +125,7 @@ export const DEFAULT_FLAG_VALUES: Record<FlagsmithFeatureName, boolean> = {
   'show-contacto': false,
   'show-redes-sociales': false,
   'show-admin': false,
-  'show-clerk-auth': false,
+  'show-clerk-auth': true,
   'show-debug-info': false,
   'show-beta-features': false,
 };

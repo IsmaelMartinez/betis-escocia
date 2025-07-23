@@ -1,4 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// Mock Next.js server utilities first
+jest.mock('next/server', () => ({
+  NextResponse: {
+    json: jest.fn((data, options) => ({
+      json: async () => data,
+      status: options?.status || 200,
+    })),
+  },
+}));
+
 // Mock modules at the top before any imports
 jest.mock('@/lib/supabase', () => ({
   supabase: {

@@ -132,7 +132,7 @@ function getLegacyEnvironmentFlags(): FeatureFlags {
     showContacto: false,
     showRedesSociales: false,
     showAdmin: false,
-    showClerkAuth: false,
+    showClerkAuth: true,
     showDebugInfo: false,
     showBetaFeatures: false
   };
