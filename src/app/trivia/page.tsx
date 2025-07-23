@@ -161,7 +161,7 @@ export default function TriviaPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center mb-8">Betis & Scotland Trivia Challenge</h1>
+      <h1 className="text-3xl font-bold text-center mb-8 text-gray-900">Betis & Scotland Trivia Challenge</h1>
       <div className="bg-white shadow-md rounded-lg p-6 mb-6">
         <p className="text-lg font-semibold mb-4">Question {currentQuestionIndex + 1} of {questions.length}</p>
         <GameTimer

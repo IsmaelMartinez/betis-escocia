@@ -29,12 +29,7 @@ body {
   font-family: var(--font-geist-sans, ui-sans-serif, system-ui);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+
 
 /* Force light mode for form elements to ensure readability */
 input, select, textarea {
