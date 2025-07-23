@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/src/lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 export async function GET() {
   try {
@@ -28,10 +28,10 @@ export async function GET() {
     }
 
     // Shuffle questions and answers to ensure randomness
-    const shuffledQuestions = questions.sort(() => 0.5 - Math.random());
+    const shuffledQuestions = [...questions].sort(() => 0.5 - Math.random());
     const formattedQuestions = shuffledQuestions.map(q => ({
       ...q,
-      trivia_answers: q.trivia_answers.sort(() => 0.5 - Math.random())
+      trivia_answers: [...q.trivia_answers].sort(() => 0.5 - Math.random())
     }));
 
     return NextResponse.json(formattedQuestions);

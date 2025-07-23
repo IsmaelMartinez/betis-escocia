@@ -102,10 +102,10 @@ export interface ContactSubmission {
   name: string
   email: string
   phone?: string
-  type: 'general' | 'rsvp' | 'merchandise' | 'photo' | 'whatsapp' | 'feedback'
-  subject: string
-  message: string
-  status: 'new' | 'read' | 'responded' | 'closed'
+  type: 'general' | 'rsvp' | 'merchandise' | 'photo' | 'whatsapp' | 'feedback';
+  subject: string;
+  message: string;
+  status: 'new' | 'in progress' | 'resolved' | 'closed';
   user_id?: string   // New field for linking to authenticated users
   created_at: string
   updated_at: string
@@ -113,13 +113,13 @@ export interface ContactSubmission {
 }
 
 export interface ContactSubmissionInsert {
-  name: string
-  email: string
-  phone?: string
+  name: string;
+  email: string;
+  phone?: string | null;
   type: 'general' | 'rsvp' | 'merchandise' | 'photo' | 'whatsapp' | 'feedback'
   subject: string
   message: string
-  status?: 'new' | 'read' | 'responded' | 'closed'
+  status?: 'new' | 'in progress' | 'resolved' | 'closed';
   user_id?: string   // New field for linking to authenticated users
   updated_by?: string // New field to store the user who updated the submission
 }
@@ -131,6 +131,7 @@ export interface TriviaQuestion {
   category: 'betis' | 'scotland';
   difficulty: 'easy' | 'medium' | 'hard';
   created_at: string;
+  trivia_answers: TriviaAnswer[];
 }
 
 export interface TriviaQuestionInsert {
@@ -452,7 +453,7 @@ export async function unlinkUserSubmissions(userId: string) {
   }
 }
 
-export async function updateContactSubmissionStatus(id: number, status: 'new' | 'in progress' | 'resolved', adminUserId: string, clerkToken: string) {
+export async function updateContactSubmissionStatus(id: number, status: 'new' | 'in progress' | 'resolved' | 'closed', adminUserId: string, clerkToken: string) {
   const response = await fetch(`/api/admin/contact-submissions/${id}`, {
     method: 'PUT',
     headers: {
@@ -618,33 +619,6 @@ export async function deleteTriviaAnswer(id: string) {
     return { success: false, error: error.message };
   }
   return { success: true };
-}
-
-// Get all matches with RSVP counts
-  const response = await fetch(`/api/admin/contact-submissions/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${clerkToken}`,
-    },
-    body: JSON.stringify({ status, adminUserId }),
-  });
-
-  const responseText = await response.text();
-  let result;
-  try {
-    result = JSON.parse(responseText);
-  } catch (parseError) {
-    console.error('Failed to parse JSON response:', responseText, parseError);
-    return { success: false, error: 'Invalid JSON response from server.' };
-  }
-
-  if (!response.ok) {
-    console.error('Error updating contact submission status:', result.error);
-    return { success: false, error: result.error };
-  }
-
-  return { success: true, data: result.data as ContactSubmission };
 }
 
 // Get all matches with RSVP counts

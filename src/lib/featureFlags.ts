@@ -19,6 +19,7 @@ interface FeatureFlags {
   showClasificacion: boolean;
   showColeccionables: boolean;
   showGaleria: boolean;
+  triviaGame: boolean;
   showRSVP: boolean;
   showPartidos: boolean;
   showSocialMedia: boolean;
@@ -78,6 +79,7 @@ export async function getFeatureFlags(): Promise<FeatureFlags> {
       showClasificacion: flagValues['show-clasificacion'],
       showColeccionables: flagValues['show-coleccionables'],
       showGaleria: flagValues['show-galeria'],
+      triviaGame: flagValues['triviaGame'],
       showRSVP: flagValues['show-rsvp'],
       showPartidos: flagValues['show-partidos'],
       showSocialMedia: flagValues['show-social-media'],
@@ -120,6 +122,7 @@ function getLegacyEnvironmentFlags(): FeatureFlags {
     showClasificacion: true,
     showColeccionables: false,
     showGaleria: false,
+    triviaGame: false,
     showRSVP: true,
     showPartidos: true,
     showSocialMedia: false,
@@ -156,6 +159,9 @@ function getLegacyEnvironmentFlags(): FeatureFlags {
     showGaleria: process.env.NEXT_PUBLIC_FEATURE_GALERIA !== undefined 
       ? process.env.NEXT_PUBLIC_FEATURE_GALERIA === 'true'
       : defaultFlags.showGaleria,
+    triviaGame: process.env.NEXT_PUBLIC_FEATURE_TRIVIA_GAME !== undefined
+      ? process.env.NEXT_PUBLIC_FEATURE_TRIVIA_GAME === 'true'
+      : defaultFlags.triviaGame,
     showRSVP: process.env.NEXT_PUBLIC_FEATURE_RSVP !== undefined 
       ? process.env.NEXT_PUBLIC_FEATURE_RSVP === 'true'
       : defaultFlags.showRSVP,

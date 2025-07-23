@@ -13,7 +13,7 @@ interface RSVPEmailData {
 interface ContactEmailData {
   name: string;
   email: string;
-  phone?: string;
+  phone?: string | null | undefined;
   type: string;
   subject: string;
   message: string;

@@ -153,8 +153,8 @@ export default async function DashboardPage() {
                         <div className="text-right">
                           <span className={`text-xs px-2 py-1 rounded-full ${
                             submission.status === 'new' ? 'bg-blue-100 text-blue-800' :
-                            submission.status === 'read' ? 'bg-yellow-100 text-yellow-800' :
-                            submission.status === 'responded' ? 'bg-green-100 text-green-800' :
+                            submission.status === 'in progress' ? 'bg-yellow-100 text-yellow-800' :
+                            submission.status === 'resolved' ? 'bg-green-100 text-green-800' :
                             'bg-gray-100 text-gray-800'
                           }`}>
                             {submission.status}

@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { TriviaQuestion } from '@/src/lib/supabase';
-import ErrorMessage from '@/src/components/ErrorMessage';
-import LoadingSpinner from '@/src/components/LoadingSpinner';
-import GameTimer from '@/src/components/GameTimer';
-import { hasFeature } from '@/src/lib/featureFlags';
+import { TriviaQuestion } from '@/lib/supabase';
+import ErrorMessage from '@/components/ErrorMessage';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import GameTimer from '@/components/GameTimer';
+import { isFeatureEnabledAsync } from '@/lib/featureFlags';
 
 export default function TriviaPage() {
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
@@ -22,7 +22,7 @@ export default function TriviaPage() {
 
   useEffect(() => {
     async function checkFeatureFlag() {
-      const enabled = await hasFeature('triviaGame');
+      const enabled = await isFeatureEnabledAsync('triviaGame');
       setIsTriviaEnabled(enabled);
       if (!enabled) {
         setLoading(false);
@@ -38,8 +38,8 @@ export default function TriviaPage() {
           }
           const data: TriviaQuestion[] = await response.json();
           setQuestions(data);
-        } catch (e: any) {
-          setError(e.message);
+        } catch (error: unknown) {
+          setError(error instanceof Error ? error.message : 'An error occurred');
         } finally {
           setLoading(false);
         }

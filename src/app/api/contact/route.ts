@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { name, email, phone, type, subject, message } = sanitizeObject(body);
-    const { userId, sessionId, getToken } = getAuth(request);
+    const { userId, getToken } = getAuth(request);
     let authenticatedSupabase;
     if (userId) {
       const clerkToken = await getToken({ template: 'supabase' });
