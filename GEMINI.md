@@ -21,6 +21,46 @@ This document provides a quick overview of the Betis project's key technologies 
     - **Data Synchronization:** Keeping Supabase user data in sync with Clerk (e.g., handling user deletions).
     Functions like `linkExistingSubmissionsToUser` and `unlinkUserSubmissions` facilitate this synchronization.
 
+## Trivia Game Implementation
+
+The Betis & Scotland Trivia Challenge is a key engagement feature designed to encourage daily user interaction. Here are the architectural decisions and implementation details:
+
+### Game Design Decisions
+- **3-Question Format**: Reduced from initial 8-question concept to maintain user engagement and prevent fatigue
+- **15-Second Timer**: Per-question time limit to maintain pace and excitement
+- **Daily Gameplay Model**: "Once per day" messaging encourages regular engagement without strict enforcement
+- **Immediate Feedback**: Users see correct answers immediately after each question for educational value
+- **Percentage Scoring**: Simple scoring system showing percentage of correct answers
+
+### Database Architecture
+- **trivia_questions Table**: Stores questions with UUID primary keys and metadata
+- **trivia_answers Table**: Stores multiple choice answers linked to questions via foreign keys
+- **Data Population**: Manual SQL scripts ensure proper UUID relationships between questions and answers
+
+### Frontend Implementation
+- **Main Game Page**: `src/app/trivia/page.tsx` - Controls game flow and state management
+- **Timer Component**: `src/components/GameTimer.tsx` - Reusable countdown timer with reset functionality
+- **Results Section**: Integrated results display with percentage scoring and completion messaging
+- **Feature Flag Protection**: Controlled by `show-trivia-game` flag for safe rollouts
+
+### API Design
+- **RESTful Endpoints**: Clean separation between question fetching and answer retrieval
+- **Error Handling**: Comprehensive error responses for database and network issues
+- **Type Safety**: Full TypeScript integration with Supabase generated types
+
+### Technical Considerations
+- **Performance**: Client-side state management for responsive gameplay
+- **Accessibility**: Proper keyboard navigation and screen reader support
+- **Mobile-First**: Optimized for smartphone usage (primary user base)
+- **Real-Time Updates**: Feature flags allow instant enable/disable without deployments
+
+### Future Enhancement Opportunities
+- User progress tracking and history
+- Leaderboards and social features
+- Expanded question database with categories
+- Advanced scoring mechanisms (streak bonuses, time-based scoring)
+- Multi-language support for international users
+
 ## Project Structure Highlights:
 - `src/app/`: Next.js App Router structure for pages and API routes.
 - `src/components/`: Reusable React components.
@@ -68,9 +108,13 @@ This section outlines areas for future development and optimization. It's crucia
 7.  **CI/CD Enhancements:** Review `github/workflows/` for opportunities to add more automated checks (e.g., performance audits, security scans).
     *   **Review Note:** CI/CD pipelines can always be improved. Adding more automated checks is a continuous effort and remains a high priority for release quality.
 8.  **User Engagement Features:** A "Betis & Scotland Trivia Challenge" game has been implemented to boost engagement. This involved:
-    *   New Supabase tables (`trivia_questions`, `trivia_answers`) for game-specific data.
-    *   Frontend components for game interaction and displaying scores.
-    *   **Review Note:** This feature is now implemented. Future enhancements could include leaderboards, user points, and more complex game mechanics.
+    *   **Database Design:** New Supabase tables (`trivia_questions`, `trivia_answers`) for game-specific data with proper UUID relationships.
+    *   **Game Mechanics:** 3-question trivia format with 15-second timer per question, immediate feedback, and percentage scoring.
+    *   **Daily Gameplay Model:** "Once per day" messaging encourages regular engagement without enforcing strict limitations.
+    *   **Frontend Components:** Game timer (`GameTimer.tsx`), trivia page (`src/app/trivia/page.tsx`) with results section.
+    *   **Feature Flag Integration:** Controlled by `show-trivia-game` flag for safe rollout and testing.
+    *   **API Endpoints:** RESTful endpoints for fetching questions and answers with proper error handling.
+    *   **Review Note:** This feature is fully implemented and tested. Future enhancements could include user progress tracking, leaderboards, and expanded question database.
 9.  **Internationalization (i18n):** If the audience is global, consider implementing i18n for content.
     *   **Review Note:** This is a strategic decision based on target audience. If the project is currently focused on a single language, this might be a lower priority.
 
@@ -94,6 +138,8 @@ When integrating new features, consider the following:
 - **Asynchronous Feature Flag Rendering:** When conditionally rendering UI elements based on asynchronous feature flag checks (e.g., `isFeatureEnabledAsync`), ensure the asynchronous call is handled within a `useEffect` hook. Store the feature flag status in a component's state and use that state for conditional rendering. Directly calling asynchronous functions in the render method will lead to incorrect behavior as the Promise object itself is truthy, not its resolved value.
 - **Supabase Row-Level Security (RLS) Policies:** Be mindful of RLS policies, especially when adding new columns or tables. An overly broad "deny all" policy can override more specific "allow" policies. Ensure explicit `INSERT`, `SELECT`, and `UPDATE` policies are in place for relevant roles (e.g., `anon`, `authenticated`) to prevent unexpected `42501` errors. **Crucially, after making RLS changes, you MUST refresh the Supabase schema cache by restarting your Supabase project (e.g., via the Supabase dashboard or `docker compose restart` for local setups).**
 - **Clerk Authentication in Next.js API Routes:** When retrieving user information in Next.js API routes, use `getAuth(request)` from `@clerk/nextjs/server` to reliably get the `userId` for authenticated users, even if the route is publicly accessible. This ensures the `userId` is correctly populated in database submissions.
+- **Trivia Game Database Relationships:** When populating trivia answers, ensure proper UUID relationships between `trivia_questions` and `trivia_answers` tables. Empty answer arrays typically indicate missing or incorrect foreign key relationships. Always verify question UUIDs exist before inserting corresponding answers.
+- **Timer Component Type Safety:** When using reusable timer components like `GameTimer`, ensure proper TypeScript types for props. Use specific types like `number` instead of `any` for properties like `resetTrigger` to maintain type safety and prevent runtime errors.
 
 ## Pointers for Future Interactions:
 - **Always check `src/lib/supabase.ts`** for database interaction patterns.
