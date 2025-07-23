@@ -19,7 +19,7 @@ interface FeatureFlags {
   showClasificacion: boolean;
   showColeccionables: boolean;
   showGaleria: boolean;
-  triviaGame: boolean;
+  showTriviaGame: boolean;
   showRSVP: boolean;
   showPartidos: boolean;
   showSocialMedia: boolean;
@@ -79,7 +79,7 @@ export async function getFeatureFlags(): Promise<FeatureFlags> {
       showClasificacion: flagValues['show-clasificacion'],
       showColeccionables: flagValues['show-coleccionables'],
       showGaleria: flagValues['show-galeria'],
-      triviaGame: flagValues['triviaGame'],
+      showTriviaGame: flagValues['show-trivia-game'],
       showRSVP: flagValues['show-rsvp'],
       showPartidos: flagValues['show-partidos'],
       showSocialMedia: flagValues['show-social-media'],
@@ -122,7 +122,7 @@ function getLegacyEnvironmentFlags(): FeatureFlags {
     showClasificacion: true,
     showColeccionables: false,
     showGaleria: false,
-    triviaGame: false,
+    showTriviaGame: false,
     showRSVP: true,
     showPartidos: true,
     showSocialMedia: false,
@@ -159,9 +159,9 @@ function getLegacyEnvironmentFlags(): FeatureFlags {
     showGaleria: process.env.NEXT_PUBLIC_FEATURE_GALERIA !== undefined 
       ? process.env.NEXT_PUBLIC_FEATURE_GALERIA === 'true'
       : defaultFlags.showGaleria,
-    triviaGame: process.env.NEXT_PUBLIC_FEATURE_TRIVIA_GAME !== undefined
+    showTriviaGame: process.env.NEXT_PUBLIC_FEATURE_TRIVIA_GAME !== undefined
       ? process.env.NEXT_PUBLIC_FEATURE_TRIVIA_GAME === 'true'
-      : defaultFlags.triviaGame,
+      : defaultFlags.showTriviaGame,
     showRSVP: process.env.NEXT_PUBLIC_FEATURE_RSVP !== undefined 
       ? process.env.NEXT_PUBLIC_FEATURE_RSVP === 'true'
       : defaultFlags.showRSVP,
@@ -273,6 +273,12 @@ export function getEnabledNavigationItems() {
       feature: 'showPartidos' as keyof FeatureFlags
     },
     { 
+      name: 'Trivia', 
+      href: '/trivia', 
+      nameEn: 'Trivia',
+      feature: 'showTriviaGame' as keyof FeatureFlags
+    },
+    { 
       name: 'Coleccionables', 
       href: '/coleccionables', 
       nameEn: 'Collectibles',
@@ -331,6 +337,7 @@ export async function getEnabledNavigationItemsAsync(): Promise<NavigationItem[]
     { name: 'RSVP', href: '/rsvp', nameEn: 'RSVP', feature: 'show-rsvp' },
     { name: 'Clasificación', href: '/clasificacion', nameEn: 'Standings', feature: 'show-clasificacion' },
     { name: 'Partidos', href: '/partidos', nameEn: 'Matches', feature: 'show-partidos' },
+    { name: 'Trivia', href: '/trivia', nameEn: 'Trivia', feature: 'show-trivia-game' },
     { name: 'Coleccionables', href: '/coleccionables', nameEn: 'Collectibles', feature: 'show-coleccionables' },
     { name: 'Galería', href: '/galeria', nameEn: 'Gallery', feature: 'show-galeria' },
     { name: 'Historia', href: '/historia', nameEn: 'History', feature: 'show-history' },

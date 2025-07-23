@@ -22,7 +22,7 @@ export default function TriviaPage() {
 
   useEffect(() => {
     async function checkFeatureFlag() {
-      const enabled = await isFeatureEnabledAsync('triviaGame');
+      const enabled = await isFeatureEnabledAsync('showTriviaGame');
       setIsTriviaEnabled(enabled);
       if (!enabled) {
         setLoading(false);
