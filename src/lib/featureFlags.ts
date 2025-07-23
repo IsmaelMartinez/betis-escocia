@@ -15,7 +15,7 @@ import { getValue, getMultipleValues, hasFeature, getFlagsmithManager } from './
 import { getFlagsmithConfig } from './flagsmith/config';
 
 // Legacy interface for backward compatibility
-interface FeatureFlags {
+export interface FeatureFlags {
   showClasificacion: boolean;
   showColeccionables: boolean;
   showGaleria: boolean;

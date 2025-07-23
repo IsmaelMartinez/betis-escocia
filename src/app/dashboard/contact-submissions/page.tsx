@@ -1,6 +1,6 @@
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
-import { getUserContactSubmissions, ContactSubmission } from '@/lib/supabase';
+import { getUserContactSubmissions } from '@/lib/supabase';
 import { MessageSquare, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { isFeatureEnabledAsync } from '@/lib/featureFlags';

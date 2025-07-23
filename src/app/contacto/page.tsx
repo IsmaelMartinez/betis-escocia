@@ -3,6 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import { 
   Send, 
   MessageSquare, 
@@ -14,7 +15,7 @@ import {
 } from 'lucide-react';
 import { FormSuccessMessage, FormErrorMessage, FormLoadingMessage } from '@/components/MessageComponent';
 import { useUser } from '@clerk/nextjs';
-import { isFeatureEnabledAsync } from '@/lib/featureFlags';
+import { isFeatureEnabledAsync, type FeatureFlags } from '@/lib/featureFlags';
 import { FlagsmithFeatureName } from '@/lib/flagsmith/types';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
@@ -112,7 +113,7 @@ export default function ContactPage() {
       const featuresStatus: Record<string, boolean> = {};
       for (const type of formTypes) {
         if (type.feature) {
-          featuresStatus[type.id] = await isFeatureEnabledAsync(type.feature);
+          featuresStatus[type.id] = await isFeatureEnabledAsync(type.feature as keyof FeatureFlags);
         } else {
           featuresStatus[type.id] = true; // Always enabled if no feature flag
         }
@@ -234,12 +235,12 @@ export default function ContactPage() {
             <p className="text-gray-700 mb-4">
               Por favor, inténtalo de nuevo más tarde.
             </p>
-            <a 
+            <Link 
               href="/"
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-betis-green hover:bg-betis-green/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-betis-green"
             >
               Volver al Inicio
-            </a>
+            </Link>
           </div>
         </div>
       </div>

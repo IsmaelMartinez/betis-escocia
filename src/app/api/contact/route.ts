@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       subject: subject.trim(),
       message: message.trim(),
       status: 'new',
-      user_id: userId || null
+      user_id: userId || undefined
     };
 
     // Insert into Supabase

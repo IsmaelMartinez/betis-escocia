@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 interface GameTimerProps {
   duration: number; // in seconds
   onTimeUp: () => void;
-  resetTrigger: any; // Dependency to trigger reset
+  resetTrigger: number; // Dependency to trigger reset
 }
 
 const GameTimer: React.FC<GameTimerProps> = ({ duration, onTimeUp, resetTrigger }) => {
