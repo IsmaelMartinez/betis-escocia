@@ -193,7 +193,7 @@ const features = await getMultipleValues([
 | `show-admin` | Show admin dashboard | `false` |
 | `show-clerk-auth` | Enable Clerk authentication | `false` |
 | `show-debug-info` | Show debug information | `false` |
-| `show-beta-features` | Enable beta features | `false` |
+
 
 ### Debugging Feature Flags
 

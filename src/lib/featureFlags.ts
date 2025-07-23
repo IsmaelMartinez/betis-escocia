@@ -31,7 +31,6 @@ export interface FeatureFlags {
   showAdmin: boolean;
   showClerkAuth: boolean;
   showDebugInfo: boolean;
-  showBetaFeatures: boolean;
 }
 
 // Cache for flag values to avoid repeated async calls
@@ -91,7 +90,6 @@ export async function getFeatureFlags(): Promise<FeatureFlags> {
       showAdmin: flagValues['show-admin'],
       showClerkAuth: flagValues['show-clerk-auth'],
       showDebugInfo: flagValues['show-debug-info'],
-      showBetaFeatures: flagValues['show-beta-features']
     };
 
     console.debug('[Feature Flags] getFeatureFlags: Fetched flags from Flagsmith:', flags);
@@ -133,15 +131,13 @@ function getLegacyEnvironmentFlags(): FeatureFlags {
     showRedesSociales: false,
     showAdmin: false,
     showClerkAuth: true,
-    showDebugInfo: false,
-    showBetaFeatures: false
+    showDebugInfo: false
   };
 
   const environmentFlags: Partial<FeatureFlags> = {
     // Production overrides
     ...(process.env.NODE_ENV === 'production' && {
       showDebugInfo: false,
-      showBetaFeatures: false,
     }),
     
     // Development overrides
