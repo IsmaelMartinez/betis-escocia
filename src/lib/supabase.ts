@@ -124,6 +124,47 @@ export interface ContactSubmissionInsert {
   updated_by?: string // New field to store the user who updated the submission
 }
 
+// Type definitions for our trivia_questions table
+export interface TriviaQuestion {
+  id: string;
+  question_text: string;
+  category: 'betis' | 'scotland';
+  difficulty: 'easy' | 'medium' | 'hard';
+  created_at: string;
+}
+
+export interface TriviaQuestionInsert {
+  question_text: string;
+  category: 'betis' | 'scotland';
+  difficulty?: 'easy' | 'medium' | 'hard';
+}
+
+export interface TriviaQuestionUpdate {
+  question_text?: string;
+  category?: 'betis' | 'scotland';
+  difficulty?: 'easy' | 'medium' | 'hard';
+}
+
+// Type definitions for our trivia_answers table
+export interface TriviaAnswer {
+  id: string;
+  question_id: string;
+  answer_text: string;
+  is_correct: boolean;
+  created_at: string;
+}
+
+export interface TriviaAnswerInsert {
+  question_id: string;
+  answer_text: string;
+  is_correct?: boolean;
+}
+
+export interface TriviaAnswerUpdate {
+  answer_text?: string;
+  is_correct?: boolean;
+}
+
 // Match CRUD operations
 export async function getMatches(limit?: number) {
   const query = supabase
@@ -412,6 +453,174 @@ export async function unlinkUserSubmissions(userId: string) {
 }
 
 export async function updateContactSubmissionStatus(id: number, status: 'new' | 'in progress' | 'resolved', adminUserId: string, clerkToken: string) {
+  const response = await fetch(`/api/admin/contact-submissions/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${clerkToken}`,
+    },
+    body: JSON.stringify({ status, adminUserId }),
+  });
+
+  const responseText = await response.text();
+  let result;
+  try {
+    result = JSON.parse(responseText);
+  } catch (parseError) {
+    console.error('Failed to parse JSON response:', responseText, parseError);
+    return { success: false, error: 'Invalid JSON response from server.' };
+  }
+
+  if (!response.ok) {
+    console.error('Error updating contact submission status:', result.error);
+    return { success: false, error: result.error };
+  }
+
+  return { success: true, data: result.data as ContactSubmission };
+}
+
+// Trivia Question CRUD operations
+export async function getTriviaQuestions() {
+  const { data, error } = await supabase
+    .from('trivia_questions')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching trivia questions:', error);
+    return null;
+  }
+  return data as TriviaQuestion[];
+}
+
+export async function getTriviaQuestion(id: string) {
+  const { data, error } = await supabase
+    .from('trivia_questions')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Error fetching trivia question:', error);
+    return null;
+  }
+  return data as TriviaQuestion;
+}
+
+export async function createTriviaQuestion(question: TriviaQuestionInsert) {
+  const { data, error } = await supabase
+    .from('trivia_questions')
+    .insert([question])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating trivia question:', error);
+    return { success: false, error: error.message };
+  }
+  return { success: true, data: data as TriviaQuestion };
+}
+
+export async function updateTriviaQuestion(id: string, updates: TriviaQuestionUpdate) {
+  const { data, error } = await supabase
+    .from('trivia_questions')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating trivia question:', error);
+    return { success: false, error: error.message };
+  }
+  return { success: true, data: data as TriviaQuestion };
+}
+
+export async function deleteTriviaQuestion(id: string) {
+  const { error } = await supabase
+    .from('trivia_questions')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting trivia question:', error);
+    return { success: false, error: error.message };
+  }
+  return { success: true };
+}
+
+// Trivia Answer CRUD operations
+export async function getTriviaAnswersForQuestion(questionId: string) {
+  const { data, error } = await supabase
+    .from('trivia_answers')
+    .select('*')
+    .eq('question_id', questionId)
+    .order('created_at', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching trivia answers:', error);
+    return null;
+  }
+  return data as TriviaAnswer[];
+}
+
+export async function getTriviaAnswer(id: string) {
+  const { data, error } = await supabase
+    .from('trivia_answers')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Error fetching trivia answer:', error);
+    return null;
+  }
+  return data as TriviaAnswer;
+}
+
+export async function createTriviaAnswer(answer: TriviaAnswerInsert) {
+  const { data, error } = await supabase
+    .from('trivia_answers')
+    .insert([answer])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating trivia answer:', error);
+    return { success: false, error: error.message };
+  }
+  return { success: true, data: data as TriviaAnswer };
+}
+
+export async function updateTriviaAnswer(id: string, updates: TriviaAnswerUpdate) {
+  const { data, error } = await supabase
+    .from('trivia_answers')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating trivia answer:', error);
+    return { success: false, error: error.message };
+  }
+  return { success: true, data: data as TriviaAnswer };
+}
+
+export async function deleteTriviaAnswer(id: string) {
+  const { error } = await supabase
+    .from('trivia_answers')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting trivia answer:', error);
+    return { success: false, error: error.message };
+  }
+  return { success: true };
+}
+
+// Get all matches with RSVP counts
   const response = await fetch(`/api/admin/contact-submissions/${id}`, {
     method: 'PUT',
     headers: {

@@ -60,6 +60,7 @@ export type LegacyFeatureName =
   | 'showClasificacion'
   | 'showColeccionables'
   | 'showGaleria'
+  | 'triviaGame';
   | 'showRSVP'
   | 'showPartidos'
   | 'showSocialMedia'
@@ -113,7 +114,8 @@ export const ENV_VAR_MIGRATION_MAP: Record<string, FlagsmithFeatureName> = {
 export const DEFAULT_FLAG_VALUES: Record<FlagsmithFeatureName, boolean> = {
   'show-clasificacion': true,
   'show-coleccionables': false,
-  'show-galeria': false,
+  showGaleria: false,
+  triviaGame: false,
   'show-rsvp': true,
   'show-partidos': true,
   'show-social-media': false,

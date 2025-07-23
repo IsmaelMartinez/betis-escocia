@@ -67,12 +67,10 @@ This section outlines areas for future development and optimization. It's crucia
     *   **Review Note:** Testing coverage is an ongoing process. This remains a high priority to ensure code quality and prevent regressions.
 7.  **CI/CD Enhancements:** Review `github/workflows/` for opportunities to add more automated checks (e.g., performance audits, security scans).
     *   **Review Note:** CI/CD pipelines can always be improved. Adding more automated checks is a continuous effort and remains a high priority for release quality.
-8.  **User Engagement Features:** As discussed, implementing game mechanics (trivia, prediction games) with a point system could significantly boost engagement. This would require:
-    *   A `points` column in a user profile table (or a dedicated `user_points` table).
-    *   New Supabase tables for game-specific data (e.g., `predictions`, `quiz_questions`, `quiz_answers`).
-    *   Backend logic to calculate and award points.
-    *   Frontend components for game interaction and displaying scores/leaderboards.
-    *   **Review Note:** This is a feature-driven item. Its priority depends on product roadmap and user engagement goals. It's a potential expansion, not necessarily a current "improvement" of existing systems.
+8.  **User Engagement Features:** A "Betis & Scotland Trivia Challenge" game has been implemented to boost engagement. This involved:
+    *   New Supabase tables (`trivia_questions`, `trivia_answers`) for game-specific data.
+    *   Frontend components for game interaction and displaying scores.
+    *   **Review Note:** This feature is now implemented. Future enhancements could include leaderboards, user points, and more complex game mechanics.
 9.  **Internationalization (i18n):** If the audience is global, consider implementing i18n for content.
     *   **Review Note:** This is a strategic decision based on target audience. If the project is currently focused on a single language, this might be a lower priority.
 

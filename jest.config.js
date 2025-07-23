@@ -1,6 +1,7 @@
 module.exports = {
   preset: "ts-jest",
-  testEnvironment: "node",
+  testEnvironment: "jsdom",
+  setupFilesAfterEnv: ["<rootDir>/tests/setup.ts"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
@@ -12,7 +13,7 @@ module.exports = {
     // "**/tests/canary/**/*.(test|spec).{ts,tsx}",
   ],
   transform: {
-    "^.+\\.(ts|tsx)$": "ts-jest",
+    "^.+\.(ts|tsx)$": ["@swc/jest", { /* swc options */ }],
   },
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
 };
