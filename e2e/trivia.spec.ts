@@ -10,7 +10,7 @@ test.describe('Trivia Page Happy Path', () => {
     await expect(page.locator('h1', { hasText: 'Betis & Scotland Trivia Challenge' })).toBeVisible();
     await expect(page.locator('p', { hasText: 'Question 1 of' })).toBeVisible();
     await expect(page.locator('h2')).toBeVisible(); // Question text
-    await expect(page.locator('button')).toHaveCount(4); // Four answer buttons
+    await expect(page.locator('div.grid button')).toHaveCount(4); // Four answer buttons within the grid
 
     // Ensure no console errors or network failures on page load
     page.on('console', msg => {
@@ -32,25 +32,21 @@ test.describe('Trivia Page Happy Path', () => {
     await expect(page.locator('h2')).toBeVisible();
 
     // Answer the first question
-    await page.locator('button').first().click();
+    await page.locator('div.grid button').first().click();
 
     // Expect to move to the next question after a delay (2 seconds feedback + transition)
     await expect(page.locator('p', { hasText: 'Question 2 of' })).toBeVisible({ timeout: 3000 });
 
-    // Continue answering questions until the end of the game
-    // This loop assumes there are always 4 buttons and the game ends after a fixed number of questions
-    // For a more robust test, you might need to dynamically check for game over conditions
-    for (let i = 2; i <= 10; i++) { // Assuming 10 questions based on API limit
-      await page.locator('button').first().click();
-      if (i < 10) {
+    // Continue answering questions until the end of the game (3 questions total)
+    for (let i = 2; i <= 3; i++) {
+      await page.locator('div.grid button').first().click();
+      if (i < 3) {
         await expect(page.locator('p', { hasText: `Question ${i + 1} of` })).toBeVisible({ timeout: 3000 });
       }
     }
 
-    // Expect game over alert
-    page.on('dialog', async dialog => {
-      expect(dialog.message()).toContain('Game Over!');
-      await dialog.accept();
-    });
+    // After the last question, expect to see the "Daily Trivia Complete!" message
+    await expect(page.locator('h1', { hasText: 'Daily Trivia Complete!' })).toBeVisible();
+    await expect(page.locator('a', { hasText: 'Back to Home' })).toBeVisible();
   });
 });
