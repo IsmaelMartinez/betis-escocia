@@ -10,6 +10,7 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 
 - **Mobile-first responsive design** optimized for smartphones
 - **Community RSVP System** - "¿Vienes al Polwarth?" attendance confirmation
+- **Interactive Trivia Game** - Test your knowledge of Real Betis and Scotland
 - **Merchandise Showcase** - Official peña gear: bufandas, llaveros, parches, camisetas
 - **Photo Gallery** - Share match day photos with your peña merch
 - **Real Betis branding** with official colors
@@ -289,6 +290,26 @@ Confirm your attendance for match viewing parties at Polwarth Tavern:
 - See who else is coming
 - Automatic reminders and updates
 - Help us plan seating and atmosphere
+
+### 🧠 Betis & Scotland Trivia Challenge
+
+Test your knowledge with our interactive trivia game:
+
+- **Dual-themed questions**: Real Betis history and Scottish culture
+- **Timed gameplay**: 15 seconds per question for added excitement
+- **Real-time scoring**: Track your progress as you play
+- **Mobile-optimized**: Perfect for quick games at the pub
+- **Feature-flagged**: Controlled rollout via Flagsmith
+- **Custom question bank**: Curated content specific to our community
+
+**Key Features:**
+- Multiple choice questions with immediate feedback
+- Visual answer highlighting (correct/incorrect)
+- Question categories: Betis history, Scottish culture, general football
+- Randomized question and answer order for replayability
+- Clean, responsive design matching site aesthetics
+
+**Access**: Available at `/trivia` when enabled via the `show-trivia-game` feature flag.
 
 ## ⚽ Match Information
 

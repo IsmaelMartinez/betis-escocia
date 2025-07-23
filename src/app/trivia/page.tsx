@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { TriviaQuestion } from '@/lib/supabase';
 import ErrorMessage from '@/components/ErrorMessage';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -17,8 +18,10 @@ export default function TriviaPage() {
   const [showFeedback, setShowFeedback] = useState(false);
   const [timerResetTrigger, setTimerResetTrigger] = useState(0); // To reset the timer
   const [isTriviaEnabled, setIsTriviaEnabled] = useState(false);
+  const [gameCompleted, setGameCompleted] = useState(false);
 
   const QUESTION_DURATION = 15; // seconds per question
+  const MAX_QUESTIONS = 3; // Limit to 3 questions
 
   useEffect(() => {
     async function checkFeatureFlag() {
@@ -37,7 +40,8 @@ export default function TriviaPage() {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
           const data: TriviaQuestion[] = await response.json();
-          setQuestions(data);
+          // Limit to 3 questions
+          setQuestions(data.slice(0, MAX_QUESTIONS));
         } catch (error: unknown) {
           setError(error instanceof Error ? error.message : 'An error occurred');
         } finally {
@@ -57,9 +61,8 @@ export default function TriviaPage() {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prevIndex => prevIndex + 1);
     } else {
-      // Game over
-      alert(`Game Over! Your score: ${score}/${questions.length}`);
-      // Optionally, reset game or navigate to results page
+      // Game over - show results
+      setGameCompleted(true);
     }
   };
 
@@ -99,6 +102,59 @@ export default function TriviaPage() {
 
   if (questions.length === 0) {
     return <div className="text-center text-xl text-gray-600">No trivia questions available.</div>;
+  }
+
+  // Show results section when game is completed
+  if (gameCompleted) {
+    const percentage = Math.round((score / questions.length) * 100);
+    let resultMessage = '';
+    let resultColor = '';
+
+    if (percentage === 100) {
+      resultMessage = '¡Perfecto! You know your Betis and Scotland! Come back tomorrow for another challenge!';
+      resultColor = 'text-green-600';
+    } else if (percentage >= 67) {
+      resultMessage = '¡Muy bien! Great knowledge of Betis and Scotland! Try again tomorrow!';
+      resultColor = 'text-green-500';
+    } else if (percentage >= 33) {
+      resultMessage = 'Not bad! Study up and come back tomorrow for another try!';
+      resultColor = 'text-yellow-600';
+    } else {
+      resultMessage = 'Keep learning about Betis and Scotland! New questions tomorrow!';
+      resultColor = 'text-red-500';
+    }
+
+    return (
+      <div className="container mx-auto p-4">
+        <div className="bg-white shadow-md rounded-lg p-8 text-center">
+          <h1 className="text-3xl font-bold text-green-600 mb-6">Daily Trivia Complete!</h1>
+          
+          <div className="mb-6">
+            <div className="text-6xl font-bold text-green-600 mb-2">
+              {score}/{questions.length}
+            </div>
+            <div className="text-2xl text-gray-600 mb-4">
+              {percentage}% Correct
+            </div>
+            <div className={`text-xl font-semibold ${resultColor} mb-4`}>
+              {resultMessage}
+            </div>
+            <div className="text-sm text-gray-500 italic">
+              Your score has been recorded. New trivia available tomorrow!
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <Link
+              href="/"
+              className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg inline-block"
+            >
+              Back to Home
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const currentQuestion = questions[currentQuestionIndex];
