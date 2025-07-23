@@ -29,6 +29,7 @@ The following is a list of feature flags currently in use:
 *   `show-redes-sociales` - Shows/hides the Redes Sociales (Social Media) page
 *   `show-admin` - Shows/hides the Admin dashboard
 *   `show-clerk-auth` - Enables Clerk authentication
+*   `show-trivia-game` - Shows/hides the Trivia game feature
 
 ## Usage in Code
 
@@ -67,3 +68,48 @@ NEXT_PUBLIC_FLAGSMITH_DEBUG=true
 ```
 
 This will output detailed information about flag evaluations to the browser console.
+
+---
+
+## Provider Selection & Comparison
+
+### Why Flagsmith Was Chosen
+
+After evaluating multiple feature flag providers, Flagsmith was selected as the optimal solution for the Peña Bética Escocesa website based on the following criteria:
+
+#### ✅ **Flagsmith Advantages**
+- **Generous Free Tier**: 50,000 requests/month (sufficient for current traffic)
+- **Open Source**: Full transparency and option for self-hosting if needed
+- **Rich Features**: Advanced targeting, segments, A/B testing capabilities
+- **Good SDKs**: Quality JavaScript/React SDKs with excellent developer experience
+- **Real-time Updates**: Instant flag changes without deployments
+- **Active Development**: Regular updates and improvements
+- **Cost Effective**: Meets all current needs within the free tier
+
+#### 🔄 **Migration from Environment Variables**
+
+The project successfully migrated from environment variable-based feature flags to Flagsmith:
+
+1. **Phase 1**: Implemented Flagsmith SDK alongside existing env vars
+2. **Phase 2**: Created Flagsmith account and configured all flags
+3. **Phase 3**: Tested both systems in parallel
+4. **Phase 4**: Gradually migrated flags one by one
+5. **Phase 5**: Removed env var system once stable
+
+#### 📊 **Alternatives Considered**
+
+| Provider | Free Tier | Ease of Setup | Features | Decision |
+|----------|-----------|---------------|----------|----------|
+| **Flagsmith** | ⭐⭐⭐⭐⭐ (50K requests) | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | **✅ Selected** |
+| **Vercel Flags** | ⭐⭐⭐⭐⭐ (Free) | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | Too basic |
+| **LaunchDarkly** | ⭐⭐ (1K contexts) | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | Too expensive |
+| **ConfigCat** | ⭐⭐⭐ (1K evals) | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | Limited free tier |
+| **Unleash** | ⭐⭐ (self-host) | ⭐⭐ | ⭐⭐⭐⭐ | Too complex |
+
+### Implementation Details
+
+- **SDK**: Uses `flagsmith-js-client-sdk` for React integration
+- **Caching**: Client-side caching for performance optimization
+- **Fallbacks**: Default values configured for offline scenarios
+- **Environments**: Separate configurations for development/production
+- **Security**: Environment-specific API keys with appropriate permissions
