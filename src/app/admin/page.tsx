@@ -77,6 +77,14 @@ function AdminPage() {
     }
   };
 
+  const handleContactFilterChange = (status: ContactSubmission['status']) => {
+    setContactFilterStatus(prev => 
+      prev.includes(status) 
+        ? prev.filter(s => s !== status)
+        : [...prev, status]
+    );
+  };
+
   // Redirect to sign-in if not authenticated
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -350,14 +358,6 @@ function AdminPage() {
       </div>
     );
   }
-
-  """  const handleContactFilterChange = (status: ContactSubmission['status']) => {
-    setContactFilterStatus(prev => 
-      prev.includes(status) 
-        ? prev.filter(s => s !== status)
-        : [...prev, status]
-    );
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -708,6 +708,5 @@ function AdminPage() {
     </div>
   );
 }
-""
 
 export default withAdminRole(AdminPage);

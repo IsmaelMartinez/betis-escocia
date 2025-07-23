@@ -40,5 +40,26 @@
     "isPreOrder": false,
     "status": "pending",
     "timestamp": "2025-07-05T21:57:13.455Z"
+  },
+  {
+    "id": "1753230661208",
+    "productId": "coll_001",
+    "productName": "Bufanda Peña Bética Escocesa",
+    "price": 15.99,
+    "quantity": 1,
+    "totalPrice": 15.99,
+    "customerInfo": {
+      "name": "Ismael",
+      "email": "isma@gmail.com",
+      "phone": "07533030784",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2025-07-23T00:31:00.898Z"
   }
 ]
