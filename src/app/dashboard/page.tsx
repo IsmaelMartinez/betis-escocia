@@ -24,7 +24,7 @@ export default async function DashboardPage() {
     redirect('/sign-in');
   }
 
-  const { sessionClaims } = auth();
+  const { sessionClaims } = await auth();
   const sessionToken = sessionClaims?.__raw || null;
 
   // Get user's submissions and counts
