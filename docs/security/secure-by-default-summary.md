@@ -5,6 +5,8 @@
 ### 🔒 Security Principle Implemented
 **ALL features are now managed by Flagsmith and are disabled by default unless explicitly enabled in the Flagsmith dashboard.** This ensures no accidental feature exposure in production environments.
 
+Additionally, **Row Level Security (RLS) is implemented on sensitive database tables** (e.g., `user_trivia_scores`) to ensure users can only access and modify their own data, even if a feature flag is enabled.
+
 ### 📋 What Changed
 
 #### 1. Migrated to Flagsmith

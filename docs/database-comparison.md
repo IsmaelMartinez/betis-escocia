@@ -17,7 +17,7 @@ Currently using JSON files for data storage. Need to migrate to a proper databas
 - **Full PostgreSQL**: Complete Postgres with all features
 - **Real-time Features**: Live subscriptions, real-time updates
 - **Built-in Auth**: User authentication system included
-- **Row Level Security**: Fine-grained permissions
+- **Row Level Security**: Fine-grained permissions, requiring correct JWT configuration (e.g., Clerk JWKS URL in Supabase settings) for proper enforcement.
 - **Admin Dashboard**: Excellent web interface for data management
 - **API Auto-generation**: REST and GraphQL APIs generated automatically
 - **Storage**: Built-in file storage for images/documents

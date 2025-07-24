@@ -35,9 +35,10 @@ We will leverage Supabase's native integration with Clerk to authenticate users 
     *   The `user_id` column in relevant Supabase tables (e.g., `contact_submissions`, `rsvps`, `public.users`) must store the Clerk user ID (which corresponds to the `sub` claim in the JWT) and should be of type `VARCHAR(255)`.
 
 4.  **Usage in API Routes/Server Components:**
-    *   API routes and server components will use the standard `supabase` client initialized with the anonymous key (`createClient(supabaseUrl, supabaseAnonKey)`).
-    *   Supabase will automatically handle the JWT verification when a Clerk-issued JWT is present in the `Authorization` header of the incoming request.
-    *   The `sessionClaims` object from `getAuth(request)` will contain the necessary `publicMetadata` for server-side authorization checks (after Clerk JWT template configuration).
+    *   For operations requiring explicit user authentication against Supabase RLS (e.g., `INSERT` or `SELECT` on tables with strict RLS policies like `user_trivia_scores`), API routes and server components should explicitly initialize an authenticated Supabase client.
+    *   This is achieved by obtaining the Clerk JWT (e.g., `await getAuth(request).getToken()` in API routes, or `auth().sessionClaims.__raw` in server components) and passing it to `getAuthenticatedSupabaseClient` from `src/lib/supabase.ts`.
+    *   For other operations, the standard `supabase` client initialized with the anonymous key (`createClient(supabaseUrl, supabaseAnonKey)`) can still be used, as Supabase will automatically handle JWT verification when a Clerk-issued JWT is present in the `Authorization` header of the incoming request.
+    *   The `sessionClaims` object from `getAuth(request)` or `auth()` will contain the necessary `publicMetadata` for server-side authorization checks (after Clerk JWT template configuration).
 
 ## Consequences
 *   **Simplified Integration:** Eliminates the need for custom Supabase client initialization with JWTs, making the codebase cleaner and less prone to JWT-related errors.

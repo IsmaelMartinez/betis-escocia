@@ -94,6 +94,7 @@ Rate limiting implementation:
 - [x] Email validation enhancements
 - [x] Admin operation rate limiting
 - [x] Security middleware
+- [x] Row Level Security (RLS) for sensitive data (e.g., user trivia scores)
 
 ### 🔄 In Progress
 - [ ] CSRF token validation on server
@@ -103,7 +104,7 @@ Rate limiting implementation:
 
 ### 📋 Future Enhancements
 - [ ] Redis-based rate limiting for production
-- [ ] JWT-based authentication
+- [x] JWT-based authentication
 - [ ] Role-based access control
 - [ ] Audit logging for admin actions
 - [ ] Two-factor authentication
