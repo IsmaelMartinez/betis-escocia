@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase, TriviaQuestion, UserTriviaScoreInsert } from '@/lib/supabase';
-import { getAuth } from '@clerk/nextjs/server';
+import { supabase } from '@/lib/supabase';
 
 export async function GET() {
   try {

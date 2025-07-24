@@ -39,4 +39,6 @@
 - [ ] 6.0 Testing
   - [ ] 6.1 Write unit tests for any new utility functions or components related to point calculation/display.
   - [ ] 6.2 Write integration tests for the modified/new API endpoints to ensure correct score calculation and storage.
-  - [ ] 6.3 Update `e2e/trivia.spec.ts` to include tests for the new pointing system display and functionality.
+  - [x] 6.3 Create ADR for Clerk E2E testing.
+  - [ ] 6.3.1 Implement Clerk testing setup for E2E tests.
+  - [ ] 6.4 Update `e2e/trivia.spec.ts` to include tests for the new pointing system display and functionality (depends on 6.3).
