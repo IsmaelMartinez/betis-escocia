@@ -24,6 +24,7 @@ export default function TriviaPage() {
   const [timerResetTrigger, setTimerResetTrigger] = useState(0); // To reset the timer
   const [isTriviaEnabled, setIsTriviaEnabled] = useState(false);
   const [gameCompleted, setGameCompleted] = useState(false);
+  const [totalAccumulatedScore, setTotalAccumulatedScore] = useState(0);
 
   const QUESTION_DURATION = 15; // seconds per question
   const MAX_QUESTIONS = 3; // Limit to 3 questions
@@ -61,6 +62,22 @@ export default function TriviaPage() {
           }
         }
         fetchQuestions();
+
+        // Fetch accumulated scores
+        async function fetchAccumulatedScores() {
+          try {
+            const response = await fetch('/api/trivia'); // Using the same endpoint for GET
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data: { daily_score: number }[] = await response.json();
+            const total = data.reduce((sum, entry) => sum + entry.daily_score, 0);
+            setTotalAccumulatedScore(total);
+          } catch (error: unknown) {
+            console.error('Error fetching accumulated scores:', error);
+          }
+        }
+        fetchAccumulatedScores();
       }
       checkFeatureFlagAndFetchQuestions();
     }
@@ -124,23 +141,23 @@ export default function TriviaPage() {
     let resultColor = '';
 
     if (percentage === 100) {
-      resultMessage = '¡Perfecto! You know your Betis and Scotland! Come back tomorrow for another challenge!';
+      resultMessage = '¡Perfecto! ¡Conoces tu Betis y Escocia! ¡Vuelve mañana para otro desafío!';
       resultColor = 'text-green-600';
     } else if (percentage >= 67) {
-      resultMessage = '¡Muy bien! Great knowledge of Betis and Scotland! Try again tomorrow!';
+      resultMessage = '¡Muy bien! ¡Gran conocimiento de Betis y Escocia! ¡Inténtalo de nuevo mañana!';
       resultColor = 'text-green-500';
     } else if (percentage >= 33) {
-      resultMessage = 'Not bad! Study up and come back tomorrow for another try!';
+      resultMessage = '¡No está mal! ¡Estudia y vuelve mañana para otro intento!';
       resultColor = 'text-yellow-600';
     } else {
-      resultMessage = 'Keep learning about Betis and Scotland! New questions tomorrow!';
+      resultMessage = '¡Sigue aprendiendo sobre el Betis y Escocia! ¡Nuevas preguntas mañana!';
       resultColor = 'text-red-500';
     }
 
     return (
       <div className="container mx-auto p-4">
         <div className="bg-white shadow-md rounded-lg p-8 text-center">
-          <h1 className="text-3xl font-bold text-green-600 mb-6">Daily Trivia Complete!</h1>
+          <h1 className="text-3xl font-bold text-green-600 mb-6">¡Trivia Diaria Completada!</h1>
           
           <div className="mb-6">
             <div className="text-6xl font-bold text-green-600 mb-2">
@@ -149,11 +166,14 @@ export default function TriviaPage() {
             <div className="text-2xl text-gray-600 mb-4">
               {percentage}% Correct
             </div>
+            <div className="text-2xl text-gray-600 mb-4">
+              Puntuación Total Acumulada: {totalAccumulatedScore}
+            </div>
             <div className={`text-xl font-semibold ${resultColor} mb-4`}>
               {resultMessage}
             </div>
             <div className="text-sm text-gray-500 italic">
-              Your score has been recorded. New trivia available tomorrow!
+              Tu puntuación ha sido registrada. ¡Nueva trivia disponible mañana!
             </div>
           </div>
 
@@ -162,7 +182,7 @@ export default function TriviaPage() {
               href="/"
               className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg inline-block"
             >
-              Back to Home
+              Volver al Inicio
             </Link>
           </div>
         </div>
@@ -176,7 +196,7 @@ export default function TriviaPage() {
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold text-center mb-8 text-gray-900">Betis & Scotland Trivia Challenge</h1>
       <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-        <p className="text-lg font-semibold mb-4">Question {currentQuestionIndex + 1} of {questions.length}</p>
+        <p className="text-lg font-semibold mb-4">Pregunta {currentQuestionIndex + 1} of {questions.length}</p>
         <GameTimer
           duration={QUESTION_DURATION}
           onTimeUp={handleTimeUp}
@@ -210,7 +230,7 @@ export default function TriviaPage() {
           })}
         </div>
       </div>
-      <div className="text-center text-2xl font-bold">Score: {score}</div>
+      <div className="text-center text-2xl font-bold">Puntuación: {score}</div>
     </div>
   );
 }

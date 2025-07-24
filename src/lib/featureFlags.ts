@@ -268,12 +268,7 @@ export function getEnabledNavigationItems() {
       nameEn: 'Matches',
       feature: 'showPartidos' as keyof FeatureFlags
     },
-    { 
-      name: 'Trivia', 
-      href: '/trivia', 
-      nameEn: 'Trivia',
-      feature: 'showTriviaGame' as keyof FeatureFlags
-    },
+    
     { 
       name: 'Coleccionables', 
       href: '/coleccionables', 
@@ -333,7 +328,7 @@ export async function getEnabledNavigationItemsAsync(): Promise<NavigationItem[]
     { name: 'RSVP', href: '/rsvp', nameEn: 'RSVP', feature: 'show-rsvp' },
     { name: 'Clasificación', href: '/clasificacion', nameEn: 'Standings', feature: 'show-clasificacion' },
     { name: 'Partidos', href: '/partidos', nameEn: 'Matches', feature: 'show-partidos' },
-    { name: 'Trivia', href: '/trivia', nameEn: 'Trivia', feature: 'show-trivia-game' },
+    
     { name: 'Coleccionables', href: '/coleccionables', nameEn: 'Collectibles', feature: 'show-coleccionables' },
     { name: 'Galería', href: '/galeria', nameEn: 'Gallery', feature: 'show-galeria' },
     { name: 'Historia', href: '/historia', nameEn: 'History', feature: 'show-history' },

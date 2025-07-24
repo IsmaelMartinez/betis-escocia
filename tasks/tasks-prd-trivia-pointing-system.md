@@ -31,11 +31,11 @@
   - [x] 3.4 Ensure Clerk authentication is used to retrieve `user_id` for score storage.
   - [x] 3.5 Add API endpoint (or extend existing) to retrieve user's daily scores, allowing for calculation of total accumulated score on the frontend.
 - [ ] 4.0 Frontend Integration (Gameplay)
-  - [ ] 4.1 Modify `src/app/trivia/page.tsx` to display a running total of points during gameplay.
+  - [x] 4.1 Modify `src/app/trivia/page.tsx` to display a running total of points during gameplay.
 - [ ] 5.0 Frontend Integration (Results & Profile)
-  - [ ] 5.1 Modify `src/app/trivia/page.tsx` (results section) to display the user's daily score after game completion.
-  - [ ] 5.2 Modify `src/app/trivia/page.tsx` (results section) to display the user's total accumulated score by querying daily scores.
-  - [ ] 5.3 Create or modify a dedicated "My Points" or "Profile" section (e.g., `src/app/dashboard/page.tsx`) to display the user's total accumulated score by querying daily scores.
+  - [x] 5.1 Modify `src/app/trivia/page.tsx` (results section) to display the user's daily score after game completion.
+  - [x] 5.2 Modify `src/app/trivia/page.tsx` (results section) to display the user's total accumulated score by querying daily scores.
+  - [x] 5.3 Create or modify a dedicated "My Points" or "Profile" section (e.g., `src/app/dashboard/page.tsx`) to display the user's total accumulated score by querying daily scores.
 - [ ] 6.0 Testing
   - [ ] 6.1 Write unit tests for any new utility functions or components related to point calculation/display.
   - [ ] 6.2 Write integration tests for the modified/new API endpoints to ensure correct score calculation and storage.

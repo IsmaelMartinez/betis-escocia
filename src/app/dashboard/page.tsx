@@ -5,6 +5,25 @@ import { User, Calendar, MessageSquare, PieChart, ExternalLink } from 'lucide-re
 import Link from 'next/link';
 import { isFeatureEnabledAsync } from '@/lib/featureFlags';
 
+async function getTotalTriviaScore(userId: string): Promise<number> {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/trivia`, {
+      headers: {
+        'Authorization': `Bearer ${userId}` // Pass userId as a bearer token for authentication
+      }
+    });
+    if (!response.ok) {
+      console.error(`Error fetching trivia scores: ${response.statusText}`);
+      return 0;
+    }
+    const data: { daily_score: number }[] = await response.json();
+    return data.reduce((sum, entry) => sum + entry.daily_score, 0);
+  } catch (error) {
+    console.error('Failed to fetch total trivia score:', error);
+    return 0;
+  }
+}
+
 export default async function DashboardPage() {
   // Check if authentication is enabled
   const isAuthEnabled = await isFeatureEnabledAsync('showClerkAuth');
@@ -20,10 +39,11 @@ export default async function DashboardPage() {
   }
 
   // Get user's submissions and counts
-  const [rsvps, contactSubmissions, counts] = await Promise.all([
+  const [rsvps, contactSubmissions, counts, totalTriviaScore] = await Promise.all([
     getUserRSVPs(user.id),
     getUserContactSubmissions(user.id),
-    getUserSubmissionCounts(user.id)
+    getUserSubmissionCounts(user.id),
+    getTotalTriviaScore(user.id)
   ]);
 
   const userEmail = user.emailAddresses[0]?.emailAddress;
@@ -75,6 +95,16 @@ export default async function DashboardPage() {
                 <div>
                   <p className="text-sm font-medium text-gray-600">Total Interacciones</p>
                   <p className="text-3xl font-bold text-betis-green">{counts?.totalSubmissions || 0}</p>
+                </div>
+                <PieChart className="h-12 w-12 text-betis-green opacity-20" />
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Puntuación Total Trivia</p>
+                  <p className="text-3xl font-bold text-betis-green">{totalTriviaScore}</p>
                 </div>
                 <PieChart className="h-12 w-12 text-betis-green opacity-20" />
               </div>
