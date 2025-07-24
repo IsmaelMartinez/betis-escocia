@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabase, TriviaQuestion, UserTriviaScoreInsert } from '@/lib/supabase';
+import { getAuth } from '@clerk/nextjs/server';
 
 export async function GET() {
   try {
@@ -40,3 +41,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+
+
+
+

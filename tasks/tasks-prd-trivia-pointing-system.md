@@ -25,11 +25,11 @@
   - [x] 2.1 Move trivia page link into the authenticated user dropdown section/menu.
   - [x] 2.2 Ensure trivia page (`src/app/trivia/page.tsx`) is only accessible to authenticated users.
 - [ ] 3.0 API Endpoint Modification/Creation
-  - [ ] 3.1 Modify `src/app/api/trivia/route.ts` to calculate the daily score (1 point per correct answer).
-  - [ ] 3.2 Implement logic in `src/app/api/trivia/route.ts` to calculate and add bonus points for game completion.
-  - [ ] 3.3 Implement logic in `src/app/api/trivia/route.ts` to store the daily score in the database for the authenticated user.
-  - [ ] 3.4 Ensure Clerk authentication is used to retrieve `user_id` for score storage.
-  - [ ] 3.5 Add API endpoint (or extend existing) to retrieve user's daily scores, allowing for calculation of total accumulated score on the frontend.
+  - [x] 3.1 Modify `src/app/api/trivia/route.ts` to calculate the daily score (1 point per correct answer).
+  - [ ] 3.2 (Removed: No bonus/completion points. Score is solely based on correct answers.)
+  - [x] 3.3 Implement logic in `src/app/api/trivia/route.ts` to store the daily score in the database for the authenticated user.
+  - [x] 3.4 Ensure Clerk authentication is used to retrieve `user_id` for score storage.
+  - [x] 3.5 Add API endpoint (or extend existing) to retrieve user's daily scores, allowing for calculation of total accumulated score on the frontend.
 - [ ] 4.0 Frontend Integration (Gameplay)
   - [ ] 4.1 Modify `src/app/trivia/page.tsx` to display a running total of points during gameplay.
 - [ ] 5.0 Frontend Integration (Results & Profile)
