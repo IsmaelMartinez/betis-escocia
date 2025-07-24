@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth } from '@clerk/nextjs/server';
-import { getUserDailyTriviaScore, getAuthenticatedSupabaseClient } from '@/lib/supabase';
+import { getAuthenticatedSupabaseClient } from '@/lib/supabase';
 
 export async function GET(req: NextRequest) {
   const { userId, getToken } = getAuth(req);
