@@ -166,6 +166,19 @@ export interface TriviaAnswerUpdate {
   is_correct?: boolean;
 }
 
+// Type definitions for our user_trivia_scores table
+export interface UserTriviaScore {
+  id: string;
+  user_id: string;
+  daily_score: number;
+  timestamp: string;
+}
+
+export interface UserTriviaScoreInsert {
+  user_id: string;
+  daily_score: number;
+}
+
 // Match CRUD operations
 export async function getMatches(limit?: number) {
   const query = supabase
