@@ -153,7 +153,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden text-white p-2"
+              className="md:hidden text-white p-2" aria-label="Toggle mobile menu"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -248,7 +248,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
             {/* About */}
             <div className="sm:col-span-2 lg:col-span-1">
               <h3 className="font-bold text-lg mb-4 text-betis-green">No busques más que no hay</h3>
-              <p className="text-gray-300 text-sm leading-relaxed">
+              <p className="text-gray-100 text-sm leading-relaxed">
                 La peña del Real Betis en Edimburgo. Nos vemos en The Polwarth Tavern para cada partido.
               </p>
             </div>
@@ -273,7 +273,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                   href="https://www.betisweb.com/foro/principal/betis-fan-s-of-the-universe/6621126-pena-betica-escocesa-no-busques-mas-que-no-hay"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-gray-300 hover:text-betis-green transition-colors"
+                  className="block text-gray-100 hover:text-betis-green transition-colors"
                 >
                   BetisWeb Forum
                 </a>
@@ -281,7 +281,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                   href="https://beticosenescocia.blogspot.com/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-gray-300 hover:text-betis-green transition-colors"
+                  className="block text-gray-100 hover:text-betis-green transition-colors"
                 >
                   Béticos en Escocia Blog
                 </a>
@@ -289,7 +289,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                   href="https://www.laliga.com/noticias/conoce-a-la-pena-betica-de-escocia-no-busques-mas-que-no-hay"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-gray-300 hover:text-betis-green transition-colors"
+                  className="block text-gray-100 hover:text-betis-green transition-colors"
                 >
                   LaLiga Reconocimiento
                 </a>
@@ -297,7 +297,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                   href="https://www.abc.es/deportes/alfinaldelapalmera/noticias-betis/sevi-pena-betica-no-busques-mas-no-embajada-recibe-suyos-escocia-202112091615_noticia.html"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-gray-300 hover:text-betis-green transition-colors"
+                  className="block text-gray-100 hover:text-betis-green transition-colors"
                 >
                   ABC Sevilla
                 </a>
@@ -312,7 +312,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                   href="https://www.facebook.com/groups/beticosenescocia/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-betis-green transition-colors"
+                  className="text-gray-100 hover:text-betis-green transition-colors"
                   title="Facebook"
                 >
                   <MessageCircle size={24} />
@@ -321,7 +321,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                   href="https://www.instagram.com/rbetisescocia/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-betis-green transition-colors"
+                  className="text-gray-100 hover:text-betis-green transition-colors"
                   title="Instagram"
                 >
                   <Camera size={24} />
@@ -330,7 +330,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                   href="https://x.com/rbetisescocia"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-betis-green transition-colors"
+                  className="text-gray-100 hover:text-betis-green transition-colors"
                   title="X (Twitter)"
                 >
                   <Hash size={24} />
@@ -339,7 +339,8 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                   href="https://www.youtube.com/beticosenescocia"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-betis-green transition-colors"
+                  className="text-gray-100 hover:text-betis-green transition-colors"
+                  title="YouTube"
                 >
                   <Video size={24} />
                 </a>
