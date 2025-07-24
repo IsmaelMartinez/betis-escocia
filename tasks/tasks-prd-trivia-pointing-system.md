@@ -17,13 +17,13 @@
 
 ## Tasks
 
-- [ ] 1.0 Database Schema Update
+- [x] 1.0 Database Schema Update
   - [ ] 1.1 Design `user_trivia_scores` table to store `user_id`, `daily_score`, and `timestamp`.
   - [ ] 1.2 Create SQL migration script (`sql/create_user_trivia_scores_table.sql`) for the new table.
   - [x] 1.3 Update Supabase types (if applicable, e.g., `src/lib/supabase.ts` or generated types) to include the new table structure.
-- [ ] 2.0 Navigation and Access Control
-  - [ ] 2.1 Move trivia page link into the authenticated user dropdown section/menu.
-  - [ ] 2.2 Ensure trivia page (`src/app/trivia/page.tsx`) is only accessible to authenticated users.
+- [x] 2.0 Navigation and Access Control
+  - [x] 2.1 Move trivia page link into the authenticated user dropdown section/menu.
+  - [x] 2.2 Ensure trivia page (`src/app/trivia/page.tsx`) is only accessible to authenticated users.
 - [ ] 3.0 API Endpoint Modification/Creation
   - [ ] 3.1 Modify `src/app/api/trivia/route.ts` to calculate the daily score (1 point per correct answer).
   - [ ] 3.2 Implement logic in `src/app/api/trivia/route.ts` to calculate and add bonus points for game completion.

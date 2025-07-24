@@ -2,13 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { TriviaQuestion } from '@/lib/supabase';
 import ErrorMessage from '@/components/ErrorMessage';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import GameTimer from '@/components/GameTimer';
 import { isFeatureEnabledAsync } from '@/lib/featureFlags';
+import { useUser } from '@clerk/nextjs';
 
 export default function TriviaPage() {
+  const { isSignedIn, isLoaded } = useUser();
+  const router = useRouter();
+
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -24,34 +29,42 @@ export default function TriviaPage() {
   const MAX_QUESTIONS = 3; // Limit to 3 questions
 
   useEffect(() => {
-    async function checkFeatureFlag() {
-      const enabled = await isFeatureEnabledAsync('showTriviaGame');
-      setIsTriviaEnabled(enabled);
-      if (!enabled) {
-        setLoading(false);
-        return;
-      }
-
-      async function fetchQuestions() {
-        try {
-          setLoading(true);
-          const response = await fetch('/api/trivia');
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          const data: TriviaQuestion[] = await response.json();
-          // Limit to 3 questions
-          setQuestions(data.slice(0, MAX_QUESTIONS));
-        } catch (error: unknown) {
-          setError(error instanceof Error ? error.message : 'An error occurred');
-        } finally {
-          setLoading(false);
-        }
-      }
-      fetchQuestions();
+    if (isLoaded && !isSignedIn) {
+      router.push('/sign-in');
     }
-    checkFeatureFlag();
-  }, []);
+  }, [isLoaded, isSignedIn, router]);
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn) { // Only run if user is loaded and signed in
+      async function checkFeatureFlagAndFetchQuestions() {
+        const enabled = await isFeatureEnabledAsync('showTriviaGame');
+        setIsTriviaEnabled(enabled);
+        if (!enabled) {
+          setLoading(false);
+          return;
+        }
+
+        async function fetchQuestions() {
+          try {
+            setLoading(true);
+            const response = await fetch('/api/trivia');
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data: TriviaQuestion[] = await response.json();
+            // Limit to 3 questions
+            setQuestions(data.slice(0, MAX_QUESTIONS));
+          } catch (error: unknown) {
+            setError(error instanceof Error ? error.message : 'An error occurred');
+          } finally {
+            setLoading(false);
+          }
+        }
+        fetchQuestions();
+      }
+      checkFeatureFlagAndFetchQuestions();
+    }
+  }, [isLoaded, isSignedIn]); // Depend on isLoaded and isSignedIn
 
   const goToNextQuestion = () => {
     setShowFeedback(false);
