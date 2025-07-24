@@ -10,6 +10,7 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+  globalSetup: require.resolve('./playwright/global.setup'),
   testDir: './e2e',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -34,6 +35,7 @@ export default defineConfig({
         NEXT_PUBLIC_FEATURE_UNETE: 'true',
         NEXT_PUBLIC_FEATURE_CLERK_AUTH: 'true',
         NEXT_PUBLIC_FEATURE_ADMIN: 'true',
+        NEXT_PUBLIC_FEATURE_TRIVIA_GAME: 'true',
       },
     },
 
@@ -45,7 +47,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], storageState: 'playwright/.clerk/user.json' },
     },
   ],
 

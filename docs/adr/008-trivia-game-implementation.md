@@ -13,10 +13,11 @@ To enhance user engagement and provide an interactive experience, a trivia game 
 The trivia game has been implemented as a new feature within the existing Next.js application with the following architectural decisions:
 
 ### Database Design
-- **Supabase tables**: `trivia_questions` and `trivia_answers` for relational data storage
+- **Supabase tables**: `trivia_questions`, `trivia_answers`, and `user_trivia_scores` for relational data storage
 - **Question categorization**: Support for 'betis' and 'scotland' categories
 - **Difficulty levels**: 'easy', 'medium', 'hard' for future expansion
 - **Flexible answer structure**: Multiple choice with boolean `is_correct` flag
+- **User Score Tracking**: `user_trivia_scores` table to store daily scores linked to authenticated users.
 
 ### Feature Flag Integration
 - **Flag name**: `show-trivia-game` (following project naming conventions)
@@ -35,23 +36,27 @@ The trivia game has been implemented as a new feature within the existing Next.j
 - **Loading states**: Spinner and error components for better UX
 
 ### API Design
-- **Endpoint**: `/api/trivia` for question retrieval
+- **Endpoint**: `/api/trivia` for question retrieval and score submission
 - **Randomization**: Questions and answers shuffled on each request
 - **Data format**: Includes nested answers with question data
 - **Error handling**: Proper HTTP status codes and error messages
+- **Score Submission**: `POST` requests to `/api/trivia` to submit daily scores, linked to authenticated users.
+- **Daily Play Check**: `GET` requests to `/api/trivia` now check if an authenticated user has already played today.
 
 ## Implementation Details
 
 ### Technical Components
-1. **Database Schema** (`sql/create_trivia_tables.sql`)
+1. **Database Schema** (`sql/create_trivia_tables.sql`, `sql/create_user_trivia_scores_table.sql`, `sql/user_trivia_scores_rls.sql`)
    - Primary key UUID fields
    - Foreign key relationships
    - Timestamp tracking for auditing
+   - Row Level Security (RLS) for user scores.
 
 2. **API Route** (`src/app/api/trivia/route.ts`)
    - Server-side randomization
    - Supabase integration
    - Error handling and logging
+   - Handles score submission and daily play checks.
 
 3. **Frontend Game** (`src/app/trivia/page.tsx`)
    - React hooks for state management

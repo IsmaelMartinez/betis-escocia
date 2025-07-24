@@ -634,6 +634,43 @@ export async function deleteTriviaAnswer(id: string) {
   return { success: true };
 }
 
+// User Trivia Score CRUD operations
+export async function createUserTriviaScore(score: UserTriviaScoreInsert, authenticatedSupabase: SupabaseClient) {
+  const { data, error } = await authenticatedSupabase
+    .from('user_trivia_scores')
+    .insert([score])
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error creating user trivia score:', error);
+    return { success: false, error: error.message };
+  }
+  return { success: true, data: data as UserTriviaScore };
+}
+
+export async function getUserDailyTriviaScore(userId: string, authenticatedSupabase: SupabaseClient) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const { data, error } = await authenticatedSupabase
+    .from('user_trivia_scores')
+    .select('*')
+    .eq('user_id', userId)
+    .gte('timestamp', today.toISOString())
+    .lt('timestamp', tomorrow.toISOString())
+    .single(); // Assuming only one score per user per day
+
+  if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
+    console.error('Error fetching user daily trivia score:', error);
+    return { success: false, error: error.message };
+  }
+  
+  return { success: true, data: data as UserTriviaScore | null };
+}
+
 // Get all matches with RSVP counts
 export async function getAllMatchesWithRSVPCounts(limit?: number) {
   const query = supabase

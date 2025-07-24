@@ -8,10 +8,11 @@ import ErrorMessage from '@/components/ErrorMessage';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import GameTimer from '@/components/GameTimer';
 import { isFeatureEnabledAsync } from '@/lib/featureFlags';
-import { useUser } from '@clerk/nextjs';
+import { useUser, useAuth } from '@clerk/nextjs';
 
 export default function TriviaPage() {
   const { isSignedIn, isLoaded } = useUser();
+  const { getToken } = useAuth();
   const router = useRouter();
 
   const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
@@ -28,6 +29,28 @@ export default function TriviaPage() {
 
   const QUESTION_DURATION = 15; // seconds per question
   const MAX_QUESTIONS = 3; // Limit to 3 questions
+
+  const saveScore = async (finalScore: number) => {
+    try {
+      const token = await getToken();
+      const response = await fetch('/api/trivia', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ score: finalScore }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      console.log('Score saved successfully!');
+    } catch (error) {
+      console.error('Error saving score:', error);
+    }
+  };
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -50,6 +73,14 @@ export default function TriviaPage() {
             setLoading(true);
             const response = await fetch('/api/trivia');
             if (!response.ok) {
+              if (response.status === 403) {
+                const data = await response.json();
+                setError(data.message + ` Your score: ${data.score}`);
+                setGameCompleted(true); // Indicate game is completed for today
+                setScore(data.score); // Set the score to display
+                setLoading(false);
+                return;
+              }
               throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data: TriviaQuestion[] = await response.json();
@@ -66,13 +97,12 @@ export default function TriviaPage() {
         // Fetch accumulated scores
         async function fetchAccumulatedScores() {
           try {
-            const response = await fetch('/api/trivia'); // Using the same endpoint for GET
+            const response = await fetch('/api/trivia/total-score'); // Using the new endpoint
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const data: { daily_score: number }[] = await response.json();
-            const total = data.reduce((sum, entry) => sum + entry.daily_score, 0);
-            setTotalAccumulatedScore(total);
+            const data: { score: number } = await response.json();
+            setTotalAccumulatedScore(data.score);
           } catch (error: unknown) {
             console.error('Error fetching accumulated scores:', error);
           }
@@ -91,8 +121,9 @@ export default function TriviaPage() {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prevIndex => prevIndex + 1);
     } else {
-      // Game over - show results
+      // Game over - show results and save score
       setGameCompleted(true);
+      saveScore(score);
     }
   };
 
