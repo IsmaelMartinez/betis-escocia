@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase, type RSVP } from '@/lib/supabase';
 import { emailService, type RSVPEmailData } from '@/lib/emailService';
 import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, getClientIP } from '@/lib/security';
+import { getCurrentUpcomingMatch } from '@/lib/matchUtils';
 
 // Default current match info (this could be moved to env vars or a separate config)
 const DEFAULT_MATCH = {
@@ -9,32 +10,6 @@ const DEFAULT_MATCH = {
   date: "2025-06-28T20:00:00",
   competition: "LaLiga"
 };
-
-// Helper function to get current upcoming match for RSVP
-async function getCurrentUpcomingMatch() {
-  // Query the database for upcoming matches
-  const { data, error } = await supabase
-    .from('matches')
-    .select('id, opponent, date_time, competition')
-    .gte('date_time', new Date().toISOString())
-    .order('date_time', { ascending: true })
-    .limit(1);
-
-  if (error) {
-    console.error('Error fetching upcoming match:', error);
-    return DEFAULT_MATCH;
-  }
-
-  if (data && data.length > 0) {
-    const nextMatch = data[0];
-    return {
-      opponent: nextMatch.opponent,
-      date: nextMatch.date_time,
-      competition: nextMatch.competition
-    };
-  }
-  return DEFAULT_MATCH;
-}
 
 // GET - Retrieve current RSVP data
 export async function GET(request: NextRequest) {
