@@ -1,0 +1,57 @@
+import { Meta } from '@storybook/blocks';
+import { ColorPalette, ColorItem } from '@storybook/addon-docs';
+
+<Meta title="Design Tokens/Colors" />
+
+# Betis Color Palette
+
+This document outlines the primary and accent colors used in the Betis application, reflecting the club's branding.
+
+<ColorPalette>
+  <ColorItem
+    title="Primary Green"
+    subtitle="Betis Green"
+    colors={{ Green: '#00A651' }}
+  />
+  <ColorItem
+    title="Accent Gold"
+    subtitle="Gold Accent"
+    colors={{ Gold: '#FFD700' }}
+  />
+  <ColorItem
+    title="Neutral Grays"
+    subtitle="Used for text, backgrounds, and borders"
+    colors={{
+      'Gray 100': '#F7FAFC',
+      'Gray 200': '#EDF2F7',
+      'Gray 300': '#E2E8F0',
+      'Gray 400': '#CBD5E0',
+      'Gray 500': '#A0AEC0',
+      'Gray 600': '#718096',
+      'Gray 700': '#4A5568',
+      'Gray 800': '#2D3748',
+      'Gray 900': '#1A202C',
+    }}
+  />
+  <ColorItem
+    title="Utility Colors"
+    subtitle="For success, warning, and error states"
+    colors={{
+      Success: '#48BB78',
+      Warning: '#ECC94B',
+      Error: '#F56565',
+    }}
+  />
+</ColorPalette>
+
+## Typography
+
+**Font Family:** "Open Sans", sans-serif (as defined in `.storybook/theme.ts`)
+
+## Spacing
+
+(To be defined based on Tailwind CSS spacing scale or custom values)
+
+## Border Radius
+
+(To be defined based on Tailwind CSS border-radius scale or custom values)

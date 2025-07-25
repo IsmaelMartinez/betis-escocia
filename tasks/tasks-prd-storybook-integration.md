@@ -30,7 +30,7 @@
   - [x] 1.6 Configure Storybook to work with Tailwind CSS and existing project styles
   - [ ] 1.7 (OPTIONAL) Install and configure Storybook MCP server (`storybook-mcp`) for AI-assisted development
 
-- [ ] 2.0 Core Component Stories Implementation
+- [x] 2.0 Core Component Stories Implementation
   - [x] 2.1 Identify and prioritize existing components in `src/components/` for story creation
   - [x] 2.2 Create story file for Button component (`src/components/ui/Button.stories.tsx`) with all variants (primary, secondary, outline, ghost, danger) and sizes
   - [x] 2.3 Create story file for LoadingSpinner component with different sizes and custom labels
@@ -39,12 +39,12 @@
   - [x] 2.6 Implement basic interactive controls (args) for each component story
 
 - [ ] 3.0 Betis Branding and Theme Integration
-  - [ ] 3.1 Create custom Storybook theme in `.storybook/theme.ts` with Betis colors (#00A651 green, gold accents)
-  - [ ] 3.2 Configure mobile-first viewport presets in `.storybook/preview.ts`
-  - [ ] 3.3 Add Betis-branded background options for component testing
-  - [ ] 3.4 Document Betis design tokens and color palette within Storybook
-  - [ ] 3.5 Create component variations that showcase Betis branding patterns
-  - [ ] 3.6 Ensure all stories reflect mobile-first responsive design principles
+  - [x] 3.1 Create custom Storybook theme in `.storybook/theme.ts` with Betis colors (#00A651 green, gold accents)
+  - [x] 3.2 Configure mobile-first viewport presets in `.storybook/preview.ts`
+  - [x] 3.3 Add Betis-branded background options for component testing
+  - [x] 3.4 Document Betis design tokens and color palette within Storybook
+  - [x] 3.5 Create component variations that showcase Betis branding patterns
+  - [x] 3.6 Ensure all stories reflect mobile-first responsive design principles
 
 - [ ] 4.0 Advanced Features and Addons Configuration
   - [ ] 4.1 Install and configure Controls addon for interactive component testing

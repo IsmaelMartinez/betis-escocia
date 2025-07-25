@@ -134,3 +134,25 @@ export const AllVariants: Story = {
     size: 'md',
   },
 };
+
+export const BrandedBackgrounds: Story = {
+  render: (args) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <Button {...args} variant="primary">Primary on Green</Button>
+      <Button {...args} variant="secondary">Secondary on Gold</Button>
+      <Button {...args} variant="outline">Outline on Green</Button>
+    </div>
+  ),
+  parameters: {
+    backgrounds: {
+      default: 'betis-green',
+      values: [
+        { name: 'betis-green', value: '#00A651' },
+        { name: 'betis-gold', value: '#FFD700' },
+      ],
+    },
+  },
+  args: {
+    size: 'md',
+  },
+};
