@@ -19,9 +19,13 @@ export default function TriviaScoreDisplay() {
         }
         const data = await response.json();
         setTotalScore(data.totalScore);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Failed to fetch total trivia score:', err);
-        setError(err.message || 'An unknown error occurred');
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unknown error occurred');
+        }
       } finally {
         setLoading(false);
       }

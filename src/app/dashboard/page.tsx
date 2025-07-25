@@ -1,7 +1,7 @@
 import { currentUser, auth } from '@clerk/nextjs/server';
 import TriviaScoreDisplay from '@/components/TriviaScoreDisplay';
 import { redirect } from 'next/navigation';
-import { getUserRSVPs, getUserContactSubmissions, getUserSubmissionCounts, supabase, getAuthenticatedSupabaseClient } from '@/lib/supabase';
+import { getUserRSVPs, getUserContactSubmissions, getUserSubmissionCounts } from '@/lib/supabase';
 import { User, Calendar, MessageSquare, PieChart, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { isFeatureEnabledAsync } from '@/lib/featureFlags';
@@ -24,8 +24,7 @@ export default async function DashboardPage() {
     redirect('/sign-in');
   }
 
-  const { sessionClaims } = await auth();
-  const sessionToken = sessionClaims?.__raw || null;
+  await auth();
 
   // Get user's submissions and counts
   const [rsvps, contactSubmissions, counts] = await Promise.all([

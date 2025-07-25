@@ -1,11 +1,11 @@
-import { FlagsmithFeatureName } from '../types';
+import { FlagsmithFeatureName, DEFAULT_FLAG_VALUES } from '../types';
 
 // Mock Flagsmith manager for Storybook
 class MockFlagsmithManager {
-  private featureFlags: Record<FlagsmithFeatureName, boolean> = {};
+  private featureFlags: Record<FlagsmithFeatureName, boolean> = DEFAULT_FLAG_VALUES as Record<FlagsmithFeatureName, boolean>;
 
   constructor(initialFlags: Record<FlagsmithFeatureName, boolean> = {}) {
-    this.featureFlags = initialFlags;
+    this.featureFlags = { ...DEFAULT_FLAG_VALUES, ...initialFlags };
   }
 
   async hasFeature(flagName: FlagsmithFeatureName): Promise<boolean> {
@@ -49,7 +49,7 @@ export function getFlagsmithManager(initialFlags?: Record<FlagsmithFeatureName, 
   return mockFlagsmithInstance;
 }
 
-export async function initializeFlagsmith(config?: any): Promise<void> {
+export async function initializeFlagsmith(): Promise<void> {
   // No-op for Storybook
   getFlagsmithManager(); // Ensure instance is created
   return Promise.resolve();

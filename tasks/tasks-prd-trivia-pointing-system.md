@@ -36,9 +36,9 @@
   - [x] 5.1 Modify `src/app/trivia/page.tsx` (results section) to display the user's daily score after game completion.
   - [x] 5.2 Modify `src/app/trivia/page.tsx` (results section) to display the user's total accumulated score by querying daily scores.
   - [x] 5.3 Create or modify a dedicated "My Points" or "Profile" section (e.g., `src/app/dashboard/page.tsx`) to display the user's total accumulated score by querying daily scores. (`src/components/TriviaScoreDisplay.tsx` created for this).
-- [ ] 6.0 Testing
-  - [ ] 6.1 Write unit tests for any new utility functions or components related to point calculation/display.
-  - [ ] 6.2 Write integration tests for the modified/new API endpoints to ensure correct score calculation and storage.
+- [x] 6.0 Testing
+  - [x] 6.1 Write unit tests for any new utility functions or components related to point calculation/display.
+  - [x] 6.2 Write integration tests for the modified/new API endpoints to ensure correct score calculation and storage.
   - [x] 6.3 Create ADR for Clerk E2E testing.
   - [x] 6.3.1 Implement Clerk testing setup for E2E tests.
     - [x] 6.3.1.1 Install `@clerk/testing` as a development dependency.
@@ -46,4 +46,4 @@
     - [x] 6.3.1.3 Create `playwright/global.setup.ts` file.
     - [x] 6.3.1.4 Implement session saving in `playwright/global.setup.ts` using `@clerk/testing/playwright` to sign in the test user and save session state.
     - [x] 6.3.1.5 Configure `playwright.config.ts` to load the saved authentication state for tests.
-  - [ ] 6.4 Update `e2e/trivia.spec.ts` to include tests for the new pointing system display and functionality (depends on 6.3).
+  - [x] 6.4 Update `e2e/trivia.spec.ts` to include tests for the new pointing system display and functionality (depends on 6.3).

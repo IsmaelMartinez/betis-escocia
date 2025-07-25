@@ -11,7 +11,17 @@ jest.mock('next/server', () => ({
 
 // Mock Clerk server utilities
 jest.mock('@clerk/nextjs/server', () => ({
-  getAuth: jest.fn(() => ({ userId: null, getToken: jest.fn() })),
+  getAuth: jest.fn((req) => {
+    const userId = req?.headers?.get('x-user-id') || null;
+    return {
+      userId,
+      getToken: jest.fn(() => Promise.resolve(userId ? 'mock-token' : null)),
+      sessionClaims: userId ? { sub: userId, azp: 'mock-azp', exp: 123, iat: 123, iss: 'mock-iss', nbf: 123, sid: 'mock-sid', aud: ['mock-aud'], org_id: 'mock-org-id', shp: 'mock-shp', primary_email: 'mock-email' } : null,
+      sessionId: userId ? 'mock-session-id' : null,
+      sessionStatus: userId ? 'active' : 'signed-out',
+      actor: null,
+    };
+  }),
 }));
 
 // Mock Supabase functions
@@ -76,7 +86,7 @@ describe('/api/trivia', () => {
 
     test('should return 403 for authenticated user who has already played today', async () => {
       mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') });
-      mockGetUserDailyTriviaScore.mockResolvedValueOnce({ success: true, data: { daily_score: 3 } });
+      mockGetUserDailyTriviaScore.mockResolvedValueOnce({ success: true, data: { id: 's1', user_id: 'user1', daily_score: 3, timestamp: new Date().toISOString() } });
 
       const response = await getTriviaQuestions({} as any);
       const json = await response.json();
@@ -124,7 +134,7 @@ describe('/api/trivia', () => {
 
     test('should return 409 if user has already submitted score today', async () => {
       mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') });
-      mockGetUserDailyTriviaScore.mockResolvedValueOnce({ success: true, data: { daily_score: 2 } });
+      mockGetUserDailyTriviaScore.mockResolvedValueOnce({ success: true, data: { id: 's1', user_id: 'user1', daily_score: 2, timestamp: new Date().toISOString() } });
 
       const response = await postTriviaScore({ json: () => Promise.resolve({ score: 5 }) } as any);
       const json = await response.json();
@@ -136,7 +146,7 @@ describe('/api/trivia', () => {
     test('should successfully save score for authenticated user who has not played today', async () => {
       mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') });
       mockGetUserDailyTriviaScore.mockResolvedValueOnce({ success: true, data: null });
-      mockCreateUserTriviaScore.mockResolvedValueOnce({ success: true, data: { id: 's1', user_id: 'user1', daily_score: 5 } });
+      mockCreateUserTriviaScore.mockResolvedValueOnce({ success: true, data: { id: 's1', user_id: 'user1', daily_score: 5, timestamp: new Date().toISOString() } });
 
       const response = await postTriviaScore({ json: () => Promise.resolve({ score: 5 }) } as any);
       const json = await response.json();

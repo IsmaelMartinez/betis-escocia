@@ -5,11 +5,7 @@ import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, get
 import { getCurrentUpcomingMatch } from '@/lib/matchUtils';
 
 // Default current match info (this could be moved to env vars or a separate config)
-const DEFAULT_MATCH = {
-  opponent: "Real Madrid",
-  date: "2025-06-28T20:00:00",
-  competition: "LaLiga"
-};
+
 
 // GET - Retrieve current RSVP data
 export async function GET(request: NextRequest) {
