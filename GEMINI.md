@@ -3,8 +3,9 @@
 This document provides a quick overview of the Betis project's key technologies and patterns, intended for the Gemini CLI agent's future reference.
 
 ## Core Technologies:
-- **Frontend:** Next.js (React)
+- **Frontend:** Next.js (React), Storybook
 - **Styling:** Tailwind CSS (implied by `postcss.config.mjs` and `globals.css`)
+- **Storybook:** Component development and documentation (`.storybook/` directory, `src/components/**/*.stories.tsx`, `docs/storybook-guide.md`).
 - **Database:** Supabase (PostgreSQL backend, used for matches, RSVPs, contact submissions).
   - **Client:** `@supabase/supabase-js` (`src/lib/supabase.ts`)
 - **Authentication:** Clerk (implied by `.clerk/` directory and historical docs like `docs/historical/clerk-evaluation-results.md`)

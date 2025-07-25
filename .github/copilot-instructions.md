@@ -82,6 +82,8 @@ NEXT_PUBLIC_FLAGSMITH_DEBUG=true
 ### Local Development Commands
 
 - `npm run dev` - Starts with Turbopack
+- `npm run storybook` - Starts Storybook development server
+- `npm run build-storybook` - Builds static Storybook for deployment
 - `npm run test:e2e` - Playwright tests (requires dev server)
 - `npm test` - Jest unit/integration tests
 - `npm run lint` - ESLint with Next.js config
