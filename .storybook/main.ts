@@ -8,13 +8,10 @@ const config: StorybookConfig = {
   ],
   "addons": [
     "@chromatic-com/storybook",
-    "@storybook/addon-docs",
     "@storybook/addon-onboarding",
     "@storybook/addon-a11y",
     "@storybook/addon-vitest",
-    "@storybook/addon-controls",
-    "@storybook/addon-viewport",
-    "@storybook/addon-backgrounds"
+    "@storybook/addon-docs"
   ],
   "framework": {
     "name": "@storybook/nextjs-vite",
