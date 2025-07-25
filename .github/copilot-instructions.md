@@ -62,6 +62,50 @@ export async function POST(request: NextRequest) {
 jest.mock("@/lib/supabase", () => ({ supabase: { from: jest.fn() } }));
 ```
 
+#### Critical Testing Patterns (Learned from Contact/RSVP API tests)
+
+**ES Module Import Issues**: Jest fails with Clerk's ES modules. **SOLUTION**: Mock Clerk before ANY imports:
+```typescript
+// Mock Clerk before any other imports
+jest.mock('@clerk/nextjs/server', () => ({
+  getAuth: jest.fn(() => ({
+    userId: null,
+    getToken: jest.fn(() => Promise.resolve(null)),
+  })),
+}));
+```
+
+**Supabase Query Builder Mocking**: Must match actual API chain structure:
+```typescript
+// Correct pattern - supports .from().select().eq() chaining
+jest.mock('@/lib/supabase', () => {
+  const mockFrom = jest.fn();
+  return { supabase: { from: mockFrom } };
+});
+
+// In tests, mock the full chain:
+(supabase.from as jest.Mock).mockReturnValue({
+  select: jest.fn(() => ({
+    eq: jest.fn(() => Promise.resolve({ data: [], error: null }))
+  }))
+});
+```
+
+**Security Function Mocking**: Avoid `jest.requireActual()` - causes conflicts with test spies:
+```typescript
+// GOOD - Simple mocks without requireActual
+jest.mock('@/lib/security', () => ({
+  __esModule: true,
+  sanitizeObject: jest.fn((obj) => obj),
+  validateEmail: jest.fn(() => ({ isValid: true })),
+  checkRateLimit: jest.fn(() => ({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 })),
+}));
+```
+
+**Complete Mock Objects**: Rate limit mocks need ALL required properties (`allowed`, `remaining`, `resetTime`)
+
+**API Route Test Coverage**: For each endpoint, test: success cases, validation failures, rate limiting, database errors, edge cases (not found, empty data)
+
 ### Environment Setup Requirements
 
 ```bash

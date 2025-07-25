@@ -137,6 +137,93 @@ When integrating new features, consider the following:
 - **Existing Components and Utilities:** Before creating new components or utility functions, check `src/components/` and `src/lib/` for existing reusable assets.
 - **Documentation:** Document new features, architectural decisions, and any significant changes in the `docs/` directory, preferably as an ADR if it's an architectural decision.
 
+## Testing Implementation Patterns
+
+### Jest Configuration and ES Module Handling
+The project uses Jest with TypeScript and faces challenges with ES modules from dependencies like Clerk. Key learnings:
+
+#### ES Module Import Issues
+- **Problem**: Jest encounters `SyntaxError: Unexpected token 'export'` when importing Clerk packages
+- **Root Cause**: Clerk's `@clerk/backend` package uses ES modules that Jest cannot parse by default
+- **Solution**: Mock Clerk modules at the top of test files before any imports:
+```typescript
+// Mock Clerk before any other imports
+jest.mock('@clerk/nextjs/server', () => ({
+  getAuth: jest.fn(() => ({
+    userId: null,
+    getToken: jest.fn(() => Promise.resolve(null)),
+  })),
+}));
+```
+- **Alternative Attempted**: Adding `transformIgnorePatterns` to Jest config was not sufficient
+
+#### Supabase Query Builder Mocking
+Properly mocking Supabase's chainable query builder requires understanding the actual API structure:
+```typescript
+// Correct pattern for mocking Supabase
+jest.mock('@/lib/supabase', () => {
+  const mockFrom = jest.fn();
+  return {
+    supabase: {
+      from: mockFrom,
+    },
+  };
+});
+```
+
+### API Route Testing Strategy
+For Next.js API routes with complex dependencies:
+
+#### Mock Structure Hierarchy
+1. **External Services First**: Mock Clerk, Supabase, email services before imports
+2. **Security Functions**: Mock all security utilities to avoid conflicts
+3. **Test-Specific Overrides**: Use `jest.spyOn()` for test-specific behavior
+
+#### Supabase Query Chain Mocking
+The Supabase client uses method chaining that must be properly mocked:
+```typescript
+(supabase.from as jest.Mock).mockReturnValue({
+  select: jest.fn(() => ({
+    order: jest.fn(() => ({
+      eq: jest.fn(() => Promise.resolve({ data: [], error: null }))
+    }))
+  }))
+});
+```
+
+#### Security Function Mocking Best Practices
+- **Avoid `jest.requireActual()`**: This can cause conflicts with test-specific spies
+- **Default to Valid**: Mock security functions to return valid by default, override in specific tests
+- **Complete Mock Objects**: Include all required properties (e.g., rate limit responses need `allowed`, `remaining`, `resetTime`)
+
+### Test Coverage Patterns
+For comprehensive API route testing, cover:
+
+#### GET Endpoints
+- Successful data retrieval
+- Query parameter handling
+- Database error scenarios
+- Empty data sets
+
+#### POST Endpoints
+- Successful submission
+- Validation failures (each validation rule)
+- Rate limiting
+- Database insertion errors
+- Update vs. create scenarios
+
+#### DELETE Endpoints
+- Successful deletion by ID
+- Successful deletion by identifier (email, etc.)
+- Not found scenarios
+- Database deletion errors
+
+### Common Testing Pitfalls
+1. **Mock Order Matters**: Clerk mocks must be before imports to prevent ES module errors
+2. **Security Function Conflicts**: Using `jest.requireActual()` can interfere with test-specific spies
+3. **Incomplete Mock Objects**: Missing properties in mock responses cause test failures
+4. **Query Builder Depth**: Supabase mocks need proper nesting to match real API chains
+
 ## Common Pitfalls and Solutions:
 - **Asynchronous Feature Flag Rendering:** When conditionally rendering UI elements based on asynchronous feature flag checks (e.g., `isFeatureEnabledAsync`), ensure the asynchronous call is handled within a `useEffect` hook. Store the feature flag status in a component's state and use that state for conditional rendering. Directly calling asynchronous functions in the render method will lead to incorrect behavior as the Promise object itself is truthy, not its resolved value.
 - **Supabase Row-Level Security (RLS) Policies:** Be mindful of RLS policies, especially when adding new columns or tables. An overly broad "deny all" policy can override more specific "allow" policies. Ensure explicit `INSERT`, `SELECT`, and `UPDATE` policies are in place for relevant roles (e.g., `anon`, `authenticated`) to prevent unexpected `42501` errors. **Crucially, after making RLS changes, you MUST refresh the Supabase schema cache by restarting your Supabase project (e.g., via the Supabase dashboard or `docker compose restart` for local setups).**
