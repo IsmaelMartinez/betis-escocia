@@ -38,7 +38,7 @@
   - [x] 2.5 Create story file for GameTimer component with different timer states and reset scenarios
   - [x] 2.6 Implement basic interactive controls (args) for each component story
 
-- [ ] 3.0 Betis Branding and Theme Integration
+- [x] 3.0 Betis Branding and Theme Integration
   - [x] 3.1 Create custom Storybook theme in `.storybook/theme.ts` with Betis colors (#00A651 green, gold accents)
   - [x] 3.2 Configure mobile-first viewport presets in `.storybook/preview.ts`
   - [x] 3.3 Add Betis-branded background options for component testing
@@ -47,13 +47,13 @@
   - [x] 3.6 Ensure all stories reflect mobile-first responsive design principles
 
 - [ ] 4.0 Advanced Features and Addons Configuration
-  - [ ] 4.1 Install and configure Controls addon for interactive component testing
-  - [ ] 4.2 Install and configure Docs addon for auto-generated documentation
-  - [ ] 4.3 Install and configure A11y addon for accessibility testing and reporting
-  - [ ] 4.4 Install and configure Viewport addon for responsive design testing
-  - [ ] 4.5 Install and configure Backgrounds addon for different testing environments
-  - [ ] 4.6 Set up visual regression testing integration (choose between Chromatic, Percy, or alternatives)
-  - [ ] 4.7 Configure feature flag integration to demonstrate components with Flagsmith dependencies
+  - [x] 4.1 Install and configure Controls addon for interactive component testing
+  - [x] 4.2 Install and configure Docs addon for auto-generated documentation
+  - [x] 4.3 Install and configure A11y addon for accessibility testing and reporting
+  - [x] 4.4 Install and configure Viewport addon for responsive design testing
+  - [x] 4.5 Install and configure Backgrounds addon for different testing environments
+  - [x] 4.6 Set up visual regression testing integration (choose between Chromatic, Percy, or alternatives)
+  - [x] 4.7 Configure feature flag integration to demonstrate components with Flagsmith dependencies
 
 - [ ] 5.0 Documentation and Developer Guidelines
   - [ ] 5.1 Create comprehensive developer guide (`docs/storybook-guide.md`) with usage instructions

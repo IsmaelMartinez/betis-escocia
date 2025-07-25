@@ -8,7 +8,8 @@ This document provides a quick overview of the Betis project's key technologies 
 - **Database:** Supabase (PostgreSQL backend, used for matches, RSVPs, contact submissions).
   - **Client:** `@supabase/supabase-js` (`src/lib/supabase.ts`)
 - **Authentication:** Clerk (implied by `.clerk/` directory and historical docs like `docs/historical/clerk-evaluation-results.md`)
-- **Feature Flags:** Flagsmith (implied by `docs/adr/004-flagsmith-feature-flags.md` and `src/lib/flags/`)
+- **Feature Flags:** Flagsmith (implied by `docs/adr/004-flagsmith-feature-flags.md` and implemented in `src/lib/flagsmith/`).
+  - **Storybook Integration:** Flagsmith is mocked in Storybook using `src/lib/flagsmith/__mocks__/index.ts` and aliased via Vite configuration in `.storybook/vite.config.ts` to allow for controlled testing of feature-flag-dependent components.
 - **Testing:** Playwright (E2E tests in `e2e/`, config in `playwright.config.ts`), Jest/React Testing Library (implied by `tests/unit/` and `tests/canary/` structure, common with Next.js/React)
 - **Linting/Formatting:** ESLint (`eslint.config.mjs`)
 

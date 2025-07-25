@@ -11,11 +11,18 @@ const config: StorybookConfig = {
     "@storybook/addon-docs",
     "@storybook/addon-onboarding",
     "@storybook/addon-a11y",
-    "@storybook/addon-vitest"
+    "@storybook/addon-vitest",
+    "@storybook/addon-controls",
+    "@storybook/addon-viewport",
+    "@storybook/addon-backgrounds"
   ],
   "framework": {
     "name": "@storybook/nextjs-vite",
-    "options": {}
+    "options": {
+      builder: {
+        viteConfigPath: './.storybook/vite.config.ts',
+      },
+    },
   },
   "staticDirs": [
     "../public"
