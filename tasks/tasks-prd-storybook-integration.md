@@ -46,7 +46,7 @@
   - [x] 3.5 Create component variations that showcase Betis branding patterns
   - [x] 3.6 Ensure all stories reflect mobile-first responsive design principles
 
-- [ ] 4.0 Advanced Features and Addons Configuration
+- [x] 4.0 Advanced Features and Addons Configuration
   - [x] 4.1 Install and configure Controls addon for interactive component testing
   - [x] 4.2 Install and configure Docs addon for auto-generated documentation
   - [x] 4.3 Install and configure A11y addon for accessibility testing and reporting
@@ -56,9 +56,9 @@
   - [x] 4.7 Configure feature flag integration to demonstrate components with Flagsmith dependencies
 
 - [ ] 5.0 Documentation and Developer Guidelines
-  - [ ] 5.1 Create comprehensive developer guide (`docs/storybook-guide.md`) with usage instructions
-  - [ ] 5.2 Document story naming conventions and organization patterns
-  - [ ] 5.3 Create MDX documentation templates for complex components
-  - [ ] 5.4 Write guidelines for handling authentication-dependent components in isolation
-  - [ ] 5.5 Document integration with existing development workflow and testing procedures
-  - [ ] 5.6 Create troubleshooting guide for common Storybook issues with Next.js 15
+  - [x] 5.1 Create comprehensive developer guide (`docs/storybook-guide.md`) with usage instructions
+  - [x] 5.2 Document story naming conventions and organization patterns
+  - [x] 5.3 Create MDX documentation templates for complex components
+  - [x] 5.4 Write guidelines for handling authentication-dependent components in isolation
+  - [x] 5.5 Document integration with existing development workflow and testing procedures
+  - [x] 5.6 Create troubleshooting guide for common Storybook issues with Next.js 15
