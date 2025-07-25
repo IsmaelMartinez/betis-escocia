@@ -45,6 +45,7 @@ This is a Next.js TypeScript project for the Peña Bética Escocesa (Real Betis 
 
 ## Special Considerations
 
+- **`react/no-unescaped-entities` in Storybook `Page.tsx`:** The `react/no-unescaped-entities` error in `src/stories/Page.tsx` (e.g., on lines 39:13 and 39:18) can be resolved by escaping double quotes within text content using `&quot;` (e.g., changing `"args"` to `&quot;args&quot;`). This is a lower concern as it primarily affects Storybook build/development time.
 - Community engagement is the primary focus
 - RSVP system is the key interactive feature
 - Polwarth Tavern is the primary meeting location
