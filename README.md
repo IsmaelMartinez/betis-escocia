@@ -21,7 +21,7 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Next.js 15, TypeScript, Tailwind CSS 4
+- **Frontend**: Next.js 15, TypeScript, Tailwind CSS 4, Storybook
 - **Backend**: Next.js API Routes + Supabase (PostgreSQL)
 - **Database**: Supabase (GDPR-compliant with auto-cleanup)
 - **Authentication**: Clerk.com for user management and authentication
@@ -409,6 +409,7 @@ The project includes automatic deployment via GitHub Actions. Set up these secre
 - [Developer Onboarding Guide](docs/development/onboarding.md)
 - [Implementation Guide](docs/development/IMPLEMENTATION.md)
 - [Feature Flags Documentation](docs/feature-flags.md)
+- [Storybook Developer Guide](docs/storybook-guide.md)
 
 ### Architecture Decisions
 - [ADR-001: Clerk Authentication](docs/adr/001-clerk-authentication.md)
