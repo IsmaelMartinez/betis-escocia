@@ -13,6 +13,8 @@
     "type-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:silent": "jest --silent",
+    "test:coverage": "jest --coverage",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "lighthouse:accessibility": "npx lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-report.json --headless",

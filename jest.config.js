@@ -13,7 +13,26 @@ module.exports = {
     // "**/tests/canary/**/*.(test|spec).{ts,tsx}",
   ],
   transform: {
-    "^.+\.(ts|tsx)$": ["@swc/jest", { /* swc options */ }],
+    "^.+.(ts|tsx)$": [
+      "@swc/jest",
+      {
+        jsc: {
+          transform: {
+            react: {
+              runtime: "automatic",
+            },
+          },
+        },
+      },
+    ],
   },
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
+  // Optimize test execution
+  maxWorkers: "50%",
+  // Suppress verbose output during testing
+  verbose: false,
+  // Clear mocks between tests automatically
+  clearMocks: true,
+  // Detect test changes and only run affected tests
+  watchman: true,
 };
