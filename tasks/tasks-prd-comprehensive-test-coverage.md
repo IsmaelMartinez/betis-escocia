@@ -60,7 +60,7 @@
 ## Tasks
 
 - [ ] 1.0 API Route Testing Implementation (Target: 90% Coverage)
-  - [ ] 1.1 Create comprehensive tests for trivia API routes (`/api/trivia/*`) including authentication, scoring, and error scenarios
+  - [x] 1.1 Create comprehensive tests for trivia API routes (`/api/trivia/*`) including authentication, scoring, and error scenarios
   - [ ] 1.2 Create tests for RSVP API route (`/api/rsvp`) covering user authentication, event management, and validation
   - [ ] 1.3 Create tests for contact API route (`/api/contact`) including form submission, validation, and admin notifications
   - [ ] 1.4 Create tests for admin role management API (`/api/admin/roles`) covering role assignment and permission validation
