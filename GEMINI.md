@@ -128,6 +128,7 @@ Regularly revisit this section (e.g., quarterly or before major releases) to:
 
 ## How to Integrate New Features:
 When integrating new features, consider the following:
+- **Latest Library Versions**: Always use the latest stable versions of libraries and frameworks to ensure security, performance, and access to newest features. Research current versions before implementation.
 - **Feature Flagging with Flagsmith:** For new features, especially those under development or requiring A/B testing, utilize Flagsmith. Integrate feature flags early in the development cycle to enable gradual rollouts, A/B testing, and easy toggling of features without code deployments. Refer to `docs/adr/004-flagsmith-feature-flags.md` and `src/lib/flags/` for implementation details.
 - **Supabase for Data Persistence:** If the feature requires data storage, design the database schema and implement CRUD operations using Supabase. Ensure appropriate Row-Level Security (RLS) policies are defined.
 - **Clerk for Authentication:** If the feature involves user-specific data or restricted access, leverage Clerk for authentication and user management. Use `getAuth(request)` in API routes to retrieve user IDs.
