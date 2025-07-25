@@ -65,9 +65,10 @@ jest.mock("@/lib/supabase", () => ({ supabase: { from: jest.fn() } }));
 #### Critical Testing Patterns (Learned from Contact/RSVP API tests)
 
 **ES Module Import Issues**: Jest fails with Clerk's ES modules. **SOLUTION**: Mock Clerk before ANY imports:
+
 ```typescript
 // Mock Clerk before any other imports
-jest.mock('@clerk/nextjs/server', () => ({
+jest.mock("@clerk/nextjs/server", () => ({
   getAuth: jest.fn(() => ({
     userId: null,
     getToken: jest.fn(() => Promise.resolve(null)),
@@ -76,9 +77,10 @@ jest.mock('@clerk/nextjs/server', () => ({
 ```
 
 **Supabase Query Builder Mocking**: Must match actual API chain structure:
+
 ```typescript
 // Correct pattern - supports .from().select().eq() chaining
-jest.mock('@/lib/supabase', () => {
+jest.mock("@/lib/supabase", () => {
   const mockFrom = jest.fn();
   return { supabase: { from: mockFrom } };
 });
@@ -86,19 +88,24 @@ jest.mock('@/lib/supabase', () => {
 // In tests, mock the full chain:
 (supabase.from as jest.Mock).mockReturnValue({
   select: jest.fn(() => ({
-    eq: jest.fn(() => Promise.resolve({ data: [], error: null }))
-  }))
+    eq: jest.fn(() => Promise.resolve({ data: [], error: null })),
+  })),
 });
 ```
 
 **Security Function Mocking**: Avoid `jest.requireActual()` - causes conflicts with test spies:
+
 ```typescript
 // GOOD - Simple mocks without requireActual
-jest.mock('@/lib/security', () => ({
+jest.mock("@/lib/security", () => ({
   __esModule: true,
   sanitizeObject: jest.fn((obj) => obj),
   validateEmail: jest.fn(() => ({ isValid: true })),
-  checkRateLimit: jest.fn(() => ({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 })),
+  checkRateLimit: jest.fn(() => ({
+    allowed: true,
+    remaining: 2,
+    resetTime: Date.now() + 100000,
+  })),
 }));
 ```
 
