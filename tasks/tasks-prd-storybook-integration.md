@@ -21,13 +21,14 @@
 
 ## Tasks
 
-- [ ] 1.0 Initial Storybook Setup and Configuration
-  - [ ] 1.1 Install Storybook 9.x and required dependencies (`@storybook/nextjs`, `@storybook/react`, `storybook`)
-  - [ ] 1.2 Initialize Storybook configuration using `npx storybook@latest init`
-  - [ ] 1.3 Configure `.storybook/main.ts` with Next.js framework and TypeScript support
-  - [ ] 1.4 Update `package.json` with Storybook scripts (`storybook` and `build-storybook`)
-  - [ ] 1.5 Test initial Storybook setup by running `npm run storybook`
-  - [ ] 1.6 Configure Storybook to work with Tailwind CSS and existing project styles
+- [x] 1.0 Initial Storybook Setup and Configuration
+  - [x] 1.1 Install Storybook 9.x and required dependencies (`@storybook/nextjs`, `@storybook/react`, `storybook`)
+  - [x] 1.2 Initialize Storybook configuration using `npx storybook@latest init`
+  - [x] 1.3 Configure `.storybook/main.ts` with Next.js framework and TypeScript support
+  - [x] 1.4 Update `package.json` with Storybook scripts (`storybook` and `build-storybook`)
+  - [x] 1.5 Test initial Storybook setup by running `npm run storybook`
+  - [x] 1.6 Configure Storybook to work with Tailwind CSS and existing project styles
+  - [ ] 1.7 (OPTIONAL) Install and configure Storybook MCP server (`storybook-mcp`) for AI-assisted development
 
 - [ ] 2.0 Core Component Stories Implementation
   - [ ] 2.1 Identify and prioritize existing components in `src/components/` for story creation

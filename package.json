@@ -15,7 +15,9 @@
     "test:watch": "jest --watch",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
-    "lighthouse:accessibility": "npx lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-report.json --headless"
+    "lighthouse:accessibility": "npx lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-report.json --headless",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.25.5",
@@ -32,9 +34,15 @@
     "svix": "^1.69.0"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^4.0.1",
     "@clerk/testing": "^1.10.6",
     "@eslint/eslintrc": "^3",
     "@playwright/test": "^1.54.1",
+    "@storybook/addon-a11y": "^9.0.18",
+    "@storybook/addon-docs": "^9.0.18",
+    "@storybook/addon-onboarding": "^9.0.18",
+    "@storybook/addon-vitest": "^9.0.18",
+    "@storybook/react": "^9.0.18",
     "@swc/jest": "^0.2.39",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.6.3",
@@ -46,13 +54,20 @@
     "axios": "^1.11.0",
     "eslint": "^9",
     "eslint-config-next": "^15.4.3",
+    "eslint-plugin-storybook": "^9.0.18",
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
     "lighthouse": "^12.8.0",
+    "storybook": "^9.0.18",
     "tailwindcss": "^4",
     "ts-jest": "^29.4.0",
     "tsx": "^4.20.3",
     "typescript": "^5",
-    "wait-on": "^8.0.4"
+    "wait-on": "^8.0.4",
+    "@storybook/nextjs-vite": "^9.0.18",
+    "vitest": "^3.2.4",
+    "@vitest/browser": "^3.2.4",
+    "playwright": "^1.54.1",
+    "@vitest/coverage-v8": "^3.2.4"
   }
 }
