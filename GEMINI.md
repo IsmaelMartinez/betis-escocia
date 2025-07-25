@@ -3,15 +3,22 @@
 This document provides a quick overview of the Betis project's key technologies and patterns, intended for the Gemini CLI agent's future reference.
 
 ## Core Technologies:
-- **Frontend:** Next.js (React), Storybook
-- **Styling:** Tailwind CSS (implied by `postcss.config.mjs` and `globals.css`)
+- **Frontend:** Next.js 15 (React), Storybook v9.0.18
+- **Styling:** Tailwind CSS v4 (configured in `postcss.config.mjs` and `globals.css`)
 - **Storybook:** Component development and documentation (`.storybook/` directory, `src/components/**/*.stories.tsx`, `docs/storybook-guide.md`).
+  - **Version**: Storybook v9.0.18 with Next.js-Vite integration
+  - **Essential Addons**: Controls, viewport, backgrounds, actions, and other essential features are now built into core (no separate packages needed)
+  - **Additional Addons**: Docs, A11y, Vitest integration for component testing
+  - **Performance**: 48% lighter bundle sizes and faster startup times compared to v8
 - **Database:** Supabase (PostgreSQL backend, used for matches, RSVPs, contact submissions).
   - **Client:** `@supabase/supabase-js` (`src/lib/supabase.ts`)
-- **Authentication:** Clerk (implied by `.clerk/` directory and historical docs like `docs/historical/clerk-evaluation-results.md`)
-- **Feature Flags:** Flagsmith (implied by `docs/adr/004-flagsmith-feature-flags.md` and implemented in `src/lib/flagsmith/`).
+- **Authentication:** Clerk (configured in `.clerk/` directory and documented in `docs/historical/clerk-evaluation-results.md`)
+- **Feature Flags:** Flagsmith (documented in `docs/adr/004-flagsmith-feature-flags.md` and implemented in `src/lib/flagsmith/`).
   - **Storybook Integration:** Flagsmith is mocked in Storybook using `src/lib/flagsmith/__mocks__/index.ts` and aliased via Vite configuration in `.storybook/vite.config.ts` to allow for controlled testing of feature-flag-dependent components.
-- **Testing:** Playwright (E2E tests in `e2e/`, config in `playwright.config.ts`), Jest/React Testing Library (implied by `tests/unit/` and `tests/canary/` structure, common with Next.js/React)
+- **Testing:** 
+  - **E2E**: Playwright (tests in `e2e/`, config in `playwright.config.ts`) with Clerk authentication setup
+  - **Unit/Integration**: Jest with React Testing Library (`tests/unit/` and `tests/integration/`)
+  - **Component Testing**: Vitest integration within Storybook v9
 - **Linting/Formatting:** ESLint (`eslint.config.mjs`)
 
 ## Key Data Handling Patterns:
@@ -103,8 +110,8 @@ This section outlines areas for future development and optimization. It's crucia
     *   **Review Note:** Rate limiting is critical for public APIs and may not be fully implemented. Database indexing is an ongoing task as new queries and data patterns emerge. Both remain high priority.
 5.  **Developer Experience (DX):**
     *   **Code Generation:** Explore tools like `supabase gen types` for generating TypeScript types from the database schema to improve type safety and reduce manual work.
-    *   **Storybook:** Consider Storybook for isolated component development and documentation.
-    *   **Review Note:** `supabase gen types` is a valuable tool that should be integrated into the workflow if not already. Storybook is a significant DX improvement but might be a lower priority compared to core features or critical performance/security.
+    *   ✅ **Storybook v9 Migration**: **COMPLETED** - Successfully migrated to Storybook v9.0.18 with performance improvements, package consolidation, and enhanced testing integration. See ADR-010 for details.
+    *   **Review Note**: Storybook v9 migration has been completed, providing better performance and development experience. Focus can now shift to expanding component documentation and visual testing capabilities.
 6.  **Testing Coverage:** While E2E and some unit tests exist, ensure critical business logic and UI interactions have sufficient test coverage.
     *   **Review Note:** Testing coverage is an ongoing process. This remains a high priority to ensure code quality and prevent regressions.
 7.  **CI/CD Enhancements:** Review `github/workflows/` for opportunities to add more automated checks (e.g., performance audits, security scans).

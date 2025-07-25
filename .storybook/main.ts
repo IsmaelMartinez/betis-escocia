@@ -29,8 +29,8 @@ const config: StorybookConfig = {
     config.build = config.build || {};
     config.build.rollupOptions = config.build.rollupOptions || {};
     config.build.rollupOptions.external = [
-      '@storybook/manager-api',
-      '@storybook/theming',
+      'storybook/internal/manager-api',
+      'storybook/internal/theming',
       ...(config.build.rollupOptions.external || []),
     ];
     return config;

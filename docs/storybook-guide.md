@@ -1,10 +1,12 @@
 # Storybook Developer Guide
 
-This guide provides instructions for developing and documenting UI components using Storybook in the Betis project.
+This guide provides instructions for developing and documenting UI components using Storybook v9 in the Betis project.
 
 ## 1. Getting Started
 
 Storybook is a powerful frontend workshop environment for building UI components in isolation. It helps you develop components faster, document them, and test them.
+
+**Current Version**: Storybook v9.0.18 with Next.js-Vite integration
 
 ### 1.1 Starting Storybook
 
@@ -14,7 +16,9 @@ To start the Storybook development server, run the following command in your pro
 npm run storybook
 ```
 
-This will open Storybook in your browser, typically at `http://localhost:6006`.
+This will open Storybook in your browser at `http://localhost:6006`.
+
+**Note**: Storybook v9 includes significant performance improvements with 48% lighter bundle sizes and faster startup times.
 
 ### 1.2 Building Storybook
 
@@ -96,11 +100,33 @@ To maintain a consistent and organized Storybook, please follow these convention
 
 Storybook is extended with addons to enhance the development experience. Here are some key addons configured in this project:
 
+### 2.3.1 Essential Addons (Built-in with Storybook v9)
+
+The following addons are now built into Storybook core and no longer require separate packages:
+
 - **Controls**: Automatically generates UI controls for your component's `args`, allowing you to interactively change props and see the component's behavior in real-time.
-- **Docs**: Auto-generates documentation pages for your components based on your stories and JSDoc comments. Use MDX files for more detailed documentation.
-- **A11y (Accessibility)**: Helps you catch accessibility issues early in the development process by running automated accessibility checks on your stories.
 - **Viewport**: Allows you to test your components across different screen sizes and devices by simulating various viewport dimensions.
 - **Backgrounds**: Provides options to change the background color of your stories, useful for testing components on different themes or brand colors.
+- **Actions**: Logs actions taken on your components (button clicks, form submissions, etc.) for debugging.
+- **Toolbars**: Provides global toolbars for switching between different states across all stories.
+- **Measure & Outline**: Visual debugging tools to check spacing and component boundaries.
+
+### 2.3.2 Additional Addons
+
+- **Docs**: Auto-generates documentation pages for your components based on your stories and JSDoc comments. Use MDX files for more detailed documentation.
+- **A11y (Accessibility)**: Helps you catch accessibility issues early in the development process by running automated accessibility checks on your stories.
+- **Vitest**: Provides component testing capabilities directly within Storybook.
+
+### 2.3.3 Storybook v9 Migration Notes
+
+This project has been migrated to Storybook v9, which includes significant changes:
+
+- **Package Consolidation**: Many addon packages have been consolidated into the main `storybook` package
+- **Essential Addons Moved to Core**: Controls, viewport, backgrounds, and other essential features no longer require separate packages
+- **Improved Performance**: 48% lighter bundle sizes and faster startup times
+- **Enhanced Testing**: Better integration with Vitest for component testing
+
+For more details, see [ADR-010: Storybook v9 Migration](../adr/010-storybook-v9-migration.md).
 
 ## 3. Design Tokens and Branding
 
