@@ -26,6 +26,17 @@ const config: StorybookConfig = {
   },
   "staticDirs": [
     "../public"
-  ]
+  ],
+  async viteFinal(config, { configType }) {
+    // Ensure these are treated as external by Vite
+    config.build = config.build || {};
+    config.build.rollupOptions = config.build.rollupOptions || {};
+    config.build.rollupOptions.external = [
+      '@storybook/manager-api',
+      '@storybook/theming',
+      ...(config.build.rollupOptions.external || []),
+    ];
+    return config;
+  },
 };
 export default config;
