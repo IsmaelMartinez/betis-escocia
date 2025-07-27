@@ -55,11 +55,16 @@ docs/
 │   └── 010-storybook-v9-migration.md  # ← NEW
 ├── api/                          # API documentation
 ├── development/                  # Development guidelines
+│   ├── onboarding.md            # ← UPDATED: Includes trivia script info
+│   ├── scripts.md               # ← NEW: Comprehensive scripts documentation
+│   └── documentation-guidelines.md
 ├── historical/                   # Historical research
 ├── security/                     # Security documentation
 ├── storybook/                    # Storybook-specific docs
 │   └── templates/                # Component documentation templates
 ├── storybook-guide.md           # ← UPDATED: Now covers v9
+└── README.md                    # ← This file
+```
 └── README.md                    # ← This file
 ```
 
