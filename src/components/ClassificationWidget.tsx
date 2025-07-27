@@ -10,6 +10,7 @@ import type { StandingEntry } from '@/services/footballDataService';
 
 interface ClassificationWidgetProps {
   className?: string;
+  initialStandings?: StandingEntry[] | null; // New prop for Storybook
 }
 
 // Helper function to get position styling
@@ -30,13 +31,22 @@ function getPositionBadge(position: number): { text: string; color: string } | n
   return null;
 }
 
-export default function ClassificationWidget({ className = '' }: ClassificationWidgetProps) {
-  const [standings, setStandings] = useState<StandingEntry[] | null>(null);
+export default function ClassificationWidget({ className = '', initialStandings = null }: ClassificationWidgetProps) {
+  const [standings, setStandings] = useState<StandingEntry[] | null>(initialStandings);
   const [betisEntry, setBetisEntry] = useState<StandingEntry | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(initialStandings === null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (initialStandings !== null) {
+      // If initialStandings are provided, use them directly
+      setStandings(initialStandings);
+      const betis = initialStandings.find((entry: StandingEntry) => entry.team.id === 90);
+      setBetisEntry(betis || null);
+      setIsLoading(false);
+      return;
+    }
+
     async function fetchStandings() {
       try {
         setIsLoading(true);
@@ -61,7 +71,7 @@ export default function ClassificationWidget({ className = '' }: ClassificationW
     }
 
     fetchStandings();
-  }, []);
+  }, [initialStandings]);
 
   // Loading state
   if (isLoading) {

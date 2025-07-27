@@ -97,76 +97,43 @@ const meta: Meta<typeof ClassificationWidget> = {
       control: 'text',
       description: 'Additional CSS classes for styling the widget container.',
     },
+    initialStandings: {
+      control: 'object',
+      description: 'Initial standings data to bypass API call.',
+    },
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof ClassificationWidget>;
 
-// Mock the fetch API for stories
-const withFetchMock = (storyFn: any, { args }: any) => {
-  const mockFetch = (url: string) => {
-    if (url.includes('/api/standings')) {
-      if (args.mockType === 'success') {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve({ standings: { table: mockStandings } }),
-        });
-      } else if (args.mockType === 'loading') {
-        return new Promise(() => {}); // Never resolve, keep loading
-      } else if (args.mockType === 'empty') {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve({ standings: { table: [] } }),
-        });
-      } else if (args.mockType === 'error') {
-        return Promise.resolve({
-          ok: false,
-          status: 500,
-          json: () => Promise.resolve({ error: 'Error al cargar la clasificación' }),
-        });
-      }
-    }
-    return Promise.reject(new Error('Unknown API endpoint'));
-  };
-
-  // Temporarily override global fetch
-  const originalFetch = global.fetch;
-  global.fetch = mockFetch as any;
-
-  // Render the story
-  const story = storyFn();
-
-  // Restore original fetch after render
-  global.fetch = originalFetch;
-
-  return story;
-};
-
 export const Default: Story = {
   args: {
-    mockType: 'success',
+    initialStandings: mockStandings,
   },
-  decorators: [withFetchMock],
 };
 
 export const Loading: Story = {
   args: {
-    mockType: 'loading',
+    initialStandings: null, // Simulate loading by not providing data
   },
-  decorators: [withFetchMock],
 };
 
 export const EmptyState: Story = {
   args: {
-    mockType: 'empty',
+    initialStandings: [],
   },
-  decorators: [withFetchMock],
 };
 
 export const ErrorState: Story = {
   args: {
-    mockType: 'error',
+    // Simulate error by providing null and letting component fetch (which will error)
+    initialStandings: null,
   },
-  decorators: [withFetchMock],
+  parameters: {
+    // This parameter will be used by the global decorator in preview.ts
+    // to mock the fetch call to return an error.
+    mockFetchError: true,
+  },
 };
+
