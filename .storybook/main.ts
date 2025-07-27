@@ -4,7 +4,8 @@ const config: StorybookConfig = {
   "stories": [
     "../src/**/*.mdx",
     "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)",
-    "../docs/**/*.mdx"
+    // Temporarily exclude design-tokens.mdx due to persistent loading issues
+    // "../docs/**/*.mdx"
   ],
   "addons": [
     "@chromatic-com/storybook",
