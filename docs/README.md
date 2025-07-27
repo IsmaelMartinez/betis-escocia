@@ -1,8 +1,20 @@
-# Documentation Updates - July 25, 2025
+# Documentation Updates - July 27, 2025
 
 ## Recent Changes
 
-### ADR-010: Storybook v9 Migration (NEW)
+### Trivia Questions Update Script (NEW)
+
+A comprehensive TypeScript script for managing trivia questions:
+
+- **Complete data refresh**: Safely clears existing trivia data and populates with new questions
+- **Bilingual support**: Questions in both Spanish and English for Edinburgh-based supporters
+- **55 curated questions**: 30 Real Betis + 25 Scotland questions with verified answers
+- **Automated management**: Handles UUIDs, progress tracking, and data verification
+- **npm integration**: Easy execution via `npm run update-trivia`
+
+**Location**: `scripts/update-trivia-questions.ts` with documentation in `scripts/README.md`
+
+### ADR-010: Storybook v9 Migration
 
 A comprehensive ADR documenting the migration from Storybook v8 to v9, including:
 

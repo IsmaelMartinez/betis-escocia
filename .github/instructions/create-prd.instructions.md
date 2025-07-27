@@ -40,7 +40,7 @@ The generated PRD should include the following sections:
 4. **Functional Requirements:** List the specific functionalities the feature must have. Use clear, concise language (e.g., "The system must allow users to upload a profile picture."). Number these requirements.
 5. **Non-Goals (Out of Scope):** Clearly state what this feature will *not* include to manage scope.
 6. **Design Considerations (Optional):** Link to mockups, describe UI/UX requirements, or mention relevant components/styles if applicable.
-7. **Technical Considerations (Optional):** Mention any known technical constraints, dependencies, or suggestions (e.g., "Should integrate with the existing Auth module").
+7. **Technical Considerations (Optional):** Mention any known technical constraints, dependencies, or suggestions (e.g., "Should integrate with the existing Auth module"). *When proposing MCP servers, consider if official versions exist (e.g., Supabase MCP server).* 
 8. **Success Metrics:** How will the success of this feature be measured? (e.g., "Increase user engagement by 10%", "Reduce support tickets related to X").
 9. **Open Questions:** List any remaining questions or areas needing further clarification.
 

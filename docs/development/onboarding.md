@@ -105,6 +105,27 @@ Access the Supabase dashboard for database management:
 - Schema changes should be documented
 - Always backup before major changes
 
+#### Trivia Questions Management
+The project includes a comprehensive script for managing trivia questions:
+
+```bash
+# Update all trivia questions with new curated content
+npm run update-trivia
+```
+
+**Features:**
+- Safely replaces all existing trivia data
+- 55 bilingual questions (30 Real Betis + 25 Scotland)
+- Automatic UUID handling and data verification
+- Progress tracking and error handling
+
+**Script Location:** `scripts/update-trivia-questions.ts`
+**Documentation:** `scripts/README.md`
+
+**Requirements:**
+- Environment variables: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- Database tables: `trivia_questions`, `trivia_answers`
+
 ### Adding New Features
 1. Check if feature flag is needed
 2. Update TypeScript types if necessary

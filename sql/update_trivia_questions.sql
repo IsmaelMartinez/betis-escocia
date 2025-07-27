@@ -1,0 +1,26 @@
+-- Backup and Update Trivia Questions Script
+-- This SQL file provides a backup approach if the TypeScript script is not preferred
+-- Step 1: Backup existing data (optional - run this first if you want to keep current data)
+-- CREATE TABLE trivia_questions_backup AS SELECT * FROM trivia_questions;
+-- CREATE TABLE trivia_answers_backup AS SELECT * FROM trivia_answers;
+-- Step 2: Clear existing trivia data
+DELETE FROM trivia_answers;
+DELETE FROM trivia_questions;
+-- Step 3: Reset sequences (if using PostgreSQL with sequences)
+-- This ensures clean UUID generation
+-- No sequence reset needed for UUID fields
+-- Step 4: Insert new trivia questions
+-- Note: This approach requires running the TypeScript script or manually inserting with UUIDs
+-- For production use, the TypeScript script is recommended as it handles UUIDs automatically
+-- Alternative manual approach (requires replacing UUIDs manually):
+-- 
+-- INSERT INTO trivia_questions (id, question_text, category, difficulty) VALUES
+-- ('11111111-1111-1111-1111-111111111111', '¿En qué estadio juega como local el Real Betis Balompié? / In which stadium does Real Betis play its home matches?', 'betis', 'easy');
+-- 
+-- INSERT INTO trivia_answers (question_id, answer_text, is_correct) VALUES
+-- ('11111111-1111-1111-1111-111111111111', 'Camp Nou', false),
+-- ('11111111-1111-1111-1111-111111111111', 'Santiago Bernabéu', false),
+-- ('11111111-1111-1111-1111-111111111111', 'Benito Villamarín', true),
+-- ('11111111-1111-1111-1111-111111111111', 'Mestalla', false);
+-- For ease of use, run the TypeScript script instead:
+-- npm run update-trivia

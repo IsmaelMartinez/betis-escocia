@@ -4,7 +4,7 @@
 
 Real Betis supporters club website in Edinburgh with mobile-first design, serving match viewing parties at Polwarth Tavern. Built on Next.js 15 with TypeScript, featuring secure-by-default architecture using feature flags.
 
-**📖 For comprehensive project details, architecture decisions, and implementation guides, see GEMINI.md - it contains up-to-date information about technologies, patterns, trivia game implementation, and areas for improvement.**
+**📖 For comprehensive project details, architecture decisions, and implementation guides, see GEMINI.md - it contains up-to-date information about technologies, patterns, trivia game implementation, MCP server configuration, and areas for improvement.**
 
 ## Critical Architecture Patterns
 
@@ -224,6 +224,13 @@ export default async function MyComponent() {
 - **Database schema**: See `sql/` directory for migrations
 - **Documentation**: Comprehensive ADRs in `docs/adr/`
 - **Feature flags**: Complete guide in `docs/feature-flags.md`
+
+### Model Context Protocol (MCP) Servers
+
+This project utilizes Model Context Protocol (MCP) servers to extend the Gemini CLI's capabilities. Specifically, we are integrating with:
+
+- **GitHub MCP Server**: For interacting with GitHub repositories and workflows.
+- **Supabase MCP Server**: For direct database interactions and schema management.
 
 ## Quick Reference
 

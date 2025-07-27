@@ -10,7 +10,7 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 
 - **Mobile-first responsive design** optimized for smartphones
 - **Community RSVP System** - "¿Vienes al Polwarth?" attendance confirmation
-- **Interactive Trivia Game** - Test your knowledge of Real Betis and Scotland
+- **Interactive Trivia Game** - Test your knowledge of Real Betis and Scotland with a new pointing system
 - **Merchandise Showcase** - Official peña gear: bufandas, llaveros, parches, camisetas
 - **Photo Gallery** - Share match day photos with your peña merch
 - **Real Betis branding** with official colors
@@ -371,6 +371,27 @@ The project includes automatic deployment via GitHub Actions. Set up these secre
 - `npm run lint` - Run ESLint
 - `npm run test:e2e` - Run Playwright end-to-end tests in headless mode
 - `npm run test:e2e:headed` - Run Playwright end-to-end tests in headed mode (for debugging)
+- `npm run update-trivia` - Update trivia questions with curated content
+
+### Database Management
+
+#### Trivia Questions Management
+
+The project includes a comprehensive script for managing trivia questions:
+
+```bash
+npm run update-trivia
+```
+
+**Features:**
+- Completely replaces all existing trivia data
+- 55 bilingual questions (30 Real Betis + 25 Scotland)
+- Automatic UUID handling and progress tracking
+- Data verification and safety checks
+
+**Requirements:** Environment variables `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` must be configured.
+
+See `scripts/README.md` for detailed documentation.
 
 ### Running Playwright Tests Locally
 

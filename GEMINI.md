@@ -76,7 +76,7 @@ The Betis & Scotland Trivia Challenge is a key engagement feature designed to en
 - `src/lib/`: Utility functions, API clients (Supabase, Flagsmith), and authentication helpers.
 - `data/`: JSON files for specific data sets (including prototype voting data).
 - `docs/`: Extensive documentation, including:
-    - **Architecture Decision Records (ADRs):** Located in `docs/adr/`, these documents capture significant architectural decisions and their rationale (e.g., `001-clerk-authentication.md`, `003-supabase-database.md`, `004-flagsmith-feature-flags.md`, `007-clerk-webhooks-for-data-sync.md`).
+    - **Architecture Decision Records (ADRs:** Located in `docs/adr/`, these documents capture significant architectural decisions and their rationale (e.g., `001-clerk-authentication.md`, `003-supabase-database.md`, `004-flagsmith-feature-flags.md`, `007-clerk-webhooks-for-data-sync.md`).
     - **API Documentation:** `docs/api/` contains details on API solutions and considerations.
     - **Development Guidelines:** `docs/development/` provides information on documentation guidelines and onboarding.
     - **Historical Research:** `docs/historical/` contains past research and evaluations, particularly around authentication providers.
@@ -90,6 +90,32 @@ The Betis & Scotland Trivia Challenge is a key engagement feature designed to en
     - **`process-tasks-list.instructions.md`**: Provides guidelines for implementing tasks one by one, marking completion, running tests, and committing changes.
 - `e2e/`: Playwright end-to-end tests.
 - `tests/`: Unit and canary tests.
+
+## Model Context Protocol (MCP) Servers
+
+The Gemini CLI can be extended using Model Context Protocol (MCP) servers, which expose tools and resources to the CLI. This allows for interaction with external systems, custom scripts, and specialized workflows beyond the CLI's built-in features.
+
+### Integration with Gemini CLI
+
+MCP servers are configured in the `.gemini/settings.json` file. The CLI discovers and executes tools exposed by these servers, handling connection management, tool filtering, and conflict resolution.
+
+### Recommended MCP Servers for this Project
+
+Given the project's technology stack (Next.js/TypeScript, Supabase), the following types of MCP servers are recommended for extending functionality:
+
+-   **Official Supabase MCP Server:**
+    -   **Use Case:** Directly interact with your Supabase database, manage schema, and execute SQL queries securely from the CLI.
+    -   **Configuration:** Requires installing the Supabase CLI and configuring the official Supabase MCP server. Refer to the Supabase documentation for detailed setup instructions (e.g., `supabase.com/blog/mcp-server`).
+
+-   **Node.js/TypeScript MCP Server (for Clerk and Flagsmith):**
+    -   **Use Case:** Ideal for extending functionality using existing Node.js/TypeScript utilities, interacting with Clerk for user management, or Flagsmith for feature flag control.
+    -   **Example:** A custom server that wraps Clerk's or Flagsmith's SDKs to expose their functionalities as tools to the Gemini CLI.
+
+-   **HTTP-based MCP Server:**
+    -   **Use Case:** A general solution for integrating with any external service that exposes an HTTP API. This is common for microservices, third-party APIs, or custom backend services.
+    -   **Example:** A server that acts as a proxy or wrapper for external APIs (e.g., a football API for match data, a payment gateway), exposing their functionalities as tools to the Gemini CLI.
+
+These recommendations provide flexibility to extend the Gemini CLI's capabilities in ways that align with the project's existing technologies and potential future needs.
 
 ## Potential Areas for Improvement/Expansion (as a Principal Software Developer would think):
 
@@ -123,7 +149,7 @@ This section outlines areas for future development and optimization. It's crucia
     *   **Frontend Components:** Game timer (`GameTimer.tsx`), trivia page (`src/app/trivia/page.tsx`) with results section.
     *   **Feature Flag Integration:** Controlled by `show-trivia-game` flag for safe rollout and testing.
     *   **API Endpoints:** RESTful endpoints for fetching questions and answers with proper error handling.
-    *   **Review Note:** This feature is fully implemented and tested. Future enhancements could include user progress tracking, leaderboards, and expanded question database.
+    *   **Review Note:** This feature is fully implemented and tested. The trivia pointing system has also been implemented. Future enhancements could include user progress tracking, leaderboards, and expanded question database.
 9.  **Internationalization (i18n):** If the audience is global, consider implementing i18n for content.
     *   **Review Note:** This is a strategic decision based on target audience. If the project is currently focused on a single language, this might be a lower priority.
 
