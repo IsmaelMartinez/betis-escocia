@@ -10,4 +10,7 @@ export default defineConfig({
       '@clerk/nextjs/testing': path.resolve(__dirname, '../src/lib/clerk/__mocks__/index.tsx'),
     },
   },
+  optimizeDeps: {
+    include: ['@storybook/blocks'],
+  },
 });
