@@ -117,6 +117,121 @@ Given the project's technology stack (Next.js/TypeScript, Supabase), the followi
 
 These recommendations provide flexibility to extend the Gemini CLI's capabilities in ways that align with the project's existing technologies and potential future needs.
 
+### Setting up MCP Servers for Gemini CLI
+
+To enable the Gemini CLI to interact with Supabase, Clerk, and Flagsmith, you need to configure and run their respective MCP servers. This involves setting up environment variables, configuring `.gemini/settings.json`, and potentially creating VSCode tasks for easy management.
+
+#### 1. Environment Variables
+
+Ensure the following environment variables are set in your shell or `.env` file where you run the Gemini CLI:
+
+-   **Clerk MCP Server:**
+    -   `CLERK_SECRET_KEY`: Your Clerk Secret Key (e.g., `sk_test_...`). This is crucial for the Clerk MCP server to authenticate with Clerk's backend.
+
+-   **Flagsmith MCP Server:**
+    -   `FLAGSMITH_ENVIRONMENT_ID`: Your Flagsmith Environment ID (e.g., `YOUR_FLAGSMITH_ENVIRONMENT_ID`). This allows the Flagsmith MCP server to fetch feature flags from your Flagsmith project.
+
+-   **Supabase MCP Server:**
+    -   `SUPABASE_ACCESS_TOKEN`: A Supabase Personal Access Token (PAT) with appropriate permissions. This is used by the official Supabase MCP server to authenticate with your Supabase account.
+    -   `SUPABASE_PROJECT_REF`: Your Supabase Project Reference ID. This scopes the Supabase MCP server to a specific project.
+
+#### 2. Running the MCP Servers
+
+##### a. Custom MCP Servers (Clerk and Flagsmith)
+
+These servers are implemented within this project under the `mcp-servers/` directory. You need to compile and run them:
+
+1.  **Compile:**
+    ```bash
+    cd mcp-servers/clerk-mcp && npm install && npx tsc
+    cd mcp-servers/flagsmith-mcp && npm install && npx tsc
+    ```
+2.  **Run in Background:**
+    ```bash
+    cd mcp-servers/clerk-mcp && npm start &
+    cd mcp-servers/flagsmith-mcp && npm start &
+    ```
+    *Note: The `&` runs the server in the background. You can use `fg` to bring them to the foreground or `kill <PID>` to stop them.* The Clerk MCP server runs on port `3001` and the Flagsmith MCP server on port `3002` by default.
+
+##### b. Official Supabase MCP Server
+
+This server is run directly via `npx` by the Gemini CLI. You do not need to clone or run it separately. The configuration in `.gemini/settings.json` will handle its execution.
+
+#### 3. `.gemini/settings.json` Configuration
+
+Create or update the `.gemini/settings.json` file in your project's root directory (`.gemini/settings.json`) with the following content:
+
+```json
+{
+  "mcpServers": {
+    "clerkMcp": {
+      "httpUrl": "http://localhost:3001/mcp",
+      "timeout": 30000,
+      "trust": false
+    },
+    "flagsmithMcp": {
+      "httpUrl": "http://localhost:3002/mcp",
+      "timeout": 30000,
+      "trust": false
+    },
+    "supabaseMcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--read-only",
+        "--project-ref=${SUPABASE_PROJECT_REF}"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "${SUPABASE_ACCESS_TOKEN}"
+      },
+      "timeout": 30000,
+      "trust": false
+    }
+  }
+}
+```
+
+*Note: The `${SUPABASE_PROJECT_REF}` and `${SUPABASE_ACCESS_TOKEN}` placeholders will be replaced by the Gemini CLI with the actual environment variable values.* You can also hardcode these values directly if preferred, but using environment variables is recommended for security.
+
+#### 4. VSCode Configuration (Optional)
+
+To easily manage the custom MCP servers within VSCode, you can add tasks to your `.vscode/tasks.json` file. This allows you to start and stop them directly from VSCode's terminal.
+
+```json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Clerk MCP Server",
+      "type": "shell",
+      "command": "cd mcp-servers/clerk-mcp && npm start",
+      "isBackground": true,
+      "problemMatcher": [],
+      "group": "build",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Start Flagsmith MCP Server",
+      "type": "shell",
+      "command": "cd mcp-servers/flagsmith-mcp && npm start",
+      "isBackground": true,
+      "problemMatcher": [],
+      "group": "build",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    }
+  ]
+}
+```
+
+To run these tasks, open the Command Palette (`Cmd+Shift+P` or `Ctrl+Shift+P`), type `Tasks: Run Task`, and select the desired server. You can also configure `tasks.json` to automatically terminate background tasks when VSCode closes.
+
+With these steps, your Gemini CLI will be fully configured to leverage the Clerk, Flagsmith, and Supabase MCP servers, enhancing your development workflow.
+
 ## Potential Areas for Improvement/Expansion (as a Principal Software Developer would think):
 
 This section outlines areas for future development and optimization. It's crucial to regularly review these points to assess progress and re-prioritize based on current project needs and completed work.
