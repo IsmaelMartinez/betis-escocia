@@ -12,6 +12,7 @@
   "description": "",
   "dependencies": {
     "@types/node": "^24.1.0",
+    "dotenv": "^17.2.1",
     "flagsmith": "^9.3.0",
     "typescript": "^5.8.3"
   }

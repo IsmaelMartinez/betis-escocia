@@ -5,10 +5,6 @@ interface EmailAddress {
   emailAddress: string;
 }
 
-interface EmailAddress {
-  emailAddress: string;
-}
-
 // Initialize Clerk with the secret key from environment variables
 // This should be loaded securely, e.g., from process.env.CLERK_SECRET_KEY
 // For now, we'll use a placeholder and assume it's set.

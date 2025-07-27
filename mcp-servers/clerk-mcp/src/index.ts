@@ -1,6 +1,10 @@
 // mcp-servers/clerk-mcp/src/index.ts
 import http from 'http';
 import { getUserTool } from './tools/clerk-user-reader';
+import * as dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config({ path: path.resolve(__dirname, '..', '..', '..', '.env.local') });
 
 const PORT = process.env.PORT || 3001;
 

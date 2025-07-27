@@ -1,6 +1,10 @@
 // mcp-servers/flagsmith-mcp/src/index.ts
 import http from 'http';
 import { getFlagTool } from './tools/flagsmith-reader';
+import * as dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config({ path: path.resolve(__dirname, '..', '..', '..', '.env.local') });
 
 const PORT = process.env.PORT || 3002;
 
