@@ -5,10 +5,7 @@ interface EmailAddress {
   emailAddress: string;
 }
 
-// Initialize Clerk with the secret key from environment variables
-// This should be loaded securely, e.g., from process.env.CLERK_SECRET_KEY
-// For now, we'll use a placeholder and assume it's set.
-const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
+
 
 interface GetUserParams {
   userId: string;
@@ -37,10 +34,9 @@ export const getUserTool = {
   },
   async execute(params: GetUserParams): Promise<UserInfo | { error: string }> {
     try {
-      if (!process.env.CLERK_SECRET_KEY) {
-        return { error: 'CLERK_SECRET_KEY is not set in environment variables.' };
-      }
+      console.log('Clerk Secret Key (from env): ', process.env.CLERK_SECRET_KEY ? 'Set' : 'Not Set');
 
+      const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
       const user = await clerk.users.getUser(params.userId);
 
       if (!user) {
