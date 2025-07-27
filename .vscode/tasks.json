@@ -1,23 +1,45 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"label": "dev",
-			"type": "shell",
-			"command": "npm",
-			"args": [
-				"run",
-				"dev"
-			],
-			"group": "build",
-			"isBackground": true,
-			"problemMatcher": [],
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": false,
-				"panel": "new"
-			}
-		}
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "dev",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "run",
+        "dev"
+      ],
+      "group": "build",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Start Clerk MCP Server",
+      "type": "shell",
+      "command": "cd mcp-servers/clerk-mcp && npm start",
+      "isBackground": true,
+      "problemMatcher": [],
+      "group": "build",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Start Flagsmith MCP Server",
+      "type": "shell",
+      "command": "cd mcp-servers/flagsmith-mcp && npm start",
+      "isBackground": true,
+      "problemMatcher": [],
+      "group": "build",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    }
+  ]
 }
