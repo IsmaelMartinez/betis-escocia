@@ -18,11 +18,6 @@ Created: July 2025
 
 ### Overall Progress: 0% COMPLETE
 
-## ⚙️ PHASE 0: Initial Setup
-
-### 0.0 Configure VSCode
-- [ ] 0.0.1 Ensure VSCode is configured with recommended extensions and settings for the project (e.g., ESLint, Prettier, TypeScript, etc.).
-
 ## 🏗️ PHASE 1: Core Setup and Common Components
 
 ### 1.0 Project Scaffolding

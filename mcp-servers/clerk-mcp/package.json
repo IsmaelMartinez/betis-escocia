@@ -1,0 +1,18 @@
+{
+  "name": "clerk-mcp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@clerk/backend": "^2.6.0",
+    "@types/node": "^24.1.0",
+    "typescript": "^5.8.3"
+  }
+}
