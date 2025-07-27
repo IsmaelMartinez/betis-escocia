@@ -117,6 +117,8 @@ Given the project's technology stack (Next.js/TypeScript, Supabase), the followi
 
 These recommendations provide flexibility to extend the Gemini CLI's capabilities in ways that align with the project's existing technologies and potential future needs.
 
+    *   **Review Note:** This feature is fully implemented and tested. The trivia pointing system has also been implemented. Future enhancements could include user progress tracking, leaderboards, and expanded question database.
+
 ### Setting up MCP Servers for Gemini CLI
 
 To enable the Gemini CLI to interact with Supabase, Clerk, and Flagsmith, you need to configure and run their respective MCP servers. This involves setting up environment variables, configuring `.gemini/settings.json`, and potentially creating VSCode tasks for easy management.
@@ -148,10 +150,9 @@ These servers are implemented within this project under the `mcp-servers/` direc
     ```
 2.  **Run in Background:**
     ```bash
-    cd mcp-servers/clerk-mcp && npm start &
-    cd mcp-servers/flagsmith-mcp && npm start &
+    npm run start-mcp-servers
     ```
-    *Note: The `&` runs the server in the background. You can use `fg` to bring them to the foreground or `kill <PID>` to stop them.* The Clerk MCP server runs on port `3001` and the Flagsmith MCP server on port `3002` by default.
+    *Note: This command runs both custom MCP servers in the background. You can use `fg` to bring them to the foreground or `kill <PID>` to stop them.* The Clerk MCP server runs on port `3001` and the Flagsmith MCP server on port `3002` by default.
 
 ##### b. Official Supabase MCP Server
 
