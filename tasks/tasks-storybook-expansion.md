@@ -1,73 +1,79 @@
-# Task List: Expanding Storybook Coverage
+## Relevant Files
 
-This document outlines the detailed tasks for expanding the Storybook component library as per the "Expanding Storybook Coverage" PRD.
+-   `src/components/ClassificationWidget.tsx` - The component for which stories will be created.
+-   `src/components/ClassificationWidget.stories.tsx` - New file for Storybook stories for `ClassificationWidget`.
+-   `src/components/MatchCard.tsx` - The component for which stories will be created.
+-   `src/components/MatchCard.stories.tsx` - New file for Storybook stories for `MatchCard`.
+-   `src/components/RSVPForm.tsx` - The component for which stories will be created.
+-   `src/components/RSVPForm.stories.tsx` - New file for Storybook stories for `RSVPForm`.
+-   `src/components/ErrorMessage.tsx` - The component for which stories will be created.
+-   `src/components/ErrorMessage.stories.tsx` - New file for Storybook stories for `ErrorMessage`.
+-   `src/lib/supabase.ts` - May need to reference types or mock data structures from here.
+-   `src/lib/featureFlags.ts` - For understanding feature flag usage in components.
+-   `src/lib/flagsmith/types.ts` - For understanding feature flag types.
+-   `docs/storybook-guide.md` - Existing documentation to ensure adherence to conventions.
+-   `src/lib/clerk/__mocks__/index.tsx` - Clerk mocks for Storybook.
+-   `.storybook/vite.config.ts` - Vite configuration for Storybook.
+-   `.storybook/main.ts` - Storybook main configuration.
+-   `.storybook/preview.ts` - Storybook preview configuration.
 
-## Parent Task: Implement Storybook Stories for Key UI Components
+### Notes
 
-**Goal:** Increase Storybook coverage for critical UI components to improve reusability, development efficiency, and visual documentation.
+-   Unit tests should typically be placed alongside the code files they are testing (e.g., `MyComponent.tsx` and `MyComponent.test.tsx` in the same directory).
+-   Use `npm test [optional/path/to/test/file]` to run tests. Running without a path executes all tests found by the Jest configuration.
 
-### Sub-tasks:
+## Tasks
 
-#### 1. Create Stories for `ClassificationWidget.tsx`
+-   [x] 1.0 Create Stories for `ClassificationWidget.tsx`
+    -   [x] 1.1 Create `src/components/ClassificationWidget.stories.tsx` file.
+    -   [x] 1.2 Define `Meta` for `ClassificationWidget`, including `title`, `component`, `parameters`, and `tags: ['autodocs']`.
+    -   [x] 1.3 Create a default story (`Default`) with sample classification data passed via `initialStandings` prop.
+    -   [ ] 1.4 Create a story for the loading state (`Loading`) by setting `simulateLoading: true`.
+    -   [x] 1.5 Create a story for the empty state (`EmptyState`) by passing an empty array to `initialStandings`.
+    -   [x] 1.6 Create a story for the error state (`ErrorState`) by passing `null` to `initialStandings` and ensuring the component's internal fetch fails (e.g., by not mocking the API for this specific story).
+    -   [x] 1.7 Ensure all stories use `args` and `argTypes` for interactive controls where applicable.
 
-*   **File:** `src/components/ClassificationWidget.tsx`
-*   **New Story File:** `src/components/ClassificationWidget.stories.tsx`
-*   **Tasks:**
-    *   Create `ClassificationWidget.stories.tsx` alongside `ClassificationWidget.tsx`.
-    *   Define `Meta` for `ClassificationWidget`, including `title`, `component`, `parameters`, and `tags: ['autodocs']`.
-    *   Create a default story with sample classification data.
-    *   Create a story for the loading state.
-    *   Create a story for the empty state (no data available).
-    *   Create a story for the error state.
-    *   Ensure all stories use `args` and `argTypes` for interactive controls where applicable.
-    *   Mock any necessary data dependencies for the component.
+-   [x] 2.0 Create Stories for `MatchCard.tsx`
+    -   [x] 2.1 Create `src/components/MatchCard.stories.tsx` file.
+    -   [x] 2.2 Define `Meta` for `MatchCard`, including `title`, `component`, `parameters`, and `tags: ['autodocs']`.
+    -   [x] 2.3 Create a default story (`Default`) with typical match data (e.g., upcoming match).
+    -   [x] 2.4 Create a story for a completed match with scores (`CompletedMatch`).
+    -   [x] 2.5 Create a story for a match with a specific status (e.g., `PostponedMatch`, `LiveMatch`).
+    -   [x] 2.6 Create a story demonstrating RSVP functionality (`MatchWithRSVP`).
+    -   [x] 2.7 Ensure all stories use `args` and `argTypes` for interactive controls where applicable.
+    -   [x] 2.8 Mock any necessary data dependencies for the component.
 
-#### 2. Create Stories for `MatchCard.tsx`
+-   [x] 3.0 Create Stories for `RSVPForm.tsx`
+    -   [x] 3.1 Create `src/components/RSVPForm.stories.tsx` file.
+    -   [x] 3.2 Define `Meta` for `RSVPForm`, including `title`, `component`, `parameters`, and `tags: ['autodocs']`.
+    -   [x] 3.3 Create a default story (`Default`) for the initial form state.
+    -   [x] 3.4 Create a story for the form with pre-filled data (e.g., for an authenticated user) (`PreFilledForm`).
+    -   [x] 3.5 Create a story demonstrating validation errors (`ValidationErrors`).
+    -   [x] 3.6 Create a story for the submitting state (`SubmittingState`).
+    -   [x] 3.7 Create a story for the success state after submission (`SuccessState`).
+    -   [x] 3.8 Ensure all stories use `args` and `argTypes` for interactive controls where applicable.
+    -   [x] 3.9 Mock any necessary form submission logic or external dependencies (e.g., `fetch('/api/rsvp')`, Clerk's `useUser`).
 
-*   **File:** `src/components/MatchCard.tsx`
-*   **New Story File:** `src/components/MatchCard.stories.tsx`
-*   **Tasks:**
-    *   Create `MatchCard.stories.tsx` alongside `MatchCard.tsx`.
-    *   Define `Meta` for `MatchCard`, including `title`, `component`, `parameters`, and `tags: ['autodocs']`.
-    *   Create a default story with typical match data.
-    *   Create a story for an upcoming match.
-    *   Create a story for a completed match (with scores).
-    *   Create stories for specific match statuses (e.g., postponed, cancelled).
-    *   Ensure all stories use `args` and `argTypes` for interactive controls where applicable.
-    *   Mock any necessary data dependencies for the component.
+-   [x] 4.0 Create Stories for `ErrorMessage.tsx`
+    -   [x] 4.1 Create `src/components/ErrorMessage.stories.tsx` file.
+    -   [x] 4.2 Define `Meta` for `ErrorMessage`, including `title`, `component`, `parameters`, and `tags: ['autodocs']`.
+    -   [x] 4.3 Create a default story (`Default`) with a simple error message.
+    -   [x] 4.4 Create stories for different message types (`WarningMessage`, `InfoMessage`, `OfflineMessage`).
+    -   [x] 4.5 Create a story with a custom title and message (`CustomTitleMessage`).
+    -   [x] 4.6 Create a story with a retry button (`WithRetryButton`).
+    -   [x] 4.7 Ensure all stories use `args` and `argTypes` for interactive controls where applicable.
 
-#### 3. Create Stories for `RSVPForm.tsx`
-
-*   **File:** `src/components/RSVPForm.tsx`
-*   **New Story File:** `src/components/RSVPForm.stories.tsx`
-*   **Tasks:**
-    *   Create `RSVPForm.stories.tsx` alongside `RSVPForm.tsx`.
-    *   Define `Meta` for `RSVPForm`, including `title`, `component`, `parameters`, and `tags: ['autodocs']`.
-    *   Create a default story for the initial form state.
-    *   Create a story for the form with pre-filled data.
-    *   Create a story demonstrating validation errors.
-    *   Create a story for the submitting state.
-    *   Create a story for the success state after submission.
-    *   Ensure all stories use `args` and `argTypes` for interactive controls where applicable.
-    *   Mock any necessary form submission logic or external dependencies.
-
-#### 4. Create Stories for `ErrorMessage.tsx`
-
-*   **File:** `src/components/ErrorMessage.tsx`
-*   **New Story File:** `src/components/ErrorMessage.stories.tsx`
-*   **Tasks:**
-    *   Create `ErrorMessage.stories.tsx` alongside `ErrorMessage.tsx`.
-    *   Define `Meta` for `ErrorMessage`, including `title`, `component`, `parameters`, and `tags: ['autodocs']`.
-    *   Create a default story with a simple error message.
-    *   Create a story with a custom title and description.
-    *   Create a story with an action button.
-    *   Ensure all stories use `args` and `argTypes` for interactive controls where applicable.
-
----
-
-**Verification Steps (after completing all tasks):**
-
-1.  Run `npm run storybook` and verify that all new stories are visible and interactive in the Storybook UI.
-2.  Check the "Docs" tab for each component to ensure automatic documentation is generated correctly.
-3.  Manually test each story to ensure components render as expected in their various states.
-4.  Run `npm run build-storybook` to ensure the static build completes without errors.
+-   [ ] 5.0 Verify and Document Storybook Expansion
+    -   [ ] 5.1 Run `npm run storybook` and verify that all new stories are visible and interactive in the Storybook UI.
+    -   [ ] 5.2 Check the "Docs" tab for each new component to ensure automatic documentation is generated correctly.
+    -   [ ] 5.3 Manually test each story to ensure components render as expected in their various states.
+    -   [ ] 5.4 Run `npm run build-storybook` to ensure the static build completes without errors.
+    -   [ ] 5.5 Update `docs/storybook-guide.md` if any new patterns or significant configurations were introduced during story creation.
+    -   [x] 5.6 **Verify `ClassificationWidget` stories**:
+        -   [x] 5.6.1 Confirm `Default` story shows correct standings data.
+        -   [ ] 5.6.2 Confirm `Loading` story shows a loading spinner and no data. (Still failing)
+        -   [x] 5.6.3 Confirm `EmptyState` story shows a message indicating no data.
+        -   [x] 5.6.4 Confirm `ErrorState` story shows an error message.
+    -   [ ] 5.7 **Debug `ClassificationWidget` Loading Story**:
+        -   [ ] 5.7.1 Investigate why the `Loading` story is not rendering correctly.
+        -   [ ] 5.7.2 Implement a reliable way to simulate a loading state for `ClassificationWidget` in Storybook.
