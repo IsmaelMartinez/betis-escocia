@@ -11,6 +11,6 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['@storybook/blocks'],
+    include: ['@storybook/blocks', '@storybook/test'],
   },
 });
