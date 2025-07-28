@@ -156,7 +156,7 @@ The GitHub Actions workflow (`enhanced-deploy.yml`) runs comprehensive quality c
 ```
 Pipeline Jobs (run in parallel):
 ├── lint (ESLint)
-├── type-check (TypeScript)  
+├── type-check (TypeScript)
 ├── storybook-build (Component Documentation)
 ├── jest-tests (Unit/Integration)
 ├── e2e-tests (Playwright)
