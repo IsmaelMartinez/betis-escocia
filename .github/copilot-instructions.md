@@ -175,6 +175,24 @@ For systematic feature development with AI assistance, use the structured workfl
 
 **Usage**: Reference these instructions (e.g., `@create-prd.instructions.md`) to follow the structured development process from idea to implementation.
 
+## Documentation & Task Management Workflow
+
+When completing PRDs and their associated tasks:
+
+1. **Task Completion**: Mark all sub-tasks as `[x]` completed in the task list
+2. **Quality Assurance**: Run full test suite, resolve all lint/type-check errors
+3. **Code Commit**: Stage and commit changes with descriptive commit messages
+4. **Documentation Updates**: Update relevant ADRs, README.md, and technical docs
+5. **Feature Documentation**: Update feature flags, API docs, or user guides as needed
+6. **Historical Organization**: Move completed work to historical documentation:
+   - Move `tasks-prd-[feature].md` to `docs/historical/completed-tasks/`
+   - Move `prd-[feature].md` to `docs/historical/implemented-features/`
+   - Update `docs/historical/documentation-reorganization.md` with the move
+7. **README Updates**: Update main README.md if the feature affects user-facing functionality
+8. **Merge Documentation**: Merge any research/comparison docs into existing documentation (e.g., feature flag comparisons into main feature flag docs)
+
+This workflow ensures completed work is properly archived while keeping active planning documents in the `/tasks` folder.
+
 ## Component & Page Patterns
 
 ### Secure Component Pattern
