@@ -64,6 +64,8 @@ export async function POST(request: NextRequest) {
 - **Unit tests**: Jest with `@swc/jest`, placed in `tests/unit/`
 - **Integration tests**: API routes in `tests/integration/`
 - **E2E tests**: Playwright with Clerk authentication pre-setup
+- **Component tests**: Storybook v9 with Vitest addon integration
+- **CI/CD Pipeline**: GitHub Actions with comprehensive checks (ESLint, TypeScript, Storybook build, Jest, Playwright, Lighthouse)
 - **Mocking pattern**: Always mock at module level before imports
 
 ```typescript
@@ -146,6 +148,22 @@ NEXT_PUBLIC_FLAGSMITH_DEBUG=true
 - `npm run test:e2e` - Playwright tests (requires dev server)
 - `npm test` - Jest unit/integration tests
 - `npm run lint` - ESLint with Next.js config
+
+### CI/CD Pipeline Structure
+
+The GitHub Actions workflow (`enhanced-deploy.yml`) runs comprehensive quality checks:
+
+```
+Pipeline Jobs (run in parallel):
+├── lint (ESLint)
+├── type-check (TypeScript)  
+├── storybook-build (Component Documentation)
+├── jest-tests (Unit/Integration)
+├── e2e-tests (Playwright)
+└── build-and-lighthouse (Final build + Lighthouse audit)
+```
+
+All quality gate jobs must pass before the final build and deployment step. Storybook build artifacts are uploaded for 30 days retention.
 
 ### Structured Feature Development Workflow
 

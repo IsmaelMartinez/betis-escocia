@@ -21,6 +21,7 @@ This document provides a quick overview of the Betis project's key technologies 
   - **E2E**: Playwright (tests in `e2e/`, config in `playwright.config.ts`) with Clerk authentication setup
   - **Unit/Integration**: Jest with React Testing Library (`tests/unit/` and `tests/integration/`)
   - **Component Testing**: Vitest integration within Storybook v9
+  - **CI/CD Pipeline**: GitHub Actions with comprehensive quality gates: ESLint, TypeScript checking, Storybook build validation, Jest tests, Playwright E2E tests, and Lighthouse accessibility audits
 - **Linting/Formatting:** ESLint (`eslint.config.mjs`)
 
 ## Key Data Handling Patterns:

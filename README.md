@@ -34,7 +34,7 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 - **CI/CD**: GitHub Actions (enhanced workflow for quality checks, build, and start)
 - **Dependency Management**: Dependabot for automated dependency updates
 - **Security Scanning**: GitHub Security Advisories and Dependabot
-- **Quality Gates**: ESLint, TypeScript, Playwright E2E, Lighthouse Accessibility
+- **Quality Gates**: ESLint, TypeScript, Storybook Build, Jest Tests, Playwright E2E, Lighthouse Accessibility
 
 - **Deployment**: Vercel with GitHub Actions
 
