@@ -30,6 +30,16 @@ npm run build-storybook
 
 The static build will be generated in the `storybook-static` directory.
 
+#### CI/CD Integration
+
+Storybook builds are automatically validated in the GitHub Actions CI/CD pipeline:
+
+- **Build Check**: Every push and pull request triggers a Storybook build to ensure all stories compile correctly
+- **Artifact Storage**: Successfully built Storybook static files are uploaded as GitHub artifacts for 30 days
+- **Quality Gate**: Storybook build must pass before the main application build and deployment
+
+This ensures component documentation remains up-to-date and all stories are functional.
+
 ## 2. Writing Stories
 
 Stories are functions that describe how to render a component in a given state. They are typically placed alongside the component file with a `.stories.tsx` extension.

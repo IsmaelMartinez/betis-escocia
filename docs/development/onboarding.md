@@ -96,9 +96,15 @@ Important technical decisions are documented as ADRs (Architecture Decision Reco
 
 ### Running Tests
 ```bash
-npm run lint
-npm run build  # Test build process
+npm run lint                # ESLint checking
+npm run type-check         # TypeScript validation
+npm run build-storybook    # Build component documentation
+npm test                   # Jest unit/integration tests
+npm run test:e2e          # Playwright end-to-end tests
+npm run build             # Test build process
 ```
+
+Note: The CI/CD pipeline runs all these checks automatically on every push and pull request.
 
 ### Database Management
 Access the Supabase dashboard for database management:
