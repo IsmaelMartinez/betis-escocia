@@ -7,6 +7,14 @@ const meta: Meta<typeof TriviaScoreDisplay> = {
   component: TriviaScoreDisplay,
   parameters: {
     layout: 'centered',
+    msw: {
+      handlers: [
+        // Default mock for the API call
+        http.get('/api/trivia/total-score-dashboard', () => {
+          return HttpResponse.json({ totalScore: 1234 });
+        }),
+      ],
+    },
   },
   tags: ['autodocs'],
   argTypes: {
@@ -21,35 +29,8 @@ export const Default: Story = {
   parameters: {
     msw: {
       handlers: [
-        // Mock the API call for a successful response
         http.get('/api/trivia/total-score-dashboard', () => {
           return HttpResponse.json({ totalScore: 1234 });
-        }),
-      ],
-    },
-  },
-};
-
-export const Loading: Story = {
-  parameters: {
-    msw: {
-      handlers: [
-        // Mock the API call to never resolve, simulating a loading state
-        http.get('/api/trivia/total-score-dashboard', () => {
-          return new Promise(() => {}); // Never resolves
-        }),
-      ],
-    },
-  },
-};
-
-export const ErrorState: Story = {
-  parameters: {
-    msw: {
-      handlers: [
-        // Mock the API call to return an error
-        http.get('/api/trivia/total-score-dashboard', () => {
-          return new HttpResponse(null, { status: 500, statusText: 'Internal Server Error' });
         }),
       ],
     },

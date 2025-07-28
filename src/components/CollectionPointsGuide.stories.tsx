@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
+import { within, userEvent } from 'storybook/test';
 import CollectionPointsGuide from './CollectionPointsGuide';
 
 const meta: Meta<typeof CollectionPointsGuide> = {

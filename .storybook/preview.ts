@@ -3,7 +3,12 @@ import '../src/app/globals.css'
 import { initialize, mswLoader } from 'msw-storybook-addon';
 
 // Initialize MSW
-initialize();
+initialize({
+  onUnhandledRequest: 'bypass', // or 'warn'
+  serviceWorker: {
+    url: '/mockServiceWorker.js', // Path relative to Storybook's root
+  },
+});
 
 const preview: Preview = {
   parameters: {

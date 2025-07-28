@@ -87,6 +87,7 @@
     -   [x] 5.7 **Debug `ClassificationWidget` Loading Story**:
         -   [x] 5.7.1 Investigate why the `Loading` story is not rendering correctly.
         -   [x] 5.7.2 Implement a reliable way to simulate a loading state for `ClassificationWidget` in Storybook.
+    -   **Note**: The `Expanded` story for `CollectionPointsGuide` is still not expanding. This is being investigated.
 
 -   [x] 6.0 Create Stories for `CollectionPointsGuide.tsx`
     -   [x] 6.1 Create `src/components/CollectionPointsGuide.stories.tsx` file.
