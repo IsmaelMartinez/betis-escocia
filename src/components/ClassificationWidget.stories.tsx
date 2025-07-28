@@ -1,5 +1,5 @@
 
-import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import ClassificationWidget from './ClassificationWidget';
 import { StandingEntry } from '@/services/footballDataService';
 

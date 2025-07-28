@@ -57,6 +57,7 @@ test.describe('Trivia Page', () => {
           },
         ]),
       });
+    });
 
     // Mock the /api/trivia/total-score-dashboard endpoint
     await page.route('/api/trivia/total-score-dashboard', route => {
@@ -151,4 +152,5 @@ test.describe('Trivia Page', () => {
     await expect(page.locator('text=Puntuación Total Acumulada: 10')).toBeVisible(); // Still shows total from mock
     await expect(page.locator('div.grid button')).not.toBeVisible(); // Game elements should not be visible
   });
-}
+});
+

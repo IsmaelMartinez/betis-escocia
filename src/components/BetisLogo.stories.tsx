@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import BetisLogo from './BetisLogo';
 
 const meta: Meta<typeof BetisLogo> = {

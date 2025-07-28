@@ -1,23 +1,31 @@
 
-import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import RSVPForm from './RSVPForm';
 import { fn, userEvent } from 'storybook/test';
 import { setMockUser, resetClerkMocks } from '@/lib/clerk/__mocks__';
 
 // Mock fetch API for form submissions
 const mockFetch = (status: 'success' | 'error') => {
-  return async (url: RequestInfo) => {
+  return async (input: RequestInfo | URL): Promise<Response> => {
+    let url: string;
+    if (typeof input === 'string') {
+      url = input;
+    } else if (input instanceof URL) {
+      url = input.toString();
+    } else {
+      url = input.url;
+    }
+    
     if (url === '/api/rsvp') {
       if (status === 'success') {
-        return Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve({ message: 'Confirmación recibida correctamente' }),
+        return new Response(JSON.stringify({ message: 'Confirmación recibida correctamente' }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
         });
       } else if (status === 'error') {
-        return Promise.resolve({
-          ok: false,
+        return new Response(JSON.stringify({ error: 'Error al enviar la confirmación' }), {
           status: 500,
-          json: () => Promise.resolve({ error: 'Error al enviar la confirmación' }),
+          headers: { 'Content-Type': 'application/json' },
         });
       }
     }
@@ -43,7 +51,7 @@ const meta: Meta<typeof RSVPForm> = {
   decorators: [
     (Story) => {
       resetClerkMocks();
-      global.fetch = mockFetch('success'); // Default fetch mock
+      global.fetch = mockFetch('success') as typeof fetch; // Default fetch mock
       return Story();
     },
   ],
@@ -72,6 +80,10 @@ export const PreFilledForm: Story = {
       firstName: 'John',
       lastName: 'Doe',
       emailAddresses: [{ emailAddress: 'john.doe@example.com' }],
+      publicMetadata: { role: 'member' },
+      createdAt: new Date().toISOString(),
+      lastSignInAt: new Date().toISOString(),
+      imageUrl: 'https://example.com/avatar.jpg',
     });
     return <RSVPForm {...args} />;
   },
@@ -103,13 +115,22 @@ export const SubmittingState: Story = {
   },
   render: (args) => {
     setMockUser(null);
-    global.fetch = async (url: RequestInfo) => {
+    global.fetch = async (input: RequestInfo | URL): Promise<Response> => {
+      let url: string;
+      if (typeof input === 'string') {
+        url = input;
+      } else if (input instanceof URL) {
+        url = input.toString();
+      } else {
+        url = input.url;
+      }
+      
       if (url === '/api/rsvp') {
-        return new Promise(resolve => setTimeout(() => {
-          resolve({
-            ok: true,
-            json: () => Promise.resolve({ message: 'Confirmación recibida correctamente' }),
-          });
+        return new Promise<Response>(resolve => setTimeout(() => {
+          resolve(new Response(JSON.stringify({ message: 'Confirmación recibida correctamente' }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }));
         }, 5000)); // Simulate a long submission
       }
       return Promise.reject(new Error('Unknown API endpoint'));

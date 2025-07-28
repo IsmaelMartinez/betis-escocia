@@ -1,5 +1,5 @@
 
-import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import ErrorMessage, { ApiErrorMessage, NoMatchesMessage, ServerErrorMessage } from './ErrorMessage';
 import { fn } from 'storybook/test';
 
@@ -15,7 +15,7 @@ const meta: Meta<typeof ErrorMessage> = {
     message: { control: 'text' },
     type: {
       control: { type: 'select' },
-      options: ['error', 'warning', 'offline', 'info'],
+      options: ['error', 'warning', 'offline'],
     },
     onRetry: { action: 'onRetry' },
     retryLabel: { control: 'text' },
@@ -42,11 +42,11 @@ export const WarningMessage: Story = {
   },
 };
 
-export const InfoMessage: Story = {
+  export const Info: Story = {
   args: {
     title: 'Información',
     message: 'Aquí hay un mensaje informativo.',
-    type: 'info',
+    type: 'warning',
   },
 };
 
