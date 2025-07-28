@@ -1,41 +1,21 @@
-import type { StorybookConfig } from "@storybook/nextjs-vite";
+import type { StorybookConfig } from '@storybook/nextjs';
 
 const config: StorybookConfig = {
   "stories": [
     "../src/**/*.mdx",
-    "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)",
-    // Temporarily exclude design-tokens.mdx due to persistent loading issues
-    // "../docs/**/*.mdx"
+    "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"
   ],
   "addons": [
-    "@chromatic-com/storybook",
-    "@storybook/addon-onboarding",
-    "@storybook/addon-a11y",
-    "@storybook/addon-vitest",
     "@storybook/addon-docs",
+    "@storybook/addon-onboarding",
     "msw-storybook-addon"
   ],
   "framework": {
-    "name": "@storybook/nextjs-vite",
-    "options": {
-      builder: {
-        viteConfigPath: './.storybook/vite.config.ts',
-      },
-    },
+    "name": "@storybook/nextjs",
+    "options": {}
   },
   "staticDirs": [
     "../public"
-  ],
-  async viteFinal(config, { configType }) {
-    // Ensure these are treated as external by Vite
-    config.build = config.build || {};
-    config.build.rollupOptions = config.build.rollupOptions || {};
-    config.build.rollupOptions.external = [
-      'storybook/internal/manager-api',
-      'storybook/internal/theming',
-      ...(config.build.rollupOptions.external || []),
-    ];
-    return config;
-  },
+  ]
 };
 export default config;

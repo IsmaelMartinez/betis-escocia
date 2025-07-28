@@ -1,6 +1,6 @@
 
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import ErrorMessage, { ApiErrorMessage, MatchDataErrorMessage, NoMatchesMessage, NoUpcomingMatchesMessage, NoRecentMatchesMessage, ServerErrorMessage, RateLimitErrorMessage, OfflineMessage } from './ErrorMessage';
+import ErrorMessage, { ApiErrorMessage, NoMatchesMessage, ServerErrorMessage } from './ErrorMessage';
 import { fn } from 'storybook/test';
 
 const meta: Meta<typeof ErrorMessage> = {

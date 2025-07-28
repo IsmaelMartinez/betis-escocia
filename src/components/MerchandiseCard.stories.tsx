@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { within, userEvent } from '@storybook/test';
 import MerchandiseCard from './MerchandiseCard';
 import { MerchandiseItem } from '@/types/community';
 

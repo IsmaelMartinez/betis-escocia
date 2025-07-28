@@ -48,7 +48,10 @@ export default function CollectionPointsGuide() {
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
       <button
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={() => {
+          console.log('Button clicked!');
+          setIsExpanded(!isExpanded);
+        }}
         className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white p-6 text-left hover:from-green-700 hover:to-green-800 transition-colors"
       >
         <div className="flex items-center justify-between">

@@ -1,28 +1,47 @@
 // src/lib/clerk/__mocks__/index.tsx
 // This file provides mocks for Clerk hooks for Storybook.
 
+import React from 'react';
+import { UserResource } from '@clerk/types';
+
+// Define a more specific type for the mock user
+interface MockUser extends Partial<UserResource> {
+  id: string;
+  firstName: string;
+  lastName: string;
+  emailAddresses: Array<{ emailAddress: string }>;
+  publicMetadata: { role: string };
+  createdAt: string;
+  lastSignInAt: string;
+  imageUrl: string;
+}
+
 // Enhanced mock function replacement for jest.fn()
-const mockFn = (impl?: (...args: any[]) => any) => {
+const mockFn = <T extends (...args: unknown[]) => unknown>(impl?: T) => {
   let currentImpl = impl;
-  let mockReturn: any;
+  let mockReturn: ReturnType<T> | undefined;
   let hasMockReturn = false;
 
-  const mockFunc: any = (...args: any[]) => {
+  const mockFunc: T & {
+    mockReturnValue: (value: ReturnType<T>) => typeof mockFunc;
+    mockImplementation: (newImpl: T) => typeof mockFunc;
+    mockReset: () => typeof mockFunc;
+  } = ((...args: Parameters<T>) => {
     if (hasMockReturn) {
       return mockReturn;
     } else if (currentImpl) {
       return currentImpl(...args);
     }
     return undefined;
-  };
+  });
 
-  mockFunc.mockReturnValue = (value: any) => {
+  mockFunc.mockReturnValue = (value: ReturnType<T>) => {
     mockReturn = value;
     hasMockReturn = true;
     return mockFunc;
   };
 
-  mockFunc.mockImplementation = (newImpl: (...args: any[]) => any) => {
+  mockFunc.mockImplementation = (newImpl: T) => {
     currentImpl = newImpl;
     hasMockReturn = false;
     return mockFunc;
@@ -39,7 +58,7 @@ const mockFn = (impl?: (...args: any[]) => any) => {
 };
 
 // Default mock user data
-const DEFAULT_MOCK_USER = {
+const DEFAULT_MOCK_USER: MockUser = {
   id: 'user_default_mock',
   firstName: 'Mock',
   lastName: 'User',
@@ -96,13 +115,13 @@ export const SignIn = () => <div>Mock SignIn Component</div>;
 export const SignUp = () => <div>Mock SignUp Component</div>;
 
 // Helper to set mock user data for stories
-export const setMockUser = (user: any | null) => {
-  (useUser as any).mockReturnValue({
+export const setMockUser = (user: MockUser | null) => {
+  useUser.mockReturnValue({
     isLoaded: true,
     isSignedIn: !!user,
     user: user || undefined,
   });
-  (useAuth as any).mockReturnValue({
+  useAuth.mockReturnValue({
     isLoaded: true,
     isSignedIn: !!user,
     userId: user?.id || null,
@@ -114,8 +133,8 @@ export const setMockUser = (user: any | null) => {
 
 // Helper to reset mocks
 export const resetClerkMocks = () => {
-  (useUser as any).mockReset();
-  (useAuth as any).mockReset();
-  (useClerk as any).mockReset();
+  useUser.mockReset();
+  useAuth.mockReset();
+  useClerk.mockReset();
   setMockUser(DEFAULT_MOCK_USER); // Reset to default mock user
 };

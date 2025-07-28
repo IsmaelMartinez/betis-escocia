@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 
 import { fn } from 'storybook/test';
 
@@ -51,4 +51,11 @@ export const Small: Story = {
     size: 'small',
     label: 'Button',
   },
+};
+
+export const Test: Story = {
+  args: {
+    primary: false,
+    label: "Button"
+  }
 };

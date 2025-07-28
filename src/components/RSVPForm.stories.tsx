@@ -6,7 +6,7 @@ import { setMockUser, resetClerkMocks } from '@/lib/clerk/__mocks__';
 
 // Mock fetch API for form submissions
 const mockFetch = (status: 'success' | 'error') => {
-  return async (url: RequestInfo, init?: RequestInit) => {
+  return async (url: RequestInfo) => {
     if (url === '/api/rsvp') {
       if (status === 'success') {
         return Promise.resolve({
@@ -103,7 +103,7 @@ export const SubmittingState: Story = {
   },
   render: (args) => {
     setMockUser(null);
-    global.fetch = async (url: RequestInfo, init?: RequestInit) => {
+    global.fetch = async (url: RequestInfo) => {
       if (url === '/api/rsvp') {
         return new Promise(resolve => setTimeout(() => {
           resolve({
