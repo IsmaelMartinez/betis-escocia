@@ -7,8 +7,10 @@ This document provides a quick overview of the Betis project's key technologies 
 - **Styling:** Tailwind CSS v4 (configured in `postcss.config.mjs` and `globals.css`)
 - **Storybook:** Component development and documentation (`.storybook/` directory, `src/components/**/*.stories.tsx`, `docs/storybook-guide.md`).
   - **Version**: Storybook v9.0.18 with Next.js-Vite integration
-  - **Essential Addons**: Controls, viewport, backgrounds, actions, and other essential features are now built into core (no separate packages needed)
-  - **Additional Addons**: Docs, A11y, Vitest integration for component testing
+  - **Key Features**: Storybook Test (now part of core), Component testing, Accessibility testing, Test coverage, 48% lighter bundle, Tags-based story organization.
+  - **Package Consolidation**: Many packages, including `@storybook/test`, `@storybook/addon-actions`, `@storybook/addon-controls`, `@storybook/addon-interactions`, and `@storybook/addon-viewport`, are now consolidated into the main `storybook` package. Imports should reflect this (e.g., `import { within, userEvent } from 'storybook/test';`).
+  - **Essential Addons**: Controls, viewport, backgrounds, actions, and other essential features are now built into core (no separate packages needed).
+  - **Additional Addons**: Docs, A11y, Vitest integration for component testing (recommended over test-runner).
   - **Performance**: 48% lighter bundle sizes and faster startup times compared to v8
 - **Database:** Supabase (PostgreSQL backend, used for matches, RSVPs, contact submissions).
   - **Client:** `@supabase/supabase-js` (`src/lib/supabase.ts`)

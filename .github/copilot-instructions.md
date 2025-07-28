@@ -6,6 +6,14 @@ Real Betis supporters club website in Edinburgh with mobile-first design, servin
 
 **📖 For comprehensive project details, architecture decisions, and implementation guides, see GEMINI.md - it contains up-to-date information about technologies, patterns, trivia game implementation, MCP server configuration, and areas for improvement.**
 
+## Storybook 9 Integration Notes
+
+This project uses Storybook v9.0.18. Key changes and considerations for AI assistants:
+
+- **Package Consolidation**: Many Storybook packages (e.g., `@storybook/test`, `@storybook/addon-actions`, `@storybook/addon-controls`, `@storybook/addon-interactions`, `@storybook/addon-viewport`) are now consolidated into the main `storybook` package. When importing utilities like `within` and `userEvent` for `play` functions, use the `storybook/test` path (e.g., `import { within, userEvent } from 'storybook/test';`).
+- **Vitest Addon**: `@storybook/addon-vitest` is integrated for component testing and is the recommended approach over the older test runner. This enables the full Storybook Test experience.
+- **Breaking Changes**: Be aware of other breaking changes in Storybook 9, such as Node.js 20+, Next.js 14+, and Vite 5+ requirements. Refer to the official Storybook migration guide for a complete list.
+
 ## Critical Architecture Patterns
 
 ### Feature Flag System (Flagsmith)

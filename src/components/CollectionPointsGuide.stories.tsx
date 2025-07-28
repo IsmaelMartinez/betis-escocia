@@ -26,6 +26,7 @@ export const Expanded: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const toggleButton = await canvas.getByRole('button', { name: /Puntos de Recogida/i });
+    console.log('Toggle button found:', toggleButton);
     await userEvent.click(toggleButton);
   },
 };
