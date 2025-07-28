@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^4.0.1",
-    "@clerk/testing": "^1.10.6",
+    "@clerk/testing": "^1.10.7",
     "@eslint/eslintrc": "^3",
     "@playwright/test": "^1.54.1",
     "@storybook/addon-a11y": "^9.0.18",
