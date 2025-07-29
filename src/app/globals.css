@@ -1,26 +1,9 @@
 @import "tailwindcss";
+@import "./generated/_variables.css";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  
-  /* Real Betis brand colors */
-  --betis-green: #00A651;
-  --betis-green-dark: #008542;
-  --betis-white: #FFFFFF;
-  --betis-dark: #0f1419;
-  --betis-black: #000000;
-  --betis-gold: #FFD700;
-  --betis-gold-dark: #e6c200;
-  
-  /* Scottish accent colors */
-  --scotland-blue: #005EB8;
-  --scotland-navy: #0B1426;
-  
-  /* Enhanced contrast colors */
-  --gray-50: #f9fafb;
-  --gray-100: #f3f4f6;
-  --gray-900: #111827;
 }
 
 body {
@@ -57,28 +40,28 @@ form {
 }
 
 /* Custom utility classes for Real Betis branding */
-.bg-betis-green { background-color: var(--betis-green); }
-.bg-betis-green-dark { background-color: var(--betis-green-dark); }
-.text-betis-green { color: var(--betis-green); }
-.border-betis-green { border-color: var(--betis-green); }
-.bg-betis-gold { background-color: var(--betis-gold); }
-.bg-betis-gold-dark { background-color: var(--betis-gold-dark); }
-.text-betis-gold { color: var(--betis-gold); }
-.bg-betis-dark { background-color: var(--betis-dark); }
-.text-betis-dark { color: var(--betis-dark); }
-.bg-betis-black { background-color: var(--betis-black); }
-.text-betis-black { color: var(--betis-black); }
-.bg-scotland-blue { background-color: var(--scotland-blue); }
-.text-scotland-blue { color: var(--scotland-blue); }
+.bg-betis-green { background-color: var(--color-betis-green-DEFAULT); }
+.bg-betis-green-dark { background-color: var(--color-betis-green-700); }
+.text-betis-green { color: var(--color-betis-green-DEFAULT); }
+.border-betis-green { border-color: var(--color-betis-green-DEFAULT); }
+.bg-betis-gold { background-color: var(--color-betis-gold-DEFAULT); }
+.bg-betis-gold-dark { background-color: var(--color-betis-gold-700); }
+.text-betis-gold { color: var(--color-betis-gold-DEFAULT); }
+.bg-betis-dark { background-color: var(--color-neutral-900); }
+.text-betis-dark { color: var(--color-neutral-900); }
+.bg-betis-black { background-color: var(--color-neutral-900); }
+.text-betis-black { color: var(--color-neutral-900); }
+.bg-scotland-blue { background-color: var(--color-scottish-blue-DEFAULT); }
+.text-scotland-blue { color: var(--color-scottish-blue-DEFAULT); }
 
 /* Simple utility classes that work with existing Tailwind */
 
 /* Enhanced contrast utilities */
-.text-shadow-lg { text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); }
-.text-shadow-xl { text-shadow: 0 6px 12px rgba(0, 0, 0, 0.7); }
-.drop-shadow-2xl { filter: drop-shadow(0 25px 25px rgba(0, 0, 0, 0.5)); }
-.bg-gradient-betis { 
-  background: linear-gradient(135deg, var(--betis-green) 0%, var(--betis-green-dark) 100%); 
+.text-shadow-lg { text-shadow: var(--shadow-lg); }
+.text-shadow-xl { text-shadow: var(--shadow-xl); }
+.drop-shadow-2xl { filter: drop-shadow(var(--shadow-2xl)); }
+.bg-gradient-betis {
+  background: linear-gradient(135deg, var(--color-betis-green-DEFAULT) 0%, var(--color-betis-green-700) 100%);
 }
 .bg-gradient-dark-overlay {
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%);
@@ -102,7 +85,7 @@ form {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(var(--spacing-8));
   }
   to {
     opacity: 1;
@@ -113,7 +96,7 @@ form {
 @keyframes fadeInLeft {
   from {
     opacity: 0;
-    transform: translateX(-30px);
+    transform: translateX(calc(-1 * var(--spacing-8)));
   }
   to {
     opacity: 1;
@@ -124,7 +107,7 @@ form {
 @keyframes fadeInRight {
   from {
     opacity: 0;
-    transform: translateX(30px);
+    transform: translateX(var(--spacing-8));
   }
   to {
     opacity: 1;

@@ -43,19 +43,19 @@
   - [x] 2.6 Configure `tailwind.config.mjs` to extend its theme with border radius tokens.
   - [x] 2.7 Verify that Tailwind utility classes are correctly generated from the new tokens.
 
-- [ ] 3.0 Generate CSS Variables from Design Tokens (Optional but Recommended)
-  - [ ] 3.1 Research tools for generating CSS variables from JSON design tokens (e.g., Style Dictionary, custom script).
-  - [ ] 3.2 Implement a script or configure a tool to generate CSS variables from `src/styles/tokens.json`.
-  - [ ] 3.3 Integrate the generated CSS variables into `src/app/globals.css` for use in custom CSS or for components not using Tailwind.
-  - [ ] 3.4 Add a script to `package.json` to automate the CSS variable generation process.
+- [x] 3.0 Generate CSS Variables from Design Tokens (Optional but Recommended)
+  - [x] 3.1 Research tools for generating CSS variables from JSON design tokens (e.g., Style Dictionary, custom script).
+  - [x] 3.2 Implement a script or configure a tool to generate CSS variables from `src/styles/tokens.json`.
+  - [x] 3.3 Integrate the generated CSS variables into `src/app/globals.css` for use in custom CSS or for components not using Tailwind.
+  - [x] 3.4 Add a script to `package.json` to automate the CSS variable generation process.
 
-- [ ] 4.0 Document Design Tokens in Storybook
-  - [ ] 4.1 Update `docs/storybook/design-tokens.mdx` to visually document all defined color tokens, including their names, values, and usage examples.
-  - [ ] 4.2 Extend `docs/storybook/design-tokens.mdx` to document typography tokens with examples of headings, body text, etc.
-  - [ ] 4.3 Extend `docs/storybook/design-tokens.mdx` to document spacing tokens with visual representations.
-  - [ ] 4.4 Extend `docs/storybook/design-tokens.mdx` to document breakpoint tokens and their application.
-  - [ ] 4.5 Extend `docs/storybook/design-tokens.mdx` to document shadow and border radius tokens.
-  - [ ] 4.6 Ensure the Storybook documentation provides clear guidelines for developers and designers on how to use the new tokens.
+- [x] 4.0 Document Design Tokens in Storybook
+  - [x] 4.1 Update `docs/storybook/design-tokens.mdx` to visually document all defined color tokens, including their names, values, and usage examples.
+  - [x] 4.2 Extend `docs/storybook/design-tokens.mdx` to document typography tokens with examples of headings, body text, etc.
+  - [x] 4.3 Extend `docs/storybook/design-tokens.mdx` to document spacing tokens with visual representations.
+  - [x] 4.4 Extend `docs/storybook/design-tokens.mdx` to document breakpoint tokens and their application.
+  - [x] 4.5 Extend `docs/storybook/design-tokens.mdx` to document shadow and border radius tokens.
+  - [x] 4.6 Ensure the Storybook documentation provides clear guidelines for developers and designers on how to use the new tokens.
 
 - [ ] 5.0 Refactor Existing Components to Use Design Tokens
   - [ ] 5.1 Identify existing components that use hardcoded styling values (colors, fonts, spacing, etc.).

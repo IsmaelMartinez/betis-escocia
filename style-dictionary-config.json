@@ -1,0 +1,22 @@
+{
+  "source": [
+    "src/styles/colors.json",
+    "src/styles/typography.json",
+    "src/styles/spacing.json",
+    "src/styles/breakpoints.json",
+    "src/styles/shadows.json",
+    "src/styles/border-radii.json"
+  ],
+  "platforms": {
+    "css": {
+      "transformGroup": "css",
+      "buildPath": "src/styles/generated/",
+      "files": [
+        {
+          "destination": "_variables.css",
+          "format": "css/variables"
+        }
+      ]
+    }
+  }
+}
