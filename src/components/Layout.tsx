@@ -4,9 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash, User, LogIn, LogOut, UserPlus } from 'lucide-react';
 import BetisLogo from '@/components/BetisLogo';
-import { isFeatureEnabled } from '@/lib/featureFlags';
+import { isFeatureEnabled, getEnabledNavigationItemsAsync } from '@/lib/featureFlags';
 import { useUser, useClerk } from '@clerk/nextjs';
-import { getEnabledNavigationItemsAsync } from '@/lib/featureFlags';
 import { NavigationItem } from '@/lib/flagsmith/types';
 
 interface DebugInfo {
@@ -119,13 +118,15 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                           >
                             Dashboard
                           </Link>
-                          <Link
-                            href="/trivia"
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={() => setIsUserMenuOpen(false)}
-                          >
-                            Trivia
-                          </Link>
+                          {isFeatureEnabled('showTriviaGame') && (
+                            <Link
+                              href="/trivia"
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => setIsUserMenuOpen(false)}
+                            >
+                              Trivia
+                            </Link>
+                          )}
                           <button
                             onClick={handleSignOut}
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -205,14 +206,16 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                         <User size={20} />
                         <span>Dashboard</span>
                       </Link>
-                      <Link
-                        href="/trivia"
-                        className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-gold hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <User size={20} />
-                        <span>Trivia</span>
-                      </Link>
+                      {isFeatureEnabled('showTriviaGame') && (
+                        <Link
+                          href="/trivia"
+                          className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-gold hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <User size={20} />
+                          <span>Trivia</span>
+                        </Link>
+                      )}
                       <button
                         onClick={() => {
                           handleSignOut();
