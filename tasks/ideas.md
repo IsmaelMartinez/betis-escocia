@@ -29,10 +29,44 @@ This document provides a list of ideas and features for the Peña Bética Escoce
 
 ## 👥 **User Features**
 
-* Add user profiles with basic information
-* Allow users to RSVP for events and view their RSVP history
-* Implement a simple contact form for user inquiries
-* Enable users to submit feedback and suggestions (Github Issues integration)
+### ✅ **Implemented User Features**
+
+* **User Dashboard:** Complete personal dashboard with RSVP & contact history (✅ LIVE)
+  * View all personal RSVP confirmations with match details
+  * See contact message history with status tracking
+  * Profile management through Clerk integration
+  * Email-based automatic linking of existing anonymous submissions
+
+* **RSVP System:** Users can confirm attendance and view their history (✅ LIVE)
+  * Anonymous submissions supported (backward compatibility)
+  * Authenticated users get pre-filled forms and submission tracking
+  * Match-specific RSVPs with attendee counts
+
+* **Contact Form:** Enhanced contact system with user tracking (✅ LIVE)
+  * Pre-populated name/email for authenticated users
+  * Contact type categorization and subject handling
+  * Admin interface for managing submissions with status updates
+
+* **GDPR Compliance:** Complete data access and deletion system (✅ LIVE)
+  * Data export functionality (JSON download)
+  * Right to be forgotten (complete data deletion)
+  * Email-based data access requests
+  * **Data Retention:** RSVPs auto-deleted after 1 month, contact submissions retained as per admin policy
+
+### 🚧 **User Features To Be Developed**
+
+* **Enhanced User Profiles:** Expand beyond basic Clerk information
+  * Add Peña membership status and preferences
+  * Integration with community points/activity tracking
+  * Custom profile fields for supporter preferences
+
+* **GitHub Issues Integration:** Enable users to submit feedback/suggestions directly
+  * Link contact form to GitHub issue creation
+  * Community voting on suggestions and feature requests
+
+* **GDPR Dashboard Integration:** Move GDPR controls to user dashboard
+  * Currently requires email entry - could be streamlined for authenticated users
+  * Integrate data retention notifications and consent management
 
 ## 🌍 **Multi-language Support**
 
@@ -49,12 +83,32 @@ This document provides a list of ideas and features for the Peña Bética Escoce
 * Member profiles with activity and participation history
 * Community recognition and points system
 
-## 📅 **Games**
+## 🎮 **Games & Engagement**
 
-* Add a simple game section with trivia or quizzes about Real Betis
-* Implement a "Guess the Lineup" game for matches
-* Implement a "Guess the Score" game for matches
-* Crossword puzzles related to Real Betis history and players
+### ✅ **Implemented Games**
+
+* **Daily Trivia Challenge:** 3-question daily quiz about Real Betis & Scotland (✅ LIVE)
+  * Feature flagged (`show-trivia-game`)
+  * Mobile-optimized with 15-second timer per question  
+  * Points system: 1 point per correct answer
+  * Daily play limit with score tracking
+  * Database: Full user score history
+  * **Known Issues**: Some edge cases and UX improvements needed
+
+### 🚧 **Games To Be Developed**
+
+* **"Guess the Lineup" game** for matches - Interactive team selection
+* **"Guess the Score" game** for matches - Match prediction system  
+* **Crossword puzzles** related to Real Betis history and players
+* **Word Search** themed puzzles
+* **Enhanced Daily Quiz** - Expand beyond 3 questions, add categories
+* **🥅 3D Penalty Shootout Game** - Browser-based 3D football game
+  * **Technology Options**: Three.js + TypeScript (recommended) or Rust + WebAssembly
+  * **Features**: Physics simulation, goalkeeper AI, multiple difficulty levels
+  * **Integration**: Daily challenges, leaderboards, Betis-themed stadium
+  * **Mobile Support**: Touch controls with WebGL fallback for compatibility
+  * **Progressive Loading**: Code-split bundle, loads only when requested
+  * **Estimated Development**: 2-4 weeks (Three.js) or 6-12 weeks (Rust + WASM)
 
 ## ⚡ **Advanced Performance Enhancements**
 
