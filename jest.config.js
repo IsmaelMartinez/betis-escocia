@@ -27,6 +27,9 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
+  transformIgnorePatterns: [
+    "node_modules/(?!(@clerk/.*|next-auth-mock|jose|@flagsmith/.*)/)",
+  ],
   // Optimize test execution
   maxWorkers: "50%",
   // Suppress verbose output during testing
