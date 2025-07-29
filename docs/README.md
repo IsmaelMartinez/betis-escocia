@@ -52,7 +52,8 @@ docs/
 │   ├── 002-football-api.md
 │   ├── ...
 │   ├── 009-clerk-e2e-testing.md
-│   └── 010-storybook-v9-migration.md  # ← NEW
+│   ├── 010-storybook-v9-migration.md  # ← NEW
+│   └── 011-design-tokens-implementation.md  # ← NEW
 ├── api/                          # API documentation
 ├── development/                  # Development guidelines
 │   ├── onboarding.md            # ← UPDATED: Includes trivia script info

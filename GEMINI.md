@@ -79,7 +79,7 @@ The Betis & Scotland Trivia Challenge is a key engagement feature designed to en
 - `src/lib/`: Utility functions, API clients (Supabase, Flagsmith), and authentication helpers.
 - `data/`: JSON files for specific data sets (including prototype voting data).
 - `docs/`: Extensive documentation, including:
-    - **Architecture Decision Records (ADRs:** Located in `docs/adr/`, these documents capture significant architectural decisions and their rationale (e.g., `001-clerk-authentication.md`, `003-supabase-database.md`, `004-flagsmith-feature-flags.md`, `007-clerk-webhooks-for-data-sync.md`).
+    - **Architecture Decision Records (ADRs:** Located in `docs/adr/`, these documents capture significant architectural decisions and their rationale (e.g., `001-clerk-authentication.md`, `003-supabase-database.md`, `004-flagsmith-feature-flags.md`, `007-clerk-webhooks-for-data-sync.md`, `011-design-tokens-implementation.md`).
     - **API Documentation:** `docs/api/` contains details on API solutions and considerations.
     - **Development Guidelines:** `docs/development/` provides information on documentation guidelines and onboarding.
     - **Historical Research:** `docs/historical/` contains past research and evaluations, particularly around authentication providers.
