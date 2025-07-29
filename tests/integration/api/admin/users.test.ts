@@ -16,23 +16,7 @@ jest.mock('@clerk/nextjs/server', () => ({
 }));
 
 // Mock Next.js server components
-j    it('should return 500 if serverRoleUtils fails', async () => {
-      mockDeleteUser.mockResolvedValue({
-        success: false,
-        message: 'Database error'
-      });
-
-      const request = new NextRequest('http://localhost/api/admin/users', {
-        method: 'DELETE',
-        body: JSON.stringify({ userId: 'user1' }),
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const response = await DELETE(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(500);
-      expect(data.success).toBe(false);
-      expect(data.message).toBe('Database error');/server', () => ({
+jest.mock('next/server', () => ({
   NextRequest: jest.fn((input, init) => {
     const request = new Request(input, init);
     return {
@@ -217,7 +201,6 @@ describe('Admin Users API', () => {
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
       expect(data.message).toBe('Database error');
-      expect(data.error).toBe('Clerk API error');
     });
   });
 
@@ -349,8 +332,7 @@ describe('Admin Users API', () => {
 
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
-      expect(data.message).toBe('Error updating user');
-      expect(data.error).toBe('Clerk API error');
+      expect(data.message).toBe('Database error');
     });
   });
 
@@ -420,8 +402,11 @@ describe('Admin Users API', () => {
       expect(data.message).toBe('Admin access required');
     });
 
-    it('should return 500 if Clerk API fails', async () => {
-      mockClerkUsers.deleteUser.mockRejectedValue(new Error('Clerk API error'));
+    it('should return 500 if serverRoleUtils fails', async () => {
+      mockDeleteUser.mockResolvedValue({
+        success: false,
+        message: 'Database error'
+      });
 
       const request = new NextRequest('http://localhost/api/admin/users', {
         method: 'DELETE',
@@ -433,8 +418,7 @@ describe('Admin Users API', () => {
 
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
-      expect(data.message).toBe('Error deleting user');
-      expect(data.error).toBe('Clerk API error');
+      expect(data.message).toBe('Database error');
     });
   });
 });

@@ -1,6 +1,6 @@
 # Tasks for Comprehensive Test Coverage Implementation
 
-## Overall Test Coverage: 11.13%
+## Overall Test Coverage: 15.2%
 
 ## Relevant Files
 
@@ -66,7 +66,7 @@
   - [x] 1.2 Create tests for RSVP API route (`/api/rsvp`) covering user authentication, event management, and validation - **COMPLETED: Applied same pattern as contact tests with proper Clerk/Supabase mocking, covers all 3 HTTP methods (GET/POST/DELETE) with 16 comprehensive test scenarios**
   - [x] 1.3 Create tests for contact API route (`/api/contact`) including form submission, validation, and admin notifications - **COMPLETED: Fixed ES module import issues with Clerk, properly mocked Supabase query builders, resolved security function mocking conflicts**
   - [x] 1.4 Create tests for admin role management API (`/api/admin/roles`) covering role assignment and permission validation - **COMPLETED: Added comprehensive integration tests for GET, POST, PUT, and DELETE endpoints, including authentication, validation, and error handling. Resolved Jest configuration issues with Clerk and Next.js server components.**
-  - [ ] 1.5 Create tests for admin user management API (`/api/admin/users`) including user lookup and role management
+  - [x] 1.5 Create tests for admin user management API (`/api/admin/users`) including user lookup and role management - **COMPLETED: Refactored API to use serverRoleUtils abstraction layer, updated all tests to mock serverRoleUtils instead of direct Clerk client, fixed NextResponse mocking issues, and ensured proper error handling. All 16 test scenarios now pass covering GET, PATCH, and DELETE endpoints with authentication, validation, and error cases.**
   - [ ] 1.6 Create tests for Clerk webhook handler (`/api/webhooks/clerk`) covering user sync and data consistency
   - [ ] 1.7 Enhance existing standings API tests (`/api/standings`) to cover caching scenarios and error handling
   - [ ] 1.8 Create tests for remaining admin APIs (`/api/admin/sync-matches`, `/api/admin/contact-submissions`)
