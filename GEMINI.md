@@ -255,7 +255,7 @@ This section outlines areas for future development and optimization. It's crucia
     *   **Review Note:** Rate limiting is critical for public APIs and may not be fully implemented. Database indexing is an ongoing task as new queries and data patterns emerge. Both remain high priority.
 5.  **Developer Experience (DX):**
     *   **Code Generation:** Explore tools like `supabase gen types` for generating TypeScript types from the database schema to improve type safety and reduce manual work.
-    *   ✅ **Storybook v9 Migration**: **COMPLETED** - Successfully migrated to Storybook v9.0.18 with performance improvements, package consolidation, and enhanced testing integration. See ADR-010 for details.
+    *   **Storybook v9 Migration**: **COMPLETED** - Successfully migrated to Storybook v9.0.18 with performance improvements, package consolidation, and enhanced testing integration. See ADR-010 for details. Related PRDs and tasks moved to `docs/historical/completed-tasks` and `docs/historical/implemented-features`.
     *   **Review Note**: Storybook v9 migration has been completed, providing better performance and development experience. Focus can now shift to expanding component documentation and visual testing capabilities.
 6.  **Testing Coverage:** While E2E and some unit tests exist, ensure critical business logic and UI interactions have sufficient test coverage.
     *   **Review Note:** Testing coverage is an ongoing process. This remains a high priority to ensure code quality and prevent regressions.
@@ -348,33 +348,116 @@ The Supabase client uses method chaining that must be properly mocked:
 - **Default to Valid**: Mock security functions to return valid by default, override in specific tests
 - **Complete Mock Objects**: Include all required properties (e.g., rate limit responses need `allowed`, `remaining`, `resetTime`)
 
-### Test Coverage Patterns
+### Comprehensive Testing Implementation (Current Coverage: 13.26%)
+
+#### Successfully Tested API Routes
+- **Trivia API** (`/api/trivia`): 100% coverage with authentication, scoring, and error scenarios
+- **RSVP API** (`/api/rsvp`): 79.54% coverage across GET/POST/DELETE methods with 16 test scenarios
+- **Contact API** (`/api/contact`): 63.15% coverage with form submission, validation, and admin notifications
+- **Admin Roles API** (`/api/admin/roles`): 86.88% coverage for role assignment and permission validation
+- **Admin Users API** (`/api/admin/users`): 88% coverage with serverRoleUtils abstraction layer
+- **Clerk Webhook API** (`/api/webhooks/clerk`): 100% coverage for user sync and data consistency
+
+#### Critical Testing Patterns Learned
+
+##### 1. ES Module Import Issues with Clerk
+**Problem**: Jest fails with Clerk's ES modules during import
+**Solution**: Always mock Clerk BEFORE any imports:
+```typescript
+// Mock Clerk before any other imports
+jest.mock("@clerk/nextjs/server", () => ({
+  getAuth: jest.fn(() => ({
+    userId: null,
+    getToken: jest.fn(() => Promise.resolve(null)),
+  })),
+}));
+```
+
+##### 2. Supabase Query Builder Mocking
+**Problem**: Mocks must match actual API chain structure
+**Solution**: Mock the full chain pattern:
+```typescript
+jest.mock("@/lib/supabase", () => {
+  const mockFrom = jest.fn();
+  return { supabase: { from: mockFrom } };
+});
+
+// In tests, mock the full chain:
+(supabase.from as jest.Mock).mockReturnValue({
+  select: jest.fn(() => ({
+    eq: jest.fn(() => Promise.resolve({ data: [], error: null })),
+  })),
+});
+```
+
+##### 3. Security Function Mocking Best Practices
+**Problem**: `jest.requireActual()` causes conflicts with test spies
+**Solution**: Use simple mocks without requireActual:
+```typescript
+jest.mock("@/lib/security", () => ({
+  __esModule: true,
+  sanitizeObject: jest.fn((obj) => obj),
+  validateEmail: jest.fn(() => ({ isValid: true })),
+  checkRateLimit: jest.fn(() => ({
+    allowed: true,
+    remaining: 2,
+    resetTime: Date.now() + 100000,
+  })),
+}));
+```
+
+##### 4. Complete Mock Objects
+**Critical**: Rate limit mocks need ALL required properties (`allowed`, `remaining`, `resetTime`)
+
+##### 5. NextResponse Mocking Pattern
+**Established Pattern**: Consistent NextResponse mocking across all API tests:
+```typescript
+jest.mock("next/server", () => ({
+  NextResponse: {
+    json: jest.fn((data, options) => ({ data, ...options })),
+  },
+}));
+```
+
+#### Test Coverage Patterns
 For comprehensive API route testing, cover:
 
-#### GET Endpoints
+##### GET Endpoints
 - Successful data retrieval
 - Query parameter handling
 - Database error scenarios
 - Empty data sets
 
-#### POST Endpoints
+##### POST Endpoints
 - Successful submission
 - Validation failures (each validation rule)
 - Rate limiting
 - Database insertion errors
 - Update vs. create scenarios
 
-#### DELETE Endpoints
+##### DELETE Endpoints
 - Successful deletion by ID
 - Successful deletion by identifier (email, etc.)
 - Not found scenarios
 - Database deletion errors
 
-### Common Testing Pitfalls
-1. **Mock Order Matters**: Clerk mocks must be before imports to prevent ES module errors
-2. **Security Function Conflicts**: Using `jest.requireActual()` can interfere with test-specific spies
-3. **Incomplete Mock Objects**: Missing properties in mock responses cause test failures
-4. **Query Builder Depth**: Supabase mocks need proper nesting to match real API chains
+##### Webhook Endpoints (Clerk Pattern)
+- Valid webhook processing (user.created, user.updated, user.deleted)
+- Header validation and signature verification
+- Data linking/unlinking operations
+- Missing data edge cases
+- Database error handling
+- Invalid webhook types
+
+#### API Route Test Coverage by Endpoint
+Each endpoint should test: success cases, validation failures, rate limiting, database errors, edge cases (not found, empty data)
+
+#### Systematic Test Implementation Workflow
+1. **Mock Setup**: Establish all mocks before imports (Clerk, Supabase, security, NextResponse)
+2. **Test Structure**: Organize by HTTP method, then by scenario (success/error cases)
+3. **Comprehensive Coverage**: Test authentication, validation, database operations, and error handling
+4. **Consistent Patterns**: Apply learned mocking patterns across all API tests
+5. **Verification**: Run `npm test -- --coverage` to verify actual coverage percentages
 
 ## Common Pitfalls and Solutions:
 - **`react/no-unescaped-entities` in Storybook `Page.tsx`:** The `react/no-unescaped-entities` error in `src/stories/Page.tsx` (e.g., on lines 39:13 and 39:18) can be resolved by escaping double quotes within text content using `&quot;` (e.g., changing `"args"` to `&quot;args&quot;`). This is a lower concern as it primarily affects Storybook build/development time.

@@ -89,7 +89,6 @@ We chose **Flagsmith** as our feature flag provider for the following reasons:
 - **Configuration**: Environment-based configuration (dev/staging/prod)
 
 ## References
-- [Feature Flag Provider Comparison](../../tasks/feature-flag-providers-comparison.md)
 - [Flagsmith Documentation](https://docs.flagsmith.com/)
 - [Project Ideas](../../tasks/ideas.md)
 

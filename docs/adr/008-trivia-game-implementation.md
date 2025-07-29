@@ -155,7 +155,5 @@ The trivia game has been implemented as a new feature within the existing Next.j
 
 ## Documentation Links
 
-- **PRD**: [docs/historical/implemented-features/prd-trivia-pointing-system.md](../../docs/historical/implemented-features/prd-trivia-pointing-system.md)
-- **Task List**: [docs/historical/implemented-features/tasks-prd-trivia-pointing-system.md](../../docs/historical/implemented-features/tasks-prd-trivia-pointing-system.md)
 - **API Documentation**: See inline comments in `src/app/api/trivia/route.ts`
 - **Database Schema**: `sql/create_trivia_tables.sql` and `sql/populate_trivia_data.sql`

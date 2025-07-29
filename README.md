@@ -21,7 +21,7 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Next.js 15, TypeScript, Tailwind CSS 4, Storybook
+- **Frontend**: Next.js 15, TypeScript, Tailwind CSS 4
 - **Backend**: Next.js API Routes + Supabase (PostgreSQL)
 - **Database**: Supabase (GDPR-compliant with auto-cleanup)
 - **Authentication**: Clerk.com for user management and authentication

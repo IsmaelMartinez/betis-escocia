@@ -123,6 +123,25 @@ jest.mock("@/lib/security", () => ({
 
 **API Route Test Coverage**: For each endpoint, test: success cases, validation failures, rate limiting, database errors, edge cases (not found, empty data)
 
+#### Comprehensive Test Implementation Learnings (Current Coverage: 13.26%)
+
+**Successfully Tested API Routes**: Trivia (100%), RSVP (79.54%), Contact (63.15%), Admin Roles (86.88%), Admin Users (88%), Clerk Webhook (100%)
+
+**Webhook Testing Pattern**: For Clerk webhooks, test user.created/updated/deleted events, header validation, signature verification, data linking/unlinking, missing data edge cases, and database errors.
+
+**NextResponse Mocking**: Establish consistent NextResponse mocking across all API tests:
+```typescript
+jest.mock("next/server", () => ({
+  NextResponse: {
+    json: jest.fn((data, options) => ({ data, ...options })),
+  },
+}));
+```
+
+**Complete Mock Objects**: Rate limit mocks need ALL required properties (`allowed`, `remaining`, `resetTime`). Security function mocks should avoid `jest.requireActual()` to prevent conflicts with test spies.
+
+**Test Coverage Verification**: Always run `npm test -- --coverage` to verify actual coverage percentages instead of estimates.
+
 ### Environment Setup Requirements
 
 ```bash
@@ -188,6 +207,7 @@ When completing PRDs and their associated tasks:
    - Move `tasks-prd-[feature].md` to `docs/historical/completed-tasks/`
    - Move `prd-[feature].md` to `docs/historical/implemented-features/`
    - Update `docs/historical/documentation-reorganization.md` with the move
+   - **Learning**: Storybook v9 migration PRDs and tasks have been moved to these historical directories.
 7. **README Updates**: Update main README.md if the feature affects user-facing functionality
 8. **Merge Documentation**: Merge any research/comparison docs into existing documentation (e.g., feature flag comparisons into main feature flag docs)
 

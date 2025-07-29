@@ -41,7 +41,7 @@ Refreshed the main project documentation with:
 - **Current technology versions**: Next.js 15, Storybook v9.0.18, Tailwind CSS v4
 - **Testing improvements**: Enhanced component testing with Vitest integration
 - **Performance updates**: Documented bundle size improvements
-- **Completed improvements**: Marked Storybook v9 migration as completed
+- **Completed improvements**: Marked Storybook v9 migration as completed, and related PRDs and tasks moved to historical documentation.
 
 ## Documentation Structure
 
@@ -65,15 +65,11 @@ docs/
 ├── storybook-guide.md           # ← UPDATED: Now covers v9
 └── README.md                    # ← This file
 ```
-└── README.md                    # ← This file
-```
 
 ## Next Steps
 
 1. **Review and validate** the updated documentation accuracy
-2. **Update component stories** to leverage new Storybook v9 features
-3. **Expand testing coverage** using the enhanced Vitest integration
-4. **Monitor performance** improvements from the v9 migration
+2. **Monitor performance** improvements from the v9 migration
 
 ## Maintenance Notes
 
