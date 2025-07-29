@@ -147,3 +147,78 @@ export async function listUsersWithRoles(limit: number = 50, offset: number = 0)
     };
   }
 }
+
+/**
+ * Update a user (role or banned status)
+ */
+export async function updateUser(userId: string, updates: { 
+  role?: Role; 
+  banned?: boolean; 
+}): Promise<{
+  success: boolean;
+  message?: string;
+  user?: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    role: string;
+    banned: boolean;
+  };
+}> {
+  try {
+    const updateData: { publicMetadata?: { role: Role }; banned?: boolean } = {};
+    
+    if (updates.role !== undefined) {
+      updateData.publicMetadata = { role: updates.role };
+    }
+    
+    if (updates.banned !== undefined) {
+      updateData.banned = updates.banned;
+    }
+
+    const updatedUser = await clerkClient.users.updateUser(userId, updateData);
+    
+    return {
+      success: true,
+      message: 'User updated successfully',
+      user: {
+        id: updatedUser.id,
+        email: updatedUser.emailAddresses[0]?.emailAddress || '',
+        firstName: updatedUser.firstName || '',
+        lastName: updatedUser.lastName || '',
+        role: (updatedUser.publicMetadata as { role?: string })?.role || 'user',
+        banned: updatedUser.banned
+      }
+    };
+  } catch (error) {
+    console.error('Error updating user:', error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Unknown error occurred while updating user'
+    };
+  }
+}
+
+/**
+ * Delete a user
+ */
+export async function deleteUser(userId: string): Promise<{
+  success: boolean;
+  message?: string;
+}> {
+  try {
+    await clerkClient.users.deleteUser(userId);
+    
+    return {
+      success: true,
+      message: 'User deleted successfully'
+    };
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Unknown error occurred while deleting user'
+    };
+  }
+}

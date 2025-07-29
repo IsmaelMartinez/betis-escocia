@@ -324,18 +324,16 @@ export function getEnabledNavigationItems() {
  */
 export async function getEnabledNavigationItemsAsync(): Promise<NavigationItem[]> {
   const allNavigationItems: NavigationItem[] = [
-    { name: 'Inicio', href: '/', nameEn: 'Home', feature: null },
-    { name: 'RSVP', href: '/rsvp', nameEn: 'RSVP', feature: 'show-rsvp' },
-    { name: 'Clasificación', href: '/clasificacion', nameEn: 'Standings', feature: 'show-clasificacion' },
+    { name: 'Únete', href: '/unete', nameEn: 'Join', feature: 'show-unete' },
     { name: 'Partidos', href: '/partidos', nameEn: 'Matches', feature: 'show-partidos' },
-    
+    { name: 'Clasificación', href: '/clasificacion', nameEn: 'Standings', feature: 'show-clasificacion' },
     { name: 'Coleccionables', href: '/coleccionables', nameEn: 'Collectibles', feature: 'show-coleccionables' },
     { name: 'Galería', href: '/galeria', nameEn: 'Gallery', feature: 'show-galeria' },
-    { name: 'Historia', href: '/historia', nameEn: 'History', feature: 'show-history' },
-    { name: 'Nosotros', href: '/nosotros', nameEn: 'About', feature: 'show-nosotros' },
-    { name: 'Únete', href: '/unete', nameEn: 'Join', feature: 'show-unete' },
-    { name: 'Contacto', href: '/contacto', nameEn: 'Contact', feature: 'show-contacto' },
     { name: 'Redes Sociales', href: '/redes-sociales', nameEn: 'Social Media', feature: 'show-redes-sociales' },
+    { name: 'Nosotros', href: '/nosotros', nameEn: 'About', feature: 'show-nosotros' },
+    { name: 'Historia', href: '/historia', nameEn: 'History', feature: 'show-history' },
+    { name: 'RSVP', href: '/rsvp', nameEn: 'RSVP', feature: 'show-rsvp' },
+    { name: 'Contacto', href: '/contacto', nameEn: 'Contact', feature: 'show-contacto' },
   ];
 
   // Get all flags at once for better performance

@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkAdminRole } from '@/lib/adminApiProtection';
-import { createClerkClient } from '@clerk/nextjs/server';
-
-const clerkClient = createClerkClient({
-  secretKey: process.env.CLERK_SECRET_KEY,
-});
+import { listUsersWithRoles, updateUser, deleteUser } from '@/lib/serverRoleUtils';
+import { type Role } from '@/lib/roleUtils';
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,32 +19,21 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '50');
     const offset = parseInt(searchParams.get('offset') || '0');
 
-    // Fetch users from Clerk
-    const users = await clerkClient.users.getUserList({
-      limit,
-      offset,
-      orderBy: '-created_at'
-    });
-
-    // Transform user data for admin interface
-    const transformedUsers = users.data.map(user => ({
-      id: user.id,
-      email: user.emailAddresses[0]?.emailAddress || '',
-      firstName: user.firstName || '',
-      lastName: user.lastName || '',
-      role: user.publicMetadata.role || 'user',
-      createdAt: user.createdAt,
-      lastSignInAt: user.lastSignInAt,
-      imageUrl: user.imageUrl,
-      banned: user.banned,
-      emailVerified: user.emailAddresses[0]?.verification?.status === 'verified'
-    }));
+    // Fetch users using serverRoleUtils
+    const result = await listUsersWithRoles(limit, offset);
+    
+    if (!result.success) {
+      return NextResponse.json({
+        success: false,
+        message: result.message || 'Error fetching users'
+      }, { status: 500 });
+    }
 
     return NextResponse.json({
       success: true,
-      users: transformedUsers,
-      totalCount: users.data.length,
-      hasMore: users.data.length === limit
+      users: result.users,
+      totalCount: result.totalCount,
+      hasMore: result.hasMore
     });
 
   } catch (error) {
@@ -80,31 +66,24 @@ export async function PATCH(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // Update user metadata and/or ban status
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const updates: any = {};
+    // Update user using serverRoleUtils
+    const updates: { role?: Role; banned?: boolean } = {};
+    if (role !== undefined) updates.role = role as Role;
+    if (banned !== undefined) updates.banned = banned;
     
-    if (role !== undefined) {
-      updates.publicMetadata = { role };
-    }
+    const result = await updateUser(userId, updates);
     
-    if (banned !== undefined) {
-      updates.banned = banned;
+    if (!result.success) {
+      return NextResponse.json({
+        success: false,
+        message: result.message || 'Error updating user'
+      }, { status: 500 });
     }
-
-    const updatedUser = await clerkClient.users.updateUser(userId, updates);
 
     return NextResponse.json({
       success: true,
       message: 'User updated successfully',
-      user: {
-        id: updatedUser.id,
-        email: updatedUser.emailAddresses[0]?.emailAddress || '',
-        firstName: updatedUser.firstName || '',
-        lastName: updatedUser.lastName || '',
-        role: updatedUser.publicMetadata.role || 'user',
-        banned: updatedUser.banned
-      }
+      user: result.user
     });
 
   } catch (error) {
@@ -137,8 +116,15 @@ export async function DELETE(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // Delete user from Clerk
-    await clerkClient.users.deleteUser(userId);
+    // Delete user using serverRoleUtils
+    const result = await deleteUser(userId);
+    
+    if (!result.success) {
+      return NextResponse.json({
+        success: false,
+        message: result.message || 'Error deleting user'
+      }, { status: 500 });
+    }
 
     return NextResponse.json({
       success: true,
