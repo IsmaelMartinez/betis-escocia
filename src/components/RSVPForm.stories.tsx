@@ -2,7 +2,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import RSVPForm from './RSVPForm';
 import { fn, userEvent } from 'storybook/test';
-import { setMockUser, resetClerkMocks } from '@/lib/clerk/__mocks__';
+import { setMockUser, resetClerkMocks } from '@/lib/clerk/__mocks__/storybook';
 
 // Mock fetch API for form submissions
 const mockFetch = (status: 'success' | 'error') => {

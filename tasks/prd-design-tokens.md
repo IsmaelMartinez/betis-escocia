@@ -44,6 +44,7 @@ The design token system must support and provide tokens for the following core f
 
 *   **Storage and Management:** Design tokens will be defined in structured JSON files, serving as the single source of truth.
 *   **Integration with Tailwind CSS:** The JSON tokens will be integrated into `tailwind.config.mjs` to extend Tailwind's theme, allowing developers to consume tokens directly via Tailwind's utility classes.
+    *   **Learning**: Ensure careful verification of Tailwind CSS version compatibility with PostCSS and Next.js build processes. Issues can arise if the Tailwind JIT compiler does not correctly process dynamically generated classes or if the `content` array in `tailwind.config.js` does not fully capture all sources of utility classes.
 *   **CSS Variable Generation (Optional but Recommended):** A process will be established to optionally generate CSS variables from the JSON tokens, providing flexibility for custom CSS and future theming.
 *   **Documentation:** Comprehensive documentation of all design tokens, including their values and usage examples, will be provided within Storybook (leveraging `docs/storybook/design-tokens.mdx`).
 *   **Accessibility:** The token system must support and facilitate the implementation of accessible designs, particularly concerning color contrast.

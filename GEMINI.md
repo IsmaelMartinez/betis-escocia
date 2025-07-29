@@ -47,6 +47,9 @@ Implement comprehensive tests for the match synchronization admin API endpoint w
 
 ---
 
+## Operational Guidelines
+- **Verify library version compatibility** - ensure that all libraries, especially those related to styling (e.g., Tailwind CSS, PostCSS) and build processes (e.g., Next.js, Storybook), are compatible with each other to avoid integration issues and unexpected behavior.
+
 ## Core Technologies:
 - **Frontend:** Next.js 15 (React), Storybook v9.0.18
 - **Styling:** Tailwind CSS v4 (configured in `postcss.config.mjs` and `globals.css`)

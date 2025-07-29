@@ -279,6 +279,7 @@ export default async function MyComponent() {
 - **Don't forget RLS** - user data requires authenticated Supabase client
 - **Test environment isolation** - use separate Flagsmith environments
 - **Always use latest stable versions** - research current library versions before implementation to ensure security, performance, and access to newest features
+- **Verify library version compatibility** - ensure that all libraries, especially those related to styling (e.g., Tailwind CSS, PostCSS) and build processes (e.g., Next.js, Storybook), are compatible with each other to avoid integration issues and unexpected behavior.
 
 ## Additional Resources
 
