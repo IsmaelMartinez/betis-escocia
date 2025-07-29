@@ -1,6 +1,6 @@
 # Tasks for Comprehensive Test Coverage Implementation
 
-## Overall Test Coverage: 15.2%
+## Overall Test Coverage: 12.2%
 
 ## Relevant Files
 
