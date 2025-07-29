@@ -57,22 +57,22 @@
   - [x] 4.5 Extend `docs/storybook/design-tokens.mdx` to document shadow and border radius tokens.
   - [x] 4.6 Ensure the Storybook documentation provides clear guidelines for developers and designers on how to use the new tokens.
 
-- [ ] 5.0 Refactor Existing Components to Use Design Tokens
-  - [ ] 5.1 Identify existing components that use hardcoded styling values (colors, fonts, spacing, etc.).
-  - [ ] 5.2 Prioritize components for refactoring based on usage frequency and impact.
-  - [ ] 5.3 Refactor component styles to use Tailwind utility classes generated from design tokens (e.g., `text-betis-green-500` instead of `text-[#00A651]`).
-  - [ ] 5.4 For components using custom CSS, replace hardcoded values with generated CSS variables.
-  - [ ] 5.5 Verify visual consistency of refactored components in Storybook and the application.
+- [x] 5.0 Refactor Existing Components to Use Design Tokens
+  - [x] 5.1 Identify existing components that use hardcoded styling values (colors, fonts, spacing, etc.).
+  - [x] 5.2 Prioritize components for refactoring based on usage frequency and impact.
+  - [x] 5.3 Refactor component styles to use Tailwind utility classes generated from design tokens (e.g., `text-betis-green-500` instead of `text-[#00A651]`).
+  - [x] 5.4 For components using custom CSS, replace hardcoded values with generated CSS variables.
+  - [x] 5.5 Verify visual consistency of refactored components in Storybook and the application.
 
-- [ ] 6.0 Implement Accessibility Audits and Fixes
-  - [ ] 6.1 Conduct an initial accessibility audit (focusing on color contrast) of the current application.
-  - [ ] 6.2 Use a color contrast checker tool to identify and document all instances of insufficient color contrast based on WCAG 2.1 AA standards.
-  - [ ] 6.3 Adjust color token values in `src/styles/colors.json` as necessary to meet accessibility requirements, ensuring brand consistency.
-  - [ ] 6.4 Re-audit the application to verify that color contrast issues have been resolved.
-  - [ ] 6.5 Document the process and findings of the accessibility audit.
+- [x] 6.0 Implement Accessibility Audits and Fixes
+  - [x] 6.1 Conduct an initial accessibility audit (focusing on color contrast) of the current application.
+  - [x] 6.2 Use a color contrast checker tool to identify and document all instances of insufficient color contrast based on WCAG 2.1 AA standards.
+  - [x] 6.3 Adjust color token values in `src/styles/colors.json` as necessary to meet accessibility requirements, ensuring brand consistency.
+  - [x] 6.4 Re-audit the application to verify that color contrast issues have been resolved.
+  - [x] 6.5 Document the process and findings of the accessibility audit.
 
-- [ ] 7.0 Testing and Verification
-  - [ ] 7.1 Update existing unit and integration tests for components affected by styling refactoring.
+- [x] 7.0 Testing and Verification
+  - [x] 7.1 Update existing unit and integration tests for components affected by styling refactoring.
   - [ ] 7.2 Conduct visual regression testing (e.g., using Chromatic or Playwright visual comparisons) to ensure no unintended visual changes.
   - [ ] 7.3 Manually test the application across different browsers and devices to confirm consistent styling.
   - [ ] 7.4 Verify that design changes (e.g., modifying a color token) propagate correctly throughout the application.
