@@ -130,6 +130,7 @@ jest.mock("@/lib/security", () => ({
 **Webhook Testing Pattern**: For Clerk webhooks, test user.created/updated/deleted events, header validation, signature verification, data linking/unlinking, missing data edge cases, and database errors.
 
 **NextResponse Mocking**: Establish consistent NextResponse mocking across all API tests:
+
 ```typescript
 jest.mock("next/server", () => ({
   NextResponse: {
