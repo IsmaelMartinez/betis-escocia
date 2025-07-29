@@ -113,17 +113,23 @@ export default function TriviaPage() {
     }
   }, [isLoaded, isSignedIn]); // Depend on isLoaded and isSignedIn
 
-  const goToNextQuestion = () => {
+  const goToNextQuestion = (answeredCorrectly: boolean | null = null) => {
     setShowFeedback(false);
     setSelectedAnswer(null);
     setTimerResetTrigger(prev => prev + 1); // Reset timer for next question
+
+    let newScore = score;
+    if (answeredCorrectly) {
+      newScore = score + 1;
+      setScore(newScore);
+    }
 
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prevIndex => prevIndex + 1);
     } else {
       // Game over - show results and save score
       setGameCompleted(true);
-      saveScore(score);
+      saveScore(newScore);
     }
   };
 
@@ -133,11 +139,7 @@ export default function TriviaPage() {
     setSelectedAnswer(answerId);
     setShowFeedback(true);
 
-    if (isCorrect) {
-      setScore(prevScore => prevScore + 1);
-    }
-
-    setTimeout(goToNextQuestion, 2000); // Show feedback for 2 seconds
+    setTimeout(() => goToNextQuestion(isCorrect), 2000); // Show feedback for 2 seconds
   };
 
   const handleTimeUp = () => {
