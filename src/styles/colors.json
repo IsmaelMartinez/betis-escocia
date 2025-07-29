@@ -2,16 +2,16 @@
   "color": {
     "betis": {
       "green": {
-        "DEFAULT": { "value": "#00803E" },
-        "500": { "value": "#00803E" },
-        "600": { "value": "#006B34" },
-        "700": { "value": "#00562A" }
+        "DEFAULT": { "value": "#00A651" },
+        "500": { "value": "#00A651" },
+        "600": { "value": "#009548" },
+        "700": { "value": "#00843F" }
       },
       "gold": {
-        "DEFAULT": { "value": "#A68B00" },
-        "500": { "value": "#A68B00" },
-        "600": { "value": "#8F7700" },
-        "700": { "value": "#786300" }
+        "DEFAULT": { "value": "#FFD700" },
+        "500": { "value": "#FFD700" },
+        "600": { "value": "#E6C300" },
+        "700": { "value": "#CCAE00" }
       }
     },
     "scottish": {
