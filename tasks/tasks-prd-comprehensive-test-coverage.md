@@ -77,17 +77,10 @@
   - [x] 1.9.4 Implement error handling tests for FootballDataService and Supabase operations
   - [x] 1.9.5 Implement edge case tests (e.g., null scores, unfinished matches, no matches returned)
 
-- [ ] 2.0 Core Business Logic Testing (Supabase Functions) (Target: 90% Coverage)
-  - [ ] 2.1 Expand existing Supabase function tests to cover all CRUD operations for users, RSVPs, and trivia scores
-  - [ ] 2.2 Create tests for RLS (Row Level Security) scenarios ensuring proper data access control
-  - [ ] 2.3 Create tests for data transformation functions and business logic calculations
-  - [ ] 2.4 Create tests for error handling and validation in database operations
-  - [ ] 2.5 Create tests for caching mechanisms and data consistency checks
-  - [ ] 2.6 Create tests for user authentication and authorization flows with Supabase
-  - [ ] 2.7 Create tests for trivia scoring and leaderboard calculation functions
+- [ ] 2.0 Core Business Logic Testing (Supabase Functions) (Target: 90% Coverage) - DEFERRED
 
 - [ ] 3.0 Utility Functions and Services Testing (Target: 80% Coverage)
-  - [ ] 3.1 Expand existing Flagsmith tests to cover all feature flag scenarios and error handling
+  - [x] 3.1 Expand existing Flagsmith tests to cover all feature flag scenarios and error handling
   - [ ] 3.2 Create comprehensive tests for admin API protection utilities including role validation and error scenarios
   - [ ] 3.3 Create tests for security utilities covering input validation, sanitization, and CORS handling
   - [ ] 3.4 Create tests for form validation utilities covering all validation rules and error messages

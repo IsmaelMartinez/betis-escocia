@@ -193,8 +193,7 @@ class FlagsmithManager {
     const evaluationTime = Date.now() - startTime;
     
     // Update average evaluation time
-    this.performanceMetrics.flagEvaluationTime = 
-      (this.performanceMetrics.flagEvaluationTime + evaluationTime) / 2;
+    this.performanceMetrics.flagEvaluationTime += evaluationTime;
     
     // Update cache hit rate
     // Cache hit rate unavailable; caching disabled.
