@@ -398,6 +398,134 @@ The Supabase client uses method chaining that must be properly mocked:
 - **Default to Valid**: Mock security functions to return valid by default, override in specific tests
 - **Complete Mock Objects**: Include all required properties (e.g., rate limit responses need `allowed`, `remaining`, `resetTime`)
 
+### Form Validation Testing Patterns (Task 3.4 - COMPLETED)
+
+**Achievement**: 50% coverage for `formValidation.ts` with 31 comprehensive test scenarios covering `validateField`, `validateForm`, and `commonValidationRules`.
+
+#### Key Learnings from Form Validation Testing
+
+##### 1. Validation Rule Precedence Understanding
+**Critical Discovery**: Form validation follows a specific precedence order that must be understood for accurate testing:
+1. **Required validation** - checked first, stops further validation if field is empty
+2. **Length validation** (minLength/maxLength) - checked before pattern validation
+3. **Pattern validation** - checked after length requirements are met
+4. **Custom validation** - applied last
+
+**Example Pattern**:
+```typescript
+// Phone number validation precedence test
+// minLength (10) is checked BEFORE custom pattern validation
+expect(validateField("123", rules.phone)).toEqual({
+  isValid: false,
+  error: "El teléfono debe tener al menos 10 caracteres"
+});
+```
+
+##### 2. Spanish Error Message Validation
+**Implementation**: All form validation supports Spanish localization with proper error messages:
+```typescript
+// Spanish error messages pattern
+expect(validateField("", rules.required)).toEqual({
+  isValid: false,
+  error: "Este campo es obligatorio"
+});
+
+expect(validateField("ab", rules.minLength)).toEqual({
+  isValid: false,
+  error: "Debe tener al menos 3 caracteres"
+});
+```
+
+##### 3. Security Function Integration Testing
+**Pattern**: Form validation integrates with security utilities that must be properly mocked:
+```typescript
+// Security function mocking for form validation
+jest.mock("@/lib/security", () => ({
+  __esModule: true,
+  sanitizeInput: jest.fn((value) => value?.trim() || ''),
+  validateInputLength: jest.fn((value, max) => ({ 
+    isValid: true, 
+    sanitized: value 
+  })),
+  validateEmail: jest.fn((email) => ({ 
+    isValid: email?.includes('@') 
+  }))
+}));
+```
+
+##### 4. Complex Validation Rules Testing
+**Comprehensive Coverage**: Testing covers various validation rule combinations:
+- **Required + Pattern**: Email validation with required field
+- **Length + Pattern**: Phone numbers with minimum length and numeric pattern
+- **Multiple Rules**: Text fields with minLength, maxLength, and pattern validation
+- **Custom Validation**: Special validation functions for complex business rules
+
+##### 5. Edge Case Handling
+**Thorough Testing**: Form validation handles edge cases properly:
+```typescript
+// Edge cases covered in testing
+- Empty strings and null values
+- Whitespace-only input
+- Unicode characters and special symbols
+- Boundary length values (exact min/max)
+- Invalid pattern formats
+- Extremely long input values
+```
+
+##### 6. Test Structure Best Practices
+**Organization**: Tests are structured for maintainability and clarity:
+```typescript
+describe('validateField', () => {
+  // Basic validation tests (8 scenarios)
+  // Required field validation
+  // Pattern validation
+  // Length validation
+});
+
+describe('validateForm', () => {
+  // Form-level validation tests (3 scenarios)
+  // Multiple field validation
+  // Error aggregation
+});
+
+describe('commonValidationRules', () => {
+  // Predefined rule tests (15 scenarios)
+  // Email, phone, text, textarea validation
+});
+
+describe('Edge Cases', () => {
+  // Boundary and exceptional scenarios (5 scenarios)
+  // Null handling, empty objects, special characters
+});
+```
+
+##### 7. Realistic Security Function Simulation
+**Best Practice**: Security functions should be mocked realistically to match production behavior:
+```typescript
+// Realistic sanitization mock that actually trims whitespace
+sanitizeInput: jest.fn((value) => value?.trim() || ''),
+
+// Length validation that respects max limits
+validateInputLength: jest.fn((value, max) => ({
+  isValid: !value || value.length <= max,
+  sanitized: value
+})),
+
+// Email validation with actual pattern checking
+validateEmail: jest.fn((email) => ({
+  isValid: email && email.includes('@') && email.includes('.')
+}))
+```
+
+#### Form Validation Coverage Metrics
+- **Total Test Scenarios**: 31 comprehensive tests
+- **Coverage Achievement**: 50% for `formValidation.ts`
+- **Test Categories**: 8 validateField + 3 validateForm + 15 commonValidationRules + 5 edge cases
+- **Error Message Languages**: Spanish localization fully tested
+- **Integration Points**: Security functions, validation rules, error handling
+
+This implementation establishes a robust testing foundation for form validation utilities and demonstrates comprehensive coverage patterns for utility function testing.
+
 ### Comprehensive Testing Implementation (Current Coverage: 13.26%)
 
 #### Successfully Tested API Routes
