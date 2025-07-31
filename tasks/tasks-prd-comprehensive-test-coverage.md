@@ -82,8 +82,8 @@
 - [ ] 3.0 Utility Functions and Services Testing (Target: 80% Coverage)
   - [x] 3.1 Expand existing Flagsmith tests to cover all feature flag scenarios and error handling
   - [x] 3.2 Create comprehensive tests for admin API protection utilities including role validation and error scenarios
-  - [x] 3.3 Create tests for security utilities covering input validation, sanitization, and CORS handling
-  - [ ] 3.4 Create tests for form validation utilities covering all validation rules and error messages
+- [x] 3.3 Create tests for security utilities covering input validation, sanitization, and CORS handling
+  - [x] 3.4 Create tests for form validation utilities covering all validation rules and error messages
   - [ ] 3.5 Create tests for email service integration including success and failure scenarios
   - [ ] 3.6 Create tests for role management utilities covering role assignment and permission checks
   - [ ] 3.7 Create tests for date/time utilities and formatting functions used across the application
