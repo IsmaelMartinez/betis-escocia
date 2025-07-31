@@ -48,7 +48,7 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },
-  productionBrowserSourceMaps: false,
+  productionBrowserSourceMaps: true,
   // experimental: {
   //   optimizePackageImports: ['lucide-react'],
   // },

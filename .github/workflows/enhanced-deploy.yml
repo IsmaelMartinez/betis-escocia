@@ -130,6 +130,17 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y lsof
       - name: Build Project
         run: npm run build
+      - name: Create Sentry Release and Upload Source Maps
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          SENTRY_RELEASE: ${{ github.sha }}
+        run: |
+          npx sentry-cli releases new $SENTRY_RELEASE
+          npx sentry-cli releases set-commits $SENTRY_RELEASE --auto
+          npx sentry-cli sourcemaps upload .next --ext js --ext js.map --ext mjs --ext mjs.map --ext css --ext css.map --ext html --ext html.map
+          npx sentry-cli releases finalize $SENTRY_RELEASE
       - name: Start Built Project
         run: |
           CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }} \

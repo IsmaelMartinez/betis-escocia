@@ -6,12 +6,14 @@ import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+  environment: process.env.NEXT_PUBLIC_VERCEL_ENV || process.env.NODE_ENV,
+  release: process.env.NEXT_PUBLIC_SENTRY_RELEASE,
 
   // Adjust this value in production, or use tracesSampler for greater control
-  tracesSampleRate: 1.0,
+  tracesSampleRate: 0.1,
 
-  // Set profilesSampleRate to 1.0 to enable profiling for all events
-  profilesSampleRate: 1.0,
+  // Set profilesSampleRate to 0.1 to enable profiling for a fraction of events
+  profilesSampleRate: 0.1,
 
   // In client-side Sentry, you can also set up a `beforeSend` hook to
   // filter out sensitive data or add additional context.

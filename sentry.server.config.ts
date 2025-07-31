@@ -6,14 +6,19 @@ import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
+  environment: process.env.VERCEL_ENV || process.env.NODE_ENV,
+  release: process.env.SENTRY_RELEASE,
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
+  tracesSampleRate: 0.1,
+
+  // Set profilesSampleRate to 0.1 to enable profiling for a fraction of events
+  profilesSampleRate: 0.1,
 
   // Enable logs to be sent to Sentry
-  enableLogs: true,
+  enableLogs: false,
 
   // Setting this option to true will print useful information to the console while you're setting up Sentry.
-  debug: true,
-  enableTracing: true,
+  debug: false,
+  enableTracing: false,
 });
