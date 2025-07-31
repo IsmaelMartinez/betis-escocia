@@ -23,12 +23,15 @@ module.exports = {
             },
           },
         },
+        module: {
+          type: "commonjs",
+        },
       },
     ],
   },
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
   transformIgnorePatterns: [
-    "node_modules/(?!(@clerk/.*|next-auth-mock|jose|@flagsmith/.*)/)",
+    "node_modules/(?!(@clerk/.*|next-auth-mock|jose|@flagsmith/.*|@supabase/.*|isows)/)",
   ],
   // Optimize test execution
   maxWorkers: "50%",
