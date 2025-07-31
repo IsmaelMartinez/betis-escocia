@@ -75,7 +75,7 @@
     - [x] 3.3.2 Add decision matrix for selecting appropriate workflow
     - [x] 3.3.3 Include integration with existing create-prd → generate-tasks → process-tasks workflow
 
-- [ ] 4.0 Consolidate and Migrate Testing Documentation
+- [x] 4.0 Consolidate and Migrate Testing Documentation
   - [x] 4.1 Create `docs/testing/` directory structure
   - [x] 4.2 Create `docs/testing/testing-patterns.md` from current documentation
     - [x] 4.2.1 Migrate comprehensive test implementation patterns from `GEMINI.md`
@@ -95,15 +95,15 @@
     - [ ] 5.1.3 Verify testing workflow instructions work with actual test scenarios
     - [ ] 5.1.4 Test debugging workflow with real error scenarios
   - [ ] 5.2 Validate cross-references and links
-    - [ ] 5.2.1 Check all internal links between instruction files
-    - [ ] 5.2.2 Verify references to `/docs/` and `/tasks/` content are accurate
-    - [ ] 5.2.3 Test links from GEMINI.md to copilot-instructions.md sections
+    - [x] 5.2.1 Check all internal links between instruction files
+    - [x] 5.2.2 Verify references to `/docs/` and `/tasks/` content are accurate
+    - [x] 5.2.3 Test links from GEMINI.md to copilot-instructions.md sections
   - [ ] 5.3 Test with both AI assistants
-    - [ ] 5.3.1 Validate GitHub Copilot can follow workflow routing logic
-    - [ ] 5.3.2 Test Gemini CLI integration with MCP server documentation
-    - [ ] 5.3.3 Verify both assistants provide consistent guidance
+    - [x] 5.3.1 Validate GitHub Copilot can follow workflow routing logic
+    - [x] 5.3.2 Test Gemini CLI integration with MCP server documentation
+    - [x] 5.3.3 Verify both assistants provide consistent guidance
   - [ ] 5.4 Measure success metrics
-    - [ ] 5.4.1 Compare documentation line counts before and after restructure
-    - [ ] 5.4.2 Verify zero content duplication between main AI files and workflow instructions
-    - [ ] 5.4.3 Test time to find relevant workflow instructions (target: 15 seconds)
-    - [ ] 5.4.4 Document any remaining issues or improvements needed
+    - [x] 5.4.1 Compare documentation line counts before and after restructure
+    - [x] 5.4.2 Verify zero content duplication between main AI files and workflow instructions
+    - [x] 5.4.3 Test time to find relevant workflow instructions (target: 15 seconds)
+    - [x] 5.4.4 Document any remaining issues or improvements needed
