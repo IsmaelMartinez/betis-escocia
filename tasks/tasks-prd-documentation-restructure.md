@@ -33,7 +33,7 @@
   - [x] 1.3 Create `docs/historical/superseded-docs/` directory for version control during migration
   - [x] 1.4 Document current file sizes and structure for comparison metrics
 
-- [ ] 2.0 Create Workflow-Specific Instruction Files
+- [x] 2.0 Create Workflow-Specific Instruction Files
   - [x] 2.1 Create template structure for workflow instruction files with update guidelines
   - [x] 2.2 Create `.github/instructions/development.instructions.md` for code development patterns
     - [x] 2.2.1 Extract architecture patterns from current copilot-instructions.md
@@ -59,21 +59,21 @@
     - [x] 2.6.3 Add code cleanup and optimization patterns
 
 - [ ] 3.0 Restructure Main AI Instruction Files
-  - [ ] 3.1 Transform `.github/copilot-instructions.md` into comprehensive router
-    - [ ] 3.1.1 Create routing decision tree for workflow selection
-    - [ ] 3.1.2 Consolidate critical quick reference sections
-    - [ ] 3.1.3 Add links to specialized workflow instruction files
-    - [ ] 3.1.4 Include decision flow guidance for updating instructions
-    - [ ] 3.1.5 Remove duplicated content that now exists in workflow files
-  - [ ] 3.2 Streamline `GEMINI.md` as lightweight reference layer
-    - [ ] 3.2.1 Remove duplicated content from copilot-instructions.md
-    - [ ] 3.2.2 Keep only Gemini-specific features (MCP servers, CLI workflows)
-    - [ ] 3.2.3 Add clear references to sections in copilot-instructions.md
-    - [ ] 3.2.4 Maintain MCP server configuration documentation
-  - [ ] 3.3 Update `.github/instructions/README.md` with workflow routing index
-    - [ ] 3.3.1 Create overview of all workflow instruction files
-    - [ ] 3.3.2 Add decision matrix for selecting appropriate workflow
-    - [ ] 3.3.3 Include integration with existing create-prd → generate-tasks → process-tasks workflow
+  - [x] 3.1 Transform `.github/copilot-instructions.md` into comprehensive router
+    - [x] 3.1.1 Create routing decision tree for workflow selection
+    - [x] 3.1.2 Consolidate critical quick reference sections
+    - [x] 3.1.3 Add links to specialized workflow instruction files
+    - [x] 3.1.4 Include decision flow guidance for updating instructions
+    - [x] 3.1.5 Remove duplicated content that now exists in workflow files
+  - [x] 3.2 Streamline `GEMINI.md` as lightweight reference layer
+    - [x] 3.2.1 Remove duplicated content from copilot-instructions.md
+    - [x] 3.2.2 Keep only Gemini-specific features (MCP servers, CLI workflows)
+    - [x] 3.2.3 Add clear references to sections in copilot-instructions.md
+    - [x] 3.2.4 Maintain MCP server configuration documentation
+  - [x] 3.3 Update `.github/instructions/README.md` with workflow routing index
+    - [x] 3.3.1 Create overview of all workflow instruction files
+    - [x] 3.3.2 Add decision matrix for selecting appropriate workflow
+    - [x] 3.3.3 Include integration with existing create-prd → generate-tasks → process-tasks workflow
 
 - [ ] 4.0 Consolidate and Migrate Testing Documentation
   - [ ] 4.1 Create `docs/testing/` directory structure

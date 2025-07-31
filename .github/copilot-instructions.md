@@ -14,178 +14,22 @@ This project uses Storybook v9.0.18. Key changes and considerations for AI assis
 - **Vitest Addon**: `@storybook/addon-vitest` is integrated for component testing and is the recommended approach over the older test runner. This enables the full Storybook Test experience.
 - **Breaking Changes**: Be aware of other breaking changes in Storybook 9, such as Node.js 20+, Next.js 14+, and Vite 5+ requirements. Refer to the official Storybook migration guide for a complete list.
 
-## Critical Architecture Patterns
+## Workflow Routing
 
-### Feature Flag System (Flagsmith)
+This document serves as a router to direct you to the appropriate workflow-specific instructions. Please select the workflow that best matches your current task:
 
-- **All features disabled by default** - requires explicit activation in Flagsmith dashboard
-- **Never use environment variables for new flags** - migrate to Flagsmith API
-- **Pattern**: Check flags with `await hasFeature('flag-name')` or `await getValue('flag-name')`
-- **Debugging**: Enable with `NEXT_PUBLIC_FLAGSMITH_DEBUG=true`
-- **Config required**: `NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID` (starts with `ser_` in production)
+- **Development**: For code development patterns, architectural decisions, and integration patterns.
+  - Reference: `@.github/instructions/development.instructions.md`
+- **Testing**: For testing strategies, mocking patterns, and test coverage.
+  - Reference: `@.github/instructions/testing.instructions.md`
+- **Debugging**: For problem-solving, common pitfalls, and error resolution.
+  - Reference: `@.github/instructions/debugging.instructions.md`
+- **Deployment**: For CI/CD workflows, environment setup, and deployment patterns.
+  - Reference: `@.github/instructions/deployment.instructions.md`
+- **Maintenance**: For refactoring, dependency management, and code optimization.
+  - Reference: `@.github/instructions/maintenance.instructions.md`
 
-### Authentication Flow (Clerk + Supabase)
-
-- **Dual pattern**: Anonymous submissions + authenticated user management
-- **Server-side**: Always use `getAuth()` and `currentUser()` for metadata access
-- **API protection**: Import `checkAdminRole()` from `@/lib/adminApiProtection`
-- **Role hierarchy**: `admin` > `moderator` > `user` (stored in `publicMetadata.role`)
-- **Token passing**: Use `getAuthenticatedSupabaseClient(clerkToken)` for RLS
-
-### API Route Patterns
-
-```typescript
-// Standard protected API route structure
-import { getAuth, currentUser } from "@clerk/nextjs/server";
-import { checkAdminRole } from "@/lib/adminApiProtection";
-
-export async function POST(request: NextRequest) {
-  const { user, isAdmin, error } = await checkAdminRole();
-  if (!isAdmin) return NextResponse.json({ error }, { status: 401 });
-
-  // For user-specific data, use authenticated Supabase client
-  const { getToken } = getAuth(request);
-  const token = await getToken({ template: "supabase" });
-  const supabase = getAuthenticatedSupabaseClient(token);
-}
-```
-
-### Database Integration (Supabase)
-
-- **RLS enabled** on all user tables - always use authenticated client for user data
-- **User linking**: Automatic email-based association via Clerk webhooks
-- **Cache strategy**: Use `classification_cache` table pattern for external API data
-- **Cleanup**: Implement TTL patterns (see `cleanup_old_rsvps()` function)
-
-## Development Workflows
-
-### Testing Strategy
-
-- **Unit tests**: Jest with `@swc/jest`, placed in `tests/unit/`
-- **Integration tests**: API routes in `tests/integration/`
-- **E2E tests**: Playwright with Clerk authentication pre-setup
-- **Component tests**: Storybook v9 with Vitest addon integration
-- **CI/CD Pipeline**: GitHub Actions with comprehensive checks (ESLint, TypeScript, Storybook build, Jest, Playwright, Lighthouse)
-- **Mocking pattern**: Always mock at module level before imports
-
-```typescript
-jest.mock("@/lib/supabase", () => ({ supabase: { from: jest.fn() } }));
-```
-
-#### Critical Testing Patterns (Learned from Contact/RSVP API tests)
-
-**ES Module Import Issues**: Jest fails with Clerk's ES modules. **SOLUTION**: Mock Clerk before ANY imports:
-
-```typescript
-// Mock Clerk before any other imports
-jest.mock("@clerk/nextjs/server", () => ({
-  getAuth: jest.fn(() => ({
-    userId: null,
-    getToken: jest.fn(() => Promise.resolve(null)),
-  })),
-}));
-```
-
-**Supabase Query Builder Mocking**: Must match actual API chain structure:
-
-```typescript
-// Correct pattern - supports .from().select().eq() chaining
-jest.mock("@/lib/supabase", () => {
-  const mockFrom = jest.fn();
-  return { supabase: { from: mockFrom } };
-});
-
-// In tests, mock the full chain:
-(supabase.from as jest.Mock).mockReturnValue({
-  select: jest.fn(() => ({
-    eq: jest.fn(() => Promise.resolve({ data: [], error: null })),
-  })),
-});
-```
-
-**Security Function Mocking**: Avoid `jest.requireActual()` - causes conflicts with test spies:
-
-```typescript
-// GOOD - Simple mocks without requireActual
-jest.mock("@/lib/security", () => ({
-  __esModule: true,
-  sanitizeObject: jest.fn((obj) => obj),
-  validateEmail: jest.fn(() => ({ isValid: true })),
-  checkRateLimit: jest.fn(() => ({
-    allowed: true,
-    remaining: 2,
-    resetTime: Date.now() + 100000,
-  })),
-}));
-```
-
-**Complete Mock Objects**: Rate limit mocks need ALL required properties (`allowed`, `remaining`, `resetTime`)
-
-**API Route Test Coverage**: For each endpoint, test: success cases, validation failures, rate limiting, database errors, edge cases (not found, empty data)
-
-#### Comprehensive Test Implementation Learnings (Current Coverage: 13.26%)
-
-**Successfully Tested API Routes**: Trivia (100%), RSVP (79.54%), Contact (63.15%), Admin Roles (86.88%), Admin Users (88%), Clerk Webhook (100%)
-
-**Webhook Testing Pattern**: For Clerk webhooks, test user.created/updated/deleted events, header validation, signature verification, data linking/unlinking, missing data edge cases, and database errors.
-
-**NextResponse Mocking**: Establish consistent NextResponse mocking across all API tests:
-
-```typescript
-jest.mock("next/server", () => ({
-  NextResponse: {
-    json: jest.fn((data, options) => ({ data, ...options })),
-  },
-}));
-```
-
-**Complete Mock Objects**: Rate limit mocks need ALL required properties (`allowed`, `remaining`, `resetTime`). Security function mocks should avoid `jest.requireActual()` to prevent conflicts with test spies.
-
-**Test Coverage Verification**: Always run `npm test -- --coverage` to verify actual coverage percentages instead of estimates.
-
-### Environment Setup Requirements
-
-```bash
-# Core services
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-CLERK_SECRET_KEY=
-
-# Feature flags (required)
-NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID=
-
-# Development helpers
-NEXT_PUBLIC_DEBUG_MODE=true
-NEXT_PUBLIC_FLAGSMITH_DEBUG=true
-```
-
-### Local Development Commands
-
-- `npm run dev` - Starts with Turbopack
-- `npm run storybook` - Starts Storybook development server
-- `npm run build-storybook` - Builds static Storybook for deployment
-- `npm run test:e2e` - Playwright tests (requires dev server)
-- `npm test` - Jest unit/integration tests
-- `npm run lint` - ESLint with Next.js config
-
-### CI/CD Pipeline Structure
-
-The GitHub Actions workflow (`enhanced-deploy.yml`) runs comprehensive quality checks:
-
-```
-Pipeline Jobs (run in parallel):
-├── lint (ESLint)
-├── type-check (TypeScript)
-├── storybook-build (Component Documentation)
-├── jest-tests (Unit/Integration)
-├── e2e-tests (Playwright)
-└── build-and-lighthouse (Final build + Lighthouse audit)
-```
-
-All quality gate jobs must pass before the final build and deployment step. Storybook build artifacts are uploaded for 30 days retention.
-
-### Structured Feature Development Workflow
+## Structured Feature Development Workflow
 
 For systematic feature development with AI assistance, use the structured workflow instructions:
 
@@ -213,28 +57,6 @@ When completing PRDs and their associated tasks:
 8. **Merge Documentation**: Merge any research/comparison docs into existing documentation (e.g., feature flag comparisons into main feature flag docs)
 
 This workflow ensures completed work is properly archived while keeping active planning documents in the `/tasks` folder.
-
-## Component & Page Patterns
-
-### Secure Component Pattern
-
-```tsx
-import { hasFeature } from "@/lib/flagsmith";
-
-export default async function MyComponent() {
-  const isEnabled = await hasFeature("my-feature-flag");
-  if (!isEnabled) return null;
-
-  return <div>Feature content</div>;
-}
-```
-
-### Mobile-First Styling
-
-- **Always start with mobile** breakpoints, scale up
-- **Betis branding**: `bg-gradient-to-r from-green-600 to-green-700` (#00A651)
-- **Gold accents**: `text-yellow-400` for highlights
-- **Responsive navigation**: Hamburger menu pattern in `components/Layout.tsx`
 
 ## Critical File Locations
 
@@ -270,67 +92,6 @@ export default async function MyComponent() {
 2. If stale, fetch from external API
 3. Update cache with TTL
 4. Return cached data with source indicator
-
-## Common Pitfalls to Avoid
-
-- **Strategic Task Deferral**: When encountering unexpectedly complex or time-consuming tasks, consider deferring them to focus on more manageable tasks to maintain momentum and avoid getting stuck.
-- **Don't mock Clerk incorrectly** - use `getAuth()` and `currentUser()` consistently
-- **Avoid hardcoded role checks** - use `checkAdminRole()` utility
-- **Don't forget RLS** - user data requires authenticated Supabase client
-- **Test environment isolation** - use separate Flagsmith environments
-- **Always use latest stable versions** - research current library versions before implementation to ensure security, performance, and access to newest features
-- **Verify library version compatibility** - ensure that all libraries, especially those related to styling (e.g., Tailwind CSS, PostCSS) and build processes (e.g., Next.js, Storybook), are compatible with each other to avoid integration issues and unexpected behavior.
-
-### Form Validation Testing Learnings (Task 3.4 - COMPLETED)
-
-Successfully implemented comprehensive form validation testing achieving 50% coverage for `formValidation.ts` with 31 test scenarios. Key learnings:
-
-#### Validation Rule Precedence Critical Understanding
-
-Form validation follows strict precedence order that affects test expectations:
-
-1. **Required validation** → 2. **Length validation** → 3. **Pattern validation** → 4. **Custom validation**
-
-**Example**: Phone number validation checks minLength (10 chars) BEFORE custom pattern validation, so tests must expect length errors for short inputs, not pattern errors.
-
-#### Security Function Mocking Best Practices
-
-```typescript
-// Realistic mocking that simulates actual behavior
-jest.mock("@/lib/security", () => ({
-  __esModule: true,
-  sanitizeInput: jest.fn((value) => value?.trim() || ""),
-  validateInputLength: jest.fn((value, max) => ({
-    isValid: !value || value.length <= max,
-    sanitized: value,
-  })),
-  validateEmail: jest.fn((email) => ({
-    isValid: email && email.includes("@") && email.includes("."),
-  })),
-}));
-```
-
-#### Spanish Localization Testing
-
-All form validation supports Spanish error messages - test scenarios must validate proper localized error text:
-
-```typescript
-expect(validateField("", rules.required)).toEqual({
-  isValid: false,
-  error: "Este campo es obligatorio",
-});
-```
-
-#### Comprehensive Test Coverage Structure
-
-- **validateField tests**: 8 scenarios (required, pattern, length validation)
-- **validateForm tests**: 3 scenarios (multiple fields, error aggregation)
-- **commonValidationRules tests**: 15 scenarios (email, phone, text, textarea)
-- **Edge cases**: 5 scenarios (null handling, boundary values, special characters)
-
-#### Test Organization Best Practices
-
-Structure tests by function, then by validation type, with clear describe blocks for maintainability. Include edge cases for null values, empty strings, whitespace-only input, and boundary length values.
 
 ## Additional Resources
 
