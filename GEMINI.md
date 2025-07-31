@@ -288,6 +288,8 @@ With these steps, your Gemini CLI will be fully configured to leverage the Clerk
 
 This section outlines areas for future development and optimization. It's crucial to regularly review these points to assess progress and re-prioritize based on current project needs and completed work.
 
+-   **Strategic Task Deferral:** When encountering unexpectedly complex or time-consuming tasks, consider deferring them to focus on more manageable tasks to maintain momentum and avoid getting stuck. This allows for a more agile approach to development.
+
 1.  **Centralized State Management:** For more complex UIs, consider a state management library (e.g., Zustand, Jotai, React Context API) if not already implicitly handled by Next.js/React Query patterns.
     *   **Review Note:** This remains a relevant consideration as UI complexity grows. No explicit solution has been implemented to deprecate this.
 2.  **Robust Error Handling & Logging:** Review error boundaries (`src/app/error.tsx`, `src/app/global-error.tsx`, `src/components/ErrorBoundary.tsx`) and ensure comprehensive logging (e.g., Sentry, LogRocket) is in place for production.

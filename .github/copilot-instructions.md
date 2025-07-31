@@ -273,7 +273,7 @@ export default async function MyComponent() {
 
 ## Common Pitfalls to Avoid
 
-- **Never bypass feature flags** - always check before rendering features
+- **Strategic Task Deferral**: When encountering unexpectedly complex or time-consuming tasks, consider deferring them to focus on more manageable tasks to maintain momentum and avoid getting stuck.
 - **Don't mock Clerk incorrectly** - use `getAuth()` and `currentUser()` consistently
 - **Avoid hardcoded role checks** - use `checkAdminRole()` utility
 - **Don't forget RLS** - user data requires authenticated Supabase client
