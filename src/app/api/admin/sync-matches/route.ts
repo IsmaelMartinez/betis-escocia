@@ -4,6 +4,19 @@ import { supabase } from '@/lib/supabase';
 import { checkRateLimit, getClientIP } from '@/lib/security';
 import { checkAdminRole } from '@/lib/adminApiProtection';
 
+/**
+ * Determine match result label based on Betis home/away and score
+ */
+function getMatchResult(isBetisHome: boolean, homeScore: number, awayScore: number): string {
+  if (homeScore > awayScore) {
+    return 'HOME_WIN';
+  }
+  if (awayScore > homeScore) {
+    return 'AWAY_WIN';
+  }
+  return 'DRAW';
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Check admin role
@@ -59,18 +72,12 @@ export async function POST(request: NextRequest) {
         if (match.status === 'FINISHED' && match.score?.fullTime) {
           const homeScoreValue = match.score.fullTime.home;
           const awayScoreValue = match.score.fullTime.away;
-          
-          if (homeScoreValue !== null && awayScoreValue !== null) {
+
+          if (homeScoreValue != null && awayScoreValue != null) {
             homeScore = homeScoreValue;
             awayScore = awayScoreValue;
-            
-            if (homeScoreValue > awayScoreValue) {
-              result = isBetisHome ? 'HOME_WIN' : 'AWAY_WIN';
-            } else if (homeScoreValue < awayScoreValue) {
-              result = isBetisHome ? 'AWAY_WIN' : 'HOME_WIN';
-            } else {
-              result = 'DRAW';
-            }
+            // compute result label
+            result = getMatchResult(isBetisHome, homeScoreValue, awayScoreValue);
           }
         }
         
