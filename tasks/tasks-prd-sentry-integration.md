@@ -24,16 +24,16 @@
   - [x] 1.3 Create `sentry.client.config.ts` and initialize Sentry for the client-side.
   - [x] 1.4 Create `sentry.server.config.ts` and initialize Sentry for the server-side.
   - [x] 1.5 Configure `next.config.js` to wrap with Sentry's webpack plugin.
-- [ ] 2.0 Error Capture Implementation
+- [x] 2.0 Error Capture Implementation
   - [x] 2.1 Implement Sentry Error Boundaries in `src/app/layout.tsx` or `src/app/error.tsx` to catch React component errors.
   - [x] 2.2 Verify automatic capture of unhandled JavaScript exceptions from the frontend.
   - [x] 2.3 Verify automatic capture of unhandled exceptions from Next.js API routes (backend).
   - [x] 2.4 Configure Sentry to capture network request failures.
 - [ ] 3.0 Contextual Data Enhancement
-  - [ ] 3.1 Integrate Sentry with Clerk to associate errors with authenticated user IDs.
-  - [ ] 3.2 Verify that browser, OS, and device information are automatically included with errors.
-  - [ ] 3.3 Configure Sentry to include request details (URL, method, headers, sanitized body) for backend errors.
-  - [ ] 3.4 Implement breadcrumbs to log user actions and system events leading up to an error.
+  - [x] 3.1 Integrate Sentry with Clerk to associate errors with authenticated user IDs.
+  - [x] 3.2 Verify that browser, OS, and device information are automatically included with errors.
+  - [x] 3.3 Configure Sentry to include request details (URL, method, headers, sanitized body) for backend errors.
+  - [x] 3.4 Implement breadcrumbs to log user actions and system events leading up to an error.
 - [ ] 4.0 Performance Monitoring Setup
   - [ ] 4.1 Configure Sentry to track Core Web Vitals (LCP, FID, CLS).
   - [ ] 4.2 Implement custom transaction tracing for critical user flows (e.g., user login, form submissions).

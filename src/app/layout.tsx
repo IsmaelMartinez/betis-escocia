@@ -6,6 +6,7 @@ import OfflineDetector from "@/components/OfflineDetector";
 import { Analytics } from "@vercel/analytics/next";
 import * as Sentry from "@sentry/nextjs";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import SentryUserContext from "@/components/SentryUserContext";
 
 import { ClerkProvider } from '@clerk/nextjs';
 import { getEnabledNavigationItemsAsync, initializeFeatureFlags } from '@/lib/featureFlags';
@@ -155,6 +156,7 @@ export default async function RootLayout({
           afterSignUpUrl="/dashboard"
         >
           <FlagsmithRefresher />
+          <SentryUserContext />
           <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
             <Layout debugInfo={debugInfo}>
               {children}
