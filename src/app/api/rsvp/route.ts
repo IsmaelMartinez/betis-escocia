@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import * as Sentry from "@sentry/nextjs";
 import { supabase, type RSVP } from '@/lib/supabase';
 import { emailService, type RSVPEmailData } from '@/lib/emailService';
 import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, getClientIP } from '@/lib/security';
@@ -97,6 +98,16 @@ export async function GET(request: NextRequest) {
 
 // POST - Submit new RSVP
 export async function POST(request: NextRequest) {
+  return Sentry.startSpan(
+    {
+      op: "http.server",
+      name: "POST /api/rsvp",
+      attributes: {
+        method: "POST",
+        route: "/api/rsvp",
+      },
+    },
+    async (span) => {
   try {
     const body = await request.json();
     const { name, email, attendees, message, whatsappInterest, matchId, userId } = sanitizeObject(body);
@@ -346,6 +357,7 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+});
 }
 
 // DELETE - Remove RSVP (admin function)

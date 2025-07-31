@@ -29,14 +29,14 @@
   - [x] 2.2 Verify automatic capture of unhandled JavaScript exceptions from the frontend.
   - [x] 2.3 Verify automatic capture of unhandled exceptions from Next.js API routes (backend).
   - [x] 2.4 Configure Sentry to capture network request failures.
-- [ ] 3.0 Contextual Data Enhancement
+- [x] 3.0 Contextual Data Enhancement
   - [x] 3.1 Integrate Sentry with Clerk to associate errors with authenticated user IDs.
   - [x] 3.2 Verify that browser, OS, and device information are automatically included with errors.
   - [x] 3.3 Configure Sentry to include request details (URL, method, headers, sanitized body) for backend errors.
   - [x] 3.4 Implement breadcrumbs to log user actions and system events leading up to an error.
 - [ ] 4.0 Performance Monitoring Setup
-  - [ ] 4.1 Configure Sentry to track Core Web Vitals (LCP, FID, CLS).
-  - [ ] 4.2 Implement custom transaction tracing for critical user flows (e.g., user login, form submissions).
+  - [x] 4.1 Configure Sentry to track Core Web Vitals (LCP, FID, CLS).
+  - [x] 4.2 Implement custom transaction tracing for critical user flows (e.g., user login, form submissions).
 - [ ] 5.0 Release Management Integration
   - [ ] 5.1 Configure Sentry to automatically tag errors with the current application version/release.
   - [ ] 5.2 Set up source map uploading to Sentry as part of the build process (e.g., in `next.config.js` and CI/CD).
