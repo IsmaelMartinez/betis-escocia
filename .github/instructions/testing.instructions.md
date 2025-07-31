@@ -158,7 +158,4 @@ Each endpoint should test: success cases, validation failures, rate limiting, da
 - Clerk authentication is pre-setup in `playwright/global.setup.ts`.
 - Run E2E tests with `npm run test:e2e`.
 
-## Notes
-- This document focuses on organizing existing content rather than creating new documentation.
-- All workflow instruction files should reference existing `/docs` and `/tasks` content instead of duplicating it.
-- Maintain version control during migration by keeping old files until restructure is validated.
+

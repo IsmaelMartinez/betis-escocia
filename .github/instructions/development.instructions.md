@@ -85,7 +85,4 @@ export default async function MyComponent() {
 - **Gold accents**: `text-yellow-400` for highlights.
 - **Responsive navigation**: Hamburger menu pattern in `components/Layout.tsx`.
 
-## Notes
-- This document focuses on organizing existing content rather than creating new documentation.
-- All workflow instruction files should reference existing `/docs` and `/tasks` content instead of duplicating it.
-- Maintain version control during migration by keeping old files until restructure is validated.
+

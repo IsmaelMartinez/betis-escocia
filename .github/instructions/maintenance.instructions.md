@@ -50,7 +50,4 @@ This document outlines the guidelines and patterns for code maintenance, refacto
 #### Centralized State Management
 - For more complex UIs, consider a state management library (e.g., Zustand, Jotai, React Context API) if not already implicitly handled by Next.js/React Query patterns.
 
-## Notes
-- This document focuses on organizing existing content rather than creating new documentation.
-- All workflow instruction files should reference existing `/docs` and `/tasks` content instead of duplicating it.
-- Maintain version control during migration by keeping old files until restructure is validated.
+

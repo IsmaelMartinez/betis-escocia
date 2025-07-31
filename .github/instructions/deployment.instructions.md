@@ -54,7 +54,4 @@ This document outlines the guidelines and patterns for CI/CD and deployment work
   ```
 - **Validation Steps**: Verify that all necessary environment variables are correctly configured in the deployment environment to prevent runtime errors.
 
-## Notes
-- This document focuses on organizing existing content rather than creating new documentation.
-- All workflow instruction files should reference existing `/docs` and `/tasks` content instead of duplicating it.
-- Maintain version control during migration by keeping old files until restructure is validated.
+

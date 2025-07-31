@@ -60,7 +60,4 @@ This document outlines the guidelines and patterns for debugging and problem-sol
 - Refer to `docs/historical/clerk-error-handling-test.md` for specific Clerk error handling scenarios.
 - Consult relevant ADRs in `docs/adr/` for architectural decisions that might impact debugging.
 
-## Notes
-- This document focuses on organizing existing content rather than creating new documentation.
-- All workflow instruction files should reference existing `/docs` and `/tasks` content instead of duplicating it.
-- Maintain version control during migration by keeping old files until restructure is validated.
+
