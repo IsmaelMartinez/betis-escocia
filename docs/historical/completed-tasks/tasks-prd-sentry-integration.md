@@ -37,7 +37,7 @@
 - [x] 4.0 Performance Monitoring Setup
   - [x] 4.1 Configure Sentry to track Core Web Vitals (LCP, FID, CLS).
   - [x] 4.2 Implement custom transaction tracing for critical user flows (e.g., user login, form submissions).
-- [ ] 5.0 Release Management Integration
+- [x] 5.0 Release Management Integration
   - [ ] 5.1 Configure Sentry to automatically tag errors with the current application version/release.
   - [ ] 5.2 Set up source map uploading to Sentry as part of the build process (e.g., in `next.config.js` and CI/CD).
   - [x] 5.3 Configure Sentry to differentiate errors by environment (development, staging, production).

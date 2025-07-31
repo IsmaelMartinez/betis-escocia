@@ -11,17 +11,7 @@ jest.mock('next/server', () => ({
 
 // Mock Clerk server utilities
 jest.mock('@clerk/nextjs/server', () => ({
-  getAuth: jest.fn((req) => {
-    const userId = req?.headers?.get('x-user-id') || null;
-    return {
-      userId,
-      getToken: jest.fn(() => Promise.resolve(userId ? 'mock-token' : null)),
-      sessionClaims: userId ? { sub: userId, azp: 'mock-azp', exp: 123, iat: 123, iss: 'mock-iss', nbf: 123, sid: 'mock-sid', aud: ['mock-aud'], org_id: 'mock-org-id', shp: 'mock-shp', primary_email: 'mock-email' } : null,
-      sessionId: userId ? 'mock-session-id' : null,
-      sessionStatus: userId ? 'active' : 'signed-out',
-      actor: null,
-    };
-  }),
+  getAuth: jest.fn(),
 }));
 
 // Mock Supabase functions
@@ -54,7 +44,7 @@ describe('/api/trivia', () => {
 
   describe('GET /api/trivia', () => {
     test('should return questions for unauthenticated user', async () => {
-      mockGetAuth.mockReturnValueOnce({ userId: null, getToken: jest.fn() });
+      mockGetAuth.mockReturnValueOnce({ userId: null, getToken: jest.fn() } as any);
       mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         limit: jest.fn().mockResolvedValue({ data: [{ id: 'q1', question_text: 'Q1', trivia_answers: [] }], error: null }),
@@ -69,7 +59,7 @@ describe('/api/trivia', () => {
     });
 
     test('should return questions for authenticated user who has not played today', async () => {
-      mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') });
+      mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') } as any);
       mockGetUserDailyTriviaScore.mockResolvedValueOnce({ success: true, data: null });
       mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
@@ -85,7 +75,7 @@ describe('/api/trivia', () => {
     });
 
     test('should return 403 for authenticated user who has already played today', async () => {
-      mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') });
+      mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') } as any);
       mockGetUserDailyTriviaScore.mockResolvedValueOnce({ success: true, data: { id: 's1', user_id: 'user1', daily_score: 3, timestamp: new Date().toISOString() } });
 
       const response = await getTriviaQuestions({} as any);
@@ -97,7 +87,7 @@ describe('/api/trivia', () => {
     });
 
     test('should return 500 if fetching questions fails', async () => {
-      mockGetAuth.mockReturnValueOnce({ userId: null, getToken: jest.fn() });
+      mockGetAuth.mockReturnValueOnce({ userId: null, getToken: jest.fn() } as any);
       mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         limit: jest.fn().mockResolvedValue({ data: null, error: { message: 'DB Error' } }),
@@ -113,7 +103,7 @@ describe('/api/trivia', () => {
 
   describe('POST /api/trivia', () => {
     test('should return 401 for unauthenticated user', async () => {
-      mockGetAuth.mockReturnValueOnce({ userId: null, getToken: jest.fn() });
+      mockGetAuth.mockReturnValueOnce({ userId: null, getToken: jest.fn() } as any);
 
       const response = await postTriviaScore({ json: () => Promise.resolve({ score: 5 }) } as any);
       const json = await response.json();
@@ -123,7 +113,7 @@ describe('/api/trivia', () => {
     });
 
     test('should return 400 for invalid score', async () => {
-      mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') });
+      mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') } as any);
 
       const response = await postTriviaScore({ json: () => Promise.resolve({ score: 'invalid' }) } as any);
       const json = await response.json();
@@ -133,7 +123,7 @@ describe('/api/trivia', () => {
     });
 
     test('should return 409 if user has already submitted score today', async () => {
-      mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') });
+      mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') } as any);
       mockGetUserDailyTriviaScore.mockResolvedValueOnce({ success: true, data: { id: 's1', user_id: 'user1', daily_score: 2, timestamp: new Date().toISOString() } });
 
       const response = await postTriviaScore({ json: () => Promise.resolve({ score: 5 }) } as any);
@@ -144,7 +134,7 @@ describe('/api/trivia', () => {
     });
 
     test('should successfully save score for authenticated user who has not played today', async () => {
-      mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') });
+      mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') } as any);
       mockGetUserDailyTriviaScore.mockResolvedValueOnce({ success: true, data: null });
       mockCreateUserTriviaScore.mockResolvedValueOnce({ success: true, data: { id: 's1', user_id: 'user1', daily_score: 5, timestamp: new Date().toISOString() } });
 
@@ -157,7 +147,7 @@ describe('/api/trivia', () => {
     });
 
     test('should return 500 if saving score fails', async () => {
-      mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') });
+      mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') } as any);
       mockGetUserDailyTriviaScore.mockResolvedValueOnce({ success: true, data: null });
       mockCreateUserTriviaScore.mockResolvedValueOnce({ success: false, error: 'Save Error' });
 
@@ -176,7 +166,7 @@ describe('/api/trivia/total-score-dashboard', () => {
   });
 
   test('should return 401 for unauthenticated user', async () => {
-    mockGetAuth.mockReturnValueOnce({ userId: null, getToken: jest.fn() });
+    mockGetAuth.mockReturnValueOnce({ userId: null, getToken: jest.fn() } as any);
 
     const response = await getTotalScoreDashboard({} as any);
     const json = await response.json();
@@ -186,7 +176,7 @@ describe('/api/trivia/total-score-dashboard', () => {
   });
 
   test('should return total score for authenticated user', async () => {
-    mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') });
+    mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') } as any);
     mockGetAuthenticatedSupabaseClient.mockReturnValue({
       from: jest.fn(() => ({
         select: jest.fn().mockReturnThis(),
@@ -203,7 +193,7 @@ describe('/api/trivia/total-score-dashboard', () => {
   });
 
   test('should return 0 if no scores found for authenticated user', async () => {
-    mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') });
+    mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') } as any);
     mockGetAuthenticatedSupabaseClient.mockReturnValue({
       from: jest.fn(() => ({
         select: jest.fn().mockReturnThis(),
@@ -219,7 +209,7 @@ describe('/api/trivia/total-score-dashboard', () => {
   });
 
   test('should return 500 if fetching total score fails', async () => {
-    mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') });
+    mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: jest.fn().mockResolvedValue('mock-token') } as any);
     mockGetAuthenticatedSupabaseClient.mockReturnValue({
       from: jest.fn(() => ({
         select: jest.fn().mockReturnThis(),

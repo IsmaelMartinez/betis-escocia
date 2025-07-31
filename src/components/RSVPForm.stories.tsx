@@ -81,8 +81,8 @@ export const PreFilledForm: Story = {
       lastName: 'Doe',
       emailAddresses: [{ emailAddress: 'john.doe@example.com' }],
       publicMetadata: { role: 'member' },
-      createdAt: new Date().toISOString(),
-      lastSignInAt: new Date().toISOString(),
+      createdAt: new Date(),
+      lastSignInAt: new Date(),
       imageUrl: 'https://example.com/avatar.jpg',
     });
     return <RSVPForm {...args} />;

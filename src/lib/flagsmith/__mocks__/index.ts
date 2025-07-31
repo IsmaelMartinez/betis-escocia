@@ -4,7 +4,7 @@ import { FlagsmithFeatureName, DEFAULT_FLAG_VALUES } from '../types';
 class MockFlagsmithManager {
   private featureFlags: Record<FlagsmithFeatureName, boolean> = DEFAULT_FLAG_VALUES as Record<FlagsmithFeatureName, boolean>;
 
-  constructor(initialFlags: Record<FlagsmithFeatureName, boolean> = {}) {
+  constructor(initialFlags: Partial<Record<FlagsmithFeatureName, boolean>> = {}) {
     this.featureFlags = { ...DEFAULT_FLAG_VALUES, ...initialFlags };
   }
 
@@ -36,7 +36,7 @@ class MockFlagsmithManager {
 
   // Mock reset, does nothing in Storybook
   reset(): void {
-    this.featureFlags = {};
+    this.featureFlags = { ...DEFAULT_FLAG_VALUES };
   }
 }
 

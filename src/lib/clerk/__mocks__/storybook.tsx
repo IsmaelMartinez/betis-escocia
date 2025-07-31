@@ -2,59 +2,48 @@
 // This file provides mocks for Clerk hooks for Storybook.
 
 import React from 'react';
-import { UserResource } from '@clerk/types';
 
-// Define a more specific type for the mock user
-interface MockUser extends Partial<UserResource> {
+// Simplified mock user type to avoid complex interface compatibility issues
+interface MockUser {
   id: string;
   firstName: string;
   lastName: string;
   emailAddresses: Array<{ emailAddress: string }>;
   publicMetadata: { role: string };
-  createdAt: string;
-  lastSignInAt: string;
+  createdAt: Date;
+  lastSignInAt: Date;
   imageUrl: string;
 }
 
-// Enhanced mock function replacement for jest.fn()
-const mockFn = <T extends (...args: unknown[]) => unknown>(impl?: T) => {
-  let currentImpl = impl;
-  let mockReturn: ReturnType<T> | undefined;
-  let hasMockReturn = false;
-
-  const mockFunc: T & {
-    mockReturnValue: (value: ReturnType<T>) => typeof mockFunc;
-    mockImplementation: (newImpl: T) => typeof mockFunc;
-    mockReset: () => typeof mockFunc;
-  } = ((...args: Parameters<T>) => {
-    if (hasMockReturn) {
-      return mockReturn;
-    } else if (currentImpl) {
-      return currentImpl(...args);
+// Simple mock function that mimics jest.fn() behavior
+const mockFn = (impl?: any): any => {
+  const fn = impl || (() => undefined);
+  fn.mockReturnValue = (value: any) => {
+    fn._mockReturnValue = value;
+    return fn;
+  };
+  fn.mockImplementation = (newImpl: any) => {
+    fn._mockImplementation = newImpl;
+    return fn;
+  };
+  fn.mockReset = () => {
+    delete fn._mockReturnValue;
+    delete fn._mockImplementation;
+    return fn;
+  };
+  
+  const wrappedFn = (...args: any[]) => {
+    if (fn._mockReturnValue !== undefined) {
+      return fn._mockReturnValue;
     }
-    return undefined;
-  });
-
-  mockFunc.mockReturnValue = (value: ReturnType<T>) => {
-    mockReturn = value;
-    hasMockReturn = true;
-    return mockFunc;
+    if (fn._mockImplementation) {
+      return fn._mockImplementation(...args);
+    }
+    return fn(...args);
   };
-
-  mockFunc.mockImplementation = (newImpl: T) => {
-    currentImpl = newImpl;
-    hasMockReturn = false;
-    return mockFunc;
-  };
-
-  mockFunc.mockReset = () => {
-    currentImpl = impl; // Reset to original implementation
-    mockReturn = undefined;
-    hasMockReturn = false;
-    return mockFunc;
-  };
-
-  return mockFunc;
+  
+  Object.assign(wrappedFn, fn);
+  return wrappedFn;
 };
 
 // Default mock user data
@@ -64,8 +53,8 @@ const DEFAULT_MOCK_USER: MockUser = {
   lastName: 'User',
   emailAddresses: [{ emailAddress: 'mock.user@example.com' }],
   publicMetadata: { role: 'user' },
-  createdAt: new Date().toISOString(),
-  lastSignInAt: new Date().toISOString(),
+  createdAt: new Date(),
+  lastSignInAt: new Date(),
   imageUrl: 'https://www.gravatar.com/avatar/?d=mp',
 };
 

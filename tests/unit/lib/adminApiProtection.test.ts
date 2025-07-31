@@ -18,7 +18,7 @@ jest.mock('next/server', () => ({
   },
 }));
 
-const mockAuth = auth as jest.Mock;
+const mockAuth = auth as unknown as jest.Mock;
 const mockCurrentUser = currentUser as jest.Mock;
 const mockNextResponseJson = NextResponse.json as jest.Mock;
 
