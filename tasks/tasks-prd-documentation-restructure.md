@@ -28,11 +28,10 @@
 ## Tasks
 
 - [ ] 1.0 Audit and Archive Current Documentation
-  - [ ] 1.1 Create backup copies of current `.github/copilot-instructions.md` and `GEMINI.md`
-  - [ ] 1.2 Analyze content overlap between current documentation files
-  - [ ] 1.3 Identify completed sections in `GEMINI.md` (Tasks 1.8, 1.9, form validation patterns) for migration
-  - [ ] 1.4 Create `docs/historical/superseded-docs/` directory for version control during migration
-  - [ ] 1.5 Document current file sizes and structure for comparison metrics
+  - [x] 1.1 Create backup copies of current `.github/copilot-instructions.md` and `GEMINI.md`
+  - [x] 1.2 Analyze content overlap between current documentation files
+  - [x] 1.3 Create `docs/historical/superseded-docs/` directory for version control during migration
+  - [x] 1.4 Document current file sizes and structure for comparison metrics
 
 - [ ] 2.0 Create Workflow-Specific Instruction Files
   - [ ] 2.1 Create template structure for workflow instruction files with update guidelines
