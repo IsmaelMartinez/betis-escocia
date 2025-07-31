@@ -1,24 +1,18 @@
----
-description: Guidelines and patterns for CI/CD and deployment workflows.
-globs:
-  - ".github/workflows/*.yml"
-  - "next.config.js"
-alwaysApply: false
----
 # Deployment Workflow Instructions
 
 ## Description
-This document outlines the guidelines and patterns for CI/CD and deployment workflows, covering GitHub Actions, Vercel deployment, and environment setup.
+This document outlines the guidelines and patterns for CI/CD and deployment workflows, specifically focusing on the project's integration with GitHub Actions and Vercel.
 
 ## Relevant Files
-- `.github/workflows/`: Contains GitHub Actions workflow definitions (e.g., `enhanced-deploy.yml`).
-- `next.config.js`: Next.js configuration, potentially including deployment-related settings.
+- `.github/workflows/enhanced-deploy.yml`: The primary GitHub Actions workflow definition.
+- `next.config.js`: Next.js configuration.
 - `.env.local`, `.env.development`, `.env.production`: Environment variable files.
 
 ## Guidelines
 
 ### CI/CD Pipeline Structure (GitHub Actions)
-- The GitHub Actions workflow (`enhanced-deploy.yml`) runs comprehensive quality checks:
+- The project utilizes a single, comprehensive GitHub Actions workflow: `enhanced-deploy.yml`.
+- This workflow runs a series of quality checks in parallel:
   ```
   Pipeline Jobs (run in parallel):
   ├── lint (ESLint)
@@ -30,14 +24,15 @@ This document outlines the guidelines and patterns for CI/CD and deployment work
   ```
 - All quality gate jobs must pass before the final build and deployment step.
 - Storybook build artifacts are uploaded for 30 days retention.
-- **Reference**: For more details, consult the specific workflow files in `.github/workflows/`.
+- **Reference**: For detailed job configurations, consult `.github/workflows/enhanced-deploy.yml`.
 
-### Vercel Deployment Patterns
-- This project is designed for deployment on Vercel, leveraging Next.js capabilities.
-- Ensure `next.config.js` is configured appropriately for Vercel deployment if custom settings are required.
+### Vercel Deployment
+- The project is deployed to Vercel via its native Git integration.
+- Upon a push to the `main` branch (or a pull request merge), Vercel automatically triggers a build using `npm run build`.
+- There are no separate Vercel-specific deployment scripts or patterns beyond the standard Next.js build process.
 
 ### Environment Setup Requirements
-- Ensure the following environment variables are set for different environments (development, production):
+- Ensure the following environment variables are set for both local development and Vercel deployments:
   ```bash
   # Core services
   NEXT_PUBLIC_SUPABASE_URL=
@@ -53,5 +48,3 @@ This document outlines the guidelines and patterns for CI/CD and deployment work
   NEXT_PUBLIC_FLAGSMITH_DEBUG=true
   ```
 - **Validation Steps**: Verify that all necessary environment variables are correctly configured in the deployment environment to prevent runtime errors.
-
-
