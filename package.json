@@ -24,7 +24,7 @@
     "start-mcp-servers": "(cd mcp-servers/clerk-mcp && npm start &) && (cd mcp-servers/flagsmith-mcp && npm start &)"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.25.5",
+    "@clerk/nextjs": "^6.28.1",
     "@sentry/nextjs": "^10.0.0",
     "@supabase/supabase-js": "^2.52.1",
     "@vercel/analytics": "^1.5.0",
