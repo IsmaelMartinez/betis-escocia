@@ -58,7 +58,7 @@
     - [x] 2.6.2 Reference documentation update procedures
     - [x] 2.6.3 Add code cleanup and optimization patterns
 
-- [ ] 3.0 Restructure Main AI Instruction Files
+- [x] 3.0 Restructure Main AI Instruction Files
   - [x] 3.1 Transform `.github/copilot-instructions.md` into comprehensive router
     - [x] 3.1.1 Create routing decision tree for workflow selection
     - [x] 3.1.2 Consolidate critical quick reference sections
@@ -76,17 +76,17 @@
     - [x] 3.3.3 Include integration with existing create-prd → generate-tasks → process-tasks workflow
 
 - [ ] 4.0 Consolidate and Migrate Testing Documentation
-  - [ ] 4.1 Create `docs/testing/` directory structure
-  - [ ] 4.2 Create `docs/testing/testing-patterns.md` from current documentation
-    - [ ] 4.2.1 Migrate comprehensive test implementation patterns from `GEMINI.md`
-    - [ ] 4.2.2 Include ES module handling and mocking strategies
-    - [ ] 4.2.3 Add form validation testing patterns
-    - [ ] 4.2.4 Reference specific test files in project for examples
-  - [ ] 4.3 Create `docs/testing/api-testing-guide.md`
-    - [ ] 4.3.1 Consolidate API route testing patterns
-    - [ ] 4.3.2 Include webhook testing patterns for Clerk integration
-    - [ ] 4.3.3 Add security function mocking best practices
-    - [ ] 4.3.4 Reference actual test files for implementation examples
+  - [x] 4.1 Create `docs/testing/` directory structure
+  - [x] 4.2 Create `docs/testing/testing-patterns.md` from current documentation
+    - [x] 4.2.1 Migrate comprehensive test implementation patterns from `GEMINI.md`
+    - [x] 4.2.2 Include ES module handling and mocking strategies
+    - [x] 4.2.3 Add form validation testing patterns
+    - [x] 4.2.4 Reference specific test files in project for examples
+  - [x] 4.3 Create `docs/testing/api-testing-guide.md`
+    - [x] 4.3.1 Consolidate API route testing patterns
+    - [x] 4.3.2 Include webhook testing patterns for Clerk integration
+    - [x] 4.3.3 Add security function mocking best practices
+    - [x] 4.3.4 Reference actual test files for implementation examples
 
 - [ ] 5.0 Validate and Test New Documentation Structure
   - [ ] 5.1 Test routing logic with sample development scenarios
