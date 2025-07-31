@@ -28,7 +28,7 @@ test.describe('RSVP Page Happy Path', () => {
     await page.goto('/rsvp');
 
     // 2.2.3 Verify basic navigation
-    await page.getByRole('link', { name: 'Inicio' }).click();
+    await page.locator('header a[href="/"]').click();
     await expect(page).toHaveURL('/');
   });
 });

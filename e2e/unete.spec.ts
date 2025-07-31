@@ -27,7 +27,7 @@ test.describe('Unete Page Happy Path', () => {
     await page.goto('/unete');
 
     // 2.6.3 Verify basic navigation
-    await page.getByRole('link', { name: 'Inicio' }).click();
+    await page.locator('header a[href="/"]').click();
     await expect(page).toHaveURL('/');
   });
 });

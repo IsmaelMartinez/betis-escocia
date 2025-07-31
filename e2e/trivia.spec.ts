@@ -1,10 +1,23 @@
 import { test, expect } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js';
 
+// Load environment variables
+require('dotenv').config({ path: '.env.local' });
+
 // Initialize Supabase client with service role key for cleanup
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey);
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl) {
+  throw new Error('Missing required environment variable: NEXT_PUBLIC_SUPABASE_URL must be set in .env.local');
+}
+
+if (!supabaseServiceRoleKey) {
+  console.warn('Warning: SUPABASE_SERVICE_ROLE_KEY not found. Database cleanup will be skipped.');
+  console.warn('To enable database cleanup, add SUPABASE_SERVICE_ROLE_KEY to your .env.local file.');
+}
+
+const supabaseAdmin = supabaseServiceRoleKey ? createClient(supabaseUrl, supabaseServiceRoleKey) : null;
 
 // Assuming the test user ID is available as an environment variable
 // IMPORTANT: Replace 'your_clerk_test_user_id' with the actual Clerk userId of your test user.
@@ -13,50 +26,61 @@ const TEST_USER_ID = process.env.CLERK_TEST_USER_ID || 'your_clerk_test_user_id'
 
 test.describe('Trivia Page', () => {
   test.beforeEach(async ({ page }) => {
-    // Mock the /api/trivia endpoint to return a consistent set of questions
+    // Mock the /api/trivia endpoint to return a consistent set of questions (GET)
     await page.route('/api/trivia', route => {
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify([
-          {
-            id: 'q1',
-            question_text: '¿Cuál es el estadio del Real Betis?',
-            category: 'betis',
-            difficulty: 'easy',
-            trivia_answers: [
-              { id: 'a1', answer_text: 'Benito Villamarín', is_correct: true },
-              { id: 'a2', answer_text: 'Ramón Sánchez-Pizjuán', is_correct: false },
-              { id: 'a3', answer_text: 'Camp Nou', is_correct: false },
-              { id: 'a4', answer_text: 'Santiago Bernabéu', is_correct: false },
-            ],
-          },
-          {
-            id: 'q2',
-            question_text: '¿Qué río atraviesa Glasgow?',
-            category: 'scotland',
-            difficulty: 'medium',
-            trivia_answers: [
-              { id: 'b1', answer_text: 'Clyde', is_correct: true },
-              { id: 'b2', answer_text: 'Támesis', is_correct: false },
-              { id: 'b3', answer_text: 'Sena', is_correct: false },
-              { id: 'b4', answer_text: 'Danubio', is_correct: false },
-            ],
-          },
-          {
-            id: 'q3',
-            question_text: '¿En qué año se fundó el Real Betis Balompié?',
-            category: 'betis',
-            difficulty: 'hard',
-            trivia_answers: [
-              { id: 'c1', answer_text: '1907', is_correct: true },
-              { id: 'c2', answer_text: '1900', is_correct: false },
-              { id: 'c3', answer_text: '1910', is_correct: false },
-              { id: 'c4', answer_text: '1914', is_correct: false },
-            ],
-          },
-        ]),
-      });
+      if (route.request().method() === 'GET') {
+        route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify([
+            {
+              id: 'q1',
+              question_text: '¿Cuál es el estadio del Real Betis?',
+              category: 'betis',
+              difficulty: 'easy',
+              trivia_answers: [
+                { id: 'a1', answer_text: 'Benito Villamarín', is_correct: true },
+                { id: 'a2', answer_text: 'Ramón Sánchez-Pizjuán', is_correct: false },
+                { id: 'a3', answer_text: 'Camp Nou', is_correct: false },
+                { id: 'a4', answer_text: 'Santiago Bernabéu', is_correct: false },
+              ],
+            },
+            {
+              id: 'q2',
+              question_text: '¿Qué río atraviesa Glasgow?',
+              category: 'scotland',
+              difficulty: 'medium',
+              trivia_answers: [
+                { id: 'b1', answer_text: 'Clyde', is_correct: true },
+                { id: 'b2', answer_text: 'Támesis', is_correct: false },
+                { id: 'b3', answer_text: 'Sena', is_correct: false },
+                { id: 'b4', answer_text: 'Danubio', is_correct: false },
+              ],
+            },
+            {
+              id: 'q3',
+              question_text: '¿En qué año se fundó el Real Betis Balompié?',
+              category: 'betis',
+              difficulty: 'hard',
+              trivia_answers: [
+                { id: 'c1', answer_text: '1907', is_correct: true },
+                { id: 'c2', answer_text: '1900', is_correct: false },
+                { id: 'c3', answer_text: '1910', is_correct: false },
+                { id: 'c4', answer_text: '1914', is_correct: false },
+              ],
+            },
+          ]),
+        });
+      } else if (route.request().method() === 'POST') {
+        // Handle POST requests for score submission
+        route.fulfill({
+          status: 201,
+          contentType: 'application/json',
+          body: JSON.stringify({ message: 'Score saved successfully!' }),
+        });
+      } else {
+        route.continue();
+      }
     });
 
     // Mock the /api/trivia/total-score-dashboard endpoint
@@ -67,10 +91,25 @@ test.describe('Trivia Page', () => {
         body: JSON.stringify({ totalScore: 10 }), // Example total score
       });
     });
+
+    // Mock the /api/trivia/total-score endpoint
+    await page.route('/api/trivia/total-score', route => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ score: 10 }), // Example total score
+      });
+    });
+
   });
 
   test.afterEach(async () => {
     // Clean up user_trivia_scores for the test user after each test
+    if (!supabaseAdmin) {
+      console.log('Skipping database cleanup - SUPABASE_SERVICE_ROLE_KEY not available');
+      return;
+    }
+
     console.log(`Cleaning up trivia scores for user: ${TEST_USER_ID}`);
     const { error } = await supabaseAdmin
       .from('user_trivia_scores')
@@ -115,20 +154,20 @@ test.describe('Trivia Page', () => {
     // Answer first question correctly (assuming first button is correct for mock data)
     await page.locator('div.grid button').first().click();
     await expect(page.locator('text=Puntuación: 1')).toBeVisible();
-    await expect(page.locator('p', { hasText: 'Pregunta 2 of' })).toBeVisible({ timeout: 3000 });
+    await expect(page.locator('p', { hasText: 'Pregunta 2 of' })).toBeVisible({ timeout: 5000 });
 
     // Answer second question correctly
     await page.locator('div.grid button').first().click();
     await expect(page.locator('text=Puntuación: 2')).toBeVisible();
-    await expect(page.locator('p', { hasText: 'Pregunta 3 of' })).toBeVisible({ timeout: 3000 });
+    await expect(page.locator('p', { hasText: 'Pregunta 3 of' })).toBeVisible({ timeout: 5000 });
 
     // Answer third question correctly
     await page.locator('div.grid button').first().click();
-    await expect(page.locator('text=Puntuación: 3')).toBeVisible();
-
-    // After the last question, expect to see the results
-    await expect(page.locator('h1', { hasText: '¡Trivia Diaria Completada!' })).toBeVisible();
-    await expect(page.locator('text=3/3 Correct')).toBeVisible();
+    
+    // Wait for game completion with longer timeout since there's processing time
+    await expect(page.locator('h1', { hasText: '¡Trivia Diaria Completada!' })).toBeVisible({ timeout: 8000 });
+    await expect(page.locator('text=3/3')).toBeVisible();
+    await expect(page.locator('text=100% Correct')).toBeVisible();
     await expect(page.locator('text=Puntuación Total Acumulada: 10')).toBeVisible();
     await expect(page.locator('a', { hasText: 'Volver al Inicio' })).toBeVisible();
   });

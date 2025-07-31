@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Home Page Happy Path', () => {
-  test('should load successfully and display key elements', async ({ page }) => {
+test('should load successfully and display key elements', async ({ page }) => {
     // 2.1.1 Verify page loads successfully (HTTP 200)
     const response = await page.goto('/');
     expect(response?.status()).toBe(200);
@@ -9,7 +9,8 @@ test.describe('Home Page Happy Path', () => {
     // 2.1.2 Assert visibility of key elements (e.g., hero section, main headings, navigation bar)
     await expect(page.locator('h1', { hasText: 'No busques más' })).toBeVisible();
     await expect(page.locator('nav')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Inicio' })).toBeVisible();
+    // Look for the logo/home link instead of "Inicio" text
+    await expect(page.locator('header a[href="/"]')).toBeVisible();
     await expect(page.getByRole('link', { name: 'RSVP' })).toBeVisible();
 
     // 2.1.4 Ensure no console errors or network failures on page load
@@ -33,7 +34,8 @@ test.describe('Home Page Happy Path', () => {
     await expect(page).toHaveURL('/rsvp');
     await expect(page.locator('h1', { hasText: '¿Vienes al Polwarth?' })).toBeVisible();
 
-    await page.getByRole('link', { name: 'Inicio' }).click();
+    // Click the logo/home link instead of "Inicio" text
+    await page.locator('header a[href="/"]').click();
     await expect(page).toHaveURL('/');
   });
 });

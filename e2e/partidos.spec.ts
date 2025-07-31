@@ -26,7 +26,7 @@ test.describe('Partidos Page Happy Path', () => {
     await page.goto('/partidos');
 
     // 2.4.3 Verify basic navigation
-    await page.getByRole('link', { name: 'Inicio' }).click();
+    await page.locator('header a[href="/"]').click();
     await expect(page).toHaveURL('/');
   });
 });
