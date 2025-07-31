@@ -18,17 +18,17 @@
 
 ## Tasks
 
-- [ ] 1.0 Sentry SDK Installation and Basic Configuration
+- [x] 1.0 Sentry SDK Installation and Basic Configuration
   - [x] 1.1 Install `@sentry/nextjs` package.
   - [x] 1.2 Add Sentry DSN to `.env.local` for development, staging, and production environments.
   - [x] 1.3 Create `sentry.client.config.ts` and initialize Sentry for the client-side.
   - [x] 1.4 Create `sentry.server.config.ts` and initialize Sentry for the server-side.
   - [x] 1.5 Configure `next.config.js` to wrap with Sentry's webpack plugin.
 - [ ] 2.0 Error Capture Implementation
-  - [ ] 2.1 Implement Sentry Error Boundaries in `src/app/layout.tsx` or `src/app/error.tsx` to catch React component errors.
-  - [ ] 2.2 Verify automatic capture of unhandled JavaScript exceptions from the frontend.
-  - [ ] 2.3 Verify automatic capture of unhandled exceptions from Next.js API routes (backend).
-  - [ ] 2.4 Configure Sentry to capture network request failures.
+  - [x] 2.1 Implement Sentry Error Boundaries in `src/app/layout.tsx` or `src/app/error.tsx` to catch React component errors.
+  - [x] 2.2 Verify automatic capture of unhandled JavaScript exceptions from the frontend.
+  - [x] 2.3 Verify automatic capture of unhandled exceptions from Next.js API routes (backend).
+  - [x] 2.4 Configure Sentry to capture network request failures.
 - [ ] 3.0 Contextual Data Enhancement
   - [ ] 3.1 Integrate Sentry with Clerk to associate errors with authenticated user IDs.
   - [ ] 3.2 Verify that browser, OS, and device information are automatically included with errors.

@@ -3,39 +3,38 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'img.clerk.com',
-        port: '',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "img.clerk.com",
+        port: "",
+        pathname: "/**",
       },
     ],
   },
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
+            key: "X-Content-Type-Options",
+            value: "nosniff",
           },
           {
-            key: 'X-Frame-Options',
-            value: 'DENY',
+            key: "X-Frame-Options",
+            value: "DENY",
           },
           {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
+            key: "X-XSS-Protection",
+            value: "1; mode=block",
           },
           {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
           },
           {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()',
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
           },
-          
         ],
       },
     ];
@@ -47,14 +46,13 @@ const nextConfig = {
   // These are typically enabled for Vercel deployments and might not be necessary or correctly configured for local builds.
   // To enable them, remove these lines and ensure your Vercel project is configured correctly.
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
+    removeConsole: process.env.NODE_ENV === "production",
   },
   productionBrowserSourceMaps: false,
   // experimental: {
   //   optimizePackageImports: ['lucide-react'],
   // },
 };
-          
 
 const { withSentryConfig } = require("@sentry/nextjs");
 
@@ -64,7 +62,7 @@ module.exports = withSentryConfig(nextConfig, {
   // Upload a larger amount of data to Sentry
   widenClientFileUpload: true,
 
-  // Transpiles SDK to be compatible with older browsers. 
+  // Transpiles SDK to be compatible with older browsers.
   // Remove this if you only support modern browsers
   transpileClientSDK: true,
 

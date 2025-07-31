@@ -4,7 +4,9 @@ import "./globals.css";
 import Layout from "@/components/Layout";
 import OfflineDetector from "@/components/OfflineDetector";
 import { Analytics } from "@vercel/analytics/next";
+import * as Sentry from "@sentry/nextjs";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+
 import { ClerkProvider } from '@clerk/nextjs';
 import { getEnabledNavigationItemsAsync, initializeFeatureFlags } from '@/lib/featureFlags';
 import FlagsmithRefresher from '@/components/FlagsmithRefresher';
@@ -153,9 +155,11 @@ export default async function RootLayout({
           afterSignUpUrl="/dashboard"
         >
           <FlagsmithRefresher />
-          <Layout debugInfo={debugInfo}>
-            {children}
-          </Layout>
+          <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
+            <Layout debugInfo={debugInfo}>
+              {children}
+            </Layout>
+          </Sentry.ErrorBoundary>
         </ClerkProvider>
         <Analytics />
         <SpeedInsights />
