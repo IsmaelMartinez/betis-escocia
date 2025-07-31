@@ -20,6 +20,8 @@ This document outlines the guidelines and patterns for the code development work
 - `src/lib/flagsmith/`: Feature flag management system.
 - `src/lib/supabase.ts`: Database client and type definitions.
 - `src/lib/adminApiProtection.ts`: API security utilities.
+- `.storybook/`: Storybook configuration files.
+- `src/components/**/*.stories.tsx`: Storybook stories for components.
 
 ## Guidelines
 
@@ -67,6 +69,13 @@ export async function POST(request: NextRequest) {
 
 ### Component & Page Patterns
 
+#### Storybook for Component Development and Testing
+- **Purpose**: Storybook is used for developing, documenting, and testing UI components in isolation.
+- **Component Development**: Create stories (`.stories.tsx`) for each component to showcase its different states and variations.
+- **UI Testing**: Leverage Storybook's integration with Vitest (`@storybook/addon-vitest`) for comprehensive component testing, including visual regression testing and interaction testing.
+- **Usage**: Run `npm run storybook` to start the Storybook development server.
+- **Reference**: For more details on Storybook v9 migration and usage, consult `docs/adr/010-storybook-v9-migration.md` and `docs/storybook-guide.md`.
+
 #### Secure Component Pattern
 ```tsx
 import { hasFeature } from "@/lib/flagsmith";
@@ -84,5 +93,3 @@ export default async function MyComponent() {
 - **Betis branding**: `bg-gradient-to-r from-green-600 to-green-700` (#00A651).
 - **Gold accents**: `text-yellow-400` for highlights.
 - **Responsive navigation**: Hamburger menu pattern in `components/Layout.tsx`.
-
-
