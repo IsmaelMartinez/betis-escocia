@@ -56,4 +56,28 @@ const nextConfig = {
 };
           
 
-module.exports = nextConfig;
+const { withSentryConfig } = require("@sentry/nextjs");
+
+module.exports = withSentryConfig(nextConfig, {
+  // For all available options, see: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+
+  // Upload a larger amount of data to Sentry
+  widenClientFileUpload: true,
+
+  // Transpiles SDK to be compatible with older browsers. 
+  // Remove this if you only support modern browsers
+  transpileClientSDK: true,
+
+  // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
+  // This can't be configured when a custom `server.dev.url` is set in the Sentry config.
+  tunnelRoute: "/monitoring-tunnel",
+
+  // Hides source maps from generated client bundles.
+  hideSourceMaps: true,
+
+  // Automatically tree-shake Sentry SDKs to optimize bundle size.
+  autoInstrumentServerFunctions: true,
+  autoInstrumentClientFunctions: true,
+
+  // For all available options, see: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+});
