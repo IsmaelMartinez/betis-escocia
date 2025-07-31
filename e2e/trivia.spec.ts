@@ -6,15 +6,15 @@ require('dotenv').config({ path: '.env.local' });
 
 // Initialize Supabase client with service role key for cleanup
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseServiceRoleKey = process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl) {
   throw new Error('Missing required environment variable: NEXT_PUBLIC_SUPABASE_URL must be set in .env.local');
 }
 
 if (!supabaseServiceRoleKey) {
-  console.warn('Warning: SUPABASE_SERVICE_ROLE_KEY not found. Database cleanup will be skipped.');
-  console.warn('To enable database cleanup, add SUPABASE_SERVICE_ROLE_KEY to your .env.local file.');
+  console.warn('Warning: NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY not found. Database cleanup will be skipped.');
+  console.warn('To enable database cleanup, add NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY to your .env.local file.');
 }
 
 const supabaseAdmin = supabaseServiceRoleKey ? createClient(supabaseUrl, supabaseServiceRoleKey) : null;
@@ -173,21 +173,31 @@ test.describe('Trivia Page', () => {
   });
 
   test('should display already played message if user has played today', async ({ page }) => {
+    // First unroute any existing mocks, then add our specific one
+    await page.unroute('/api/trivia');
+    
     // Mock the /api/trivia endpoint to return 403 (already played)
     await page.route('/api/trivia', route => {
-      route.fulfill({
-        status: 403,
-        contentType: 'application/json',
-        body: JSON.stringify({ message: 'You have already played today.', score: 2 }),
-      });
+      if (route.request().method() === 'GET') {
+        route.fulfill({
+          status: 403,
+          contentType: 'application/json',
+          body: JSON.stringify({ message: 'You have already played today.', score: 2 }),
+        });
+      } else {
+        route.continue();
+      }
     });
 
     const response = await page.goto('/trivia');
     expect(response?.status()).toBe(200); // Page itself still loads 200
 
+    // Wait a bit for the API call to complete and UI to update
+    await page.waitForTimeout(2000);
+
     await expect(page.locator('text=Trivia game is currently not enabled.')).not.toBeVisible(); // Ensure it's not the feature flag message
     await expect(page.locator('text=You have already played today. Your score: 2')).toBeVisible();
-    await expect(page.locator('h1', { hasText: '¡Trivia Diaria Completada!' })).toBeVisible();
+    await expect(page.locator('h1', { hasText: '¡Trivia Diaria Completada!' })).toBeVisible({ timeout: 8000 });
     await expect(page.locator('text=Puntuación Total Acumulada: 10')).toBeVisible(); // Still shows total from mock
     await expect(page.locator('div.grid button')).not.toBeVisible(); // Game elements should not be visible
   });
