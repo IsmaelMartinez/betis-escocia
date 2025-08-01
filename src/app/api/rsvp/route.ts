@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from "@sentry/nextjs";
 import { supabase, type RSVP } from '@/lib/supabase';
-import { emailService, type RSVPEmailData } from '@/lib/emailService';
+import { EmailService, type RSVPEmailData } from '@/lib/emailService';
 import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, getClientIP } from '@/lib/security';
 import { getCurrentUpcomingMatch } from '@/lib/matchUtils';
 
@@ -313,6 +313,7 @@ export async function POST(request: NextRequest) {
     };
     
     // Send notification asynchronously (don't wait for it)
+    const emailService = new EmailService();
     emailService.sendRSVPNotification(emailData).catch(error => {
       console.error('Failed to send RSVP notification email:', error);
       // Don't fail the API request if email fails

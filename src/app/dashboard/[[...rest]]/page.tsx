@@ -3,6 +3,7 @@ import TriviaScoreDisplay from '@/components/TriviaScoreDisplay';
 import { redirect } from 'next/navigation';
 import { getUserRSVPs, getUserContactSubmissions, getUserSubmissionCounts } from '@/lib/supabase';
 import { User, Calendar, MessageSquare, PieChart, ExternalLink } from 'lucide-react';
+import { UserProfile } from '@clerk/nextjs';
 import Link from 'next/link';
 import { isFeatureEnabledAsync } from '@/lib/featureFlags';
 
@@ -60,31 +61,7 @@ export default async function DashboardPage() {
       {/* User Info */}
       <section className="pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Información de la Cuenta</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Nombre</p>
-                <p className="text-gray-900">{userName}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">Email</p>
-                <p className="text-gray-900">{userEmail}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">Miembro desde</p>
-                <p className="text-gray-900">
-                  {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">Último acceso</p>
-                <p className="text-gray-900">
-                  {user.lastSignInAt ? new Date(user.lastSignInAt).toLocaleDateString() : 'N/A'}
-                </p>
-              </div>
-            </div>
-          </div>
+          <UserProfile />
         </div>
       </section>
 

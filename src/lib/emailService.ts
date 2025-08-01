@@ -1,3 +1,6 @@
+import { formatLocalizedDate } from "@/lib/dateUtils";
+import { es } from 'date-fns/locale';
+
 // Email notification service for admin alerts
 // This service sends notifications when new RSVPs or contacts are submitted
 
@@ -46,7 +49,7 @@ class EmailService {
             <strong>Nombre:</strong> ${data.name}<br>
             <strong>Email:</strong> ${data.email}<br>
             <strong>Número de asistentes:</strong> ${data.attendees}<br>
-            <strong>Fecha del partido:</strong> ${new Date(data.matchDate).toLocaleDateString('es-ES')}<br>
+            <strong>Fecha del partido:</strong> ${formatLocalizedDate(data.matchDate, es)}<br>
             <strong>Interés en WhatsApp:</strong> ${data.whatsappInterest ? 'Sí' : 'No'}
           </div>
           
@@ -79,7 +82,7 @@ Detalles del RSVP:
 - Nombre: ${data.name}
 - Email: ${data.email}
 - Asistentes: ${data.attendees}
-- Fecha del partido: ${new Date(data.matchDate).toLocaleDateString('es-ES')}
+- Fecha del partido: ${formatLocalizedDate(data.matchDate, es)}
 - Interés en WhatsApp: ${data.whatsappInterest ? 'Sí' : 'No'}
 ${data.message ? `- Mensaje: "${data.message}"` : ''}
 
@@ -244,8 +247,6 @@ Peña Bética Escocesa - No busques más que no hay
   }
 }
 
-// Export singleton instance
-export const emailService = new EmailService();
-
-// Export types for use in API routes
+// Export the class and types
+export { EmailService };
 export type { RSVPEmailData, ContactEmailData };

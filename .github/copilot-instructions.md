@@ -116,3 +116,7 @@ This project utilizes Model Context Protocol (MCP) servers to extend the Gemini 
 - **API endpoints**: Follow RESTful patterns in `src/app/api/`
 - **Feature flag implementation**: `src/lib/flagsmith/` (not `src/lib/flags/`)
 - **Trivia game**: Full implementation details in GEMINI.md
+
+---
+
+**Note on User Profile Editing**: For user profile editing on the dashboard, leverage Clerk's built-in `<UserProfile />` component. This component provides a secure and comprehensive solution for users to manage their profile information, including first name and surname, without requiring custom UI development. Refer to Clerk's documentation for integration details: [https://clerk.com/docs/nextjs/components/user/user-profile](https://clerk.com/docs/nextjs/components/user/user-profile)

@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
             is_correct
           )
         `)
-        .limit(10);
+        .limit(5);
 
       if (error) {
         console.error('Error fetching trivia questions for unauthenticated user:', error);

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase, type ContactSubmissionInsert, getAuthenticatedSupabaseClient } from '@/lib/supabase';
-import { emailService, type ContactEmailData } from '@/lib/emailService';
+import { EmailService, type ContactEmailData } from '@/lib/emailService';
 import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, getClientIP } from '@/lib/security';
 import { getAuth } from '@clerk/nextjs/server';
 
@@ -107,6 +107,7 @@ export async function POST(request: NextRequest) {
     };
     
     // Send notification asynchronously (don't wait for it)
+    const emailService = new EmailService();
     emailService.sendContactNotification(emailData).catch(error => {
       console.error('Failed to send contact notification email:', error);
       // Don't fail the API request if email fails
