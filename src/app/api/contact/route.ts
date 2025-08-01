@@ -82,14 +82,14 @@ export async function POST(request: NextRequest) {
     };
 
     // Insert into Supabase
-    const { error: insertError } = await (authenticatedSupabase || supabase)
+    const { data: insertedData, error: insertError } = await (authenticatedSupabase || supabase)
       .from('contact_submissions')
       .insert(newSubmission)
       .select()
       .single();
 
     if (insertError) {
-      console.error('Error inserting contact submission:', insertError);
+      console.error('Supabase insert error:', insertError);
       return NextResponse.json({
         success: false,
         error: 'Error interno del servidor al procesar tu mensaje'

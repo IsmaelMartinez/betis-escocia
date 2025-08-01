@@ -9,7 +9,13 @@ jest.mock('@clerk/nextjs/server', () => ({
 import { NextRequest } from 'next/server';
 import { GET, POST, DELETE } from '@/app/api/rsvp/route';
 import { supabase } from '@/lib/supabase';
-import { emailService } from '@/lib/emailService';
+import { EmailService } from '@/lib/emailService';
+
+jest.mock('@/lib/emailService', () => ({
+  EmailService: jest.fn().mockImplementation(() => ({
+    sendRSVPNotification: jest.fn(() => Promise.resolve(true)),
+  })),
+}));
 import * as security from '@/lib/security';
 import * as matchUtils from '@/lib/matchUtils';
 
@@ -23,12 +29,7 @@ jest.mock('@/lib/supabase', () => {
   };
 });
 
-// Mock emailService
-jest.mock('@/lib/emailService', () => ({
-  emailService: {
-    sendRSVPNotification: jest.fn(() => Promise.resolve(true)),
-  },
-}));
+
 
 // Mock security functions
 jest.mock('@/lib/security', () => ({
@@ -311,7 +312,7 @@ describe('RSVP API - POST', () => {
       totalAttendees: 5,
       confirmedCount: 2
     });
-    expect(emailService.sendRSVPNotification).toHaveBeenCalledTimes(1);
+    expect(EmailService.mock.results[0].value.sendRSVPNotification).toHaveBeenCalledTimes(1);
   });
 
   it('should update existing RSVP for same email', async () => {
@@ -426,7 +427,7 @@ describe('RSVP API - POST', () => {
       error: 'Mínimo 2 caracteres',
     });
     expect(supabase.from).not.toHaveBeenCalled();
-    expect(emailService.sendRSVPNotification).not.toHaveBeenCalled();
+    expect(EmailService).not.toHaveBeenCalled();
   });
 
   it('should return 400 for invalid attendees count', async () => {
@@ -453,7 +454,7 @@ describe('RSVP API - POST', () => {
       error: 'Número de asistentes debe ser entre 1 y 10',
     });
     expect(supabase.from).not.toHaveBeenCalled();
-    expect(emailService.sendRSVPNotification).not.toHaveBeenCalled();
+    expect(EmailService).not.toHaveBeenCalled();
   });
 
   it('should return 429 for rate limit exceeded', async () => {
@@ -481,7 +482,7 @@ describe('RSVP API - POST', () => {
       error: 'Demasiadas solicitudes. Por favor, intenta de nuevo más tarde.',
     });
     expect(supabase.from).not.toHaveBeenCalled();
-    expect(emailService.sendRSVPNotification).not.toHaveBeenCalled();
+    expect(EmailService).not.toHaveBeenCalled();
   });
 
   it('should return 404 for non-existent match', async () => {
@@ -519,7 +520,7 @@ describe('RSVP API - POST', () => {
       success: false,
       error: 'Partido no encontrado'
     });
-    expect(emailService.sendRSVPNotification).not.toHaveBeenCalled();
+    expect(EmailService).not.toHaveBeenCalled();
   });
 
   it('should return 500 for database insertion error', async () => {
@@ -584,7 +585,7 @@ describe('RSVP API - POST', () => {
       success: false,
       error: 'Error interno del servidor al procesar la confirmación'
     });
-    expect(emailService.sendRSVPNotification).not.toHaveBeenCalled();
+    expect(EmailService).not.toHaveBeenCalled();
   });
 });
 
