@@ -249,10 +249,11 @@ let globalFlagsmithInstance: FlagsmithManager | null = null;
  */
 export function getFlagsmithManager(config?: FlagsmithConfig): FlagsmithManager {
   if (!globalFlagsmithInstance) {
-    if (!config) {
+    const finalConfig = config || getFlagsmithConfig();
+    if (!finalConfig) {
       throw new Error('Flagsmith configuration is required for first initialization');
     }
-    globalFlagsmithInstance = new FlagsmithManager(config);
+    globalFlagsmithInstance = new FlagsmithManager(finalConfig);
   }
   return globalFlagsmithInstance;
 }

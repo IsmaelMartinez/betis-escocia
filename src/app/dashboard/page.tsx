@@ -41,13 +41,48 @@ export default async function DashboardPage() {
       {/* Header */}
       <section className="bg-betis-green text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center space-x-4">
-            <div className="bg-white/20 p-3 rounded-full">
-              <User className="h-8 w-8" />
+          <div className="flex items-center justify-between space-x-4">
+            <div className="flex items-center space-x-4">
+              <div className="bg-white/20 p-3 rounded-full">
+                <User className="h-8 w-8" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold">Dashboard Personal</h1>
+                <p className="text-xl opacity-90">Bienvenido, {userName}</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-bold">Dashboard Personal</h1>
-              <p className="text-xl opacity-90">Bienvenido, {userName}</p>
+            <TriviaScoreDisplay />
+          </div>
+        </div>
+      </section>
+
+
+      {/* User Info */}
+      <section className="pb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Información de la Cuenta</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Nombre</p>
+                <p className="text-gray-900">{userName}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600">Email</p>
+                <p className="text-gray-900">{userEmail}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600">Miembro desde</p>
+                <p className="text-gray-900">
+                  {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600">Último acceso</p>
+                <p className="text-gray-900">
+                  {user.lastSignInAt ? new Date(user.lastSignInAt).toLocaleDateString() : 'N/A'}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -86,8 +121,6 @@ export default async function DashboardPage() {
                 <PieChart className="h-12 w-12 text-betis-green opacity-20" />
               </div>
             </div>
-
-            <TriviaScoreDisplay />
           </div>
         </div>
       </section>
@@ -203,36 +236,7 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      {/* User Info */}
-      <section className="pb-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Información de la Cuenta</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Nombre</p>
-                <p className="text-gray-900">{userName}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">Email</p>
-                <p className="text-gray-900">{userEmail}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">Miembro desde</p>
-                <p className="text-gray-900">
-                  {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">Último acceso</p>
-                <p className="text-gray-900">
-                  {user.lastSignInAt ? new Date(user.lastSignInAt).toLocaleDateString() : 'N/A'}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+
 
       {/* Quick Actions */}
       <section className="pb-12">

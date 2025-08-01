@@ -4,16 +4,23 @@ import { useState, useEffect } from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ErrorMessage from '@/components/ErrorMessage';
 import { PieChart } from 'lucide-react';
+import { useAuth } from '@clerk/nextjs';
 
 export default function TriviaScoreDisplay() {
   const [totalScore, setTotalScore] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { getToken } = useAuth();
 
   useEffect(() => {
     async function fetchTotalTriviaScore() {
       try {
-        const response = await fetch('/api/trivia/total-score-dashboard');
+        const token = await getToken();
+        const response = await fetch('/api/trivia/total-score-dashboard', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

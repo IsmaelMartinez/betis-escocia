@@ -9,6 +9,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import GameTimer from '@/components/GameTimer';
 import { isFeatureEnabledAsync } from '@/lib/featureFlags';
 import { useUser, useAuth } from '@clerk/nextjs';
+import TriviaScoreDisplay from '@/components/TriviaScoreDisplay';
 
 export default function TriviaPage() {
   const { isSignedIn, isLoaded } = useUser();
@@ -26,6 +27,7 @@ export default function TriviaPage() {
   const [isTriviaEnabled, setIsTriviaEnabled] = useState(false);
   const [gameCompleted, setGameCompleted] = useState(false);
   const [totalAccumulatedScore, setTotalAccumulatedScore] = useState(0);
+  const [gameStarted, setGameStarted] = useState(false); // New state for game start
 
   const QUESTION_DURATION = 15; // seconds per question
   const MAX_QUESTIONS = 3; // Limit to 3 questions
@@ -58,60 +60,83 @@ export default function TriviaPage() {
     }
   }, [isLoaded, isSignedIn, router]);
 
-  useEffect(() => {
-    if (isLoaded && isSignedIn) { // Only run if user is loaded and signed in
-      async function checkFeatureFlagAndFetchQuestions() {
-        const enabled = await isFeatureEnabledAsync('showTriviaGame');
-        setIsTriviaEnabled(enabled);
-        if (!enabled) {
+  const handleStartGame = async () => {
+    setLoading(true); // Show spinner while fetching questions
+    try {
+      const response = await fetch('/api/trivia');
+      if (!response.ok) {
+        // This case should ideally be handled by the initial check, but as a fallback
+        if (response.status === 403) {
+          const data = await response.json();
+          setError(data.message);
+          setGameCompleted(true);
+          setScore(data.score);
           setLoading(false);
           return;
         }
-
-        async function fetchQuestions() {
-          try {
-            setLoading(true);
-            const response = await fetch('/api/trivia');
-            if (!response.ok) {
-              if (response.status === 403) {
-                const data = await response.json();
-                setError(data.message + ` Your score: ${data.score}`);
-                setGameCompleted(true); // Indicate game is completed for today
-                setScore(data.score); // Set the score to display
-                setLoading(false);
-                return;
-              }
-              throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data: TriviaQuestion[] = await response.json();
-            // Limit to 3 questions
-            setQuestions(data.slice(0, MAX_QUESTIONS));
-          } catch (error: unknown) {
-            setError(error instanceof Error ? error.message : 'An error occurred');
-          } finally {
-            setLoading(false);
-          }
-        }
-        fetchQuestions();
-
-        // Fetch accumulated scores
-        async function fetchAccumulatedScores() {
-          try {
-            const response = await fetch('/api/trivia/total-score'); // Using the new endpoint
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data: { score: number } = await response.json();
-            setTotalAccumulatedScore(data.score);
-          } catch (error: unknown) {
-            console.error('Error fetching accumulated scores:', error);
-          }
-        }
-        fetchAccumulatedScores();
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-      checkFeatureFlagAndFetchQuestions();
+      const data: TriviaQuestion[] = await response.json();
+      setQuestions(data.slice(0, MAX_QUESTIONS));
+      setGameStarted(true);
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'An error occurred while starting game');
+    } finally {
+      setLoading(false); // Hide spinner after fetching questions
     }
-  }, [isLoaded, isSignedIn]); // Depend on isLoaded and isSignedIn
+  };
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      async function initializeTriviaPage() {
+        setLoading(true); // Start loading for initial checks
+        const enabled = await isFeatureEnabledAsync('showTriviaGame');
+        setIsTriviaEnabled(enabled);
+
+        if (!enabled) {
+          setLoading(false); // Feature disabled, stop loading
+          return;
+        }
+
+        // Fetch accumulated scores on initial load
+        try {
+          const totalScoreResponse = await fetch('/api/trivia/total-score');
+          if (!totalScoreResponse.ok) {
+            throw new Error(`HTTP error! status: ${totalScoreResponse.status}`);
+          }
+          const totalScoreData: { score: number } = await totalScoreResponse.json();
+          setTotalAccumulatedScore(totalScoreData.score);
+        } catch (error: unknown) {
+          console.error('Error fetching accumulated scores on initial load:', error);
+          // Don't block the page if score fetch fails, but log it.
+        }
+
+        // Check if user has already played today
+        try {
+          const response = await fetch('/api/trivia'); // This endpoint checks if played today
+          if (!response.ok) {
+            if (response.status === 403) {
+              const data = await response.json();
+              setError(data.message);
+              setGameCompleted(true);
+              setScore(data.score);
+              setQuestions(Array(MAX_QUESTIONS).fill({} as TriviaQuestion)); // Populate questions for display
+              setLoading(false); // User already played, stop loading
+              return;
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          // If response is OK, it means user hasn't played yet, or questions are ready to be fetched
+          // We don't set questions here, as they will be fetched on game start
+        } catch (error: unknown) {
+          setError(error instanceof Error ? error.message : 'An error occurred during initial check');
+        } finally {
+          setLoading(false); // All initial checks done, stop loading
+        }
+      }
+      initializeTriviaPage();
+    }
+  }, [isLoaded, isSignedIn]); // Only run once when user is loaded and signed in
 
   const goToNextQuestion = (answeredCorrectly: boolean | null = null) => {
     setShowFeedback(false);
@@ -147,7 +172,9 @@ export default function TriviaPage() {
     goToNextQuestion();
   };
 
-  if (loading) {
+  
+
+  if (loading && !gameStarted) {
     return <LoadingSpinner />;
   }
 
@@ -159,17 +186,9 @@ export default function TriviaPage() {
     );
   }
 
-  if (error) {
-    return <ErrorMessage message={error} />;
-  }
-
-  if (questions.length === 0) {
-    return <div className="text-center text-xl text-gray-600">No trivia questions available.</div>;
-  }
-
-  // Show results section when game is completed
   if (gameCompleted) {
-    const percentage = Math.round((score / questions.length) * 100);
+    const totalQuestions = gameStarted ? questions.length : MAX_QUESTIONS;
+    const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
     let resultMessage = '';
     let resultColor = '';
 
@@ -192,21 +211,23 @@ export default function TriviaPage() {
         <div className="bg-white shadow-md rounded-lg p-8 text-center">
           <h1 className="text-3xl font-bold text-green-600 mb-6">¡Trivia Diaria Completada!</h1>
           
-          <div className="mb-6">
-            <div className="text-6xl font-bold text-green-600 mb-2">
-              {score}/{questions.length}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+            <div className="text-center">
+              <div className="text-6xl font-bold text-green-600 mb-2">
+                {score}/{totalQuestions}
+              </div>
+              <div className="text-2xl text-gray-600 mb-4">
+                {percentage}% Correct
+              </div>
+              <div className={`text-xl font-semibold ${resultColor} mb-4`}>
+                {resultMessage}
+              </div>
+              <div className="text-sm text-gray-500 italic">
+                Tu puntuación ha sido registrada. ¡Nueva trivia disponible mañana!
+              </div>
             </div>
-            <div className="text-2xl text-gray-600 mb-4">
-              {percentage}% Correct
-            </div>
-            <div className="text-2xl text-gray-600 mb-4">
-              Puntuación Total Acumulada: {totalAccumulatedScore}
-            </div>
-            <div className={`text-xl font-semibold ${resultColor} mb-4`}>
-              {resultMessage}
-            </div>
-            <div className="text-sm text-gray-500 italic">
-              Tu puntuación ha sido registrada. ¡Nueva trivia disponible mañana!
+            <div className="flex items-center justify-center">
+              <TriviaScoreDisplay />
             </div>
           </div>
 
@@ -223,7 +244,35 @@ export default function TriviaPage() {
     );
   }
 
+  if (!gameStarted) {
+    return (
+      <div className="container mx-auto p-4">
+        <div className="bg-white shadow-md rounded-lg p-8 text-center">
+          <h1 className="text-3xl font-bold text-green-600 mb-6">Betis & Scotland Trivia Challenge</h1>
+          {error && (
+            <div className="mb-4 text-red-500 font-medium">
+              <ErrorMessage message={error} />
+              {score !== null && <p>Your score today: {score}</p>}
+            </div>
+          )}
+          <p className="text-lg text-gray-700 mb-6">¡Pon a prueba tus conocimientos sobre el Real Betis y Escocia!</p>
+          <button
+            onClick={handleStartGame}
+            className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg inline-block"
+            disabled={loading}
+          >
+            {loading ? <LoadingSpinner /> : "Comenzar Trivia"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const currentQuestion = questions[currentQuestionIndex];
+
+  if (questions.length === 0) {
+    return <div className="text-center text-xl text-gray-600">No trivia questions available.</div>;
+  }
 
   return (
     <div className="container mx-auto p-4">
