@@ -29,7 +29,7 @@ export default function TriviaPage() {
   const [gameStarted, setGameStarted] = useState(false); // New state for game start
 
   const QUESTION_DURATION = 15; // seconds per question
-  const MAX_QUESTIONS = 3; // Limit to 3 questions
+  const MAX_QUESTIONS = 5; // Limit to 5 questions
 
   const saveScore = async (finalScore: number) => {
     try {
