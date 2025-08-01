@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Insert into Supabase
-    const { data: insertedData, error: insertError } = await (authenticatedSupabase || supabase)
+    const { error: insertError } = await (authenticatedSupabase || supabase)
       .from('contact_submissions')
       .insert(newSubmission)
       .select()

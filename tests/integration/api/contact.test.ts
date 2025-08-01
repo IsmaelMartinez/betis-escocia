@@ -217,7 +217,9 @@ describe('Contact API - POST', () => {
       message: 'Mensaje enviado correctamente. Te responderemos pronto.',
     });
     expect(supabase.from).toHaveBeenCalledWith('contact_submissions');
-    expect(EmailService.mock.results[0].value.sendContactNotification).toHaveBeenCalledTimes(1);
+    expect((EmailService as jest.MockedClass<typeof EmailService>)).toHaveBeenCalledTimes(1);
+    const emailServiceInstance = (EmailService as jest.MockedClass<typeof EmailService>).mock.instances[0];
+    expect(emailServiceInstance.sendContactNotification).toHaveBeenCalledTimes(1);
   });
 
   it('should return 400 for invalid input (missing required fields)', async () => {

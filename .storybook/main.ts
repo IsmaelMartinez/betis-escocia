@@ -10,6 +10,7 @@ const config: StorybookConfig = {
     "@storybook/addon-onboarding",
     "msw-storybook-addon"
   ],
+  "setupFiles": ["./.storybook/setup.ts"],
   "framework": {
     "name": "@storybook/nextjs",
     "options": {}

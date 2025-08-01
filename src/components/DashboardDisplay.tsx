@@ -1,6 +1,5 @@
 import { Calendar, MessageSquare, PieChart, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
-import { User } from '@clerk/nextjs/server';
 import { RSVP, ContactSubmission } from '@/lib/supabase';
 
 interface Counts {

@@ -312,7 +312,9 @@ describe('RSVP API - POST', () => {
       totalAttendees: 5,
       confirmedCount: 2
     });
-    expect(EmailService.mock.results[0].value.sendRSVPNotification).toHaveBeenCalledTimes(1);
+    expect((EmailService as jest.MockedClass<typeof EmailService>)).toHaveBeenCalledTimes(1);
+    const emailServiceInstance = (EmailService as jest.MockedClass<typeof EmailService>).mock.instances[0];
+    expect(emailServiceInstance.sendRSVPNotification).toHaveBeenCalledTimes(1);
   });
 
   it('should update existing RSVP for same email', async () => {

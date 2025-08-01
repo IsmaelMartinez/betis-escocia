@@ -1,6 +1,8 @@
+import React from 'react';
 import type { Preview } from '@storybook/nextjs'
 import '../src/app/globals.css'
 import { initialize, mswLoader } from 'msw-storybook-addon';
+import ClerkDecorator from '../src/components/ClerkDecorator';
 
 // Initialize MSW
 initialize({
@@ -62,6 +64,9 @@ const preview: Preview = {
     },
   },
   loaders: [mswLoader],
+  decorators: [
+    (Story) => React.createElement(ClerkDecorator, null, React.createElement(Story)),
+  ],
 };
 
 export default preview;

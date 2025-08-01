@@ -7,9 +7,7 @@ describe("roleUtils", () => {
     return {
       id: userId,
       publicMetadata: { role: role },
-      // Add other necessary User properties if they are used by the functions
-      // For these tests, only id and publicMetadata.role are relevant
-    } as User;
+    } as Partial<User> as User;
   };
 
   describe("hasRole", () => {
