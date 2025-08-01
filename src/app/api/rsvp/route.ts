@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
         route: "/api/rsvp",
       },
     },
-    async (span) => {
+    async () => {
   try {
     const body = await request.json();
     const { name, email, attendees, message, whatsappInterest, matchId, userId } = sanitizeObject(body);

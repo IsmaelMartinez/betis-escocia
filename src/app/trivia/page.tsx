@@ -26,7 +26,6 @@ export default function TriviaPage() {
   const [timerResetTrigger, setTimerResetTrigger] = useState(0); // To reset the timer
   const [isTriviaEnabled, setIsTriviaEnabled] = useState(false);
   const [gameCompleted, setGameCompleted] = useState(false);
-  const [totalAccumulatedScore, setTotalAccumulatedScore] = useState(0);
   const [gameStarted, setGameStarted] = useState(false); // New state for game start
 
   const QUESTION_DURATION = 15; // seconds per question
@@ -99,6 +98,8 @@ export default function TriviaPage() {
         }
 
         // Fetch accumulated scores on initial load
+        // This is now handled by TriviaScoreDisplay component
+        /*
         try {
           const totalScoreResponse = await fetch('/api/trivia/total-score');
           if (!totalScoreResponse.ok) {
@@ -110,6 +111,7 @@ export default function TriviaPage() {
           console.error('Error fetching accumulated scores on initial load:', error);
           // Don't block the page if score fetch fails, but log it.
         }
+        */
 
         // Check if user has already played today
         try {

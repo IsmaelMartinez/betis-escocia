@@ -7,6 +7,7 @@
 
 import flagsmith from 'flagsmith/isomorphic';
 import { FlagsmithConfig, FlagsmithFeatureName, FlagsmithPerformanceMetrics } from './types';
+import { getFlagsmithConfig } from './config';
 // Fallback mechanism removed
 
 class FlagsmithManager {

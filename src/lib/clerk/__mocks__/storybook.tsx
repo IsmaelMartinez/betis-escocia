@@ -16,13 +16,13 @@ interface MockUser {
 }
 
 // Simple mock function that mimics jest.fn() behavior
-const mockFn = (impl?: any): any => {
-  const fn = impl || (() => undefined);
-  fn.mockReturnValue = (value: any) => {
+const mockFn = (impl?: (...args: any[]) => any): any => { // eslint-disable-line @typescript-eslint/no-explicit-any
+  const fn: any = impl || (() => undefined); // eslint-disable-line @typescript-eslint/no-explicit-any
+  fn.mockReturnValue = (value: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     fn._mockReturnValue = value;
     return fn;
   };
-  fn.mockImplementation = (newImpl: any) => {
+  fn.mockImplementation = (newImpl: (...args: any[]) => any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     fn._mockImplementation = newImpl;
     return fn;
   };
@@ -32,7 +32,7 @@ const mockFn = (impl?: any): any => {
     return fn;
   };
   
-  const wrappedFn = (...args: any[]) => {
+  const wrappedFn = (...args: any[]) => { // eslint-disable-line @typescript-eslint/no-explicit-any
     if (fn._mockReturnValue !== undefined) {
       return fn._mockReturnValue;
     }

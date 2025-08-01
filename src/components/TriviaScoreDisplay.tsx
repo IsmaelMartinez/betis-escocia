@@ -39,7 +39,7 @@ export default function TriviaScoreDisplay() {
     }
 
     fetchTotalTriviaScore();
-  }, []);
+  }, [getToken]);
 
   if (loading) {
     return <LoadingSpinner />;

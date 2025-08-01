@@ -43,7 +43,16 @@ describe('Flagsmith Integration', () => {
     });
 
     it('should throw an error if config is not provided for first initialization', () => {
-      expect(() => getFlagsmithManager()).toThrow('Flagsmith configuration is required for first initialization');
+      // Mock environment variable as undefined to trigger the error
+      const originalEnv = process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID;
+      delete process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID;
+      
+      expect(() => getFlagsmithManager()).toThrow('NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID is required. Please set it in your environment variables.');
+      
+      // Restore original environment variable
+      if (originalEnv) {
+        process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID = originalEnv;
+      }
     });
   });
 
@@ -80,14 +89,14 @@ describe('Flagsmith Integration', () => {
 
     it('should return true if feature is enabled', async () => {
       mockFlagsmithHasFeature.mockReturnValue(true);
-      const result = await hasFeature('test_feature' as any);
+      const result = await hasFeature('show-clasificacion');
       expect(result).toBe(true);
-      expect(mockFlagsmithHasFeature).toHaveBeenCalledWith('test_feature');
+      expect(mockFlagsmithHasFeature).toHaveBeenCalledWith('show-clasificacion');
     });
 
     it('should return false if feature is disabled', async () => {
       mockFlagsmithHasFeature.mockReturnValue(false);
-      const result = await hasFeature('test_feature' as any);
+      const result = await hasFeature('show-clasificacion');
       expect(result).toBe(false);
     });
 
@@ -95,7 +104,7 @@ describe('Flagsmith Integration', () => {
       mockFlagsmithHasFeature.mockImplementationOnce(() => {
         throw new Error('Feature check failed');
       });
-      const result = await hasFeature('test_feature' as any);
+      const result = await hasFeature('show-clasificacion');
       expect(result).toBe(false); // Fallback value
       const status = await getSystemStatus();
       expect(status.performance.errorCount).toBe(1);
@@ -109,14 +118,14 @@ describe('Flagsmith Integration', () => {
 
     it('should return the value of a feature flag', async () => {
       mockFlagsmithGetValue.mockReturnValue('true');
-      const result = await getValue('test_value' as any);
+      const result = await getValue('show-clasificacion');
       expect(result).toBe(true);
-      expect(mockFlagsmithGetValue).toHaveBeenCalledWith('test_value');
+      expect(mockFlagsmithGetValue).toHaveBeenCalledWith('show-clasificacion');
     });
 
     it('should return the default value if provided and flag is not set', async () => {
       mockFlagsmithGetValue.mockReturnValue(null);
-      const result = await getValue('test_value' as any, false);
+      const result = await getValue('show-clasificacion', false);
       expect(result).toBe(false);
     });
 
@@ -124,7 +133,7 @@ describe('Flagsmith Integration', () => {
       mockFlagsmithGetValue.mockImplementationOnce(() => {
         throw new Error('Get value failed');
       });
-      const result = await getValue('test_value' as any);
+      const result = await getValue('show-clasificacion');
       expect(result).toBe(false); // Fallback value
       const status = await getSystemStatus();
       expect(status.performance.errorCount).toBe(1);
@@ -138,15 +147,15 @@ describe('Flagsmith Integration', () => {
 
     it('should return multiple flag values', async () => {
       mockFlagsmithGetValue.mockImplementation((flagName: string) => {
-        if (flagName === 'feature_a') return 'true';
-        if (flagName === 'feature_b') return 'false';
+        if (flagName === 'show-clasificacion') return 'true';
+        if (flagName === 'show-rsvp') return 'false';
         return null;
       });
-      const results = await getMultipleValues(['feature_a', 'feature_b', 'feature_c'] as any);
+      const results = await getMultipleValues(['show-clasificacion', 'show-rsvp', 'show-galeria']);
       expect(results).toEqual({
-        feature_a: true,
-        feature_b: false,
-        feature_c: false, // Fallback
+        'show-clasificacion': true,
+        'show-rsvp': false,
+        'show-galeria': false, // Fallback
       });
     });
 
@@ -154,10 +163,10 @@ describe('Flagsmith Integration', () => {
       mockFlagsmithGetValue.mockImplementationOnce(() => {
         throw new Error('Multiple values failed');
       });
-      const results = await getMultipleValues(['feature_a', 'feature_b'] as any);
+      const results = await getMultipleValues(['show-clasificacion', 'show-rsvp']);
       expect(results).toEqual({
-        feature_a: false, // Fallback
-        feature_b: false, // Fallback
+        'show-clasificacion': false, // Fallback
+        'show-rsvp': false, // Fallback
       });
       const status = await getSystemStatus();
       expect(status.performance.errorCount).toBe(1);
@@ -210,7 +219,7 @@ describe('Flagsmith Integration', () => {
       mockDateNow.mockReturnValueOnce(1000); // Start time
       mockDateNow.mockReturnValueOnce(1050); // End time, 50ms later
 
-      await hasFeature('test_feature' as any);
+      await hasFeature('show-clasificacion');
       const status = await getSystemStatus();
       expect(status.performance.apiCallCount).toBe(1);
       expect(status.performance.flagEvaluationTime).toBeGreaterThan(0);
@@ -222,7 +231,7 @@ describe('Flagsmith Integration', () => {
     it('should reset the flagsmith manager', async () => {
       await initializeFlagsmith(mockConfig);
       mockFlagsmithHasFeature.mockReturnValue(true);
-      await hasFeature('test_feature' as any);
+      await hasFeature('show-clasificacion');
 
       let status = await getSystemStatus();
       expect(status.initialized).toBe(true);
