@@ -30,11 +30,12 @@ Sentry.init({
   },
 
   // You can remove this option if you're not planning to use the Sentry Session Replay feature.
-  integrations: [
-    Sentry.replayIntegration({
-      // Additional Replay configuration goes in here, for example:
-      maskAllText: true,
-      blockAllMedia: true,
-    }),
-  ],
+  // Note: Session Replay is now configured in instrumentation-client.ts to avoid duplicate instances
+  // integrations: [
+  //   Sentry.replayIntegration({
+  //     // Additional Replay configuration goes in here, for example:
+  //     maskAllText: true,
+  //     blockAllMedia: true,
+  //   }),
+  // ],
 });
