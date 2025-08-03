@@ -1,66 +1,107 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import DashboardTabs from '@/components/DashboardTabs';
-import { User } from '@clerk/nextjs/server';
+import type { Meta, StoryObj } from '@storybook/react';
+import DashboardTabs from './DashboardTabs';
+import { RSVP, ContactSubmission } from '@/lib/supabase';
+import { setMockUser } from '@/lib/clerk/__mocks__/storybook';
+
+const mockUser = {
+  id: 'user_123',
+  firstName: 'John',
+  lastName: 'Doe',
+  emailAddresses: [{ emailAddress: 'john.doe@example.com' }],
+  createdAt: Date.now() - (1000 * 60 * 60 * 24 * 365), // 1 year ago
+  lastSignInAt: Date.now(),
+};
+
+const mockRsvps: RSVP[] = [
+  {
+    id: 1,
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    attendees: 2,
+    match_date: '2025-08-10',
+    message: 'Looking forward to it!',
+    whatsapp_interest: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 2,
+    name: 'Jane Smith',
+    email: 'jane.smith@example.com',
+    attendees: 1,
+    match_date: '2025-07-20',
+    message: null,
+    whatsapp_interest: false,
+    created_at: new Date().toISOString(),
+  },
+];
+
+const mockContactSubmissions: ContactSubmission[] = [
+  {
+    id: 1,
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    phone: '123-456-7890',
+    type: 'general',
+    subject: 'Query about membership',
+    message: 'I have a question about how to become a member.',
+    status: 'new',
+    created_at: new Date().toISOString(),
+    updated_by: null,
+  },
+  {
+    id: 2,
+    name: 'Jane Smith',
+    email: 'jane.smith@example.com',
+    phone: null,
+    type: 'feedback',
+    subject: 'Website feedback',
+    message: 'Great website, very easy to navigate!',
+    status: 'resolved',
+    created_at: new Date().toISOString(),
+    updated_by: null,
+  },
+];
+
+const mockCounts = {
+  rsvpCount: mockRsvps.length,
+  contactCount: mockContactSubmissions.length,
+  totalSubmissions: mockRsvps.length + mockContactSubmissions.length,
+};
 
 const meta: Meta<typeof DashboardTabs> = {
-  title: 'Dashboard/DashboardTabs',
+  title: 'Components/DashboardTabs',
   component: DashboardTabs,
   parameters: {
     layout: 'fullscreen',
+    clerk: { enabled: true }, // This component uses UserProfile from Clerk
   },
+  tags: ['autodocs'],
   argTypes: {
     user: {
       control: 'object',
-      description: 'Clerk user object (serialized)',
+      description: 'User data for the dashboard',
     },
     rsvps: {
       control: 'object',
-      description: 'Array of user RSVPs',
+      description: 'List of user RSVPs',
     },
     contactSubmissions: {
       control: 'object',
-      description: 'Array of user contact submissions',
+      description: 'List of user contact submissions',
     },
     counts: {
       control: 'object',
-      description: 'Object with rsvpCount, contactCount, and totalSubmissions',
+      description: 'Counts of RSVPs and contact submissions',
     },
     userName: {
       control: 'text',
-      description: 'Formatted user name',
+      description: 'Display name for the user',
     },
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
-
-const mockUser: User = {
-  id: 'user_123',
-  firstName: 'John',
-  lastName: 'Doe',
-  emailAddresses: [{ emailAddress: 'john.doe@example.com' }],
-  createdAt: Date.now(),
-  lastSignInAt: Date.now(),
-  // Add other necessary properties of User if they are used by DashboardTabs or its children
-  // For this story, we only need the properties defined in DashboardTabsProps
-} as User; // Cast to User to satisfy type, even if not all properties are present
-
-const mockRsvps = [
-  { id: 1, match_date: '2025-01-01', attendees: 2, message: 'Excited!', created_at: '2024-12-01T10:00:00Z', name: 'John Doe', email: 'john@example.com', whatsapp_interest: true },
-  { id: 2, match_date: '2025-02-01', attendees: 1, message: '', created_at: '2024-12-15T11:00:00Z', name: 'Jane Smith', email: 'jane@example.com', whatsapp_interest: false },
-];
-
-const mockContactSubmissions = [
-  { id: 1, subject: 'General Inquiry', type: 'general' as const, message: 'Just a test message.', status: 'new' as const, created_at: '2024-11-01T09:00:00Z', name: 'Alice', email: 'alice@example.com', updated_at: '2024-11-01T09:00:00Z' },
-  { id: 2, subject: 'Feedback', type: 'feedback' as const, message: 'Great website!', status: 'resolved' as const, created_at: '2024-11-10T14:00:00Z', name: 'Bob', email: 'bob@example.com', updated_at: '2024-11-10T14:00:00Z' },
-];
-
-const mockCounts = {
-  rsvpCount: 2,
-  contactCount: 2,
-  totalSubmissions: 4,
-};
+type Story = StoryObj<typeof DashboardTabs>;
 
 export const Default: Story = {
   args: {
@@ -69,5 +110,47 @@ export const Default: Story = {
     contactSubmissions: mockContactSubmissions,
     counts: mockCounts,
     userName: 'John Doe',
+  },
+  render: (args) => {
+    setMockUser(mockUser); // Simulate logged-in user
+    return <DashboardTabs {...args} />;
+  },
+};
+
+export const NoData: Story = {
+  args: {
+    user: mockUser,
+    rsvps: [],
+    contactSubmissions: [],
+    counts: {
+      rsvpCount: 0,
+      contactCount: 0,
+      totalSubmissions: 0,
+    },
+    userName: 'John Doe',
+  },
+  render: (args) => {
+    setMockUser(mockUser); // Simulate logged-in user
+    return <DashboardTabs {...args} />;
+  },
+};
+
+export const ProfileTabActive: Story = {
+  args: {
+    user: mockUser,
+    rsvps: mockRsvps,
+    contactSubmissions: mockContactSubmissions,
+    counts: mockCounts,
+    userName: 'John Doe',
+  },
+  play: async ({ canvasElement }) => {
+    const profileTabButton = canvasElement.querySelector('button');
+    if (profileTabButton) {
+      profileTabButton.click();
+    }
+  },
+  render: (args) => {
+    setMockUser(mockUser); // Simulate logged-in user
+    return <DashboardTabs {...args} />;
   },
 };
