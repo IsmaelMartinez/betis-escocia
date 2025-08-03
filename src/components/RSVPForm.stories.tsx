@@ -38,6 +38,7 @@ const meta: Meta<typeof RSVPForm> = {
   component: RSVPForm,
   parameters: {
     layout: 'centered',
+    clerk: { enabled: false }, // Disable Clerk for this component
   },
   tags: ['autodocs'],
   argTypes: {
