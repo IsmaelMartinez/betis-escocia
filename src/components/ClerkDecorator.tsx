@@ -1,5 +1,5 @@
 import React from 'react';
-// Removed ClerkProvider import
+import { ClerkProvider } from '@clerk/nextjs';
 
 interface ClerkDecoratorProps {
   children: React.ReactNode;
@@ -7,7 +7,9 @@ interface ClerkDecoratorProps {
 
 const ClerkDecorator: React.FC<ClerkDecoratorProps> = ({ children }) => {
   return (
-    <>{children}</> // Simply render children
+    <ClerkProvider>
+      {children}
+    </ClerkProvider>
   );
 };
 
