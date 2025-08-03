@@ -7,6 +7,7 @@ const meta: Meta<typeof GameTimer> = {
   component: GameTimer,
   parameters: {
     layout: 'centered',
+    clerk: { enabled: false }, // Disable Clerk for this component
   },
   tags: ['autodocs'],
   argTypes: {

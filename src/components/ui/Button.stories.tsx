@@ -6,6 +6,7 @@ const meta: Meta<typeof Button> = {
   component: Button,
   parameters: {
     layout: 'centered',
+    clerk: { enabled: false }, // Disable Clerk for this component
   },
   tags: ['autodocs'],
   argTypes: {

@@ -7,6 +7,7 @@ const meta: Meta<typeof TriviaScoreDisplay> = {
   component: TriviaScoreDisplay,
   parameters: {
     layout: 'centered',
+    clerk: { enabled: false }, // Disable Clerk for this component
     msw: {
       handlers: [
         // Default mock for the API call
