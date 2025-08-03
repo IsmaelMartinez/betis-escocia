@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import AllDatabaseMatches from './AllDatabaseMatches';
 import { Match } from '@/lib/supabase';
+import { http, HttpResponse } from 'msw';
 
 // Mock data for matches
 const mockMatches: Match[] = [
@@ -108,24 +109,24 @@ const mockMatches: Match[] = [
   },
 ];
 
-// Mock the supabase function
-jest.mock('@/lib/supabase', () => ({
-  ...jest.requireActual('@/lib/supabase'),
-  getAllMatchesWithRSVPCounts: jest.fn(() => Promise.resolve(
-    mockMatches.map(match => ({
-      ...match,
-      rsvp_count: Math.floor(Math.random() * 20),
-      total_attendees: Math.floor(Math.random() * 50),
-    }))
-  )),
-}));
-
 const meta: Meta<typeof AllDatabaseMatches> = {
   title: 'Components/AllDatabaseMatches',
   component: AllDatabaseMatches,
   parameters: {
     layout: 'fullscreen',
     clerk: { enabled: false }, // This component does not directly use Clerk hooks
+    msw: {
+      handlers: [
+        http.get('/api/standings', () => {
+          const matchesWithRsvp = mockMatches.map(match => ({
+            ...match,
+            rsvp_count: Math.floor(Math.random() * 20),
+            total_attendees: Math.floor(Math.random() * 50),
+          }));
+          return HttpResponse.json(matchesWithRsvp);
+        }),
+      ],
+    },
   },
   tags: ['autodocs'],
   argTypes: {
@@ -148,15 +149,11 @@ export const Loading: Story = {
   parameters: {
     msw: {
       handlers: [
-        // Simulate loading state by never resolving
-        // This requires a custom setup in preview.ts or a global mock
+        http.get('/api/standings', () => {
+          return new Promise(() => {}); // Never resolve to simulate loading
+        }),
       ],
     },
-  },
-  render: (args) => {
-    // Manually set loading state for Storybook
-    const Component = AllDatabaseMatches as any;
-    return <Component {...args} isLoading={true} />;
   },
 };
 
@@ -165,11 +162,9 @@ export const ErrorState: Story = {
   parameters: {
     msw: {
       handlers: [
-        // Simulate error state
-        jest.mock('@/lib/supabase', () => ({
-          ...jest.requireActual('@/lib/supabase'),
-          getAllMatchesWithRSVPCounts: jest.fn(() => Promise.reject(new Error('Failed to fetch matches'))),
-        })),
+        http.get('/api/standings', () => {
+          return HttpResponse.json({ message: 'Failed to fetch matches' }, { status: 500 });
+        }),
       ],
     },
   },
@@ -180,11 +175,9 @@ export const EmptyState: Story = {
   parameters: {
     msw: {
       handlers: [
-        // Simulate empty state
-        jest.mock('@/lib/supabase', () => ({
-          ...jest.requireActual('@/lib/supabase'),
-          getAllMatchesWithRSVPCounts: jest.fn(() => Promise.resolve([])),
-        })),
+        http.get('/api/standings', () => {
+          return HttpResponse.json([]);
+        }),
       ],
     },
   },

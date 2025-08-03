@@ -28,7 +28,7 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
         setIsLoading(true);
         setError(null);
         
-        const data = await getAllMatchesWithRSVPCounts(); // Get all matches with RSVP counts
+        const data = await getAllMatchesWithRSVPCounts();
         
         if (data) {
           setMatches(data as MatchWithRSVP[]);
