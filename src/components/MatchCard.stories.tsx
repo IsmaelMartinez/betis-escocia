@@ -14,6 +14,7 @@ const meta: Meta<typeof MatchCard> = {
   component: MatchCard,
   parameters: {
     layout: 'centered',
+    clerk: { enabled: false }, // Disable Clerk for this component
   },
   tags: ['autodocs'],
   argTypes: {
