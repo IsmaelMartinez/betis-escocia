@@ -100,7 +100,7 @@ To add new questions:
 
 ```typescript
 {
-  questionText: "¿En qué estadio juega como local el Real Betis? / In which stadium does Real Betis play?",
+  questionText: "¿En qué estadio juega como local el Real Betis?",
   category: "betis",
   difficulty: "easy",
   answers: [

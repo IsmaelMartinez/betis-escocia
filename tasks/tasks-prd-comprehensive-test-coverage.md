@@ -1,6 +1,6 @@
 # Tasks for Comprehensive Test Coverage Implementation
 
-## Overall Test Coverage: 20.14%
+## Overall Test Coverage: 21.76%
 
 ## Relevant Files
 
@@ -70,12 +70,7 @@
   - [x] 1.6 Create tests for Clerk webhook handler (`/api/webhooks/clerk`) covering user sync and data consistency - **COMPLETED: Created comprehensive integration tests for webhook processing including user.created, user.updated, and user.deleted events. Tests cover webhook verification, header validation, data linking/unlinking operations, and error scenarios. Properly mocked svix library, Next.js headers, and Supabase functions. All 11 test scenarios pass covering successful processing, missing data edge cases, and database error handling.**
   - [x] 1.7 Enhance existing standings API tests (`/api/standings`) to cover caching scenarios and error handling - **COMPLETED: Enhanced existing standings tests with comprehensive caching scenarios (fresh cache, stale cache, empty cache, cache retrieval failures, cache save failures) and extensive error handling (network errors, API rate limiting, timeouts, generic errors, non-Error exceptions). Added 11 comprehensive test scenarios covering all cache states and error conditions with proper NextResponse and external service mocking. All tests pass successfully.**
   - [x] 1.8 Create tests for admin contact submissions API (`/api/admin/contact-submissions`) - **COMPLETED: Created comprehensive integration tests with 15 test scenarios covering authentication/authorization (3 tests), request validation (4 tests), database operations (3 tests), error handling (3 tests), token integration (1 test), and status tracking (1 test). Tests cover Clerk authentication integration, admin role validation, status management, database operations, and error handling. All tests pass successfully with proper mocking patterns established.**
-  - [x] 1.9 Create tests for admin sync matches API (`/api/admin/sync-matches`) covering match synchronization, data processing, and external API integration
-  - [x] 1.9.1 Implement authentication and authorization tests
-  - [x] 1.9.2 Implement rate limiting tests
-  - [x] 1.9.3 Implement successful match synchronization tests (new and updated matches)
-  - [x] 1.9.4 Implement error handling tests for FootballDataService and Supabase operations
-  - [x] 1.9.5 Implement edge case tests (e.g., null scores, unfinished matches, no matches returned)
+  - [x] 1.9 Create tests for admin sync matches API (`/api/admin/sync-matches`) covering match synchronization, data processing, and external API integration - **COMPLETED: Created comprehensive integration tests with 10 test scenarios covering authentication/authorization (3 tests), rate limiting (1 test), successful match synchronization (1 test), error handling (3 tests), and edge cases (2 tests). All tests pass successfully.**
 
 - [ ] 2.0 Core Business Logic Testing (Supabase Functions) (Target: 90% Coverage) - DEFERRED
 

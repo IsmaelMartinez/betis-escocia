@@ -31,6 +31,9 @@ export function formatLocalizedDate(dateString: string, locale: Locale = es, dat
  * @returns A string representing the time ago (e.g., '2 days ago', '3 hours ago').
  */
 export function timeAgo(dateString: string, locale: Locale = es): string {
+  if (!dateString) {
+    return '';
+  }
   try {
     const date = parseISO(dateString);
     if (isNaN(date.getTime())) {

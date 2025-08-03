@@ -121,7 +121,7 @@ npm run update-trivia
 
 **Features:**
 - Safely replaces all existing trivia data
-- 55 bilingual questions (30 Real Betis + 25 Scotland)
+- 1465 questions (130 Real Betis + 425 Scotland + 900 Whisky)
 - Automatic UUID handling and data verification
 - Progress tracking and error handling
 

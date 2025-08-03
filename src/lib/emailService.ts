@@ -1,5 +1,6 @@
 import { formatLocalizedDate } from "@/lib/dateUtils";
 import { es } from 'date-fns/locale';
+import { Resend } from 'resend';
 
 // Email notification service for admin alerts
 // This service sends notifications when new RSVPs or contacts are submitted
@@ -16,21 +17,27 @@ interface RSVPEmailData {
 interface ContactEmailData {
   name: string;
   email: string;
-  phone?: string | null | undefined;
+  phone?: string | null;
   type: string;
   subject: string;
   message: string;
 }
 
 class EmailService {
-  private adminEmail: string;
-  private fromEmail: string;
-  private apiKey?: string;
+  private readonly adminEmail: string;
+  private readonly fromEmail: string;
+  private readonly resend?: Resend;
   
   constructor() {
     this.adminEmail = process.env.ADMIN_EMAIL || 'ismaelmartinez@gmail.com';
     this.fromEmail = process.env.FROM_EMAIL || 'noreply@betis-escocia.com';
-    this.apiKey = process.env.EMAIL_API_KEY;
+    
+    const apiKey = process.env.EMAIL_API_KEY;
+    if (apiKey) {
+      this.resend = new Resend(apiKey);
+    } else {
+      console.warn('EMAIL_API_KEY is not set. Email notifications will be disabled.');
+    }
   }
 
   private formatRSVPEmail(data: RSVPEmailData): { subject: string; html: string; text: string } {
@@ -160,7 +167,7 @@ Peña Bética Escocesa - No busques más que no hay
   }
 
   async sendRSVPNotification(data: RSVPEmailData): Promise<boolean> {
-    if (!this.apiKey) {
+    if (!this.resend) {
       console.log('Email notifications disabled: No API key configured');
       return false;
     }
@@ -168,24 +175,16 @@ Peña Bética Escocesa - No busques más que no hay
     try {
       const { subject, html, text } = this.formatRSVPEmail(data);
       
-      // Using Resend API (you can replace with SendGrid or other service)
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from: this.fromEmail,
-          to: this.adminEmail,
-          subject,
-          html,
-          text,
-        }),
+      const { error } = await this.resend.emails.send({
+        from: this.fromEmail,
+        to: [this.adminEmail],
+        subject,
+        html,
+        text,
       });
 
-      if (!response.ok) {
-        throw new Error(`Email API error: ${response.status}`);
+      if (error) {
+        throw new Error(`Email API error: ${JSON.stringify(error)}`);
       }
 
       console.log('RSVP notification email sent successfully');
@@ -197,7 +196,7 @@ Peña Bética Escocesa - No busques más que no hay
   }
 
   async sendContactNotification(data: ContactEmailData): Promise<boolean> {
-    if (!this.apiKey) {
+    if (!this.resend) {
       console.log('Email notifications disabled: No API key configured');
       return false;
     }
@@ -205,24 +204,16 @@ Peña Bética Escocesa - No busques más que no hay
     try {
       const { subject, html, text } = this.formatContactEmail(data);
       
-      // Using Resend API (you can replace with SendGrid or other service)
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from: this.fromEmail,
-          to: this.adminEmail,
-          subject,
-          html,
-          text,
-        }),
+      const { error } = await this.resend.emails.send({
+        from: this.fromEmail,
+        to: [this.adminEmail],
+        subject,
+        html,
+        text,
       });
 
-      if (!response.ok) {
-        throw new Error(`Email API error: ${response.status}`);
+      if (error) {
+        throw new Error(`Email API error: ${JSON.stringify(error)}`);
       }
 
       console.log('Contact notification email sent successfully');

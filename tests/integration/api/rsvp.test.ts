@@ -6,16 +6,34 @@ jest.mock('@clerk/nextjs/server', () => ({
   })),
 }));
 
+// Mock the Resend SDK first
+jest.mock('resend', () => {
+  return {
+    Resend: jest.fn().mockImplementation(() => ({
+      emails: {
+        send: jest.fn(),
+      },
+    })),
+  };
+});
+
+// Mock EmailService with all methods
+const mockSendRSVPNotification = jest.fn(() => Promise.resolve(true));
+const mockSendContactNotification = jest.fn(() => Promise.resolve(true));
+const mockSendTestEmail = jest.fn(() => Promise.resolve(true));
+
+jest.mock('@/lib/emailService', () => ({
+  EmailService: jest.fn().mockImplementation(() => ({
+    sendRSVPNotification: mockSendRSVPNotification,
+    sendContactNotification: mockSendContactNotification,
+    sendTestEmail: mockSendTestEmail,
+  })),
+}));
+
 import { NextRequest } from 'next/server';
 import { GET, POST, DELETE } from '@/app/api/rsvp/route';
 import { supabase } from '@/lib/supabase';
 import { EmailService } from '@/lib/emailService';
-
-jest.mock('@/lib/emailService', () => ({
-  EmailService: jest.fn().mockImplementation(() => ({
-    sendRSVPNotification: jest.fn(() => Promise.resolve(true)),
-  })),
-}));
 import * as security from '@/lib/security';
 import * as matchUtils from '@/lib/matchUtils';
 
@@ -228,6 +246,10 @@ describe('RSVP API - GET', () => {
 describe('RSVP API - POST', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // Clear the specific mock functions
+    mockSendRSVPNotification.mockClear();
+    mockSendContactNotification.mockClear();
+    mockSendTestEmail.mockClear();
     // Reset all spies to their original implementation
     jest.restoreAllMocks();
   });
@@ -313,8 +335,7 @@ describe('RSVP API - POST', () => {
       confirmedCount: 2
     });
     expect((EmailService as jest.MockedClass<typeof EmailService>)).toHaveBeenCalledTimes(1);
-    const emailServiceInstance = (EmailService as jest.MockedClass<typeof EmailService>).mock.instances[0];
-    expect(emailServiceInstance.sendRSVPNotification).toHaveBeenCalledTimes(1);
+    expect(mockSendRSVPNotification).toHaveBeenCalledTimes(1);
   });
 
   it('should update existing RSVP for same email', async () => {

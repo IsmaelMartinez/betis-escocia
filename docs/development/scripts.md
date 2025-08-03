@@ -38,8 +38,8 @@ Runs end-to-end tests using Playwright.
 
 **Features**:
 - Safely clears existing trivia data
-- Inserts 55 new bilingual questions (Spanish/English)
-- 30 Real Betis questions + 25 Scotland questions
+- Inserts 1465 new questions (Spanish)
+- 1465 questions (130 Real Betis + 425 Scotland + 900 Whisky)
 - Automatic UUID handling and progress tracking
 - Data verification after insertion
 

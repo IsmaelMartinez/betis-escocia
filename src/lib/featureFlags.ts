@@ -36,7 +36,7 @@ export interface FeatureFlags {
 // Cache for flag values to avoid repeated async calls
 let flagsCache: FeatureFlags | null = null;
 let cacheExpiry: number = 0;
-const CACHE_TTL = 30000; // 30 seconds
+const CACHE_TTL = 60000; // 60 seconds
 
 /**
  * Initialize Flagsmith (call this early in your app)
