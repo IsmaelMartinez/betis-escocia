@@ -9,6 +9,10 @@ initialize({
   onUnhandledRequest: 'bypass', // or 'warn'
   serviceWorker: {
     url: '/mockServiceWorker.js', // Path relative to Storybook's root
+    options: {
+      scope: '/',
+      baseUrl: '/',
+    },
   },
 });
 
@@ -65,7 +69,13 @@ const preview: Preview = {
   },
   loaders: [mswLoader],
   decorators: [
-    (Story) => React.createElement(ClerkDecorator, null, React.createElement(Story)),
+    (Story, context) => {
+      const { clerk } = context.parameters;
+      if (clerk && clerk.enabled === false) {
+        return React.createElement(Story);
+      }
+      return React.createElement(ClerkDecorator, null, React.createElement(Story));
+    },
   ],
 };
 
