@@ -42,19 +42,21 @@ export default function DashboardTabs({
       {/* Header */}
       <section className="bg-betis-green text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between space-x-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 sm:space-x-4">
             <div className="flex items-center space-x-4">
               <div className="bg-white/20 p-3 rounded-full">
-                {/* User icon is part of the header, not directly tied to UserProfile component */}
-                <User className="h-8 w-8" />
+              {/* User icon is part of the header, not directly tied to UserProfile component */}
+              <User className="h-8 w-8" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Dashboard Personal</h1>
-                <p className="text-xl opacity-90">Bienvenido, {userName}</p>
+              <h1 className="text-3xl font-bold">Dashboard Personal</h1>
+              <p className="text-xl opacity-90">Bienvenido, {userName}</p>
               </div>
             </div>
-            <TriviaScoreDisplay />
-          </div>
+            <div className="w-full sm:w-auto">
+              <TriviaScoreDisplay />
+            </div>
+            </div>
         </div>
       </section>
 

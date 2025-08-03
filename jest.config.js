@@ -4,6 +4,7 @@ module.exports = {
   setupFilesAfterEnv: ["<rootDir>/tests/setup.ts"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
+    "^@clerk/nextjs$": "<rootDir>/__mocks__/@clerk/nextjs.ts",
   },
   collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.d.ts"],
   testMatch: [

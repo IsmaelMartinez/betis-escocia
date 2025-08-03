@@ -92,11 +92,6 @@ function AdminPage() {
     }
   }, [isLoaded, isSignedIn, router]);
 
-  const handleSignOut = async () => {
-    await signOut();
-    router.push('/');
-  };
-
   const fetchStats = async () => {
     try {
       setError(null);
@@ -397,13 +392,6 @@ function AdminPage() {
                 isLoading={refreshing}
               >
                 Actualizar
-              </Button>
-              <Button
-                onClick={handleSignOut}
-                variant="outline"
-                leftIcon={<LogOut className="h-4 w-4" />}
-              >
-                Cerrar Sesión
               </Button>
             </div>
           </div>

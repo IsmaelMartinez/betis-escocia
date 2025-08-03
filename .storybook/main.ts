@@ -15,6 +15,15 @@ const config: StorybookConfig = {
     "name": "@storybook/nextjs",
     "options": {}
   },
+  "webpackFinal": async (config) => {
+    if (config.resolve) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        "@clerk/nextjs": require.resolve("../__mocks__/@clerk/nextjs.ts"),
+      };
+    }
+    return config;
+  },
   "staticDirs": [
     "../public"
   ]
