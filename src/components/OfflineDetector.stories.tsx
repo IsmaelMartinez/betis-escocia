@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import React, { useEffect } from 'react';
 import OfflineDetector from './OfflineDetector';
-import { fn } from 'storybook/test';
+
 
 // Helper to set online status for stories
 const setOnlineStatus = (isOnline: boolean) => {
