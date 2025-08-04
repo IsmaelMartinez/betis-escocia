@@ -1,6 +1,6 @@
 # Tasks for Comprehensive Test Coverage Implementation
 
-## Overall Test Coverage: 21.76%
+## Overall Test Coverage: 19.91%
 
 ## Relevant Files
 
@@ -43,6 +43,7 @@
 - `tests/helpers/testHelpers.ts` - Shared test utilities and setup functions
 - `tests/setup.ts` - Global test configuration (enhance existing)
 - `jest.config.js` - Jest configuration with coverage thresholds (enhance existing)
+- `tests/unit/lib/dateUtils.test.ts` - Unit tests for date/time utilities and formatting functions
 
 ### Middleware and Integration
 - `src/middleware.ts` - Next.js middleware for authentication and security
