@@ -10,7 +10,6 @@ const config: StorybookConfig = {
     "@storybook/addon-onboarding",
     "msw-storybook-addon"
   ],
-  "setupFiles": ["./.storybook/setup.ts"],
   "framework": {
     "name": "@storybook/nextjs",
     "options": {}
@@ -20,6 +19,7 @@ const config: StorybookConfig = {
       config.resolve.alias = {
         ...config.resolve.alias,
         "@clerk/nextjs": require.resolve("../__mocks__/@clerk/nextjs.ts"),
+        "next/image": require.resolve("../__mocks__/next/image.tsx"),
       };
     }
     return config;

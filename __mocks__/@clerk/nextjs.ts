@@ -38,6 +38,10 @@ export const UserButton = () => {
   return null;
 };
 
+export const UserProfile = () => {
+  return null;
+};
+
 export const useClerk = () => ({
   session: { publicMemberships: [] },
   user: { publicMetadata: {} },

@@ -8,24 +8,6 @@ interface UserManagementRequestBody {
   banned?: boolean;
 }
 
-// Mock ROLES from @/lib/roleUtils
-jest.mock('@/lib/roleUtils', () => ({
-  ROLES: {
-    ADMIN: 'admin',
-    MODERATOR: 'moderator',
-    USER: 'user',
-  },
-}));
-
-// Mock next/image
-jest.mock('next/image', () => ({
-  __esModule: true,
-  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img {...props} alt="" />;
-  },
-}));
-
 const mockUsers = [
   {
     id: 'user_1',

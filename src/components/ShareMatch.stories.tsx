@@ -1,7 +1,57 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
+import { useEffect, ReactElement } from 'react';
 import ShareMatch from './ShareMatch';
 import { Match } from '@/types/match';
 import { fn } from 'storybook/test';
+
+// Mock wrapper component for Storybook
+function MockedWrapper({ children }: { children: ReactElement }) {
+  useEffect(() => {
+    // Mock browser APIs
+    if (typeof window !== 'undefined') {
+      // Store originals
+      const originalShare = navigator.share;
+      const originalClipboard = navigator.clipboard;
+      const originalOpen = window.open;
+
+      // Mock navigator.share
+      Object.defineProperty(navigator, 'share', {
+        configurable: true,
+        value: fn(() => Promise.resolve()),
+      });
+      
+      // Mock navigator.clipboard
+      Object.defineProperty(navigator, 'clipboard', {
+        configurable: true,
+        value: {
+          writeText: fn(() => Promise.resolve()),
+        },
+      });
+
+      // Mock window.open
+      window.open = fn() as unknown as typeof window.open;
+      
+      // Cleanup on unmount
+      return () => {
+        if (originalShare) {
+          Object.defineProperty(navigator, 'share', {
+            configurable: true,
+            value: originalShare,
+          });
+        }
+        if (originalClipboard) {
+          Object.defineProperty(navigator, 'clipboard', {
+            configurable: true,
+            value: originalClipboard,
+          });
+        }
+        window.open = originalOpen;
+      };
+    }
+  }, []);
+
+  return children;
+}
 
 const mockMatch: Match = {
   id: 1,
@@ -43,29 +93,6 @@ const meta: Meta<typeof ShareMatch> = {
     match: { control: 'object' },
     opponent: { control: 'object' },
   },
-  decorators: [
-    (Story) => {
-      // Mock navigator.share and navigator.clipboard
-      if (typeof window !== 'undefined') {
-        Object.defineProperty(navigator, 'share', {
-          configurable: true,
-          value: fn(() => Promise.resolve()),
-        });
-        Object.defineProperty(navigator, 'clipboard', {
-          configurable: true,
-          value: {
-            writeText: fn(() => Promise.resolve()),
-          },
-        });
-        // Mock window.location.href
-        Object.defineProperty(window, 'location', {
-          configurable: true,
-          value: { href: 'http://localhost:6006/?path=/story/components-sharematch--default' },
-        });
-      }
-      return Story();
-    },
-  ],
 };
 
 export default meta;
@@ -76,6 +103,13 @@ export const Default: Story = {
     match: mockMatch,
     opponent: mockMatch.awayTeam,
   },
+  decorators: [
+    (Story) => (
+      <MockedWrapper>
+        <Story />
+      </MockedWrapper>
+    ),
+  ],
 };
 
 export const FinishedMatch: Story = {
@@ -83,7 +117,63 @@ export const FinishedMatch: Story = {
     match: mockFinishedMatch,
     opponent: mockFinishedMatch.awayTeam,
   },
+  decorators: [
+    (Story) => (
+      <MockedWrapper>
+        <Story />
+      </MockedWrapper>
+    ),
+  ],
 };
+
+// Error mock wrapper component
+function ErrorMockedWrapper({ children }: { children: ReactElement }) {
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Store originals
+      const originalShare = navigator.share;
+      const originalClipboard = navigator.clipboard;
+      const originalOpen = window.open;
+
+      // Mock failing navigator.share
+      Object.defineProperty(navigator, 'share', {
+        configurable: true,
+        value: fn(() => Promise.reject(new Error('Share failed'))),
+      });
+      
+      // Mock failing navigator.clipboard
+      Object.defineProperty(navigator, 'clipboard', {
+        configurable: true,
+        value: {
+          writeText: fn(() => Promise.reject(new Error('Clipboard write failed'))),
+        },
+      });
+
+      // Mock window.open
+      window.open = fn() as unknown as typeof window.open;
+      
+      // Cleanup on unmount
+      return () => {
+        if (originalShare) {
+          Object.defineProperty(navigator, 'share', {
+            configurable: true,
+            value: originalShare,
+          });
+        }
+        if (originalClipboard) {
+          Object.defineProperty(navigator, 'clipboard', {
+            configurable: true,
+            value: originalClipboard,
+          });
+        }
+        window.open = originalOpen;
+      };
+    }
+  }, []);
+
+  return children;
+
+}
 
 export const ShareError: Story = {
   args: {
@@ -91,20 +181,10 @@ export const ShareError: Story = {
     opponent: mockMatch.awayTeam,
   },
   decorators: [
-    (Story) => {
-      if (typeof window !== 'undefined') {
-        Object.defineProperty(navigator, 'share', {
-          configurable: true,
-          value: fn(() => Promise.reject(new Error('Share failed'))),
-        });
-        Object.defineProperty(navigator, 'clipboard', {
-          configurable: true,
-          value: {
-            writeText: fn(() => Promise.reject(new Error('Clipboard write failed'))),
-          },
-        });
-      }
-      return Story();
-    },
+    (Story) => (
+      <ErrorMockedWrapper>
+        <Story />
+      </ErrorMockedWrapper>
+    ),
   ],
 };
