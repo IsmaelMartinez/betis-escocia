@@ -60,7 +60,7 @@
     "@vitest/coverage-v8": "^3.2.4",
     "axios": "^1.11.0",
     "eslint": "^9",
-    "eslint-config-next": "^15.4.3",
+    "eslint-config-next": "^15.4.5",
     "eslint-plugin-storybook": "^9.0.18",
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
