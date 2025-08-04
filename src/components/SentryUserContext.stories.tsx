@@ -26,11 +26,10 @@ export const LoggedInUser: Story = {
       firstName: 'Sentry',
       lastName: 'User',
       emailAddresses: [{ emailAddress: 'sentry.user@example.com' }],
-      username: 'sentryuser',
-      publicMetadata: {},
+      publicMetadata: { role: 'user' },
       createdAt: new Date(),
-      lastSignInAt: new Date(),
       imageUrl: 'https://example.com/sentry-avatar.jpg',
+      lastSignInAt: new Date(),
     });
     return <SentryUserContext />;
   },

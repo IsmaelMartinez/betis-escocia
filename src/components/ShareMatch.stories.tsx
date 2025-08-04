@@ -5,24 +5,30 @@ import { fn } from 'storybook/test';
 
 const mockMatch: Match = {
   id: 1,
-  competition: { id: 2014, name: 'La Liga', code: 'PD', emblem: 'https://crests.football-data.org/PD.png' },
+  competition: { id: 2014, name: 'La Liga', code: 'PD', type: 'LEAGUE', emblem: 'https://crests.football-data.org/PD.png' },
   utcDate: new Date().toISOString(),
   status: 'SCHEDULED',
   matchday: 30,
   homeTeam: { id: 90, name: 'Real Betis', shortName: 'Betis', tla: 'BET', crest: 'https://crests.football-data.org/90.png' },
   awayTeam: { id: 81, name: 'FC Barcelona', shortName: 'Barcelona', tla: 'BAR', crest: 'https://crests.football-data.org/81.png' },
-  score: { fullTime: { home: null, away: null } },
+  score: { fullTime: { home: null, away: null }, duration: 'REGULAR', halfTime: { home: null, away: null } },
+  stage: 'REGULAR_SEASON',
+  lastUpdated: new Date().toISOString(),
+  season: { id: 1, startDate: '2024-08-01', endDate: '2025-05-31', currentMatchday: 30 },
 };
 
 const mockFinishedMatch: Match = {
   id: 2,
-  competition: { id: 2014, name: 'La Liga', code: 'PD', emblem: 'https://crests.football-data.org/PD.png' },
+  competition: { id: 2014, name: 'La Liga', code: 'PD', type: 'LEAGUE', emblem: 'https://crests.football-data.org/PD.png' },
   utcDate: new Date(new Date().getTime() - 24 * 60 * 60 * 1000).toISOString(), // yesterday
   status: 'FINISHED',
   matchday: 29,
   homeTeam: { id: 90, name: 'Real Betis', shortName: 'Betis', tla: 'BET', crest: 'https://crests.football-data.org/90.png' },
   awayTeam: { id: 86, name: 'Real Madrid', shortName: 'Real Madrid', tla: 'RMA', crest: 'https://crests.football-data.org/86.png' },
-  score: { fullTime: { home: 1, away: 2 } },
+  score: { fullTime: { home: 1, away: 2 }, duration: 'REGULAR', halfTime: { home: 1, away: 1 } },
+  stage: 'REGULAR_SEASON',
+  lastUpdated: new Date().toISOString(),
+  season: { id: 1, startDate: '2024-08-01', endDate: '2025-05-31', currentMatchday: 29 },
 };
 
 const meta: Meta<typeof ShareMatch> = {

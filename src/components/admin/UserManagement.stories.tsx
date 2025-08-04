@@ -2,6 +2,12 @@ import type { Meta, StoryObj } from '@storybook/nextjs';
 import UserManagement from './UserManagement';
 import { http, HttpResponse } from 'msw';
 
+interface UserManagementRequestBody {
+  userId: string;
+  role?: string;
+  banned?: boolean;
+}
+
 // Mock ROLES from @/lib/roleUtils
 jest.mock('@/lib/roleUtils', () => ({
   ROLES: {
@@ -95,7 +101,7 @@ const meta: Meta<typeof UserManagement> = {
           return HttpResponse.json({ success: true, users: mockUsers });
         }),
         http.patch('/api/admin/users', async ({ request }) => {
-          const { userId, role, banned } = await request.json();
+          const { userId, role, banned } = await request.json() as UserManagementRequestBody;
           const userIndex = mockUsers.findIndex(u => u.id === userId);
           if (userIndex > -1) {
             if (role) mockUsers[userIndex].role = role;
@@ -105,7 +111,7 @@ const meta: Meta<typeof UserManagement> = {
           return HttpResponse.json({ success: false, message: 'User not found' }, { status: 404 });
         }),
         http.delete('/api/admin/users', async ({ request }) => {
-          const { userId } = await request.json();
+          const { userId } = await request.json() as UserManagementRequestBody;
           const initialLength = mockUsers.length;
           const newUsers = mockUsers.filter(u => u.id !== userId);
           mockUsers.splice(0, mockUsers.length, ...newUsers); // Update mockUsers in place
@@ -115,16 +121,16 @@ const meta: Meta<typeof UserManagement> = {
           return HttpResponse.json({ success: false, message: 'User not found' }, { status: 404 });
         }),
         http.post('/api/admin/roles', async ({ request }) => {
-          const { userId, role } = await request.json();
+          const { userId, role } = await request.json() as UserManagementRequestBody;
           const userIndex = mockUsers.findIndex(u => u.id === userId);
           if (userIndex > -1) {
-            mockUsers[userIndex].role = role;
+            if (role) mockUsers[userIndex].role = role;
             return HttpResponse.json({ success: true, message: 'Role assigned' });
           }
           return HttpResponse.json({ success: false, message: 'User not found' }, { status: 404 });
         }),
         http.delete('/api/admin/roles', async ({ request }) => {
-          const { userId } = await request.json();
+          const { userId } = await request.json() as UserManagementRequestBody;
           const userIndex = mockUsers.findIndex(u => u.id === userId);
           if (userIndex > -1) {
             mockUsers[userIndex].role = 'user'; // Revert to default role

@@ -6,7 +6,7 @@ interface OfflineMessageProps {
   readonly isOnline: boolean;
 }
 
-function OfflineMessage({ isOnline }: OfflineMessageProps) {
+export function OfflineMessage({ isOnline }: OfflineMessageProps) {
   if (isOnline) return null;
 
   return (

@@ -13,18 +13,15 @@ const mockMatch: Match = {
   id: 1,
   competition: 'La Liga',
   date_time: new Date('2025-08-10T18:00:00Z').toISOString(),
-  home_team: 'Real Betis',
-  away_team: 'FC Barcelona',
-  home_score: null,
-  away_score: null,
+  opponent: 'FC Barcelona',
+  home_away: 'home',
+  home_score: undefined,
+  away_score: undefined,
   status: 'SCHEDULED',
   matchday: 30,
-  home_crest: 'https://crests.football-data.org/90.png',
-  away_crest: 'https://crests.football-data.org/81.png',
-  competition_emblem: 'https://crests.football-data.org/PD.png',
-  watch_party_details: null,
+  created_at: new Date('2025-07-01T00:00:00Z').toISOString(),
+  updated_at: new Date('2025-07-01T00:00:00Z').toISOString(),
   external_id: 12345,
-  home_away: 'home',
   notes: 'Important match',
 };
 
@@ -50,7 +47,7 @@ type Story = StoryObj<typeof MatchForm>;
 
 export const CreateNewMatch: Story = {
   args: {
-    onSubmit: fn(() => Promise.resolve({ success: true })),
+    onSubmit: fn(() => Promise.resolve({ success: true }) as Promise<{ success: boolean; error?: string }>),
     onCancel: fn(),
     isLoading: false,
   },
@@ -59,16 +56,16 @@ export const CreateNewMatch: Story = {
 export const EditExistingMatch: Story = {
   args: {
     match: mockMatch,
-    onSubmit: fn(() => Promise.resolve({ success: true })),
+    onSubmit: fn(() => Promise.resolve({ success: true }) as Promise<{ success: boolean; error?: string }>),
     onCancel: fn(),
-    onDelete: fn(() => Promise.resolve({ success: true })),
+    onDelete: fn(() => Promise.resolve({ success: true }) as Promise<{ success: boolean; error?: string }>),
     isLoading: false,
   },
 };
 
 export const SubmittingState: Story = {
   args: {
-    onSubmit: fn(() => new Promise(resolve => setTimeout(() => resolve({ success: true }), 2000))),
+    onSubmit: fn(async () => { await new Promise(resolve => setTimeout(resolve, 2000)); return { success: true }; }),
     onCancel: fn(),
     isLoading: true,
   },
@@ -77,16 +74,16 @@ export const SubmittingState: Story = {
 export const DeletingState: Story = {
   args: {
     match: mockMatch,
-    onSubmit: fn(() => Promise.resolve({ success: true })),
+    onSubmit: fn(() => Promise.resolve({ success: true }) as Promise<{ success: boolean; error?: string }>),
     onCancel: fn(),
-    onDelete: fn(() => new Promise(resolve => setTimeout(() => resolve({ success: true }), 2000))),
+    onDelete: fn(async () => { await new Promise(resolve => setTimeout(resolve, 2000)); return { success: true }; }),
     isLoading: true,
   },
 };
 
 export const SubmissionError: Story = {
   args: {
-    onSubmit: fn(() => Promise.resolve({ success: false, error: 'Failed to save match' })),
+    onSubmit: fn(() => Promise.resolve({ success: false, error: 'Failed to save match' }) as Promise<{ success: boolean; error?: string }>),
     onCancel: fn(),
     isLoading: false,
   },
@@ -95,9 +92,9 @@ export const SubmissionError: Story = {
 export const DeletionError: Story = {
   args: {
     match: mockMatch,
-    onSubmit: fn(() => Promise.resolve({ success: true })),
+    onSubmit: fn(() => Promise.resolve({ success: true }) as Promise<{ success: boolean; error?: string }>),
     onCancel: fn(),
-    onDelete: fn(() => Promise.resolve({ success: false, error: 'Failed to delete match' })),
+    onDelete: fn(() => Promise.resolve({ success: false, error: 'Failed to delete match' }) as Promise<{ success: boolean; error?: string }>),
     isLoading: false,
   },
 };

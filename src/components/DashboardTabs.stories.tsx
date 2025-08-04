@@ -3,13 +3,26 @@ import DashboardTabs from './DashboardTabs';
 import { RSVP, ContactSubmission } from '@/lib/supabase';
 import { setMockUser } from '@/lib/clerk/__mocks__/storybook';
 
+// Mock user for component props (expects timestamps)
 const mockUser = {
   id: 'user_123',
   firstName: 'John',
   lastName: 'Doe',
   emailAddresses: [{ emailAddress: 'john.doe@example.com' }],
-  createdAt: Date.now() - (1000 * 60 * 60 * 24 * 365), // 1 year ago
-  lastSignInAt: Date.now(),
+  createdAt: (new Date()).getTime() - (1000 * 60 * 60 * 24 * 365), // 1 year ago
+  lastSignInAt: (new Date()).getTime(),
+};
+
+// Mock user for setMockUser (expects Date objects)
+const mockUserForClerk = {
+  id: 'user_123',
+  firstName: 'John',
+  lastName: 'Doe',
+  emailAddresses: [{ emailAddress: 'john.doe@example.com' }],
+  createdAt: new Date((new Date()).getTime() - (1000 * 60 * 60 * 24 * 365)), // 1 year ago
+  lastSignInAt: new Date(),
+  publicMetadata: { role: 'user' },
+  imageUrl: 'https://www.gravatar.com/avatar/?d=mp',
 };
 
 const mockRsvps: RSVP[] = [
@@ -29,7 +42,7 @@ const mockRsvps: RSVP[] = [
     email: 'jane.smith@example.com',
     attendees: 1,
     match_date: '2025-07-20',
-    message: null,
+    message: undefined,
     whatsapp_interest: false,
     created_at: new Date().toISOString(),
   },
@@ -45,20 +58,22 @@ const mockContactSubmissions: ContactSubmission[] = [
     subject: 'Query about membership',
     message: 'I have a question about how to become a member.',
     status: 'new',
+    updated_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
-    updated_by: null,
+    updated_by: undefined,
   },
   {
     id: 2,
     name: 'Jane Smith',
     email: 'jane.smith@example.com',
-    phone: null,
+    phone: undefined,
     type: 'feedback',
     subject: 'Website feedback',
     message: 'Great website, very easy to navigate!',
     status: 'resolved',
+    updated_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
-    updated_by: null,
+    updated_by: undefined,
   },
 ];
 
@@ -112,7 +127,7 @@ export const Default: Story = {
     userName: 'John Doe',
   },
   render: (args) => {
-    setMockUser(mockUser); // Simulate logged-in user
+    setMockUser(mockUserForClerk); // Simulate logged-in user
     return <DashboardTabs {...args} />;
   },
 };
@@ -130,7 +145,7 @@ export const NoData: Story = {
     userName: 'John Doe',
   },
   render: (args) => {
-    setMockUser(mockUser); // Simulate logged-in user
+    setMockUser(mockUserForClerk); // Simulate logged-in user
     return <DashboardTabs {...args} />;
   },
 };
@@ -150,7 +165,7 @@ export const ProfileTabActive: Story = {
     }
   },
   render: (args) => {
-    setMockUser(mockUser); // Simulate logged-in user
+    setMockUser(mockUserForClerk); // Simulate logged-in user
     return <DashboardTabs {...args} />;
   },
 };

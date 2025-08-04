@@ -11,7 +11,7 @@ jest.mock('@/lib/formValidation', () => ({
     const [touched, setTouched] = useState({});
 
     const updateField = (field: string, value: unknown) => {
-      setData((prev: any) => ({ ...prev, [field]: value }));
+      setData((prev: typeof initialData) => ({ ...prev, [field]: value }));
       setErrors((prev) => ({ ...prev, [field]: undefined })); // Clear error on change
     };
 

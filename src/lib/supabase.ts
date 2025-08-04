@@ -101,7 +101,7 @@ export interface ContactSubmission {
   id: number
   name: string
   email: string
-  phone?: string
+  phone?: string | null
   type: 'general' | 'rsvp' | 'merchandise' | 'photo' | 'whatsapp' | 'feedback';
   subject: string;
   message: string;

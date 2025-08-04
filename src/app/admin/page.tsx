@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 import { useState, useEffect } from 'react';
 import { useAuth, useUser } from '@clerk/nextjs';
 import { supabase, RSVP, ContactSubmission, Match, createMatch, updateMatch, deleteMatch, getMatches, updateContactSubmissionStatus } from '@/lib/supabase';
-import { Users, Mail, TrendingUp, Download, RefreshCw, Calendar, Plus, RotateCcw, LogOut } from 'lucide-react';
+import { Users, Mail, TrendingUp, Download, RefreshCw, Calendar, Plus, RotateCcw } from 'lucide-react';
 import Card, { CardHeader, CardBody } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
