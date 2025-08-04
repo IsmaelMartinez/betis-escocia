@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import FlagsmithRefresher from './FlagsmithRefresher';
-import { fn } from 'storybook/test';
+// import { fn } from 'storybook/test';
 
 // Mock the flagsmith and featureFlags modules
 jest.mock('@/lib/flagsmith', () => ({

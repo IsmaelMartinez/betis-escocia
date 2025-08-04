@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import ShareMatch from './ShareMatch';
 import { Match } from '@/types/match';
 import { fn } from 'storybook/test';

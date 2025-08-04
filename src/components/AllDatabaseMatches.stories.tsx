@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import AllDatabaseMatches from './AllDatabaseMatches';
 import { Match } from '@/lib/supabase';
 import { http, HttpResponse } from 'msw';

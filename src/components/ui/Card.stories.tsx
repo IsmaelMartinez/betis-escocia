@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import Card, { CardHeader, CardBody, CardFooter, InteractiveCard, BetisCard, ElevatedCard } from './Card';
 
 const meta: Meta<typeof Card> = {
@@ -227,7 +227,7 @@ export const BetisCardExample: StoryBetisCard = {
   },
 };
 
-const metaElevatedCard: Meta<typeof ElevatedCard> = {
+// const metaElevatedCard: Meta<typeof ElevatedCard> = {
   title: 'UI/Card/ElevatedCard',
   component: ElevatedCard,
   parameters: {

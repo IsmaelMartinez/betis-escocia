@@ -35,7 +35,7 @@ interface MatchFormData {
 }
 
 function AdminPage() {
-  const { isLoaded, isSignedIn, signOut, getToken } = useAuth();
+  const { isLoaded, isSignedIn, getToken } = useAuth();
   const { user } = useUser();
   const router = useRouter();
   const [stats, setStats] = useState<AdminStats | null>(null);

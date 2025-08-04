@@ -1,7 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import UserManagement from './UserManagement';
 import { http, HttpResponse } from 'msw';
-import { fn } from 'storybook/test';
 
 // Mock ROLES from @/lib/roleUtils
 jest.mock('@/lib/roleUtils', () => ({
@@ -15,9 +14,9 @@ jest.mock('@/lib/roleUtils', () => ({
 // Mock next/image
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: (props: any) => {
+  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img {...props} />;
+    return <img {...props} alt="" />;
   },
 }));
 

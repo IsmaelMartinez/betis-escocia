@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import MessageComponent, { FormSuccessMessage, FormErrorMessage, FormLoadingMessage } from './MessageComponent';
 
 const meta: Meta<typeof MessageComponent> = {

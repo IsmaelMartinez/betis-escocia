@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import UpcomingMatchesWidget from './UpcomingMatchesWidget';
 import { Match } from '@/types/match';
 import { http, HttpResponse } from 'msw';

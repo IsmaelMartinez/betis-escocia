@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import Layout from './Layout';
 import { setMockUser } from '@/lib/clerk/__mocks__/storybook';
 

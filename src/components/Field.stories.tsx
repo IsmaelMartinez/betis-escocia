@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import Field, { ValidatedInput, ValidatedTextarea, ValidatedSelect } from './Field';
 import { User, Mail, MessageSquare } from 'lucide-react';
 
@@ -162,7 +162,7 @@ export const TextareaWithError: StoryValidatedTextarea = {
 };
 
 // Stories for ValidatedSelect
-const metaValidatedSelect: Meta<typeof ValidatedSelect> = {
+// const metaValidatedSelect: Meta<typeof ValidatedSelect> = {
   title: 'Forms/ValidatedSelect',
   component: ValidatedSelect,
   parameters: {

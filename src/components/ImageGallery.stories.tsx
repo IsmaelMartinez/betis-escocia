@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import ImageGallery from './ImageGallery';
 import { fn } from 'storybook/test';
 

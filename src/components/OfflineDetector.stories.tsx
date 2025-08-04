@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import React, { useEffect } from 'react';
 import OfflineDetector, { OfflineAwareError, OfflineMessage, useOnlineStatus } from './OfflineDetector';
 import { fn } from 'storybook/test';
@@ -84,7 +84,7 @@ export const OfflineMessageHidden: StoryOfflineMessage = {
 };
 
 // Stories for OfflineAwareError
-const metaOfflineAwareError: Meta<typeof OfflineAwareError> = {
+// const metaOfflineAwareError: Meta<typeof OfflineAwareError> = {
   title: 'Components/OfflineDetector/OfflineAwareError',
   component: OfflineAwareError,
   parameters: {

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import MatchesList from './MatchesList';
 import { Match } from '@/lib/supabase';
 import { fn } from 'storybook/test';

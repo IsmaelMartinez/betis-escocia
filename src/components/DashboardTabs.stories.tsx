@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import DashboardTabs from './DashboardTabs';
 import { RSVP, ContactSubmission } from '@/lib/supabase';
 import { setMockUser } from '@/lib/clerk/__mocks__/storybook';

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs';
 import OrderForm from './OrderForm';
 import { http, HttpResponse } from 'msw';
 import { useState } from 'react';
@@ -10,7 +10,7 @@ jest.mock('@/lib/formValidation', () => ({
     const [errors, setErrors] = useState({});
     const [touched, setTouched] = useState({});
 
-    const updateField = (field: string, value: any) => {
+    const updateField = (field: string, value: unknown) => {
       setData((prev: any) => ({ ...prev, [field]: value }));
       setErrors((prev) => ({ ...prev, [field]: undefined })); // Clear error on change
     };
