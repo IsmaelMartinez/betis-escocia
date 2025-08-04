@@ -41,7 +41,7 @@
     "svix": "^1.69.0"
   },
   "devDependencies": {
-    "@clerk/testing": "^1.10.6",
+    "@clerk/testing": "^1.10.9",
     "@eslint/eslintrc": "^3",
     "@playwright/test": "^1.54.1",
     "@storybook/addon-docs": "^9.0.18",
