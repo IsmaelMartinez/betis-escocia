@@ -46,7 +46,7 @@
     "@playwright/test": "^1.54.1",
     "@storybook/addon-docs": "^9.0.18",
     "@storybook/addon-onboarding": "^9.0.18",
-    "@storybook/addon-vitest": "^9.0.18",
+    "@storybook/addon-vitest": "^9.1.0",
     "@storybook/nextjs": "^9.0.18",
     "@swc/jest": "^0.2.39",
     "@tailwindcss/postcss": "^4",
