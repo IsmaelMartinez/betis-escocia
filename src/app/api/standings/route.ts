@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { FootballDataService, StandingEntry } from '@/services/footballDataService';
+import axios from 'axios';
 import { supabase } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
@@ -49,7 +50,7 @@ export async function GET() {
       }
     }
 
-    const service = new FootballDataService();
+    const service = new FootballDataService(axios.create());
     const standings = await service.getLaLigaStandings();
     
     if (!standings) {

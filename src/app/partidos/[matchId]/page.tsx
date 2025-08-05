@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FootballDataService } from '@/services/footballDataService';
+import axios from 'axios';
 import { Match } from '@/types/match';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -26,7 +27,7 @@ export async function generateMetadata({ params }: MatchDetailPageProps): Promis
   }
 
   try {
-    const service = new FootballDataService();
+    const service = new FootballDataService(axios.create());
     const match = await service.getMatchById(matchId);
 
     if (!match) {
@@ -125,7 +126,7 @@ function getOpponent(match: Match): { name: string; crest: string } {
 
 // Main component for rendering match details
 async function MatchDetailContent({ matchId }: { matchId: number }) {
-  const service = new FootballDataService();
+  const service = new FootballDataService(axios.create());
   const match = await service.getMatchById(matchId);
 
   if (!match) {

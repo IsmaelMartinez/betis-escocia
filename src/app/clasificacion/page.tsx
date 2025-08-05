@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { FootballDataService, StandingEntry } from '@/services/footballDataService';
+import axios from 'axios';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Image from 'next/image';
@@ -141,7 +142,7 @@ function StandingRow({ entry, isBetis }: { entry: StandingEntry; isBetis: boolea
 
 // Main standings content component
 async function StandingsContent() {
-  const service = new FootballDataService();
+  const service = new FootballDataService(axios.create());
   const standings = await service.getLaLigaStandings();
 
   if (!standings) {

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { FootballDataService } from '@/services/footballDataService';
+import axios from 'axios';
 import { supabase } from '@/lib/supabase';
 import { checkAdminRole } from '@/lib/adminApiProtection';
 
@@ -30,7 +31,7 @@ export async function POST(
     console.log(`🔄 Updating individual match ID: ${matchIdNumber}`);
     
     // Initialize the football data service
-    const footballService = new FootballDataService();
+    const footballService = new FootballDataService(axios.create());
     
     // Get the specific match from the API
     const match = await footballService.getMatchById(matchIdNumber);

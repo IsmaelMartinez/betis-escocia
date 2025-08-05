@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { FootballDataService } from '@/services/footballDataService';
+import axios from 'axios';
 import type { Match, MatchCardProps } from '@/types/match';
 
 export async function GET(request: Request) {
@@ -13,7 +14,7 @@ export async function GET(request: Request) {
     if (useLive) {
       // Use live Football-Data.org API
       try {
-        const service = new FootballDataService();
+        const service = new FootballDataService(axios.create());
         
         switch (type) {
           case 'upcoming':

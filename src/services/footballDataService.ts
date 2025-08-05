@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import rateLimit from 'axios-rate-limit';
 import type { Match } from '@/types/match';
 
@@ -39,16 +39,18 @@ export interface StandingEntry {
 }
 
 // Create a rate-limited axios instance
-const http = rateLimit(axios.create(), {
-  maxRequests: 10,
-  perMilliseconds: 60000,
-  maxRPS: 10,
-});
-
-http.defaults.headers.common['X-Auth-Token'] = API_KEY;
-http.defaults.headers.common['User-Agent'] = 'Betis-Escocia-App/1.0';
-
 export class FootballDataService {
+  private http: AxiosInstance;
+
+  constructor(axiosInstance: AxiosInstance) {
+    this.http = rateLimit(axiosInstance, {
+      maxRequests: 10,
+      perMilliseconds: 60000,
+      maxRPS: 10,
+    });
+    this.http.defaults.headers.common['X-Auth-Token'] = API_KEY;
+    this.http.defaults.headers.common['User-Agent'] = 'Betis-Escocia-App/1.0';
+  }
   async fetchRealBetisMatches(season: string): Promise<Match[]> {
     // Use the same format as the working script
     const url = `${BASE_URL}/teams/${REAL_BETIS_TEAM_ID}/matches?competitions=${LALIGA_COMPETITION_ID}&season=${season}`;
@@ -64,7 +66,7 @@ export class FootballDataService {
     console.log('Competition ID:', LALIGA_COMPETITION_ID);
     
     try {
-      const response = await http.get(url);
+      const response = await this.http.get(url);
       console.log('✅ API Response Status:', response.status);
       console.log('✅ API Response Data Keys:', Object.keys(response.data));
       return response.data.matches;
@@ -85,7 +87,7 @@ export class FootballDataService {
   async fetchLaLigaStandings(season: string): Promise<{ table: StandingEntry[] }[]> {
     const url = `${BASE_URL}/competitions/PD/standings?season=${season}`;
     try {
-      const response = await http.get(url);
+      const response = await this.http.get(url);
       return response.data.standings;
     } catch (error) {
       console.error('Error fetching La Liga standings:', error);
@@ -140,7 +142,7 @@ export class FootballDataService {
       const url = `${BASE_URL}/matches/${matchId}`;
       console.log(`🔍 Trying direct match API: ${url}`);
       
-      const response = await http.get(url);
+      const response = await this.http.get(url);
       console.log('✅ Direct match API Response Status:', response.status);
       
       if (response.data && response.data.id === matchId) {
@@ -204,5 +206,5 @@ export class FootballDataService {
   
 }
 
-const footballDataService = new FootballDataService();
+const footballDataService = new FootballDataService(axios.create());
 export default footballDataService;

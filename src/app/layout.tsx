@@ -11,6 +11,7 @@ import SentryUserContext from "@/components/SentryUserContext";
 import { ClerkProvider } from '@clerk/nextjs';
 import { getEnabledNavigationItemsAsync, initializeFeatureFlags } from '@/lib/featureFlags';
 import FlagsmithRefresher from '@/components/FlagsmithRefresher';
+import FacebookSDK from "@/components/FacebookSDK";
 
 export const dynamic = 'force-dynamic';
 
@@ -139,14 +140,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* Facebook SDK */}
-        <div id="fb-root"></div>
-        <script 
-          async 
-          defer 
-          crossOrigin="anonymous" 
-          src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v23.0"
-        ></script>
+        <FacebookSDK />
         
         <OfflineDetector />
         <ClerkProvider

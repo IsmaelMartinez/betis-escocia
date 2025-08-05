@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { FootballDataService } from '@/services/footballDataService';
+import axios from 'axios';
 import { supabase } from '@/lib/supabase';
 import { checkRateLimit, getClientIP } from '@/lib/security';
 import { checkAdminRole } from '@/lib/adminApiProtection';
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Initialize the football data service
-    const footballService = new FootballDataService();
+    const footballService = new FootballDataService(axios.create());
     
     // Get current and previous season matches
     // Use current year like the working script
