@@ -48,7 +48,7 @@ export class FootballDataService {
       perMilliseconds: 60000,
       maxRPS: 10,
     });
-    this.http.defaults.headers.common['X-Auth-Token'] = API_KEY;
+    this.http.defaults.headers.common['X-Auth-Token'] = process.env.FOOTBALL_DATA_API_KEY;
     this.http.defaults.headers.common['User-Agent'] = 'Betis-Escocia-App/1.0';
   }
   async fetchRealBetisMatches(season: string): Promise<Match[]> {
