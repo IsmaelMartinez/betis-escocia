@@ -147,23 +147,25 @@ jobs:
           npx sentry-cli releases set-commits $SENTRY_RELEASE --auto
           npx sentry-cli sourcemaps upload .next --ext js --ext js.map --ext mjs --ext mjs.map --ext css --ext css.map --ext html --ext html.map
           npx sentry-cli releases finalize $SENTRY_RELEASE
-      - name: Start Built Project
-        run: |
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }} \
-          CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }} \
-          CLERK_TEST_EMAIL=${{ secrets.CLERK_TEST_EMAIL }} \
-          CLERK_TEST_PASSWORD=${{ secrets.CLERK_TEST_PASSWORD }} \
-          NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }} \
-          NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }} \
-          FOOTBALL_DATA_API_KEY=${{ secrets.FOOTBALL_DATA_API_KEY }} \
-          FOOTBALL_DATA_API_URL=${{ secrets.FOOTBALL_DATA_API_URL }} \
-          NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID=${{ secrets.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID }} \
-          GOOGLE_SITE_VERIFICATION=${{ secrets.GOOGLE_SITE_VERIFICATION }} \
-          NEXT_PUBLIC_FEATURE_CLERK_AUTH=${{ secrets.NEXT_PUBLIC_FEATURE_CLERK_AUTH }} \
-          npm run start &
-      - name: Wait for server to be ready
-        run: npx wait-on http://localhost:3000 --timeout 120000 # Increased timeout to 2 minutes
+      - name: Deploy to Vercel Preview
+        uses: amondnet/vercel-action@v25
+        id: vercel_deploy
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prebuilt'
+          github-comment: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get Vercel Preview URL
+        id: get_url
+        run: echo "VERCEL_PREVIEW_URL=${{ steps.vercel_deploy.outputs.preview-url }}" >> $GITHUB_ENV
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.12.0
+
       - name: Run Lighthouse Accessibility
-        run: npm run lighthouse:accessibility
-      - name: Stop Development Server
-        run: kill $(lsof -t -i:3000) || true
+        run: npx lhci collect --url=${{ env.VERCEL_PREVIEW_URL }} && npx lhci assert
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
