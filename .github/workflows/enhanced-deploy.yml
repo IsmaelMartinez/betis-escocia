@@ -160,7 +160,7 @@ jobs:
           NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID=${{ secrets.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID }} \
           GOOGLE_SITE_VERIFICATION=${{ secrets.GOOGLE_SITE_VERIFICATION }} \
           NEXT_PUBLIC_FEATURE_CLERK_AUTH=${{ secrets.NEXT_PUBLIC_FEATURE_CLERK_AUTH }} \
-          npm run dev &
+          npm run start &
       - name: Wait for server to be ready
         run: npx wait-on http://localhost:3000 --timeout 120000 # Increased timeout to 2 minutes
       - name: Run Lighthouse Accessibility
