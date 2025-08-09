@@ -40,7 +40,7 @@
   - [x] 4.2 Review `GEMINI.md` and remove any references to the email service.
   - [x] 4.3 Review `README.md` and remove any references to the email service.
   - [x] 4.4 Review `docs/historical/completed-tasks/` and `docs/historical/implemented-features/` for any related entries and update/move them as necessary.
-- [ ] 5.0 Verify Decommissioning
+- [x] 5.0 Verify Decommissioning
   - [x] 5.1 Run `npm test` to ensure no regressions are introduced.
-  - [ ] 5.2 Run `npm run type-check` to ensure no TypeScript errors.
-  - [ ] 5.3 Manually verify that no email notifications are sent from the application (e.g., by submitting contact/RSVP forms locally).
+  - [x] 5.2 Run `npm run type-check` to ensure no TypeScript errors.
+  - [x] 5.3 Manually verify that no email notifications are sent from the application (e.g., by submitting contact/RSVP forms locally).
