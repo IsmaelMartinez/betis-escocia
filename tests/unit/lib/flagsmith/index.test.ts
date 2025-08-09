@@ -189,6 +189,29 @@ describe('Flagsmith Integration', () => {
       const status = await getSystemStatus();
       expect(status.performance.errorCount).toBe(1);
     });
+
+    it('should update feature flag states after refreshing flags', async () => {
+      // Initial state: feature is disabled
+      mockFlagsmithHasFeature.mockReturnValue(false);
+      mockFlagsmithGetValue.mockReturnValue('false');
+      await initializeFlagsmith(mockConfig);
+      expect(await hasFeature('test-feature')).toBe(false);
+      expect(await getValue('test-feature')).toBe(false);
+
+      // After refresh: feature is enabled
+      mockFlagsmithGetFlags.mockImplementationOnce(() => {
+        // Simulate flagsmith.getFlags() updating internal state
+        mockFlagsmithHasFeature.mockReturnValue(true);
+        mockFlagsmithGetValue.mockReturnValue('true');
+        return Promise.resolve();
+      });
+
+      await refreshFlags();
+
+      // Verify that the feature flag state has been updated
+      expect(await hasFeature('test-feature')).toBe(true);
+      expect(await getValue('test-feature')).toBe(true);
+    });
   });
 
   describe('getSystemStatus', () => {
