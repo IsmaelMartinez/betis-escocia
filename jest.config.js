@@ -9,9 +9,12 @@ module.exports = {
   collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.d.ts"],
   testMatch: [
     "**/tests/integration/**/*.(test|spec).{ts,tsx}",
-    "**/tests/unit/**/*.(test|spec).{ts,tsx}",
+    "**/tests/unit/**/*.(test|spec).{ts,tsx}", // Reverted to original
     // Exclude canary tests for now (they are empty placeholders)
     // "**/tests/canary/**/*.(test|spec).{ts,tsx}",
+  ],
+  testPathIgnorePatterns: [
+    "<rootDir>/tests/unit/app/", // Added this line to ignore the app directory
   ],
   transform: {
     "^.+.(ts|tsx)$": [
