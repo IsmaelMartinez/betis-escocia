@@ -18,28 +18,6 @@
         "focus": false,
         "panel": "new"
       }
-    },
-    {
-      "label": "Start Clerk MCP Server",
-      "type": "shell",
-      "command": "cd mcp-servers/clerk-mcp && npm start",
-      "isBackground": true,
-      "problemMatcher": [],
-      "group": "build",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      }
-    },
-    {
-      "label": "Start Flagsmith MCP Server",
-      "type": "shell",
-      "command": "cd mcp-servers/flagsmith-mcp && npm start",
-      "isBackground": true,
-      "problemMatcher": [],
-      "group": "build",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      }
     }
   ]
 }

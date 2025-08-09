@@ -1,6 +1,6 @@
 # Tasks for Comprehensive Test Coverage Implementation
 
-## Overall Test Coverage: 22.14%
+## Overall Test Coverage: 21.45%
 
 ## Relevant Files
 
@@ -8,6 +8,7 @@
 - `tests/integration/api/matches.test.ts` - Integration tests for matches API endpoints
 - `src/app/api/trivia/route.ts` - Trivia API endpoints with authentication and scoring logic
 - `tests/integration/api/trivia.test.ts` - Integration tests for trivia API endpoints
+- `tests/integration/api/e2e-workflow.test.ts` - End-to-end API workflow test combining Clerk auth and Supabase for trivia flow
 - `src/app/api/rsvp/route.ts` - RSVP management API with user authentication
 - `tests/integration/api/rsvp.test.ts` - Integration tests for RSVP functionality
 - `src/app/api/contact/route.ts` - Contact form submission API
@@ -38,7 +39,10 @@
 - `tests/unit/lib/roleUtils.test.ts` - Unit tests for role utilities
 
 ### Test Infrastructure
-- `tests/helpers/mockFactories.ts` - Test data factories and mock utilities
+
+- `tests/helpers/mockFactories.ts` - Test data factories and mock utilities (added)
+- `tests/msw/handlers.ts` - Mock Service Worker request handlers for external APIs (added)
+- `tests/msw/server.ts` - MSW server setup for Jest tests (added)
 - `tests/helpers/testHelpers.ts` - Shared test utilities and setup functions
 - `tests/setup.ts` - Global test configuration (enhance existing)
 - `jest.config.js` - Jest configuration with coverage thresholds (enhance existing)
@@ -98,11 +102,11 @@ This project utilizes Storybook v9 with `@storybook/addon-vitest` for comprehens
   - [ ] 4.3 Create integration tests for Supabase database operations with real test database - **DEFERRED: Due to persistent mocking challenges with Supabase client's chainable methods in Jest.**
   - [x] 4.4 Create integration tests for Flagsmith feature flag responses and configuration changes - **COMPLETED: Added test case for refreshFlags() to verify feature flag state updates.**
   - [x] 4.5 Create tests for middleware functionality including route protection and security headers - **COMPLETED: Added tests for security headers, public routes, and unauthenticated redirects for protected and admin routes.**
-  - [ ] 4.6 Create end-to-end API workflow tests combining multiple services and authentication
+  - [x] 4.6 Create end-to-end API workflow tests combining multiple services and authentication - **COMPLETED: Added `tests/integration/api/e2e-workflow.test.ts` covering authenticated trivia flow, NextResponse JSON handling, and randomized ordering.**
 
 - [ ] 5.0 Mock Strategy and Test Foundation Setup
-  - [ ] 5.1 Create comprehensive mock factories for test data generation (users, events, scores, etc.)
-  - [ ] 5.2 Implement Mock Service Worker (MSW) setup for external API mocking in integration tests
+  - [x] 5.1 Create comprehensive mock factories for test data generation (users, events, scores, etc.) - **COMPLETED: Added `tests/helpers/mockFactories.ts` with typed factories for matches, RSVP entries, contact submissions, and trivia questions/answers/scores, plus helpers and deterministic sequences.**
+  - [x] 5.2 Implement Mock Service Worker (MSW) setup for external API mocking in integration tests - **COMPLETED: Added MSW server and handlers, wired into `tests/setup.ts` (listen/reset/close) with example Football Data API handler and 429 error handler.**
   - [ ] 5.3 Create shared test utilities and helper functions for common testing patterns
   - [ ] 5.4 Configure test database setup and cleanup procedures for integration tests
   - [ ] 5.5 Enhance Jest configuration with coverage thresholds and reporting improvements

@@ -1,15 +1,7 @@
 {
   "mcpServers": {
-    "clerkMcp": {
-      "httpUrl": "http://localhost:3001/mcp",
-      "timeout": 30000,
-      "trust": false
-    },
-    "flagsmithMcp": {
-      "httpUrl": "http://localhost:3002/mcp",
-      "timeout": 30000,
-      "trust": false
-    },
+    
+    
     "supabaseMcp": {
       "command": "npx",
       "args": [

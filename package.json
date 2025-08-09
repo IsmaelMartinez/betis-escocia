@@ -20,8 +20,7 @@
     "lighthouse:accessibility": "npx lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-report.json --headless",
     "update-trivia": "tsx scripts/update-trivia-questions.ts",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "start-mcp-servers": "(cd mcp-servers/clerk-mcp && npm start &) && (cd mcp-servers/flagsmith-mcp && npm start &)"
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.25.5",

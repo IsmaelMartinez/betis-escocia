@@ -96,7 +96,7 @@ describe('Middleware', () => {
     const request = new NextRequest('http://localhost/some-route', { headers: { 'x-forwarded-for': '127.0.0.1' } });
 
     type MockResponse = { headers: Headers; url?: string; status?: number };
-    const response = await (middleware as unknown as (req: NextRequest) => Promise<MockResponse | undefined>)(request);
+    const response = (await (middleware as unknown as (req: NextRequest) => Promise<MockResponse | undefined>)(request))!;
 
     if (!response) throw new Error('Response is null or undefined');
 
@@ -117,7 +117,7 @@ describe('Middleware', () => {
     const request = new NextRequest('http://localhost/rsvp', { headers: { 'x-forwarded-for': '127.0.0.1' } });
 
     type MockResponse = { headers: Headers; url?: string; status?: number };
-    const response = await (middleware as unknown as (req: NextRequest) => Promise<MockResponse | undefined>)(request);
+    const response = (await (middleware as unknown as (req: NextRequest) => Promise<MockResponse | undefined>)(request))!; // Use non-null assertion
 
     if (!response) throw new Error('Response is null or undefined');
 
@@ -132,7 +132,7 @@ describe('Middleware', () => {
     const request = new NextRequest('http://localhost/dashboard', { headers: { 'x-forwarded-for': '127.0.0.1' } });
 
     type MockResponse = { headers: Headers; url?: string; status?: number };
-    const response = await (middleware as unknown as (req: NextRequest) => Promise<MockResponse | undefined>)(request);
+    const response = (await (middleware as unknown as (req: NextRequest) => Promise<MockResponse | undefined>)(request))!; // Use non-null assertion
 
     if (!response) throw new Error('Response is null or undefined');
 
@@ -146,7 +146,7 @@ describe('Middleware', () => {
     const request = new NextRequest('http://localhost/admin', { headers: { 'x-forwarded-for': '127.0.0.1' } });
 
     type MockResponse = { headers: Headers; url?: string; status?: number };
-    const response = await (middleware as unknown as (req: NextRequest) => Promise<MockResponse | undefined>)(request);
+    const response = (await (middleware as unknown as (req: NextRequest) => Promise<MockResponse | undefined>)(request))!; // Use non-null assertion
 
     if (!response) throw new Error('Response is null or undefined');
 
