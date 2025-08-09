@@ -34,8 +34,6 @@
 ### Feature Flags and Services
 - `src/lib/flagsmith/index.ts` - Flagsmith integration and feature flag utilities
 - `tests/unit/lib/flagsmith/index.test.ts` - Unit tests for feature flag functions (expand existing)
-- `src/lib/emailService.ts` - Email service integration
-- `tests/unit/lib/emailService.test.ts` - Unit tests for email service
 - `src/lib/roleUtils.ts` - Role management utilities
 - `tests/unit/lib/roleUtils.test.ts` - Unit tests for role utilities
 
@@ -91,9 +89,8 @@ This project utilizes Storybook v9 with `@storybook/addon-vitest` for comprehens
   - [x] 3.2 Create comprehensive tests for admin API protection utilities including role validation and error scenarios
 - [x] 3.3 Create tests for security utilities covering input validation, sanitization, and CORS handling
   - [x] 3.4 Create tests for form validation utilities covering all validation rules and error messages - **COMPLETED: Implemented 31 comprehensive test scenarios achieving 50% coverage for formValidation.ts. Tests cover validateField, validateForm, and commonValidationRules functions with edge cases, type conversion, validation order precedence, and all common field validation patterns (name, email, phone, message, subject). Includes proper security function mocking and Spanish error message validation.**
-  - [x] 3.5 Create tests for email service integration including success and failure scenarios
-  - [x] 3.6 Create tests for role management utilities covering role assignment and permission checks
-  - [x] 3.7 Create tests for date/time utilities and formatting functions used across the application
+  - [x] 3.5 Create tests for role management utilities covering role assignment and permission checks
+  - [x] 3.6 Create tests for date/time utilities and formatting functions used across the application
 
 - [ ] 4.0 Integration Testing Infrastructure (Target: 80% Coverage)
   - [x] 4.1 Create integration tests for external Football API service including rate limiting and error handling - **COMPLETED: Added a test case for rate limiting (HTTP 429) in fetchRealBetisMatches and adjusted assertion to match actual console output.**
@@ -101,8 +98,7 @@ This project utilizes Storybook v9 with `@storybook/addon-vitest` for comprehens
   - [ ] 4.3 Create integration tests for Supabase database operations with real test database - **DEFERRED: Due to persistent mocking challenges with Supabase client's chainable methods in Jest.**
   - [x] 4.4 Create integration tests for Flagsmith feature flag responses and configuration changes - **COMPLETED: Added test case for refreshFlags() to verify feature flag state updates.**
   - [x] 4.5 Create tests for middleware functionality including route protection and security headers - **COMPLETED: Added tests for security headers, public routes, and unauthenticated redirects for protected and admin routes.**
-  - [ ] 4.6 Create integration tests for email service delivery and template rendering - **DEFERRED: Requires a live email service and domain for effective testing, which is outside the current scope.**
-  - [ ] 4.7 Create end-to-end API workflow tests combining multiple services and authentication
+  - [ ] 4.6 Create end-to-end API workflow tests combining multiple services and authentication
 
 - [ ] 5.0 Mock Strategy and Test Foundation Setup
   - [ ] 5.1 Create comprehensive mock factories for test data generation (users, events, scores, etc.)

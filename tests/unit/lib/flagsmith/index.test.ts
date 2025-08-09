@@ -195,8 +195,8 @@ describe('Flagsmith Integration', () => {
       mockFlagsmithHasFeature.mockReturnValue(false);
       mockFlagsmithGetValue.mockReturnValue('false');
       await initializeFlagsmith(mockConfig);
-      expect(await hasFeature('test-feature')).toBe(false);
-      expect(await getValue('test-feature')).toBe(false);
+      expect(await hasFeature('show-clasificacion')).toBe(false);
+      expect(await getValue('show-clasificacion')).toBe(false);
 
       // After refresh: feature is enabled
       mockFlagsmithGetFlags.mockImplementationOnce(() => {
@@ -209,8 +209,8 @@ describe('Flagsmith Integration', () => {
       await refreshFlags();
 
       // Verify that the feature flag state has been updated
-      expect(await hasFeature('test-feature')).toBe(true);
-      expect(await getValue('test-feature')).toBe(true);
+      expect(await hasFeature('show-clasificacion')).toBe(true);
+      expect(await getValue('show-clasificacion')).toBe(true);
     });
   });
 

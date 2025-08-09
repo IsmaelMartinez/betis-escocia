@@ -22,25 +22,25 @@
 ## Tasks
 
 - [ ] 1.0 Remove Email Service Implementation
-  - [ ] 1.1 Delete `src/lib/emailService.ts`.
-  - [ ] 1.2 Delete `tests/unit/lib/emailService.test.ts`.
-  - [ ] 1.3 Remove `resend` dependency from `package.json`.
-  - [ ] 1.4 Review `package.json` for any other email-related dependencies that can be removed.
-- [ ] 2.0 Update API Routes and Backend Logic
-  - [ ] 2.1 Remove calls to `emailService.sendRSVPNotification` from `src/app/api/rsvp/route.ts`.
-  - [ ] 2.2 Remove calls to `emailService.sendContactNotification` from `src/app/api/contact/route.ts`.
-  - [ ] 2.3 Review `src/app/api/admin/contact-submissions/[id]/route.ts` for any email service calls and remove them.
-  - [ ] 2.4 Review `src/lib/supabase.ts` for any email service calls and remove them.
-  - [ ] 2.5 Remove any unused imports related to the email service from affected files.
-- [ ] 3.0 Clean Up Environment Variables
-  - [ ] 3.1 Remove `ADMIN_EMAIL`, `FROM_EMAIL`, `EMAIL_API_KEY` from `.env.local` and any other relevant `.env` files.
-  - [ ] 3.2 Ensure no code references these environment variables after removal.
+  - [x] 1.1 Delete `src/lib/emailService.ts`.
+  - [x] 1.2 Delete `tests/unit/lib/emailService.test.ts`.
+  - [x] 1.3 Remove `resend` dependency from `package.json`.
+  - [x] 1.4 Review `package.json` for any other email-related dependencies that can be removed.
+- [x] 2.0 Update API Routes and Backend Logic
+  - [x] 2.1 Remove calls to `emailService.sendRSVPNotification` from `src/app/api/rsvp/route.ts`.
+  - [x] 2.2 Remove calls to `emailService.sendContactNotification` from `src/app/api/contact/route.ts`.
+  - [x] 2.3 Review `src/app/api/admin/contact-submissions/[id]/route.ts` for any email service calls and remove them.
+  - [x] 2.4 Review `src/lib/supabase.ts` for any email service calls and remove them.
+  - [x] 2.5 Remove any unused imports related to the email service from affected files.
+- [x] 3.0 Clean Up Environment Variables
+  - [x] 3.1 Remove `ADMIN_EMAIL`, `FROM_EMAIL`, `EMAIL_API_KEY` from `.env.local` and any other relevant `.env` files.
+  - [x] 3.2 Ensure no code references these environment variables after removal.
 - [ ] 4.0 Update Documentation
-  - [ ] 4.1 Update `docs/adr/012-email-service-provider-analysis.md` to mark it as decommissioned/removed.
-  - [ ] 4.2 Review `GEMINI.md` and remove any references to the email service.
-  - [ ] 4.3 Review `README.md` and remove any references to the email service.
-  - [ ] 4.4 Review `docs/historical/completed-tasks/` and `docs/historical/implemented-features/` for any related entries and update/move them as necessary.
+  - [x] 4.1 Update `docs/adr/012-email-service-provider-analysis.md` to mark it as decommissioned/removed.
+  - [x] 4.2 Review `GEMINI.md` and remove any references to the email service.
+  - [x] 4.3 Review `README.md` and remove any references to the email service.
+  - [x] 4.4 Review `docs/historical/completed-tasks/` and `docs/historical/implemented-features/` for any related entries and update/move them as necessary.
 - [ ] 5.0 Verify Decommissioning
-  - [ ] 5.1 Run `npm test` to ensure no regressions are introduced.
+  - [x] 5.1 Run `npm test` to ensure no regressions are introduced.
   - [ ] 5.2 Run `npm run type-check` to ensure no TypeScript errors.
   - [ ] 5.3 Manually verify that no email notifications are sent from the application (e.g., by submitting contact/RSVP forms locally).

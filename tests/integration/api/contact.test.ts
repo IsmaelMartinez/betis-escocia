@@ -6,34 +6,9 @@ jest.mock('@clerk/nextjs/server', () => ({
   })),
 }));
 
-// Mock the Resend SDK first
-jest.mock('resend', () => {
-  return {
-    Resend: jest.fn().mockImplementation(() => ({
-      emails: {
-        send: jest.fn(),
-      },
-    })),
-  };
-});
-
-// Mock EmailService with named functions
-const mockSendContactNotification = jest.fn(() => Promise.resolve(true));
-const mockSendRSVPNotification = jest.fn(() => Promise.resolve(true));
-const mockSendTestEmail = jest.fn(() => Promise.resolve(true));
-
-jest.mock('@/lib/emailService', () => ({
-  EmailService: jest.fn().mockImplementation(() => ({
-    sendContactNotification: mockSendContactNotification,
-    sendRSVPNotification: mockSendRSVPNotification,
-    sendTestEmail: mockSendTestEmail,
-  })),
-}));
-
 import { NextRequest } from 'next/server';
 import { GET, POST } from '@/app/api/contact/route';
 import { supabase } from '@/lib/supabase';
-import { EmailService } from '@/lib/emailService';
 import * as security from '@/lib/security'; // Import as namespace
 
 // Mock supabase client
@@ -193,10 +168,6 @@ describe('Contact API - GET', () => {
 describe('Contact API - POST', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // Clear the specific mock functions
-    mockSendContactNotification.mockClear();
-    mockSendRSVPNotification.mockClear();
-    mockSendTestEmail.mockClear();
     // Reset all spies to their original implementation
     jest.restoreAllMocks();
   });
@@ -239,8 +210,6 @@ describe('Contact API - POST', () => {
       message: 'Mensaje enviado correctamente. Te responderemos pronto.',
     });
     expect(supabase.from).toHaveBeenCalledWith('contact_submissions');
-    expect((EmailService as jest.MockedClass<typeof EmailService>)).toHaveBeenCalledTimes(1);
-    expect(mockSendContactNotification).toHaveBeenCalledTimes(1);
   });
 
   it('should return 400 for invalid input (missing required fields)', async () => {
@@ -266,7 +235,6 @@ describe('Contact API - POST', () => {
       error: 'Mínimo 2 caracteres',
     });
     expect(supabase.from).not.toHaveBeenCalled();
-    expect(EmailService).not.toHaveBeenCalled();
   });
 
   it('should return 400 for invalid email format instead of phone format (current behavior)', async () => {
@@ -292,7 +260,6 @@ describe('Contact API - POST', () => {
       error: 'Formato de email inválido',
     });
     expect(supabase.from).not.toHaveBeenCalled();
-    expect(EmailService).not.toHaveBeenCalled();
   });
 
   it('should return 429 for rate limit exceeded', async () => {
@@ -323,7 +290,6 @@ describe('Contact API - POST', () => {
       error: 'Demasiadas solicitudes. Por favor, intenta de nuevo más tarde.',
     });
     expect(supabase.from).not.toHaveBeenCalled();
-    expect(EmailService).not.toHaveBeenCalled();
   });
 
   it('should return 500 for database insertion error', async () => {
@@ -364,6 +330,5 @@ describe('Contact API - POST', () => {
       error: 'Error interno del servidor al procesar tu mensaje',
     });
     expect(supabase.from).toHaveBeenCalledWith('contact_submissions');
-    expect(EmailService).not.toHaveBeenCalled();
   });
 });

@@ -25,7 +25,7 @@ This document provides a list of ideas and features for the Peña Bética Escoce
 ## 📊 **Admin Features**
 
 * Develop admin dashboard for RSVP management and statistics
-* Add email notifications for new RSVPs and orders
+* Add push notifications for new RSVPs and orders
 
 ## 👥 **User Features**
 

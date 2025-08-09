@@ -1,10 +1,11 @@
 # ADR-012: Email Service Provider Analysis
 
 ## Status
-- **Status**: Proposed
-- **Date**: 2025-08-01
+- **Status**: Decommissioned/Removed
+- **Date**: 2025-08-09 (Date of decommissioning)
 - **Authors**: Gemini CLI
 - **Decision Maker**: User
+- **Note**: This ADR is decommissioned as the email notification system has been removed from the project.
 
 ## Context
 The current email notification service (`src/lib/emailService.ts`) uses Resend for sending transactional emails (RSVP and contact notifications). The user has requested an analysis of the current provider against other free/low-volume alternatives, with a focus on identifying the most suitable option for extremely limited load while remaining free. The current implementation relies on an `EMAIL_API_KEY` environment variable, implying a third-party service.

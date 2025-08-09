@@ -18,8 +18,8 @@ jest.mock('@clerk/nextjs/server', () => ({
 
 import { auth, currentUser } from '@clerk/nextjs/server';
 
-const mockAuth = auth as jest.Mock;
-const mockCurrentUser = currentUser as jest.Mock;
+const mockAuth = auth as unknown as jest.Mock; // Add unknown for safer casting
+const mockCurrentUser = currentUser as unknown as jest.Mock;
 
 describe('Clerk Authentication Integration', () => {
   beforeEach(() => {
@@ -43,7 +43,7 @@ describe('Clerk Authentication Integration', () => {
       });
       mockCurrentUser.mockResolvedValue(MOCK_USER);
 
-      const { userId } = auth();
+      const { userId } = await auth();
       const user = await currentUser();
 
       expect(userId).toBe(MOCK_USER_ID);

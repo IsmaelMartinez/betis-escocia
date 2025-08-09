@@ -6,7 +6,7 @@ This guide provides comprehensive patterns and best practices for testing API ro
 For Next.js API routes with complex dependencies:
 
 ### Mock Structure Hierarchy
-1. **External Services First**: Mock Clerk, Supabase, email services before imports.
+1. **External Services First**: Mock Clerk, Supabase, external services before imports.
 2. **Security Functions**: Mock all security utilities to avoid conflicts.
 3. **Test-Specific Overrides**: Use `jest.spyOn()` for test-specific behavior.
 
