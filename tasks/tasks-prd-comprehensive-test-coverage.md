@@ -91,7 +91,7 @@
   - [ ] 4.3 Create integration tests for Supabase database operations with real test database - **DEFERRED: Due to persistent mocking challenges with Supabase client's chainable methods in Jest.**
   - [x] 4.4 Create integration tests for Flagsmith feature flag responses and configuration changes - **COMPLETED: Added test case for refreshFlags() to verify feature flag state updates.**
   - [x] 4.5 Create tests for middleware functionality including route protection and security headers - **COMPLETED: Added tests for security headers, public routes, and unauthenticated redirects for protected and admin routes.**
-  - [ ] 4.6 Create integration tests for email service delivery and template rendering
+  - [ ] 4.6 Create integration tests for email service delivery and template rendering - **DEFERRED: Requires a live email service and domain for effective testing, which is outside the current scope.**
   - [ ] 4.7 Create end-to-end API workflow tests combining multiple services and authentication
 
 - [ ] 5.0 Mock Strategy and Test Foundation Setup

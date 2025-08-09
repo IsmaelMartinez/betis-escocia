@@ -107,7 +107,8 @@ jest.isolateModules(() => {
 
       it('should handle rate limiting errors (status 429)', async () => {
         const rateLimitError = new Error('Too Many Requests');
-        (rateLimitError as any).response = { status: 429 };
+        const rateLimitErrorWithResponse = rateLimitError as Error & { response?: { status: number } };
+        rateLimitErrorWithResponse.response = { status: 429 };
         mockAxiosInstance.get.mockRejectedValueOnce(rateLimitError);
 
         const season = '2024';
