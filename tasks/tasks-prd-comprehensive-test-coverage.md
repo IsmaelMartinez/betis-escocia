@@ -61,6 +61,16 @@
 - Mock external dependencies (Clerk, Supabase, external APIs) in unit tests
 - Use real test database for integration tests where appropriate
 
+## Component Testing with Storybook
+
+This project utilizes Storybook v9 with `@storybook/addon-vitest` for comprehensive component testing. Components are tested directly within their Storybook stories (`.stories.tsx` files) using "play functions". These functions simulate user interactions and assert component behavior, and are automatically run by Vitest.
+
+**Key points for component testing:**
+- **Location**: Tests are written directly within `.stories.tsx` files.
+- **Method**: Use `play` functions to define test scenarios.
+- **Tools**: Leverage `within` and `userEvent` from `storybook/test` for interactions and assertions.
+- **Execution**: Tests are run automatically when Storybook is built or when `npm test` is executed (via Vitest integration).
+
 ## Tasks
 
 - [x] 1.0 API Route Testing Implementation (Target: 90% Coverage)
