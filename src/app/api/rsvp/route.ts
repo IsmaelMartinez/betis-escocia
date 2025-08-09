@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from "@sentry/nextjs";
 import { supabase, type RSVP } from '@/lib/supabase';
-import { EmailService, type RSVPEmailData } from '@/lib/emailService';
+
 import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, getClientIP } from '@/lib/security';
 import { getCurrentUpcomingMatch } from '@/lib/matchUtils';
 
@@ -303,21 +303,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Send email notification to admin (non-blocking)
-    const emailData: RSVPEmailData = {
-      name: rsvpData.name,
-      email: rsvpData.email,
-      attendees: rsvpData.attendees,
-      matchDate: rsvpData.match_date,
-      message: rsvpData.message,
-      whatsappInterest: rsvpData.whatsapp_interest
-    };
     
-    // Send notification asynchronously (don't wait for it)
-    const emailService = new EmailService();
-    emailService.sendRSVPNotification(emailData).catch(error => {
-      console.error('Failed to send RSVP notification email:', error);
-      // Don't fail the API request if email fails
-    });
 
     // Get updated totals for the current match using match_id
     const { data: allRSVPs, error: countError } = await supabase
