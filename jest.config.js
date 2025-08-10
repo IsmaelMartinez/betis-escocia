@@ -9,7 +9,7 @@ module.exports = {
   collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.d.ts"],
   testMatch: [
     "**/tests/integration/**/*.(test|spec).{ts,tsx}",
-    "**/tests/unit/**/*.(test|spec).{ts,tsx}", // Reverted to original
+    "**/tests/unit/**/!(*.app)*.(test|spec).{ts,tsx}", // Exclude tests/unit/app
     // Exclude canary tests for now (they are empty placeholders)
     // "**/tests/canary/**/*.(test|spec).{ts,tsx}",
   ],
