@@ -26,7 +26,7 @@ vi.mock('@/lib/security', () => ({
   validateEmail: vi.fn((email) => {
     const trimmed = email.trim().toLowerCase();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.it(trimmed)) return { isValid: false, error: 'Formato de email inválido' };
+    if (!emailRegex.test(trimmed)) return { isValid: false, error: 'Formato de email inválido' };
     if (trimmed.length > 254) return { isValid: false, error: 'Email demasiado largo' };
     if (trimmed.includes('..') || trimmed.includes('@@')) return { isValid: false, error: 'Email contiene caracteres inválidos' };
     return { isValid: true };
