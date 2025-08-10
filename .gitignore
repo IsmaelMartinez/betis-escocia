@@ -62,3 +62,6 @@ storybook-static
 
 # trivia questions
 data/trivia-questions.json
+
+# ignore generated html folder
+html/

@@ -54,11 +54,24 @@ describe('Clerk Webhook API', () => {
     } as unknown as typeof MockWebhook.prototype));
     
     // Default successful header mock
-    mockHeaders.mockResolvedValue(new Map([
-      ['svix-id', 'test-id'],
-      ['svix-timestamp', '1234567890'],
-      ['svix-signature', 'test-signature'],
-    ]));
+    mockHeaders.mockResolvedValue({
+      get: vi.fn((key: string) => {
+        if (key === 'svix-id') return 'test-id';
+        if (key === 'svix-timestamp') return '1234567890';
+        if (key === 'svix-signature') return 'test-signature';
+        return null;
+      }),
+      append: vi.fn(),
+      set: vi.fn(),
+      delete: vi.fn(),
+      has: vi.fn(),
+      forEach: vi.fn(),
+      entries: vi.fn(),
+      keys: vi.fn(),
+      values: vi.fn(),
+      getSetCookie: vi.fn(() => []),
+      [Symbol.iterator]: vi.fn(),
+    } as unknown as Headers);
     
     // Default successful supabase function mocks
     mockLinkExistingSubmissionsToUser.mockResolvedValue({
@@ -295,7 +308,19 @@ describe('Clerk Webhook API', () => {
     });
 
     it('should return 400 if svix headers are missing', async () => {
-      mockHeaders.mockResolvedValue(new Map());
+      mockHeaders.mockResolvedValue({
+        get: vi.fn(() => null),
+        append: vi.fn(),
+        set: vi.fn(),
+        delete: vi.fn(),
+        has: vi.fn(),
+        forEach: vi.fn(),
+        entries: vi.fn(),
+        keys: vi.fn(),
+        values: vi.fn(),
+        getSetCookie: vi.fn(() => []),
+        [Symbol.iterator]: vi.fn(),
+      } as unknown as Headers);
 
       const request = new Request('http://localhost/api/webhooks/clerk', {
         method: 'POST',

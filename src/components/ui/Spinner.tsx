@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 
-interface SpinnerProps {
+interface SpinnerProps extends Omit<HTMLAttributes<HTMLDivElement>, 'className'> {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
@@ -8,6 +8,7 @@ interface SpinnerProps {
 const Spinner: React.FC<SpinnerProps> = ({
   size = 'md',
   className = '',
+  ...props
 }) => {
   const sizeClasses = {
     sm: 'w-4 h-4 border-2',
@@ -17,6 +18,7 @@ const Spinner: React.FC<SpinnerProps> = ({
 
   return (
     <div
+      {...props}
       className={`inline-block animate-spin rounded-full border-solid border-current border-r-transparent text-betis-green ${sizeClasses[size]} ${className}`}
       role="status"
     >

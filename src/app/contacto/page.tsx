@@ -15,8 +15,6 @@ import {
 } from 'lucide-react';
 import { FormSuccessMessage, FormErrorMessage, FormLoadingMessage } from '@/components/MessageComponent';
 import { useUser } from '@clerk/nextjs';
-import { isFeatureEnabledAsync, type FeatureFlags } from '@/lib/featureFlags';
-import { FlagsmithFeatureName } from '@/lib/flagsmith/types';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface ContactFormData {
@@ -43,7 +41,7 @@ const formTypes = [
     description: 'Dudas sobre eventos y confirmaciones',
     icon: UserPlus,
     color: 'bg-green-500',
-    feature: 'showRSVP' as keyof FlagsmithFeatureName
+    feature: null // Always enabled
   },
   {
     id: 'coleccionables' as const,
@@ -51,7 +49,7 @@ const formTypes = [
     description: 'Consultas sobre productos y pedidos',
     icon: Package,
     color: 'bg-purple-500',
-    feature: 'showColeccionables' as keyof FlagsmithFeatureName
+    feature: null // Always enabled
   },
   {
     id: 'galeria' as const,
@@ -59,7 +57,7 @@ const formTypes = [
     description: 'Envío de fotos o problemas con la galería',
     icon: Camera,
     color: 'bg-pink-500',
-    feature: 'showGaleria' as keyof FlagsmithFeatureName
+    feature: null // Always enabled
   },
   {
     id: 'whatsapp' as const,
@@ -83,9 +81,16 @@ export default function ContactPage() {
   console.log('[ContactPage] Component rendering...');
   const { user } = useUser();
   const formRef = useRef<HTMLDivElement>(null);
-  const [isContactFeatureEnabled, setIsContactFeatureEnabled] = useState(false);
-  const [loadingFeatureFlag, setLoadingFeatureFlag] = useState(true);
-  const [highlightFeatures, setHighlightFeatures] = useState<Record<string, boolean>>({});
+  const [isContactFeatureEnabled, setIsContactFeatureEnabled] = useState(true);
+  const [loadingFeatureFlag, setLoadingFeatureFlag] = useState(false);
+  const [highlightFeatures, setHighlightFeatures] = useState<Record<string, boolean>>({
+    general: true,
+    rsvp: true,
+    coleccionables: true,
+    galeria: true,
+    whatsapp: true,
+    feedback: true,
+  });
 
   console.log('[ContactPage] Initial state: loadingFeatureFlag=', loadingFeatureFlag, ' isContactFeatureEnabled=', isContactFeatureEnabled);
 
@@ -102,28 +107,7 @@ export default function ContactPage() {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Check feature flag on client-side
-  useEffect(() => {
-    console.log('[ContactPage] useEffect for feature flag check triggered.');
-    const checkFeatures = async () => {
-      console.log('[ContactPage] Calling isFeatureEnabledAsync for showContacto...');
-      const contactEnabled = await isFeatureEnabledAsync('showContacto');
-      setIsContactFeatureEnabled(contactEnabled);
-
-      const featuresStatus: Record<string, boolean> = {};
-      for (const type of formTypes) {
-        if (type.feature) {
-          featuresStatus[type.id] = await isFeatureEnabledAsync(type.feature as keyof FeatureFlags);
-        } else {
-          featuresStatus[type.id] = true; // Always enabled if no feature flag
-        }
-      }
-      setHighlightFeatures(featuresStatus);
-      setLoadingFeatureFlag(false);
-      console.log('[ContactPage] Updated state: loadingFeatureFlag=false, isContactFeatureEnabled=', contactEnabled, ' highlightFeatures=', featuresStatus);
-    };
-    checkFeatures();
-  }, []);
+  // Feature always enabled; no flag checks needed
 
   // Pre-populate form with user data when authenticated
   useEffect(() => {

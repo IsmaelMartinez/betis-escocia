@@ -14,7 +14,9 @@
       "Bash(npm run test:coverage:*)",
       "Bash(rm:*)",
       "Bash(find:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(npm run test:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": []
   }

@@ -27,40 +27,40 @@ export default function Card({
   );
 }
 
-interface CardHeaderProps {
+interface CardHeaderProps extends Omit<HTMLAttributes<HTMLDivElement>, 'className'> {
   readonly children: ReactNode;
   readonly className?: string;
 }
 
-export function CardHeader({ children, className = '' }: CardHeaderProps) {
+export function CardHeader({ children, className = '', ...props }: CardHeaderProps) {
   return (
-    <div className={cn('px-6 py-4 border-b border-gray-200', className)}>
+    <div {...props} className={cn('px-6 py-4 border-b border-gray-200', className)}>
       {children}
     </div>
   );
 }
 
-interface CardBodyProps {
+interface CardBodyProps extends Omit<HTMLAttributes<HTMLDivElement>, 'className'> {
   readonly children: ReactNode;
   readonly className?: string;
 }
 
-export function CardBody({ children, className = '' }: CardBodyProps) {
+export function CardBody({ children, className = '', ...props }: CardBodyProps) {
   return (
-    <div className={cn('px-6 py-4', className)}>
+    <div {...props} className={cn('px-6 py-4', className)}>
       {children}
     </div>
   );
 }
 
-interface CardFooterProps {
+interface CardFooterProps extends Omit<HTMLAttributes<HTMLDivElement>, 'className'> {
   readonly children: ReactNode;
   readonly className?: string;
 }
 
-export function CardFooter({ children, className = '' }: CardFooterProps) {
+export function CardFooter({ children, className = '', ...props }: CardFooterProps) {
   return (
-    <div className={cn('px-6 py-4 border-t border-gray-200 bg-gray-50/50', className)}>
+    <div {...props} className={cn('px-6 py-4 border-t border-gray-200 bg-gray-50/50', className)}>
       {children}
     </div>
   );

@@ -53,7 +53,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
   // Authentication state
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
-  const isAuthEnabled = isFeatureEnabled('showClerkAuth');
+  const isAuthEnabled = true;
   
   const handleSignOut = async () => {
     await signOut();

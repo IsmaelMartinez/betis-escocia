@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest, NextResponse } from 'next/server';
+import { User } from '@clerk/backend';
 
 // Mock external dependencies
 vi.mock('@/lib/adminApiProtection');
@@ -40,11 +41,21 @@ describe('POST /api/admin/sync-matches', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Default mocks for successful admin role and rate limit
-    mockCheckAdminRole.mockResolvedValue({ user: { id: 'admin_user_id', publicMetadata: { role: 'admin' } }, isAdmin: true, error: null });
-    mockCheckRateLimit.mockReturnValue({ allowed: true });
+    mockCheckAdminRole.mockResolvedValue({ user: { id: 'admin_user_id', publicMetadata: { role: 'admin' } } as any, isAdmin: true, error: undefined });
+    mockCheckRateLimit.mockReturnValue({ allowed: true, remaining: 0, resetTime: 0 });
     mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: vi.fn().mockResolvedValue([]),
-    }));
+      http: {} as any, // Mock http property
+      fetchRealBetisMatches: vi.fn(),
+      fetchLaLigaStandings: vi.fn(),
+      getBetisMatchesForSeasons: vi.fn(),
+      getUpcomingBetisMatchesForCards: vi.fn(),
+      getRecentBetisResultsForCards: vi.fn(),
+      getMatchById: vi.fn(),
+      getLaLigaStandings: vi.fn(),
+      isHomeMatch: vi.fn(),
+      getOpponent: vi.fn(),
+      getResult: vi.fn(),
+    } as any));
     (mockSupabaseFrom as any).mockReturnValue({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -68,7 +79,7 @@ describe('POST /api/admin/sync-matches', () => {
   });
 
   it('should return 403 if user is authenticated but not an admin', async () => {
-    mockCheckAdminRole.mockResolvedValue({ user: { id: 'user_id', publicMetadata: { role: 'user' } }, isAdmin: false, error: 'Forbidden. Admin access required.' });
+    mockCheckAdminRole.mockResolvedValue({ user: { id: 'user_id', publicMetadata: { role: 'user' } } as any, isAdmin: false, error: 'Forbidden. Admin access required.' });
 
     const req = new NextRequest('http://localhost/api/admin/sync-matches', { method: 'POST' });
     const res = await POST(req);
@@ -81,7 +92,7 @@ describe('POST /api/admin/sync-matches', () => {
 
   // 1.9.2 Implement rate limiting tests
   it('should return 429 if rate limit is exceeded', async () => {
-    mockCheckRateLimit.mockReturnValue({ allowed: false });
+    mockCheckRateLimit.mockReturnValue({ allowed: false, remaining: 0, resetTime: 0 });
 
     const req = new NextRequest('http://localhost/api/admin/sync-matches', { method: 'POST' });
     const res = await POST(req);
@@ -116,8 +127,18 @@ describe('POST /api/admin/sync-matches', () => {
       },
     ];
     mockFootballDataService.mockImplementation(() => ({
+      http: {} as any,
+      fetchRealBetisMatches: vi.fn(),
+      fetchLaLigaStandings: vi.fn(),
       getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches),
-    }));
+      getUpcomingBetisMatchesForCards: vi.fn(),
+      getRecentBetisResultsForCards: vi.fn(),
+      getMatchById: vi.fn(),
+      getLaLigaStandings: vi.fn(),
+      isHomeMatch: vi.fn(),
+      getOpponent: vi.fn(),
+      getResult: vi.fn(),
+    } as any));
     (mockSupabaseFrom as any).mockReturnValue({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -152,9 +173,7 @@ describe('POST /api/admin/sync-matches', () => {
         score: { fullTime: { home: 2, away: 1 } },
       },
     ];
-    mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches),
-    }));
+    mockFootballDataService.mockImplementation(() => ({ getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches) } as any));
     // Mock supabase update chain for successful update
     // Mock supabase for updating existing match
     (mockSupabaseFrom as any).mockReturnValue({
@@ -201,9 +220,7 @@ describe('POST /api/admin/sync-matches', () => {
         matchday: 2,
       },
     ];
-    mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches),
-    }));
+    mockFootballDataService.mockImplementation(() => ({ getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches) } as any));
     // Mock supabase for mixed updates and inserts
     // Prepare spies for update and insert operations
     const mockUpdate = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) });
@@ -246,7 +263,7 @@ describe('POST /api/admin/sync-matches', () => {
   it('should return 500 if FootballDataService fails', async () => {
     mockFootballDataService.mockImplementation(() => ({
       getBetisMatchesForSeasons: vi.fn().mockRejectedValue(new Error('API error')),
-    }));
+    } as unknown as FootballDataService));
 
     const req = new NextRequest('http://localhost/api/admin/sync-matches', { method: 'POST' });
     const res = await POST(req);
@@ -273,9 +290,7 @@ describe('POST /api/admin/sync-matches', () => {
         matchday: 1,
       },
     ];
-    mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches),
-    }));
+    mockFootballDataService.mockImplementation(() => ({ getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches) } as any));
     (mockSupabaseFrom as any).mockReturnValue({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -309,9 +324,7 @@ describe('POST /api/admin/sync-matches', () => {
         score: { fullTime: { home: 2, away: 1 } },
       },
     ];
-    mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches),
-    }));
+    mockFootballDataService.mockImplementation(() => ({ getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches) } as any));
     (mockSupabaseFrom as any).mockReturnValue({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -346,9 +359,7 @@ describe('POST /api/admin/sync-matches', () => {
         score: { fullTime: { home: null, away: null } }, // Null scores
       },
     ];
-    mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches),
-    }));
+    mockFootballDataService.mockImplementation(() => ({ getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches) } as any));
     (mockSupabaseFrom as any).mockReturnValue({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -378,7 +389,7 @@ describe('POST /api/admin/sync-matches', () => {
   it('should handle empty array of matches from FootballDataService', async () => {
     mockFootballDataService.mockImplementation(() => ({
       getBetisMatchesForSeasons: vi.fn().mockResolvedValue([]),
-    }));
+    } as unknown as FootballDataService));
 
     const req = new NextRequest('http://localhost/api/admin/sync-matches', { method: 'POST' });
     const res = await POST(req);
@@ -407,9 +418,7 @@ describe('POST /api/admin/sync-matches', () => {
         score: { fullTime: { home: 2, away: 1 } },
       },
     ];
-    mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches),
-    }));
+    mockFootballDataService.mockImplementation(() => ({ getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches) } as any));
     (mockSupabaseFrom as any).mockReturnValue({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -442,9 +451,7 @@ describe('POST /api/admin/sync-matches', () => {
         score: { fullTime: { home: 1, away: 2 } },
       },
     ];
-    mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches),
-    }));
+    mockFootballDataService.mockImplementation(() => ({ getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches) } as any));
     (mockSupabaseFrom as any).mockReturnValue({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -477,9 +484,7 @@ describe('POST /api/admin/sync-matches', () => {
         score: { fullTime: { home: 1, away: 1 } },
       },
     ];
-    mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches),
-    }));
+    mockFootballDataService.mockImplementation(() => ({ getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches) } as any));
     (mockSupabaseFrom as any).mockReturnValue({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),

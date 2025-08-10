@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
+import { User } from '@clerk/backend';
 
 // Mock serverRoleUtils
 vi.mock('@/lib/serverRoleUtils', () => ({
@@ -55,10 +56,37 @@ describe('Admin Users API', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Default mocks for successful admin access
-    mockCheckAdminRole.mockResolvedValue({ 
-      user: { id: 'admin_user_id', publicMetadata: { role: ROLES.ADMIN } }, 
-      isAdmin: true, 
-      error: null 
+    mockCheckAdminRole.mockResolvedValue({
+      user: {
+        id: 'admin_user_id',
+        publicMetadata: { role: ROLES.ADMIN },
+        passwordEnabled: false,
+        totpEnabled: false,
+        backupCodeEnabled: false,
+        twoFactorEnabled: false,
+        unsafeMetadata: {},
+        emailAddresses: [],
+        firstName: null,
+        lastName: null,
+        username: null,
+        externalAccounts: [],
+        externalId: null,
+        hasImage: false,
+        imageUrl: '',
+        lastSignInAt: null,
+        locked: false,
+        phoneNumber: null,
+        phoneNumbers: [],
+        primaryEmailAddressId: null,
+        primaryPhoneNumberId: null,
+        primaryWeb3WalletId: null,
+        profileImageUrl: '',
+        web3Wallets: [],
+        createdAt: 0,
+        updatedAt: 0,
+      } as unknown as User,
+      isAdmin: true,
+      error: undefined
     });
 
     // Default successful responses for serverRoleUtils
@@ -71,7 +99,14 @@ describe('Admin Users API', () => {
     
     mockUpdateUser.mockResolvedValue({
       success: true,
-      user: {}
+      user: {
+        id: 'mock_user_id',
+        email: 'mock@example.com',
+        firstName: 'Mock',
+        lastName: 'User',
+        role: ROLES.USER,
+        banned: false,
+      }
     });
     
     mockDeleteUser.mockResolvedValue({
@@ -178,7 +213,38 @@ describe('Admin Users API', () => {
     });
 
     it('should return 403 if not an admin', async () => {
-      mockCheckAdminRole.mockResolvedValue({ user: { id: 'user_id', publicMetadata: { role: ROLES.USER } }, isAdmin: false, error: 'Admin access required' });
+      mockCheckAdminRole.mockResolvedValue({
+        user: {
+          id: 'user_id',
+          publicMetadata: { role: ROLES.USER },
+          passwordEnabled: false,
+          totpEnabled: false,
+          backupCodeEnabled: false,
+          twoFactorEnabled: false,
+          unsafeMetadata: {},
+          emailAddresses: [],
+          firstName: null,
+          lastName: null,
+          username: null,
+          externalAccounts: [],
+          externalId: null,
+          hasImage: false,
+          imageUrl: '',
+          lastSignInAt: null,
+          locked: false,
+          phoneNumber: null,
+          phoneNumbers: [],
+          primaryEmailAddressId: null,
+          primaryPhoneNumberId: null,
+          primaryWeb3WalletId: null,
+          profileImageUrl: '',
+          web3Wallets: [],
+          createdAt: 0,
+          updatedAt: 0,
+        } as unknown as User,
+        isAdmin: false,
+        error: 'Admin access required'
+      });
 
       const request = new NextRequest('http://localhost/api/admin/users');
       const response = await GET(request);
@@ -302,7 +368,38 @@ describe('Admin Users API', () => {
     });
 
     it('should return 403 if not an admin', async () => {
-      mockCheckAdminRole.mockResolvedValue({ user: { id: 'user_id', publicMetadata: { role: ROLES.USER } }, isAdmin: false, error: 'Admin access required' });
+      mockCheckAdminRole.mockResolvedValue({
+        user: {
+          id: 'user_id',
+          publicMetadata: { role: ROLES.USER },
+          passwordEnabled: false,
+          totpEnabled: false,
+          backupCodeEnabled: false,
+          twoFactorEnabled: false,
+          unsafeMetadata: {},
+          emailAddresses: [],
+          firstName: null,
+          lastName: null,
+          username: null,
+          externalAccounts: [],
+          externalId: null,
+          hasImage: false,
+          imageUrl: '',
+          lastSignInAt: null,
+          locked: false,
+          phoneNumber: null,
+          phoneNumbers: [],
+          primaryEmailAddressId: null,
+          primaryPhoneNumberId: null,
+          primaryWeb3WalletId: null,
+          profileImageUrl: '',
+          web3Wallets: [],
+          createdAt: 0,
+          updatedAt: 0,
+        } as unknown as User,
+        isAdmin: false,
+        error: 'Admin access required'
+      });
 
       const request = new NextRequest('http://localhost/api/admin/users', {
         method: 'PATCH',
@@ -388,7 +485,38 @@ describe('Admin Users API', () => {
     });
 
     it('should return 403 if not an admin', async () => {
-      mockCheckAdminRole.mockResolvedValue({ user: { id: 'user_id', publicMetadata: { role: ROLES.USER } }, isAdmin: false, error: 'Admin access required' });
+      mockCheckAdminRole.mockResolvedValue({
+        user: {
+          id: 'user_id',
+          publicMetadata: { role: ROLES.USER },
+          passwordEnabled: false,
+          totpEnabled: false,
+          backupCodeEnabled: false,
+          twoFactorEnabled: false,
+          unsafeMetadata: {},
+          emailAddresses: [],
+          firstName: null,
+          lastName: null,
+          username: null,
+          externalAccounts: [],
+          externalId: null,
+          hasImage: false,
+          imageUrl: '',
+          lastSignInAt: null,
+          locked: false,
+          phoneNumber: null,
+          phoneNumbers: [],
+          primaryEmailAddressId: null,
+          primaryPhoneNumberId: null,
+          primaryWeb3WalletId: null,
+          profileImageUrl: '',
+          web3Wallets: [],
+          createdAt: 0,
+          updatedAt: 0,
+        } as unknown as User,
+        isAdmin: false,
+        error: 'Admin access required'
+      });
 
       const request = new NextRequest('http://localhost/api/admin/users', {
         method: 'DELETE',

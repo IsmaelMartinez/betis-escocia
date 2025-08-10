@@ -55,7 +55,7 @@ describe('Admin Roles API', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Default mocks for successful admin access
-    mockCheckAdminRole.mockResolvedValue({ user: { id: 'admin_user_id', publicMetadata: { role: ROLES.ADMIN } } as any, isAdmin: true, error: null });
+    mockCheckAdminRole.mockResolvedValue({ user: { id: 'admin_user_id', publicMetadata: { role: ROLES.ADMIN } } as any, isAdmin: true, error: undefined });
     mockAuth.mockResolvedValue({ userId: 'admin_user_id' } as any);
     mockValidateRoleChange.mockReturnValue({ allowed: true, message: 'Allowed' });
   });

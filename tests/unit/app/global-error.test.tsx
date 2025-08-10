@@ -14,7 +14,7 @@ describe('GlobalError component', () => {
     const mockError = new Error('Test global error') as Error & { digest?: string };
     const mockReset = vi.fn();
 
-    render(<GlobalError error={mockError} reset={mockReset} />);
+        render(<GlobalError error={mockError} reset={mockReset} /> as any);
 
     expect(screen.getByText('¡Oops!')).toBeInTheDocument();
     expect(screen.getByText('Error del sistema')).toBeInTheDocument();
@@ -27,7 +27,7 @@ describe('GlobalError component', () => {
     const mockError = new Error('Test global error') as Error & { digest?: string };
     const mockReset = vi.fn();
 
-    render(<GlobalError error={mockError} reset={mockReset} />);
+        render(<GlobalError error={mockError} reset={mockReset} /> as any);
 
     fireEvent.click(screen.getByRole('button', { name: /Intentar de nuevo/i }));
     expect(mockReset).toHaveBeenCalledTimes(1);
@@ -38,7 +38,7 @@ describe('GlobalError component', () => {
     const mockError = new Error('Test global error') as Error & { digest?: string };
     const mockReset = vi.fn();
 
-    render(<GlobalError error={mockError} reset={mockReset} />);
+        render(<GlobalError error={mockError} reset={mockReset} /> as any);
 
     expect(consoleSpy).toHaveBeenCalledWith('Global application error:', mockError);
     expect(Sentry.captureException).toHaveBeenCalledWith(mockError);

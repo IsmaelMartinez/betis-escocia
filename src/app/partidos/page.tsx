@@ -1,19 +1,10 @@
 import { ApiErrorBoundary } from '@/components/ErrorBoundary';
 import BetisPositionWidget from '@/components/BetisPositionWidget';
 import AllDatabaseMatches from '@/components/AllDatabaseMatches';
-import { FeatureWrapper } from '@/lib/featureProtection';
-import { notFound } from 'next/navigation';
-import { isFeatureEnabled } from '@/lib/featureFlags';
-
 
 export const dynamic = 'force-dynamic';
 
 export default function MatchesPage() {
-  // Check if partidos feature is enabled
-  if (!isFeatureEnabled('showPartidos')) {
-    notFound();
-  }
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
@@ -38,13 +29,11 @@ export default function MatchesPage() {
             </div>
             
             {/* Sidebar - Betis Position Widget */}
-            <FeatureWrapper feature="showClasificacion">
-              <div className="lg:col-span-1">
-                <div className="sticky top-8">
-                  <BetisPositionWidget />
-                </div>
+            <div className="lg:col-span-1">
+              <div className="sticky top-8">
+                <BetisPositionWidget />
               </div>
-            </FeatureWrapper>
+            </div>
           </div>
         </div>
       </section>

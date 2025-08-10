@@ -57,8 +57,8 @@ describe('RootLayout', () => {
     vi.clearAllMocks();
     // Ensure mocks return default implementations if needed
     vi.mocked(Layout).mockImplementation(({ children }: any) => <div data-testid="mock-layout">{children}</div>);
-    vi.mocked(Sentry.ErrorBoundary).mockImplementation(({ children }: any) => <div data-testid="mock-sentry-error-boundary">{children}</div>);
-    vi.mocked(ClerkProvider).mockImplementation(({ children }: any) => <div data-testid="mock-clerk-provider">{children}</div>);
+    vi.mocked(Sentry.ErrorBoundary).mockImplementation((props: any) => <div data-testid="mock-sentry-error-boundary">{props.children}</div> as any);
+    vi.mocked(ClerkProvider).mockImplementation((props: any) => <div data-testid="mock-clerk-provider">{props.children}</div> as any);
   });
 
   it('renders children correctly within the layout structure', async () => {

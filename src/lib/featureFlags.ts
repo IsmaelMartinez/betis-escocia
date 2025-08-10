@@ -258,19 +258,19 @@ export function getEnabledNavigationItems() {
       name: 'RSVP', 
       href: '/rsvp', 
       nameEn: 'RSVP',
-      feature: 'showRSVP' as keyof FeatureFlags
+      feature: null // Always on
     },
     { 
       name: 'Clasificación', 
       href: '/clasificacion', 
       nameEn: 'Standings',
-      feature: 'showClasificacion' as keyof FeatureFlags
+      feature: null // Always on
     },
     { 
       name: 'Partidos', 
       href: '/partidos', 
       nameEn: 'Matches',
-      feature: 'showPartidos' as keyof FeatureFlags
+      feature: null // Always on
     },
     
     { 
@@ -301,13 +301,13 @@ export function getEnabledNavigationItems() {
       name: 'Únete', 
       href: '/unete', 
       nameEn: 'Join',
-      feature: 'showUnete' as keyof FeatureFlags
+      feature: null // Always on
     },
     { 
       name: 'Contacto', 
       href: '/contacto', 
       nameEn: 'Contact',
-      feature: 'showContacto' as keyof FeatureFlags
+      feature: null // Always on
     },
     { 
       name: 'Redes Sociales', 
@@ -328,16 +328,16 @@ export function getEnabledNavigationItems() {
  */
 export async function getEnabledNavigationItemsAsync(): Promise<NavigationItem[]> {
   const allNavigationItems: NavigationItem[] = [
-    { name: 'Únete', href: '/unete', nameEn: 'Join', feature: 'show-unete' },
-    { name: 'Partidos', href: '/partidos', nameEn: 'Matches', feature: 'show-partidos' },
-    { name: 'Clasificación', href: '/clasificacion', nameEn: 'Standings', feature: 'show-clasificacion' },
+    { name: 'Únete', href: '/unete', nameEn: 'Join', feature: null },
+    { name: 'Partidos', href: '/partidos', nameEn: 'Matches', feature: null },
+    { name: 'Clasificación', href: '/clasificacion', nameEn: 'Standings', feature: null },
     { name: 'Coleccionables', href: '/coleccionables', nameEn: 'Collectibles', feature: 'show-coleccionables' },
     { name: 'Galería', href: '/galeria', nameEn: 'Gallery', feature: 'show-galeria' },
     { name: 'Redes Sociales', href: '/redes-sociales', nameEn: 'Social Media', feature: 'show-redes-sociales' },
     { name: 'Nosotros', href: '/nosotros', nameEn: 'About', feature: 'show-nosotros' },
     { name: 'Historia', href: '/historia', nameEn: 'History', feature: 'show-history' },
-    { name: 'RSVP', href: '/rsvp', nameEn: 'RSVP', feature: 'show-rsvp' },
-    { name: 'Contacto', href: '/contacto', nameEn: 'Contact', feature: 'show-contacto' },
+    { name: 'RSVP', href: '/rsvp', nameEn: 'RSVP', feature: null },
+    { name: 'Contacto', href: '/contacto', nameEn: 'Contact', feature: null },
   ];
 
   // Get all flags at once for better performance
