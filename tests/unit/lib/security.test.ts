@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { encodeHtml, sanitizeInput, sanitizeObject, validateInputLength, validateEmail, checkRateLimit, generateCSRFToken, validateCSRFToken, getClientIP, getCSPHeader, CSP_DIRECTIVES } from '@/lib/security';
 
 describe('Security Utilities', () => {
@@ -149,12 +150,7 @@ describe('Security Utilities', () => {
 
     beforeEach(() => {
       // Clear the internal rateLimitStore map for each test
-      jest.resetModules();
-      // Re-import to get a fresh instance of the module with an empty map
-      jest.doMock('@/lib/security', () => {
-        const actual = jest.requireActual('@/lib/security');
-        return { ...actual };
-      });
+      vi.resetModules();
     });
 
     it('should allow requests within the limit', () => {
@@ -177,18 +173,18 @@ describe('Security Utilities', () => {
     });
 
     it('should reset after the windowMs', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       checkRateLimit(identifier, config); // 1st request
       checkRateLimit(identifier, config); // 2nd request
 
-      jest.advanceTimersByTime(1001); // Advance time past windowMs
+      vi.advanceTimersByTime(1001); // Advance time past windowMs
 
       const result4 = checkRateLimit(identifier, config); // New window
       expect(result4.allowed).toBe(true);
       expect(result4.remaining).toBe(1);
 
-      jest.useRealTimers();
+      vi.useRealTimers();
     });
 
     it('should handle multiple identifiers independently', () => {

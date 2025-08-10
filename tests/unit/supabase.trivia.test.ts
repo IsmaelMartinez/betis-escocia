@@ -1,26 +1,27 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createUserTriviaScore, getUserDailyTriviaScore, supabase } from '../../src/lib/supabase';
 
 // Mock the Supabase client
-jest.mock('@supabase/supabase-js', () => ({
-  createClient: jest.fn(() => {
-    const mockSingle = jest.fn();
-    const mockLt = jest.fn(() => ({
+vi.mock('@supabase/supabase-js', () => ({
+  createClient: vi.fn(() => {
+    const mockSingle = vi.fn();
+    const mockLt = vi.fn(() => ({
       single: mockSingle,
     }));
-    const mockGte = jest.fn(() => ({
+    const mockGte = vi.fn(() => ({
       lt: mockLt,
     }));
-    const mockEq = jest.fn(() => ({
+    const mockEq = vi.fn(() => ({
       gte: mockGte,
     }));
-    const mockSelect = jest.fn(() => ({
+    const mockSelect = vi.fn(() => ({
       eq: mockEq,
       single: mockSingle, // For cases where select().single() is called directly
     }));
-    const mockInsert = jest.fn(() => ({
+    const mockInsert = vi.fn(() => ({
       select: mockSelect,
     }));
-    const mockFrom = jest.fn(() => ({
+    const mockFrom = vi.fn(() => ({
       insert: mockInsert,
       select: mockSelect,
     }));
@@ -35,7 +36,7 @@ jest.mock('@supabase/supabase-js', () => ({
 
 describe('Trivia Score Supabase Functions', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('createUserTriviaScore', () => {

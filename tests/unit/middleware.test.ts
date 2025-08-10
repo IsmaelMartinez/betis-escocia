@@ -1,38 +1,39 @@
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { NextRequest, NextResponse } from 'next/server';
 import { getCSPHeader } from '@/lib/security';
 import middleware from '@/middleware';
 
 // Mock Next.js server
-jest.mock('next/server', () => ({
+vi.mock('next/server', () => ({
   NextResponse: {
-    next: jest.fn(() => ({
+    next: vi.fn(() => ({
       headers: new Headers(),
     })),
-    redirect: jest.fn((url: URL) => ({
+    redirect: vi.fn((url: URL) => ({
       headers: new Headers(),
       url: url.toString(),
       status: 307,
     })),
   },
-  NextRequest: jest.fn((input: string, init?: RequestInit) => {
+  NextRequest: vi.fn((input: string, init?: RequestInit) => {
     const request = new Request(input, init);
     return {
       ...request,
       nextUrl: new URL(input),
       url: input,
     };
-  }) as unknown as jest.Mock<typeof NextRequest>,
+  }) as unknown as any,
 }));
 
 // Mock Clerk
-jest.mock('@clerk/nextjs/server', () => {
+vi.mock('@clerk/nextjs/server', () => {
   type AuthResult = { userId: string | null };
   type AuthFn = () => Promise<AuthResult>;
 
   // Global auth mock so tests can control it without changing module types
   (globalThis as unknown as { __clerkAuthMock: AuthFn }).__clerkAuthMock = async () => ({ userId: null });
 
-  const createRouteMatcher = jest.fn((routes: string[]) => {
+  const createRouteMatcher = vi.fn((routes: string[]) => {
     return (req: NextRequest) => {
       const anyReq = req as unknown as { nextUrl?: { pathname: string }; url: string };
       const pathname = anyReq.nextUrl?.pathname ?? new URL(anyReq.url).pathname;
@@ -46,7 +47,7 @@ jest.mock('@clerk/nextjs/server', () => {
     };
   });
 
-  const clerkMiddleware = jest.fn(
+  const clerkMiddleware = vi.fn(
     (handler: (auth: AuthFn, request: NextRequest) => unknown) => {
       return async (request: NextRequest) =>
         handler((globalThis as unknown as { __clerkAuthMock: AuthFn }).__clerkAuthMock, request);
@@ -57,42 +58,40 @@ jest.mock('@clerk/nextjs/server', () => {
 });
 
 // Mock security functions
-jest.mock('@/lib/security', () => ({
-  getCSPHeader: jest.fn(() => 'mock-csp-header'),
+vi.mock('@/lib/security', () => ({
+  getCSPHeader: vi.fn(() => 'mock-csp-header'),
 }));
 
-const mockNextResponseNext = NextResponse.next as jest.Mock;
-const mockGetCSPHeader = getCSPHeader as jest.Mock;
+const mockNextResponseNext = NextResponse.next as any;
+const mockGetCSPHeader = getCSPHeader as any;
 
 describe('Middleware', () => {
   let originalNodeEnv: string | undefined;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Store original NODE_ENV
     originalNodeEnv = process.env.NODE_ENV;
-    // Mock process.env.NODE_ENV for consistent testing
-    Object.defineProperty(process.env, 'NODE_ENV', {
-      value: 'test',
-      writable: true,
-    });
+    // Set NODE_ENV for consistent testing
+    process.env.NODE_ENV = 'test';
     // Default to unauthenticated unless overridden in a test
     (globalThis as unknown as { __clerkAuthMock: () => Promise<{ userId: string | null }> }).__clerkAuthMock =
-      jest.fn(async () => ({ userId: null }));
+      vi.fn(async () => ({ userId: null }));
   });
 
   afterEach(() => {
     // Restore original NODE_ENV
-    Object.defineProperty(process.env, 'NODE_ENV', {
-      value: originalNodeEnv,
-      writable: true,
-    });
-    jest.restoreAllMocks();
+    if (originalNodeEnv !== undefined) {
+      process.env.NODE_ENV = originalNodeEnv;
+    } else {
+      delete process.env.NODE_ENV;
+    }
+    vi.restoreAllMocks();
   });
 
   it('should set security headers for all responses', async () => {
     (globalThis as unknown as { __clerkAuthMock: () => Promise<{ userId: string | null }> }).__clerkAuthMock =
-      jest.fn(async () => ({ userId: 'user_123' }));
+      vi.fn(async () => ({ userId: 'user_123' }));
     const request = new NextRequest('http://localhost/some-route', { headers: { 'x-forwarded-for': '127.0.0.1' } });
 
     type MockResponse = { headers: Headers; url?: string; status?: number };
@@ -113,7 +112,7 @@ describe('Middleware', () => {
 
   it('should allow access to public routes without authentication', async () => {
     (globalThis as unknown as { __clerkAuthMock: () => Promise<{ userId: string | null }> }).__clerkAuthMock =
-      jest.fn(async () => ({ userId: null }));
+      vi.fn(async () => ({ userId: null }));
     const request = new NextRequest('http://localhost/rsvp', { headers: { 'x-forwarded-for': '127.0.0.1' } });
 
     type MockResponse = { headers: Headers; url?: string; status?: number };
@@ -128,7 +127,7 @@ describe('Middleware', () => {
 
   it('should redirect unauthenticated users from protected routes', async () => {
     (globalThis as unknown as { __clerkAuthMock: () => Promise<{ userId: string | null }> }).__clerkAuthMock =
-      jest.fn(async () => ({ userId: null }));
+      vi.fn(async () => ({ userId: null }));
     const request = new NextRequest('http://localhost/dashboard', { headers: { 'x-forwarded-for': '127.0.0.1' } });
 
     type MockResponse = { headers: Headers; url?: string; status?: number };
@@ -142,7 +141,7 @@ describe('Middleware', () => {
 
   it('should redirect unauthenticated users from admin routes', async () => {
     (globalThis as unknown as { __clerkAuthMock: () => Promise<{ userId: string | null }> }).__clerkAuthMock =
-      jest.fn(async () => ({ userId: null }));
+      vi.fn(async () => ({ userId: null }));
     const request = new NextRequest('http://localhost/admin', { headers: { 'x-forwarded-for': '127.0.0.1' } });
 
     type MockResponse = { headers: Headers; url?: string; status?: number };

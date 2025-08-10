@@ -19,9 +19,10 @@ npm run type-check     # TypeScript type checking
 
 ### Testing
 ```bash
-npm test                # Run Jest unit tests
-npm run test:watch     # Jest watch mode
-npm run test:coverage  # Coverage report
+npm test                # Run Vitest unit & integration tests
+npm run test:watch     # Vitest watch mode
+npm run test:coverage  # Vitest coverage report with v8 provider
+npm run test:silent    # Vitest with minimal JSON output
 npm run test:e2e       # Playwright E2E tests (headless)
 npm run test:e2e:headed # Playwright E2E tests (headed)
 npm run storybook      # Storybook dev server
@@ -42,7 +43,7 @@ npm run lighthouse:accessibility # Run Lighthouse audit
 - **Database**: Supabase (PostgreSQL) with Row Level Security
 - **Authentication**: Clerk with role-based permissions
 - **Feature Flags**: Flagsmith for secure feature rollouts
-- **Testing**: Jest + Playwright + Storybook v9
+- **Testing**: Vitest + Playwright + Storybook v9
 
 ### Key Directories
 ```
@@ -54,8 +55,8 @@ src/
 └── types/              # TypeScript type definitions
 
 tests/
-├── unit/               # Jest unit tests
-├── integration/        # API integration tests
+├── unit/               # Vitest unit tests
+├── integration/        # Vitest integration tests
 └── helpers/            # Test utilities
 
 e2e/                    # Playwright E2E tests
@@ -88,7 +89,7 @@ sql/                    # Database migrations & scripts
 
 ### Storybook Integration
 - **Purpose**: Component development, documentation, and testing
-- **Version**: v9.0.18 with Vitest addon integration
+- **Version**: v9.1.1 with Vitest addon integration
 - **Pattern**: Create `.stories.tsx` files alongside components
 - **Import updates**: Use `import { within, userEvent } from 'storybook/test'`
 
@@ -145,6 +146,44 @@ export async function POST(request: NextRequest) {
 - **Auth setup**: Pre-configured in `playwright/global.setup.ts`
 - **Base URL**: Defaults to `http://localhost:3000`
 - **Pattern**: Test user workflows end-to-end with real authentication
+
+## Testing Patterns
+
+### Vitest Configuration
+- **Test runner**: Vitest with jsdom environment for React components
+- **Coverage**: v8 provider with 80% threshold for lines, functions, branches, statements
+- **Setup**: Global setup in `tests/setup.ts` with DOM testing library matchers
+- **Config**: `vitest.config.ts` with path aliases and environment variables
+
+### Test Organization
+- **Unit tests**: `tests/unit/` - Component and utility function testing
+- **Integration tests**: `tests/integration/` - API route and database integration testing
+- **E2E tests**: `e2e/` - Full user journey testing with Playwright
+- **Helpers**: `tests/helpers/` - Shared test utilities and mock factories
+
+### Vitest API Patterns
+```typescript
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen } from '@testing-library/react';
+
+// Mocking with Vitest
+vi.mock('@/lib/flagsmith', () => ({
+  hasFeature: vi.fn(() => Promise.resolve(false)),
+  getValue: vi.fn(() => Promise.resolve('default')),
+}));
+
+// Component testing
+test('renders component correctly', () => {
+  render(<MyComponent />);
+  expect(screen.getByRole('button')).toBeInTheDocument();
+});
+```
+
+### API Testing Patterns
+- **Clerk mocking**: Mock `@clerk/nextjs/server` for authentication tests
+- **Supabase mocking**: Mock database operations with controlled responses  
+- **MSW integration**: Service worker for external API mocking
+- **Environment variables**: Test-specific values in `vitest.config.ts`
 
 ## Key Features
 

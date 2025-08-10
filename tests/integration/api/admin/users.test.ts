@@ -1,27 +1,28 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 
 // Mock serverRoleUtils
-jest.mock('@/lib/serverRoleUtils', () => ({
-  listUsersWithRoles: jest.fn(),
-  updateUser: jest.fn(),
-  deleteUser: jest.fn(),
+vi.mock('@/lib/serverRoleUtils', () => ({
+  listUsersWithRoles: vi.fn(),
+  updateUser: vi.fn(),
+  deleteUser: vi.fn(),
 }));
 
 // Mock Clerk auth
-jest.mock('@clerk/nextjs/server', () => ({
-  auth: jest.fn(() => ({
+vi.mock('@clerk/nextjs/server', () => ({
+  auth: vi.fn(() => ({
     userId: null,
-    getToken: jest.fn(() => Promise.resolve(null)),
+    getToken: vi.fn(() => Promise.resolve(null)),
   })),
 }));
 
 // Mock Next.js server components
-jest.mock('next/server', () => ({
-  NextRequest: jest.fn((input, init) => {
+vi.mock('next/server', () => ({
+  NextRequest: vi.fn((input, init) => {
     const request = new Request(input, init);
     return {
       ...request,
-      json: jest.fn(() => request.json()),
+      json: vi.fn(() => request.json()),
       url: request.url,
       nextUrl: {
         searchParams: new URLSearchParams(request.url.split('?')[1] || ''),
@@ -29,7 +30,7 @@ jest.mock('next/server', () => ({
     };
   }),
   NextResponse: {
-    json: jest.fn((data, init) => ({
+    json: vi.fn((data, init) => ({
       json: () => Promise.resolve(data),
       status: init?.status || 200,
     })),
@@ -42,17 +43,17 @@ import { listUsersWithRoles, updateUser, deleteUser } from '@/lib/serverRoleUtil
 import { ROLES } from '@/lib/roleUtils';
 
 // Mock external dependencies
-jest.mock('@/lib/adminApiProtection');
+vi.mock('@/lib/adminApiProtection');
 
-const mockCheckAdminRole = checkAdminRole as jest.Mock;
-const mockListUsersWithRoles = listUsersWithRoles as jest.Mock;
-const mockUpdateUser = updateUser as jest.Mock;
-const mockDeleteUser = deleteUser as jest.Mock;
+const mockCheckAdminRole = vi.mocked(checkAdminRole);
+const mockListUsersWithRoles = vi.mocked(listUsersWithRoles);
+const mockUpdateUser = vi.mocked(updateUser);
+const mockDeleteUser = vi.mocked(deleteUser);
 
 describe('Admin Users API', () => {
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Default mocks for successful admin access
     mockCheckAdminRole.mockResolvedValue({ 
       user: { id: 'admin_user_id', publicMetadata: { role: ROLES.ADMIN } }, 

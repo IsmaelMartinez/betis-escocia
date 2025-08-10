@@ -6,7 +6,13 @@
       "Bash(npm run build:*)",
       "Bash(npm run test:silent:*)",
       "Bash(npm test:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npm run test:integration:*)",
+      "Bash(npx vitest:*)",
+      "Bash(timeout 5 npm run test:watch)",
+      "Bash(npm run test:coverage:*)",
+      "Bash(rm:*)"
     ],
     "deny": []
   }

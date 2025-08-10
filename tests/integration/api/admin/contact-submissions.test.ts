@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Mock Next.js server utilities first
-jest.mock('next/server', () => ({
+vi.mock('next/server', () => ({
   NextResponse: {
-    json: jest.fn((data, options) => ({
+    json: vi.fn((data, options) => ({
       json: async () => data,
       status: options?.status || 200,
       data,
@@ -12,38 +12,39 @@ jest.mock('next/server', () => ({
 }));
 
 // Mock Clerk before any other imports
-jest.mock('@clerk/nextjs/server', () => ({
-  getAuth: jest.fn(() => ({
+vi.mock('@clerk/nextjs/server', () => ({
+  getAuth: vi.fn(() => ({
     userId: null,
-    getToken: jest.fn(() => Promise.resolve(null)),
+    getToken: vi.fn(() => Promise.resolve(null)),
   })),
-  currentUser: jest.fn(() => Promise.resolve(null)),
+  currentUser: vi.fn(() => Promise.resolve(null)),
 }));
 
 // Mock Supabase client creation
-jest.mock('@supabase/supabase-js', () => ({
-  createClient: jest.fn(() => ({
-    from: jest.fn(),
+vi.mock('@supabase/supabase-js', () => ({
+  createClient: vi.fn(() => ({
+    from: vi.fn(),
   })),
 }));
 
 // Mock role utilities
-jest.mock('@/lib/roleUtils', () => ({
-  isAdmin: jest.fn(() => false),
+vi.mock('@/lib/roleUtils', () => ({
+  isAdmin: vi.fn(() => false),
 }));
 
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { PUT } from '@/app/api/admin/contact-submissions/[id]/route';
 import { getAuth, currentUser } from '@clerk/nextjs/server';
 import { createClient } from '@supabase/supabase-js';
 import { isAdmin } from '@/lib/roleUtils';
 import { NextResponse } from 'next/server';
 
-// Use jest.mocked for type safety
-const mockGetAuth = jest.mocked(getAuth);
-const mockCurrentUser = jest.mocked(currentUser);
-const mockCreateClient = jest.mocked(createClient);
-const mockIsAdmin = jest.mocked(isAdmin);
-const mockNextResponse = jest.mocked(NextResponse);
+// Use vi.mocked for type safety
+const mockGetAuth = vi.mocked(getAuth);
+const mockCurrentUser = vi.mocked(currentUser);
+const mockCreateClient = vi.mocked(createClient);
+const mockIsAdmin = vi.mocked(isAdmin);
+const mockNextResponse = vi.mocked(NextResponse);
 
 describe('/api/admin/contact-submissions/[id]', () => {
   // Mock request object
@@ -51,7 +52,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
     url,
     method: options.method || 'PUT',
     headers: new Map(),
-    json: jest.fn(() => {
+    json: vi.fn(() => {
       if (options.body) {
         try {
           return Promise.resolve(JSON.parse(options.body));
@@ -68,20 +69,20 @@ describe('/api/admin/contact-submissions/[id]', () => {
   let mockSupabaseClient: any;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     
     mockRequest = createMockRequest();
     
     // Mock Supabase client
     mockSupabaseClient = {
-      from: jest.fn(),
+      from: vi.fn(),
     };
     mockCreateClient.mockReturnValue(mockSupabaseClient);
     
     // Reset default mocks
     mockGetAuth.mockReturnValue({
       userId: 'admin-user-id',
-      getToken: jest.fn(() => Promise.resolve('mock-token')),
+      getToken: vi.fn(() => Promise.resolve('mock-token')),
     } as any);
     
     mockCurrentUser.mockResolvedValue({
@@ -96,7 +97,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
     test('should reject unauthenticated requests (no userId)', async () => {
       mockGetAuth.mockReturnValue({
         userId: null,
-        getToken: jest.fn(() => Promise.resolve(null)),
+        getToken: vi.fn(() => Promise.resolve(null)),
       } as any);
       
       mockCurrentUser.mockResolvedValue(null);
@@ -120,7 +121,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
     test('should reject unauthenticated requests (no user)', async () => {
       mockGetAuth.mockReturnValue({
         userId: 'user-id',
-        getToken: jest.fn(() => Promise.resolve('token')),
+        getToken: vi.fn(() => Promise.resolve('token')),
       } as any);
       
       mockCurrentUser.mockResolvedValue(null);
@@ -144,7 +145,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
     test('should reject non-admin users', async () => {
       mockGetAuth.mockReturnValue({
         userId: 'regular-user-id',
-        getToken: jest.fn(() => Promise.resolve('token')),
+        getToken: vi.fn(() => Promise.resolve('token')),
       } as any);
       
       mockCurrentUser.mockResolvedValue({
@@ -231,13 +232,13 @@ describe('/api/admin/contact-submissions/[id]', () => {
       const validStatuses = ['new', 'in progress', 'resolved'];
       
       for (const status of validStatuses) {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         
         // Mock successful database update
-        const mockUpdate = jest.fn().mockReturnThis();
-        const mockEq = jest.fn().mockReturnThis();
-        const mockSelect = jest.fn().mockReturnThis();
-        const mockMaybeSingle = jest.fn().mockResolvedValue({
+        const mockUpdate = vi.fn().mockReturnThis();
+        const mockEq = vi.fn().mockReturnThis();
+        const mockSelect = vi.fn().mockReturnThis();
+        const mockMaybeSingle = vi.fn().mockResolvedValue({
           data: { id: 123, status, updated_by: 'admin-user-id' },
           error: null,
         });
@@ -273,10 +274,10 @@ describe('/api/admin/contact-submissions/[id]', () => {
 
   describe('Database Operations', () => {
     test('should successfully update contact submission status', async () => {
-      const mockUpdate = jest.fn().mockReturnThis();
-      const mockEq = jest.fn().mockReturnThis();
-      const mockSelect = jest.fn().mockReturnThis();
-      const mockMaybeSingle = jest.fn().mockResolvedValue({
+      const mockUpdate = vi.fn().mockReturnThis();
+      const mockEq = vi.fn().mockReturnThis();
+      const mockSelect = vi.fn().mockReturnThis();
+      const mockMaybeSingle = vi.fn().mockResolvedValue({
         data: {
           id: 123,
           status: 'resolved',
@@ -327,10 +328,10 @@ describe('/api/admin/contact-submissions/[id]', () => {
     });
 
     test('should handle submission not found', async () => {
-      const mockUpdate = jest.fn().mockReturnThis();
-      const mockEq = jest.fn().mockReturnThis();
-      const mockSelect = jest.fn().mockReturnThis();
-      const mockMaybeSingle = jest.fn().mockResolvedValue({
+      const mockUpdate = vi.fn().mockReturnThis();
+      const mockEq = vi.fn().mockReturnThis();
+      const mockSelect = vi.fn().mockReturnThis();
+      const mockMaybeSingle = vi.fn().mockResolvedValue({
         data: null,
         error: null,
       });
@@ -367,10 +368,10 @@ describe('/api/admin/contact-submissions/[id]', () => {
     });
 
     test('should handle database update errors', async () => {
-      const mockUpdate = jest.fn().mockReturnThis();
-      const mockEq = jest.fn().mockReturnThis();
-      const mockSelect = jest.fn().mockReturnThis();
-      const mockMaybeSingle = jest.fn().mockResolvedValue({
+      const mockUpdate = vi.fn().mockReturnThis();
+      const mockEq = vi.fn().mockReturnThis();
+      const mockSelect = vi.fn().mockReturnThis();
+      const mockMaybeSingle = vi.fn().mockResolvedValue({
         data: null,
         error: { message: 'Database connection failed' },
       });
@@ -474,14 +475,14 @@ describe('/api/admin/contact-submissions/[id]', () => {
       const mockToken = 'mock-clerk-token';
       mockGetAuth.mockReturnValue({
         userId: 'admin-user-id',
-        getToken: jest.fn(() => Promise.resolve(mockToken)),
+        getToken: vi.fn(() => Promise.resolve(mockToken)),
       } as any);
 
       // Mock successful database update
-      const mockUpdate = jest.fn().mockReturnThis();
-      const mockEq = jest.fn().mockReturnThis();
-      const mockSelect = jest.fn().mockReturnThis();
-      const mockMaybeSingle = jest.fn().mockResolvedValue({
+      const mockUpdate = vi.fn().mockReturnThis();
+      const mockEq = vi.fn().mockReturnThis();
+      const mockSelect = vi.fn().mockReturnThis();
+      const mockMaybeSingle = vi.fn().mockResolvedValue({
         data: { id: 123, status: 'resolved', updated_by: 'admin-user-id' },
         error: null,
       });
@@ -531,13 +532,13 @@ describe('/api/admin/contact-submissions/[id]', () => {
       ];
 
       for (const update of statusUpdates) {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
 
         // Mock successful database update
-        const mockUpdate = jest.fn().mockReturnThis();
-        const mockEq = jest.fn().mockReturnThis();
-        const mockSelect = jest.fn().mockReturnThis();
-        const mockMaybeSingle = jest.fn().mockResolvedValue({
+        const mockUpdate = vi.fn().mockReturnThis();
+        const mockEq = vi.fn().mockReturnThis();
+        const mockSelect = vi.fn().mockReturnThis();
+        const mockMaybeSingle = vi.fn().mockResolvedValue({
           data: {
             id: 123,
             status: update.to,

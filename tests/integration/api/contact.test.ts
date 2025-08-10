@@ -1,28 +1,29 @@
 // Mock Clerk before any other imports
-jest.mock('@clerk/nextjs/server', () => ({
-  getAuth: jest.fn(() => ({
+vi.mock('@clerk/nextjs/server', () => ({
+  getAuth: vi.fn(() => ({
     userId: null,
-    getToken: jest.fn(() => Promise.resolve(null)),
+    getToken: vi.fn(() => Promise.resolve(null)),
   })),
 }));
 
+import { describe, it, expect, beforeAll, afterEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET, POST } from '@/app/api/contact/route';
 import { supabase } from '@/lib/supabase';
 import * as security from '@/lib/security'; // Import as namespace
 
 // Mock supabase client
-jest.mock('@/lib/supabase', () => {
-  const mockFrom = jest.fn();
+vi.mock('@/lib/supabase', () => {
+  const mockFrom = vi.fn();
   return {
     supabase: {
       from: mockFrom,
     },
-    getAuthenticatedSupabaseClient: jest.fn(() => ({
-      from: jest.fn(() => ({
-        insert: jest.fn(() => ({
-          select: jest.fn(() => ({
-            single: jest.fn(),
+    getAuthenticatedSupabaseClient: vi.fn(() => ({
+      from: vi.fn(() => ({
+        insert: vi.fn(() => ({
+          select: vi.fn(() => ({
+            single: vi.fn(),
           })),
         })),
       })),
@@ -33,20 +34,20 @@ jest.mock('@/lib/supabase', () => {
 
 
 // Mock security functions
-jest.mock('@/lib/security', () => ({
+vi.mock('@/lib/security', () => ({
   __esModule: true, // This is important for mocking modules with default exports
-  sanitizeObject: jest.fn((obj) => obj),
-  validateEmail: jest.fn(() => ({ isValid: true })),
-  validateInputLength: jest.fn(() => ({ isValid: true })),
-  checkRateLimit: jest.fn(() => ({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 })),
-  getClientIP: jest.fn(() => '127.0.0.1'),
+  sanitizeObject: vi.fn((obj) => obj),
+  validateEmail: vi.fn(() => ({ isValid: true })),
+  validateInputLength: vi.fn(() => ({ isValid: true })),
+  checkRateLimit: vi.fn(() => ({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 })),
+  getClientIP: vi.fn(() => '127.0.0.1'),
 }));
 
 // Mock Next.js server functions
-jest.mock('next/server', () => ({
-  NextRequest: jest.fn(),
+vi.mock('next/server', () => ({
+  NextRequest: vi.fn(),
   NextResponse: {
-    json: jest.fn((data, init) => ({
+    json: vi.fn((data, init) => ({
       json: () => Promise.resolve(data),
       status: init?.status || 200,
     })),
@@ -55,21 +56,21 @@ jest.mock('next/server', () => ({
 
 describe('Contact API - GET', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should return contact statistics successfully', async () => {
     // Mock the query builder chain for totalSubmissions
-    const mockTotalSelect = jest.fn().mockResolvedValue({ count: 10, error: null });
+    const mockTotalSelect = vi.fn().mockResolvedValue({ count: 10, error: null });
     // Mock the query builder chain for newSubmissions 
     
-    (supabase.from as jest.Mock)
+    (supabase.from as any)
       .mockReturnValueOnce({
         select: mockTotalSelect
       })
       .mockReturnValueOnce({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockResolvedValue({ count: 3, error: null })
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockResolvedValue({ count: 3, error: null })
         })
       });
 
@@ -90,9 +91,9 @@ describe('Contact API - GET', () => {
   });
 
   it('should handle errors when fetching total submissions', async () => {
-    const mockTotalSelect = jest.fn().mockResolvedValue({ count: null, error: { message: 'Database error' } });
+    const mockTotalSelect = vi.fn().mockResolvedValue({ count: null, error: { message: 'Database error' } });
     
-    (supabase.from as jest.Mock).mockReturnValue({
+    (supabase.from as any).mockReturnValue({
       select: mockTotalSelect
     });
 
@@ -108,13 +109,13 @@ describe('Contact API - GET', () => {
 
   it('should handle errors when fetching new submissions', async () => {
     // Mock for totalSubmissions (success)
-    const mockTotalSelect = jest.fn().mockResolvedValue({ count: 10, error: null });
+    const mockTotalSelect = vi.fn().mockResolvedValue({ count: 10, error: null });
     // Mock for newSubmissions (error)
-    const mockNewSelect = jest.fn().mockReturnValue({
-      eq: jest.fn().mockResolvedValue({ count: null, error: { message: 'Another database error' } })
+    const mockNewSelect = vi.fn().mockReturnValue({
+      eq: vi.fn().mockResolvedValue({ count: null, error: { message: 'Another database error' } })
     });
 
-    (supabase.from as jest.Mock)
+    (supabase.from as any)
       .mockReturnValueOnce({
         select: mockTotalSelect
       })
@@ -134,13 +135,13 @@ describe('Contact API - GET', () => {
 
   it('should return zero counts if no submissions exist', async () => {
     // Mock for totalSubmissions
-    const mockTotalSelect = jest.fn().mockResolvedValue({ count: 0, error: null });
+    const mockTotalSelect = vi.fn().mockResolvedValue({ count: 0, error: null });
     // Mock for newSubmissions
-    const mockNewSelect = jest.fn().mockReturnValue({
-      eq: jest.fn().mockResolvedValue({ count: 0, error: null })
+    const mockNewSelect = vi.fn().mockReturnValue({
+      eq: vi.fn().mockResolvedValue({ count: 0, error: null })
     });
 
-    (supabase.from as jest.Mock)
+    (supabase.from as any)
       .mockReturnValueOnce({
         select: mockTotalSelect
       })
@@ -167,9 +168,9 @@ describe('Contact API - GET', () => {
 
 describe('Contact API - POST', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Reset all spies to their original implementation
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('should successfully submit a contact form', async () => {
@@ -185,18 +186,18 @@ describe('Contact API - POST', () => {
     } as unknown as NextRequest;
 
     // Ensure all validations pass
-    jest.spyOn(security, 'validateInputLength')
+    vi.spyOn(security, 'validateInputLength')
       .mockReturnValueOnce({ isValid: true }) // name validation
       .mockReturnValueOnce({ isValid: true }) // subject validation  
       .mockReturnValueOnce({ isValid: true }); // message validation
-    jest.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    jest.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
+    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
 
     // Mock the insert operation to return a successful result
-    (supabase.from as jest.Mock).mockReturnValue({
-      insert: jest.fn(() => ({
-        select: jest.fn(() => ({
-          single: jest.fn(() => Promise.resolve({ data: { id: 1, name: 'Test User' }, error: null })),
+    (supabase.from as any).mockReturnValue({
+      insert: vi.fn(() => ({
+        select: vi.fn(() => ({
+          single: vi.fn(() => Promise.resolve({ data: { id: 1, name: 'Test User' }, error: null })),
         })),
       })),
     });
@@ -223,8 +224,8 @@ describe('Contact API - POST', () => {
     } as unknown as NextRequest;
 
     // Mock validateInputLength and validateEmail to return invalid results
-    jest.spyOn(security, 'validateInputLength').mockReturnValueOnce({ isValid: false, error: 'Mínimo 2 caracteres' });
-    jest.spyOn(security, 'validateEmail').mockReturnValueOnce({ isValid: false, error: 'Formato de email inválido' });
+    vi.spyOn(security, 'validateInputLength').mockReturnValueOnce({ isValid: false, error: 'Mínimo 2 caracteres' });
+    vi.spyOn(security, 'validateEmail').mockReturnValueOnce({ isValid: false, error: 'Formato de email inválido' });
 
     const response = await POST(mockRequest);
     const json = await response.json();
@@ -275,7 +276,7 @@ describe('Contact API - POST', () => {
     } as unknown as NextRequest;
 
     // Mock checkRateLimit to return not allowed
-    jest.spyOn(security, 'checkRateLimit').mockReturnValueOnce({ 
+    vi.spyOn(security, 'checkRateLimit').mockReturnValueOnce({ 
       allowed: false, 
       remaining: 0, 
       resetTime: Date.now() + 100000 
@@ -305,18 +306,18 @@ describe('Contact API - POST', () => {
     } as unknown as NextRequest;
 
     // Ensure all validations pass
-    jest.spyOn(security, 'validateInputLength')
+    vi.spyOn(security, 'validateInputLength')
       .mockReturnValueOnce({ isValid: true }) // name validation
       .mockReturnValueOnce({ isValid: true }) // subject validation  
       .mockReturnValueOnce({ isValid: true }); // message validation
-    jest.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    jest.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
+    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
 
     // Mock the insert operation to return an error
-    (supabase.from as jest.Mock).mockReturnValue({
-      insert: jest.fn(() => ({
-        select: jest.fn(() => ({
-          single: jest.fn(() => Promise.resolve({ data: null, error: { message: 'Supabase insert error' } })),
+    (supabase.from as any).mockReturnValue({
+      insert: vi.fn(() => ({
+        select: vi.fn(() => ({
+          single: vi.fn(() => Promise.resolve({ data: null, error: { message: 'Supabase insert error' } })),
         })),
       })),
     });

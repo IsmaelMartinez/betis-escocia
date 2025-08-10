@@ -1,11 +1,12 @@
 // Mock Clerk before any other imports
-jest.mock('@clerk/nextjs/server', () => ({
-  getAuth: jest.fn(() => ({
+vi.mock('@clerk/nextjs/server', () => ({
+  getAuth: vi.fn(() => ({
     userId: null,
-    getToken: jest.fn(() => Promise.resolve(null)),
+    getToken: vi.fn(() => Promise.resolve(null)),
   })),
 }));
 
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET, POST, DELETE } from '@/app/api/rsvp/route';
 import { supabase } from '@/lib/supabase';
@@ -13,8 +14,8 @@ import * as security from '@/lib/security';
 import * as matchUtils from '@/lib/matchUtils';
 
 // Mock supabase client
-jest.mock('@/lib/supabase', () => {
-  const mockFrom = jest.fn();
+vi.mock('@/lib/supabase', () => {
+  const mockFrom = vi.fn();
   return {
     supabase: {
       from: mockFrom,
@@ -25,18 +26,18 @@ jest.mock('@/lib/supabase', () => {
 
 
 // Mock security functions
-jest.mock('@/lib/security', () => ({
+vi.mock('@/lib/security', () => ({
   __esModule: true,
-  sanitizeObject: jest.fn((obj) => obj),
-  validateEmail: jest.fn(() => ({ isValid: true })),
-  validateInputLength: jest.fn(() => ({ isValid: true })),
-  checkRateLimit: jest.fn(() => ({ allowed: true, remaining: 4, resetTime: Date.now() + 100000 })),
-  getClientIP: jest.fn(() => '127.0.0.1'),
+  sanitizeObject: vi.fn((obj) => obj),
+  validateEmail: vi.fn(() => ({ isValid: true })),
+  validateInputLength: vi.fn(() => ({ isValid: true })),
+  checkRateLimit: vi.fn(() => ({ allowed: true, remaining: 4, resetTime: Date.now() + 100000 })),
+  getClientIP: vi.fn(() => '127.0.0.1'),
 }));
 
 // Mock matchUtils
-jest.mock('@/lib/matchUtils', () => ({
-  getCurrentUpcomingMatch: jest.fn(() => Promise.resolve({
+vi.mock('@/lib/matchUtils', () => ({
+  getCurrentUpcomingMatch: vi.fn(() => Promise.resolve({
     id: 1,
     opponent: 'Real Madrid',
     date: '2025-06-28T20:00:00',
@@ -45,10 +46,10 @@ jest.mock('@/lib/matchUtils', () => ({
 }));
 
 // Mock Next.js server functions
-jest.mock('next/server', () => ({
-  NextRequest: jest.fn(),
+vi.mock('next/server', () => ({
+  NextRequest: vi.fn(),
   NextResponse: {
-    json: jest.fn((data, init) => ({
+    json: vi.fn((data, init) => ({
       json: () => Promise.resolve(data),
       status: init?.status || 200,
     })),
@@ -57,7 +58,7 @@ jest.mock('next/server', () => ({
 
 describe('RSVP API - GET', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should return current match and RSVP data successfully', async () => {
@@ -66,7 +67,7 @@ describe('RSVP API - GET', () => {
     } as unknown as NextRequest;
 
     // Mock getCurrentUpcomingMatch
-    (matchUtils.getCurrentUpcomingMatch as jest.Mock).mockResolvedValue({
+    (matchUtils.getCurrentUpcomingMatch as any).mockResolvedValue({
       id: 1,
       opponent: 'Real Madrid',
       date: '2025-06-28T20:00:00',
@@ -74,10 +75,10 @@ describe('RSVP API - GET', () => {
     });
 
     // Mock Supabase query for RSVPs
-    (supabase.from as jest.Mock).mockReturnValue({
-      select: jest.fn(() => ({
-        order: jest.fn(() => ({
-          eq: jest.fn(() => Promise.resolve({
+    (supabase.from as any).mockReturnValue({
+      select: vi.fn(() => ({
+        order: vi.fn(() => ({
+          eq: vi.fn(() => Promise.resolve({
             data: [
               { id: 1, name: 'John Doe', email: 'john@example.com', attendees: 2 },
               { id: 2, name: 'Jane Smith', email: 'jane@example.com', attendees: 3 }
@@ -111,10 +112,10 @@ describe('RSVP API - GET', () => {
     } as unknown as NextRequest;
 
     // Mock Supabase query for specific match
-    (supabase.from as jest.Mock).mockReturnValueOnce({
-      select: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          single: jest.fn(() => Promise.resolve({
+    (supabase.from as any).mockReturnValueOnce({
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          single: vi.fn(() => Promise.resolve({
             data: {
               id: 123,
               opponent: 'Barcelona',
@@ -126,9 +127,9 @@ describe('RSVP API - GET', () => {
         }))
       }))
     }).mockReturnValueOnce({
-      select: jest.fn(() => ({
-        order: jest.fn(() => ({
-          eq: jest.fn(() => Promise.resolve({
+      select: vi.fn(() => ({
+        order: vi.fn(() => ({
+          eq: vi.fn(() => Promise.resolve({
             data: [
               { id: 3, name: 'Bob Wilson', email: 'bob@example.com', attendees: 1 }
             ],
@@ -161,10 +162,10 @@ describe('RSVP API - GET', () => {
     } as unknown as NextRequest;
 
     // Mock Supabase query returning no match
-    (supabase.from as jest.Mock).mockReturnValue({
-      select: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          single: jest.fn(() => Promise.resolve({
+    (supabase.from as any).mockReturnValue({
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          single: vi.fn(() => Promise.resolve({
             data: null,
             error: { message: 'No rows found' }
           }))
@@ -188,7 +189,7 @@ describe('RSVP API - GET', () => {
     } as unknown as NextRequest;
 
     // Mock getCurrentUpcomingMatch
-    (matchUtils.getCurrentUpcomingMatch as jest.Mock).mockResolvedValue({
+    (matchUtils.getCurrentUpcomingMatch as any).mockResolvedValue({
       id: 1,
       opponent: 'Real Madrid',
       date: '2025-06-28T20:00:00',
@@ -196,10 +197,10 @@ describe('RSVP API - GET', () => {
     });
 
     // Mock Supabase query returning error
-    (supabase.from as jest.Mock).mockReturnValue({
-      select: jest.fn(() => ({
-        order: jest.fn(() => ({
-          eq: jest.fn(() => Promise.resolve({
+    (supabase.from as any).mockReturnValue({
+      select: vi.fn(() => ({
+        order: vi.fn(() => ({
+          eq: vi.fn(() => Promise.resolve({
             data: null,
             error: { message: 'Database connection error' }
           }))
@@ -220,9 +221,9 @@ describe('RSVP API - GET', () => {
 
 describe('RSVP API - POST', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Reset all spies to their original implementation
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('should successfully submit a new RSVP', async () => {
@@ -238,19 +239,19 @@ describe('RSVP API - POST', () => {
     } as unknown as NextRequest;
 
     // Ensure all validations pass
-    jest.spyOn(security, 'validateInputLength')
+    vi.spyOn(security, 'validateInputLength')
       .mockReturnValueOnce({ isValid: true }) // name validation
       .mockReturnValueOnce({ isValid: true }); // message validation
-    jest.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    jest.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 4, resetTime: Date.now() + 100000 });
+    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 4, resetTime: Date.now() + 100000 });
 
     // Mock Supabase queries
-    (supabase.from as jest.Mock)
+    (supabase.from as any)
       // First call: fetch match data
       .mockReturnValueOnce({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            maybeSingle: jest.fn(() => Promise.resolve({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            maybeSingle: vi.fn(() => Promise.resolve({
               data: {
                 id: 1,
                 opponent: 'Real Madrid',
@@ -264,9 +265,9 @@ describe('RSVP API - POST', () => {
       })
       // Second call: check existing RSVPs
       .mockReturnValueOnce({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            eq: jest.fn(() => Promise.resolve({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            eq: vi.fn(() => Promise.resolve({
               data: [],
               error: null
             }))
@@ -275,8 +276,8 @@ describe('RSVP API - POST', () => {
       })
       // Third call: insert new RSVP
       .mockReturnValueOnce({
-        insert: jest.fn(() => ({
-          select: jest.fn(() => Promise.resolve({
+        insert: vi.fn(() => ({
+          select: vi.fn(() => Promise.resolve({
             data: [{ id: 1, name: 'Test User' }],
             error: null
           }))
@@ -284,8 +285,8 @@ describe('RSVP API - POST', () => {
       })
       // Fourth call: get updated totals
       .mockReturnValueOnce({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => Promise.resolve({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => Promise.resolve({
             data: [
               { attendees: 2 },
               { attendees: 3 }
@@ -320,19 +321,19 @@ describe('RSVP API - POST', () => {
     } as unknown as NextRequest;
 
     // Ensure all validations pass
-    jest.spyOn(security, 'validateInputLength')
+    vi.spyOn(security, 'validateInputLength')
       .mockReturnValueOnce({ isValid: true }) // name validation
       .mockReturnValueOnce({ isValid: true }); // message validation
-    jest.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    jest.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 4, resetTime: Date.now() + 100000 });
+    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 4, resetTime: Date.now() + 100000 });
 
     // Mock Supabase queries
-    (supabase.from as jest.Mock)
+    (supabase.from as any)
       // First call: fetch match data
       .mockReturnValueOnce({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            maybeSingle: jest.fn(() => Promise.resolve({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            maybeSingle: vi.fn(() => Promise.resolve({
               data: {
                 id: 1,
                 opponent: 'Real Madrid',
@@ -346,9 +347,9 @@ describe('RSVP API - POST', () => {
       })
       // Second call: check existing RSVPs (found existing)
       .mockReturnValueOnce({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            eq: jest.fn(() => Promise.resolve({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            eq: vi.fn(() => Promise.resolve({
               data: [{ id: 123 }],
               error: null
             }))
@@ -357,16 +358,16 @@ describe('RSVP API - POST', () => {
       })
       // Third call: delete existing RSVP
       .mockReturnValueOnce({
-        delete: jest.fn(() => ({
-          eq: jest.fn(() => Promise.resolve({
+        delete: vi.fn(() => ({
+          eq: vi.fn(() => Promise.resolve({
             error: null
           }))
         }))
       })
       // Fourth call: insert updated RSVP
       .mockReturnValueOnce({
-        insert: jest.fn(() => ({
-          select: jest.fn(() => Promise.resolve({
+        insert: vi.fn(() => ({
+          select: vi.fn(() => Promise.resolve({
             data: [{ id: 124, name: 'Test User Updated' }],
             error: null
           }))
@@ -374,8 +375,8 @@ describe('RSVP API - POST', () => {
       })
       // Fifth call: get updated totals
       .mockReturnValueOnce({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => Promise.resolve({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => Promise.resolve({
             data: [
               { attendees: 3 },
               { attendees: 2 }
@@ -407,8 +408,8 @@ describe('RSVP API - POST', () => {
     } as unknown as NextRequest;
 
     // Mock validateInputLength and validateEmail to return invalid results
-    jest.spyOn(security, 'validateInputLength').mockReturnValueOnce({ isValid: false, error: 'Mínimo 2 caracteres' });
-    jest.spyOn(security, 'validateEmail').mockReturnValue({ isValid: false, error: 'Formato de email inválido' });
+    vi.spyOn(security, 'validateInputLength').mockReturnValueOnce({ isValid: false, error: 'Mínimo 2 caracteres' });
+    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: false, error: 'Formato de email inválido' });
 
     const response = await POST(mockRequest);
     const json = await response.json();
@@ -432,9 +433,9 @@ describe('RSVP API - POST', () => {
     } as unknown as NextRequest;
 
     // Ensure other validations pass
-    jest.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
-    jest.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    jest.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 4, resetTime: Date.now() + 100000 });
+    vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 4, resetTime: Date.now() + 100000 });
 
     const response = await POST(mockRequest);
     const json = await response.json();
@@ -457,7 +458,7 @@ describe('RSVP API - POST', () => {
     } as unknown as NextRequest;
 
     // Mock checkRateLimit to return not allowed
-    jest.spyOn(security, 'checkRateLimit').mockReturnValueOnce({ 
+    vi.spyOn(security, 'checkRateLimit').mockReturnValueOnce({ 
       allowed: false, 
       remaining: 0, 
       resetTime: Date.now() + 100000 
@@ -485,15 +486,15 @@ describe('RSVP API - POST', () => {
     } as unknown as NextRequest;
 
     // Ensure validations pass
-    jest.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
-    jest.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    jest.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 4, resetTime: Date.now() + 100000 });
+    vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 4, resetTime: Date.now() + 100000 });
 
     // Mock Supabase query returning no match
-    (supabase.from as jest.Mock).mockReturnValue({
-      select: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          maybeSingle: jest.fn(() => Promise.resolve({
+    (supabase.from as any).mockReturnValue({
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          maybeSingle: vi.fn(() => Promise.resolve({
             data: null,
             error: { message: 'No rows found' }
           }))
@@ -522,17 +523,17 @@ describe('RSVP API - POST', () => {
     } as unknown as NextRequest;
 
     // Ensure validations pass
-    jest.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
-    jest.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    jest.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 4, resetTime: Date.now() + 100000 });
+    vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 4, resetTime: Date.now() + 100000 });
 
     // Mock Supabase queries
-    (supabase.from as jest.Mock)
+    (supabase.from as any)
       // First call: fetch match data
       .mockReturnValueOnce({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            maybeSingle: jest.fn(() => Promise.resolve({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            maybeSingle: vi.fn(() => Promise.resolve({
               data: {
                 id: 1,
                 opponent: 'Real Madrid',
@@ -546,9 +547,9 @@ describe('RSVP API - POST', () => {
       })
       // Second call: check existing RSVPs
       .mockReturnValueOnce({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            eq: jest.fn(() => Promise.resolve({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            eq: vi.fn(() => Promise.resolve({
               data: [],
               error: null
             }))
@@ -557,8 +558,8 @@ describe('RSVP API - POST', () => {
       })
       // Third call: insert new RSVP (error)
       .mockReturnValueOnce({
-        insert: jest.fn(() => ({
-          select: jest.fn(() => Promise.resolve({
+        insert: vi.fn(() => ({
+          select: vi.fn(() => Promise.resolve({
             data: null,
             error: { message: 'Database insert error' }
           }))
@@ -578,7 +579,7 @@ describe('RSVP API - POST', () => {
 
 describe('RSVP API - DELETE', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should successfully delete RSVP by ID', async () => {
@@ -587,7 +588,7 @@ describe('RSVP API - DELETE', () => {
     } as unknown as NextRequest;
 
     // Mock getCurrentUpcomingMatch
-    (matchUtils.getCurrentUpcomingMatch as jest.Mock).mockResolvedValue({
+    (matchUtils.getCurrentUpcomingMatch as any).mockResolvedValue({
       id: 1,
       opponent: 'Real Madrid',
       date: '2025-06-28T20:00:00',
@@ -595,12 +596,12 @@ describe('RSVP API - DELETE', () => {
     });
 
     // Mock Supabase queries
-    (supabase.from as jest.Mock)
+    (supabase.from as any)
       // First call: delete RSVP
       .mockReturnValueOnce({
-        delete: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            select: jest.fn(() => Promise.resolve({
+        delete: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            select: vi.fn(() => Promise.resolve({
               data: [{ id: 123, name: 'Deleted User' }],
               error: null
             }))
@@ -609,8 +610,8 @@ describe('RSVP API - DELETE', () => {
       })
       // Second call: get remaining RSVPs
       .mockReturnValueOnce({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => Promise.resolve({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => Promise.resolve({
             data: [
               { attendees: 2 }
             ],
@@ -637,7 +638,7 @@ describe('RSVP API - DELETE', () => {
     } as unknown as NextRequest;
 
     // Mock getCurrentUpcomingMatch
-    (matchUtils.getCurrentUpcomingMatch as jest.Mock).mockResolvedValue({
+    (matchUtils.getCurrentUpcomingMatch as any).mockResolvedValue({
       id: 1,
       opponent: 'Real Madrid',
       date: '2025-06-28T20:00:00',
@@ -645,12 +646,12 @@ describe('RSVP API - DELETE', () => {
     });
 
     // Mock Supabase queries
-    (supabase.from as jest.Mock)
+    (supabase.from as any)
       // First call: delete RSVP
       .mockReturnValueOnce({
-        delete: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            select: jest.fn(() => Promise.resolve({
+        delete: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            select: vi.fn(() => Promise.resolve({
               data: [{ id: 123, email: 'test@example.com' }],
               error: null
             }))
@@ -659,8 +660,8 @@ describe('RSVP API - DELETE', () => {
       })
       // Second call: get remaining RSVPs
       .mockReturnValueOnce({
-        select: jest.fn(() => ({
-          eq: jest.fn(() => Promise.resolve({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => Promise.resolve({
             data: [],
             error: null
           }))
@@ -701,10 +702,10 @@ describe('RSVP API - DELETE', () => {
     } as unknown as NextRequest;
 
     // Mock Supabase delete returning no rows
-    (supabase.from as jest.Mock).mockReturnValue({
-      delete: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          select: jest.fn(() => Promise.resolve({
+    (supabase.from as any).mockReturnValue({
+      delete: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          select: vi.fn(() => Promise.resolve({
             data: [],
             error: null
           }))
@@ -728,10 +729,10 @@ describe('RSVP API - DELETE', () => {
     } as unknown as NextRequest;
 
     // Mock Supabase delete returning error
-    (supabase.from as jest.Mock).mockReturnValue({
-      delete: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          select: jest.fn(() => Promise.resolve({
+    (supabase.from as any).mockReturnValue({
+      delete: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          select: vi.fn(() => Promise.resolve({
             data: null,
             error: { message: 'Database delete error' }
           }))

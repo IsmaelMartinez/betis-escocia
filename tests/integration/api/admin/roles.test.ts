@@ -1,32 +1,33 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 
 // Mock Clerk before any other imports
-jest.mock('@clerk/nextjs/server', () => ({
-  auth: jest.fn(() => ({
+vi.mock('@clerk/nextjs/server', () => ({
+  auth: vi.fn(() => ({
     userId: null,
-    getToken: jest.fn(() => Promise.resolve(null)),
+    getToken: vi.fn(() => Promise.resolve(null)),
   })),
-  createClerkClient: jest.fn(() => ({
+  createClerkClient: vi.fn(() => ({
     users: {
-      getUser: jest.fn(),
-      getUserList: jest.fn(),
-      updateUserMetadata: jest.fn(),
+      getUser: vi.fn(),
+      getUserList: vi.fn(),
+      updateUserMetadata: vi.fn(),
     },
   })),
 }));
 
 // Mock Next.js server components
-jest.mock('next/server', () => ({
-  NextRequest: jest.fn((input, init) => {
+vi.mock('next/server', () => ({
+  NextRequest: vi.fn((input, init) => {
     const request = new Request(input, init);
     return {
       ...request,
-      json: jest.fn(() => request.json()),
+      json: vi.fn(() => request.json()),
       url: request.url,
     };
   }),
   NextResponse: {
-    json: jest.fn((data, init) => ({
+    json: vi.fn((data, init) => ({
       json: () => Promise.resolve(data),
       status: init?.status || 200,
     })),
@@ -40,19 +41,19 @@ import { validateRoleChange, ROLES } from '@/lib/roleUtils';
 import { auth } from '@clerk/nextjs/server';
 
 // Mock external dependencies
-jest.mock('@/lib/adminApiProtection');
-jest.mock('@/lib/serverRoleUtils');
-jest.mock('@/lib/roleUtils');
+vi.mock('@/lib/adminApiProtection');
+vi.mock('@/lib/serverRoleUtils');
+vi.mock('@/lib/roleUtils');
 
-const mockCheckAdminRole = checkAdminRole as jest.Mock;
-const mockListUsersWithRoles = listUsersWithRoles as jest.Mock;
-const mockAssignRole = assignRole as jest.Mock;
-const mockValidateRoleChange = validateRoleChange as jest.Mock;
-const mockAuth = auth as unknown as jest.Mock;
+const mockCheckAdminRole = vi.mocked(checkAdminRole);
+const mockListUsersWithRoles = vi.mocked(listUsersWithRoles);
+const mockAssignRole = vi.mocked(assignRole);
+const mockValidateRoleChange = vi.mocked(validateRoleChange);
+const mockAuth = vi.mocked(auth);
 
 describe('Admin Roles API', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Default mocks for successful admin access
     mockCheckAdminRole.mockResolvedValue({ user: { id: 'admin_user_id', publicMetadata: { role: ROLES.ADMIN } }, isAdmin: true, error: null });
     mockAuth.mockResolvedValue({ userId: 'admin_user_id' });

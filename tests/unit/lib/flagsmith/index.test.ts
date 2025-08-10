@@ -1,22 +1,23 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import flagsmith from 'flagsmith/isomorphic';
 import { getFlagsmithManager, initializeFlagsmith, hasFeature, getValue, getMultipleValues, refreshFlags, getSystemStatus, resetFlagsmith } from '@/lib/flagsmith';
 
 // Mock the flagsmith/isomorphic module
-jest.mock('flagsmith/isomorphic', () => ({
+vi.mock('flagsmith/isomorphic', () => ({
   __esModule: true,
   default: {
-    init: jest.fn(),
-    hasFeature: jest.fn(),
-    getValue: jest.fn(),
-    getFlags: jest.fn(),
-    getState: jest.fn(),
+    init: vi.fn(),
+    hasFeature: vi.fn(),
+    getValue: vi.fn(),
+    getFlags: vi.fn(),
+    getState: vi.fn(),
   },
 }));
 
-const mockFlagsmithInit = flagsmith.init as jest.Mock;
-const mockFlagsmithHasFeature = flagsmith.hasFeature as jest.Mock;
-const mockFlagsmithGetValue = flagsmith.getValue as jest.Mock;
-const mockFlagsmithGetFlags = flagsmith.getFlags as jest.Mock;
+const mockFlagsmithInit = flagsmith.init as any;
+const mockFlagsmithHasFeature = flagsmith.hasFeature as any;
+const mockFlagsmithGetValue = flagsmith.getValue as any;
+const mockFlagsmithGetFlags = flagsmith.getFlags as any;
 
 describe('Flagsmith Integration', () => {
   const mockConfig = {
@@ -27,7 +28,7 @@ describe('Flagsmith Integration', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     resetFlagsmith(); // Ensure a clean slate for each test
     // Reset global.__flagsmithInitialized
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -238,7 +239,7 @@ describe('Flagsmith Integration', () => {
       mockFlagsmithHasFeature.mockReturnValue(true);
       
       // Mock Date.now() to ensure evaluationTime is not zero
-      const mockDateNow = jest.spyOn(Date, 'now');
+      const mockDateNow = vi.spyOn(Date, 'now');
       mockDateNow.mockReturnValueOnce(1000); // Start time
       mockDateNow.mockReturnValueOnce(1050); // End time, 50ms later
 

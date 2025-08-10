@@ -1,25 +1,25 @@
-
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { getFeatureFlag, hasFeatureFlag } from '../../src/lib/featureFlags';
 import { resetFlagsmith } from '../../src/lib/flagsmith';
 import flagsmith from 'flagsmith/isomorphic';
 import { FlagsmithFeatureName } from '../../src/lib/flagsmith/types';
 
 // Mock the flagsmith/isomorphic module
-jest.mock('flagsmith/isomorphic');
+vi.mock('flagsmith/isomorphic');
 
 describe('Flagsmith Feature Flag Defaults', () => {
   beforeEach(async () => {
     // Reset Flagsmith state before each test
     resetFlagsmith();
     // Clear all mocks before each test
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Mock flagsmith.init to resolve successfully
-    (flagsmith.init as jest.Mock).mockResolvedValue(undefined);
+    (flagsmith.init as any).mockResolvedValue(undefined);
 
     // Mock flagsmith.hasFeature and flagsmith.getValue to return default values
-    (flagsmith.hasFeature as jest.Mock).mockReturnValue(false);
-    (flagsmith.getValue as jest.Mock).mockReturnValue(false);
+    (flagsmith.hasFeature as any).mockReturnValue(false);
+    (flagsmith.getValue as any).mockReturnValue(false);
 
     // Initialize Flagsmith with a mock config
     const mockConfig = {

@@ -1,29 +1,30 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 
 // Mock Clerk before any other imports
-jest.mock('@clerk/nextjs/server', () => ({
-  auth: jest.fn(() => ({
+vi.mock('@clerk/nextjs/server', () => ({
+  auth: vi.fn(() => ({
     userId: null,
-    getToken: jest.fn(() => Promise.resolve(null)),
+    getToken: vi.fn(() => Promise.resolve(null)),
   })),
-  currentUser: jest.fn(() => Promise.resolve(null)),
-  createClerkClient: jest.fn(() => ({
+  currentUser: vi.fn(() => Promise.resolve(null)),
+  createClerkClient: vi.fn(() => ({
     users: {
-      getUser: jest.fn(),
-      getUserList: jest.fn(),
-      updateUserMetadata: jest.fn(),
+      getUser: vi.fn(),
+      getUserList: vi.fn(),
+      updateUserMetadata: vi.fn(),
     },
   })),
 }));
 
 import { auth, currentUser } from '@clerk/nextjs/server';
 
-const mockAuth = auth as unknown as jest.Mock; // Add unknown for safer casting
-const mockCurrentUser = currentUser as unknown as jest.Mock;
+const mockAuth = vi.mocked(auth);
+const mockCurrentUser = vi.mocked(currentUser);
 
 describe('Clerk Authentication Integration', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Authenticated User', () => {
@@ -39,7 +40,7 @@ describe('Clerk Authentication Integration', () => {
 
       mockAuth.mockReturnValue({
         userId: MOCK_USER_ID,
-        getToken: jest.fn(() => Promise.resolve('mock_token')),
+        getToken: vi.fn(() => Promise.resolve('mock_token')),
       });
       mockCurrentUser.mockResolvedValue(MOCK_USER);
 

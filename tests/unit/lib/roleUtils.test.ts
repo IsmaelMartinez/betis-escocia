@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { hasRole, isAdmin, isModerator, validateRoleChange, ROLES, Role } from "@/lib/roleUtils";
 import { User } from "@clerk/nextjs/server";
 

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Mock Next.js server utilities first
-jest.mock('next/server', () => ({
+vi.mock('next/server', () => ({
   NextResponse: {
-    json: jest.fn((data, options) => ({
+    json: vi.fn((data, options) => ({
       json: async () => data,
       status: options?.status || 200,
       data,
@@ -12,29 +12,30 @@ jest.mock('next/server', () => ({
 }));
 
 // Mock modules at the top before any imports
-jest.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/supabase', () => ({
   supabase: {
-    from: jest.fn(),
+    from: vi.fn(),
   },
 }));
 
-jest.mock('@/services/footballDataService', () => ({
-  FootballDataService: jest.fn(),
+vi.mock('@/services/footballDataService', () => ({
+  FootballDataService: vi.fn(),
 }));
 
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { GET } from '@/app/api/standings/route';
 import { supabase } from '@/lib/supabase';
 import { FootballDataService } from '@/services/footballDataService';
 import { NextResponse } from 'next/server';
 
-// Use jest.mocked for type safety
-const mockSupabase = jest.mocked(supabase);
-const MockFootballDataService = jest.mocked(FootballDataService);
-const mockNextResponse = jest.mocked(NextResponse);
+// Use vi.mocked for type safety
+const mockSupabase = vi.mocked(supabase);
+const MockFootballDataService = vi.mocked(FootballDataService);
+const mockNextResponse = vi.mocked(NextResponse);
 
 describe('/api/standings', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Reset mock implementation
     MockFootballDataService.mockClear();
   });
@@ -47,9 +48,9 @@ describe('/api/standings', () => {
       };
 
       // Mock the Supabase chain for cache retrieval
-      const mockSelect = jest.fn().mockReturnThis();
-      const mockOrder = jest.fn().mockReturnThis();
-      const mockLimit = jest.fn().mockResolvedValue({
+      const mockSelect = vi.fn().mockReturnThis();
+      const mockOrder = vi.fn().mockReturnThis();
+      const mockLimit = vi.fn().mockResolvedValue({
         data: [mockCachedData],
         error: null,
       });
@@ -78,13 +79,13 @@ describe('/api/standings', () => {
       };
 
       // Mock stale cache retrieval
-      const mockSelect = jest.fn().mockReturnThis();
-      const mockOrder = jest.fn().mockReturnThis();
-      const mockLimit = jest.fn().mockResolvedValue({
+      const mockSelect = vi.fn().mockReturnThis();
+      const mockOrder = vi.fn().mockReturnThis();
+      const mockLimit = vi.fn().mockResolvedValue({
         data: [mockStaleData],
         error: null,
       });
-      const mockUpsert = jest.fn().mockResolvedValue({ error: null });
+      const mockUpsert = vi.fn().mockResolvedValue({ error: null });
 
       mockSupabase.from
         .mockReturnValueOnce({
@@ -98,7 +99,7 @@ describe('/api/standings', () => {
 
       const mockFreshApiData = { table: [{ position: 1, team: { name: 'Real Betis' }, points: 50 }] };
       MockFootballDataService.mockImplementation(() => ({
-        getLaLigaStandings: jest.fn().mockResolvedValue(mockFreshApiData),
+        getLaLigaStandings: vi.fn().mockResolvedValue(mockFreshApiData),
       }) as any);
 
       const response = await GET();
@@ -116,13 +117,13 @@ describe('/api/standings', () => {
 
     test('should fetch fresh data when cache is empty', async () => {
       // Mock empty cache
-      const mockSelect = jest.fn().mockReturnThis();
-      const mockOrder = jest.fn().mockReturnThis();
-      const mockLimit = jest.fn().mockResolvedValue({
+      const mockSelect = vi.fn().mockReturnThis();
+      const mockOrder = vi.fn().mockReturnThis();
+      const mockLimit = vi.fn().mockResolvedValue({
         data: [],
         error: null,
       });
-      const mockUpsert = jest.fn().mockResolvedValue({ error: null });
+      const mockUpsert = vi.fn().mockResolvedValue({ error: null });
 
       mockSupabase.from
         .mockReturnValueOnce({
@@ -136,7 +137,7 @@ describe('/api/standings', () => {
 
       const mockApiData = { table: [{ position: 1, team: { name: 'Real Betis' } }] };
       MockFootballDataService.mockImplementation(() => ({
-        getLaLigaStandings: jest.fn().mockResolvedValue(mockApiData),
+        getLaLigaStandings: vi.fn().mockResolvedValue(mockApiData),
       }) as any);
 
       const response = await GET();
@@ -154,13 +155,13 @@ describe('/api/standings', () => {
 
     test('should proceed with API fetch when cache retrieval fails', async () => {
       // Mock cache retrieval error
-      const mockSelect = jest.fn().mockReturnThis();
-      const mockOrder = jest.fn().mockReturnThis();
-      const mockLimit = jest.fn().mockResolvedValue({
+      const mockSelect = vi.fn().mockReturnThis();
+      const mockOrder = vi.fn().mockReturnThis();
+      const mockLimit = vi.fn().mockResolvedValue({
         data: null,
         error: { message: 'Cache retrieval failed' },
       });
-      const mockUpsert = jest.fn().mockResolvedValue({ error: null });
+      const mockUpsert = vi.fn().mockResolvedValue({ error: null });
 
       mockSupabase.from
         .mockReturnValueOnce({
@@ -174,7 +175,7 @@ describe('/api/standings', () => {
 
       const mockApiData = { table: [{ position: 1, team: { name: 'Real Betis' } }] };
       MockFootballDataService.mockImplementation(() => ({
-        getLaLigaStandings: jest.fn().mockResolvedValue(mockApiData),
+        getLaLigaStandings: vi.fn().mockResolvedValue(mockApiData),
       }) as any);
 
       const response = await GET();
@@ -188,13 +189,13 @@ describe('/api/standings', () => {
 
     test('should handle cache save failures gracefully', async () => {
       // Mock empty cache first, then cache save failure
-      const mockSelect = jest.fn().mockReturnThis();
-      const mockOrder = jest.fn().mockReturnThis();
-      const mockLimit = jest.fn().mockResolvedValue({
+      const mockSelect = vi.fn().mockReturnThis();
+      const mockOrder = vi.fn().mockReturnThis();
+      const mockLimit = vi.fn().mockResolvedValue({
         data: [],
         error: null,
       });
-      const mockUpsert = jest.fn().mockResolvedValue({ 
+      const mockUpsert = vi.fn().mockResolvedValue({ 
         error: { message: 'Cache save failed' } 
       });
 
@@ -210,7 +211,7 @@ describe('/api/standings', () => {
 
       const mockApiData = { table: [{ position: 1, team: { name: 'Real Betis' } }] };
       MockFootballDataService.mockImplementation(() => ({
-        getLaLigaStandings: jest.fn().mockResolvedValue(mockApiData),
+        getLaLigaStandings: vi.fn().mockResolvedValue(mockApiData),
       }) as any);
 
       const response = await GET();
@@ -226,9 +227,9 @@ describe('/api/standings', () => {
   describe('Error handling', () => {
     test('should return 404 when API returns no standings', async () => {
       // Mock empty cache
-      const mockSelect = jest.fn().mockReturnThis();
-      const mockOrder = jest.fn().mockReturnThis();
-      const mockLimit = jest.fn().mockResolvedValue({
+      const mockSelect = vi.fn().mockReturnThis();
+      const mockOrder = vi.fn().mockReturnThis();
+      const mockLimit = vi.fn().mockResolvedValue({
         data: [],
         error: null,
       });
@@ -241,7 +242,7 @@ describe('/api/standings', () => {
 
       // Mock API returning null/undefined
       MockFootballDataService.mockImplementation(() => ({
-        getLaLigaStandings: jest.fn().mockResolvedValue(null),
+        getLaLigaStandings: vi.fn().mockResolvedValue(null),
       }) as any);
 
       const response = await GET();
@@ -256,9 +257,9 @@ describe('/api/standings', () => {
 
     test('should handle network errors with appropriate message', async () => {
       // Mock empty cache
-      const mockSelect = jest.fn().mockReturnThis();
-      const mockOrder = jest.fn().mockReturnThis();
-      const mockLimit = jest.fn().mockResolvedValue({
+      const mockSelect = vi.fn().mockReturnThis();
+      const mockOrder = vi.fn().mockReturnThis();
+      const mockLimit = vi.fn().mockResolvedValue({
         data: [],
         error: null,
       });
@@ -271,7 +272,7 @@ describe('/api/standings', () => {
 
       // Mock network error
       MockFootballDataService.mockImplementation(() => ({
-        getLaLigaStandings: jest.fn().mockRejectedValue(new Error('network connection failed')),
+        getLaLigaStandings: vi.fn().mockRejectedValue(new Error('network connection failed')),
       }) as any);
 
       const response = await GET();
@@ -287,9 +288,9 @@ describe('/api/standings', () => {
 
     test('should handle API rate limiting errors', async () => {
       // Mock empty cache
-      const mockSelect = jest.fn().mockReturnThis();
-      const mockOrder = jest.fn().mockReturnThis();
-      const mockLimit = jest.fn().mockResolvedValue({
+      const mockSelect = vi.fn().mockReturnThis();
+      const mockOrder = vi.fn().mockReturnThis();
+      const mockLimit = vi.fn().mockResolvedValue({
         data: [],
         error: null,
       });
@@ -302,7 +303,7 @@ describe('/api/standings', () => {
 
       // Mock API rate limiting error
       MockFootballDataService.mockImplementation(() => ({
-        getLaLigaStandings: jest.fn().mockRejectedValue(new Error('API rate limit exceeded 429')),
+        getLaLigaStandings: vi.fn().mockRejectedValue(new Error('API rate limit exceeded 429')),
       }) as any);
 
       const response = await GET();
@@ -318,9 +319,9 @@ describe('/api/standings', () => {
 
     test('should handle timeout errors', async () => {
       // Mock empty cache
-      const mockSelect = jest.fn().mockReturnThis();
-      const mockOrder = jest.fn().mockReturnThis();
-      const mockLimit = jest.fn().mockResolvedValue({
+      const mockSelect = vi.fn().mockReturnThis();
+      const mockOrder = vi.fn().mockReturnThis();
+      const mockLimit = vi.fn().mockResolvedValue({
         data: [],
         error: null,
       });
@@ -333,7 +334,7 @@ describe('/api/standings', () => {
 
       // Mock timeout error
       MockFootballDataService.mockImplementation(() => ({
-        getLaLigaStandings: jest.fn().mockRejectedValue(new Error('Request timeout exceeded')),
+        getLaLigaStandings: vi.fn().mockRejectedValue(new Error('Request timeout exceeded')),
       }) as any);
 
       const response = await GET();
@@ -349,9 +350,9 @@ describe('/api/standings', () => {
 
     test('should handle generic errors with default message', async () => {
       // Mock empty cache
-      const mockSelect = jest.fn().mockReturnThis();
-      const mockOrder = jest.fn().mockReturnThis();
-      const mockLimit = jest.fn().mockResolvedValue({
+      const mockSelect = vi.fn().mockReturnThis();
+      const mockOrder = vi.fn().mockReturnThis();
+      const mockLimit = vi.fn().mockResolvedValue({
         data: [],
         error: null,
       });
@@ -364,7 +365,7 @@ describe('/api/standings', () => {
 
       // Mock generic error
       MockFootballDataService.mockImplementation(() => ({
-        getLaLigaStandings: jest.fn().mockRejectedValue(new Error('Unexpected error occurred')),
+        getLaLigaStandings: vi.fn().mockRejectedValue(new Error('Unexpected error occurred')),
       }) as any);
 
       const response = await GET();
@@ -380,9 +381,9 @@ describe('/api/standings', () => {
 
     test('should handle non-Error objects thrown as exceptions', async () => {
       // Mock empty cache
-      const mockSelect = jest.fn().mockReturnThis();
-      const mockOrder = jest.fn().mockReturnThis();
-      const mockLimit = jest.fn().mockResolvedValue({
+      const mockSelect = vi.fn().mockReturnThis();
+      const mockOrder = vi.fn().mockReturnThis();
+      const mockLimit = vi.fn().mockResolvedValue({
         data: [],
         error: null,
       });
@@ -395,7 +396,7 @@ describe('/api/standings', () => {
 
       // Mock non-Error object thrown
       MockFootballDataService.mockImplementation(() => ({
-        getLaLigaStandings: jest.fn().mockRejectedValue('String error'),
+        getLaLigaStandings: vi.fn().mockRejectedValue('String error'),
       }) as any);
 
       const response = await GET();

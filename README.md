@@ -34,7 +34,7 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 - **CI/CD**: GitHub Actions (enhanced workflow for quality checks, build, and start)
 - **Dependency Management**: Dependabot for automated dependency updates
 - **Security Scanning**: GitHub Security Advisories and Dependabot
-- **Quality Gates**: ESLint, TypeScript, Storybook Build, Jest Tests, Playwright E2E, Lighthouse Accessibility
+- **Quality Gates**: ESLint, TypeScript, Storybook Build, Vitest Tests, Playwright E2E, Lighthouse Accessibility
 
 - **Deployment**: Vercel with GitHub Actions
 
@@ -366,9 +366,13 @@ The project includes automatic deployment via GitHub Actions. Set up these secre
 ### Available Scripts
 
 - `npm run dev` - Start development server
-- `npm run build` - Build for production
+- `npm run build` - Build for production  
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
+- `npm test` - Run Vitest unit and integration tests
+- `npm run test:watch` - Run Vitest in watch mode
+- `npm run test:coverage` - Run Vitest with coverage report
+- `npm run test:silent` - Run Vitest with minimal JSON output
 - `npm run test:e2e` - Run Playwright end-to-end tests in headless mode
 - `npm run test:e2e:headed` - Run Playwright end-to-end tests in headed mode (for debugging)
 - `npm run update-trivia` - Update trivia questions with curated content

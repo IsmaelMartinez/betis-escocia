@@ -1,16 +1,21 @@
+import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest';
 import { formatLocalizedDate, timeAgo } from '@/lib/dateUtils';
 import { es, enUS } from 'date-fns/locale';
 
 describe('dateUtils', () => {
   // Mock console.error to prevent test logs from cluttering output
-  let consoleErrorSpy: jest.SpyInstance;
+  let consoleErrorSpy: any;
 
   beforeAll(() => {
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterAll(() => {
     consoleErrorSpy.mockRestore();
+  });
+
+  beforeEach(() => {
+    consoleErrorSpy.mockClear();
   });
 
   describe('formatLocalizedDate', () => {
@@ -61,7 +66,7 @@ describe('dateUtils', () => {
     const realDateNow = Date.now;
 
     beforeEach(() => {
-      global.Date.now = jest.fn(() => MOCK_DATE.getTime());
+      global.Date.now = vi.fn(() => MOCK_DATE.getTime());
     });
 
     afterEach(() => {

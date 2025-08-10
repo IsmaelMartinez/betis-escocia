@@ -1,6 +1,8 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/trivia/route';
 import { getAuth } from '@clerk/nextjs/server';
+import { getUserDailyTriviaScore } from '@/lib/supabase';
 
 // Ensure Response.json (static) exists for NextResponse.json in Jest env
 type ResponseStatic = typeof globalThis.Response & {
@@ -15,32 +17,32 @@ if (!ResponseStaticRef.json) {
     });
 }
 
-// (Supabase mocks are defined inside the jest.mock factory to avoid hoisting issues)
+// (Supabase mocks are defined inside the vi.mock factory to avoid hoisting issues)
 
 // Mock Clerk's getAuth
-jest.mock('@clerk/nextjs/server', () => ({
-  getAuth: jest.fn(() => ({
+vi.mock('@clerk/nextjs/server', () => ({
+  getAuth: vi.fn(() => ({
     userId: 'user_test_id',
-    getToken: jest.fn(() => Promise.resolve('mock_clerk_token')),
+    getToken: vi.fn(() => Promise.resolve('mock_clerk_token')),
   })),
 }));
 
 // Mock Supabase
-jest.mock('@/lib/supabase', () => {
+vi.mock('@/lib/supabase', () => {
   // Flattened Supabase mocks to avoid deep nesting and hoisting issues
-  const supabaseLimit = jest.fn(async () => ({
+  const supabaseLimit = vi.fn(async () => ({
     data: [
       { id: 'q1', question_text: 'Question 1', trivia_answers: [] },
       { id: 'q2', question_text: 'Question 2', trivia_answers: [] },
     ],
     error: null,
   }));
-  const supabaseSelect = jest.fn(() => ({ limit: supabaseLimit }));
-  const supabaseFrom = jest.fn(() => ({ select: supabaseSelect }));
+  const supabaseSelect = vi.fn(() => ({ limit: supabaseLimit }));
+  const supabaseFrom = vi.fn(() => ({ select: supabaseSelect }));
 
-  const authSingle = jest.fn(async () => ({ data: null, error: null }));
-  const authSelect = jest.fn(() => ({ single: authSingle }));
-  const authFrom = jest.fn(() => ({ select: authSelect }));
+  const authSingle = vi.fn(async () => ({ data: null, error: null }));
+  const authSelect = vi.fn(() => ({ single: authSingle }));
+  const authFrom = vi.fn(() => ({ select: authSelect }));
   const mockAuthenticatedSupabaseClient = { from: authFrom };
 
   return {
@@ -48,17 +50,17 @@ jest.mock('@/lib/supabase', () => {
       from: supabaseFrom,
     },
     // Mock other functions from supabase.ts if needed by the trivia API
-    getUserDailyTriviaScore: jest.fn(() => Promise.resolve({ success: true, data: null })), // User has not played today
-    getAuthenticatedSupabaseClient: jest.fn(() => mockAuthenticatedSupabaseClient),
+    getUserDailyTriviaScore: vi.fn(() => Promise.resolve({ success: true, data: null })), // User has not played today
+    getAuthenticatedSupabaseClient: vi.fn(() => mockAuthenticatedSupabaseClient),
   };
 });
 
-const mockGetAuth = getAuth as jest.Mock;
-const mockGetUserDailyTriviaScore = jest.requireMock('@/lib/supabase').getUserDailyTriviaScore;
+const mockGetAuth = getAuth as any;
+const mockGetUserDailyTriviaScore = vi.mocked(getUserDailyTriviaScore);
 
 describe('End-to-End API Workflow: Trivia with Authentication', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should return trivia questions for an authenticated user who has not played today', async () => {

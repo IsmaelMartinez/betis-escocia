@@ -1,21 +1,26 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest, NextResponse } from 'next/server';
 
 // Mock external dependencies
-jest.mock('@/lib/adminApiProtection');
-jest.mock('@/services/footballDataService');
-
-jest.mock('@/lib/security');
+vi.mock('@/lib/adminApiProtection');
+vi.mock('@/services/footballDataService');
+vi.mock('@/lib/supabase', () => ({
+  supabase: {
+    from: vi.fn(),
+  },
+}));
+vi.mock('@/lib/security');
 
 // Mock NextResponse.json and NextRequest
-jest.mock('next/server', () => ({
+vi.mock('next/server', () => ({
   NextResponse: {
-    json: jest.fn((data, options) => ({ data, ...options })),
+    json: vi.fn((data, options) => ({ data, ...options })),
   },
-  NextRequest: jest.fn().mockImplementation((url, options) => ({
+  NextRequest: vi.fn().mockImplementation((url, options) => ({
     url,
     method: options?.method || 'GET',
     headers: new Map(),
-    json: jest.fn(),
+    json: vi.fn(),
   })),
 }));
 
@@ -26,26 +31,26 @@ import { supabase } from '@/lib/supabase';
 import { checkRateLimit } from '@/lib/security';
 
 describe('POST /api/admin/sync-matches', () => {
-  const mockCheckAdminRole = checkAdminRole as jest.Mock;
-  const mockFootballDataService = FootballDataService as jest.Mock;
-  const mockSupabaseFrom = supabase.from as jest.Mock;
-  const mockCheckRateLimit = checkRateLimit as jest.Mock;
-  const mockNextResponseJson = NextResponse.json as jest.Mock;
+  const mockCheckAdminRole = vi.mocked(checkAdminRole);
+  const mockFootballDataService = vi.mocked(FootballDataService);
+  const mockSupabaseFrom = supabase.from as any;
+  const mockCheckRateLimit = vi.mocked(checkRateLimit);
+  const mockNextResponseJson = vi.mocked(NextResponse.json);
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Default mocks for successful admin role and rate limit
     mockCheckAdminRole.mockResolvedValue({ user: { id: 'admin_user_id', publicMetadata: { role: 'admin' } }, isAdmin: true, error: null });
     mockCheckRateLimit.mockReturnValue({ allowed: true });
     mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: jest.fn().mockResolvedValue([]),
+      getBetisMatchesForSeasons: vi.fn().mockResolvedValue([]),
     }));
-    mockSupabaseFrom.mockReturnValue({
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }),
-      update: jest.fn().mockReturnThis(),
-      insert: jest.fn().mockReturnThis(),
+    (mockSupabaseFrom as any).mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: null, error: null }),
+      update: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockReturnThis(),
     });
   });
 
@@ -111,13 +116,13 @@ describe('POST /api/admin/sync-matches', () => {
       },
     ];
     mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: jest.fn().mockResolvedValue(mockMatches),
+      getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches),
     }));
-    mockSupabaseFrom.mockReturnValue({
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }), // No existing matches
-      insert: jest.fn().mockResolvedValue({ error: null }), // Successful insert
+    (mockSupabaseFrom as any).mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: null, error: null }), // No existing matches
+      insert: vi.fn().mockResolvedValue({ error: null }), // Successful insert
     });
 
     const req = new NextRequest('http://localhost/api/admin/sync-matches', { method: 'POST' });
@@ -148,16 +153,16 @@ describe('POST /api/admin/sync-matches', () => {
       },
     ];
     mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: jest.fn().mockResolvedValue(mockMatches),
+      getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches),
     }));
     // Mock supabase update chain for successful update
     // Mock supabase for updating existing match
-    mockSupabaseFrom.mockReturnValue({
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: { id: 'existing_id' }, error: null }),
-      update: jest.fn().mockReturnValue({ eq: jest.fn().mockResolvedValue({ error: null }) }),
-      insert: jest.fn().mockReturnThis(),
+    (mockSupabaseFrom as any).mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: { id: 'existing_id' }, error: null }),
+      update: vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) }),
+      insert: vi.fn().mockReturnThis(),
     });
 
     const req = new NextRequest('http://localhost/api/admin/sync-matches', { method: 'POST' });
@@ -197,18 +202,18 @@ describe('POST /api/admin/sync-matches', () => {
       },
     ];
     mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: jest.fn().mockResolvedValue(mockMatches),
+      getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches),
     }));
     // Mock supabase for mixed updates and inserts
     // Prepare spies for update and insert operations
-    const mockUpdate = jest.fn().mockReturnValue({ eq: jest.fn().mockResolvedValue({ error: null }) });
-    const mockInsert = jest.fn().mockResolvedValue({ error: null });
+    const mockUpdate = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) });
+    const mockInsert = vi.fn().mockResolvedValue({ error: null });
     mockSupabaseFrom.mockImplementation((table: string) => {
       if (table === 'matches') {
         return {
-          select: jest.fn().mockReturnThis(),
-          eq: jest.fn().mockReturnThis(),
-          single: jest.fn().mockImplementation(() => {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: vi.fn().mockImplementation(() => {
             // first call returns existing, second returns null for new match
             const callCount = mockSupabaseFrom.mock.calls.length;
             if (callCount === 1) {
@@ -220,7 +225,7 @@ describe('POST /api/admin/sync-matches', () => {
           insert: mockInsert,
         };
       }
-      return jest.fn();
+      return vi.fn();
     });
 
     const req = new NextRequest('http://localhost/api/admin/sync-matches', { method: 'POST' });
@@ -240,7 +245,7 @@ describe('POST /api/admin/sync-matches', () => {
   // 1.9.4 Implement error handling tests for FootballDataService and Supabase operations
   it('should return 500 if FootballDataService fails', async () => {
     mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: jest.fn().mockRejectedValue(new Error('API error')),
+      getBetisMatchesForSeasons: vi.fn().mockRejectedValue(new Error('API error')),
     }));
 
     const req = new NextRequest('http://localhost/api/admin/sync-matches', { method: 'POST' });
@@ -269,13 +274,13 @@ describe('POST /api/admin/sync-matches', () => {
       },
     ];
     mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: jest.fn().mockResolvedValue(mockMatches),
+      getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches),
     }));
-    mockSupabaseFrom.mockReturnValue({
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }),
-      insert: jest.fn().mockResolvedValue({ error: { message: 'DB insert error' } }), // Insert fails
+    (mockSupabaseFrom as any).mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: null, error: null }),
+      insert: vi.fn().mockResolvedValue({ error: { message: 'DB insert error' } }), // Insert fails
     });
 
     const req = new NextRequest('http://localhost/api/admin/sync-matches', { method: 'POST' });
@@ -305,13 +310,13 @@ describe('POST /api/admin/sync-matches', () => {
       },
     ];
     mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: jest.fn().mockResolvedValue(mockMatches),
+      getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches),
     }));
-    mockSupabaseFrom.mockReturnValue({
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: { id: 'existing_id' }, error: null }),
-      update: jest.fn().mockResolvedValue({ error: { message: 'DB update error' } }), // Update fails
+    (mockSupabaseFrom as any).mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: { id: 'existing_id' }, error: null }),
+      update: vi.fn().mockResolvedValue({ error: { message: 'DB update error' } }), // Update fails
     });
 
     const req = new NextRequest('http://localhost/api/admin/sync-matches', { method: 'POST' });
@@ -342,13 +347,13 @@ describe('POST /api/admin/sync-matches', () => {
       },
     ];
     mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: jest.fn().mockResolvedValue(mockMatches),
+      getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches),
     }));
-    mockSupabaseFrom.mockReturnValue({
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }),
-      insert: jest.fn().mockResolvedValue({ error: null }),
+    (mockSupabaseFrom as any).mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: null, error: null }),
+      insert: vi.fn().mockResolvedValue({ error: null }),
     });
 
     const req = new NextRequest('http://localhost/api/admin/sync-matches', { method: 'POST' });
@@ -372,7 +377,7 @@ describe('POST /api/admin/sync-matches', () => {
 
   it('should handle empty array of matches from FootballDataService', async () => {
     mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: jest.fn().mockResolvedValue([]),
+      getBetisMatchesForSeasons: vi.fn().mockResolvedValue([]),
     }));
 
     const req = new NextRequest('http://localhost/api/admin/sync-matches', { method: 'POST' });
@@ -403,13 +408,13 @@ describe('POST /api/admin/sync-matches', () => {
       },
     ];
     mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: jest.fn().mockResolvedValue(mockMatches),
+      getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches),
     }));
-    mockSupabaseFrom.mockReturnValue({
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }),
-      insert: jest.fn().mockResolvedValue({ error: null }),
+    (mockSupabaseFrom as any).mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: null, error: null }),
+      insert: vi.fn().mockResolvedValue({ error: null }),
     });
 
     const req = new NextRequest('http://localhost/api/admin/sync-matches', { method: 'POST' });
@@ -438,13 +443,13 @@ describe('POST /api/admin/sync-matches', () => {
       },
     ];
     mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: jest.fn().mockResolvedValue(mockMatches),
+      getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches),
     }));
-    mockSupabaseFrom.mockReturnValue({
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }),
-      insert: jest.fn().mockResolvedValue({ error: null }),
+    (mockSupabaseFrom as any).mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: null, error: null }),
+      insert: vi.fn().mockResolvedValue({ error: null }),
     });
 
     const req = new NextRequest('http://localhost/api/admin/sync-matches', { method: 'POST' });
@@ -473,13 +478,13 @@ describe('POST /api/admin/sync-matches', () => {
       },
     ];
     mockFootballDataService.mockImplementation(() => ({
-      getBetisMatchesForSeasons: jest.fn().mockResolvedValue(mockMatches),
+      getBetisMatchesForSeasons: vi.fn().mockResolvedValue(mockMatches),
     }));
-    mockSupabaseFrom.mockReturnValue({
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }),
-      insert: jest.fn().mockResolvedValue({ error: null }),
+    (mockSupabaseFrom as any).mockReturnValue({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: null, error: null }),
+      insert: vi.fn().mockResolvedValue({ error: null }),
     });
 
     const req = new NextRequest('http://localhost/api/admin/sync-matches', { method: 'POST' });

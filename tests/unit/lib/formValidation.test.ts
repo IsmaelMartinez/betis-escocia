@@ -1,9 +1,10 @@
+import { describe, it, expect, vi } from 'vitest';
 import { validateForm, validateField, commonValidationRules } from '@/lib/formValidation';
 import { sanitizeInput, validateEmail } from '@/lib/security';
 
 // Mock security functions used by formValidation
-jest.mock('@/lib/security', () => ({
-  sanitizeInput: jest.fn((input) => {
+vi.mock('@/lib/security', () => ({
+  sanitizeInput: vi.fn((input) => {
     // Simulate actual sanitizeInput behavior: remove < and > characters
     return input
       .trim()
@@ -16,13 +17,13 @@ jest.mock('@/lib/security', () => ({
       .replace(/file:/gi, '')
       .replace(/\0/g, '');
   }),
-  validateInputLength: jest.fn((input, min, max) => {
+  validateInputLength: vi.fn((input, min, max) => {
     const len = input.trim().length;
     if (min && len < min) return { isValid: false, error: `Mínimo ${min} caracteres` };
     if (max && len > max) return { isValid: false, error: `Máximo ${max} caracteres` };
     return { isValid: true };
   }),
-  validateEmail: jest.fn((email) => {
+  validateEmail: vi.fn((email) => {
     const trimmed = email.trim().toLowerCase();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(trimmed)) return { isValid: false, error: 'Formato de email inválido' };

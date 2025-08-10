@@ -1,37 +1,38 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { withAdminApiProtection, checkAdminRole } from '@/lib/adminApiProtection';
 
 // Mock Clerk's auth and currentUser functions
-jest.mock('@clerk/nextjs/server', () => ({
-  auth: jest.fn(),
-  currentUser: jest.fn(),
+vi.mock('@clerk/nextjs/server', () => ({
+  auth: vi.fn(),
+  currentUser: vi.fn(),
 }));
 
 // Mock Next.js NextResponse
-jest.mock('next/server', () => ({
+vi.mock('next/server', () => ({
   NextResponse: {
-    json: jest.fn((data, options) => ({
+    json: vi.fn((data, options) => ({
       status: options?.status || 200,
       data: data,
     })),
   },
 }));
 
-const mockAuth = auth as unknown as jest.Mock;
-const mockCurrentUser = currentUser as jest.Mock;
-const mockNextResponseJson = NextResponse.json as jest.Mock;
+const mockAuth = auth as unknown as any;
+const mockCurrentUser = currentUser as any;
+const mockNextResponseJson = NextResponse.json as any;
 
 describe('adminApiProtection', () => {
   let mockRequest: NextRequest;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockRequest = {} as NextRequest; // Mock a NextRequest object
   });
 
   describe('withAdminApiProtection', () => {
-    const mockHandler = jest.fn(async () => NextResponse.json({ message: 'Success' }, { status: 200 }));
+    const mockHandler = vi.fn(async () => NextResponse.json({ message: 'Success' }, { status: 200 }));
 
     it('should return 401 if user is not authenticated', async () => {
       mockAuth.mockReturnValue({ userId: null });

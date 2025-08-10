@@ -1,53 +1,54 @@
 // Mock external dependencies first
-jest.mock('svix', () => ({
-  Webhook: jest.fn(),
+vi.mock('svix', () => ({
+  Webhook: vi.fn(),
 }));
 
-jest.mock('next/headers', () => ({
-  headers: jest.fn(),
+vi.mock('next/headers', () => ({
+  headers: vi.fn(),
 }));
 
-jest.mock('next/server', () => ({
-  NextRequest: jest.fn((input, init) => {
+vi.mock('next/server', () => ({
+  NextRequest: vi.fn((input, init) => {
     const request = new Request(input, init);
     return {
       ...request,
-      json: jest.fn(() => request.json()),
+      json: vi.fn(() => request.json()),
       url: request.url,
     };
   }),
   NextResponse: {
-    json: jest.fn((data, init) => ({
+    json: vi.fn((data, init) => ({
       json: () => Promise.resolve(data),
       status: init?.status || 200,
     })),
   },
 }));
 
-jest.mock('@/lib/supabase', () => ({
-  linkExistingSubmissionsToUser: jest.fn(),
-  unlinkUserSubmissions: jest.fn(),
+vi.mock('@/lib/supabase', () => ({
+  linkExistingSubmissionsToUser: vi.fn(),
+  unlinkUserSubmissions: vi.fn(),
 }));
 
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { POST } from '@/app/api/webhooks/clerk/route';
 import { linkExistingSubmissionsToUser, unlinkUserSubmissions } from '@/lib/supabase';
 import { headers } from 'next/headers';
 import { Webhook } from 'svix';
 
-const mockLinkExistingSubmissionsToUser = linkExistingSubmissionsToUser as jest.Mock;
-const mockUnlinkUserSubmissions = unlinkUserSubmissions as jest.Mock;
-const mockHeaders = headers as jest.Mock;
-const MockWebhook = Webhook as jest.MockedClass<typeof Webhook>;
+const mockLinkExistingSubmissionsToUser = vi.mocked(linkExistingSubmissionsToUser);
+const mockUnlinkUserSubmissions = vi.mocked(unlinkUserSubmissions);
+const mockHeaders = vi.mocked(headers);
+const MockWebhook = vi.mocked(Webhook);
 
 describe('Clerk Webhook API', () => {
-  let mockVerify: jest.Mock;
+  let mockVerify: any;
   
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     process.env.CLERK_WEBHOOK_SECRET = 'test-webhook-secret';
     
     // Mock svix Webhook instance
-    mockVerify = jest.fn();
+    mockVerify = vi.fn();
     MockWebhook.mockImplementation(() => ({
       verify: mockVerify,
     } as unknown as typeof MockWebhook.prototype));

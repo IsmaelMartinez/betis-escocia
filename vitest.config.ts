@@ -20,6 +20,11 @@ export default defineConfig({
     environmentOptions: {
       url: 'http://localhost/',
     },
+    env: {
+      NEXT_PUBLIC_SUPABASE_URL: 'https://test-supabase-url.com',
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
+      SUPABASE_SERVICE_ROLE_KEY: 'test-service-role-key',
+    },
     // Include all unit and integration tests, exclude E2E tests
     include: [
       'tests/unit/**/*.test.{ts,tsx}',
@@ -104,7 +109,7 @@ export default defineConfig({
     // Test execution settings
     testTimeout: 10000, // 10 seconds timeout for tests
     hookTimeout: 10000, // 10 seconds timeout for hooks
-    // Reporter configuration
-    reporter: ['verbose', 'json', 'html'],
+    // Reporter configuration  
+    reporters: ['verbose', 'json', 'html'],
   },
 });

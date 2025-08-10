@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { vi } from 'vitest';
 
 // Helper function to mock NextRequest and NextResponse
 export function mockNextRequestAndResponse(pathname: string, userId: string | null = null) {
@@ -7,26 +8,26 @@ export function mockNextRequestAndResponse(pathname: string, userId: string | nu
   });
 
   // Mock the auth function for Clerk
-  const mockAuth = jest.fn(() => ({ userId }));
+  const mockAuth = vi.fn(() => ({ userId }));
 
   // Mock NextResponse.next() and NextResponse.redirect()
-  const mockNextResponseNext = jest.fn(() => ({
+  const mockNextResponseNext = vi.fn(() => ({
     headers: new Headers(),
   })) as any;
-  const mockNextResponseRedirect = jest.fn((url: string | URL) => ({
+  const mockNextResponseRedirect = vi.fn((url: string | URL) => ({
     headers: new Headers(),
     url: url.toString(),
     status: 307,
   })) as any;
-  const mockNextResponseJson = jest.fn((data, init) => ({
+  const mockNextResponseJson = vi.fn((data, init) => ({
     json: () => Promise.resolve(data),
     status: init?.status || 200,
   })) as any;
 
   // Override the actual NextResponse methods with our mocks
-  jest.spyOn(NextResponse, 'next').mockImplementation(mockNextResponseNext);
-  jest.spyOn(NextResponse, 'redirect').mockImplementation(mockNextResponseRedirect);
-  jest.spyOn(NextResponse, 'json').mockImplementation(mockNextResponseJson);
+  vi.spyOn(NextResponse, 'next').mockImplementation(mockNextResponseNext);
+  vi.spyOn(NextResponse, 'redirect').mockImplementation(mockNextResponseRedirect);
+  vi.spyOn(NextResponse, 'json').mockImplementation(mockNextResponseJson);
 
   return { mockRequest, mockAuth, mockNextResponseNext, mockNextResponseRedirect, mockNextResponseJson };
 }

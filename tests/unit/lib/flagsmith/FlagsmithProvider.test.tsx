@@ -1,16 +1,17 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { FlagsmithProvider } from '@/lib/flagsmith/FlagsmithProvider';
 import { initializeFeatureFlags } from '@/lib/featureFlags';
 
 // Mock the initializeFeatureFlags function
-jest.mock('@/lib/featureFlags', () => ({
-  initializeFeatureFlags: jest.fn(),
+vi.mock('@/lib/featureFlags', () => ({
+  initializeFeatureFlags: vi.fn(),
 }));
 
 describe('FlagsmithProvider', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should call initializeFeatureFlags on mount', () => {

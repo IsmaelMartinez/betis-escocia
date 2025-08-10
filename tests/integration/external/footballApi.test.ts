@@ -1,32 +1,33 @@
+import { describe, it, expect, beforeAll, beforeEach, afterAll, vi } from 'vitest';
 import { type FootballDataService } from '@/services/footballDataService';
 import axios, { type AxiosInstance } from 'axios';
 import { type Match } from '@/types/match';
 
 // Mock axios
-jest.mock('axios');
-const mockedAxios = axios as jest.Mocked<typeof axios>;
+vi.mock('axios');
+const mockedAxios = vi.mocked(axios);
 
 // Create a mock axios instance
 const mockAxiosInstance = {
-  get: jest.fn(),
-  post: jest.fn(),
-  put: jest.fn(),
-  delete: jest.fn(),
-  patch: jest.fn(),
-  head: jest.fn(),
-  options: jest.fn(),
-  request: jest.fn(),
+  get: vi.fn(),
+  post: vi.fn(),
+  put: vi.fn(),
+  delete: vi.fn(),
+  patch: vi.fn(),
+  head: vi.fn(),
+  options: vi.fn(),
+  request: vi.fn(),
   defaults: {
     headers: {
       common: {},
     },
   },
   interceptors: {
-    request: { use: jest.fn(), eject: jest.fn(), clear: jest.fn() },
-    response: { use: jest.fn(), eject: jest.fn(), clear: jest.fn() },
+    request: { use: vi.fn(), eject: vi.fn(), clear: vi.fn() },
+    response: { use: vi.fn(), eject: vi.fn(), clear: vi.fn() },
   },
-  getUri: jest.fn(),
-} as unknown as jest.Mocked<AxiosInstance>;
+  getUri: vi.fn(),
+} as unknown as any;
 
 // Mock axios.create to return our mock instance
 mockedAxios.create.mockReturnValue(mockAxiosInstance);
@@ -38,23 +39,30 @@ const MOCK_BASE_URL = 'https://api.football-data.org/v4';
 process.env.FOOTBALL_DATA_API_KEY = MOCK_API_KEY;
 process.env.FOOTBALL_DATA_API_URL = MOCK_BASE_URL;
 
-jest.isolateModules(() => {
-  const { FootballDataService, REAL_BETIS_TEAM_ID, LALIGA_COMPETITION_ID } = jest.requireActual('@/services/footballDataService');
-
-  describe('FootballDataService Integration Tests', () => {
-    let consoleErrorSpy: jest.SpyInstance | undefined;
-    let consoleLogSpy: jest.SpyInstance | undefined;
+describe('FootballDataService Integration Tests', () => {
+  let FootballDataService: any;
+  let REAL_BETIS_TEAM_ID: any;
+  let LALIGA_COMPETITION_ID: any;
+  
+  beforeAll(async () => {
+    const module = await import('@/services/footballDataService');
+    FootballDataService = module.FootballDataService;
+    REAL_BETIS_TEAM_ID = module.REAL_BETIS_TEAM_ID;
+    LALIGA_COMPETITION_ID = module.LALIGA_COMPETITION_ID;
+  });
+    let consoleErrorSpy: any;
+    let consoleLogSpy: any;
     let footballDataService: FootballDataService;
     let FootballDataServiceModule: typeof import('@/services/footballDataService');
 
     beforeAll(() => {
-      consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+      consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     });
 
     beforeEach(async () => {
       // Clear all mocks
-      jest.clearAllMocks();
+      vi.clearAllMocks();
       mockAxiosInstance.get.mockClear();
       mockAxiosInstance.post.mockClear();
       mockAxiosInstance.put.mockClear();
@@ -551,4 +559,3 @@ jest.isolateModules(() => {
       });
     });
   });
-});
