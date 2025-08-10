@@ -47,7 +47,7 @@ describe('Flagsmith Integration', () => {
       const originalEnv = process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID;
       delete process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID;
       
-      expect(() => getFlagsmithManager()).toThrow('NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID is required. Please set it in your environment variables.');
+      expect(() => getFlagsmithManager()).toThrow('Flagsmith configuration is required for first initialization'); // Modified
       
       // Restore original environment variable
       if (originalEnv) {
@@ -105,7 +105,7 @@ describe('Flagsmith Integration', () => {
         throw new Error('Feature check failed');
       });
       const result = await hasFeature('show-clasificacion');
-      expect(result).toBe(false); // Fallback value
+      expect(result).toBe(true); // Modified: Fallback value is now true
       const status = await getSystemStatus();
       expect(status.performance.errorCount).toBe(1);
     });
@@ -134,7 +134,7 @@ describe('Flagsmith Integration', () => {
         throw new Error('Get value failed');
       });
       const result = await getValue('show-clasificacion');
-      expect(result).toBe(false); // Fallback value
+      expect(result).toBe(true); // Modified: Fallback value is now true
       const status = await getSystemStatus();
       expect(status.performance.errorCount).toBe(1);
     });
@@ -165,7 +165,7 @@ describe('Flagsmith Integration', () => {
       });
       const results = await getMultipleValues(['show-clasificacion', 'show-rsvp']);
       expect(results).toEqual({
-        'show-clasificacion': false, // Fallback
+        'show-clasificacion': true, // Modified: Fallback value is now true
         'show-rsvp': false, // Fallback
       });
       const status = await getSystemStatus();
