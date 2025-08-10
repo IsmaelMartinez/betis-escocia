@@ -115,7 +115,7 @@ export async function getFeatureFlags(): Promise<FeatureFlags> {
 /**
  * Legacy environment variable fallback
  */
-function getLegacyEnvironmentFlags(): FeatureFlags {
+export function getLegacyEnvironmentFlags(): FeatureFlags {
   const defaultFlags: FeatureFlags = {
     showClasificacion: true,
     showColeccionables: false,
