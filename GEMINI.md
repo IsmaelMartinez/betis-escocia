@@ -53,75 +53,6 @@ Real Betis supporters club website in Edinburgh with mobile-first design, servin
 
 **📖 For comprehensive project details, architecture decisions, and implementation guides, please refer to the workflow-specific instruction files in `.github/instructions/` and the detailed documentation in `docs/` directory.**
 
-## Model Context Protocol (MCP) Servers
-
-The Gemini CLI can be extended using Model Context Protocol (MCP) servers, which expose tools and resources to the CLI. This allows for interaction with external systems, custom scripts, and specialized workflows beyond the CLI's built-in features.
-
-### Integration with Gemini CLI
-
-MCP servers are configured in the `.gemini/settings.json` file. The CLI discovers and executes tools exposed by these servers, handling connection management, tool filtering, and conflict resolution.
-
-### Recommended MCP Servers for this Project
-
-Given the project's technology stack (Next.js/TypeScript, Supabase), the following types of MCP servers are recommended for extending functionality:
-
--   **Official Supabase MCP Server:**
-    -   **Use Case:** Directly interact with your Supabase database, manage schema, and execute SQL queries securely from the CLI.
-    -   **Configuration:** Requires installing the Supabase CLI and configuring the official Supabase MCP server. Refer to the Supabase documentation for detailed setup instructions (e.g., `supabase.com/blog/mcp-server`).
-
--   **HTTP-based MCP Server:**
-    -   **Use Case:** A general solution for integrating with any external service that exposes an HTTP API. This is common for microservices, third-party APIs, or custom backend services.
-    -   **Example:** A server that acts as a proxy or wrapper for external APIs (e.g., a football API for match data, a payment gateway), exposing their functionalities as tools to the Gemini CLI.
-
-These recommendations provide flexibility to extend the Gemini CLI's capabilities in ways that align with the project's existing technologies and potential future needs.
-
-    *   **Review Note:** This feature is fully implemented and tested. The trivia pointing system has also been implemented. Future enhancements could include user progress tracking, leaderboards, and expanded question database.
-
-### Setting up MCP Servers for Gemini CLI
-
-To enable the Gemini CLI to interact with Supabase, you need to configure and run their respective MCP servers. This involves setting up environment variables, configuring `.gemini/settings.json`, and potentially creating VSCode tasks for easy management.
-
-#### 1. Environment Variables
-
-Ensure the following environment variables are set in your shell or `.env` file where you run the Gemini CLI:
-
--   **Supabase MCP Server:**
-    -   `SUPABASE_ACCESS_TOKEN`: A Supabase Personal Access Token (PAT) with appropriate permissions. This is used by the official Supabase MCP server to authenticate with your Supabase account.
-    -   `SUPABASE_PROJECT_REF`: Your Supabase Project Reference ID. This scopes the Supabase MCP server to a specific project.
-
-#### 2. Running the MCP Servers
-
-##### a. Official Supabase MCP Server
-
-This server is run directly via `npx` by the Gemini CLI. You do not need to clone or run it separately. The configuration in `.gemini/settings.json` will handle its execution.
-
-#### 3. `.gemini/settings.json` Configuration
-
-Create or update the `.gemini/settings.json` file in your project's root directory (`.gemini/settings.json`) with the following content:
-
-```json
-{
-  "mcpServers": {
-    "supabaseMcp": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@supabase/mcp-server-supabase@latest",
-        "--read-only",
-        "--project-ref=${SUPABASE_PROJECT_REF}"
-      ],
-      "env": {
-        "SUPABASE_ACCESS_TOKEN": "${SUPABASE_ACCESS_TOKEN}"
-      },
-      "timeout": 30000,
-      "trust": false
-    }
-  }
-}
-```
-
-*Note: The `${SUPABASE_PROJECT_REF}` and `${SUPABASE_ACCESS_TOKEN}` placeholders will be replaced by the Gemini CLI with the actual environment variable values.* You can also hardcode these values directly if preferred, but using environment variables is recommended for security.
-
 ## Potential Areas for Improvement/Expansion (as a Principal Software Developer would think):
 
 This section outlines areas for future development and optimization. It's crucial to regularly review these points to assess progress and re-prioritize based on current project needs and completed work.
@@ -174,4 +105,4 @@ Regularly revisit this section (e.g., quarterly or before major releases) to:
 - **Consult `docs/adr/`** for architectural decisions.
 - **For authentication, assume Clerk** unless otherwise specified.
 - **For feature flags, assume Flagsmith.**
-- **When proposing new features, consider how they integrate with Supabase, Clerk, and Flagsmith.
+- **When proposing new features, consider how they integrate with Supabase, Clerk, and Flagsmith.**
