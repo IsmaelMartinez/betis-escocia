@@ -30,7 +30,7 @@ const mockAxiosInstance = {
 } as unknown as any;
 
 // Mock axios.create to return our mock instance
-mockedAxios.create.mockReturnValue(mockAxiosInstance);
+(mockedAxios.create as any).mockReturnValue(mockAxiosInstance);
 
 // Mock environment variables
 const MOCK_API_KEY = 'test-api-key';

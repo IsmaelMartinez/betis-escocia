@@ -73,7 +73,7 @@ describe('Middleware', () => {
     // Store original NODE_ENV
     originalNodeEnv = process.env.NODE_ENV;
     // Set NODE_ENV for consistent testing
-    process.env.NODE_ENV = 'test';
+    (process.env as any).NODE_ENV = 'test';
     // Default to unauthenticated unless overridden in a test
     (globalThis as unknown as { __clerkAuthMock: () => Promise<{ userId: string | null }> }).__clerkAuthMock =
       vi.fn(async () => ({ userId: null }));
@@ -82,9 +82,9 @@ describe('Middleware', () => {
   afterEach(() => {
     // Restore original NODE_ENV
     if (originalNodeEnv !== undefined) {
-      process.env.NODE_ENV = originalNodeEnv;
+      (process.env as any).NODE_ENV = originalNodeEnv;
     } else {
-      delete process.env.NODE_ENV;
+      delete (process.env as any).NODE_ENV;
     }
     vi.restoreAllMocks();
   });

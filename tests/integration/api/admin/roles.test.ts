@@ -55,16 +55,16 @@ describe('Admin Roles API', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Default mocks for successful admin access
-    mockCheckAdminRole.mockResolvedValue({ user: { id: 'admin_user_id', publicMetadata: { role: ROLES.ADMIN } }, isAdmin: true, error: null });
-    mockAuth.mockResolvedValue({ userId: 'admin_user_id' });
+    mockCheckAdminRole.mockResolvedValue({ user: { id: 'admin_user_id', publicMetadata: { role: ROLES.ADMIN } } as any, isAdmin: true, error: null });
+    mockAuth.mockResolvedValue({ userId: 'admin_user_id' } as any);
     mockValidateRoleChange.mockReturnValue({ allowed: true, message: 'Allowed' });
   });
 
   describe('GET /api/admin/roles', () => {
     it('should return a list of users with roles for an admin', async () => {
       const mockUsers = [
-        { id: 'user1', emailAddresses: [{ emailAddress: 'user1@example.com' }], publicMetadata: { role: ROLES.USER } },
-        { id: 'user2', emailAddresses: [{ emailAddress: 'user2@example.com' }], publicMetadata: { role: ROLES.MODERATOR } },
+        { id: 'user1', email: 'user1@example.com', firstName: '', lastName: '', role: ROLES.USER, createdAt: 0, lastSignInAt: null, imageUrl: '', banned: false, emailVerified: true },
+        { id: 'user2', email: 'user2@example.com', firstName: '', lastName: '', role: ROLES.MODERATOR, createdAt: 0, lastSignInAt: null, imageUrl: '', banned: false, emailVerified: true },
       ];
       mockListUsersWithRoles.mockResolvedValue({ success: true, users: mockUsers, totalCount: 2, hasMore: false });
 
@@ -91,7 +91,7 @@ describe('Admin Roles API', () => {
     });
 
     it('should return 403 if authenticated user is not an admin', async () => {
-      mockCheckAdminRole.mockResolvedValue({ user: { id: 'user_id', publicMetadata: { role: ROLES.USER } }, isAdmin: false, error: 'Admin access required' });
+      mockCheckAdminRole.mockResolvedValue({ user: { id: 'user_id', publicMetadata: { role: ROLES.USER } } as any, isAdmin: false, error: 'Admin access required' });
 
       const request = new NextRequest('http://localhost/api/admin/roles');
       const response = await GET(request);
@@ -132,7 +132,7 @@ describe('Admin Roles API', () => {
         firstName: 'Target',
         lastName: 'User',
         publicMetadata: { role: ROLES.MODERATOR }
-      };
+      } as any;
       mockAssignRole.mockResolvedValue({ success: true, message: 'Role assigned', user: mockAssignedUser });
 
       const request = new NextRequest('http://localhost/api/admin/roles', {
@@ -235,7 +235,7 @@ describe('Admin Roles API', () => {
         firstName: 'Target',
         lastName: 'User',
         publicMetadata: { role: ROLES.USER }
-      };
+      } as any;
       mockAssignRole.mockResolvedValue({ success: true, message: 'Role removed', user: mockAssignedUser });
 
       const request = new NextRequest('http://localhost/api/admin/roles', {
@@ -310,7 +310,7 @@ describe('Admin Roles API', () => {
         firstName: 'Target',
         lastName: 'User',
         publicMetadata: { role: ROLES.MODERATOR }
-      };
+      } as any;
       mockAssignRole.mockResolvedValue({ success: true, message: 'Role assigned', user: mockAssignedUser });
 
       const request = new NextRequest('http://localhost/api/admin/roles', {
