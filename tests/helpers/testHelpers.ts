@@ -12,16 +12,16 @@ export function mockNextRequestAndResponse(pathname: string, userId: string | nu
   // Mock NextResponse.next() and NextResponse.redirect()
   const mockNextResponseNext = jest.fn(() => ({
     headers: new Headers(),
-  }));
-  const mockNextResponseRedirect = jest.fn((url: URL) => ({
+  })) as any;
+  const mockNextResponseRedirect = jest.fn((url: string | URL) => ({
     headers: new Headers(),
     url: url.toString(),
     status: 307,
-  }));
+  })) as any;
   const mockNextResponseJson = jest.fn((data, init) => ({
     json: () => Promise.resolve(data),
     status: init?.status || 200,
-  }));
+  })) as any;
 
   // Override the actual NextResponse methods with our mocks
   jest.spyOn(NextResponse, 'next').mockImplementation(mockNextResponseNext);

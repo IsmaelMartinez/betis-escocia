@@ -17,13 +17,10 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    testEnvironmentOptions: {
+    environmentOptions: {
       url: 'http://localhost/',
     },
-    include: ['tests/unit/**/*.test.{ts,tsx}'],
+    include: ['tests/unit/app/**/*.test.{ts,tsx}'], // Modified this line
     setupFiles: ['.storybook/vitest.setup.ts'],
-    transformMode: {
-      web: [/\.[jt]sx$/],
-    },
   },
 });

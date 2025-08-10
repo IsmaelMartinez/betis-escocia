@@ -5,7 +5,7 @@ import Error from '../../../src/app/error';
 
 // Mock useEffect to prevent it from running during tests
 vi.mock('react', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal() as any;
   return {
     ...actual,
     useEffect: vi.fn(), // Mock useEffect
@@ -14,7 +14,7 @@ vi.mock('react', async (importOriginal) => {
 
 describe('Error component', () => {
   it('renders correctly with error message and buttons', () => {
-    const mockError = new Error('Test error');
+    const mockError = new Error('Test error') as Error & { digest?: string };
     const mockReset = vi.fn();
 
     render(<Error error={mockError} reset={mockReset} />);
@@ -27,7 +27,7 @@ describe('Error component', () => {
   });
 
   it('calls reset function when "Intentar de nuevo" button is clicked', () => {
-    const mockError = new Error('Test error');
+    const mockError = new Error('Test error') as Error & { digest?: string };
     const mockReset = vi.fn();
 
     render(<Error error={mockError} reset={mockReset} />);

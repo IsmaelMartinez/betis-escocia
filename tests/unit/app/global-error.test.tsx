@@ -11,7 +11,7 @@ vi.mock('@sentry/nextjs', () => ({
 
 describe('GlobalError component', () => {
   it('renders correctly with error message and buttons', () => {
-    const mockError = new Error('Test global error');
+    const mockError = new Error('Test global error') as Error & { digest?: string };
     const mockReset = vi.fn();
 
     render(<GlobalError error={mockError} reset={mockReset} />);
@@ -24,7 +24,7 @@ describe('GlobalError component', () => {
   });
 
   it('calls reset function when "Intentar de nuevo" button is clicked', () => {
-    const mockError = new Error('Test global error');
+    const mockError = new Error('Test global error') as Error & { digest?: string };
     const mockReset = vi.fn();
 
     render(<GlobalError error={mockError} reset={mockReset} />);
@@ -35,7 +35,7 @@ describe('GlobalError component', () => {
 
   it('logs the error to console and captures exception with Sentry', () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const mockError = new Error('Test global error');
+    const mockError = new Error('Test global error') as Error & { digest?: string };
     const mockReset = vi.fn();
 
     render(<GlobalError error={mockError} reset={mockReset} />);

@@ -28,7 +28,7 @@ vi.mock('@vercel/analytics/next', () => ({
   Analytics: vi.fn(() => <div data-testid="mock-analytics" />),
 }));
 vi.mock('@sentry/nextjs', () => ({
-  ErrorBoundary: vi.fn(({ children }) => <div data-testid="mock-sentry-error-boundary">{children}</div>),
+  ErrorBoundary: vi.fn(({ children }: any) => <div data-testid="mock-sentry-error-boundary">{children}</div>),
   captureException: vi.fn(),
 }));
 vi.mock('@vercel/speed-insights/next', () => ({
@@ -38,7 +38,7 @@ vi.mock('@/components/SentryUserContext', () => ({
   default: vi.fn(() => <div data-testid="mock-sentry-user-context" />),
 }));
 vi.mock('@clerk/nextjs', () => ({
-  ClerkProvider: vi.fn(({ children }) => <div data-testid="mock-clerk-provider">{children}</div>),
+  ClerkProvider: vi.fn(({ children }: any) => <div data-testid="mock-clerk-provider">{children}</div>),
 }));
 vi.mock('@/lib/featureFlags', () => ({
   initializeFeatureFlags: vi.fn(),
@@ -56,9 +56,9 @@ describe('RootLayout', () => {
     // Reset mocks before each test
     vi.clearAllMocks();
     // Ensure mocks return default implementations if needed
-    vi.mocked(Layout).mockImplementation(({ children }) => <div data-testid="mock-layout">{children}</div>);
-    vi.mocked(Sentry.ErrorBoundary).mockImplementation(({ children }) => <div data-testid="mock-sentry-error-boundary">{children}</div>);
-    vi.mocked(ClerkProvider).mockImplementation(({ children }) => <div data-testid="mock-clerk-provider">{children}</div>);
+    vi.mocked(Layout).mockImplementation(({ children }: any) => <div data-testid="mock-layout">{children}</div>);
+    vi.mocked(Sentry.ErrorBoundary).mockImplementation(({ children }: any) => <div data-testid="mock-sentry-error-boundary">{children}</div>);
+    vi.mocked(ClerkProvider).mockImplementation(({ children }: any) => <div data-testid="mock-clerk-provider">{children}</div>);
   });
 
   it('renders children correctly within the layout structure', async () => {

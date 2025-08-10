@@ -45,10 +45,10 @@ describe('sitemap', () => {
 
   it('should generate sitemap with dynamic pages when navigation items are enabled', () => {
     vi.mocked(getEnabledNavigationItems).mockReturnValue([
-      { href: '/', name: 'Home' }, // Should be filtered out as it's a static page
-      { href: '/unete', name: 'Únete' },
-      { href: '/contacto', name: 'Contacto' },
-      { href: '/galeria', name: 'Galería' },
+      { href: '/', name: 'Home', nameEn: 'Home', feature: null }, // Should be filtered out as it's a static page
+      { href: '/unete', name: 'Únete', nameEn: 'Join Us', feature: 'showUnete' },
+      { href: '/contacto', name: 'Contacto', nameEn: 'Contact', feature: 'showContacto' },
+      { href: '/galeria', name: 'Galería', nameEn: 'Gallery', feature: 'showGaleria' },
     ]);
 
     const result = sitemap();
@@ -90,8 +90,8 @@ describe('sitemap', () => {
 
   it('should handle different priorities for dynamic pages', () => {
     vi.mocked(getEnabledNavigationItems).mockReturnValue([
-      { href: '/unete', name: 'Únete' },
-      { href: '/galeria', name: 'Galería' },
+      { href: '/unete', name: 'Únete', nameEn: 'Join Us', feature: 'showUnete' },
+      { href: '/galeria', name: 'Galería', nameEn: 'Gallery', feature: 'showGaleria' },
     ]);
 
     const result = sitemap();

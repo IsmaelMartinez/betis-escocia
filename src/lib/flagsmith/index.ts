@@ -6,8 +6,10 @@
  */
 
 import flagsmith from 'flagsmith/isomorphic';
-import { FlagsmithConfig, FlagsmithFeatureName, FlagsmithPerformanceMetrics } from './types';
+import { FlagsmithConfig, FlagsmithFeatureName, FlagsmithPerformanceMetrics, LegacyFeatureName, FLAG_MIGRATION_MAP } from './types';
 import { getFlagsmithConfig } from './config';
+import { getLegacyEnvironmentFlags } from '../featureFlags'; // Added import
+
 // Fallback mechanism removed
 
 class FlagsmithManager {
@@ -181,9 +183,17 @@ class FlagsmithManager {
   /**
    * Get fallback value for a flag
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private getFallbackValue(_flagName: FlagsmithFeatureName): boolean {
-    // Fallback disabled: default to false
+  private getFallbackValue(flagName: FlagsmithFeatureName): boolean {
+    // Map Flagsmith feature name to legacy feature name
+    const legacyFeatureName = Object.keys(FLAG_MIGRATION_MAP).find(
+      key => FLAG_MIGRATION_MAP[key as LegacyFeatureName] === flagName
+    ) as LegacyFeatureName | undefined;
+
+    if (legacyFeatureName) {
+      const legacyFlags = getLegacyEnvironmentFlags();
+      return legacyFlags[legacyFeatureName];
+    }
+    // Default to false if no mapping or legacy feature found
     return false;
   }
 

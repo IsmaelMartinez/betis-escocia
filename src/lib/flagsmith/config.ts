@@ -10,13 +10,12 @@ import { FlagsmithConfig } from './types';
 /**
  * Get Flagsmith configuration based on environment
  */
-export function getFlagsmithConfig(): FlagsmithConfig {
+export function getFlagsmithConfig(): FlagsmithConfig | null {
   const environmentID = process.env.NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID;
   
   if (!environmentID) {
-    throw new Error(
-      'NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID is required. Please set it in your environment variables.'
-    );
+    console.warn('[Flagsmith Config] NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID not set. Flagsmith will be disabled.');
+    return null;
   }
 
   const config: FlagsmithConfig = {
