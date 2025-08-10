@@ -12,7 +12,9 @@
       "Bash(npx vitest:*)",
       "Bash(timeout 5 npm run test:watch)",
       "Bash(npm run test:coverage:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(find:*)",
+      "Bash(sed:*)"
     ],
     "deny": []
   }

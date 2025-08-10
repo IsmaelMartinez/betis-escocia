@@ -1,12 +1,12 @@
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 
-export const auth = jest.fn(() => ({
+export const auth = vi.fn(() => ({
   userId: 'mock_user_id',
   sessionId: 'mock_session_id',
-  getToken: jest.fn(() => Promise.resolve('mock_token')),
+  getToken: vi.fn(() => Promise.resolve('mock_token')),
 }));
 
-export const currentUser = jest.fn(() => Promise.resolve({
+export const currentUser = vi.fn(() => Promise.resolve({
   id: 'mock_user_id',
   emailAddresses: [{ emailAddress: 'mock@example.com' }],
   firstName: 'Mock',

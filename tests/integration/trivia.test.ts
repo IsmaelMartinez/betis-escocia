@@ -44,7 +44,7 @@ describe('/api/trivia', () => {
   });
 
   describe('GET /api/trivia', () => {
-    test('should return questions for unauthenticated user', async () => {
+    it('should return questions for unauthenticated user', async () => {
       mockGetAuth.mockReturnValueOnce({ userId: null, getToken: vi.fn() } as any);
       mockSupabase.from.mockReturnValue({
         select: vi.fn().mockReturnThis(),
@@ -59,7 +59,7 @@ describe('/api/trivia', () => {
       expect(mockSupabase.from).toHaveBeenCalledWith('trivia_questions');
     });
 
-    test('should return questions for authenticated user who has not played today', async () => {
+    it('should return questions for authenticated user who has not played today', async () => {
       mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: vi.fn().mockResolvedValue('mock-token') } as any);
       mockGetUserDailyTriviaScore.mockResolvedValueOnce({ success: true, data: null });
       mockSupabase.from.mockReturnValue({
@@ -75,7 +75,7 @@ describe('/api/trivia', () => {
       expect(mockGetUserDailyTriviaScore).toHaveBeenCalledWith('user1', expect.any(Object));
     });
 
-    test('should return 403 for authenticated user who has already played today', async () => {
+    it('should return 403 for authenticated user who has already played today', async () => {
       mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: vi.fn().mockResolvedValue('mock-token') } as any);
       mockGetUserDailyTriviaScore.mockResolvedValueOnce({ success: true, data: { id: 's1', user_id: 'user1', daily_score: 3, timestamp: new Date().toISOString() } });
 
@@ -87,7 +87,7 @@ describe('/api/trivia', () => {
       expect(mockGetUserDailyTriviaScore).toHaveBeenCalledWith('user1', expect.any(Object));
     });
 
-    test('should return 500 if fetching questions fails', async () => {
+    it('should return 500 if fetching questions fails', async () => {
       mockGetAuth.mockReturnValueOnce({ userId: null, getToken: vi.fn() } as any);
       mockSupabase.from.mockReturnValue({
         select: vi.fn().mockReturnThis(),
@@ -103,7 +103,7 @@ describe('/api/trivia', () => {
   });
 
   describe('POST /api/trivia', () => {
-    test('should return 401 for unauthenticated user', async () => {
+    it('should return 401 for unauthenticated user', async () => {
       mockGetAuth.mockReturnValueOnce({ userId: null, getToken: vi.fn() } as any);
 
       const response = await postTriviaScore({ json: () => Promise.resolve({ score: 5 }) } as any);
@@ -113,7 +113,7 @@ describe('/api/trivia', () => {
       expect(json).toEqual({ error: 'Unauthorized' });
     });
 
-    test('should return 400 for invalid score', async () => {
+    it('should return 400 for invalid score', async () => {
       mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: vi.fn().mockResolvedValue('mock-token') } as any);
 
       const response = await postTriviaScore({ json: () => Promise.resolve({ score: 'invalid' }) } as any);
@@ -123,7 +123,7 @@ describe('/api/trivia', () => {
       expect(json).toEqual({ error: 'Invalid score provided' });
     });
 
-    test('should return 409 if user has already submitted score today', async () => {
+    it('should return 409 if user has already submitted score today', async () => {
       mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: vi.fn().mockResolvedValue('mock-token') } as any);
       mockGetUserDailyTriviaScore.mockResolvedValueOnce({ success: true, data: { id: 's1', user_id: 'user1', daily_score: 2, timestamp: new Date().toISOString() } });
 
@@ -134,7 +134,7 @@ describe('/api/trivia', () => {
       expect(json).toEqual({ error: 'You have already submitted a score today.' });
     });
 
-    test('should successfully save score for authenticated user who has not played today', async () => {
+    it('should successfully save score for authenticated user who has not played today', async () => {
       mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: vi.fn().mockResolvedValue('mock-token') } as any);
       mockGetUserDailyTriviaScore.mockResolvedValueOnce({ success: true, data: null });
       mockCreateUserTriviaScore.mockResolvedValueOnce({ success: true, data: { id: 's1', user_id: 'user1', daily_score: 5, timestamp: new Date().toISOString() } });
@@ -147,7 +147,7 @@ describe('/api/trivia', () => {
       expect(mockCreateUserTriviaScore).toHaveBeenCalledWith({ user_id: 'user1', daily_score: 5 }, expect.any(Object));
     });
 
-    test('should return 500 if saving score fails', async () => {
+    it('should return 500 if saving score fails', async () => {
       mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: vi.fn().mockResolvedValue('mock-token') } as any);
       mockGetUserDailyTriviaScore.mockResolvedValueOnce({ success: true, data: null });
       mockCreateUserTriviaScore.mockResolvedValueOnce({ success: false, error: 'Save Error' });
@@ -166,7 +166,7 @@ describe('/api/trivia/total-score-dashboard', () => {
     vi.clearAllMocks();
   });
 
-  test('should return 401 for unauthenticated user', async () => {
+  it('should return 401 for unauthenticated user', async () => {
     mockGetAuth.mockReturnValueOnce({ userId: null, getToken: vi.fn() } as any);
 
     const response = await getTotalScoreDashboard({} as any);
@@ -176,7 +176,7 @@ describe('/api/trivia/total-score-dashboard', () => {
     expect(json).toEqual({ error: 'Unauthorized' });
   });
 
-  test('should return total score for authenticated user', async () => {
+  it('should return total score for authenticated user', async () => {
     mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: vi.fn().mockResolvedValue('mock-token') } as any);
     mockGetAuthenticatedSupabaseClient.mockReturnValue({
       from: vi.fn(() => ({
@@ -193,7 +193,7 @@ describe('/api/trivia/total-score-dashboard', () => {
     expect(mockGetAuthenticatedSupabaseClient).toHaveBeenCalledWith('mock-token');
   });
 
-  test('should return 0 if no scores found for authenticated user', async () => {
+  it('should return 0 if no scores found for authenticated user', async () => {
     mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: vi.fn().mockResolvedValue('mock-token') } as any);
     mockGetAuthenticatedSupabaseClient.mockReturnValue({
       from: vi.fn(() => ({
@@ -209,7 +209,7 @@ describe('/api/trivia/total-score-dashboard', () => {
     expect(json).toEqual({ totalScore: 0 });
   });
 
-  test('should return 500 if fetching total score fails', async () => {
+  it('should return 500 if fetching total score fails', async () => {
     mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: vi.fn().mockResolvedValue('mock-token') } as any);
     mockGetAuthenticatedSupabaseClient.mockReturnValue({
       from: vi.fn(() => ({

@@ -2,10 +2,11 @@ import type { Meta, StoryObj } from '@storybook/nextjs';
 import OrderForm from './OrderForm';
 import { http, HttpResponse } from 'msw';
 import { useState } from 'react';
+import { vi } from 'vitest';
 
 // Mock useFormValidation hook
-jest.mock('@/lib/formValidation', () => ({
-  useFormValidation: jest.fn((initialData) => {
+vi.mock('@/lib/formValidation', () => ({
+  useFormValidation: vi.fn((initialData) => {
     const [data, setData] = useState(initialData);
     const [errors, setErrors] = useState({});
     const [touched, setTouched] = useState({});

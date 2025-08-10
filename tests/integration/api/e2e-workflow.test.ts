@@ -4,7 +4,7 @@ import { GET } from '@/app/api/trivia/route';
 import { getAuth } from '@clerk/nextjs/server';
 import { getUserDailyTriviaScore } from '@/lib/supabase';
 
-// Ensure Response.json (static) exists for NextResponse.json in Jest env
+// Ensure Response.json (static) exists for NextResponse.json in Vitest env
 type ResponseStatic = typeof globalThis.Response & {
   json?: (data: unknown, init?: ResponseInit) => Response;
 };

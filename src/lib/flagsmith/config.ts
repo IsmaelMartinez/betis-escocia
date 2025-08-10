@@ -92,6 +92,10 @@ export async function autoInitializeFlagsmith(): Promise<void> {
   try {
     const { initializeFlagsmith } = await import('./index');
     const config = getFlagsmithConfig();
+    if (!config) {
+      console.warn('[Flagsmith Config] No configuration available, skipping initialization');
+      return;
+    }
     await initializeFlagsmith(config);
   } catch (error) {
     console.error('[Flagsmith Config] Failed to auto-initialize:', error);

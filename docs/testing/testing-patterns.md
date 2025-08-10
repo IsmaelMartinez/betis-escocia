@@ -2,31 +2,31 @@
 
 This document consolidates various testing patterns and strategies used across the project, including unit, integration, and component testing.
 
-## Jest Configuration and ES Module Handling
+## Vitest Configuration and ES Module Handling
 
-The project uses Jest with TypeScript and faces challenges with ES modules from dependencies like Clerk. Key learnings:
+The project uses Vitest with TypeScript and faces challenges with ES modules from dependencies like Clerk. Key learnings:
 
 ### ES Module Import Issues
-- **Problem**: Jest encounters `SyntaxError: Unexpected token 'export'` when importing Clerk packages.
-- **Root Cause**: Clerk's `@clerk/backend` package uses ES modules that Jest cannot parse by default.
+- **Problem**: Vitest encounters `SyntaxError: Unexpected token 'export'` when importing Clerk packages.
+- **Root Cause**: Clerk's `@clerk/backend` package uses ES modules that Vitest cannot parse by default.
 - **Solution**: Mock Clerk modules at the top of test files before any imports:
 ```typescript
 // Mock Clerk before any other imports
-jest.mock("@clerk/nextjs/server", () => ({
-  getAuth: jest.fn(() => ({
+vi.mock("@clerk/nextjs/server", () => ({
+  getAuth: vi.fn(() => ({
     userId: null,
-    getToken: jest.fn(() => Promise.resolve(null)),
+    getToken: vi.fn(() => Promise.resolve(null)),
   })),
 }));
 ```
-- **Alternative Attempted**: Adding `transformIgnorePatterns` to Jest config was not sufficient.
+- **Alternative Attempted**: Adding `optimizeDeps.exclude` to Vite config was not sufficient.
 
 ### Supabase Query Builder Mocking
 Properly mocking Supabase's chainable query builder requires understanding the actual API structure:
 ```typescript
 // Correct pattern for mocking Supabase
-jest.mock("@/lib/supabase", () => {
-  const mockFrom = jest.fn();
+vi.mock("@/lib/supabase", () => {
+  const mockFrom = vi.fn();
   return {
     supabase: {
       from: mockFrom,
@@ -35,9 +35,9 @@ jest.mock("@/lib/supabase", () => {
 });
 
 // In tests, mock the full chain:
-(supabase.from as jest.Mock).mockReturnValue({
-  select: jest.fn(() => ({
-    eq: jest.fn(() => Promise.resolve({ data: [], error: null })),
+(supabase.from as vi.Mock).mockReturnValue({
+  select: vi.fn(() => ({
+    eq: vi.fn(() => Promise.resolve({ data: [], error: null })),
   })),
 });
 ```
@@ -80,14 +80,14 @@ expect(validateField("ab", rules.minLength)).toEqual({
 **Pattern**: Form validation integrates with security utilities that must be properly mocked:
 ```typescript
 // Security function mocking for form validation
-jest.mock("@/lib/security", () => ({
+vi.mock("@/lib/security", () => ({
   __esModule: true,
-  sanitizeInput: jest.fn((value) => value?.trim() || ''),
-  validateInputLength: jest.fn((value, max) => ({ 
+  sanitizeInput: vi.fn((value) => value?.trim() || ''),
+  validateInputLength: vi.fn((value, max) => ({ 
     isValid: true, 
     sanitized: value 
   })),
-  validateEmail: jest.fn((email) => ({ 
+  validateEmail: vi.fn((email) => ({ 
     isValid: email?.includes('@') 
   }))
 }));
@@ -143,16 +143,16 @@ describe('Edge Cases', () => {
 **Best Practice**: Security functions should be mocked realistically to match production behavior:
 ```typescript
 // Realistic sanitization mock that actually trims whitespace
-sanitizeInput: jest.fn((value) => value?.trim() || ''),
+sanitizeInput: vi.fn((value) => value?.trim() || ''),
 
 // Length validation that respects max limits
-validateInputLength: jest.fn((value, max) => ({
+validateInputLength: vi.fn((value, max) => ({
   isValid: !value || value.length <= max,
   sanitized: value
 })),
 
 // Email validation with actual pattern checking
-validateEmail: jest.fn((email) => ({
+validateEmail: vi.fn((email) => ({
   isValid: email && email.includes('@') && email.includes('.')
 }))
 ```

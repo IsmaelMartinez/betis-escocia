@@ -99,7 +99,7 @@ Important technical decisions are documented as ADRs (Architecture Decision Reco
 npm run lint                # ESLint checking
 npm run type-check         # TypeScript validation
 npm run build-storybook    # Build component documentation
-npm test                   # Jest unit/integration tests
+npm run test               # Vitest unit/integration tests
 npm run test:e2e          # Playwright end-to-end tests
 npm run build             # Test build process
 ```

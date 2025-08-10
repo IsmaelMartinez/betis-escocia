@@ -131,10 +131,35 @@ export async function POST(request: NextRequest) {
 
 ## Testing Patterns
 
-### Jest Configuration
-- **ES Module handling**: Mock Clerk/Supabase before imports to avoid syntax errors
-- **Location**: `tests/setup.ts` for global configuration
-- **Pattern**: Use `__mocks__/` directory for consistent mocking
+### Vitest Configuration
+- **Test runner**: Vitest with jsdom environment for React components
+- **Coverage**: v8 provider with 80% threshold for lines, functions, branches, statements
+- **Setup**: Global setup in `tests/setup.ts` with DOM testing library matchers
+- **Config**: `vitest.config.ts` with path aliases and environment variables
+
+### Mocking Patterns
+- **Clerk mocking**: Mock `@clerk/nextjs/server` for authentication tests
+- **Supabase mocking**: Mock database operations with controlled responses  
+- **MSW integration**: Service worker for external API mocking
+- **Environment variables**: Test-specific values in `vitest.config.ts`
+
+### Example Test
+```typescript
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+
+// Mocking with Vitest
+vi.mock('@/lib/flagsmith', () => ({
+  hasFeature: vi.fn(() => Promise.resolve(false)),
+  getValue: vi.fn(() => Promise.resolve('default')),
+}));
+
+// Component testing
+test('renders component correctly', () => {
+  render(<MyComponent />);
+  expect(screen.getByRole('button')).toBeInTheDocument();
+});
+```
 
 ### API Route Testing
 - Mock external services first (Clerk, Supabase)

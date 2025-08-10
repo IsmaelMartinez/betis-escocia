@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import FacebookPagePlugin from './FacebookPagePlugin';
+import { vi } from 'vitest';
 
 const meta: Meta<typeof FacebookPagePlugin> = {
   title: 'Components/FacebookPagePlugin',
@@ -93,7 +94,7 @@ export const ErrorState: Story = {
         window.FB = undefined;
         window.fbAsyncInit = undefined;
         // Mock script loading error
-        jest.spyOn(document.head, 'appendChild').mockImplementation((node) => {
+        vi.spyOn(document.head, 'appendChild').mockImplementation((node) => {
           if (node.nodeName === 'SCRIPT' && (node as HTMLScriptElement).src.includes('connect.facebook.net')) {
             setTimeout(() => (node as HTMLScriptElement).onerror?.(new Event('error')), 0);
           }

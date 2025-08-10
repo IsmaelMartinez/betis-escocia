@@ -77,7 +77,11 @@ The trivia game has been implemented as a new feature within the existing Next.j
 - **Unit tests**: GameTimer component functionality, new utility functions for point calculation.
 - **Integration tests**: API endpoint behavior for question retrieval, score submission, and total score retrieval.
 - **E2E tests**: Complete game flow validation, including display of points and daily play enforcement.
-- **Jest configuration**: React and TypeScript support.
+- **Vitest Configuration**: The project has transitioned from Jest to Vitest for testing, leveraging its speed and modern features. The configuration includes support for React and TypeScript, ensuring compatibility with the existing codebase. Key configuration files:
+   - `vitest.config.ts`: Defines path aliases, environment variables, and test coverage settings.
+   - `tests/setup.ts`: Sets up the testing environment, including DOM testing utilities and global mocks.
+   - `playwright/global.setup.ts`: Handles E2E test setup, including authentication state with Clerk.
+- **Migration Notes**: All Jest-specific configurations and tests have been updated to work with Vitest. Refer to `docs/testing-migration.md` for detailed migration steps and troubleshooting tips.
 - **Playwright E2E Testing with Clerk**: Implemented dedicated test user setup and session saving for robust E2E testing of authenticated flows.
 
 ## Consequences

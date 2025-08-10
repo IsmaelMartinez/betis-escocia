@@ -1,15 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import FlagsmithRefresher from './FlagsmithRefresher';
-// import { fn } from 'storybook/test';
+import { fn } from 'storybook/test';
+import { vi } from 'vitest';
 
 // Mock the flagsmith and featureFlags modules
-jest.mock('@/lib/flagsmith', () => ({
-  refreshFlags: jest.fn(),
+vi.mock('@/lib/flagsmith', () => ({
+  refreshFlags: fn(),
 }));
 
-jest.mock('@/lib/featureFlags', () => ({
-  initializeFeatureFlags: jest.fn(() => Promise.resolve()),
-  isFeatureEnabled: jest.fn(() => true), // Mock as always enabled for stories
+vi.mock('@/lib/featureFlags', () => ({
+  initializeFeatureFlags: fn(() => Promise.resolve()),
+  isFeatureEnabled: fn(() => true), // Mock as always enabled for stories
 }));
 
 const meta: Meta<typeof FlagsmithRefresher> = {
@@ -32,7 +33,7 @@ export const Default: Story = {
   args: {},
   play: async () => {
     // You can add assertions here if needed, e.g., to check if mocks were called
-    // Note: Direct Jest assertions won't work in Storybook's browser environment
+    // Note: Direct Jest/Vitest assertions won't work in Storybook's browser environment
     // but you can log to console or use Storybook's actions addon.
     console.log('FlagsmithRefresher mounted. Check console for mock calls.');
   },

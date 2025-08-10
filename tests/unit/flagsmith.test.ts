@@ -49,7 +49,7 @@ describe('Flagsmith Feature Flag Defaults', () => {
 
   it('should return true for hasFeatureFlag when Flagsmith is configured to return true', async () => {
     const featureName: FlagsmithFeatureName = 'show-rsvp';
-    (flagsmith.hasFeature as jest.Mock).mockReturnValue(true);
+    (flagsmith.hasFeature as vi.Mock).mockReturnValue(true);
     const result = await hasFeatureFlag(featureName);
     expect(result).toBe(true);
     expect(flagsmith.hasFeature).toHaveBeenCalledWith(featureName);
@@ -57,7 +57,7 @@ describe('Flagsmith Feature Flag Defaults', () => {
 
   it('should return true for getFeatureFlag when Flagsmith is configured to return true', async () => {
     const featureName: FlagsmithFeatureName = 'show-rsvp';
-    (flagsmith.getValue as jest.Mock).mockReturnValue(true);
+    (flagsmith.getValue as vi.Mock).mockReturnValue(true);
     const result = await getFeatureFlag(featureName);
     expect(result).toBe(true);
     expect(flagsmith.getValue).toHaveBeenCalledWith(featureName);

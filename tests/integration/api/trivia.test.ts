@@ -95,7 +95,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
 
   describe('GET /api/trivia - Fetch Questions', () => {
     describe('Unauthenticated User Scenarios', () => {
-      test('should return shuffled questions for unauthenticated user', async () => {
+      it('should return shuffled questions for unauthenticated user', async () => {
         mockGetAuth.mockReturnValueOnce({ userId: null, getToken: vi.fn() } as any);
         mockSupabase.from.mockReturnValue({
           select: vi.fn().mockReturnThis(),
@@ -112,7 +112,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
         expect(mockSupabase.from).toHaveBeenCalledWith('trivia_questions');
       });
 
-      test('should handle database error for unauthenticated user', async () => {
+      it('should handle database error for unauthenticated user', async () => {
         mockGetAuth.mockReturnValueOnce({ userId: null, getToken: vi.fn() } as any);
         mockSupabase.from.mockReturnValue({
           select: vi.fn().mockReturnThis(),
@@ -126,7 +126,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
         expect(json).toEqual({ error: 'Database connection failed' });
       });
 
-      test('should handle unexpected errors for unauthenticated user', async () => {
+      it('should handle unexpected errors for unauthenticated user', async () => {
         mockGetAuth.mockReturnValueOnce({ userId: null, getToken: vi.fn() } as any);
         mockSupabase.from.mockImplementation(() => {
           throw new Error('Unexpected database error');
@@ -141,7 +141,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
     });
 
     describe('Authenticated User Scenarios', () => {
-      test('should return questions for authenticated user who has not played today', async () => {
+      it('should return questions for authenticated user who has not played today', async () => {
         const mockGetToken = vi.fn().mockResolvedValue('valid-clerk-token');
         mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: mockGetToken } as any);
         mockGetUserDailyTriviaScore.mockResolvedValueOnce({ success: true, data: null });
@@ -159,7 +159,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
         expect(mockGetToken).toHaveBeenCalled();
       });
 
-      test('should return 403 for authenticated user who has already played today', async () => {
+      it('should return 403 for authenticated user who has already played today', async () => {
         const mockGetToken = vi.fn().mockResolvedValue('valid-clerk-token');
         mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: mockGetToken } as any);
         mockGetUserDailyTriviaScore.mockResolvedValueOnce({ 
@@ -177,7 +177,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
         });
       });
 
-      test('should return 401 when Clerk token is null', async () => {
+      it('should return 401 when Clerk token is null', async () => {
         const mockGetToken = vi.fn().mockResolvedValue(null);
         mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: mockGetToken } as any);
 
@@ -188,7 +188,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
         expect(json).toEqual({ error: 'Unauthorized: No Clerk token found' });
       });
 
-      test('should handle error when checking daily score fails', async () => {
+      it('should handle error when checking daily score fails', async () => {
         const mockGetToken = vi.fn().mockResolvedValue('valid-clerk-token');
         mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: mockGetToken } as any);
         mockGetUserDailyTriviaScore.mockResolvedValueOnce({ 
@@ -203,7 +203,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
         expect(json).toEqual({ error: 'Failed to check daily score' });
       });
 
-      test('should handle database error for authenticated user', async () => {
+      it('should handle database error for authenticated user', async () => {
         const mockGetToken = vi.fn().mockResolvedValue('valid-clerk-token');
         mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: mockGetToken } as any);
         mockGetUserDailyTriviaScore.mockResolvedValueOnce({ success: true, data: null });
@@ -219,7 +219,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
         expect(json).toEqual({ error: 'DB connection lost' });
       });
 
-      test('should handle unexpected errors for authenticated user', async () => {
+      it('should handle unexpected errors for authenticated user', async () => {
         const mockGetToken = vi.fn().mockResolvedValue('valid-clerk-token');
         mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: mockGetToken } as any);
         mockGetUserDailyTriviaScore.mockResolvedValueOnce({ success: true, data: null });
@@ -238,7 +238,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
 
   describe('POST /api/trivia - Submit Score', () => {
     describe('Authentication Scenarios', () => {
-      test('should return 401 for unauthenticated user', async () => {
+      it('should return 401 for unauthenticated user', async () => {
         mockGetAuth.mockReturnValueOnce({ userId: null, getToken: vi.fn() } as any);
         mockRequest.json = vi.fn().mockResolvedValue({ score: 5 });
 
@@ -249,7 +249,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
         expect(json).toEqual({ error: 'Unauthorized' });
       });
 
-      test('should return 401 when Clerk token is null', async () => {
+      it('should return 401 when Clerk token is null', async () => {
         const mockGetToken = vi.fn().mockResolvedValue(null);
         mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: mockGetToken } as any);
         mockRequest.json = vi.fn().mockResolvedValue({ score: 5 });
@@ -263,7 +263,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
     });
 
     describe('Score Validation Scenarios', () => {
-      test('should return 400 for invalid score type (string)', async () => {
+      it('should return 400 for invalid score type (string)', async () => {
         const mockGetToken = vi.fn().mockResolvedValue('valid-clerk-token');
         mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: mockGetToken } as any);
         mockRequest.json = vi.fn().mockResolvedValue({ score: 'invalid' });
@@ -275,7 +275,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
         expect(json).toEqual({ error: 'Invalid score provided' });
       });
 
-      test('should return 400 for missing score', async () => {
+      it('should return 400 for missing score', async () => {
         const mockGetToken = vi.fn().mockResolvedValue('valid-clerk-token');
         mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: mockGetToken } as any);
         mockRequest.json = vi.fn().mockResolvedValue({});
@@ -287,7 +287,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
         expect(json).toEqual({ error: 'Invalid score provided' });
       });
 
-      test('should return 400 for null score', async () => {
+      it('should return 400 for null score', async () => {
         const mockGetToken = vi.fn().mockResolvedValue('valid-clerk-token');
         mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: mockGetToken } as any);
         mockRequest.json = vi.fn().mockResolvedValue({ score: null });
@@ -301,7 +301,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
     });
 
     describe('Score Submission Scenarios', () => {
-      test('should successfully save score for authenticated user who has not played today', async () => {
+      it('should successfully save score for authenticated user who has not played today', async () => {
         const mockGetToken = vi.fn().mockResolvedValue('valid-clerk-token');
         mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: mockGetToken } as any);
         mockRequest.json = vi.fn().mockResolvedValue({ score: 8 });
@@ -319,7 +319,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
         );
       });
 
-      test('should return 409 if user has already submitted score today', async () => {
+      it('should return 409 if user has already submitted score today', async () => {
         const mockGetToken = vi.fn().mockResolvedValue('valid-clerk-token');
         mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: mockGetToken } as any);
         mockRequest.json = vi.fn().mockResolvedValue({ score: 8 });
@@ -336,7 +336,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
         expect(mockCreateUserTriviaScore).not.toHaveBeenCalled();
       });
 
-      test('should handle error when checking existing score fails', async () => {
+      it('should handle error when checking existing score fails', async () => {
         const mockGetToken = vi.fn().mockResolvedValue('valid-clerk-token');
         mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: mockGetToken } as any);
         mockRequest.json = vi.fn().mockResolvedValue({ score: 8 });
@@ -352,7 +352,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
         expect(json).toEqual({ error: 'Failed to check existing score' });
       });
 
-      test('should handle error when saving score fails', async () => {
+      it('should handle error when saving score fails', async () => {
         const mockGetToken = vi.fn().mockResolvedValue('valid-clerk-token');
         mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: mockGetToken } as any);
         mockRequest.json = vi.fn().mockResolvedValue({ score: 8 });
@@ -371,7 +371,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
     });
 
     describe('Edge Cases and Boundary Values', () => {
-      test('should handle score of 0', async () => {
+      it('should handle score of 0', async () => {
         const mockGetToken = vi.fn().mockResolvedValue('valid-clerk-token');
         mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: mockGetToken } as any);
         mockRequest.json = vi.fn().mockResolvedValue({ score: 0 });
@@ -389,7 +389,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
         );
       });
 
-      test('should handle maximum possible score (10)', async () => {
+      it('should handle maximum possible score (10)', async () => {
         const mockGetToken = vi.fn().mockResolvedValue('valid-clerk-token');
         mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: mockGetToken } as any);
         mockRequest.json = vi.fn().mockResolvedValue({ score: 10 });
@@ -407,7 +407,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
         );
       });
 
-      test('should handle negative score (edge case)', async () => {
+      it('should handle negative score (edge case)', async () => {
         const mockGetToken = vi.fn().mockResolvedValue('valid-clerk-token');
         mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: mockGetToken } as any);
         mockRequest.json = vi.fn().mockResolvedValue({ score: -1 });
@@ -425,7 +425,7 @@ describe('/api/trivia - Comprehensive Integration Tests', () => {
         );
       });
 
-      test('should handle very large score (edge case)', async () => {
+      it('should handle very large score (edge case)', async () => {
         const mockGetToken = vi.fn().mockResolvedValue('valid-clerk-token');
         mockGetAuth.mockReturnValueOnce({ userId: 'user1', getToken: mockGetToken } as any);
         mockRequest.json = vi.fn().mockResolvedValue({ score: 999 });

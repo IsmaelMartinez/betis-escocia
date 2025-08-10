@@ -94,7 +94,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
   });
 
   describe('Authentication and Authorization', () => {
-    test('should reject unauthenticated requests (no userId)', async () => {
+    it('should reject unauthenticated requests (no userId)', async () => {
       mockGetAuth.mockReturnValue({
         userId: null,
         getToken: vi.fn(() => Promise.resolve(null)),
@@ -118,7 +118,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
       );
     });
 
-    test('should reject unauthenticated requests (no user)', async () => {
+    it('should reject unauthenticated requests (no user)', async () => {
       mockGetAuth.mockReturnValue({
         userId: 'user-id',
         getToken: vi.fn(() => Promise.resolve('token')),
@@ -142,7 +142,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
       );
     });
 
-    test('should reject non-admin users', async () => {
+    it('should reject non-admin users', async () => {
       mockGetAuth.mockReturnValue({
         userId: 'regular-user-id',
         getToken: vi.fn(() => Promise.resolve('token')),
@@ -173,7 +173,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
   });
 
   describe('Request Validation', () => {
-    test('should reject invalid ID (non-numeric)', async () => {
+    it('should reject invalid ID (non-numeric)', async () => {
       mockRequest = createMockRequest('http://localhost:3000/api/admin/contact-submissions/abc', {
         method: 'PUT',
         body: JSON.stringify({ status: 'resolved' }),
@@ -190,7 +190,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
       );
     });
 
-    test('should reject missing status', async () => {
+    it('should reject missing status', async () => {
       mockRequest = createMockRequest('http://localhost:3000/api/admin/contact-submissions/123', {
         method: 'PUT',
         body: JSON.stringify({}),
@@ -207,7 +207,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
       );
     });
 
-    test('should reject invalid status values', async () => {
+    it('should reject invalid status values', async () => {
       const invalidStatuses = ['invalid', 'pending', 'closed', ''];
       
       for (const status of invalidStatuses) {
@@ -228,7 +228,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
       }
     });
 
-    test('should accept valid status values', async () => {
+    it('should accept valid status values', async () => {
       const validStatuses = ['new', 'in progress', 'resolved'];
       
       for (const status of validStatuses) {
@@ -273,7 +273,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
   });
 
   describe('Database Operations', () => {
-    test('should successfully update contact submission status', async () => {
+    it('should successfully update contact submission status', async () => {
       const mockUpdate = vi.fn().mockReturnThis();
       const mockEq = vi.fn().mockReturnThis();
       const mockSelect = vi.fn().mockReturnThis();
@@ -327,7 +327,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
       });
     });
 
-    test('should handle submission not found', async () => {
+    it('should handle submission not found', async () => {
       const mockUpdate = vi.fn().mockReturnThis();
       const mockEq = vi.fn().mockReturnThis();
       const mockSelect = vi.fn().mockReturnThis();
@@ -367,7 +367,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
       );
     });
 
-    test('should handle database update errors', async () => {
+    it('should handle database update errors', async () => {
       const mockUpdate = vi.fn().mockReturnThis();
       const mockEq = vi.fn().mockReturnThis();
       const mockSelect = vi.fn().mockReturnThis();
@@ -409,7 +409,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
   });
 
   describe('Error Handling', () => {
-    test('should handle generic errors', async () => {
+    it('should handle generic errors', async () => {
       // Mock getAuth to throw an error
       mockGetAuth.mockImplementation(() => {
         throw new Error('Unexpected error');
@@ -431,7 +431,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
       );
     });
 
-    test('should handle JSON parsing errors', async () => {
+    it('should handle JSON parsing errors', async () => {
       mockRequest = createMockRequest('http://localhost:3000/api/admin/contact-submissions/123', {
         method: 'PUT',
         body: 'invalid json',
@@ -448,7 +448,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
       );
     });
 
-    test('should handle Supabase client creation errors', async () => {
+    it('should handle Supabase client creation errors', async () => {
       mockCreateClient.mockImplementation(() => {
         throw new Error('Supabase client creation failed');
       });
@@ -471,7 +471,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
   });
 
   describe('Token and Authentication Integration', () => {
-    test('should pass Clerk token to Supabase client', async () => {
+    it('should pass Clerk token to Supabase client', async () => {
       const mockToken = 'mock-clerk-token';
       mockGetAuth.mockReturnValue({
         userId: 'admin-user-id',
@@ -524,7 +524,7 @@ describe('/api/admin/contact-submissions/[id]', () => {
   });
 
   describe('Status Tracking', () => {
-    test('should update all valid statuses correctly', async () => {
+    it('should update all valid statuses correctly', async () => {
       const statusUpdates = [
         { from: 'new', to: 'in progress' },
         { from: 'in progress', to: 'resolved' },

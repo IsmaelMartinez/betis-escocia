@@ -8,30 +8,30 @@ For Next.js API routes with complex dependencies:
 ### Mock Structure Hierarchy
 1. **External Services First**: Mock Clerk, Supabase, external services before imports.
 2. **Security Functions**: Mock all security utilities to avoid conflicts.
-3. **Test-Specific Overrides**: Use `jest.spyOn()` for test-specific behavior.
+3. **Test-Specific Overrides**: Use `vi.spyOn()` for test-specific behavior.
 
 ### Supabase Query Chain Mocking
 The Supabase client uses method chaining that must be properly mocked:
 ```typescript
-(supabase.from as jest.Mock).mockReturnValue({
-  select: jest.fn(() => ({
-    order: jest.fn(() => ({
-      eq: jest.fn(() => Promise.resolve({ data: [], error: null }))
+(vi.fn() as vi.Mock).mockReturnValue({
+  select: vi.fn(() => ({
+    order: vi.fn(() => ({
+      eq: vi.fn(() => Promise.resolve({ data: [], error: null }))
     }))
   }))
 });
 ```
 
 ### Security Function Mocking Best Practices
-- **Avoid `jest.requireActual()`**: This can cause conflicts with test-specific spies.
+- **Avoid `vi.requireActual()`**: This can cause conflicts with test-specific spies.
 - **Default to Valid**: Mock security functions to return valid by default, override in specific tests.
 - **Complete Mock Objects**: Include all required properties (e.g., rate limit responses need `allowed`, `remaining`, `resetTime`).
 ```typescript
-jest.mock("@/lib/security", () => ({
+vi.mock("@/lib/security", () => ({
   __esModule: true,
-  sanitizeObject: jest.fn((obj) => obj),
-  validateEmail: jest.fn(() => ({ isValid: true })),
-  checkRateLimit: jest.fn(() => ({
+  sanitizeObject: vi.fn((obj) => obj),
+  validateEmail: vi.fn(() => ({ isValid: true })),
+  checkRateLimit: vi.fn(() => ({
     allowed: true,
     remaining: 2,
     resetTime: Date.now() + 100000,
@@ -42,9 +42,9 @@ jest.mock("@/lib/security", () => ({
 ### NextResponse Mocking Pattern
 **Established Pattern**: Consistent NextResponse mocking across all API tests:
 ```typescript
-jest.mock("next/server", () => ({
+vi.mock("next/server", () => ({
   NextResponse: {
-    json: jest.fn((data, options) => ({ data, ...options })),
+    json: vi.fn((data, options) => ({ data, ...options })),
   },
 }));
 ```

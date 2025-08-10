@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
 import { createUserTriviaScore, getUserDailyTriviaScore, supabase } from '../../src/lib/supabase';
 
 // Mock the Supabase client
@@ -49,7 +49,7 @@ describe('Trivia Score Supabase Functions', () => {
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockData);
       expect(supabase.from).toHaveBeenCalledWith('user_trivia_scores');
-      expect((supabase.from as jest.Mock)().insert).toHaveBeenCalledWith([{ user_id: 'user1', daily_score: 5 }]);
+      expect((supabase.from as Mock)().insert).toHaveBeenCalledWith([{ user_id: 'user1', daily_score: 5 }]);
     });
 
     it('should return an error if score creation fails', async () => {
@@ -73,8 +73,8 @@ describe('Trivia Score Supabase Functions', () => {
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockData);
       expect(supabase.from).toHaveBeenCalledWith('user_trivia_scores');
-      expect((supabase.from as jest.Mock)().select).toHaveBeenCalledWith('*');
-      expect((supabase.from as jest.Mock)().select().eq).toHaveBeenCalledWith('user_id', 'user1');
+      expect((supabase.from as Mock)().select).toHaveBeenCalledWith('*');
+      expect((supabase.from as Mock)().select().eq).toHaveBeenCalledWith('user_id', 'user1');
     });
 
     it('should return null data if no score is found (PGRST116)', async () => {

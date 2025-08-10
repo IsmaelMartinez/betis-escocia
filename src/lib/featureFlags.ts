@@ -44,6 +44,10 @@ const CACHE_TTL = 60000; // 60 seconds
 export async function initializeFeatureFlags(): Promise<void> {
   try {
     const config = getFlagsmithConfig();
+    if (!config) {
+      console.warn('[Feature Flags] Flagsmith configuration not available, using environment variables only');
+      return;
+    }
     const manager = getFlagsmithManager(config);
     await manager.initialize();
     

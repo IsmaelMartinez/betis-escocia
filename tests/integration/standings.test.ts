@@ -41,7 +41,7 @@ describe('/api/standings', () => {
   });
 
   describe('Cache scenarios', () => {
-    test('should return cached standings when cache is fresh (within 24 hours)', async () => {
+    it('should return cached standings when cache is fresh (within 24 hours)', async () => {
       const mockCachedData = {
         data: { table: [{ position: 1, team: { name: 'Real Betis' } }] },
         last_updated: new Date().toISOString(), // Fresh timestamp
@@ -71,7 +71,7 @@ describe('/api/standings', () => {
       expect(MockFootballDataService).not.toHaveBeenCalled();
     });
 
-    test('should fetch fresh data when cache is stale (older than 24 hours)', async () => {
+    it('should fetch fresh data when cache is stale (older than 24 hours)', async () => {
       const staleTimestamp = new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString(); // 25 hours ago
       const mockStaleData = {
         data: { table: [{ position: 1, team: { name: 'Real Betis' } }] },
@@ -115,7 +115,7 @@ describe('/api/standings', () => {
       expect(MockFootballDataService).toHaveBeenCalledTimes(1);
     });
 
-    test('should fetch fresh data when cache is empty', async () => {
+    it('should fetch fresh data when cache is empty', async () => {
       // Mock empty cache
       const mockSelect = vi.fn().mockReturnThis();
       const mockOrder = vi.fn().mockReturnThis();
@@ -153,7 +153,7 @@ describe('/api/standings', () => {
       expect(MockFootballDataService).toHaveBeenCalledTimes(1);
     });
 
-    test('should proceed with API fetch when cache retrieval fails', async () => {
+    it('should proceed with API fetch when cache retrieval fails', async () => {
       // Mock cache retrieval error
       const mockSelect = vi.fn().mockReturnThis();
       const mockOrder = vi.fn().mockReturnThis();
@@ -187,7 +187,7 @@ describe('/api/standings', () => {
       expect(MockFootballDataService).toHaveBeenCalledTimes(1);
     });
 
-    test('should handle cache save failures gracefully', async () => {
+    it('should handle cache save failures gracefully', async () => {
       // Mock empty cache first, then cache save failure
       const mockSelect = vi.fn().mockReturnThis();
       const mockOrder = vi.fn().mockReturnThis();
@@ -225,7 +225,7 @@ describe('/api/standings', () => {
   });
 
   describe('Error handling', () => {
-    test('should return 404 when API returns no standings', async () => {
+    it('should return 404 when API returns no standings', async () => {
       // Mock empty cache
       const mockSelect = vi.fn().mockReturnThis();
       const mockOrder = vi.fn().mockReturnThis();
@@ -255,7 +255,7 @@ describe('/api/standings', () => {
       );
     });
 
-    test('should handle network errors with appropriate message', async () => {
+    it('should handle network errors with appropriate message', async () => {
       // Mock empty cache
       const mockSelect = vi.fn().mockReturnThis();
       const mockOrder = vi.fn().mockReturnThis();
@@ -286,7 +286,7 @@ describe('/api/standings', () => {
       );
     });
 
-    test('should handle API rate limiting errors', async () => {
+    it('should handle API rate limiting errors', async () => {
       // Mock empty cache
       const mockSelect = vi.fn().mockReturnThis();
       const mockOrder = vi.fn().mockReturnThis();
@@ -317,7 +317,7 @@ describe('/api/standings', () => {
       );
     });
 
-    test('should handle timeout errors', async () => {
+    it('should handle timeout errors', async () => {
       // Mock empty cache
       const mockSelect = vi.fn().mockReturnThis();
       const mockOrder = vi.fn().mockReturnThis();
@@ -348,7 +348,7 @@ describe('/api/standings', () => {
       );
     });
 
-    test('should handle generic errors with default message', async () => {
+    it('should handle generic errors with default message', async () => {
       // Mock empty cache
       const mockSelect = vi.fn().mockReturnThis();
       const mockOrder = vi.fn().mockReturnThis();
@@ -379,7 +379,7 @@ describe('/api/standings', () => {
       );
     });
 
-    test('should handle non-Error objects thrown as exceptions', async () => {
+    it('should handle non-Error objects thrown as exceptions', async () => {
       // Mock empty cache
       const mockSelect = vi.fn().mockReturnThis();
       const mockOrder = vi.fn().mockReturnThis();

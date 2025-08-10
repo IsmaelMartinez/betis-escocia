@@ -2,11 +2,12 @@ import type { Meta, StoryObj } from '@storybook/nextjs';
 import MatchForm from './MatchForm';
 import { Match } from '@/lib/supabase';
 import { fn } from 'storybook/test';
+import { vi } from 'vitest';
 
 // Mock security functions
-jest.mock('@/lib/security', () => ({
-  generateCSRFToken: jest.fn(() => 'mock-csrf-token'),
-  sanitizeInput: jest.fn((input) => input),
+vi.mock('@/lib/security', () => ({
+  generateCSRFToken: vi.fn(() => 'mock-csrf-token'),
+  sanitizeInput: vi.fn((input) => input),
 }));
 
 const mockMatch: Match = {

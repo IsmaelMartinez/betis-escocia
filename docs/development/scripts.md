@@ -18,7 +18,7 @@ Starts the production server (requires build first).
 ### Testing Scripts
 
 #### `npm test`
-Runs all unit and integration tests using Jest.
+Runs all unit and integration tests using Vitest.
 
 #### `npm run test:watch`
 Runs tests in watch mode for development.
