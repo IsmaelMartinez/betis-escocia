@@ -118,7 +118,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                           >
                             Dashboard
                           </Link>
-                          {isFeatureEnabled('showTriviaGame') && (
+                          
                             <Link
                               href="/trivia"
                               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -126,7 +126,6 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                             >
                               Trivia
                             </Link>
-                          )}
                           <button
                             onClick={handleSignOut}
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -206,7 +205,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                         <User size={20} />
                         <span>Dashboard</span>
                       </Link>
-                      {isFeatureEnabled('showTriviaGame') && (
+                      
                         <Link
                           href="/trivia"
                           className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-gold hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
@@ -215,7 +214,6 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                           <User size={20} />
                           <span>Trivia</span>
                         </Link>
-                      )}
                       <button
                         onClick={() => {
                           handleSignOut();

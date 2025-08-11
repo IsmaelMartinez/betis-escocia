@@ -24,9 +24,9 @@ type Story = StoryObj<typeof Layout>;
 export const Default: Story = {
   args: {
     debugInfo: {
-      flags: { showClerkAuth: true, showTriviaGame: true, showPartidos: true },
+      flags: { showClerkAuth: true, showPartidos: true },
       environment: 'development',
-      enabledFeatures: ['showClerkAuth', 'showTriviaGame', 'showPartidos'],
+      enabledFeatures: ['showClerkAuth', 'showPartidos'],
       disabledFeatures: [],
       cacheStatus: { cached: false, expires: 'N/A' },
     },
@@ -40,9 +40,9 @@ export const Default: Story = {
 export const LoggedIn: Story = {
   args: {
     debugInfo: {
-      flags: { showClerkAuth: true, showTriviaGame: true, showPartidos: true },
+      flags: { showClerkAuth: true, showPartidos: true },
       environment: 'development',
-      enabledFeatures: ['showClerkAuth', 'showTriviaGame', 'showPartidos'],
+      enabledFeatures: ['showClerkAuth', 'showPartidos'],
       disabledFeatures: [],
       cacheStatus: { cached: false, expires: 'N/A' },
     },
@@ -65,9 +65,9 @@ export const LoggedIn: Story = {
 export const LoggedInAdmin: Story = {
   args: {
     debugInfo: {
-      flags: { showClerkAuth: true, showTriviaGame: true, showPartidos: true },
+      flags: { showClerkAuth: true, showPartidos: true },
       environment: 'development',
-      enabledFeatures: ['showClerkAuth', 'showTriviaGame', 'showPartidos'],
+      enabledFeatures: ['showClerkAuth', 'showPartidos'],
       disabledFeatures: [],
       cacheStatus: { cached: false, expires: 'N/A' },
     },
@@ -90,10 +90,10 @@ export const LoggedInAdmin: Story = {
 export const FeatureFlagsDisabled: Story = {
   args: {
     debugInfo: {
-      flags: { showClerkAuth: false, showTriviaGame: false, showPartidos: false },
+      flags: { showClerkAuth: false, showPartidos: false },
       environment: 'development',
       enabledFeatures: [],
-      disabledFeatures: ['showClerkAuth', 'showTriviaGame', 'showPartidos'],
+      disabledFeatures: ['showClerkAuth', 'showPartidos'],
       cacheStatus: { cached: false, expires: 'N/A' },
     },
   },

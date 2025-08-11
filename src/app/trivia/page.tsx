@@ -89,13 +89,9 @@ export default function TriviaPage() {
     if (isLoaded && isSignedIn) {
       async function initializeTriviaPage() {
         setLoading(true); // Start loading for initial checks
-        const enabled = await isFeatureEnabledAsync('showTriviaGame');
-        setIsTriviaEnabled(enabled);
+        setIsTriviaEnabled(true);
 
-        if (!enabled) {
-          setLoading(false); // Feature disabled, stop loading
-          return;
-        }
+        
 
         // Fetch accumulated scores on initial load
         // This is now handled by TriviaScoreDisplay component
@@ -180,13 +176,7 @@ export default function TriviaPage() {
     return <LoadingSpinner />;
   }
 
-  if (!isTriviaEnabled) {
-    return (
-      <div className="container mx-auto p-4 text-center">
-        <ErrorMessage message="Trivia game is currently not enabled." />
-      </div>
-    );
-  }
+  
 
   if (gameCompleted) {
     const totalQuestions = gameStarted ? questions.length : MAX_QUESTIONS;

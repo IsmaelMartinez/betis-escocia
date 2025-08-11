@@ -53,7 +53,7 @@ export type FlagsmithFeatureName =
   | 'show-admin'
   | 'show-clerk-auth'
   | 'show-debug-info'
-  | 'show-trivia-game';
+  
 
 // Legacy feature flag names (for backward compatibility during migration)
 export type LegacyFeatureName = 
@@ -72,7 +72,7 @@ export type LegacyFeatureName =
   | 'showClerkAuth'
   | 'showDebugInfo'
   
-  | 'showTriviaGame';
+  
 
 // Migration mapping between legacy and new flag names
 export const FLAG_MIGRATION_MAP: Record<LegacyFeatureName, FlagsmithFeatureName> = {
@@ -90,7 +90,7 @@ export const FLAG_MIGRATION_MAP: Record<LegacyFeatureName, FlagsmithFeatureName>
   showAdmin: 'show-admin',
   showClerkAuth: 'show-clerk-auth',
   showDebugInfo: 'show-debug-info',
-  showTriviaGame: 'show-trivia-game',
+  
 };
 
 // Environment variable mapping for migration
@@ -115,7 +115,7 @@ export const DEFAULT_FLAG_VALUES: Record<FlagsmithFeatureName, boolean> = {
   'show-clasificacion': true,
   'show-coleccionables': false,
   'show-galeria': false,
-  'show-trivia-game': false,
+  
   'show-rsvp': true,
   'show-partidos': true,
   'show-social-media': false,
