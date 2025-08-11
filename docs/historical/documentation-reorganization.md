@@ -14,6 +14,10 @@ This document summarizes the reorganization and consolidation of documentation f
 - **Moved `tasks/tasks-prd-decommission-email-notification-system.md` to `docs/historical/completed-tasks/tasks-prd-decommission-email-notification-system.md`**
 - **Moved `tasks/prd-decommission-email-notification-system.md` to `docs/historical/implemented-features/prd-decommission-email-notification-system.md`**
 
+### Jest to Vitest Migration (August 2025)
+- **Moved `tasks/tasks-prd-jest-to-vitest-migration.md` to `docs/historical/completed-tasks/tasks-prd-jest-to-vitest-migration.md`**
+- **Moved `tasks/prd-jest-to-vitest-migration.md` to `docs/historical/implemented-features/prd-jest-to-vitest-migration.md`**
+
 **Rationale**: These files document the planning and implementation of Storybook expansion and integration, which has been completed with the migration to Storybook v9 (ADR-010). Moving them to historical ensures that the `/tasks` directory remains focused on active development tasks while preserving valuable historical context.
 
 ## Benefits

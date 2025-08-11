@@ -1,33 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { auth } from '@clerk/nextjs/server';
 
 interface GDPRRequestBody {
-  email: string;
   requestType: 'access' | 'deletion';
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, requestType }: GDPRRequestBody = await request.json();
+    const { userId } = await auth();
+
+    if (!userId) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { requestType }: Pick<GDPRRequestBody, 'requestType'> = await request.json();
 
     // Validate input
-    if (!email || !requestType) {
+    if (!requestType) {
       return NextResponse.json({
         success: false,
-        error: 'Email and request type are required'
+        error: 'Request type is required'
       }, { status: 400 });
     }
 
-    // Check if the email exists in the RSVPs or contacts
+    // Use userId for querying
     const { data: rsvps, error: rsvpError } = await supabase
       .from('rsvps')
       .select('*')
-      .eq('email', email.toLowerCase().trim());
+      .eq('user_id', userId); // Assuming rsvps table has user_id
 
     const { data: contacts, error: contactError } = await supabase
       .from('contact_submissions')
       .select('*')
-      .eq('email', email.toLowerCase().trim());
+      .eq('user_id', userId); // Assuming contact_submissions table has user_id
 
     if (rsvpError || contactError) {
       return NextResponse.json({
@@ -37,7 +43,6 @@ export async function POST(request: NextRequest) {
     }
 
     if (requestType === 'access') {
-      // Return the user data as JSON
       return NextResponse.json({
         success: true,
         data: {
@@ -48,16 +53,15 @@ export async function POST(request: NextRequest) {
     }
 
     if (requestType === 'deletion') {
-      // Delete the user data
       const { error: rsvpDeleteError } = await supabase
         .from('rsvps')
         .delete()
-        .eq('email', email.toLowerCase().trim());
+        .eq('user_id', userId); // Use userId for deletion
 
       const { error: contactDeleteError } = await supabase
         .from('contact_submissions')
         .delete()
-        .eq('email', email.toLowerCase().trim());
+        .eq('user_id', userId); // Use userId for deletion
 
       if (rsvpDeleteError || contactDeleteError) {
         return NextResponse.json({

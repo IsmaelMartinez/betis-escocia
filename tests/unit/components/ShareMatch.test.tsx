@@ -48,33 +48,47 @@ global.alert = mockAlert;
 describe('ShareMatch', () => {
   const mockFinishedMatch = {
     id: 123,
-    homeTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' },
-    awayTeam: { id: 456, name: 'Sevilla FC', crest: 'sevilla.png' },
+    homeTeam: { id: 90, name: 'Real Betis', shortName: 'Betis', tla: 'BET', crest: 'betis.png' },
+    awayTeam: { id: 456, name: 'Sevilla FC', shortName: 'Sevilla', tla: 'SEV', crest: 'sevilla.png' },
     status: 'FINISHED' as const,
+    matchday: 15,
+    stage: 'REGULAR_SEASON',
+    lastUpdated: '2023-12-01T22:00:00Z',
     score: {
-      fullTime: { home: 2, away: 1 }
+      fullTime: { home: 2, away: 1 },
+      halfTime: { home: 1, away: 0 }, // Assuming some default values
+      duration: 'REGULAR' as const,
     },
     utcDate: '2023-12-01T20:00:00Z',
     competition: {
       id: 1,
       name: 'La Liga',
       code: 'PD',
+      type: 'LEAGUE',
       emblem: 'laliga.png'
-    }
+    },
+    season: {
+      id: 1,
+      startDate: '2023-08-11',
+      endDate: '2024-05-26',
+      currentMatchday: 15,
+    },
   };
 
   const mockUpcomingMatch = {
     ...mockFinishedMatch,
     status: 'SCHEDULED' as const,
     score: {
-      fullTime: { home: null, away: null }
+      fullTime: { home: null, away: null },
+      halfTime: { home: null, away: null },
+      duration: 'REGULAR' as const,
     }
   };
 
   const mockAwayMatch = {
     ...mockFinishedMatch,
-    homeTeam: { id: 456, name: 'Sevilla FC', crest: 'sevilla.png' },
-    awayTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' },
+    homeTeam: { id: 456, name: 'Sevilla FC', shortName: 'Sevilla', tla: 'SEV', crest: 'sevilla.png' },
+    awayTeam: { id: 90, name: 'Real Betis', shortName: 'Betis', tla: 'BET', crest: 'betis.png' },
   };
 
   const mockOpponent = {
@@ -369,10 +383,32 @@ describe('ShareMatch', () => {
   describe('Edge cases and error handling', () => {
     it('handles match with null scores', () => {
       const matchWithNullScores = {
-        ...mockFinishedMatch,
+        id: 124,
+        homeTeam: { id: 90, name: 'Real Betis', shortName: 'Betis', tla: 'BET', crest: 'betis.png' },
+        awayTeam: { id: 456, name: 'Sevilla FC', shortName: 'Sevilla', tla: 'SEV', crest: 'sevilla.png' },
+        status: 'FINISHED' as const,
+        matchday: 16,
+        stage: 'REGULAR_SEASON',
+        lastUpdated: '2023-12-02T22:00:00Z',
         score: {
-          fullTime: { home: null, away: null }
-        }
+          fullTime: { home: null, away: null },
+          halfTime: { home: null, away: null },
+          duration: 'REGULAR' as const,
+        },
+        utcDate: '2023-12-02T20:00:00Z',
+        competition: {
+          id: 1,
+          name: 'La Liga',
+          code: 'PD',
+          type: 'LEAGUE',
+          emblem: 'laliga.png'
+        },
+        season: {
+          id: 1,
+          startDate: '2023-08-11',
+          endDate: '2024-05-26',
+          currentMatchday: 16,
+        },
       };
 
       render(<ShareMatch match={matchWithNullScores} opponent={mockOpponent} />);
@@ -391,8 +427,32 @@ describe('ShareMatch', () => {
 
     it('handles different match statuses', () => {
       const inPlayMatch = {
-        ...mockFinishedMatch,
-        status: 'IN_PLAY' as const
+        id: 125,
+        homeTeam: { id: 90, name: 'Real Betis', shortName: 'Betis', tla: 'BET', crest: 'betis.png' },
+        awayTeam: { id: 456, name: 'Sevilla FC', shortName: 'Sevilla', tla: 'SEV', crest: 'sevilla.png' },
+        status: 'IN_PLAY' as const,
+        matchday: 17,
+        stage: 'REGULAR_SEASON',
+        lastUpdated: '2023-12-03T21:00:00Z',
+        score: {
+          fullTime: { home: 0, away: 0 },
+          halfTime: { home: 0, away: 0 },
+          duration: 'REGULAR' as const,
+        },
+        utcDate: '2023-12-03T20:00:00Z',
+        competition: {
+          id: 1,
+          name: 'La Liga',
+          code: 'PD',
+          type: 'LEAGUE',
+          emblem: 'laliga.png'
+        },
+        season: {
+          id: 1,
+          startDate: '2023-08-11',
+          endDate: '2024-05-26',
+          currentMatchday: 17,
+        },
       };
 
       render(<ShareMatch match={inPlayMatch} opponent={mockOpponent} />);

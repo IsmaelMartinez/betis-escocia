@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { UserProfile } from '@clerk/nextjs';
 import DashboardDisplay from '@/components/DashboardDisplay';
 import TriviaScoreDisplay from '@/components/TriviaScoreDisplay';
+import GDPRTabContent from '@/components/user/GDPRTabContent';
 import { User } from 'lucide-react';
 import { RSVP, ContactSubmission } from '@/lib/supabase';
 
@@ -35,7 +36,7 @@ export default function DashboardTabs({
   counts,
   userName,
 }: DashboardTabsProps) {
-  const [activeTab, setActiveTab] = useState('dashboard'); // 'dashboard' or 'profile'
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'profile' | 'gdpr'>('dashboard');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -76,6 +77,12 @@ export default function DashboardTabs({
             >
               Mi Perfil
             </button>
+            <button
+              className={`py-2 px-4 text-sm font-medium rounded-t-lg ${activeTab === 'gdpr' ? 'border-b-2 border-betis-green text-betis-green' : 'text-gray-500 hover:text-gray-700'}`}
+              onClick={() => setActiveTab('gdpr')}
+            >
+              Tus Datos GDPR
+            </button>
           </div>
         </div>
       </div>
@@ -93,6 +100,11 @@ export default function DashboardTabs({
         {activeTab === 'profile' && (
           <div className="flex justify-center py-8">
             <UserProfile />
+          </div>
+        )}
+        {activeTab === 'gdpr' && (
+          <div className="flex justify-center py-8">
+            <GDPRTabContent userEmail={user.emailAddresses[0].emailAddress} />
           </div>
         )}
       </div>
