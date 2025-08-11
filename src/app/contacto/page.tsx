@@ -81,9 +81,9 @@ export default function ContactPage() {
   console.log('[ContactPage] Component rendering...');
   const { user } = useUser();
   const formRef = useRef<HTMLDivElement>(null);
-  const [isContactFeatureEnabled, setIsContactFeatureEnabled] = useState(true);
-  const [loadingFeatureFlag, setLoadingFeatureFlag] = useState(false);
-  const [highlightFeatures, setHighlightFeatures] = useState<Record<string, boolean>>({
+  const [isContactFeatureEnabled] = useState(true);
+  const [loadingFeatureFlag] = useState(false);
+  const [highlightFeatures] = useState<Record<string, boolean>>({
     general: true,
     rsvp: true,
     coleccionables: true,
