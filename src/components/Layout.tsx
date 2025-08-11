@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash, User, LogIn, LogOut, UserPlus } from 'lucide-react';
 import BetisLogo from '@/components/BetisLogo';
-import { isFeatureEnabled, getEnabledNavigationItemsAsync } from '@/lib/featureFlags';
+import { getEnabledNavigationItemsAsync } from '@/lib/featureFlags';
 import { useUser, useClerk } from '@clerk/nextjs';
 import { NavigationItem } from '@/lib/flagsmith/types';
 

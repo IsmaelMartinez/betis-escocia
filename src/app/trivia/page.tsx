@@ -7,7 +7,6 @@ import { TriviaQuestion } from '@/lib/supabase';
 import ErrorMessage from '@/components/ErrorMessage';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import GameTimer from '@/components/GameTimer';
-import { isFeatureEnabledAsync } from '@/lib/featureFlags';
 import { useUser, useAuth } from '@clerk/nextjs';
 import TriviaScoreDisplay from '@/components/TriviaScoreDisplay';
 
@@ -24,7 +23,6 @@ export default function TriviaPage() {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [timerResetTrigger, setTimerResetTrigger] = useState(0); // To reset the timer
-  const [isTriviaEnabled, setIsTriviaEnabled] = useState(false);
   const [gameCompleted, setGameCompleted] = useState(false);
   const [gameStarted, setGameStarted] = useState(false); // New state for game start
 
@@ -89,7 +87,6 @@ export default function TriviaPage() {
     if (isLoaded && isSignedIn) {
       async function initializeTriviaPage() {
         setLoading(true); // Start loading for initial checks
-        setIsTriviaEnabled(true);
 
         
 
