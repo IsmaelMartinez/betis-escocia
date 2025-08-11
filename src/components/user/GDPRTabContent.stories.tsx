@@ -16,7 +16,7 @@ const meta = {
   args: {
     userEmail: 'test@example.com',
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
     // Mock fetch for data access

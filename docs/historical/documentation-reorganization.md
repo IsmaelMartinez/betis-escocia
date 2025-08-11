@@ -20,6 +20,10 @@ This document summarizes the reorganization and consolidation of documentation f
 
 **Rationale**: These files document the planning and implementation of Storybook expansion and integration, which has been completed with the migration to Storybook v9 (ADR-010). Moving them to historical ensures that the `/tasks` directory remains focused on active development tasks while preserving valuable historical context.
 
+### GDPR Integration (August 2025)
+- **Moved `tasks/tasks-prd-gdpr-user-profile-integration.md` to `docs/historical/completed-tasks/tasks-prd-gdpr-user-profile-integration.md`**
+- **Moved `tasks/prd-gdpr-user-profile-integration.md` to `docs/historical/implemented-features/prd-gdpr-user-profile-integration.md`**
+
 ## Benefits
 - **Reduced Clutter**: The `/tasks` directory now contains only active development tasks.
 - **Clearer Focus**: Easier to identify current priorities.
