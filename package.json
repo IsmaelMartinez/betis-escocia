@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.25.5",
-    "@sentry/nextjs": "^10.0.0",
+    "@sentry/nextjs": "^10.3.0",
     "@supabase/supabase-js": "^2.52.1",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
