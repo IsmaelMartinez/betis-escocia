@@ -338,4 +338,333 @@ describe('Contact API - POST', () => {
     });
     expect(supabase.from).toHaveBeenCalledWith('contact_submissions');
   });
+
+  it('should validate phone number format when provided - valid formats', async () => {
+    const validPhoneNumbers = [
+      '+44 123 456 789',
+      '123-456-7890',
+      '(123) 456-7890',
+      '+1234567890',
+      '123 456 789',
+      '123456789',
+      '+12 345 678 901'
+    ];
+
+    for (const phone of validPhoneNumbers) {
+      const mockRequest = {
+        json: () => Promise.resolve({
+          name: 'Test User',
+          email: 'test@example.com',
+          phone: phone,
+          type: 'general',
+          subject: 'Test Subject',
+          message: 'This is a test message.',
+        }),
+      } as unknown as NextRequest;
+
+      // Ensure all validations pass
+      vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
+      vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
+      vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
+
+      // Mock successful database insert
+      (supabase.from as any).mockReturnValue({
+        insert: vi.fn(() => ({
+          select: vi.fn(() => ({
+            single: vi.fn(() => Promise.resolve({ data: { id: 1 }, error: null })),
+          })),
+        })),
+      });
+
+      const response = await POST(mockRequest);
+      const json = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(json.success).toBe(true);
+    }
+  });
+
+  it('should validate phone number format when provided - invalid formats', async () => {
+    const invalidPhoneNumbers = [
+      'abc123',
+      '12',
+      '1234567890123456', // Too long
+      'phone-number',
+      '++1234567890'
+    ];
+
+    for (const phone of invalidPhoneNumbers) {
+      const mockRequest = {
+        json: () => Promise.resolve({
+          name: 'Test User',
+          email: 'test@example.com',
+          phone: phone,
+          type: 'general',
+          subject: 'Test Subject',
+          message: 'This is a test message.',
+        }),
+      } as unknown as NextRequest;
+
+      // Ensure all other validations pass
+      vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
+      vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
+      vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
+
+      const response = await POST(mockRequest);
+      const json = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(json.success).toBe(false);
+      expect(json.error).toBe('Formato de teléfono inválido');
+    }
+  });
+
+  it('should handle missing required fields validation', async () => {
+    const testCases = [
+      { body: { email: 'test@example.com', subject: 'Test', message: 'Test message' }, missing: 'name' },
+      { body: { name: 'Test User', subject: 'Test', message: 'Test message' }, missing: 'email' },
+      { body: { name: 'Test User', email: 'test@example.com', message: 'Test message' }, missing: 'subject' },
+      { body: { name: 'Test User', email: 'test@example.com', subject: 'Test' }, missing: 'message' },
+    ];
+
+    for (const testCase of testCases) {
+      const mockRequest = {
+        json: () => Promise.resolve(testCase.body),
+      } as unknown as NextRequest;
+
+      // Ensure all field validations pass
+      vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
+      vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
+      vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
+
+      const response = await POST(mockRequest);
+      const json = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(json.success).toBe(false);
+      expect(json.error).toBe('Nombre, email, asunto y mensaje son obligatorios');
+    }
+  });
+
+  it('should handle authenticated user with Clerk token', async () => {
+    // Mock getAuth to return a user ID and token
+    const { getAuth } = await import('@clerk/nextjs/server');
+    const mockGetToken = vi.fn().mockResolvedValue('mock-clerk-token');
+    vi.mocked(getAuth).mockReturnValueOnce({
+      userId: 'user_123',
+      getToken: mockGetToken,
+      sessionClaims: {},
+      sessionId: 'session_123',
+      sessionStatus: 'active',
+      actor: undefined,
+      orgId: null,
+      orgRole: null,
+      orgSlug: null,
+      orgPermissions: null,
+      has: vi.fn(() => false),
+      debug: vi.fn(() => ({})),
+    } as any);
+
+    const mockRequest = {
+      json: () => Promise.resolve({
+        name: 'Authenticated User',
+        email: 'auth@example.com',
+        type: 'membership',
+        subject: 'Membership inquiry',
+        message: 'I want to join the peña.',
+      }),
+    } as unknown as NextRequest;
+
+    // Ensure all validations pass
+    vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
+
+    // Mock authenticated supabase client
+    const { getAuthenticatedSupabaseClient } = await import('@/lib/supabase');
+    const mockAuthClient = {
+      from: vi.fn(() => ({
+        insert: vi.fn(() => ({
+          select: vi.fn(() => ({
+            single: vi.fn(() => Promise.resolve({ data: { id: 1 }, error: null })),
+          })),
+        })),
+      })),
+    } as any;
+    vi.mocked(getAuthenticatedSupabaseClient).mockReturnValue(mockAuthClient);
+
+    const response = await POST(mockRequest);
+    const json = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(json.success).toBe(true);
+    expect(mockGetToken).toHaveBeenCalledWith({ template: 'supabase' });
+    expect(getAuthenticatedSupabaseClient).toHaveBeenCalledWith('mock-clerk-token');
+  });
+
+  it('should handle JSON parsing errors', async () => {
+    const mockRequest = {
+      json: () => Promise.reject(new SyntaxError('Unexpected token in JSON')),
+    } as unknown as NextRequest;
+
+    const response = await POST(mockRequest);
+    const json = await response.json();
+
+    expect(response.status).toBe(500);
+    expect(json.success).toBe(false);
+    expect(json.error).toBe('Los datos enviados no son válidos. Por favor, revisa el formulario.');
+  });
+
+  it('should handle network errors with specific message', async () => {
+    const mockRequest = {
+      json: () => Promise.resolve({
+        name: 'Test User',
+        email: 'test@example.com',
+        subject: 'Test Subject',
+        message: 'Test message',
+      }),
+    } as unknown as NextRequest;
+
+    // Mock all validations to pass
+    vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
+
+    // Mock database operation to throw network error
+    (supabase.from as any).mockImplementation(() => {
+      throw new Error('network error occurred');
+    });
+
+    const response = await POST(mockRequest);
+    const json = await response.json();
+
+    expect(response.status).toBe(500);
+    expect(json.success).toBe(false);
+    expect(json.error).toBe('Error de conexión con la base de datos. Por favor, inténtalo de nuevo.');
+  });
+
+  it('should handle timeout errors with specific message', async () => {
+    const mockRequest = {
+      json: () => Promise.resolve({
+        name: 'Test User',
+        email: 'test@example.com',
+        subject: 'Test Subject',
+        message: 'Test message',
+      }),
+    } as unknown as NextRequest;
+
+    // Mock all validations to pass
+    vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
+
+    // Mock database operation to throw timeout error
+    (supabase.from as any).mockImplementation(() => {
+      throw new Error('timeout occurred');
+    });
+
+    const response = await POST(mockRequest);
+    const json = await response.json();
+
+    expect(response.status).toBe(500);
+    expect(json.success).toBe(false);
+    expect(json.error).toBe('Tiempo de espera agotado. Por favor, inténtalo de nuevo.');
+  });
+
+  it('should handle duplicate submission errors', async () => {
+    const mockRequest = {
+      json: () => Promise.resolve({
+        name: 'Test User',
+        email: 'test@example.com',
+        subject: 'Test Subject',
+        message: 'Test message',
+      }),
+    } as unknown as NextRequest;
+
+    // Mock all validations to pass
+    vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
+
+    // Mock database operation to throw duplicate error
+    (supabase.from as any).mockImplementation(() => {
+      throw new Error('duplicate key value violates unique constraint');
+    });
+
+    const response = await POST(mockRequest);
+    const json = await response.json();
+
+    expect(response.status).toBe(500);
+    expect(json.success).toBe(false);
+    expect(json.error).toBe('Ya existe un mensaje similar. Por favor, verifica tu información.');
+  });
+
+  it('should accept empty phone number gracefully', async () => {
+    const mockRequest = {
+      json: () => Promise.resolve({
+        name: 'Test User',
+        email: 'test@example.com',
+        phone: '', // Empty phone should be handled gracefully
+        type: 'general',
+        subject: 'Test Subject',
+        message: 'This is a test message.',
+      }),
+    } as unknown as NextRequest;
+
+    // Ensure all validations pass
+    vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
+    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
+
+    // Mock successful database insert
+    (supabase.from as any).mockReturnValue({
+      insert: vi.fn(() => ({
+        select: vi.fn(() => ({
+          single: vi.fn(() => Promise.resolve({ data: { id: 1 }, error: null })),
+        })),
+      })),
+    });
+
+    const response = await POST(mockRequest);
+    const json = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(json.success).toBe(true);
+  });
+
+  it('should handle various contact types correctly', async () => {
+    const contactTypes = ['general', 'membership', 'event', 'complaint', undefined];
+
+    for (const type of contactTypes) {
+      const mockRequest = {
+        json: () => Promise.resolve({
+          name: 'Test User',
+          email: 'test@example.com',
+          type: type,
+          subject: 'Test Subject',
+          message: 'Test message for contact type.',
+        }),
+      } as unknown as NextRequest;
+
+      // Ensure all validations pass
+      vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
+      vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
+      vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
+
+      // Mock successful database insert
+      (supabase.from as any).mockReturnValue({
+        insert: vi.fn(() => ({
+          select: vi.fn(() => ({
+            single: vi.fn(() => Promise.resolve({ data: { id: 1 }, error: null })),
+          })),
+        })),
+      });
+
+      const response = await POST(mockRequest);
+      const json = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(json.success).toBe(true);
+    }
+  });
 });
