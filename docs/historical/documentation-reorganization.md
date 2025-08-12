@@ -24,6 +24,10 @@ This document summarizes the reorganization and consolidation of documentation f
 - **Moved `tasks/tasks-prd-gdpr-user-profile-integration.md` to `docs/historical/completed-tasks/tasks-prd-gdpr-user-profile-integration.md`**
 - **Moved `tasks/prd-gdpr-user-profile-integration.md` to `docs/historical/implemented-features/prd-gdpr-user-profile-integration.md`**
 
+### Admin Push Notifications Implementation (August 2025)
+- **Moved `tasks/tasks-prd-admin-push-notifications.md` to `docs/historical/completed-tasks/tasks-prd-admin-push-notifications.md`**
+- **Moved `tasks/prd-admin-push-notifications.md` to `docs/historical/implemented-features/prd-admin-push-notifications.md`**
+
 ## Benefits
 - **Reduced Clutter**: The `/tasks` directory now contains only active development tasks.
 - **Clearer Focus**: Easier to identify current priorities.

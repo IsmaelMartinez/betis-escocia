@@ -39,13 +39,13 @@ Based on PRD: `prd-admin-push-notifications.md`
   - [x] 2.4 Implement notification sending logic with proper error handling
   - [x] 2.5 Add notification click handling to open relevant admin pages
 
-- [ ] 3.0 Create Admin Dashboard Notification Controls
+- [x] 3.0 Create Admin Dashboard Notification Controls
   - [x] 3.1 Create `NotificationPanel` component with enable/disable toggle
   - [x] 3.2 Add browser permission status indicator to the panel
   - [x] 3.3 Create Storybook stories for `NotificationPanel` component with different states
   - [x] 3.4 Integrate notification panel into existing admin dashboard layout
   - [x] 3.5 Style notification panel to match existing admin dashboard design
-  - [ ] 3.6 Add user preference persistence for notification settings
+  - [x] 3.6 Add user preference persistence for notification settings
 
 - [x] 4.0 Integrate Notifications with RSVP and Contact Form APIs
   - [x] 4.1 Add notification trigger to RSVP API route (`src/app/api/rsvp/route.ts`)
