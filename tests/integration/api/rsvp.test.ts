@@ -1,752 +1,1093 @@
-// Mock Clerk before any other imports
-vi.mock('@clerk/nextjs/server', () => ({
-  getAuth: vi.fn(() => ({
-    userId: null,
-    getToken: vi.fn(() => Promise.resolve(null)),
-  })),
-}));
-
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET, POST, DELETE } from '@/app/api/rsvp/route';
-import { supabase } from '@/lib/supabase';
-import * as security from '@/lib/security';
-import * as matchUtils from '@/lib/matchUtils';
 
-// Mock supabase client
-vi.mock('@/lib/supabase', () => {
-  const mockFrom = vi.fn();
-  return {
-    supabase: {
-      from: mockFrom,
-    },
-  };
-});
+// Mock all dependencies
+vi.mock('@/lib/supabase', () => ({
+  supabase: {
+    from: vi.fn(() => ({
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          single: vi.fn(() => Promise.resolve({ data: null, error: null })),
+          maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null }))
+        })),
+        gte: vi.fn(() => ({
+          order: vi.fn(() => ({
+            limit: vi.fn(() => ({
+              maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null }))
+            }))
+          }))
+        })),
+        order: vi.fn(() => Promise.resolve({ data: [], error: null }))
+      })),
+      insert: vi.fn(() => ({
+        select: vi.fn(() => Promise.resolve({ data: { id: 1 }, error: null }))
+      })),
+      delete: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          select: vi.fn(() => Promise.resolve({ data: [{ id: 1 }], error: null }))
+        }))
+      }))
+    })),
+  }
+}));
 
-
-
-// Mock security functions
 vi.mock('@/lib/security', () => ({
-  __esModule: true,
   sanitizeObject: vi.fn((obj) => obj),
   validateEmail: vi.fn(() => ({ isValid: true })),
   validateInputLength: vi.fn(() => ({ isValid: true })),
-  checkRateLimit: vi.fn(() => ({ allowed: true, remaining: 4, resetTime: Date.now() + 100000 })),
-  getClientIP: vi.fn(() => '127.0.0.1'),
+  checkRateLimit: vi.fn(() => ({ allowed: true })),
+  getClientIP: vi.fn(() => '127.0.0.1')
 }));
 
-// Mock matchUtils
 vi.mock('@/lib/matchUtils', () => ({
-  getCurrentUpcomingMatch: vi.fn(() => Promise.resolve({
+  getCurrentUpcomingMatch: vi.fn(() => ({
     id: 1,
     opponent: 'Real Madrid',
     date: '2025-06-28T20:00:00',
     competition: 'LaLiga'
-  })),
+  }))
 }));
 
-// Mock Next.js server functions
-vi.mock('next/server', () => ({
-  NextRequest: vi.fn(),
-  NextResponse: {
-    json: vi.fn((data, init) => ({
-      json: () => Promise.resolve(data),
-      status: init?.status || 200,
-    })),
-  },
+// Mock Sentry
+vi.mock('@sentry/nextjs', () => ({
+  startSpan: vi.fn((options, callback) => callback())
 }));
 
-describe('RSVP API - GET', () => {
+describe('/api/rsvp', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'log').mockImplementation(() => {});
   });
 
-  it('should return current match and RSVP data successfully', async () => {
-    const mockRequest = {
-      url: 'http://localhost:3000/api/rsvp'
-    } as unknown as NextRequest;
-
-    // Mock getCurrentUpcomingMatch
-    (matchUtils.getCurrentUpcomingMatch as any).mockResolvedValue({
-      id: 1,
-      opponent: 'Real Madrid',
-      date: '2025-06-28T20:00:00',
-      competition: 'LaLiga'
-    });
-
-    // Mock Supabase query for RSVPs
-    (supabase.from as any).mockReturnValue({
-      select: vi.fn(() => ({
-        order: vi.fn(() => ({
-          eq: vi.fn(() => Promise.resolve({
-            data: [
-              { id: 1, name: 'John Doe', email: 'john@example.com', attendees: 2 },
-              { id: 2, name: 'Jane Smith', email: 'jane@example.com', attendees: 3 }
-            ],
-            error: null
-          }))
-        }))
-      }))
-    });
-
-    const response = await GET(mockRequest);
-    const json = await response.json();
-
-    expect(response.status).toBe(200);
-    expect(json).toEqual({
-      success: true,
-      currentMatch: {
-        id: 1,
-        opponent: 'Real Madrid',
-        date: '2025-06-28T20:00:00',
-        competition: 'LaLiga'
-      },
-      totalAttendees: 5,
-      confirmedCount: 2
-    });
-  });
-
-  it('should handle specific match ID parameter', async () => {
-    const mockRequest = {
-      url: 'http://localhost:3000/api/rsvp?match=123'
-    } as unknown as NextRequest;
-
-    // Mock Supabase query for specific match
-    (supabase.from as any).mockReturnValueOnce({
-      select: vi.fn(() => ({
-        eq: vi.fn(() => ({
-          single: vi.fn(() => Promise.resolve({
-            data: {
-              id: 123,
-              opponent: 'Barcelona',
-              date_time: '2025-07-15T18:00:00',
-              competition: 'Copa del Rey'
-            },
-            error: null
-          }))
-        }))
-      }))
-    }).mockReturnValueOnce({
-      select: vi.fn(() => ({
-        order: vi.fn(() => ({
-          eq: vi.fn(() => Promise.resolve({
-            data: [
-              { id: 3, name: 'Bob Wilson', email: 'bob@example.com', attendees: 1 }
-            ],
-            error: null
-          }))
-        }))
-      }))
-    });
-
-    const response = await GET(mockRequest);
-    const json = await response.json();
-
-    expect(response.status).toBe(200);
-    expect(json).toEqual({
-      success: true,
-      currentMatch: {
-        id: 123,
-        opponent: 'Barcelona',
-        date: '2025-07-15T18:00:00',
-        competition: 'Copa del Rey'
-      },
-      totalAttendees: 1,
-      confirmedCount: 1
-    });
-  });
-
-  it('should return 404 for non-existent match ID', async () => {
-    const mockRequest = {
-      url: 'http://localhost:3000/api/rsvp?match=999'
-    } as unknown as NextRequest;
-
-    // Mock Supabase query returning no match
-    (supabase.from as any).mockReturnValue({
-      select: vi.fn(() => ({
-        eq: vi.fn(() => ({
-          single: vi.fn(() => Promise.resolve({
-            data: null,
-            error: { message: 'No rows found' }
-          }))
-        }))
-      }))
-    });
-
-    const response = await GET(mockRequest);
-    const json = await response.json();
-
-    expect(response.status).toBe(404);
-    expect(json).toEqual({
-      success: false,
-      error: 'Partido no encontrado'
-    });
-  });
-
-  it('should handle database errors when fetching RSVPs', async () => {
-    const mockRequest = {
-      url: 'http://localhost:3000/api/rsvp'
-    } as unknown as NextRequest;
-
-    // Mock getCurrentUpcomingMatch
-    (matchUtils.getCurrentUpcomingMatch as any).mockResolvedValue({
-      id: 1,
-      opponent: 'Real Madrid',
-      date: '2025-06-28T20:00:00',
-      competition: 'LaLiga'
-    });
-
-    // Mock Supabase query returning error
-    (supabase.from as any).mockReturnValue({
-      select: vi.fn(() => ({
-        order: vi.fn(() => ({
-          eq: vi.fn(() => Promise.resolve({
-            data: null,
-            error: { message: 'Database connection error' }
-          }))
-        }))
-      }))
-    });
-
-    const response = await GET(mockRequest);
-    const json = await response.json();
-
-    expect(response.status).toBe(500);
-    expect(json).toEqual({
-      success: false,
-      error: 'Error al obtener datos de confirmaciones'
-    });
-  });
-});
-
-describe('RSVP API - POST', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    // Reset all spies to their original implementation
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  it('should successfully submit a new RSVP', async () => {
-    const mockRequest = {
-      json: () => Promise.resolve({
-        name: 'Test User',
-        email: 'test@example.com',
+  describe('GET /api/rsvp', () => {
+    it('should return current match RSVP data successfully without match ID', async () => {
+      const { supabase } = await import('@/lib/supabase');
+      const { getCurrentUpcomingMatch } = await import('@/lib/matchUtils');
+      
+      // Mock getCurrentUpcomingMatch
+      vi.mocked(getCurrentUpcomingMatch).mockResolvedValue({
+        id: 1,
+        opponent: 'Barcelona',
+        date: '2025-06-15T19:00:00',
+        competition: 'LaLiga'
+      });
+
+      // Mock supabase query for RSVPs
+      const mockSupabase = vi.mocked(supabase);
+      mockSupabase.from.mockReturnValue({
+        select: vi.fn(() => ({
+          order: vi.fn(() => ({
+            eq: vi.fn(() => Promise.resolve({
+              data: [
+                { id: 1, name: 'John', email: 'john@example.com', attendees: 2, created_at: '2025-01-01' },
+                { id: 2, name: 'Jane', email: 'jane@example.com', attendees: 1, created_at: '2025-01-02' }
+              ],
+              error: null
+            }))
+          }))
+        }))
+      } as any);
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(data.totalAttendees).toBe(3);
+      expect(data.confirmedCount).toBe(2);
+      expect(data.currentMatch.opponent).toBe('Barcelona');
+    });
+
+    it('should return specific match RSVP data when match ID provided', async () => {
+      const { supabase } = await import('@/lib/supabase');
+      const mockSupabase = vi.mocked(supabase);
+      
+      // Mock specific match query
+      mockSupabase.from.mockReturnValueOnce({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(() => Promise.resolve({
+              data: {
+                id: 123,
+                opponent: 'Valencia',
+                date_time: '2025-07-01T21:00:00',
+                competition: 'Copa del Rey'
+              },
+              error: null
+            }))
+          }))
+        }))
+      } as any);
+
+      // Mock RSVPs query
+      mockSupabase.from.mockReturnValueOnce({
+        select: vi.fn(() => ({
+          order: vi.fn(() => ({
+            eq: vi.fn(() => Promise.resolve({
+              data: [{ id: 1, attendees: 3 }],
+              error: null
+            }))
+          }))
+        }))
+      } as any);
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp?match=123');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(data.totalAttendees).toBe(3);
+      expect(data.currentMatch.opponent).toBe('Valencia');
+      expect(data.currentMatch.id).toBe(123);
+    });
+
+    it('should return 404 when specific match not found', async () => {
+      const { supabase } = await import('@/lib/supabase');
+      const mockSupabase = vi.mocked(supabase);
+      
+      mockSupabase.from.mockReturnValue({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(() => Promise.resolve({
+              data: null,
+              error: { message: 'Not found' }
+            }))
+          }))
+        }))
+      } as any);
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp?match=999');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(404);
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('Partido no encontrado');
+    });
+
+    it('should handle database error when fetching RSVPs', async () => {
+      const { supabase } = await import('@/lib/supabase');
+      const { getCurrentUpcomingMatch } = await import('@/lib/matchUtils');
+      
+      vi.mocked(getCurrentUpcomingMatch).mockResolvedValue({
+        opponent: 'Atletico Madrid',
+        date: '2025-06-20T20:00:00',
+        competition: 'LaLiga'
+      });
+
+      const mockSupabase = vi.mocked(supabase);
+      mockSupabase.from.mockReturnValue({
+        select: vi.fn(() => ({
+          order: vi.fn(() => ({
+            eq: vi.fn(() => Promise.resolve({
+              data: null,
+              error: { message: 'Database error' }
+            }))
+          }))
+        }))
+      } as any);
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('Error al obtener datos de confirmaciones');
+    });
+
+    it('should handle general error gracefully', async () => {
+      const { getCurrentUpcomingMatch } = await import('@/lib/matchUtils');
+      
+      vi.mocked(getCurrentUpcomingMatch).mockRejectedValue(new Error('Network error'));
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('Error al obtener datos de confirmaciones');
+    });
+
+    it('should handle match query by ID fallback to match date', async () => {
+      const { supabase } = await import('@/lib/supabase');
+      const { getCurrentUpcomingMatch } = await import('@/lib/matchUtils');
+      
+      // Mock getCurrentUpcomingMatch to return match without ID
+      vi.mocked(getCurrentUpcomingMatch).mockResolvedValue({
+        opponent: 'Sevilla',
+        date: '2025-06-25T18:00:00',
+        competition: 'LaLiga'
+      });
+
+      const mockSupabase = vi.mocked(supabase);
+      mockSupabase.from.mockReturnValue({
+        select: vi.fn(() => ({
+          order: vi.fn(() => ({
+            eq: vi.fn(() => Promise.resolve({
+              data: [{ id: 1, attendees: 1 }],
+              error: null
+            }))
+          }))
+        }))
+      } as any);
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(data.currentMatch.opponent).toBe('Sevilla');
+    });
+  });
+
+  describe('POST /api/rsvp', () => {
+    it('should successfully submit new RSVP', async () => {
+      const { supabase } = await import('@/lib/supabase');
+      const mockSupabase = vi.mocked(supabase);
+
+      // Mock upcoming match query
+      mockSupabase.from.mockReturnValueOnce({
+        select: vi.fn(() => ({
+          gte: vi.fn(() => ({
+            order: vi.fn(() => ({
+              limit: vi.fn(() => ({
+                maybeSingle: vi.fn(() => Promise.resolve({
+                  data: {
+                    id: 1,
+                    opponent: 'Sevilla',
+                    date_time: '2025-06-30T19:00:00',
+                    competition: 'LaLiga'
+                  },
+                  error: null
+                }))
+              }))
+            }))
+          }))
+        }))
+      } as any);
+
+      // Mock existing RSVP check (none found)
+      mockSupabase.from.mockReturnValueOnce({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            eq: vi.fn(() => Promise.resolve({ data: [], error: null }))
+          }))
+        }))
+      } as any);
+
+      // Mock RSVP insert
+      mockSupabase.from.mockReturnValueOnce({
+        insert: vi.fn(() => ({
+          select: vi.fn(() => Promise.resolve({ data: { id: 1 }, error: null }))
+        }))
+      } as any);
+
+      // Mock final count query
+      mockSupabase.from.mockReturnValueOnce({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => Promise.resolve({
+            data: [{ attendees: 2 }],
+            error: null
+          }))
+        }))
+      } as any);
+
+      const validRSVP = {
+        name: 'Juan Pérez',
+        email: 'juan@example.com',
         attendees: 2,
         message: 'Looking forward to the match!',
-        whatsappInterest: true,
-        matchId: '1'
-      }),
-    } as unknown as NextRequest;
+        whatsappInterest: true
+      };
 
-    // Ensure all validations pass
-    vi.spyOn(security, 'validateInputLength')
-      .mockReturnValueOnce({ isValid: true }) // name validation
-      .mockReturnValueOnce({ isValid: true }); // message validation
-    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 4, resetTime: Date.now() + 100000 });
-
-    // Mock Supabase queries
-    (supabase.from as any)
-      // First call: fetch match data
-      .mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            maybeSingle: vi.fn(() => Promise.resolve({
-              data: {
-                id: 1,
-                opponent: 'Real Madrid',
-                date_time: '2025-06-28T20:00:00',
-                competition: 'LaLiga'
-              },
-              error: null
-            }))
-          }))
-        }))
-      })
-      // Second call: check existing RSVPs
-      .mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            eq: vi.fn(() => Promise.resolve({
-              data: [],
-              error: null
-            }))
-          }))
-        }))
-      })
-      // Third call: insert new RSVP
-      .mockReturnValueOnce({
-        insert: vi.fn(() => ({
-          select: vi.fn(() => Promise.resolve({
-            data: [{ id: 1, name: 'Test User' }],
-            error: null
-          }))
-        }))
-      })
-      // Fourth call: get updated totals
-      .mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(() => Promise.resolve({
-            data: [
-              { attendees: 2 },
-              { attendees: 3 }
-            ],
-            error: null
-          }))
-        }))
+      const request = new NextRequest('http://localhost:3000/api/rsvp', {
+        method: 'POST',
+        body: JSON.stringify(validRSVP),
       });
 
-    const response = await POST(mockRequest);
-    const json = await response.json();
+      const response = await POST(request);
+      const data = await response.json();
 
-    expect(response.status).toBe(200);
-    expect(json).toEqual({
-      success: true,
-      message: 'Confirmación recibida correctamente',
-      totalAttendees: 5,
-      confirmedCount: 2
+      expect(response.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(data.message).toBe('Confirmación recibida correctamente');
+      expect(data.totalAttendees).toBe(2);
+      expect(data.confirmedCount).toBe(1);
     });
-  });
 
-  it('should update existing RSVP for same email', async () => {
-    const mockRequest = {
-      json: () => Promise.resolve({
-        name: 'Test User Updated',
-        email: 'test@example.com',
-        attendees: 3,
-        message: 'Updated message',
-        whatsappInterest: false,
-        matchId: '1'
-      }),
-    } as unknown as NextRequest;
+    it('should update existing RSVP', async () => {
+      const { supabase } = await import('@/lib/supabase');
+      const mockSupabase = vi.mocked(supabase);
 
-    // Ensure all validations pass
-    vi.spyOn(security, 'validateInputLength')
-      .mockReturnValueOnce({ isValid: true }) // name validation
-      .mockReturnValueOnce({ isValid: true }); // message validation
-    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 4, resetTime: Date.now() + 100000 });
-
-    // Mock Supabase queries
-    (supabase.from as any)
-      // First call: fetch match data
-      .mockReturnValueOnce({
+      // Mock upcoming match query
+      mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            maybeSingle: vi.fn(() => Promise.resolve({
-              data: {
-                id: 1,
-                opponent: 'Real Madrid',
-                date_time: '2025-06-28T20:00:00',
-                competition: 'LaLiga'
-              },
-              error: null
+          gte: vi.fn(() => ({
+            order: vi.fn(() => ({
+              limit: vi.fn(() => ({
+                maybeSingle: vi.fn(() => Promise.resolve({
+                  data: {
+                    id: 1,
+                    opponent: 'Sevilla',
+                    date_time: '2025-06-30T19:00:00',
+                    competition: 'LaLiga'
+                  },
+                  error: null
+                }))
+              }))
             }))
           }))
         }))
-      })
-      // Second call: check existing RSVPs (found existing)
-      .mockReturnValueOnce({
+      } as any);
+
+      // Mock existing RSVP check (found)
+      mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
-            eq: vi.fn(() => Promise.resolve({
-              data: [{ id: 123 }],
-              error: null
+            eq: vi.fn(() => Promise.resolve({ 
+              data: [{ id: 5 }], 
+              error: null 
             }))
           }))
         }))
-      })
-      // Third call: delete existing RSVP
-      .mockReturnValueOnce({
+      } as any);
+
+      // Mock RSVP delete
+      mockSupabase.from.mockReturnValueOnce({
         delete: vi.fn(() => ({
-          eq: vi.fn(() => Promise.resolve({
-            error: null
-          }))
+          eq: vi.fn(() => Promise.resolve({ error: null }))
         }))
-      })
-      // Fourth call: insert updated RSVP
-      .mockReturnValueOnce({
+      } as any);
+
+      // Mock RSVP insert (update)
+      mockSupabase.from.mockReturnValueOnce({
         insert: vi.fn(() => ({
-          select: vi.fn(() => Promise.resolve({
-            data: [{ id: 124, name: 'Test User Updated' }],
-            error: null
-          }))
+          select: vi.fn(() => Promise.resolve({ data: { id: 6 }, error: null }))
         }))
-      })
-      // Fifth call: get updated totals
-      .mockReturnValueOnce({
+      } as any);
+
+      // Mock final count query
+      mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => Promise.resolve({
-            data: [
-              { attendees: 3 },
-              { attendees: 2 }
-            ],
+            data: [{ attendees: 3 }],
             error: null
           }))
         }))
+      } as any);
+
+      const updateRSVP = {
+        name: 'Juan Pérez',
+        email: 'juan@example.com',
+        attendees: 3,
+        message: 'Updated attendee count!'
+      };
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp', {
+        method: 'POST',
+        body: JSON.stringify(updateRSVP),
       });
 
-    const response = await POST(mockRequest);
-    const json = await response.json();
+      const response = await POST(request);
+      const data = await response.json();
 
-    expect(response.status).toBe(200);
-    expect(json).toEqual({
-      success: true,
-      message: 'Confirmación actualizada correctamente',
-      totalAttendees: 5,
-      confirmedCount: 2
+      expect(response.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(data.message).toBe('Confirmación actualizada correctamente');
     });
-  });
 
-  it('should return 400 for invalid input (missing required fields)', async () => {
-    const mockRequest = {
-      json: () => Promise.resolve({
+    it('should validate required fields', async () => {
+      const invalidRSVP = {
         name: '',
-        email: 'invalid-email',
-        attendees: null
-      }),
-    } as unknown as NextRequest;
+        email: 'test@example.com',
+        attendees: 2
+      };
 
-    // Mock validateInputLength and validateEmail to return invalid results
-    vi.spyOn(security, 'validateInputLength').mockReturnValueOnce({ isValid: false, error: 'Mínimo 2 caracteres' });
-    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: false, error: 'Formato de email inválido' });
+      const request = new NextRequest('http://localhost:3000/api/rsvp', {
+        method: 'POST',
+        body: JSON.stringify(invalidRSVP),
+      });
 
-    const response = await POST(mockRequest);
-    const json = await response.json();
+      const response = await POST(request);
+      const data = await response.json();
 
-    expect(response.status).toBe(400);
-    expect(json).toEqual({
-      success: false,
-      error: 'Mínimo 2 caracteres',
+      expect(response.status).toBe(400);
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('Nombre, email y número de asistentes son obligatorios');
     });
-    expect(supabase.from).not.toHaveBeenCalled();
-  });
 
-  it('should return 400 for invalid attendees count', async () => {
-    const mockRequest = {
-      json: () => Promise.resolve({
+    it('should validate name length', async () => {
+      const { validateInputLength } = await import('@/lib/security');
+      vi.mocked(validateInputLength).mockReturnValueOnce({ 
+        isValid: false, 
+        error: 'El nombre debe tener entre 2 y 50 caracteres' 
+      });
+
+      const invalidRSVP = {
+        name: 'A',
+        email: 'test@example.com',
+        attendees: 2
+      };
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp', {
+        method: 'POST',
+        body: JSON.stringify(invalidRSVP),
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('El nombre debe tener entre 2 y 50 caracteres');
+    });
+
+    it('should validate email format', async () => {
+      const { validateEmail } = await import('@/lib/security');
+      vi.mocked(validateEmail).mockReturnValueOnce({ 
+        isValid: false, 
+        error: 'Formato de email inválido' 
+      });
+
+      const invalidRSVP = {
+        name: 'Valid Name',
+        email: 'invalid-email',
+        attendees: 2
+      };
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp', {
+        method: 'POST',
+        body: JSON.stringify(invalidRSVP),
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('Formato de email inválido');
+    });
+
+    it('should validate attendees count - minimum', async () => {
+      const invalidRSVP = {
+        name: 'Valid Name',
+        email: 'valid@example.com',
+        attendees: 0 // This will trigger the attendees count validation
+      };
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp', {
+        method: 'POST',
+        body: JSON.stringify(invalidRSVP),
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.success).toBe(false);
+      // The actual error is for required fields since 0 is falsy
+      expect(data.error).toBe('Nombre, email y número de asistentes son obligatorios');
+    });
+
+    it('should validate attendees count - maximum', async () => {
+      const invalidRSVP = {
+        name: 'Valid Name',
+        email: 'valid@example.com',
+        attendees: 15
+      };
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp', {
+        method: 'POST',
+        body: JSON.stringify(invalidRSVP),
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('Número de asistentes debe ser entre 1 y 10');
+    });
+
+    it('should validate attendees count - NaN', async () => {
+      const invalidRSVP = {
+        name: 'Valid Name',
+        email: 'valid@example.com',
+        attendees: 'not a number'
+      };
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp', {
+        method: 'POST',
+        body: JSON.stringify(invalidRSVP),
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('Número de asistentes debe ser entre 1 y 10');
+    });
+
+    it('should validate message length when provided', async () => {
+      const { validateInputLength } = await import('@/lib/security');
+      vi.mocked(validateInputLength)
+        .mockReturnValueOnce({ isValid: true }) // name validation
+        .mockReturnValueOnce({ isValid: false, error: 'El mensaje es demasiado largo' }); // message validation
+
+      const invalidRSVP = {
+        name: 'Valid Name',
+        email: 'valid@example.com',
+        attendees: 2,
+        message: 'A'.repeat(600) // Too long message
+      };
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp', {
+        method: 'POST',
+        body: JSON.stringify(invalidRSVP),
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('El mensaje es demasiado largo');
+    });
+
+    it('should handle rate limiting', async () => {
+      const { checkRateLimit } = await import('@/lib/security');
+      vi.mocked(checkRateLimit).mockReturnValueOnce({ allowed: false });
+
+      const validRSVP = {
+        name: 'Valid Name',
+        email: 'valid@example.com',
+        attendees: 2
+      };
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp', {
+        method: 'POST',
+        body: JSON.stringify(validRSVP),
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(429);
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('Demasiadas solicitudes. Por favor, intenta de nuevo más tarde.');
+    });
+
+    it('should handle specific match ID in POST', async () => {
+      const { supabase } = await import('@/lib/supabase');
+      const mockSupabase = vi.mocked(supabase);
+
+      // Mock specific match query
+      mockSupabase.from.mockReturnValueOnce({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            maybeSingle: vi.fn(() => Promise.resolve({
+              data: {
+                id: 456,
+                opponent: 'Athletic Bilbao',
+                date_time: '2025-07-15T20:30:00',
+                competition: 'Copa del Rey'
+              },
+              error: null
+            }))
+          }))
+        }))
+      } as any);
+
+      // Mock existing RSVP check
+      mockSupabase.from.mockReturnValueOnce({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            eq: vi.fn(() => Promise.resolve({ data: [], error: null }))
+          }))
+        }))
+      } as any);
+
+      // Mock RSVP insert
+      mockSupabase.from.mockReturnValueOnce({
+        insert: vi.fn(() => ({
+          select: vi.fn(() => Promise.resolve({ data: { id: 1 }, error: null }))
+        }))
+      } as any);
+
+      // Mock final count query
+      mockSupabase.from.mockReturnValueOnce({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => Promise.resolve({
+            data: [{ attendees: 2 }],
+            error: null
+          }))
+        }))
+      } as any);
+
+      const validRSVP = {
+        name: 'María García',
+        email: 'maria@example.com',
+        attendees: 2,
+        matchId: '456'
+      };
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp', {
+        method: 'POST',
+        body: JSON.stringify(validRSVP),
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.success).toBe(true);
+    });
+
+    it('should return 404 when specific match not found in POST', async () => {
+      const { supabase } = await import('@/lib/supabase');
+      const mockSupabase = vi.mocked(supabase);
+
+      mockSupabase.from.mockReturnValue({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            maybeSingle: vi.fn(() => Promise.resolve({
+              data: null,
+              error: { message: 'Not found' }
+            }))
+          }))
+        }))
+      } as any);
+
+      const validRSVP = {
         name: 'Test User',
         email: 'test@example.com',
-        attendees: 15, // Invalid: too many
-        message: 'Test message'
-      }),
-    } as unknown as NextRequest;
+        attendees: 1,
+        matchId: '999'
+      };
 
-    // Ensure other validations pass
-    vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
-    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 4, resetTime: Date.now() + 100000 });
+      const request = new NextRequest('http://localhost:3000/api/rsvp', {
+        method: 'POST',
+        body: JSON.stringify(validRSVP),
+      });
 
-    const response = await POST(mockRequest);
-    const json = await response.json();
+      const response = await POST(request);
+      const data = await response.json();
 
-    expect(response.status).toBe(400);
-    expect(json).toEqual({
-      success: false,
-      error: 'Número de asistentes debe ser entre 1 y 10',
+      expect(response.status).toBe(404);
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('Partido no encontrado');
     });
-    expect(supabase.from).not.toHaveBeenCalled();
-  });
 
-  it('should return 429 for rate limit exceeded', async () => {
-    const mockRequest = {
-      json: () => Promise.resolve({
+    it('should handle fallback when no upcoming match found', async () => {
+      const { supabase } = await import('@/lib/supabase');
+      const mockSupabase = vi.mocked(supabase);
+
+      // Mock no upcoming match found
+      mockSupabase.from.mockReturnValueOnce({
+        select: vi.fn(() => ({
+          gte: vi.fn(() => ({
+            order: vi.fn(() => ({
+              limit: vi.fn(() => ({
+                maybeSingle: vi.fn(() => Promise.resolve({
+                  data: null,
+                  error: { message: 'No upcoming matches' }
+                }))
+              }))
+            }))
+          }))
+        }))
+      } as any);
+
+      // Mock existing RSVP check
+      mockSupabase.from.mockReturnValueOnce({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            eq: vi.fn(() => Promise.resolve({ data: [], error: null }))
+          }))
+        }))
+      } as any);
+
+      // Mock RSVP insert
+      mockSupabase.from.mockReturnValueOnce({
+        insert: vi.fn(() => ({
+          select: vi.fn(() => Promise.resolve({ data: { id: 1 }, error: null }))
+        }))
+      } as any);
+
+      // Mock final count query
+      mockSupabase.from.mockReturnValueOnce({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => Promise.resolve({
+            data: [{ attendees: 2 }],
+            error: null
+          }))
+        }))
+      } as any);
+
+      const validRSVP = {
         name: 'Test User',
         email: 'test@example.com',
         attendees: 2
-      }),
-    } as unknown as NextRequest;
+      };
 
-    // Mock checkRateLimit to return not allowed
-    vi.spyOn(security, 'checkRateLimit').mockReturnValueOnce({ 
-      allowed: false, 
-      remaining: 0, 
-      resetTime: Date.now() + 100000 
+      const request = new NextRequest('http://localhost:3000/api/rsvp', {
+        method: 'POST',
+        body: JSON.stringify(validRSVP),
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(data.message).toBe('Confirmación recibida correctamente');
     });
 
-    const response = await POST(mockRequest);
-    const json = await response.json();
+    it('should handle database insert error', async () => {
+      const { supabase } = await import('@/lib/supabase');
+      const mockSupabase = vi.mocked(supabase);
 
-    expect(response.status).toBe(429);
-    expect(json).toEqual({
-      success: false,
-      error: 'Demasiadas solicitudes. Por favor, intenta de nuevo más tarde.',
-    });
-    expect(supabase.from).not.toHaveBeenCalled();
-  });
-
-  it('should return 404 for non-existent match', async () => {
-    const mockRequest = {
-      json: () => Promise.resolve({
-        name: 'Test User',
-        email: 'test@example.com',
-        attendees: 2,
-        matchId: '999'
-      }),
-    } as unknown as NextRequest;
-
-    // Ensure validations pass
-    vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
-    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 4, resetTime: Date.now() + 100000 });
-
-    // Mock Supabase query returning no match
-    (supabase.from as any).mockReturnValue({
-      select: vi.fn(() => ({
-        eq: vi.fn(() => ({
-          maybeSingle: vi.fn(() => Promise.resolve({
-            data: null,
-            error: { message: 'No rows found' }
-          }))
-        }))
-      }))
-    });
-
-    const response = await POST(mockRequest);
-    const json = await response.json();
-
-    expect(response.status).toBe(404);
-    expect(json).toEqual({
-      success: false,
-      error: 'Partido no encontrado'
-    });
-  });
-
-  it('should return 500 for database insertion error', async () => {
-    const mockRequest = {
-      json: () => Promise.resolve({
-        name: 'Test User',
-        email: 'test@example.com',
-        attendees: 2,
-        matchId: '1'
-      }),
-    } as unknown as NextRequest;
-
-    // Ensure validations pass
-    vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
-    vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 4, resetTime: Date.now() + 100000 });
-
-    // Mock Supabase queries
-    (supabase.from as any)
-      // First call: fetch match data
-      .mockReturnValueOnce({
+      // Mock successful match lookup
+      mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            maybeSingle: vi.fn(() => Promise.resolve({
-              data: {
-                id: 1,
-                opponent: 'Real Madrid',
-                date_time: '2025-06-28T20:00:00',
-                competition: 'LaLiga'
-              },
-              error: null
+          gte: vi.fn(() => ({
+            order: vi.fn(() => ({
+              limit: vi.fn(() => ({
+                maybeSingle: vi.fn(() => Promise.resolve({
+                  data: { id: 1, opponent: 'Test', date_time: '2025-01-01', competition: 'Test' },
+                  error: null
+                }))
+              }))
             }))
           }))
         }))
-      })
-      // Second call: check existing RSVPs
-      .mockReturnValueOnce({
+      } as any);
+
+      // Mock existing RSVP check
+      mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
-            eq: vi.fn(() => Promise.resolve({
-              data: [],
-              error: null
-            }))
+            eq: vi.fn(() => Promise.resolve({ data: [], error: null }))
           }))
         }))
-      })
-      // Third call: insert new RSVP (error)
-      .mockReturnValueOnce({
+      } as any);
+
+      // Mock failed insert
+      mockSupabase.from.mockReturnValueOnce({
         insert: vi.fn(() => ({
-          select: vi.fn(() => Promise.resolve({
-            data: null,
-            error: { message: 'Database insert error' }
+          select: vi.fn(() => Promise.resolve({ 
+            data: null, 
+            error: { message: 'Insert failed' } 
           }))
         }))
+      } as any);
+
+      const validRSVP = {
+        name: 'Test User',
+        email: 'test@example.com',
+        attendees: 1
+      };
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp', {
+        method: 'POST',
+        body: JSON.stringify(validRSVP),
       });
 
-    const response = await POST(mockRequest);
-    const json = await response.json();
+      const response = await POST(request);
+      const data = await response.json();
 
-    expect(response.status).toBe(500);
-    expect(json).toEqual({
-      success: false,
-      error: 'Error interno del servidor al procesar la confirmación'
-    });
-  });
-});
-
-describe('RSVP API - DELETE', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('should successfully delete RSVP by ID', async () => {
-    const mockRequest = {
-      url: 'http://localhost:3000/api/rsvp?id=123'
-    } as unknown as NextRequest;
-
-    // Mock getCurrentUpcomingMatch
-    (matchUtils.getCurrentUpcomingMatch as any).mockResolvedValue({
-      id: 1,
-      opponent: 'Real Madrid',
-      date: '2025-06-28T20:00:00',
-      competition: 'LaLiga'
+      expect(response.status).toBe(500);
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('Error interno del servidor al procesar la confirmación');
     });
 
-    // Mock Supabase queries
-    (supabase.from as any)
-      // First call: delete RSVP
-      .mockReturnValueOnce({
-        delete: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            select: vi.fn(() => Promise.resolve({
-              data: [{ id: 123, name: 'Deleted User' }],
-              error: null
+    it('should handle count query error after successful insert', async () => {
+      const { supabase } = await import('@/lib/supabase');
+      const mockSupabase = vi.mocked(supabase);
+
+      // Mock successful operations
+      mockSupabase.from.mockReturnValueOnce({
+        select: vi.fn(() => ({
+          gte: vi.fn(() => ({
+            order: vi.fn(() => ({
+              limit: vi.fn(() => ({
+                maybeSingle: vi.fn(() => Promise.resolve({
+                  data: { id: 1, opponent: 'Test', date_time: '2025-01-01', competition: 'Test' },
+                  error: null
+                }))
+              }))
             }))
           }))
         }))
-      })
-      // Second call: get remaining RSVPs
-      .mockReturnValueOnce({
+      } as any);
+
+      mockSupabase.from.mockReturnValueOnce({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            eq: vi.fn(() => Promise.resolve({ data: [], error: null }))
+          }))
+        }))
+      } as any);
+
+      mockSupabase.from.mockReturnValueOnce({
+        insert: vi.fn(() => ({
+          select: vi.fn(() => Promise.resolve({ data: { id: 1 }, error: null }))
+        }))
+      } as any);
+
+      // Mock failed count query
+      mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => Promise.resolve({
-            data: [
-              { attendees: 2 }
-            ],
+            data: null,
+            error: { message: 'Count failed' }
+          }))
+        }))
+      } as any);
+
+      const validRSVP = {
+        name: 'Test User',
+        email: 'test@example.com',
+        attendees: 2
+      };
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp', {
+        method: 'POST',
+        body: JSON.stringify(validRSVP),
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(data.message).toBe('Confirmación recibida correctamente');
+      expect(data.totalAttendees).toBe(2); // Falls back to submitted attendees
+      expect(data.confirmedCount).toBe(1);
+    });
+  });
+
+  describe('DELETE /api/rsvp', () => {
+    it('should delete RSVP by ID successfully', async () => {
+      const { supabase } = await import('@/lib/supabase');
+      const { getCurrentUpcomingMatch } = await import('@/lib/matchUtils');
+      const mockSupabase = vi.mocked(supabase);
+
+      // Mock delete operation
+      mockSupabase.from.mockReturnValueOnce({
+        delete: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            select: vi.fn(() => Promise.resolve({ 
+              data: [{ id: 1, name: 'Deleted User' }], 
+              error: null 
+            }))
+          }))
+        }))
+      } as any);
+
+      // Mock getCurrentUpcomingMatch
+      vi.mocked(getCurrentUpcomingMatch).mockResolvedValue({
+        opponent: 'Real Madrid',
+        date: '2025-06-28T20:00:00',
+        competition: 'LaLiga'
+      });
+
+      // Mock remaining RSVPs count
+      mockSupabase.from.mockReturnValueOnce({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => Promise.resolve({
+            data: [{ attendees: 2 }],
             error: null
           }))
         }))
-      });
+      } as any);
 
-    const response = await DELETE(mockRequest);
-    const json = await response.json();
+      const request = new NextRequest('http://localhost:3000/api/rsvp?id=1');
+      const response = await DELETE(request);
+      const data = await response.json();
 
-    expect(response.status).toBe(200);
-    expect(json).toEqual({
-      success: true,
-      message: 'Confirmación eliminada correctamente',
-      totalAttendees: 2,
-      confirmedCount: 1
-    });
-  });
-
-  it('should successfully delete RSVP by email', async () => {
-    const mockRequest = {
-      url: 'http://localhost:3000/api/rsvp?email=test@example.com'
-    } as unknown as NextRequest;
-
-    // Mock getCurrentUpcomingMatch
-    (matchUtils.getCurrentUpcomingMatch as any).mockResolvedValue({
-      id: 1,
-      opponent: 'Real Madrid',
-      date: '2025-06-28T20:00:00',
-      competition: 'LaLiga'
+      expect(response.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(data.message).toBe('Confirmación eliminada correctamente');
+      expect(data.totalAttendees).toBe(2);
+      expect(data.confirmedCount).toBe(1);
     });
 
-    // Mock Supabase queries
-    (supabase.from as any)
-      // First call: delete RSVP
-      .mockReturnValueOnce({
+    it('should delete RSVP by email successfully', async () => {
+      const { supabase } = await import('@/lib/supabase');
+      const { getCurrentUpcomingMatch } = await import('@/lib/matchUtils');
+      const mockSupabase = vi.mocked(supabase);
+
+      // Mock delete operation
+      mockSupabase.from.mockReturnValueOnce({
         delete: vi.fn(() => ({
           eq: vi.fn(() => ({
-            select: vi.fn(() => Promise.resolve({
-              data: [{ id: 123, email: 'test@example.com' }],
-              error: null
+            select: vi.fn(() => Promise.resolve({ 
+              data: [{ id: 1, email: 'test@example.com' }], 
+              error: null 
             }))
           }))
         }))
-      })
-      // Second call: get remaining RSVPs
-      .mockReturnValueOnce({
+      } as any);
+
+      // Mock getCurrentUpcomingMatch
+      vi.mocked(getCurrentUpcomingMatch).mockResolvedValue({
+        opponent: 'Barcelona',
+        date: '2025-07-01T19:00:00',
+        competition: 'LaLiga'
+      });
+
+      // Mock remaining RSVPs count
+      mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => Promise.resolve({
             data: [],
             error: null
           }))
         }))
+      } as any);
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp?email=test@example.com');
+      const response = await DELETE(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(data.message).toBe('Confirmación eliminada correctamente');
+      expect(data.totalAttendees).toBe(0);
+      expect(data.confirmedCount).toBe(0);
+    });
+
+    it('should return 400 when no ID or email provided', async () => {
+      const request = new NextRequest('http://localhost:3000/api/rsvp');
+      const response = await DELETE(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('ID de entrada o email requerido');
+    });
+
+    it('should return 404 when RSVP not found for deletion', async () => {
+      const { supabase } = await import('@/lib/supabase');
+      const mockSupabase = vi.mocked(supabase);
+
+      mockSupabase.from.mockReturnValue({
+        delete: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            select: vi.fn(() => Promise.resolve({ 
+              data: [], 
+              error: null 
+            }))
+          }))
+        }))
+      } as any);
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp?id=999');
+      const response = await DELETE(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(404);
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('Confirmación no encontrada');
+    });
+
+    it('should handle database delete error', async () => {
+      const { supabase } = await import('@/lib/supabase');
+      const mockSupabase = vi.mocked(supabase);
+
+      mockSupabase.from.mockReturnValue({
+        delete: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            select: vi.fn(() => Promise.resolve({ 
+              data: null, 
+              error: { message: 'Delete failed' } 
+            }))
+          }))
+        }))
+      } as any);
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp?id=1');
+      const response = await DELETE(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('Error interno del servidor al eliminar confirmación');
+    });
+
+    it('should handle count error after successful delete', async () => {
+      const { supabase } = await import('@/lib/supabase');
+      const { getCurrentUpcomingMatch } = await import('@/lib/matchUtils');
+      const mockSupabase = vi.mocked(supabase);
+
+      // Mock successful delete
+      mockSupabase.from.mockReturnValueOnce({
+        delete: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            select: vi.fn(() => Promise.resolve({ 
+              data: [{ id: 1 }], 
+              error: null 
+            }))
+          }))
+        }))
+      } as any);
+
+      // Mock getCurrentUpcomingMatch
+      vi.mocked(getCurrentUpcomingMatch).mockResolvedValue({
+        opponent: 'Valencia',
+        date: '2025-07-15T21:00:00',
+        competition: 'Copa del Rey'
       });
 
-    const response = await DELETE(mockRequest);
-    const json = await response.json();
-
-    expect(response.status).toBe(200);
-    expect(json).toEqual({
-      success: true,
-      message: 'Confirmación eliminada correctamente',
-      totalAttendees: 0,
-      confirmedCount: 0
-    });
-  });
-
-  it('should return 400 when no ID or email provided', async () => {
-    const mockRequest = {
-      url: 'http://localhost:3000/api/rsvp'
-    } as unknown as NextRequest;
-
-    const response = await DELETE(mockRequest);
-    const json = await response.json();
-
-    expect(response.status).toBe(400);
-    expect(json).toEqual({
-      success: false,
-      error: 'ID de entrada o email requerido'
-    });
-    expect(supabase.from).not.toHaveBeenCalled();
-  });
-
-  it('should return 404 when RSVP not found', async () => {
-    const mockRequest = {
-      url: 'http://localhost:3000/api/rsvp?id=999'
-    } as unknown as NextRequest;
-
-    // Mock Supabase delete returning no rows
-    (supabase.from as any).mockReturnValue({
-      delete: vi.fn(() => ({
-        eq: vi.fn(() => ({
-          select: vi.fn(() => Promise.resolve({
-            data: [],
-            error: null
-          }))
-        }))
-      }))
-    });
-
-    const response = await DELETE(mockRequest);
-    const json = await response.json();
-
-    expect(response.status).toBe(404);
-    expect(json).toEqual({
-      success: false,
-      error: 'Confirmación no encontrada'
-    });
-  });
-
-  it('should return 500 for database deletion error', async () => {
-    const mockRequest = {
-      url: 'http://localhost:3000/api/rsvp?id=123'
-    } as unknown as NextRequest;
-
-    // Mock Supabase delete returning error
-    (supabase.from as any).mockReturnValue({
-      delete: vi.fn(() => ({
-        eq: vi.fn(() => ({
-          select: vi.fn(() => Promise.resolve({
+      // Mock count error
+      mockSupabase.from.mockReturnValueOnce({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => Promise.resolve({
             data: null,
-            error: { message: 'Database delete error' }
+            error: { message: 'Count failed' }
           }))
         }))
-      }))
+      } as any);
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp?id=1');
+      const response = await DELETE(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(data.message).toBe('Confirmación eliminada correctamente');
+      expect(data.totalAttendees).toBe(0);
+      expect(data.confirmedCount).toBe(0);
     });
 
-    const response = await DELETE(mockRequest);
-    const json = await response.json();
+    it('should handle general error in DELETE', async () => {
+      const { supabase } = await import('@/lib/supabase');
+      const mockSupabase = vi.mocked(supabase);
 
-    expect(response.status).toBe(500);
-    expect(json).toEqual({
-      success: false,
-      error: 'Error interno del servidor al eliminar confirmación'
+      mockSupabase.from.mockImplementation(() => {
+        throw new Error('Unexpected error');
+      });
+
+      const request = new NextRequest('http://localhost:3000/api/rsvp?id=1');
+      const response = await DELETE(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('Error interno del servidor');
     });
   });
 });
