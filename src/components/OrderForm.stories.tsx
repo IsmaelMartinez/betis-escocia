@@ -1,51 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import OrderForm from './OrderForm';
 import { http, HttpResponse } from 'msw';
-import { useState } from 'react';
-import { fn } from 'storybook/test';
+
 
 // Note: This story requires mocking useFormValidation for Storybook
 // In a real Storybook environment, you'd want to use MSW or decorators
-const mockUseFormValidation = fn((initialData) => {
-    const [data, setData] = useState(initialData);
-    const [errors, setErrors] = useState({});
-    const [touched, setTouched] = useState({});
 
-    const updateField = (field: string, value: unknown) => {
-      setData((prev: typeof initialData) => ({ ...prev, [field]: value }));
-      setErrors((prev) => ({ ...prev, [field]: undefined })); // Clear error on change
-    };
-
-    const touchField = (field: string) => {
-      setTouched((prev) => ({ ...prev, [field]: true }));
-    };
-
-    const validateAll = () => {
-      const newErrors: { [key: string]: string } = {};
-      if (!data.name) newErrors.name = 'Name is required';
-      if (!data.email) newErrors.email = 'Email is required';
-      else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(data.email as string)) {
-        newErrors.email = 'Invalid email address';
-      }
-      if (!data.phone) newErrors.phone = 'Phone is required';
-      if (data.quantity === 0) newErrors.quantity = 'Quantity must be at least 1';
-      if (data.size === '' && (data.productName?.toLowerCase().includes('camiseta') || data.productName?.toLowerCase().includes('sudadera'))) {
-        newErrors.size = 'Size is required';
-      }
-
-      setErrors(newErrors);
-      return { isValid: Object.keys(newErrors).length === 0, errors: newErrors };
-    };
-
-    return {
-      data,
-      errors,
-      touched,
-      updateField,
-      touchField,
-      validateAll,
-    };
-});
 
 const meta: Meta<typeof OrderForm> = {
   title: 'Forms/OrderForm',

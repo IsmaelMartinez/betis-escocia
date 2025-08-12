@@ -31,9 +31,10 @@ const meta: Meta<typeof MatchForm> = {
     (Story) => {
       // Mock security functions for Storybook environment
       if (typeof window !== 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (window as any).__mockSecurity = {
           generateCSRFToken: () => 'mock-csrf-token',
-          sanitizeInput: (input: any) => input,
+          sanitizeInput: (input: string) => input,
         };
       }
       return Story();
