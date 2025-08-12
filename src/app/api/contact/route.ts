@@ -4,7 +4,6 @@ import { supabase, type ContactSubmissionInsert, getAuthenticatedSupabaseClient 
 import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, getClientIP } from '@/lib/security';
 import { getAuth } from '@clerk/nextjs/server';
 import { sendNotificationToAdmins } from '@/lib/notifications/pushNotifications';
-import { hasFeature } from '@/lib/flagsmith';
 import { getUsersWithNotificationsEnabledDb } from '@/lib/notifications/preferencesDb';
 
 // Supabase-based contact operations - no file system needed
@@ -101,8 +100,7 @@ export async function POST(request: NextRequest) {
 
     // Send push notification to admin users (non-blocking)
     try {
-      const notificationsEnabled = await hasFeature('admin-push-notifications');
-      if (notificationsEnabled && insertedSubmission) {
+      if (insertedSubmission) {
         // Get list of admin users with notifications enabled
         const enabledUsers = await getUsersWithNotificationsEnabledDb();
         if (enabledUsers.length > 0) {

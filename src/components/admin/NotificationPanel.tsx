@@ -298,7 +298,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
       return (
         <div className="space-y-3">
           {/* User preference toggle */}
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg" data-testid="subscription-status">
             <span className="text-sm font-medium text-gray-700">
               Recibir notificaciones:
             </span>
@@ -336,7 +336,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
 
   if (!permissionState.supported) {
     return (
-      <Card className={className}>
+      <Card className={className} data-testid="notification-panel">
         <CardHeader>
           <h3 className="text-lg font-semibold text-betis-black flex items-center">
             <AlertCircle className="h-5 w-5 mr-2 text-gray-500" />
@@ -344,7 +344,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
           </h3>
         </CardHeader>
         <CardBody>
-          <div className="text-center py-4">
+          <div className="text-center py-4" data-testid="browser-compatibility">
             <p className="text-gray-600 mb-4">
               Tu navegador no es compatible con las notificaciones push.
             </p>
@@ -358,7 +358,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
   }
 
   return (
-    <Card className={className}>
+    <Card className={className} data-testid="notification-panel">
       <CardHeader>
         <h3 className="text-lg font-semibold text-betis-black flex items-center">
           <Bell className="h-5 w-5 mr-2" />
@@ -376,7 +376,9 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
             <span className="text-sm font-medium text-gray-700">
               Estado actual:
             </span>
-            {getStatusIndicator()}
+            <div data-testid="permission-status">
+              {getStatusIndicator()}
+            </div>
           </div>
 
           {/* Error Message */}

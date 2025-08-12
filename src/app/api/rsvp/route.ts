@@ -5,7 +5,6 @@ import { supabase, type RSVP } from '@/lib/supabase';
 import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, getClientIP } from '@/lib/security';
 import { getCurrentUpcomingMatch } from '@/lib/matchUtils';
 import { sendNotificationToAdmins } from '@/lib/notifications/pushNotifications';
-import { hasFeature } from '@/lib/flagsmith';
 import { getUsersWithNotificationsEnabledDb } from '@/lib/notifications/preferencesDb';
 
 // Default current match info (this could be moved to env vars or a separate config)
@@ -307,28 +306,25 @@ export async function POST(request: NextRequest) {
 
     // Send push notification to admin users (non-blocking)
     try {
-      const notificationsEnabled = await hasFeature('admin-push-notifications');
-      if (notificationsEnabled) {
-        // Get list of admin users with notifications enabled
-        const enabledUsers = await getUsersWithNotificationsEnabledDb();
-        if (enabledUsers.length > 0) {
-          console.log(`Sending RSVP notification to ${enabledUsers.length} admin users`);
-          sendNotificationToAdmins({
-            type: 'rsvp',
-            id: currentMatchId || 0,
-            data: {
-              userName: name.trim(),
-              userEmail: email.toLowerCase().trim(),
-              matchDate: currentMatchDate,
-              attendees: parseInt(attendees)
-            }
-          }).catch(error => {
-            console.error('Failed to send admin notification:', error);
-            // Don't fail the RSVP if notification fails
-          });
-        } else {
-          console.log('No admin users have notifications enabled');
-        }
+      // Get list of admin users with notifications enabled
+      const enabledUsers = await getUsersWithNotificationsEnabledDb();
+      if (enabledUsers.length > 0) {
+        console.log(`Sending RSVP notification to ${enabledUsers.length} admin users`);
+        sendNotificationToAdmins({
+          type: 'rsvp',
+          id: currentMatchId || 0,
+          data: {
+            userName: name.trim(),
+            userEmail: email.toLowerCase().trim(),
+            matchDate: currentMatchDate,
+            attendees: parseInt(attendees)
+          }
+        }).catch(error => {
+          console.error('Failed to send admin notification:', error);
+          // Don't fail the RSVP if notification fails
+        });
+      } else {
+        console.log('No admin users have notifications enabled');
       }
     } catch (error) {
       console.error('Error checking notification preferences:', error);

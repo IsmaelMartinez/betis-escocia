@@ -18,12 +18,32 @@ import {
  */
 export function isPushNotificationSupported(): boolean {
   if (typeof window === 'undefined') {
+    console.log('[PushNotifications] Server-side, window undefined');
     return false;
   }
   
-  return 'serviceWorker' in navigator && 
-         'PushManager' in window && 
-         'Notification' in window;
+  const hasServiceWorker = 'serviceWorker' in navigator;
+  const hasPushManager = 'PushManager' in window;
+  const hasNotification = 'Notification' in window;
+  const isSecureContext = window.isSecureContext;
+  const protocol = window.location.protocol;
+  
+  console.log('[PushNotifications] Browser support check:', {
+    hasServiceWorker,
+    hasPushManager,
+    hasNotification,
+    isSecureContext,
+    protocol,
+    userAgent: navigator.userAgent
+  });
+  
+  // Push notifications require HTTPS except for localhost
+  const isValidContext = isSecureContext || window.location.hostname === 'localhost';
+  
+  const isSupported = hasServiceWorker && hasPushManager && hasNotification && isValidContext;
+  console.log('[PushNotifications] Final support result:', isSupported);
+  
+  return isSupported;
 }
 
 /**

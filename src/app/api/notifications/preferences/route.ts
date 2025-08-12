@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkAdminRole } from '@/lib/adminApiProtection';
-import { hasFeature } from '@/lib/flagsmith';
 import { 
   getUserNotificationPreferenceDb, 
   setUserNotificationPreferenceDb 
@@ -23,14 +22,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Check if notifications feature is enabled
-    const notificationsEnabled = await hasFeature('admin-push-notifications');
-    if (!notificationsEnabled) {
-      return NextResponse.json(
-        { error: 'Push notifications feature is not enabled' },
-        { status: 403 }
-      );
-    }
+    // Notifications are always enabled for admin users
 
     // Get authenticated Supabase client
     const { getToken } = getAuth(request);
@@ -66,14 +58,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if notifications feature is enabled
-    const notificationsEnabled = await hasFeature('admin-push-notifications');
-    if (!notificationsEnabled) {
-      return NextResponse.json(
-        { error: 'Push notifications feature is not enabled' },
-        { status: 403 }
-      );
-    }
+    // Notifications are always enabled for admin users
 
     const body = await request.json();
     const { enabled } = body;
