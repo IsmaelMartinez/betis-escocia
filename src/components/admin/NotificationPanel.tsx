@@ -34,11 +34,14 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [testNotificationSent, setTestNotificationSent] = useState(false);
+  const [userPreferenceEnabled, setUserPreferenceEnabled] = useState(false);
+  const [loadingPreference, setLoadingPreference] = useState(true);
 
   // Check initial state
   useEffect(() => {
     const checkInitialState = async () => {
       try {
+        // Check browser notification state
         const state = getNotificationPermissionState();
         const subscribed = await isSubscribedToPushNotifications();
         
@@ -48,6 +51,9 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
         };
         
         setPermissionState(updatedState);
+        
+        // Load user preference from database
+        await loadUserPreference();
         
         // Notify parent components
         onPermissionChange?.(state.permission);
@@ -60,6 +66,48 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
 
     checkInitialState();
   }, [onPermissionChange, onSubscriptionChange]);
+
+  // Load user preference from database
+  const loadUserPreference = async () => {
+    setLoadingPreference(true);
+    try {
+      const response = await fetch('/api/notifications/preferences');
+      if (response.ok) {
+        const data = await response.json();
+        setUserPreferenceEnabled(data.enabled);
+      } else {
+        console.error('Failed to load user preference:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error loading user preference:', error);
+    } finally {
+      setLoadingPreference(false);
+    }
+  };
+
+  // Save user preference to database
+  const saveUserPreference = async (enabled: boolean) => {
+    try {
+      const response = await fetch('/api/notifications/preferences', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ enabled }),
+      });
+
+      if (response.ok) {
+        setUserPreferenceEnabled(enabled);
+        console.log('User preference saved:', enabled);
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save preference');
+      }
+    } catch (error) {
+      console.error('Error saving user preference:', error);
+      throw error;
+    }
+  };
 
   const handleRequestPermission = async () => {
     setLoading(true);
@@ -92,6 +140,9 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
       
       setPermissionState(prev => ({ ...prev, subscribed: true }));
       onSubscriptionChange?.(true);
+      
+      // Save user preference as enabled
+      await saveUserPreference(true);
     } catch (error) {
       console.error('Subscription failed:', error);
       setError(error instanceof Error ? error.message : 'Error al activar las notificaciones');
@@ -110,6 +161,9 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
       if (success) {
         setPermissionState(prev => ({ ...prev, subscribed: false }));
         onSubscriptionChange?.(false);
+        
+        // Save user preference as disabled
+        await saveUserPreference(false);
       } else {
         throw new Error('Failed to unsubscribe');
       }
@@ -148,6 +202,15 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
   };
 
   const getStatusIndicator = () => {
+    if (loadingPreference) {
+      return (
+        <div className="flex items-center text-gray-500">
+          <LoadingSpinner size="sm" />
+          <span className="text-sm ml-2">Cargando...</span>
+        </div>
+      );
+    }
+
     if (!permissionState.supported) {
       return (
         <div className="flex items-center text-gray-500">
@@ -166,7 +229,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
       );
     }
 
-    if (permissionState.permission === 'granted' && permissionState.subscribed) {
+    if (permissionState.permission === 'granted' && permissionState.subscribed && userPreferenceEnabled) {
       return (
         <div className="flex items-center text-green-500">
           <Bell className="h-4 w-4 mr-2" />
@@ -230,28 +293,45 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
       );
     }
 
-    return (
-      <div className="flex flex-col sm:flex-row gap-2">
-        <Button
-          onClick={handleTestNotification}
-          variant="outline"
-          leftIcon={testNotificationSent ? <Check className="h-4 w-4" /> : <Settings className="h-4 w-4" />}
-          isLoading={loading}
-          disabled={loading}
-        >
-          {testNotificationSent ? 'Enviada!' : 'Probar Notificación'}
-        </Button>
-        <Button
-          onClick={handleUnsubscribe}
-          variant="secondary"
-          leftIcon={<BellOff className="h-4 w-4" />}
-          isLoading={loading}
-          disabled={loading}
-        >
-          Desactivar
-        </Button>
-      </div>
-    );
+    // User has browser permissions and subscription, show preference controls
+    if (permissionState.permission === 'granted' && permissionState.subscribed) {
+      return (
+        <div className="space-y-3">
+          {/* User preference toggle */}
+          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <span className="text-sm font-medium text-gray-700">
+              Recibir notificaciones:
+            </span>
+            <Button
+              onClick={() => userPreferenceEnabled ? handleUnsubscribe() : handleSubscribe()}
+              variant={userPreferenceEnabled ? "secondary" : "primary"}
+              leftIcon={userPreferenceEnabled ? <BellOff className="h-4 w-4" /> : <Bell className="h-4 w-4" />}
+              isLoading={loading || loadingPreference}
+              disabled={loading || loadingPreference}
+              size="sm"
+            >
+              {userPreferenceEnabled ? 'Desactivar' : 'Activar'}
+            </Button>
+          </div>
+          
+          {/* Test notification button - only show if enabled */}
+          {userPreferenceEnabled && (
+            <Button
+              onClick={handleTestNotification}
+              variant="outline"
+              leftIcon={testNotificationSent ? <Check className="h-4 w-4" /> : <Settings className="h-4 w-4" />}
+              isLoading={loading}
+              disabled={loading}
+              className="w-full"
+            >
+              {testNotificationSent ? 'Enviada!' : 'Probar Notificación'}
+            </Button>
+          )}
+        </div>
+      );
+    }
+
+    return null;
   };
 
   if (!permissionState.supported) {
@@ -335,7 +415,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
           </div>
 
           {/* Help Text */}
-          {permissionState.subscribed && (
+          {permissionState.subscribed && userPreferenceEnabled && (
             <div className="text-sm text-gray-500 pt-2 border-t">
               <p>
                 ✅ Recibirás notificaciones para:
@@ -344,6 +424,14 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
                 <li>• Nuevas confirmaciones de asistencia (RSVPs)</li>
                 <li>• Nuevos mensajes de contacto</li>
               </ul>
+            </div>
+          )}
+          
+          {permissionState.subscribed && !userPreferenceEnabled && (
+            <div className="text-sm text-gray-500 pt-2 border-t">
+              <p>
+                ℹ️ Las notificaciones están configuradas pero desactivadas. Actívalas arriba para recibir alertas.
+              </p>
             </div>
           )}
         </div>

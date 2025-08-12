@@ -11,7 +11,6 @@ import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import MessageComponent from '@/components/MessageComponent';
 import { FeatureWrapper } from '@/lib/featureProtection';
-import { hasFeature } from '@/lib/flagsmith';
 import NotificationPanel from '@/components/admin/NotificationPanel';
 import MatchForm from '@/components/admin/MatchForm';
 import MatchesList from '@/components/admin/MatchesList';
@@ -51,18 +50,6 @@ function AdminPage() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [contactFilterStatus, setContactFilterStatus] = useState<ContactSubmission['status'][]>(['new', 'in progress']);
   const [allContactSubmissions, setAllContactSubmissions] = useState<ContactSubmission[]>([]);
-  const [isNotificationsEnabled, setIsNotificationsEnabled] = useState<boolean>(false);
-
-  // Check notifications feature flag
-  const checkNotificationsFlag = async () => {
-    try {
-      const notificationsEnabled = await hasFeature('admin-push-notifications');
-      setIsNotificationsEnabled(notificationsEnabled);
-    } catch (error) {
-      console.error('Error checking notifications feature flag:', error);
-      setIsNotificationsEnabled(false);
-    }
-  };
 
   const handleUpdateContactStatus = async (id: number, status: ContactSubmission['status']) => {
     if (!user?.id) {
@@ -334,7 +321,6 @@ function AdminPage() {
   useEffect(() => {
     if (isSignedIn) {
       fetchStats();
-      checkNotificationsFlag();
     }
   }, [isSignedIn]);
 
@@ -552,11 +538,9 @@ function AdminPage() {
         </div>
 
         {/* Push Notifications Panel */}
-        {isNotificationsEnabled && (
-          <div className="mb-8">
-            <NotificationPanel />
-          </div>
-        )}
+        <div className="mb-8">
+          <NotificationPanel />
+        </div>
 
         {/* Recent Data */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

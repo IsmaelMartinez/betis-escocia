@@ -5,6 +5,7 @@ import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, get
 import { getAuth } from '@clerk/nextjs/server';
 import { sendNotificationToAdmins } from '@/lib/notifications/pushNotifications';
 import { hasFeature } from '@/lib/flagsmith';
+import { getUsersWithNotificationsEnabledDb } from '@/lib/notifications/preferencesDb';
 
 // Supabase-based contact operations - no file system needed
 
@@ -102,23 +103,30 @@ export async function POST(request: NextRequest) {
     try {
       const notificationsEnabled = await hasFeature('admin-push-notifications');
       if (notificationsEnabled && insertedSubmission) {
-        sendNotificationToAdmins({
-          type: 'contact',
-          id: insertedSubmission.id,
-          data: {
-            userName: name.trim(),
-            userEmail: email.toLowerCase().trim(),
-            contactType: type ?? 'general',
-            subject: subject.trim()
-          }
-        }).catch(error => {
-          console.error('Failed to send admin notification:', error);
-          // Don't fail the contact submission if notification fails
-        });
+        // Get list of admin users with notifications enabled
+        const enabledUsers = await getUsersWithNotificationsEnabledDb();
+        if (enabledUsers.length > 0) {
+          console.log(`Sending contact notification to ${enabledUsers.length} admin users`);
+          sendNotificationToAdmins({
+            type: 'contact',
+            id: insertedSubmission.id,
+            data: {
+              userName: name.trim(),
+              userEmail: email.toLowerCase().trim(),
+              contactType: type ?? 'general',
+              subject: subject.trim()
+            }
+          }).catch(error => {
+            console.error('Failed to send admin notification:', error);
+            // Don't fail the contact submission if notification fails
+          });
+        } else {
+          console.log('No admin users have notifications enabled');
+        }
       }
     } catch (error) {
-      console.error('Error checking notification feature flag:', error);
-      // Don't fail the contact submission if feature flag check fails
+      console.error('Error checking notification preferences:', error);
+      // Don't fail the contact submission if notification check fails
     }
 
     return NextResponse.json({ 
