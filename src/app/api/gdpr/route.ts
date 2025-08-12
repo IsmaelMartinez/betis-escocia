@@ -24,6 +24,10 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
+    if (requestType !== 'access' && requestType !== 'deletion') {
+      return NextResponse.json({ success: false, error: 'Invalid request type' }, { status: 400 });
+    }
+
     // Use userId for querying
     const { data: rsvps, error: rsvpError } = await supabase
       .from('rsvps')

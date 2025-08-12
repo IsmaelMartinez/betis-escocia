@@ -18,14 +18,14 @@ export async function GET(request: Request) {
         
         switch (type) {
           case 'upcoming':
-            matches = await service.getUpcomingBetisMatchesForCards(10);
+            matches = (await service.getUpcomingBetisMatchesForCards(10)) || [];
             break;
           case 'recent':
-            matches = await service.getRecentBetisResultsForCards(10);
+            matches = (await service.getRecentBetisResultsForCards(10)) || [];
             break;
           case 'all': {
-            const upcoming = await service.getUpcomingBetisMatchesForCards(5);
-            const recent = await service.getRecentBetisResultsForCards(5);
+            const upcoming = (await service.getUpcomingBetisMatchesForCards(5)) || [];
+            const recent = (await service.getRecentBetisResultsForCards(5)) || [];
             matches = [...upcoming, ...recent];
             break;
           }
