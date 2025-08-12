@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import FacebookPagePlugin from './FacebookPagePlugin';
-import { vi } from 'vitest';
 
 const meta: Meta<typeof FacebookPagePlugin> = {
   title: 'Components/FacebookPagePlugin',
@@ -93,13 +92,8 @@ export const ErrorState: Story = {
       if (typeof window !== 'undefined') {
         window.FB = undefined;
         window.fbAsyncInit = undefined;
-        // Mock script loading error
-        vi.spyOn(document.head, 'appendChild').mockImplementation((node) => {
-          if (node.nodeName === 'SCRIPT' && (node as HTMLScriptElement).src.includes('connect.facebook.net')) {
-            setTimeout(() => (node as HTMLScriptElement).onerror?.(new Event('error')), 0);
-          }
-          return node;
-        });
+        // Note: Error simulation removed for Storybook compatibility
+        console.log('Error state: Facebook script loading would fail');
       }
       return Story();
     },

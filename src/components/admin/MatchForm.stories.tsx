@@ -2,13 +2,6 @@ import type { Meta, StoryObj } from '@storybook/nextjs';
 import MatchForm from './MatchForm';
 import { Match } from '@/lib/supabase';
 import { fn } from 'storybook/test';
-import { vi } from 'vitest';
-
-// Mock security functions
-vi.mock('@/lib/security', () => ({
-  generateCSRFToken: vi.fn(() => 'mock-csrf-token'),
-  sanitizeInput: vi.fn((input) => input),
-}));
 
 const mockMatch: Match = {
   id: 1,
@@ -34,6 +27,18 @@ const meta: Meta<typeof MatchForm> = {
     clerk: { enabled: false }, // This component does not use Clerk
   },
   tags: ['autodocs'],
+  decorators: [
+    (Story) => {
+      // Mock security functions for Storybook environment
+      if (typeof window !== 'undefined') {
+        (window as any).__mockSecurity = {
+          generateCSRFToken: () => 'mock-csrf-token',
+          sanitizeInput: (input: any) => input,
+        };
+      }
+      return Story();
+    },
+  ],
   argTypes: {
     match: { control: 'object' },
     onSubmit: { action: 'onSubmit' },

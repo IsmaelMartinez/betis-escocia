@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import { within, userEvent } from 'storybook/test';
-import { vi } from 'vitest'; // Import vi from vitest
+import { within, userEvent, fn } from 'storybook/test';
 import GDPRTabContent from './GDPRTabContent';
 
 const meta = {
@@ -20,7 +19,7 @@ const meta = {
     const canvas = within(canvasElement);
 
     // Mock fetch for data access
-    global.fetch = vi.fn((url) => {
+    global.fetch = fn((url) => {
       if (url === '/api/gdpr') {
         if (args.userEmail === 'test@example.com') {
           return Promise.resolve(new Response(JSON.stringify({
@@ -63,7 +62,7 @@ export const NoData: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    global.fetch = vi.fn((url) => {
+    global.fetch = fn((url) => {
       if (url === '/api/gdpr') {
         return Promise.resolve(new Response(JSON.stringify({ success: true, data: { rsvps: [], contacts: [] } }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
       }
@@ -82,7 +81,7 @@ export const ErrorState: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    global.fetch = vi.fn((url) => {
+    global.fetch = fn((url) => {
       if (url === '/api/gdpr') {
         return Promise.resolve(new Response(JSON.stringify({ success: false, error: 'Error fetching data' }), { status: 500, headers: { 'Content-Type': 'application/json' } }));
       }

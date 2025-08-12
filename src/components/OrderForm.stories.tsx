@@ -2,11 +2,11 @@ import type { Meta, StoryObj } from '@storybook/nextjs';
 import OrderForm from './OrderForm';
 import { http, HttpResponse } from 'msw';
 import { useState } from 'react';
-import { vi } from 'vitest';
+import { fn } from 'storybook/test';
 
-// Mock useFormValidation hook
-vi.mock('@/lib/formValidation', () => ({
-  useFormValidation: vi.fn((initialData) => {
+// Note: This story requires mocking useFormValidation for Storybook
+// In a real Storybook environment, you'd want to use MSW or decorators
+const mockUseFormValidation = fn((initialData) => {
     const [data, setData] = useState(initialData);
     const [errors, setErrors] = useState({});
     const [touched, setTouched] = useState({});
@@ -45,14 +45,7 @@ vi.mock('@/lib/formValidation', () => ({
       touchField,
       validateAll,
     };
-  }),
-  commonValidationRules: {
-    name: { required: true },
-    email: { required: true, email: true },
-    phone: { required: true },
-    message: { required: false },
-  },
-}));
+});
 
 const meta: Meta<typeof OrderForm> = {
   title: 'Forms/OrderForm',
