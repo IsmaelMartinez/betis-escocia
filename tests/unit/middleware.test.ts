@@ -152,4 +152,88 @@ describe('Middleware', () => {
     expect(response.url).toBe('http://localhost/sign-in');
     expect(response.status).toBe(307);
   });
+
+  it('should allow authenticated users to access protected routes', async () => {
+    (globalThis as unknown as { __clerkAuthMock: () => Promise<{ userId: string | null }> }).__clerkAuthMock =
+      vi.fn(async () => ({ userId: 'user_123' }));
+    const request = new NextRequest('http://localhost/dashboard/profile', { headers: { 'x-forwarded-for': '127.0.0.1' } });
+
+    type MockResponse = { headers: Headers; url?: string; status?: number };
+    const response = (await (middleware as unknown as (req: NextRequest) => Promise<MockResponse | undefined>)(request))!;
+
+    if (!response) throw new Error('Response is null or undefined');
+
+    expect(response.url).toBeUndefined();
+    expect(mockNextResponseNext).toHaveBeenCalled();
+  });
+
+  it('should allow authenticated users to access admin routes', async () => {
+    (globalThis as unknown as { __clerkAuthMock: () => Promise<{ userId: string | null }> }).__clerkAuthMock =
+      vi.fn(async () => ({ userId: 'admin_123' }));
+    const request = new NextRequest('http://localhost/admin/users', { headers: { 'x-forwarded-for': '127.0.0.1' } });
+
+    type MockResponse = { headers: Headers; url?: string; status?: number };
+    const response = (await (middleware as unknown as (req: NextRequest) => Promise<MockResponse | undefined>)(request))!;
+
+    if (!response) throw new Error('Response is null or undefined');
+
+    expect(response.url).toBeUndefined();
+    expect(mockNextResponseNext).toHaveBeenCalled();
+  });
+
+  it('should set HSTS header in production', async () => {
+    (process.env as any).NODE_ENV = 'production';
+    (globalThis as unknown as { __clerkAuthMock: () => Promise<{ userId: string | null }> }).__clerkAuthMock =
+      vi.fn(async () => ({ userId: 'user_123' }));
+    const request = new NextRequest('http://localhost/rsvp', { headers: { 'x-forwarded-for': '127.0.0.1' } });
+
+    type MockResponse = { headers: Headers; url?: string; status?: number };
+    const response = (await (middleware as unknown as (req: NextRequest) => Promise<MockResponse | undefined>)(request))!;
+
+    if (!response) throw new Error('Response is null or undefined');
+
+    expect(response.headers.get('Strict-Transport-Security')).toBe('max-age=31536000; includeSubDomains');
+  });
+
+  it('should handle API admin routes correctly', async () => {
+    (globalThis as unknown as { __clerkAuthMock: () => Promise<{ userId: string | null }> }).__clerkAuthMock =
+      vi.fn(async () => ({ userId: null }));
+    const request = new NextRequest('http://localhost/api/admin/matches', { headers: { 'x-forwarded-for': '127.0.0.1' } });
+
+    type MockResponse = { headers: Headers; url?: string; status?: number };
+    const response = (await (middleware as unknown as (req: NextRequest) => Promise<MockResponse | undefined>)(request))!;
+
+    if (!response) throw new Error('Response is null or undefined');
+
+    expect(response.url).toBe('http://localhost/sign-in');
+    expect(response.status).toBe(307);
+  });
+
+  it('should allow public API routes without authentication', async () => {
+    (globalThis as unknown as { __clerkAuthMock: () => Promise<{ userId: string | null }> }).__clerkAuthMock =
+      vi.fn(async () => ({ userId: null }));
+    const request = new NextRequest('http://localhost/api/contact', { headers: { 'x-forwarded-for': '127.0.0.1' } });
+
+    type MockResponse = { headers: Headers; url?: string; status?: number };
+    const response = (await (middleware as unknown as (req: NextRequest) => Promise<MockResponse | undefined>)(request))!;
+
+    if (!response) throw new Error('Response is null or undefined');
+
+    expect(response.url).toBeUndefined();
+    expect(mockNextResponseNext).toHaveBeenCalled();
+  });
+
+  it('should allow non-matched routes by default', async () => {
+    (globalThis as unknown as { __clerkAuthMock: () => Promise<{ userId: string | null }> }).__clerkAuthMock =
+      vi.fn(async () => ({ userId: null }));
+    const request = new NextRequest('http://localhost/some-random-route', { headers: { 'x-forwarded-for': '127.0.0.1' } });
+
+    type MockResponse = { headers: Headers; url?: string; status?: number };
+    const response = (await (middleware as unknown as (req: NextRequest) => Promise<MockResponse | undefined>)(request))!;
+
+    if (!response) throw new Error('Response is null or undefined');
+
+    expect(response.url).toBeUndefined();
+    expect(mockNextResponseNext).toHaveBeenCalled();
+  });
 });

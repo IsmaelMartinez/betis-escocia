@@ -151,6 +151,51 @@ describe('adminApiProtection', () => {
       expect(result.error).toBe('Forbidden. Admin access required.');
     });
 
+    it('should return isAdmin: false for moderator role', async () => {
+      mockAuth.mockReturnValue({ userId: 'user_123' });
+      mockCurrentUser.mockResolvedValue({
+        publicMetadata: { role: 'moderator' },
+      });
+
+      const result = await checkAdminRole();
+
+      expect(result.isAdmin).toBe(false);
+      expect(result.user).toEqual({
+        publicMetadata: { role: 'moderator' },
+      });
+      expect(result.error).toBe('Forbidden. Admin access required.');
+    });
+
+    it('should return isAdmin: false for missing publicMetadata', async () => {
+      mockAuth.mockReturnValue({ userId: 'user_123' });
+      mockCurrentUser.mockResolvedValue({
+        publicMetadata: undefined,
+      });
+
+      const result = await checkAdminRole();
+
+      expect(result.isAdmin).toBe(false);
+      expect(result.user).toEqual({
+        publicMetadata: undefined,
+      });
+      expect(result.error).toBe('Forbidden. Admin access required.');
+    });
+
+    it('should return isAdmin: false for empty publicMetadata', async () => {
+      mockAuth.mockReturnValue({ userId: 'user_123' });
+      mockCurrentUser.mockResolvedValue({
+        publicMetadata: {},
+      });
+
+      const result = await checkAdminRole();
+
+      expect(result.isAdmin).toBe(false);
+      expect(result.user).toEqual({
+        publicMetadata: {},
+      });
+      expect(result.error).toBe('Forbidden. Admin access required.');
+    });
+
     it('should return isAdmin: true and user if user has admin role', async () => {
       mockAuth.mockReturnValue({ userId: 'admin_123' });
       mockCurrentUser.mockResolvedValue({
@@ -170,6 +215,17 @@ describe('adminApiProtection', () => {
       mockAuth.mockImplementationOnce(() => {
         throw new Error('Auth error');
       });
+
+      const result = await checkAdminRole();
+
+      expect(result.isAdmin).toBe(false);
+      expect(result.user).toBeNull();
+      expect(result.error).toBe('Internal server error');
+    });
+
+    it('should handle currentUser service errors gracefully', async () => {
+      mockAuth.mockReturnValue({ userId: 'user_123' });
+      mockCurrentUser.mockRejectedValue(new Error('User service error'));
 
       const result = await checkAdminRole();
 
