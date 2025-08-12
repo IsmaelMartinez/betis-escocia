@@ -26,7 +26,7 @@
       "id": "coll_002",
       "name": "Camiseta Peña Bética Escocesa",
       "description": "Camiseta oficial de la peña. Vota por tu diseño favorito y pre-ordena para saber cuántas producir. Recogida en la peña o en visitas al estadio.",
-      "price": 22.50,
+      "price": 22.5,
       "images": [
         "/images/coleccionables/camiseta-options.svg"
       ],
@@ -55,8 +55,8 @@
             "description": "Lema clásico de la peña en escocés",
             "image": "/images/coleccionables/camiseta-1.png",
             "votes": 0
-            },
-            {
+          },
+          {
             "id": "design_2",
             "name": "\"No busques más que no hay\"",
             "description": "Lema clásico de la peña",
@@ -139,6 +139,94 @@
         "stadium": true,
         "shipping": false
       }
+    },
+    {
+      "id": "merch_1755002503537_3hatnsyr2",
+      "name": "New Test Item",
+      "description": "Test description",
+      "price": 25.99,
+      "images": [
+        "/new-test-image.jpg"
+      ],
+      "category": "clothing",
+      "sizes": [
+        "M",
+        "L"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "inStock": true,
+      "featured": false
+    },
+    {
+      "id": "merch_1755002503542_fvwh7t8xu",
+      "name": "Minimal Item",
+      "description": "Minimal description",
+      "price": 10.99,
+      "images": [],
+      "category": "accessories",
+      "sizes": [],
+      "colors": [],
+      "inStock": false,
+      "featured": false
+    },
+    {
+      "id": "merch_1755002503542_rb6s34x7n",
+      "name": "New Test Item",
+      "description": "Test description",
+      "price": 25.99,
+      "images": [
+        "/new-test-image.jpg"
+      ],
+      "category": "collectibles",
+      "sizes": [
+        "M",
+        "L"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "inStock": true,
+      "featured": false
+    },
+    {
+      "id": "merch_1755002503543_z3i9ka9bs",
+      "name": "New Test Item",
+      "description": "Test description",
+      "price": 25.99,
+      "images": [
+        "/new-test-image.jpg"
+      ],
+      "category": "clothing",
+      "sizes": [
+        "M",
+        "L"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "inStock": true,
+      "featured": false
+    },
+    {
+      "id": "merch_1755002503544_etnxxrqyc",
+      "name": "New Test Item",
+      "description": "Test description",
+      "price": 25.99,
+      "images": [
+        "/new-test-image.jpg"
+      ],
+      "category": "clothing",
+      "sizes": [
+        "M",
+        "L"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "inStock": true,
+      "featured": false
     }
   ],
   "categories": [
@@ -146,7 +234,7 @@
     "accessories",
     "collectibles"
   ],
-  "totalItems": 5,
+  "totalItems": 10,
   "collectionInfo": {
     "polwarth": "Recogida en Polwarth Tavern durante los partidos",
     "stadium": "Recogida en visitas al estadio (cuando viajemos)",

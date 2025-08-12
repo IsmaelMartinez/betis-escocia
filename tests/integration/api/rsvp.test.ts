@@ -76,7 +76,7 @@ describe('/api/rsvp', () => {
         opponent: 'Barcelona',
         date: '2025-06-15T19:00:00',
         competition: 'LaLiga'
-      });
+      } as any);
 
       // Mock supabase query for RSVPs
       const mockSupabase = vi.mocked(supabase);
@@ -568,7 +568,11 @@ describe('/api/rsvp', () => {
 
     it('should handle rate limiting', async () => {
       const { checkRateLimit } = await import('@/lib/security');
-      vi.mocked(checkRateLimit).mockReturnValueOnce({ allowed: false });
+      vi.mocked(checkRateLimit).mockReturnValueOnce({ 
+        allowed: false, 
+        remaining: 0, 
+        resetTime: Date.now() + 100000 
+      });
 
       const validRSVP = {
         name: 'Valid Name',
