@@ -53,6 +53,7 @@ export type FlagsmithFeatureName =
   | 'show-admin'
   | 'show-clerk-auth'
   | 'show-debug-info'
+  | 'admin-push-notifications'
   
 
 // Legacy feature flag names (for backward compatibility during migration)
@@ -127,6 +128,7 @@ export const DEFAULT_FLAG_VALUES: Record<FlagsmithFeatureName, boolean> = {
   'show-admin': false,
   'show-clerk-auth': true,
   'show-debug-info': false,
+  'admin-push-notifications': false,
 };
 
 // Navigation item interface (updated for Flagsmith)

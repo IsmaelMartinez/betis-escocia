@@ -3,6 +3,8 @@ import { supabase, type ContactSubmissionInsert, getAuthenticatedSupabaseClient 
 
 import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, getClientIP } from '@/lib/security';
 import { getAuth } from '@clerk/nextjs/server';
+import { sendNotificationToAdmins } from '@/lib/notifications/pushNotifications';
+import { hasFeature } from '@/lib/flagsmith';
 
 // Supabase-based contact operations - no file system needed
 
@@ -82,7 +84,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Insert into Supabase
-    const { error: insertError } = await (authenticatedSupabase || supabase)
+    const { data: insertedSubmission, error: insertError } = await (authenticatedSupabase || supabase)
       .from('contact_submissions')
       .insert(newSubmission)
       .select()
@@ -96,9 +98,28 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    // Send email notification to admin (non-blocking)
-    
-
+    // Send push notification to admin users (non-blocking)
+    try {
+      const notificationsEnabled = await hasFeature('admin-push-notifications');
+      if (notificationsEnabled && insertedSubmission) {
+        sendNotificationToAdmins({
+          type: 'contact',
+          id: insertedSubmission.id,
+          data: {
+            userName: name.trim(),
+            userEmail: email.toLowerCase().trim(),
+            contactType: type ?? 'general',
+            subject: subject.trim()
+          }
+        }).catch(error => {
+          console.error('Failed to send admin notification:', error);
+          // Don't fail the contact submission if notification fails
+        });
+      }
+    } catch (error) {
+      console.error('Error checking notification feature flag:', error);
+      // Don't fail the contact submission if feature flag check fails
+    }
 
     return NextResponse.json({ 
       success: true, 

@@ -4,6 +4,8 @@ import { supabase, type RSVP } from '@/lib/supabase';
 
 import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, getClientIP } from '@/lib/security';
 import { getCurrentUpcomingMatch } from '@/lib/matchUtils';
+import { sendNotificationToAdmins } from '@/lib/notifications/pushNotifications';
+import { hasFeature } from '@/lib/flagsmith';
 
 // Default current match info (this could be moved to env vars or a separate config)
 
@@ -302,8 +304,28 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Send email notification to admin (non-blocking)
-    
+    // Send push notification to admin users (non-blocking)
+    try {
+      const notificationsEnabled = await hasFeature('admin-push-notifications');
+      if (notificationsEnabled) {
+        sendNotificationToAdmins({
+          type: 'rsvp',
+          id: currentMatchId || 0,
+          data: {
+            userName: name.trim(),
+            userEmail: email.toLowerCase().trim(),
+            matchDate: currentMatchDate,
+            attendees: parseInt(attendees)
+          }
+        }).catch(error => {
+          console.error('Failed to send admin notification:', error);
+          // Don't fail the RSVP if notification fails
+        });
+      }
+    } catch (error) {
+      console.error('Error checking notification feature flag:', error);
+      // Don't fail the RSVP if feature flag check fails
+    }
 
     // Get updated totals for the current match using match_id
     const { data: allRSVPs, error: countError } = await supabase
