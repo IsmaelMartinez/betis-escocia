@@ -1,6 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { createClient } from '@supabase/supabase-js';
-import { mockFlagsmithAPI } from './helpers/flagsmith-mock';
 
 // Load environment variables
 require('dotenv').config({ path: '.env.local' });
@@ -27,10 +26,6 @@ const TEST_USER_ID = process.env.CLERK_TEST_USER_ID || 'your_clerk_test_user_id'
 
 test.describe('Trivia Page', () => {
   test.beforeEach(async ({ page }) => {
-    // Mock Flagsmith API to prevent excessive requests
-    await mockFlagsmithAPI(page, {
-      'trivia-game': true
-    });
 
     // Mock the /api/trivia endpoint to return a consistent set of questions (GET)
     await page.route('/api/trivia', route => {

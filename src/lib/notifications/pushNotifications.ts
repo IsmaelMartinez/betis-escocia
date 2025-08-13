@@ -13,6 +13,12 @@ import {
   NotificationTriggerData
 } from './types';
 
+// Extend global interfaces for better TypeScript support
+interface PushSubscriptionOptions {
+  userVisibleOnly: boolean;
+  applicationServerKey?: Uint8Array;
+}
+
 /**
  * Check if push notifications are supported by the browser
  */
@@ -54,6 +60,10 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
     throw new Error('Push notifications are not supported in this browser');
   }
 
+  if (!navigator.serviceWorker) {
+    throw new Error('Service Worker not supported');
+  }
+
   try {
     const registration = await navigator.serviceWorker.register('/sw.js', {
       scope: '/'
@@ -67,7 +77,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
     return registration;
   } catch (error) {
     console.error('[PushNotifications] Service worker registration failed:', error);
-    throw new Error('Failed to register service worker');
+    throw error;
   }
 }
 
@@ -79,13 +89,38 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
     throw new Error('Push notifications are not supported');
   }
 
+  if (typeof Notification === 'undefined') {
+    throw new Error('Push notifications are not supported');
+  }
+
   try {
-    const permission = await Notification.requestPermission();
+    let permission: NotificationPermission;
+    
+    // Handle legacy callback-based API
+    if (typeof Notification.requestPermission === 'function') {
+      const result = Notification.requestPermission();
+      
+      // Check if it returns a promise (modern API) or uses callback (legacy API)
+      if (result && typeof result.then === 'function') {
+        // Modern promise-based API
+        permission = await result;
+      } else {
+        // Legacy callback-based API
+        permission = await new Promise<NotificationPermission>((resolve) => {
+          Notification.requestPermission((result) => {
+            resolve(result);
+          });
+        });
+      }
+    } else {
+      throw new Error('Notification.requestPermission is not available');
+    }
+    
     console.log('[PushNotifications] Permission result:', permission);
     return permission;
   } catch (error) {
     console.error('[PushNotifications] Permission request failed:', error);
-    throw new Error('Failed to request notification permission');
+    throw error;
   }
 }
 
@@ -96,7 +131,7 @@ export function getNotificationPermissionState(): NotificationPermissionState {
   const supported = isPushNotificationSupported();
   
   return {
-    permission: supported ? Notification.permission : 'denied',
+    permission: supported && typeof Notification !== 'undefined' ? Notification.permission : 'denied',
     supported,
     subscribed: false // This will be updated when checking subscription status
   };
@@ -110,8 +145,12 @@ export async function subscribeToPushNotifications(): Promise<NotificationSubscr
     throw new Error('Push notifications are not supported');
   }
 
+  if (!navigator.serviceWorker) {
+    throw new Error('Push notifications are not supported');
+  }
+
   // Check permission first
-  if (Notification.permission !== 'granted') {
+  if (typeof Notification !== 'undefined' && Notification.permission !== 'granted') {
     const permission = await requestNotificationPermission();
     if (permission !== 'granted') {
       throw new Error('Notification permission denied');
@@ -119,24 +158,41 @@ export async function subscribeToPushNotifications(): Promise<NotificationSubscr
   }
 
   try {
-    // Register service worker
-    const registration = await registerServiceWorker();
-    if (!registration) {
-      throw new Error('Service worker registration failed');
+    // Get service worker registration
+    const registration = await navigator.serviceWorker.ready;
+    if (!registration || !registration.pushManager) {
+      throw new Error('Push notifications are not supported');
     }
 
-    // For now, we'll use a basic subscription without VAPID keys
-    // In production, you would want to implement VAPID keys for security
-    const subscription = await registration.pushManager.subscribe({
+    // Get VAPID key from environment
+    const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+    const subscriptionOptions: PushSubscriptionOptions = {
       userVisibleOnly: true,
-      // applicationServerKey: urlBase64ToUint8Array(vapidPublicKey) // TODO: Add VAPID key
-    });
+    };
+
+    // Add VAPID key if available
+    if (vapidKey) {
+      subscriptionOptions.applicationServerKey = urlBase64ToUint8Array(vapidKey);
+    }
+
+    const subscription = await registration.pushManager.subscribe(subscriptionOptions);
+
+    if (!subscription.endpoint || !subscription.getKey) {
+      throw new Error('Invalid subscription object');
+    }
+
+    const p256dhKey = subscription.getKey('p256dh');
+    const authKey = subscription.getKey('auth');
+
+    if (!p256dhKey || !authKey) {
+      throw new Error('Missing subscription keys');
+    }
 
     const subscriptionData: NotificationSubscription = {
       endpoint: subscription.endpoint,
       keys: {
-        p256dh: arrayBufferToBase64(subscription.getKey('p256dh')!),
-        auth: arrayBufferToBase64(subscription.getKey('auth')!)
+        p256dh: arrayBufferToBase64(p256dhKey),
+        auth: arrayBufferToBase64(authKey)
       }
     };
 
@@ -144,7 +200,7 @@ export async function subscribeToPushNotifications(): Promise<NotificationSubscr
     return subscriptionData;
   } catch (error) {
     console.error('[PushNotifications] Subscription failed:', error);
-    throw new Error('Failed to subscribe to push notifications');
+    throw error;
   }
 }
 
@@ -156,8 +212,16 @@ export async function unsubscribeFromPushNotifications(): Promise<boolean> {
     return false;
   }
 
+  if (!navigator.serviceWorker) {
+    return false;
+  }
+
   try {
     const registration = await navigator.serviceWorker.ready;
+    if (!registration.pushManager) {
+      return false;
+    }
+    
     const subscription = await registration.pushManager.getSubscription();
     
     if (subscription) {
@@ -181,8 +245,16 @@ export async function isSubscribedToPushNotifications(): Promise<boolean> {
     return false;
   }
 
+  if (!navigator.serviceWorker) {
+    return false;
+  }
+
   try {
     const registration = await navigator.serviceWorker.ready;
+    if (!registration.pushManager) {
+      return false;
+    }
+    
     const subscription = await registration.pushManager.getSubscription();
     return subscription !== null;
   } catch (error) {
@@ -199,19 +271,34 @@ export async function getCurrentPushSubscription(): Promise<NotificationSubscrip
     return null;
   }
 
+  if (!navigator.serviceWorker) {
+    return null;
+  }
+
   try {
     const registration = await navigator.serviceWorker.ready;
+    if (!registration.pushManager) {
+      return null;
+    }
+    
     const subscription = await registration.pushManager.getSubscription();
     
     if (!subscription) {
       return null;
     }
 
+    const p256dhKey = subscription.getKey('p256dh');
+    const authKey = subscription.getKey('auth');
+
+    if (!p256dhKey || !authKey) {
+      return null;
+    }
+
     return {
       endpoint: subscription.endpoint,
       keys: {
-        p256dh: arrayBufferToBase64(subscription.getKey('p256dh')!),
-        auth: arrayBufferToBase64(subscription.getKey('auth')!)
+        p256dh: arrayBufferToBase64(p256dhKey),
+        auth: arrayBufferToBase64(authKey)
       }
     };
   } catch (error) {
@@ -225,6 +312,14 @@ export async function getCurrentPushSubscription(): Promise<NotificationSubscrip
  */
 export async function sendTestNotification(payload: Partial<NotificationPayload>): Promise<void> {
   if (!isPushNotificationSupported()) {
+    throw new Error('Push notifications are not supported');
+  }
+
+  if (!navigator.serviceWorker) {
+    throw new Error('Push notifications are not supported');
+  }
+
+  if (typeof Notification === 'undefined') {
     throw new Error('Push notifications are not supported');
   }
 
@@ -337,6 +432,100 @@ export function urlBase64ToUint8Array(base64String: string): Uint8Array {
     outputArray[i] = rawData.charCodeAt(i);
   }
   return outputArray;
+}
+
+/**
+ * Store push subscription in database via API
+ */
+export async function storePushSubscription(subscription: NotificationSubscription): Promise<{ success: boolean; error?: string }> {
+  try {
+    const response = await fetch('/api/notifications/subscribe', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ subscription }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to store subscription');
+    }
+
+    const result = await response.json();
+    console.log('[PushNotifications] Subscription stored successfully:', result);
+    
+    return { success: true };
+  } catch (error) {
+    console.error('[PushNotifications] Failed to store subscription:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    };
+  }
+}
+
+/**
+ * Remove push subscription from database via API
+ */
+export async function removePushSubscription(): Promise<{ success: boolean; error?: string }> {
+  try {
+    const response = await fetch('/api/notifications/subscribe', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to remove subscription');
+    }
+
+    const result = await response.json();
+    console.log('[PushNotifications] Subscription removed successfully:', result);
+    
+    return { success: true };
+  } catch (error) {
+    console.error('[PushNotifications] Failed to remove subscription:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    };
+  }
+}
+
+/**
+ * Check subscription status via API
+ */
+export async function checkSubscriptionStatus(): Promise<{ success: boolean; subscribed: boolean; error?: string }> {
+  try {
+    const response = await fetch('/api/notifications/subscribe', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to check subscription status');
+    }
+
+    const result = await response.json();
+    
+    return { 
+      success: true, 
+      subscribed: result.subscribed 
+    };
+  } catch (error) {
+    console.error('[PushNotifications] Failed to check subscription status:', error);
+    return { 
+      success: false, 
+      subscribed: false,
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    };
+  }
 }
 
 /**

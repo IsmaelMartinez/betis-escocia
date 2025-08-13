@@ -11,7 +11,7 @@ import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import MessageComponent from '@/components/MessageComponent';
 import { FeatureWrapper } from '@/lib/featureProtection';
-import NotificationPanel from '@/components/admin/NotificationPanel';
+import SimpleNotificationPanel from '@/components/admin/SimpleNotificationPanel';
 import MatchForm from '@/components/admin/MatchForm';
 import MatchesList from '@/components/admin/MatchesList';
 import UserManagement from '@/components/admin/UserManagement';
@@ -539,7 +539,7 @@ function AdminPage() {
 
         {/* Push Notifications Panel */}
         <div className="mb-8">
-          <NotificationPanel />
+          <SimpleNotificationPanel />
         </div>
 
         {/* Recent Data */}

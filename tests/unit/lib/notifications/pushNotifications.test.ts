@@ -182,11 +182,12 @@ describe('pushNotifications', () => {
     });
 
     it('should handle legacy callback-based requestPermission', async () => {
-      // Mock legacy API
+      // Mock legacy API that returns undefined but calls callback
       mockNotification.requestPermission = vi.fn((callback) => {
         if (callback) {
           callback('granted');
         }
+        return undefined; // Legacy API doesn't return a promise
       });
 
       const permission = await requestNotificationPermission();
@@ -226,6 +227,9 @@ describe('pushNotifications', () => {
     });
 
     it('should throw error when push manager is not available', async () => {
+      // Ensure permission is granted for this test
+      mockNotification.permission = 'granted';
+      
       Object.defineProperty(global, 'navigator', {
         value: {
           serviceWorker: {
@@ -241,6 +245,9 @@ describe('pushNotifications', () => {
     });
 
     it('should handle subscription API error', async () => {
+      // Ensure permission is granted for this test
+      mockNotification.permission = 'granted';
+      
       // This error handling is for the subscription process itself, not the API call
       // The actual API error handling is tested in the sendNotificationToAdmins tests
       mockServiceWorkerRegistration.pushManager.subscribe.mockRejectedValue(
@@ -253,6 +260,9 @@ describe('pushNotifications', () => {
     });
 
     it('should handle push subscription failure', async () => {
+      // Ensure permission is granted for this test
+      mockNotification.permission = 'granted';
+      
       mockServiceWorkerRegistration.pushManager.subscribe.mockRejectedValue(
         new Error('Subscription failed')
       );
@@ -335,7 +345,7 @@ describe('pushNotifications', () => {
 
       expect(result).toBe(false);
       expect(consoleSpy.error).toHaveBeenCalledWith(
-        'Error checking subscription status:',
+        '[PushNotifications] Check subscription failed:',
         expect.any(Error)
       );
     });
@@ -388,10 +398,13 @@ describe('pushNotifications', () => {
     });
 
     it('should use default values for missing properties', async () => {
-      mockNotification.permission = 'granted';
-      
       // sendTestNotification uses the Notification constructor, not service worker
       const mockNotificationConstructor = vi.fn();
+      Object.defineProperty(mockNotificationConstructor, 'permission', {
+        value: 'granted',
+        writable: true,
+      });
+      
       Object.defineProperty(global, 'Notification', {
         value: mockNotificationConstructor,
         writable: true,
@@ -517,18 +530,23 @@ describe('pushNotifications', () => {
 
   describe('Error Handling and Edge Cases', () => {
     it('should handle missing environment variables gracefully', async () => {
+      // Ensure permission is granted for this test
+      mockNotification.permission = 'granted';
+      
       // Mock missing VAPID key
       delete process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
 
       await subscribeToPushNotifications();
 
       expect(mockServiceWorkerRegistration.pushManager.subscribe).toHaveBeenCalledWith({
-        userVisibleOnly: true,
-        applicationServerKey: undefined
+        userVisibleOnly: true
       });
     });
 
     it('should handle service worker registration failures', async () => {
+      // Ensure permission is granted for this test
+      mockNotification.permission = 'granted';
+      
       Object.defineProperty(global, 'navigator', {
         value: {
           serviceWorker: {

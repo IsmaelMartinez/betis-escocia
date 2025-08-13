@@ -6,14 +6,12 @@ import Button from '@/components/ui/Button';
 import Card, { CardHeader, CardBody } from '@/components/ui/Card';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import {
-  getNotificationPermissionState,
+  isNotificationSupported,
+  getNotificationPermission,
   requestNotificationPermission,
-  subscribeToPushNotifications,
-  unsubscribeFromPushNotifications,
-  isSubscribedToPushNotifications,
-  sendTestNotification
-} from '@/lib/notifications/pushNotifications';
-import type { NotificationPermissionState } from '@/lib/notifications/types';
+  showNotification,
+  areNotificationsEnabled
+} from '@/lib/notifications/simpleNotifications';
 
 interface NotificationPanelProps {
   className?: string;
@@ -26,11 +24,8 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
   onPermissionChange,
   onSubscriptionChange
 }) => {
-  const [permissionState, setPermissionState] = useState<NotificationPermissionState>({
-    permission: 'default',
-    supported: false,
-    subscribed: false
-  });
+  const [permission, setPermission] = useState<NotificationPermission>('default');
+  const [supported, setSupported] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [testNotificationSent, setTestNotificationSent] = useState(false);
@@ -42,15 +37,11 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
     const checkInitialState = async () => {
       try {
         // Check browser notification state
-        const state = getNotificationPermissionState();
-        const subscribed = await isSubscribedToPushNotifications();
+        const browserSupported = isNotificationSupported();
+        const currentPermission = getNotificationPermission();
         
-        const updatedState = {
-          ...state,
-          subscribed
-        };
-        
-        setPermissionState(updatedState);
+        setSupported(browserSupported);
+        setPermission(currentPermission);
         
         // Load user preference from database
         await loadUserPreference();

@@ -1,16 +1,9 @@
-import { test, expect } from '@playwright/test';
-import { mockFlagsmithAPI } from './helpers/flagsmith-mock';
+import { test, expect } from './fixtures';
 
 test.describe('Notification Flow E2E', () => {
   test.beforeEach(async ({ page, context }) => {
     // Grant notification permissions for tests
     await context.grantPermissions(['notifications']);
-    
-    // Mock Flagsmith to enable required features
-    await mockFlagsmithAPI(page, {
-      'show-admin': true,
-      'show-clerk-auth': true,
-    });
   });
 
   test.describe('Anonymous User', () => {

@@ -91,3 +91,8 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+// PUT - Update notification preference for current user (same as POST for compatibility)
+export async function PUT(request: NextRequest) {
+  return POST(request);
+}

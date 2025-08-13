@@ -1,6 +1,7 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Clasificacion Page Happy Path', () => {
+
   test('should load successfully and display key elements', async ({ page }) => {
     // 2.3.1 Verify page loads successfully (HTTP 200)
     const response = await page.goto('/clasificacion');

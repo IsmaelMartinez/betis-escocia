@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkAdminRole } from '@/lib/adminApiProtection';
 import { hasFeature } from '@/lib/flagsmith';
+import { getAuth } from '@clerk/nextjs/server';
+import { getAuthenticatedSupabaseClient } from '@/lib/supabase';
 
 /**
  * API endpoint for managing push notification subscriptions
@@ -9,7 +11,7 @@ import { hasFeature } from '@/lib/flagsmith';
  */
 
 // GET - Check subscription status for current admin user
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     // Check if user has admin role
     const { user, isAdmin, error: authError } = await checkAdminRole();
@@ -29,13 +31,36 @@ export async function GET() {
       );
     }
 
-    // In a real implementation, you would check the database for user's subscription
-    // For now, return a basic response
+    // Get authenticated Supabase client
+    const { getToken } = getAuth(request);
+    const token = await getToken({ template: 'supabase' });
+    const supabase = getAuthenticatedSupabaseClient(token);
+
+    // Check if user has an active push subscription
+    const { data: subscription, error: dbError } = await supabase
+      .from('push_subscriptions')
+      .select('id, endpoint, created_at, last_used_at')
+      .eq('user_id', user?.id)
+      .single();
+
+    if (dbError && dbError.code !== 'PGRST116') { // PGRST116 = no rows returned
+      console.error('Error checking subscription:', dbError);
+      return NextResponse.json(
+        { error: 'Database error' },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({
       success: true,
-      subscribed: false, // Would check database
+      subscribed: !!subscription,
       supported: true,
-      userId: user?.id
+      userId: user?.id,
+      subscription: subscription ? {
+        id: subscription.id,
+        createdAt: subscription.created_at,
+        lastUsedAt: subscription.last_used_at
+      } : null
     });
 
   } catch (error) {
@@ -86,13 +111,41 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // In a real implementation, you would:
-    // 1. Store the subscription in the database linked to the user
-    // 2. Set up VAPID keys for secure communication
-    // 3. Validate the subscription with the push service
+    // Get authenticated Supabase client
+    const { getToken } = getAuth(request);
+    const token = await getToken({ template: 'supabase' });
+    const supabase = getAuthenticatedSupabaseClient(token);
+
+    // Get user agent for debugging
+    const userAgent = request.headers.get('user-agent') || 'Unknown';
+
+    // Store or update the subscription in the database
+    const { data, error: dbError } = await supabase
+      .from('push_subscriptions')
+      .upsert({
+        user_id: user?.id,
+        endpoint: subscription.endpoint,
+        p256dh_key: subscription.keys.p256dh,
+        auth_key: subscription.keys.auth,
+        user_agent: userAgent,
+        last_used_at: new Date().toISOString()
+      }, {
+        onConflict: 'user_id'
+      })
+      .select()
+      .single();
+
+    if (dbError) {
+      console.error('Error storing subscription:', dbError);
+      return NextResponse.json(
+        { error: 'Failed to store subscription' },
+        { status: 500 }
+      );
+    }
     
     console.log(`Admin user ${user?.id} subscribed to push notifications`);
-    console.log('Subscription data:', {
+    console.log('Subscription stored:', {
+      id: data.id,
       endpoint: subscription.endpoint.substring(0, 50) + '...',
       hasKeys: !!subscription.keys
     });
@@ -100,7 +153,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Successfully subscribed to push notifications',
-      subscribed: true
+      subscribed: true,
+      subscriptionId: data.id
     });
 
   } catch (error) {
@@ -113,7 +167,7 @@ export async function POST(request: NextRequest) {
 }
 
 // DELETE - Unsubscribe from push notifications
-export async function DELETE() {
+export async function DELETE(request: NextRequest) {
   try {
     // Check if user has admin role
     const { user, isAdmin, error: authError } = await checkAdminRole();
@@ -133,9 +187,24 @@ export async function DELETE() {
       );
     }
 
-    // In a real implementation, you would:
-    // 1. Remove the subscription from the database
-    // 2. Optionally notify the push service
+    // Get authenticated Supabase client
+    const { getToken } = getAuth(request);
+    const token = await getToken({ template: 'supabase' });
+    const supabase = getAuthenticatedSupabaseClient(token);
+
+    // Remove the subscription from the database
+    const { error: dbError } = await supabase
+      .from('push_subscriptions')
+      .delete()
+      .eq('user_id', user?.id);
+
+    if (dbError) {
+      console.error('Error removing subscription:', dbError);
+      return NextResponse.json(
+        { error: 'Failed to remove subscription' },
+        { status: 500 }
+      );
+    }
     
     console.log(`Admin user ${user?.id} unsubscribed from push notifications`);
 

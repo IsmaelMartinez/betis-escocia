@@ -13,15 +13,16 @@ export async function mockFlagsmithAPI(page: Page, customFlags?: Record<string, 
     'admin-dashboard': true,
     'trivia-game': true,
     'admin-push-notifications': true,
+    'show-admin': true,
+    'show-clerk-auth': true,
     ...customFlags
   };
 
-  // Mock both edge.api.flagsmith.com and api.flagsmith.com endpoints
-  await page.route('**/api.flagsmith.com/**', async route => {
-    const url = route.request().url();
+  const mockResponse = (url: string) => {
+    console.log(`[E2E] Mocking Flagsmith API call: ${url}`);
     
-    if (url.includes('/flags/')) {
-      // Mock flags endpoint
+    if (url.includes('/flags/') || url.includes('/identities/')) {
+      // Mock flags/identities endpoint with feature flags
       const flags = Object.entries(defaultFlags).map(([name, enabled], index) => ({
         id: index + 1,
         feature: { 
@@ -29,50 +30,53 @@ export async function mockFlagsmithAPI(page: Page, customFlags?: Record<string, 
           type: typeof enabled === 'boolean' ? 'FLAG' : 'CONFIG'
         },
         feature_state_value: typeof enabled === 'string' ? enabled : null,
-        enabled: typeof enabled === 'boolean' ? enabled : true
+        enabled: typeof enabled === 'boolean' ? enabled : true,
+        environment: { id: 1, name: 'test' },
+        identity: null
       }));
 
-      await route.fulfill({
+      return {
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify(flags)
-      });
+      };
+    } else if (url.includes('/environment-document/')) {
+      // Mock environment document endpoint
+      return {
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          environment: { id: 1, name: 'test' },
+          flags: Object.entries(defaultFlags).map(([name, enabled], index) => ({
+            id: index + 1,
+            feature: { name, type: typeof enabled === 'boolean' ? 'FLAG' : 'CONFIG' },
+            feature_state_value: typeof enabled === 'string' ? enabled : null,
+            enabled: typeof enabled === 'boolean' ? enabled : true
+          }))
+        })
+      };
     } else {
-      // Mock other Flagsmith endpoints with empty success response
-      await route.fulfill({
+      // Mock other endpoints with empty success response
+      return {
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({})
-      });
+        body: JSON.stringify({ success: true })
+      };
     }
-  });
+  };
 
-  // Also mock edge.api.flagsmith.com specifically
-  await page.route('**/edge.api.flagsmith.com/**', async route => {
-    const url = route.request().url();
-    
-    if (url.includes('/flags/')) {
-      const flags = Object.entries(defaultFlags).map(([name, enabled], index) => ({
-        id: index + 1,
-        feature: { 
-          name, 
-          type: typeof enabled === 'boolean' ? 'FLAG' : 'CONFIG'
-        },
-        feature_state_value: typeof enabled === 'string' ? enabled : null,
-        enabled: typeof enabled === 'boolean' ? enabled : true
-      }));
+  // Mock all Flagsmith domains and endpoints
+  const flagsmithDomains = [
+    '**/api.flagsmith.com/**',
+    '**/edge.api.flagsmith.com/**',
+    '**flagsmith.com/**'
+  ];
 
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(flags)
-      });
-    } else {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({})
-      });
-    }
-  });
+  for (const domain of flagsmithDomains) {
+    await page.route(domain, async route => {
+      const url = route.request().url();
+      const response = mockResponse(url);
+      await route.fulfill(response);
+    });
+  }
 }
