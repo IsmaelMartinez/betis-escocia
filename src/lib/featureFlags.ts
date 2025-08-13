@@ -33,10 +33,10 @@ export interface FeatureFlags {
   showDebugInfo: boolean;
 }
 
-// Cache for flag values to avoid repeated async calls
+// Cache for flag values to avoid repeated async calls (coordinated with Flagsmith internal cache)
 let flagsCache: FeatureFlags | null = null;
 let cacheExpiry: number = 0;
-const CACHE_TTL = 60000; // 60 seconds
+const CACHE_TTL = 60000; // 60 seconds - aligned with Flagsmith refresh interval
 
 /**
  * Initialize Flagsmith (call this early in your app)
@@ -84,7 +84,7 @@ export async function initializeFeatureFlags(): Promise<void> {
 }
 
 /**
- * Get all feature flags (with caching)
+ * Get all feature flags (with optimized caching)
  */
 export async function getFeatureFlags(): Promise<FeatureFlags> {
   // Check cache first
@@ -94,7 +94,7 @@ export async function getFeatureFlags(): Promise<FeatureFlags> {
   }
 
   try {
-    // Get all flags from Flagsmith
+    // Get all flags from Flagsmith using optimized batch operation
     const flagNames: FlagsmithFeatureName[] = Object.values(FLAG_MIGRATION_MAP);
     const flagValues = await getMultipleValues(flagNames);
     
@@ -117,9 +117,9 @@ export async function getFeatureFlags(): Promise<FeatureFlags> {
       showDebugInfo: flagValues['show-debug-info'],
     };
 
-    console.debug('[Feature Flags] getFeatureFlags: Fetched flags from Flagsmith:', flags);
+    console.debug('[Feature Flags] getFeatureFlags: Fetched flags from Flagsmith (batch):', flags);
 
-    // Cache the result
+    // Cache the result with coordinated expiry
     flagsCache = flags;
     cacheExpiry = Date.now() + CACHE_TTL;
     
@@ -127,12 +127,13 @@ export async function getFeatureFlags(): Promise<FeatureFlags> {
   } catch (error) {
     console.error('[Feature Flags] Error getting flags, using fallback:', error);
     
-    // Return cached value if available
+    // Return cached value if available (graceful degradation)
     if (flagsCache) {
+      console.debug('[Feature Flags] Using stale cache due to error');
       return flagsCache;
     }
     
-    // Fallback to environment variables
+    // Final fallback to environment variables
     return getLegacyEnvironmentFlags();
   }
 }

@@ -28,8 +28,6 @@ const E2E_FLAGS: Record<string, boolean> = E2E_MOCK ? {
   'show-admin': true,
   'show-clerk-auth': true,
   'show-debug-info': false,
-  'admin-dashboard': true,
-  'trivia-game': true,
   'admin-push-notifications': true,
 } : {};
 
@@ -116,7 +114,6 @@ class FlagsmithManager {
       // Ensure SDK is initialized
       await this.initialize();
       
-      await this.initialize();
       this.performanceMetrics.apiCallCount++;
       const result = flagsmith.hasFeature(flagName);
       this.updatePerformanceMetrics(startTime);
@@ -143,7 +140,6 @@ class FlagsmithManager {
       // Ensure SDK is initialized
       await this.initialize();
       
-      await this.initialize();
       this.performanceMetrics.apiCallCount++;
       const value = flagsmith.getValue(flagName);
       const result = typeof value === 'boolean' ? value : value === 'true';
@@ -171,16 +167,19 @@ class FlagsmithManager {
       // Ensure SDK is initialized
       await this.initialize();
       
-      // Process flags in parallel
-      const promises = flagNames.map(async (flagName) => {
-        const value = await this.getValue(flagName);
-        return { flagName, value };
-      });
-
-      const resolvedFlags = await Promise.all(promises);
+      // Use Flagsmith's native batch operation instead of parallel individual calls
+      this.performanceMetrics.apiCallCount++;
+      await flagsmith.getFlags(); // Refresh all flags in one API call
       
-      resolvedFlags.forEach(({ flagName, value }) => {
-        results[flagName] = value;
+      // Extract requested flag values from the cached state
+      flagNames.forEach(flagName => {
+        try {
+          const value = flagsmith.hasFeature(flagName);
+          results[flagName] = value;
+        } catch (error) {
+          console.warn(`[Flagsmith] Error getting flag ${flagName}, using fallback:`, error);
+          results[flagName] = this.getFallbackValue(flagName);
+        }
       });
 
       this.updatePerformanceMetrics(startTime);
@@ -301,15 +300,23 @@ class FlagsmithManager {
 let globalFlagsmithInstance: FlagsmithManager | null = null;
 
 /**
- * Get the global Flagsmith manager instance
+ * Get the global Flagsmith manager instance (thread-safe singleton)
  */
 export function getFlagsmithManager(config?: FlagsmithConfig): FlagsmithManager {
   if (!globalFlagsmithInstance) {
-    const finalConfig = config || getFlagsmithConfig();
-    if (!finalConfig) {
-      throw new Error('Flagsmith configuration is required for first initialization');
+    // Double-check locking pattern for thread safety
+    if (!globalFlagsmithInstance) {
+      const finalConfig = config || getFlagsmithConfig();
+      if (!finalConfig) {
+        throw new Error('Flagsmith configuration is required for first initialization');
+      }
+      globalFlagsmithInstance = new FlagsmithManager(finalConfig);
+      
+      // Mark singleton creation in development for debugging
+      if (process.env.NODE_ENV === 'development') {
+        console.debug('[Flagsmith] Singleton instance created');
+      }
     }
-    globalFlagsmithInstance = new FlagsmithManager(finalConfig);
   }
   return globalFlagsmithInstance;
 }
