@@ -1,7 +1,17 @@
 # ADR-018: Simplify Security Layer Using Next.js Built-ins
 
 ## Status
-Proposed
+**Accepted** ✅ - Implementation completed
+
+## Implementation Results (August 2025)
+- ✅ Reduced `security.ts` from 205 to 50 lines (75% reduction)
+- ✅ Migrated CSP to `next.config.js` with Next.js framework patterns
+- ✅ Implemented rate limiting in middleware using Next.js request processing
+- ✅ Removed custom sanitization - now using React's built-in XSS protection
+- ✅ Migrated to Zod schema validation for all API routes
+- ✅ All security tests passing with new framework-based patterns
+- ✅ Improved performance through simplified middleware
+- ✅ Maintained security posture while reducing code complexity
 
 ## Context
 The current security implementation in `src/lib/security.ts` (205 lines) contains custom implementations that may be over-engineered:

@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import { getUpcomingMatchesWithRSVPCounts, Match } from '@/lib/supabase';
 import Link from 'next/link';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { DATETIME_FORMAT } from '@/lib/constants/dateFormats';
 
 interface UpcomingMatchesWidgetProps {
   className?: string;
@@ -159,12 +162,7 @@ export default function UpcomingMatchesWidget({
                   {match.competition}
                 </span>
                 <span className="text-xs text-gray-500">
-                  {matchDate.toLocaleDateString('es-ES', { 
-                    day: '2-digit', 
-                    month: 'short',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
+                  {format(matchDate, DATETIME_FORMAT, { locale: es })}
                 </span>
               </div>
 

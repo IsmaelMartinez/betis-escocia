@@ -2,6 +2,9 @@
 
 import { useState, useMemo } from 'react';
 import { Match } from '@/lib/supabase';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { DATE_FORMAT, TIME_FORMAT } from '@/lib/constants/dateFormats';
 
 // Note: This component should be wrapped with FeatureWrapper for 'showAdmin' flag
 // when used in admin pages to ensure proper access control
@@ -150,15 +153,8 @@ export default function MatchesList({
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return {
-      date: date.toLocaleDateString('es-ES', { 
-        day: '2-digit', 
-        month: '2-digit', 
-        year: 'numeric' 
-      }),
-      time: date.toLocaleTimeString('es-ES', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      })
+      date: format(date, DATE_FORMAT, { locale: es }),
+      time: format(date, TIME_FORMAT, { locale: es })
     };
   };
 

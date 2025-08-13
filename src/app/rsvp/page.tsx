@@ -7,6 +7,9 @@ import RSVPForm from '@/components/RSVPForm';
 import { withFeatureFlag } from '@/lib/featureProtection';
 import { getUpcomingMatchesWithRSVPCounts, Match } from '@/lib/supabase';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { DATETIME_FORMAT } from '@/lib/constants/dateFormats';
 
 interface RSVPData {
   currentMatch: {
@@ -111,13 +114,7 @@ function RSVPPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', {
-      weekday: 'long',
-      day: '2-digit',
-      month: 'long',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    return format(date, DATETIME_FORMAT, { locale: es });
   };
 
   // Default data while loading
@@ -167,12 +164,7 @@ function RSVPPage() {
                         >
                           <div className="text-gray-900 font-medium">{match.opponent}</div>
                           <div className="text-gray-500 text-sm">
-                            {new Date(match.date_time).toLocaleDateString('es-ES', {
-                              day: '2-digit',
-                              month: 'short',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })} • {match.competition}
+                            {format(new Date(match.date_time), 'dd MMM HH:mm', { locale: es })} • {match.competition}
                           </div>
                         </button>
                       ))}

@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { sanitizeInput, validateEmail, validateInputLength } from '@/lib/security';
+import { validateEmail, validateInputLength } from '@/lib/security';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -40,7 +40,7 @@ export function validateForm(data: Record<string, unknown>, rules: ValidationRul
 }
 
 export function validateField(value: unknown, rule: ValidationRule): string | null {
-  const stringValue = sanitizeInput(String(value ?? ''));
+  const stringValue = String(value ?? '').trim();
   
   // Required validation
   if (rule.required && !stringValue) {

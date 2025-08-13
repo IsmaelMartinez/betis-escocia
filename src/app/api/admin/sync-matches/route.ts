@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { FootballDataService } from '@/services/footballDataService';
 import axios from 'axios';
 import { supabase } from '@/lib/supabase';
-import { checkRateLimit, getClientIP } from '@/lib/security';
 import { checkAdminRole } from '@/lib/adminApiProtection';
 
 /**
@@ -18,7 +17,10 @@ function getMatchResult(isBetisHome: boolean, homeScore: number, awayScore: numb
   return 'DRAW';
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  request: NextRequest
+) {
   try {
     // Check admin role
     const { user, isAdmin, error } = await checkAdminRole();
@@ -29,15 +31,7 @@ export async function POST(request: NextRequest) {
       }, { status: !user ? 401 : 403 });
     }
     
-    // Rate limiting for admin operations
-    const clientIP = getClientIP(request);
-    const rateLimit = checkRateLimit(`admin-sync-${clientIP}`, { windowMs: 60 * 60 * 1000, maxRequests: 10 });
-    if (!rateLimit.allowed) {
-      return NextResponse.json(
-        { success: false, error: 'Demasiadas solicitudes de sincronización. Intenta de nuevo más tarde.' },
-        { status: 429 }
-      );
-    }
+    // Note: Rate limiting is now handled by Next.js middleware
     
     // Initialize the football data service
     const footballService = new FootballDataService(axios.create());

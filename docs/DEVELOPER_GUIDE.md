@@ -48,6 +48,15 @@ npm run dev  # Open http://localhost:3000
 - **Flagsmith** for secure-by-default feature flags
 - **Tailwind CSS 4** with Betis branding
 - **Vitest + Playwright + Storybook** for testing
+- **Framework-based security** with Zod validation
+
+### Security Architecture
+The application uses a **framework-first security approach**:
+- **Next.js middleware** handles rate limiting and route protection
+- **Content Security Policy (CSP)** configured in `next.config.js`
+- **Zod schema validation** for all API input validation
+- **React's built-in XSS protection** instead of custom sanitization
+- **Clerk authentication** with JWT tokens for Supabase RLS
 
 ### Project Structure
 ```
@@ -243,16 +252,51 @@ export default async function FeatureComponent() {
 ```typescript
 import { checkAdminRole } from '@/lib/adminApiProtection';
 import { getAuthenticatedSupabaseClient } from '@/lib/supabase';
+import { z } from 'zod';
+
+// Define validation schema
+const requestSchema = z.object({
+  name: z.string().min(2).max(50),
+  email: z.string().email(),
+});
 
 export async function POST(request: NextRequest) {
   const { user, isAdmin, error } = await checkAdminRole();
   if (!isAdmin) return NextResponse.json({ error }, { status: 401 });
   
+  // Validate input with Zod
+  const body = await request.json();
+  const validation = requestSchema.safeParse(body);
+  if (!validation.success) {
+    const errorMessages = validation.error.issues.map(issue => issue.message);
+    return NextResponse.json({ error: errorMessages.join(', ') }, { status: 400 });
+  }
+  
   const { getToken } = getAuth(request);
   const token = await getToken({ template: 'supabase' });
   const supabase = getAuthenticatedSupabaseClient(token);
   
-  // Implementation here
+  // Implementation with validated data: validation.data
+}
+```
+
+#### Input Validation Pattern
+```typescript
+// Create reusable schemas in src/lib/schemas/
+import { z } from 'zod';
+
+export const contactFormSchema = z.object({
+  name: z.string().min(2, 'Mínimo 2 caracteres').max(50),
+  email: z.string().email('Email inválido'),
+  message: z.string().min(5).max(500),
+});
+
+// Use in API routes for consistent validation
+const validation = contactFormSchema.safeParse(requestData);
+if (!validation.success) {
+  return NextResponse.json({
+    error: validation.error.issues.map(issue => issue.message).join(', ')
+  }, { status: 400 });
 }
 ```
 
@@ -346,7 +390,10 @@ Key technical decisions are documented in [ADRs](adr/):
 - Mobile-first responsive design
 - Feature flags for all new functionality
 - Comprehensive testing coverage
-- Security-first patterns
+- Framework-based security patterns
+- Zod schema validation for all user input
+- React XSS protection (no custom sanitization)
+- Middleware-based rate limiting and authentication
 
 ---
 

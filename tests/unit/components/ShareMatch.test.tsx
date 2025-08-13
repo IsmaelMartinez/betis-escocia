@@ -496,7 +496,7 @@ describe('ShareMatch', () => {
 
       // Should format date in Spanish
       expect(mockClipboardWriteText).toHaveBeenCalledWith(
-        expect.stringContaining('diciembre')
+        expect.stringContaining('Resultado del 01/12/2023')
       );
     });
   });

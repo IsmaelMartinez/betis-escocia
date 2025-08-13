@@ -138,7 +138,7 @@ describe('/api/admin/users', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.message).toBe('User ID is required');
+      expect(data.message).toBe('Datos de usuario inválidos');
     });
   });
 
@@ -174,7 +174,8 @@ describe('/api/admin/users', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.message).toBe('User ID is required');
+      expect(data.message).toBe('Datos de eliminación inválidos');
+      expect(data.details).toEqual(['Invalid input: expected string, received undefined']);
     });
   });
 });

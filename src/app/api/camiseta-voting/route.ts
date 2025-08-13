@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { votingRequestSchema } from '@/lib/schemas/voting';
+import { ZodError } from 'zod';
 
 interface Voter {
   name: string;
@@ -147,11 +149,14 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    
+    // Validate input using Zod schema
+    const validatedData = votingRequestSchema.parse(body);
     const data = readVotingData();
     
-    if (body.action === 'vote') {
+    if (validatedData.action === 'vote') {
       // Handle voting
-      const { designId, voter } = body;
+      const { designId, voter } = validatedData;
       
       // Check if user already voted
       const alreadyVoted = data.voting.options.some((option: VotingOption) =>
@@ -197,9 +202,9 @@ export async function POST(request: NextRequest) {
         totalVotes: data.voting.totalVotes
       });
       
-    } else if (body.action === 'preOrder') {
+    } else if (validatedData.action === 'preOrder') {
       // Handle pre-order
-      const { orderData } = body;
+      const { orderData } = validatedData;
       
       // Check if user already has a pre-order
       const existingOrder = data.preOrders.orders.find((order: PreOrder) => 
@@ -237,18 +242,20 @@ export async function POST(request: NextRequest) {
         totalOrders: data.preOrders.totalOrders
       });
       
-    } else {
-      return NextResponse.json(
-        { 
-          success: false,
-          error: 'Acción no válida. Solo se permiten acciones de voto o pre-pedido.' 
-        },
-        { status: 400 }
-      );
     }
     
   } catch (error) {
     console.error('Error processing request:', error);
+    
+    // Handle Zod validation errors
+    if (error instanceof ZodError) {
+      const errorMessages = error.issues.map(issue => issue.message);
+      return NextResponse.json({
+        success: false,
+        error: 'Datos de votación inválidos',
+        details: errorMessages
+      }, { status: 400 });
+    }
     
     // Provide more specific error messages
     let errorMessage = 'Error interno al procesar la solicitud';

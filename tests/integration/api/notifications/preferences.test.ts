@@ -233,8 +233,10 @@ describe('/api/notifications/preferences', () => {
       const data = await response.json();
 
       expect(response.status).toBe(400);
-      expect(data).toEqual({ 
-        error: 'Enabled must be a boolean value' 
+      expect(data).toEqual({
+        success: false,
+        error: 'Datos de preferencias inválidos',
+        details: ['Invalid input: expected boolean, received undefined'],
       });
     });
 
@@ -248,8 +250,10 @@ describe('/api/notifications/preferences', () => {
       const data = await response.json();
 
       expect(response.status).toBe(400);
-      expect(data).toEqual({ 
-        error: 'Enabled must be a boolean value' 
+      expect(data).toEqual({
+        success: false,
+        error: 'Datos de preferencias inválidos',
+        details: ['Invalid input: expected boolean, received string'],
       });
     });
 

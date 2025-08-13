@@ -6,6 +6,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { MatchCardProps } from '@/types/match';
 import type { Match as DatabaseMatch } from '@/lib/supabase';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { DATETIME_FORMAT } from '@/lib/constants/dateFormats';
 
 // Adapter function to convert database match to MatchCardProps
 export function convertDatabaseMatchToCardProps(
@@ -33,10 +36,7 @@ export function convertDatabaseMatchToCardProps(
     watchParty: isUpcoming ? {
       location: 'Polwarth Tavern',
       address: '35 Polwarth Cres, Edinburgh EH11 1HR',
-      time: new Date(dbMatch.date_time).toLocaleTimeString('es-ES', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      })
+      time: format(new Date(dbMatch.date_time), 'HH:mm', { locale: es })
     } : undefined,
     // Add RSVP info if available
     rsvpInfo: (rsvpCount !== undefined && totalAttendees !== undefined) ? {
@@ -71,13 +71,7 @@ const MatchCard: React.FC<MatchCardProps> = (props) => {
   // Format date with Spanish locale
   const formatDate = (dateString: string): string => {
     const matchDate = new Date(dateString);
-    return matchDate.toLocaleDateString('es-ES', {
-      weekday: 'short',
-      day: '2-digit',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    return format(matchDate, DATETIME_FORMAT, { locale: es });
   };
 
   // Get competition badge color and style

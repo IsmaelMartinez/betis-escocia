@@ -21,17 +21,17 @@
 
 ## Tasks
 
-- [ ] 1.0 Create date format constants and prepare foundation
-  - [ ] 1.1 Create `src/lib/constants/dateFormats.ts` with Spanish date format constants (DATE_FORMAT, DATETIME_FORMAT, TIME_FORMAT)
-  - [ ] 1.2 Verify `date-fns` dependency exists in package.json
-  - [ ] 1.3 Test that Spanish locale import works: `import { es } from 'date-fns/locale'`
+- [x] 1.0 Create date format constants and prepare foundation
+  - [x] 1.1 Create `src/lib/constants/dateFormats.ts` with Spanish date format constants (DATE_FORMAT, DATETIME_FORMAT, TIME_FORMAT)
+  - [x] 1.2 Verify `date-fns` dependency exists in package.json
+  - [x] 1.3 Test that Spanish locale import works: `import { es } from 'date-fns/locale'`
 - [ ] 2.0 Identify and migrate existing date operations to use date-fns directly
-  - [ ] 2.1 Audit `src/app/partidos/[matchId]/page.tsx` for date operations and migrate to date-fns with Spanish locale
-  - [ ] 2.2 Audit `src/app/coleccionables/page.tsx` for date operations and migrate to date-fns with Spanish locale
-  - [ ] 2.3 Audit `src/app/admin/page.tsx` for date operations and migrate to date-fns with Spanish locale
-  - [ ] 2.4 Audit `src/app/dashboard/contact-submissions/page.tsx` for date operations and migrate to date-fns with Spanish locale
-  - [ ] 2.5 Audit `src/app/sitemap.ts` for date operations and migrate to date-fns with Spanish locale
-  - [ ] 2.6 Search for any other files using `toLocaleDateString`, `new Date()`, or similar patterns and migrate them
+  - [x] 2.1 Audit `src/app/partidos/[matchId]/page.tsx` for date operations and migrate to date-fns with Spanish locale
+  - [x] 2.2 Audit `src/app/coleccionables/page.tsx` for date operations and migrate to date-fns with Spanish locale
+  - [x] 2.3 Audit `src/app/admin/page.tsx` for date operations and migrate to date-fns with Spanish locale
+  - [x] 2.4 Audit `src/app/dashboard/contact-submissions/page.tsx` for date operations and migrate to date-fns with Spanish locale
+  - [x] 2.5 Audit `src/app/sitemap.ts` for date operations and migrate to date-fns with Spanish locale
+  - [x] 2.6 Search for any other files using `toLocaleDateString`, `new Date()`, or similar patterns and migrate them
 - [ ] 3.0 Remove custom date utilities and clean up imports
   - [ ] 3.1 Remove `src/lib/dateUtils.ts` file entirely
   - [ ] 3.2 Remove `tests/unit/lib/dateUtils.test.ts` file entirely

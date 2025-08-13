@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import { Match } from '@/types/match';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { DATE_FORMAT, TIME_FORMAT } from '@/lib/constants/dateFormats';
 
 interface ShareMatchProps {
   match: Match;
@@ -27,19 +30,12 @@ export default function ShareMatch({ match, opponent }: ShareMatchProps) {
 
   const getShareText = (): string => {
     const result = getMatchResult();
-    const matchDate = new Date(match.utcDate).toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
+    const matchDate = format(new Date(match.utcDate), DATE_FORMAT, { locale: es });
 
     if (result) {
       return `¡Real Betis ${result} ${opponent.name}! 🟢⚪ Resultado del ${matchDate} - Peña Bética Escocesa`;
     } else {
-      const matchTime = new Date(match.utcDate).toLocaleTimeString('es-ES', {
-        hour: '2-digit',
-        minute: '2-digit'
-      });
+      const matchTime = format(new Date(match.utcDate), TIME_FORMAT, { locale: es });
       return `Real Betis vs ${opponent.name} 🟢⚪ ${matchDate} a las ${matchTime} - Peña Bética Escocesa`;
     }
   };

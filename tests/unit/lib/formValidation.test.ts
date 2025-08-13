@@ -1,22 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
 import { validateForm, validateField, commonValidationRules } from '@/lib/formValidation';
-import { sanitizeInput, validateEmail } from '@/lib/security';
+import { validateEmail } from '@/lib/security';
 
 // Mock security functions used by formValidation
 vi.mock('@/lib/security', () => ({
-  sanitizeInput: vi.fn((input) => {
-    // Simulate actual sanitizeInput behavior: remove < and > characters
-    return input
-      .trim()
-      .replace(/[<>]/g, '')
-      .replace(/javascript:/gi, '')
-      .replace(/on\w+=/gi, '')
-      .replace(/data:/gi, '')
-      .replace(/vbscript:/gi, '')
-      .replace(/about:/gi, '')
-      .replace(/file:/gi, '')
-      .replace(/\0/g, '');
-  }),
   validateInputLength: vi.fn((input, min, max) => {
     const len = input.trim().length;
     if (min && len < min) return { isValid: false, error: `Mínimo ${min} caracteres` };
@@ -71,11 +58,10 @@ describe('Form Validation Utilities', () => {
       expect(validateField('invalid', rule)).toBe('Custom error');
     });
 
-    it('should sanitize input before validation', () => {
+    it('should handle strings with special characters (relies on React XSS protection)', () => {
       const rule = { required: true, minLength: 5 };
-      // The sanitized value should be 'scriptabc/script' which is long enough to pass validation
+      // Form validation now trims input but relies on React for XSS protection
       expect(validateField('<script>abc</script>', rule)).toBeNull();
-      expect(sanitizeInput).toHaveBeenCalledWith('<script>abc</script>');
     });
   });
 

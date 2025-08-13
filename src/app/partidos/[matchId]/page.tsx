@@ -10,6 +10,9 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import ShareMatch from '@/components/ShareMatch';
 import BetisLogo from '@/components/BetisLogo';
 import { Suspense } from 'react';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { DATE_FORMAT, TIME_FORMAT } from '@/lib/constants/dateFormats';
 
 interface MatchDetailPageProps {
   params: Promise<{ matchId: string }>;
@@ -37,7 +40,7 @@ export async function generateMetadata({ params }: MatchDetailPageProps): Promis
     }
 
     const opponent = match.homeTeam.id === 90 ? match.awayTeam.name : match.homeTeam.name;
-    const matchDate = new Date(match.utcDate).toLocaleDateString('es-ES');
+    const matchDate = format(new Date(match.utcDate), DATE_FORMAT, { locale: es });
 
     return {
       title: `Real Betis vs ${opponent} - ${matchDate} - Peña Bética Escocesa`,
@@ -54,16 +57,8 @@ export async function generateMetadata({ params }: MatchDetailPageProps): Promis
 // Format date and time for display
 function formatMatchDateTime(utcDate: string): { date: string; time: string } {
   const matchDate = new Date(utcDate);
-  const date = matchDate.toLocaleDateString('es-ES', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-  const time = matchDate.toLocaleTimeString('es-ES', {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
+  const date = format(matchDate, DATE_FORMAT, { locale: es });
+  const time = format(matchDate, TIME_FORMAT, { locale: es });
   
   return { date, time };
 }

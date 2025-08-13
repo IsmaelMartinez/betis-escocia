@@ -1,16 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase, type ContactSubmissionInsert, getAuthenticatedSupabaseClient } from '@/lib/supabase';
-
-import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, getClientIP } from '@/lib/security';
 import { getAuth } from '@clerk/nextjs/server';
 import { triggerAdminNotification } from '@/lib/notifications/simpleNotifications';
+import { contactSchema } from '@/lib/schemas/contact';
+import { ZodError } from 'zod';
 
 // Supabase-based contact operations - no file system needed
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, email, phone, type, subject, message } = sanitizeObject(body);
+    
+    // Validate input using Zod schema
+    const validatedData = contactSchema.parse(body);
+    const { name, email, phone, type, subject, message } = validatedData;
+    
     const { userId, getToken } = getAuth(request);
     let authenticatedSupabase;
     if (userId) {
@@ -20,64 +24,14 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Rate limiting
-    const clientIP = getClientIP(request);
-    const rateLimit = checkRateLimit(clientIP, { windowMs: 15 * 60 * 1000, maxRequests: 3 });
-    if (!rateLimit.allowed) {
-      return NextResponse.json(
-        { success: false, error: 'Demasiadas solicitudes. Por favor, intenta de nuevo más tarde.' },
-        { status: 429 }
-      );
-    }
-    
-    // Security validations
-    const nameValidation = validateInputLength(name, 2, 50);
-    if (!nameValidation.isValid) {
-      return NextResponse.json({ success: false, error: nameValidation.error }, { status: 400 });
-    }
-
-    const emailValidation = validateEmail(email);
-    if (!emailValidation.isValid) {
-      return NextResponse.json({ success: false, error: emailValidation.error }, { status: 400 });
-    }
-
-    const subjectValidation = validateInputLength(subject, 3, 100);
-    if (!subjectValidation.isValid) {
-      return NextResponse.json({ success: false, error: subjectValidation.error }, { status: 400 });
-    }
-
-    const messageValidation = validateInputLength(message, 5, 1000);
-    if (!messageValidation.isValid) {
-      return NextResponse.json({ success: false, error: messageValidation.error }, { status: 400 });
-    }
-
-    // Required fields validation
-    if (!name || !email || !subject || !message) {
-      return NextResponse.json({ 
-        success: false,
-        error: 'Nombre, email, asunto y mensaje son obligatorios' 
-      }, { status: 400 });
-    }
-
-    // Validate phone if provided
-    if (phone && phone.trim()) {
-      const phoneRegex = /^[+]?[\d\s-()]{9,15}$/;
-      if (!phoneRegex.test(phone)) {
-        return NextResponse.json({ 
-          success: false,
-          error: 'Formato de teléfono inválido' 
-        }, { status: 400 });
-      }
-    }
-
-    // Create new submission for Supabase
+    // Create new submission for Supabase (data already validated and sanitized by Zod)
     const newSubmission: ContactSubmissionInsert = {
-      name: name.trim(),
-      email: email.toLowerCase().trim(),
-      phone: phone?.trim() || null,
-      type: type ?? 'general',
-      subject: subject.trim(),
-      message: message.trim(),
+      name,
+      email,
+      phone: phone || null,
+      type,
+      subject,
+      message,
       status: 'new',
       user_id: userId || undefined
     };
@@ -121,6 +75,16 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error processing contact form:', error);
+    
+    // Handle Zod validation errors
+    if (error instanceof ZodError) {
+      const errorMessages = error.issues.map(issue => issue.message);
+      return NextResponse.json({
+        success: false,
+        error: 'Datos de formulario inválidos',
+        details: errorMessages
+      }, { status: 400 });
+    }
     
     // Provide more specific error messages for Supabase operations
     let errorMessage = 'Error interno del servidor al procesar tu mensaje';

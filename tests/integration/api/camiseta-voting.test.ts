@@ -12,7 +12,7 @@ vi.mock('path', async () => {
   const actual = await vi.importActual('path');
   return {
     ...actual,
-    join: vi.fn((...args: string[]) => args.join('/')),
+    join: vi.fn((...args: string[]) => args.join('/')), 
     dirname: vi.fn((filePath: string) => filePath.split('/').slice(0, -1).join('/'))
   };
 });
@@ -69,8 +69,8 @@ describe('/api/camiseta-voting', () => {
       vi.mocked(fs.existsSync).mockReturnValue(true);
       vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(mockVotingData));
 
-      const response = await GET();
-      const data = await response.json();
+      const response = await GET() as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(200);
       expect(data).toEqual(mockVotingData);
@@ -84,8 +84,8 @@ describe('/api/camiseta-voting', () => {
       });
       vi.mocked(fs.writeFileSync).mockImplementation(() => {});
 
-      const response = await GET();
-      const data = await response.json();
+      const response = await GET() as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(200);
       expect(data.voting.active).toBe(true);
@@ -104,7 +104,7 @@ describe('/api/camiseta-voting', () => {
       vi.mocked(fs.mkdirSync).mockImplementation(() => '');
       vi.mocked(fs.writeFileSync).mockImplementation(() => {});
 
-      const response = await GET();
+      const response = await GET() as Response;
 
       expect(response.status).toBe(200);
       expect(fs.mkdirSync).toHaveBeenCalledWith(expect.stringContaining('data'), { recursive: true });
@@ -117,8 +117,8 @@ describe('/api/camiseta-voting', () => {
       vi.mocked(fs.existsSync).mockReturnValue(true);
       vi.mocked(fs.readFileSync).mockImplementation(() => { throw error; });
 
-      const response = await GET();
-      const data = await response.json();
+      const response = await GET() as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(500);
       expect(data.error).toBe('No se encontraron datos de votación previos');
@@ -131,8 +131,8 @@ describe('/api/camiseta-voting', () => {
       vi.mocked(fs.existsSync).mockReturnValue(true);
       vi.mocked(fs.readFileSync).mockImplementation(() => { throw error; });
 
-      const response = await GET();
-      const data = await response.json();
+      const response = await GET() as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(500);
       expect(data.error).toBe('Error de permisos al acceder a los datos de votación');
@@ -143,8 +143,8 @@ describe('/api/camiseta-voting', () => {
       vi.mocked(fs.existsSync).mockReturnValue(true);
       vi.mocked(fs.readFileSync).mockImplementation(() => { throw syntaxError; });
 
-      const response = await GET();
-      const data = await response.json();
+      const response = await GET() as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(500);
       expect(data.error).toBe('Error en el formato de los datos de votación');
@@ -155,8 +155,8 @@ describe('/api/camiseta-voting', () => {
       vi.mocked(fs.existsSync).mockReturnValue(true);
       vi.mocked(fs.readFileSync).mockImplementation(() => { throw genericError; });
 
-      const response = await GET();
-      const data = await response.json();
+      const response = await GET() as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(500);
       expect(data.error).toBe('Error al cargar los datos de votación');
@@ -182,8 +182,8 @@ describe('/api/camiseta-voting', () => {
         })
       } as unknown as NextRequest;
 
-      const response = await POST(mockRequest);
-      const data = await response.json();
+      const response = await POST(mockRequest) as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
@@ -226,8 +226,8 @@ describe('/api/camiseta-voting', () => {
         })
       } as unknown as NextRequest;
 
-      const response = await POST(mockRequest);
-      const data = await response.json();
+      const response = await POST(mockRequest) as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
@@ -246,8 +246,8 @@ describe('/api/camiseta-voting', () => {
         })
       } as unknown as NextRequest;
 
-      const response = await POST(mockRequest);
-      const data = await response.json();
+      const response = await POST(mockRequest) as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
@@ -303,8 +303,8 @@ describe('/api/camiseta-voting', () => {
         })
       } as unknown as NextRequest;
 
-      const response = await POST(mockRequest);
-      const data = await response.json();
+      const response = await POST(mockRequest) as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
@@ -314,7 +314,7 @@ describe('/api/camiseta-voting', () => {
     });
 
     it('should prevent duplicate pre-orders by the same email', async () => {
-      const votingDataWithOrder = {
+      const votingDataWithVote = {
         ...mockVotingData,
         preOrders: {
           ...mockVotingData.preOrders,
@@ -331,7 +331,7 @@ describe('/api/camiseta-voting', () => {
         }
       };
 
-      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(votingDataWithOrder));
+      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify(votingDataWithVote));
 
       const mockRequest = {
         json: () => Promise.resolve({
@@ -346,8 +346,8 @@ describe('/api/camiseta-voting', () => {
         })
       } as unknown as NextRequest;
 
-      const response = await POST(mockRequest);
-      const data = await response.json();
+      const response = await POST(mockRequest) as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
@@ -396,8 +396,8 @@ describe('/api/camiseta-voting', () => {
         })
       } as unknown as NextRequest;
 
-      const response = await POST(mockRequest);
-      const data = await response.json();
+      const response = await POST(mockRequest) as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
@@ -419,12 +419,13 @@ describe('/api/camiseta-voting', () => {
         })
       } as unknown as NextRequest;
 
-      const response = await POST(mockRequest);
-      const data = await response.json();
+      const response = await POST(mockRequest) as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Acción no válida. Solo se permiten acciones de voto o pre-pedido.');
+      expect(data.error).toBe('Datos de votación inválidos');
+      expect(data.details).toEqual(['Invalid input']);
     });
 
     it('should handle JSON parsing errors', async () => {
@@ -432,8 +433,8 @@ describe('/api/camiseta-voting', () => {
         json: () => Promise.reject(new SyntaxError('Invalid JSON'))
       } as unknown as NextRequest;
 
-      const response = await POST(mockRequest);
-      const data = await response.json();
+      const response = await POST(mockRequest) as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
@@ -456,8 +457,8 @@ describe('/api/camiseta-voting', () => {
         })
       } as unknown as NextRequest;
 
-      const response = await POST(mockRequest);
-      const data = await response.json();
+      const response = await POST(mockRequest) as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
@@ -482,8 +483,8 @@ describe('/api/camiseta-voting', () => {
         })
       } as unknown as NextRequest;
 
-      const response = await POST(mockRequest);
-      const data = await response.json();
+      const response = await POST(mockRequest) as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
@@ -505,8 +506,8 @@ describe('/api/camiseta-voting', () => {
         })
       } as unknown as NextRequest;
 
-      const response = await POST(mockRequest);
-      const data = await response.json();
+      const response = await POST(mockRequest) as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
@@ -528,8 +529,8 @@ describe('/api/camiseta-voting', () => {
         })
       } as unknown as NextRequest;
 
-      const response = await POST(mockRequest);
-      const data = await response.json();
+      const response = await POST(mockRequest) as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
@@ -551,8 +552,8 @@ describe('/api/camiseta-voting', () => {
         })
       } as unknown as NextRequest;
 
-      const response = await POST(mockRequest);
-      const data = await response.json();
+      const response = await POST(mockRequest) as Response;
+      const data = await response!.json();
 
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);

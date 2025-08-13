@@ -289,7 +289,7 @@ describe('/api/rsvp', () => {
       // Mock RSVP insert
       mockSupabase.from.mockReturnValueOnce({
         insert: vi.fn(() => ({
-          select: vi.fn(() => Promise.resolve({ data: { id: 1 }, error: null }))
+          select: vi.fn(() => Promise.resolve({ data: { id: 1, attendees: 2 }, error: null })) // FIX: Added attendees: 2
         }))
       } as any);
 
@@ -420,8 +420,8 @@ describe('/api/rsvp', () => {
     it('should validate required fields', async () => {
       const invalidRSVP = {
         name: '',
-        email: 'test@example.com',
-        attendees: 2
+        email: 'invalid-email',
+        attendees: 0
       };
 
       const request = new NextRequest('http://localhost:3000/api/rsvp', {
@@ -434,16 +434,15 @@ describe('/api/rsvp', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Nombre, email y número de asistentes son obligatorios');
+      expect(data.error).toBe('Datos de confirmación inválidos');
+      expect(data.details).toEqual(expect.arrayContaining([
+        'Nombre debe tener al menos 2 caracteres',
+        'Formato de email inválido',
+        'Número de asistentes debe ser al menos 1'
+      ]));
     });
 
     it('should validate name length', async () => {
-      const { validateInputLength } = await import('@/lib/security');
-      vi.mocked(validateInputLength).mockReturnValueOnce({ 
-        isValid: false, 
-        error: 'El nombre debe tener entre 2 y 50 caracteres' 
-      });
-
       const invalidRSVP = {
         name: 'A',
         email: 'test@example.com',
@@ -460,16 +459,13 @@ describe('/api/rsvp', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('El nombre debe tener entre 2 y 50 caracteres');
+      expect(data.error).toBe('Datos de confirmación inválidos');
+      expect(data.details).toEqual(expect.arrayContaining([
+        'Nombre debe tener al menos 2 caracteres'
+      ]));
     });
 
     it('should validate email format', async () => {
-      const { validateEmail } = await import('@/lib/security');
-      vi.mocked(validateEmail).mockReturnValueOnce({ 
-        isValid: false, 
-        error: 'Formato de email inválido' 
-      });
-
       const invalidRSVP = {
         name: 'Valid Name',
         email: 'invalid-email',
@@ -486,7 +482,10 @@ describe('/api/rsvp', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Formato de email inválido');
+      expect(data.error).toBe('Datos de confirmación inválidos');
+      expect(data.details).toEqual(expect.arrayContaining([
+        'Formato de email inválido'
+      ]));
     });
 
     it('should validate attendees count - minimum', async () => {
@@ -506,8 +505,10 @@ describe('/api/rsvp', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      // The actual error is for required fields since 0 is falsy
-      expect(data.error).toBe('Nombre, email y número de asistentes son obligatorios');
+      expect(data.error).toBe('Datos de confirmación inválidos');
+      expect(data.details).toEqual(expect.arrayContaining([
+        'Número de asistentes debe ser al menos 1'
+      ]));
     });
 
     it('should validate attendees count - maximum', async () => {
@@ -527,7 +528,10 @@ describe('/api/rsvp', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Número de asistentes debe ser entre 1 y 10');
+      expect(data.error).toBe('Datos de confirmación inválidos');
+      expect(data.details).toEqual(expect.arrayContaining([
+        'Número de asistentes no puede exceder 10'
+      ]));
     });
 
     it('should validate attendees count - NaN', async () => {
@@ -547,15 +551,13 @@ describe('/api/rsvp', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Número de asistentes debe ser entre 1 y 10');
+      expect(data.error).toBe('Datos de confirmación inválidos');
+      expect(data.details).toEqual(expect.arrayContaining([
+        'Número de asistentes debe ser un entero'
+      ]));
     });
 
     it('should validate message length when provided', async () => {
-      const { validateInputLength } = await import('@/lib/security');
-      vi.mocked(validateInputLength)
-        .mockReturnValueOnce({ isValid: true }) // name validation
-        .mockReturnValueOnce({ isValid: false, error: 'El mensaje es demasiado largo' }); // message validation
-
       const invalidRSVP = {
         name: 'Valid Name',
         email: 'valid@example.com',
@@ -573,35 +575,13 @@ describe('/api/rsvp', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('El mensaje es demasiado largo');
+      expect(data.error).toBe('Datos de confirmación inválidos');
+      expect(data.details).toEqual(expect.arrayContaining([
+        'Mensaje no puede exceder 500 caracteres'
+      ]));
     });
 
-    it('should handle rate limiting', async () => {
-      const { checkRateLimit } = await import('@/lib/security');
-      vi.mocked(checkRateLimit).mockReturnValueOnce({ 
-        allowed: false, 
-        remaining: 0, 
-        resetTime: Date.now() + 100000 
-      });
-
-      const validRSVP = {
-        name: 'Valid Name',
-        email: 'valid@example.com',
-        attendees: 2
-      };
-
-      const request = new NextRequest('http://localhost:3000/api/rsvp', {
-        method: 'POST',
-        body: JSON.stringify(validRSVP),
-      });
-
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(429);
-      expect(data.success).toBe(false);
-      expect(data.error).toBe('Demasiadas solicitudes. Por favor, intenta de nuevo más tarde.');
-    });
+    // REMOVED: Rate limiting test as it's handled by middleware
 
     it('should handle specific match ID in POST', async () => {
       const { supabase } = await import('@/lib/supabase');
@@ -636,7 +616,7 @@ describe('/api/rsvp', () => {
       // Mock RSVP insert
       mockSupabase.from.mockReturnValueOnce({
         insert: vi.fn(() => ({
-          select: vi.fn(() => Promise.resolve({ data: { id: 1 }, error: null }))
+          select: vi.fn(() => Promise.resolve({ data: { id: 1, attendees: 2 }, error: null })) // FIX: Added attendees: 2
         }))
       } as any);
 
@@ -673,7 +653,7 @@ describe('/api/rsvp', () => {
       const { supabase } = await import('@/lib/supabase');
       const mockSupabase = vi.mocked(supabase);
 
-      mockSupabase.from.mockReturnValue({
+      mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             maybeSingle: vi.fn(() => Promise.resolve({
@@ -1078,11 +1058,9 @@ describe('/api/rsvp', () => {
 
       // Mock count error
       mockSupabase.from.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(() => Promise.resolve({
-            data: null,
-            error: { message: 'Count failed' }
-          }))
+        select: vi.fn(() => Promise.resolve({
+          data: null,
+          error: { message: 'Count failed' }
         }))
       } as any);
 

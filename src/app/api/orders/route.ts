@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { createOrderSchema, updateOrderSchema, orderQuerySchema, orderIdSchema } from '@/lib/schemas/orders';
+import { ZodError } from 'zod';
 
 interface Order {
   id: string;
@@ -48,8 +50,13 @@ export async function GET(request: NextRequest) {
   try {
     const orders = await getOrders();
     const { searchParams } = new URL(request.url);
-    const productId = searchParams.get('productId');
-    const status = searchParams.get('status');
+    
+    // Validate query parameters
+    const queryParams = orderQuerySchema.parse({
+      productId: searchParams.get('productId'),
+      status: searchParams.get('status')
+    });
+    const { productId, status } = queryParams;
 
     let filteredOrders = orders;
 
@@ -67,6 +74,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(filteredOrders);
   } catch (error) {
     console.error('Error fetching orders:', error);
+    
+    // Handle Zod validation errors
+    if (error instanceof ZodError) {
+      const errorMessages = error.issues.map(issue => issue.message);
+      return NextResponse.json({
+        error: 'Parámetros de consulta inválidos',
+        details: errorMessages
+      }, { status: 400 });
+    }
     
     // Provide more specific error messages
     let errorMessage = 'Error al cargar los pedidos';
@@ -92,36 +108,31 @@ export async function POST(request: NextRequest) {
   try {
     const orderData = await request.json();
     
-    // Validate required fields
-    if (!orderData.productId || !orderData.productName || !orderData.customerInfo?.name || !orderData.customerInfo?.email) {
-      return NextResponse.json(
-        { error: 'Faltan campos obligatorios' },
-        { status: 400 }
-      );
-    }
+    // Validate input using Zod schema
+    const validatedData = createOrderSchema.parse(orderData);
 
     const orders = await getOrders();
     
     const newOrder: Order = {
       id: Date.now().toString(),
-      productId: orderData.productId,
-      productName: orderData.productName,
-      price: orderData.price,
-      quantity: orderData.quantity,
-      totalPrice: orderData.totalPrice,
+      productId: validatedData.productId,
+      productName: validatedData.productName,
+      price: validatedData.price,
+      quantity: validatedData.quantity,
+      totalPrice: validatedData.totalPrice,
       customerInfo: {
-        name: orderData.customerInfo.name,
-        email: orderData.customerInfo.email,
-        phone: orderData.customerInfo.phone || '',
-        contactMethod: orderData.customerInfo.contactMethod || 'email'
+        name: validatedData.customerInfo.name,
+        email: validatedData.customerInfo.email,
+        phone: validatedData.customerInfo.phone || '',
+        contactMethod: validatedData.customerInfo.contactMethod
       },
       orderDetails: {
-        size: orderData.orderDetails?.size || '',
-        message: orderData.orderDetails?.message || ''
+        size: validatedData.orderDetails?.size || '',
+        message: validatedData.orderDetails?.message || ''
       },
-      isPreOrder: orderData.isPreOrder || false,
+      isPreOrder: validatedData.isPreOrder,
       status: 'pending',
-      timestamp: orderData.timestamp || new Date().toISOString()
+      timestamp: validatedData.timestamp || new Date().toISOString()
     };
 
     orders.push(newOrder);
@@ -137,6 +148,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(newOrder, { status: 201 });
   } catch (error) {
     console.error('Error creating order:', error);
+    
+    // Handle Zod validation errors
+    if (error instanceof ZodError) {
+      const errorMessages = error.issues.map(issue => issue.message);
+      return NextResponse.json({
+        error: 'Datos del pedido inválidos',
+        details: errorMessages
+      }, { status: 400 });
+    }
     
     // Provide more specific error messages
     let errorMessage = 'Error interno al procesar tu pedido';
@@ -160,14 +180,12 @@ export async function PUT(request: NextRequest) {
   try {
     const updateData = await request.json();
     const { searchParams } = new URL(request.url);
-    const orderId = searchParams.get('id');
-
-    if (!orderId) {
-      return NextResponse.json(
-        { error: 'ID del pedido requerido' },
-        { status: 400 }
-      );
-    }
+    
+    // Validate order ID parameter
+    const { id: orderId } = orderIdSchema.parse({ id: searchParams.get('id') });
+    
+    // Validate update data
+    const validatedData = updateOrderSchema.parse(updateData);
 
     const orders = await getOrders();
     const orderIndex = orders.findIndex(order => order.id === orderId);
@@ -180,18 +198,14 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update allowed fields
-    const allowedFields = ['status', 'fulfillmentDate'];
     const updatedOrder = { ...orders[orderIndex] };
-
-    allowedFields.forEach(field => {
-      if (updateData[field] !== undefined) {
-        if (field === 'status') {
-          updatedOrder.status = updateData[field];
-        } else if (field === 'fulfillmentDate') {
-          updatedOrder.fulfillmentDate = updateData[field];
-        }
-      }
-    });
+    
+    if (validatedData.status !== undefined) {
+      updatedOrder.status = validatedData.status;
+    }
+    if (validatedData.fulfillmentDate !== undefined) {
+      updatedOrder.fulfillmentDate = validatedData.fulfillmentDate;
+    }
 
     orders[orderIndex] = updatedOrder;
     await saveOrders(orders);
@@ -205,6 +219,15 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(updatedOrder);
   } catch (error) {
     console.error('Error updating order:', error);
+    
+    // Handle Zod validation errors
+    if (error instanceof ZodError) {
+      const errorMessages = error.issues.map(issue => issue.message);
+      return NextResponse.json({
+        error: 'Datos de actualización inválidos',
+        details: errorMessages
+      }, { status: 400 });
+    }
     
     // Provide more specific error messages
     let errorMessage = 'Error al actualizar el estado del pedido';
@@ -229,14 +252,9 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const orderId = searchParams.get('id');
-
-    if (!orderId) {
-      return NextResponse.json(
-        { error: 'ID del pedido requerido' },
-        { status: 400 }
-      );
-    }
+    
+    // Validate order ID parameter
+    const { id: orderId } = orderIdSchema.parse({ id: searchParams.get('id') });
 
     const orders = await getOrders();
     const orderIndex = orders.findIndex(order => order.id === orderId);
@@ -260,6 +278,15 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ message: 'Pedido eliminado correctamente' });
   } catch (error) {
     console.error('Error deleting order:', error);
+    
+    // Handle Zod validation errors
+    if (error instanceof ZodError) {
+      const errorMessages = error.issues.map(issue => issue.message);
+      return NextResponse.json({
+        error: 'Parámetros inválidos',
+        details: errorMessages
+      }, { status: 400 });
+    }
     
     // Provide more specific error messages
     let errorMessage = 'Error al eliminar el pedido';

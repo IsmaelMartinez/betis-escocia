@@ -9,6 +9,9 @@ import Button from '@/components/ui/Button';
 
 import MessageComponent from '@/components/MessageComponent';
 import type { RSVP, ContactSubmission } from '@/lib/supabase';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { DATE_FORMAT } from '@/lib/constants/dateFormats';
 
 export default function GDPRTabContent({ userEmail }: { userEmail: string }) {
   const [loading, setLoading] = useState(false);
@@ -95,7 +98,7 @@ export default function GDPRTabContent({ userEmail }: { userEmail: string }) {
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `mi-datos-betis-escocia-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `mi-datos-betis-escocia-${format(new Date(), 'yyyy-MM-dd')}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -221,8 +224,8 @@ export default function GDPRTabContent({ userEmail }: { userEmail: string }) {
                             <div key={index} className="bg-white p-3 rounded border text-sm">
                               <div><strong>Nombre:</strong> {rsvp.name}</div>
                               <div><strong>Asistentes:</strong> {rsvp.attendees}</div>
-                              <div><strong>Fecha del partido:</strong> {new Date(rsvp.match_date).toLocaleDateString()}</div>
-                              <div><strong>Creado:</strong> {new Date(rsvp.created_at).toLocaleDateString()}</div>
+                              <div><strong>Fecha del partido:</strong> {format(new Date(rsvp.match_date), DATE_FORMAT, { locale: es })}</div>
+                              <div><strong>Creado:</strong> {format(new Date(rsvp.created_at), DATE_FORMAT, { locale: es })}</div>
                               {rsvp.message && <div><strong>Mensaje:</strong> {rsvp.message}</div>}
                             </div>
                           ))}
@@ -244,7 +247,7 @@ export default function GDPRTabContent({ userEmail }: { userEmail: string }) {
                               <div><strong>Nombre:</strong> {contact.name}</div>
                               <div><strong>Tipo:</strong> {contact.type}</div>
                               <div><strong>Asunto:</strong> {contact.subject}</div>
-                              <div><strong>Creado:</strong> {new Date(contact.created_at).toLocaleDateString()}</div>
+                              <div><strong>Creado:</strong> {format(new Date(contact.created_at), DATE_FORMAT, { locale: es })}</div>
                               {contact.phone && <div><strong>Teléfono:</strong> {contact.phone}</div>}
                             </div>
                           ))}

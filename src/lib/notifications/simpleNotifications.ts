@@ -1,3 +1,7 @@
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { DATE_FORMAT } from '@/lib/constants/dateFormats';
+
 /**
  * Simple Browser Notifications for Admin Users
  * 
@@ -79,7 +83,7 @@ export function showNotification(data: SimpleNotificationData): Notification | n
  * Show RSVP notification
  */
 export function showRSVPNotification(userName: string, matchDate?: string): Notification | null {
-  const dateStr = matchDate ? new Date(matchDate).toLocaleDateString('es-ES') : 'fecha pendiente';
+  const dateStr = matchDate ? format(new Date(matchDate), DATE_FORMAT, { locale: es }) : 'fecha pendiente';
   
   return showNotification({
     title: '🎉 Nuevo RSVP - Peña Bética',

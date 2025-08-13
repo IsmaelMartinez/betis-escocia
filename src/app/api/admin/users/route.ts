@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkAdminRole } from '@/lib/adminApiProtection';
 import { listUsersWithRoles, updateUser, deleteUser } from '@/lib/serverRoleUtils';
 import { type Role } from '@/lib/roleUtils';
+import { userQuerySchema, userUpdateSchema, userDeleteSchema } from '@/lib/schemas/admin';
+import { ZodError } from 'zod';
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,10 +16,12 @@ export async function GET(request: NextRequest) {
       }, { status: !user ? 401 : 403 });
     }
 
-    // Get query parameters
+    // Get and validate query parameters
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const { limit, offset } = userQuerySchema.parse({
+      limit: searchParams.get('limit'),
+      offset: searchParams.get('offset')
+    });
 
     // Fetch users using serverRoleUtils
     const result = await listUsersWithRoles(limit, offset);
@@ -38,6 +42,17 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('Error fetching users:', error);
+    
+    // Handle Zod validation errors
+    if (error instanceof ZodError) {
+      const errorMessages = error.issues.map(issue => issue.message);
+      return NextResponse.json({
+        success: false,
+        message: 'Parámetros de consulta inválidos',
+        details: errorMessages
+      }, { status: 400 });
+    }
+    
     return NextResponse.json({
       success: false,
       message: 'Error fetching users',
@@ -57,14 +72,11 @@ export async function PATCH(request: NextRequest) {
       }, { status: !user ? 401 : 403 });
     }
 
-    const { userId, role, banned } = await request.json();
-
-    if (!userId) {
-      return NextResponse.json({
-        success: false,
-        message: 'User ID is required'
-      }, { status: 400 });
-    }
+    const body = await request.json();
+    
+    // Validate input using Zod schema
+    const validatedData = userUpdateSchema.parse(body);
+    const { userId, role, banned } = validatedData;
 
     // Update user using serverRoleUtils
     const updates: { role?: Role; banned?: boolean } = {};
@@ -88,6 +100,17 @@ export async function PATCH(request: NextRequest) {
 
   } catch (error) {
     console.error('Error updating user:', error);
+    
+    // Handle Zod validation errors
+    if (error instanceof ZodError) {
+      const errorMessages = error.issues.map(issue => issue.message);
+      return NextResponse.json({
+        success: false,
+        message: 'Datos de usuario inválidos',
+        details: errorMessages
+      }, { status: 400 });
+    }
+    
     return NextResponse.json({
       success: false,
       message: 'Error updating user',
@@ -107,14 +130,10 @@ export async function DELETE(request: NextRequest) {
       }, { status: !user ? 401 : 403 });
     }
 
-    const { userId } = await request.json();
-
-    if (!userId) {
-      return NextResponse.json({
-        success: false,
-        message: 'User ID is required'
-      }, { status: 400 });
-    }
+    const body = await request.json();
+    
+    // Validate input using Zod schema
+    const { userId } = userDeleteSchema.parse(body);
 
     // Delete user using serverRoleUtils
     const result = await deleteUser(userId);
@@ -133,6 +152,17 @@ export async function DELETE(request: NextRequest) {
 
   } catch (error) {
     console.error('Error deleting user:', error);
+    
+    // Handle Zod validation errors
+    if (error instanceof ZodError) {
+      const errorMessages = error.issues.map(issue => issue.message);
+      return NextResponse.json({
+        success: false,
+        message: 'Datos de eliminación inválidos',
+        details: errorMessages
+      }, { status: 400 });
+    }
+    
     return NextResponse.json({
       success: false,
       message: 'Error deleting user',

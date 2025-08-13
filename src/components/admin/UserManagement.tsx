@@ -8,6 +8,9 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import MessageComponent from '@/components/MessageComponent';
 import { ROLES } from '@/lib/roleUtils';
 import Image from 'next/image';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { DATE_FORMAT } from '@/lib/constants/dateFormats';
 
 interface User {
   id: string;
@@ -325,7 +328,7 @@ export default function UserManagement({ className = '' }: UserManagementProps) 
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {user.lastSignInAt 
-                        ? new Date(user.lastSignInAt).toLocaleDateString('es-ES')
+                        ? format(new Date(user.lastSignInAt), DATE_FORMAT, { locale: es })
                         : 'Nunca'
                       }
                     </td>

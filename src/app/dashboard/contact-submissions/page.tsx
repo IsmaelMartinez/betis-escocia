@@ -4,6 +4,9 @@ import { getUserContactSubmissions } from '@/lib/supabase';
 import { MessageSquare, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { isFeatureEnabledAsync } from '@/lib/featureFlags';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { DATE_FORMAT } from '@/lib/constants/dateFormats';
 
 export default async function UserContactSubmissionsPage() {
   const isAuthEnabled = await isFeatureEnabledAsync('showClerkAuth');
@@ -46,7 +49,7 @@ export default async function UserContactSubmissionsPage() {
                         {submission.status}
                       </span>
                       <p className="text-xs text-gray-400 mt-1">
-                        {new Date(submission.created_at).toLocaleDateString()}
+                        {format(new Date(submission.created_at), DATE_FORMAT, { locale: es })}
                       </p>
                     </div>
                   </div>

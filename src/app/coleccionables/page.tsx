@@ -10,6 +10,7 @@ import CollectionPointsGuide from '@/components/CollectionPointsGuide';
 import type { MerchandiseItem } from '@/types/community';
 import Image from 'next/image';
 import { withFeatureFlag } from '@/lib/featureProtection';
+import { differenceInMilliseconds, intervalToDuration } from 'date-fns';
 
 interface VotingOption {
   id: string;
@@ -57,16 +58,18 @@ function ColeccionablesPage() {
   useEffect(() => {
     if (votingData?.voting.active) {
       const interval = setInterval(() => {
-        const end = new Date(votingData.voting.endDate).getTime();
-        const now = Date.now();
-        const diff = end - now;
+        const end = new Date(votingData.voting.endDate);
+        const now = new Date();
+        const diff = differenceInMilliseconds(end, now);
+
         if (diff <= 0) {
           setTimeLeft('00:00:00');
           clearInterval(interval);
         } else {
-          const h = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, '0');
-          const m = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-          const s = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
+          const duration = intervalToDuration({ start: 0, end: diff });
+          const h = String(duration.hours || 0).padStart(2, '0');
+          const m = String(duration.minutes || 0).padStart(2, '0');
+          const s = String(duration.seconds || 0).padStart(2, '0');
           setTimeLeft(`${h}:${m}:${s}`);
         }
       }, 1000);

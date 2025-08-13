@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from "@sentry/nextjs";
 import { supabase, type RSVP } from '@/lib/supabase';
-
-import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, getClientIP } from '@/lib/security';
 import { getCurrentUpcomingMatch } from '@/lib/matchUtils';
 import { triggerAdminNotification } from '@/lib/notifications/simpleNotifications';
+import { rsvpSchema } from '@/lib/schemas/rsvp';
+import { ZodError } from 'zod';
 
 // Default current match info (this could be moved to env vars or a separate config)
 
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
       const { data: matchData, error: matchError } = await supabase
         .from('matches')
         .select('id, opponent, date_time, competition')
-        .eq('id', parseInt(matchId))
+        .eq('id', matchId)
         .single();
         
       if (matchError || !matchData) {
@@ -111,59 +111,10 @@ export async function POST(request: NextRequest) {
     async () => {
   try {
     const body = await request.json();
-    const { name, email, attendees, message, whatsappInterest, matchId, userId } = sanitizeObject(body);
-
-    // Rate limiting
-    const clientIP = getClientIP(request);
-    const rateLimit = checkRateLimit(clientIP, { windowMs: 15 * 60 * 1000, maxRequests: 5 });
-    if (!rateLimit.allowed) {
-      return NextResponse.json(
-        { success: false, error: 'Demasiadas solicitudes. Por favor, intenta de nuevo más tarde.' },
-        { status: 429 }
-      );
-    }
-
-    // Security validations
-    const nameValidation = validateInputLength(name, 2, 50);
-    if (!nameValidation.isValid) {
-      return NextResponse.json({ success: false, error: nameValidation.error }, { status: 400 });
-    }
-
-    const emailValidation = validateEmail(email);
-    if (!emailValidation.isValid) {
-      return NextResponse.json({ success: false, error: emailValidation.error }, { status: 400 });
-    }
-
-    // Validate message if provided
-    if (message && typeof message === 'string') {
-      const messageValidation = validateInputLength(message, 0, 500);
-      if (!messageValidation.isValid) {
-        return NextResponse.json({ success: false, error: messageValidation.error }, { status: 400 });
-      }
-    }
-
-    // Required fields validation
-    if (!name || !email || !attendees) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Nombre, email y número de asistentes son obligatorios' 
-        },
-        { status: 400 }
-      );
-    }
-
-    // Validate attendees count
-    const attendeesNum = typeof attendees === 'number' ? attendees : parseInt(attendees);
-    if (isNaN(attendeesNum) || attendeesNum < 1 || attendeesNum > 10) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Número de asistentes debe ser entre 1 y 10' 
-        },
-        { status: 400 }
-      );
-    }
+    
+    // Validate input using Zod schema
+    const validatedData = rsvpSchema.parse(body);
+    const { name, email, attendees, message, whatsappInterest, matchId, userId } = validatedData;
 
     let currentMatch;
     let currentMatchDate;
@@ -174,7 +125,7 @@ export async function POST(request: NextRequest) {
       const { data: matchData, error: matchError } = await supabase
         .from('matches')
         .select('id, opponent, date_time, competition')
-        .eq('id', parseInt(matchId))
+        .eq('id', matchId)
         .maybeSingle();
         
       if (matchError || !matchData) {
@@ -253,7 +204,7 @@ export async function POST(request: NextRequest) {
     const rsvpData = {
       name: name.trim(),
       email: email.toLowerCase().trim(),
-      attendees: parseInt(attendees),
+      attendees: attendees,
       message: message?.trim() ?? '',
       whatsapp_interest: Boolean(whatsappInterest),
       match_date: currentMatchDate,
@@ -330,7 +281,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: 'Confirmación recibida correctamente',
-        totalAttendees: parseInt(attendees),
+        totalAttendees: attendees,
         confirmedCount: 1
       });
     }
@@ -349,6 +300,17 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error processing RSVP:', error);
+    
+    // Handle Zod validation errors
+    if (error instanceof ZodError) {
+      const errorMessages = error.issues.map(issue => issue.message);
+      return NextResponse.json({
+        success: false,
+        error: 'Datos de confirmación inválidos',
+        details: errorMessages
+      }, { status: 400 });
+    }
+    
     return NextResponse.json(
       { 
         success: false, 

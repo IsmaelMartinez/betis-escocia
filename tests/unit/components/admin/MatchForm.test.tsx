@@ -5,7 +5,6 @@ import type { Match, MatchInsert, MatchUpdate } from '@/lib/supabase';
 
 // Mock dependencies
 vi.mock('@/lib/security', () => ({
-  generateCSRFToken: vi.fn(() => 'mock-csrf-token'),
   sanitizeInput: vi.fn((input) => input?.toString() || '')
 }));
 
@@ -254,8 +253,7 @@ describe('MatchForm', () => {
           opponent: 'Real Madrid',
           competition: 'LaLiga',
           home_away: 'away',
-          notes: 'Test notes',
-          csrfToken: 'mock-csrf-token'
+          notes: 'Test notes'
         });
       });
     });
@@ -284,8 +282,7 @@ describe('MatchForm', () => {
           opponent: 'Barcelona',
           competition: 'LaLiga',
           home_away: 'home',
-          notes: 'Important match',
-          csrfToken: 'mock-csrf-token'
+          notes: 'Important match'
         });
       });
     });
@@ -580,20 +577,7 @@ describe('MatchForm', () => {
     });
   });
 
-  describe('CSRF token', () => {
-    it('includes CSRF token in hidden input', () => {
-      render(
-        <MatchForm
-          onSubmit={mockOnSubmit}
-          onCancel={mockOnCancel}
-        />
-      );
-
-      const csrfInput = screen.getByDisplayValue('mock-csrf-token');
-      expect(csrfInput).toHaveAttribute('type', 'hidden');
-      expect(csrfInput).toHaveAttribute('name', 'csrfToken');
-    });
-  });
+  
 
   describe('Accessibility', () => {
     it('has proper labels for all form fields', () => {

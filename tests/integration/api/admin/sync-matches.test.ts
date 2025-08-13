@@ -29,20 +29,20 @@ import { POST } from '@/app/api/admin/sync-matches/route';
 import { checkAdminRole } from '@/lib/adminApiProtection';
 import { FootballDataService } from '@/services/footballDataService';
 import { supabase } from '@/lib/supabase';
-import { checkRateLimit } from '@/lib/security';
+
 
 describe('POST /api/admin/sync-matches', () => {
   const mockCheckAdminRole = vi.mocked(checkAdminRole);
   const mockFootballDataService = vi.mocked(FootballDataService);
   const mockSupabaseFrom = supabase.from as any;
-  const mockCheckRateLimit = vi.mocked(checkRateLimit);
+  
   const mockNextResponseJson = vi.mocked(NextResponse.json);
 
   beforeEach(() => {
     vi.clearAllMocks();
     // Default mocks for successful admin role and rate limit
     mockCheckAdminRole.mockResolvedValue({ user: { id: 'admin_user_id', publicMetadata: { role: 'admin' } } as any, isAdmin: true, error: undefined });
-    mockCheckRateLimit.mockReturnValue({ allowed: true, remaining: 0, resetTime: 0 });
+    
     mockFootballDataService.mockImplementation(() => ({
       http: {} as any, // Mock http property
       fetchRealBetisMatches: vi.fn(),
@@ -91,17 +91,7 @@ describe('POST /api/admin/sync-matches', () => {
   });
 
   // 1.9.2 Implement rate limiting tests
-  it('should return 429 if rate limit is exceeded', async () => {
-    mockCheckRateLimit.mockReturnValue({ allowed: false, remaining: 0, resetTime: 0 });
-
-    const req = new NextRequest('http://localhost/api/admin/sync-matches', { method: 'POST' });
-    const res = await POST(req);
-
-    expect(mockNextResponseJson).toHaveBeenCalledWith(
-      { success: false, error: 'Demasiadas solicitudes de sincronización. Intenta de nuevo más tarde.' },
-      { status: 429 }
-    );
-  });
+  
 
   // 1.9.3 Implement successful match synchronization tests (new and updated matches)
   it('should successfully import new matches', async () => {

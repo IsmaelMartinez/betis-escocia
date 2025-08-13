@@ -37,7 +37,6 @@ vi.mock('@/lib/security', () => ({
   sanitizeObject: vi.fn((obj) => obj),
   validateEmail: vi.fn(() => ({ isValid: true })), // Default mock
   validateInputLength: vi.fn(() => ({ isValid: true })), // Default mock
-  checkRateLimit: vi.fn(() => ({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 })),
   getClientIP: vi.fn(() => '127.0.0.1'),
 }));
 
@@ -186,7 +185,6 @@ describe('Contact API - POST', () => {
     // Ensure all validations pass
     vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
     vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
 
     // Mock the insert operation to return a successful result
     (supabase.from as any).mockReturnValue({
@@ -234,7 +232,13 @@ describe('Contact API - POST', () => {
     expect(response.status).toBe(400);
     expect(json).toEqual({
       success: false,
-      error: 'Mínimo 2 caracteres',
+      error: 'Datos de formulario inválidos',
+      details: expect.arrayContaining([
+        'Nombre debe tener al menos 2 caracteres',
+        'Formato de email inválido',
+        'Asunto debe tener al menos 3 caracteres',
+        'Mensaje debe tener al menos 5 caracteres',
+      ]),
     });
     expect(supabase.from).not.toHaveBeenCalled();
   });
@@ -259,7 +263,6 @@ describe('Contact API - POST', () => {
       return { isValid: true };
     });
     // Mock checkRateLimit to always pass
-    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
 
     const response = await POST(mockRequest);
     const json = await response.json();
@@ -267,40 +270,16 @@ describe('Contact API - POST', () => {
     expect(response.status).toBe(400);
     expect(json).toEqual({
       success: false,
-      error: 'Formato de email inválido',
+      error: 'Datos de formulario inválidos',
+      details: expect.arrayContaining([
+        'Formato de email inválido',
+        'Formato de teléfono inválido',
+      ]),
     });
     expect(supabase.from).not.toHaveBeenCalled();
   });
 
-  it('should return 429 for rate limit exceeded', async () => {
-    const mockRequest = {
-      json: () => Promise.resolve({
-        name: 'Test User',
-        email: 'test@example.com',
-        phone: '1234567890',
-        type: 'general',
-        subject: 'Test Subject',
-        message: 'This is a test message.',
-      }),
-    } as unknown as NextRequest;
-
-    // Mock checkRateLimit to return not allowed
-    vi.spyOn(security, 'checkRateLimit').mockReturnValueOnce({ 
-      allowed: false, 
-      remaining: 0, 
-      resetTime: Date.now() + 100000 
-    });
-
-    const response = await POST(mockRequest);
-    const json = await response.json();
-
-    expect(response.status).toBe(429);
-    expect(json).toEqual({
-      success: false,
-      error: 'Demasiadas solicitudes. Por favor, intenta de nuevo más tarde.',
-    });
-    expect(supabase.from).not.toHaveBeenCalled();
-  });
+  
 
   it('should return 500 for database insertion error', async () => {
     const mockRequest = {
@@ -317,7 +296,6 @@ describe('Contact API - POST', () => {
     // Ensure all validations pass
     vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
     vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
 
     // Mock the insert operation to return an error
     (supabase.from as any).mockReturnValue({
@@ -365,8 +343,7 @@ describe('Contact API - POST', () => {
       // Ensure all validations pass
       vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
       vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-      vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
-
+  
       // Mock successful database insert
       (supabase.from as any).mockReturnValue({
         insert: vi.fn(() => ({
@@ -408,14 +385,16 @@ describe('Contact API - POST', () => {
       // Ensure all other validations pass
       vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
       vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-      vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
-
+  
       const response = await POST(mockRequest);
       const json = await response.json();
 
       expect(response.status).toBe(400);
       expect(json.success).toBe(false);
-      expect(json.error).toBe('Formato de teléfono inválido');
+      expect(json.error).toBe('Datos de formulario inválidos');
+      expect(json.details).toEqual(expect.arrayContaining([
+        'Formato de teléfono inválido',
+      ]));
     }
   });
 
@@ -435,14 +414,16 @@ describe('Contact API - POST', () => {
       // Ensure all field validations pass
       vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
       vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-      vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
-
+  
       const response = await POST(mockRequest);
       const json = await response.json();
 
       expect(response.status).toBe(400);
       expect(json.success).toBe(false);
-      expect(json.error).toBe('Nombre, email, asunto y mensaje son obligatorios');
+      expect(json.error).toBe('Datos de formulario inválidos');
+      expect(json.details).toEqual(expect.arrayContaining([
+        'Invalid input: expected string, received undefined',
+      ]));
     }
   });
 
@@ -469,7 +450,7 @@ describe('Contact API - POST', () => {
       json: () => Promise.resolve({
         name: 'Authenticated User',
         email: 'auth@example.com',
-        type: 'membership',
+        type: 'general',
         subject: 'Membership inquiry',
         message: 'I want to join the peña.',
       }),
@@ -478,7 +459,6 @@ describe('Contact API - POST', () => {
     // Ensure all validations pass
     vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
     vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
 
     // Mock authenticated supabase client
     const { getAuthenticatedSupabaseClient } = await import('@/lib/supabase');
@@ -528,7 +508,6 @@ describe('Contact API - POST', () => {
     // Mock all validations to pass
     vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
     vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
 
     // Mock database operation to throw network error
     (supabase.from as any).mockImplementation(() => {
@@ -556,7 +535,6 @@ describe('Contact API - POST', () => {
     // Mock all validations to pass
     vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
     vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
 
     // Mock database operation to throw timeout error
     (supabase.from as any).mockImplementation(() => {
@@ -584,7 +562,6 @@ describe('Contact API - POST', () => {
     // Mock all validations to pass
     vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
     vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
 
     // Mock database operation to throw duplicate error
     (supabase.from as any).mockImplementation(() => {
@@ -614,7 +591,6 @@ describe('Contact API - POST', () => {
     // Ensure all validations pass
     vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
     vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-    vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
 
     // Mock successful database insert
     (supabase.from as any).mockReturnValue({
@@ -633,7 +609,7 @@ describe('Contact API - POST', () => {
   });
 
   it('should handle various contact types correctly', async () => {
-    const contactTypes = ['general', 'membership', 'event', 'complaint', undefined];
+    const contactTypes = ['general', 'rsvp', 'merchandise', 'photo', 'whatsapp', 'feedback', undefined];
 
     for (const type of contactTypes) {
       const mockRequest = {
@@ -649,8 +625,7 @@ describe('Contact API - POST', () => {
       // Ensure all validations pass
       vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
       vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
-      vi.spyOn(security, 'checkRateLimit').mockReturnValue({ allowed: true, remaining: 2, resetTime: Date.now() + 100000 });
-
+  
       // Mock successful database insert
       (supabase.from as any).mockReturnValue({
         insert: vi.fn(() => ({

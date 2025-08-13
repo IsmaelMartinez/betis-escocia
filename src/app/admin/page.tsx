@@ -18,6 +18,9 @@ import UserManagement from '@/components/admin/UserManagement';
 import ContactSubmissionsList from '@/components/admin/ContactSubmissionsList';
 import { useRouter } from 'next/navigation';
 import { withAdminRole } from '@/lib/withAdminRole';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { DATE_FORMAT } from '@/lib/constants/dateFormats';
 
 interface AdminStats {
   totalRSVPs: number;
@@ -278,7 +281,7 @@ function AdminPage() {
       const link = document.createElement('a');
       const url = URL.createObjectURL(blob);
       link.setAttribute('href', url);
-      link.setAttribute('download', `rsvps-${new Date().toISOString().split('T')[0]}.csv`);
+      link.setAttribute('download', `rsvps-${format(new Date(), 'yyyy-MM-dd')}.csv`);
       link.style.visibility = 'hidden';
       document.body.appendChild(link);
       link.click();
@@ -308,7 +311,7 @@ function AdminPage() {
       const link = document.createElement('a');
       const url = URL.createObjectURL(blob);
       link.setAttribute('href', url);
-      link.setAttribute('download', `contacts-${new Date().toISOString().split('T')[0]}.csv`);
+      link.setAttribute('download', `contacts-${format(new Date(), 'yyyy-MM-dd')}.csv`);
       link.style.visibility = 'hidden';
       document.body.appendChild(link);
       link.click();
@@ -559,13 +562,13 @@ function AdminPage() {
                       <div className="flex justify-between items-start mb-2">
                         <div className="font-semibold text-betis-black">{rsvp.name}</div>
                         <div className="text-sm text-gray-500">
-                          {new Date(rsvp.created_at).toLocaleDateString('es-ES')}
+                          {format(new Date(rsvp.created_at), DATE_FORMAT, { locale: es })}
                         </div>
                       </div>
                       <div className="text-sm text-gray-600 mb-1">{rsvp.email}</div>
                       <div className="text-sm">
                         <span className="font-medium">Asistentes:</span> {rsvp.attendees} | 
-                        <span className="font-medium"> Partido:</span> {new Date(rsvp.match_date).toLocaleDateString('es-ES')}
+                        <span className="font-medium"> Partido:</span> {format(new Date(rsvp.match_date), DATE_FORMAT, { locale: es })}
                       </div>
                       {rsvp.message && (
                         <div className="text-sm text-gray-600 mt-2 italic">&ldquo;{rsvp.message}&rdquo;</div>
@@ -597,7 +600,7 @@ function AdminPage() {
                       <div className="flex justify-between items-start mb-2">
                         <div className="font-semibold text-betis-black">{contact.name}</div>
                         <div className="text-sm text-gray-500">
-                          {new Date(contact.created_at).toLocaleDateString('es-ES')}
+                          {format(new Date(contact.created_at), DATE_FORMAT, { locale: es })}
                         </div>
                       </div>
                       <div className="text-sm text-gray-600 mb-1">{contact.email}</div>

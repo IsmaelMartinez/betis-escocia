@@ -5,6 +5,8 @@ import {
   setUserNotificationPreferenceDb 
 } from '@/lib/notifications/preferencesDb';
 import { getAuth } from '@clerk/nextjs/server';
+import { notificationPreferencesSchema } from '@/lib/schemas/admin';
+import { ZodError } from 'zod';
 
 /**
  * API endpoint for managing user notification preferences
@@ -61,14 +63,10 @@ export async function POST(request: NextRequest) {
     // Notifications are always enabled for admin users
 
     const body = await request.json();
-    const { enabled } = body;
-
-    if (typeof enabled !== 'boolean') {
-      return NextResponse.json(
-        { error: 'Enabled must be a boolean value' },
-        { status: 400 }
-      );
-    }
+    
+    // Validate input using Zod schema
+    const validatedData = notificationPreferencesSchema.parse(body);
+    const { enabled } = validatedData;
 
     // Get authenticated Supabase client
     const { getToken } = getAuth(request);
@@ -85,6 +83,17 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error setting notification preference:', error);
+    
+    // Handle Zod validation errors
+    if (error instanceof ZodError) {
+      const errorMessages = error.issues.map(issue => issue.message);
+      return NextResponse.json({
+        success: false,
+        error: 'Datos de preferencias inválidos',
+        details: errorMessages
+      }, { status: 400 });
+    }
+    
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

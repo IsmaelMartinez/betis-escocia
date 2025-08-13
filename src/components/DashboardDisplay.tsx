@@ -1,6 +1,9 @@
 import { Calendar, MessageSquare, PieChart, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { RSVP, ContactSubmission } from '@/lib/supabase';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { DATE_FORMAT } from '@/lib/constants/dateFormats';
 
 interface Counts {
   rsvpCount: number;
@@ -48,13 +51,13 @@ export default function DashboardDisplay({
               <div>
                 <p className="text-sm font-medium text-gray-600">Miembro desde</p>
                 <p className="text-gray-900">
-                  {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+                  {user.createdAt ? format(new Date(user.createdAt), DATE_FORMAT, { locale: es }) : 'N/A'}
                 </p>
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-600">Último acceso</p>
                 <p className="text-gray-900">
-                  {user.lastSignInAt ? new Date(user.lastSignInAt).toLocaleDateString() : 'N/A'}
+                  {user.lastSignInAt ? format(new Date(user.lastSignInAt), DATE_FORMAT, { locale: es }) : 'N/A'}
                 </p>
               </div>
             </div>
@@ -124,7 +127,7 @@ export default function DashboardDisplay({
                           )}
                         </div>
                         <span className="text-xs text-gray-400">
-                          {new Date(rsvp.created_at).toLocaleDateString()}
+                          {format(new Date(rsvp.created_at), DATE_FORMAT, { locale: es })}
                         </span>
                       </div>
                     </div>
@@ -176,7 +179,7 @@ export default function DashboardDisplay({
                             {submission.status}
                           </span>
                           <p className="text-xs text-gray-400 mt-1">
-                            {new Date(submission.created_at).toLocaleDateString()}
+                            {format(new Date(submission.created_at), DATE_FORMAT, { locale: es })}
                           </p>
                         </div>
                       </div>
