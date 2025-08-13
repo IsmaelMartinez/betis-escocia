@@ -1,7 +1,7 @@
 # ADR-017: Simplify Date Utilities by Consolidating to date-fns
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 The current codebase has multiple date utility files with minimal functionality:

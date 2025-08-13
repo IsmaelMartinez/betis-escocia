@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { formatISO } from 'date-fns';
 
 const DEFAULT_MATCH = {
   opponent: "Real Madrid",
@@ -10,7 +11,7 @@ export async function getCurrentUpcomingMatch() {
   const { data, error } = await supabase
     .from('matches')
     .select('id, opponent, date_time, competition')
-    .gte('date_time', new Date().toISOString())
+    .gte('date_time', formatISO(new Date()))
     .order('date_time', { ascending: true })
     .limit(1);
 

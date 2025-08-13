@@ -136,6 +136,7 @@ describe('matchUtils', () => {
 
     it('should use current date for filtering upcoming matches', async () => {
       const mockDateString = '2025-01-15T12:00:00.000Z';
+      const expectedDateString = '2025-01-15T12:00:00Z'; // formatISO doesn't include .000
       vi.setSystemTime(new Date(mockDateString));
 
       mockSupabaseQuery.limit.mockResolvedValue({
@@ -145,7 +146,7 @@ describe('matchUtils', () => {
 
       await getCurrentUpcomingMatch();
 
-      expect(mockSupabaseQuery.gte).toHaveBeenCalledWith('date_time', mockDateString);
+      expect(mockSupabaseQuery.gte).toHaveBeenCalledWith('date_time', expectedDateString);
       
       vi.useRealTimers();
     });

@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import rateLimit from 'axios-rate-limit';
 import type { Match } from '@/types/match';
+import { getYear, isAfter, isBefore, compareDesc, compareAsc } from 'date-fns';
 
 const API_KEY = process.env.FOOTBALL_DATA_API_KEY;
 const BASE_URL = process.env.FOOTBALL_DATA_API_URL || 'https://api.football-data.org/v4';
@@ -14,7 +15,7 @@ export const LALIGA_COMPETITION_ID = 'PD';
 // The working script uses current year, so let's match that
 function getCurrentFootballSeason(): number {
   // Use current year like the working script
-  return new Date().getFullYear();
+  return getYear(new Date());
 }
 
 // Types
@@ -118,8 +119,8 @@ export class FootballDataService {
     const now = new Date();
     
     return allMatches
-      .filter(match => new Date(match.utcDate) > now)
-      .sort((a, b) => new Date(a.utcDate).getTime() - new Date(b.utcDate).getTime())
+      .filter(match => isAfter(new Date(match.utcDate), now))
+      .sort((a, b) => compareAsc(new Date(a.utcDate), new Date(b.utcDate)))
       .slice(0, limit);
   }
 
@@ -131,8 +132,8 @@ export class FootballDataService {
     const now = new Date();
     
     return allMatches
-      .filter(match => new Date(match.utcDate) < now && match.status === 'FINISHED')
-      .sort((a, b) => new Date(b.utcDate).getTime() - new Date(a.utcDate).getTime())
+      .filter(match => isBefore(new Date(match.utcDate), now) && match.status === 'FINISHED')
+      .sort((a, b) => compareDesc(new Date(a.utcDate), new Date(b.utcDate)))
       .slice(0, limit);
   }
 

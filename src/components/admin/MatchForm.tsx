@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Match, MatchInsert, MatchUpdate } from '@/lib/supabase';
+import { formatISO, parseISO, format } from 'date-fns';
 
 // Note: This component should be wrapped with FeatureWrapper for 'showAdmin' flag
 // when used in admin pages to ensure proper access control
@@ -25,7 +26,7 @@ export default function MatchForm({
   
   // Form state
   const [formData, setFormData] = useState({
-    date_time: match?.date_time ? new Date(match.date_time).toISOString().slice(0, 16) : '',
+    date_time: match?.date_time ? format(parseISO(match.date_time), "yyyy-MM-dd'T'HH:mm") : '',
     opponent: match?.opponent || '',
     competition: match?.competition || '',
     home_away: match?.home_away || 'home' as const,
@@ -75,7 +76,7 @@ export default function MatchForm({
     setIsSubmitting(true);
     try {
       const submitData = {
-        date_time: new Date(formData.date_time).toISOString(),
+        date_time: formatISO(parseISO(formData.date_time)),
         opponent: formData.opponent.trim(),
         competition: formData.competition.trim(),
         home_away: formData.home_away,

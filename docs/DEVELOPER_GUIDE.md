@@ -248,6 +248,73 @@ export default async function FeatureComponent() {
 }
 ```
 
+#### Date Handling Patterns
+
+The project uses **date-fns** directly for all date operations with **Spanish locale**. No custom date utilities are used.
+
+##### Basic Date Formatting
+```typescript
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { DATE_FORMAT, DATETIME_FORMAT, TIME_FORMAT } from '@/lib/constants/dateFormats';
+
+// Using predefined format constants
+const formattedDate = format(new Date(), DATETIME_FORMAT, { locale: es });
+// Result: "13 ene 2025, 15:30"
+
+const dateOnly = format(new Date(), DATE_FORMAT, { locale: es });
+// Result: "13 ene 2025"
+
+const timeOnly = format(new Date(), TIME_FORMAT, { locale: es });
+// Result: "15:30"
+```
+
+##### Date Comparisons and Manipulations
+```typescript
+import { isAfter, isBefore, compareAsc, compareDesc, getYear, formatISO } from 'date-fns';
+
+// Date comparisons
+const isUpcoming = isAfter(new Date(match.date), new Date());
+const isPast = isBefore(new Date(match.date), new Date());
+
+// Sorting by date
+matches.sort((a, b) => compareAsc(new Date(a.date), new Date(b.date))); // ascending
+matches.sort((a, b) => compareDesc(new Date(a.date), new Date(b.date))); // descending
+
+// Get year from date
+const currentYear = getYear(new Date());
+
+// ISO formatting for API calls
+const isoDate = formatISO(new Date()); // "2025-01-13T15:30:00Z"
+```
+
+##### Form Date Handling
+```typescript
+import { formatISO, parseISO, format } from 'date-fns';
+
+// Convert ISO string to datetime-local input format
+const dateTimeLocalValue = format(parseISO(match.date_time), "yyyy-MM-dd'T'HH:mm");
+
+// Convert form input back to ISO string for database
+const submitData = {
+  date_time: formatISO(parseISO(formData.date_time))
+};
+```
+
+##### Available Format Constants
+```typescript
+// From @/lib/constants/dateFormats
+export const DATE_FORMAT = 'd MMM yyyy';        // "13 ene 2025"
+export const DATETIME_FORMAT = 'd MMM yyyy, HH:mm'; // "13 ene 2025, 15:30"
+export const TIME_FORMAT = 'HH:mm';             // "15:30"
+```
+
+##### Spanish Locale Notes
+- Always import and use Spanish locale: `import { es } from 'date-fns/locale'`
+- Month names are localized: "enero", "febrero", etc.
+- Abbreviated months: "ene", "feb", etc.
+- Format patterns use Spanish conventions
+
 #### Secure API Pattern
 ```typescript
 import { checkAdminRole } from '@/lib/adminApiProtection';

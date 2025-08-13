@@ -3,6 +3,7 @@ import { FootballDataService } from '@/services/footballDataService';
 import axios from 'axios';
 import { supabase } from '@/lib/supabase';
 import { checkAdminRole } from '@/lib/adminApiProtection';
+import { getYear } from 'date-fns';
 
 /**
  * Determine match result label based on Betis home/away and score
@@ -38,7 +39,7 @@ export async function POST(
     
     // Get current and previous season matches
     // Use current year like the working script
-    const currentSeason = new Date().getFullYear();
+    const currentSeason = getYear(new Date());
     const seasons = [currentSeason.toString(), (currentSeason - 1).toString(), '2023'];
     
     // Fetch matches from the API

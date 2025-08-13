@@ -853,11 +853,9 @@ describe('/api/rsvp', () => {
 
       // Mock failed count query
       mockSupabase.from.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(() => Promise.resolve({
-            data: null,
-            error: { message: 'Count failed' }
-          }))
+        select: vi.fn(() => Promise.resolve({
+          data: null,
+          error: { message: 'Count failed' }
         }))
       } as any);
 
