@@ -249,7 +249,7 @@ describe('MatchForm', () => {
 
       await waitFor(() => {
         expect(mockOnSubmit).toHaveBeenCalledWith({
-          date_time: '2024-03-15T20:00:00.000Z',
+          date_time: '2024-03-15T20:00:00Z',
           opponent: 'Real Madrid',
           competition: 'LaLiga',
           home_away: 'away',
@@ -278,7 +278,7 @@ describe('MatchForm', () => {
 
       await waitFor(() => {
         expect(mockOnSubmit).toHaveBeenCalledWith({
-          date_time: '2024-03-15T20:00:00.000Z',
+          date_time: '2024-03-15T20:00:00Z',
           opponent: 'Barcelona',
           competition: 'LaLiga',
           home_away: 'home',
