@@ -5,6 +5,7 @@ import { getCurrentUpcomingMatch } from '@/lib/matchUtils';
 import { triggerAdminNotification } from '@/lib/notifications/simpleNotifications';
 import { rsvpSchema } from '@/lib/schemas/rsvp';
 import { ZodError } from 'zod';
+import { formatISO } from 'date-fns';
 
 // Default current match info (this could be moved to env vars or a separate config)
 
@@ -152,7 +153,7 @@ export async function POST(request: NextRequest) {
       const { data, error } = await supabase
         .from('matches')
         .select('id, opponent, date_time, competition')
-        .gte('date_time', new Date().toISOString())
+        .gte('date_time', formatISO(new Date()))
         .order('date_time', { ascending: true })
         .limit(1)
         .maybeSingle();

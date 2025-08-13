@@ -49,6 +49,10 @@ vi.mock('@/lib/matchUtils', () => ({
   }))
 }));
 
+vi.mock('@/lib/notifications/simpleNotifications', () => ({
+  triggerAdminNotification: vi.fn(() => Promise.resolve())
+}));
+
 // Mock Sentry
 vi.mock('@sentry/nextjs', () => ({
   startSpan: vi.fn((options, callback) => callback())
@@ -290,16 +294,6 @@ describe('/api/rsvp', () => {
       mockSupabase.from.mockReturnValueOnce({
         insert: vi.fn(() => ({
           select: vi.fn(() => Promise.resolve({ data: { id: 1, attendees: 2 }, error: null })) // FIX: Added attendees: 2
-        }))
-      } as any);
-
-      // Mock getUsersWithNotificationsEnabledDb call
-      mockSupabase.from.mockReturnValueOnce({
-        select: vi.fn(() => ({
-          eq: vi.fn(() => Promise.resolve({
-            data: [],
-            error: null
-          }))
         }))
       } as any);
 
@@ -634,7 +628,7 @@ describe('/api/rsvp', () => {
         name: 'María García',
         email: 'maria@example.com',
         attendees: 2,
-        matchId: '456'
+        matchId: 456
       };
 
       const request = new NextRequest('http://localhost:3000/api/rsvp', {
@@ -668,7 +662,7 @@ describe('/api/rsvp', () => {
         name: 'Test User',
         email: 'test@example.com',
         attendees: 1,
-        matchId: '999'
+        matchId: 999
       };
 
       const request = new NextRequest('http://localhost:3000/api/rsvp', {
@@ -841,21 +835,13 @@ describe('/api/rsvp', () => {
         }))
       } as any);
 
-      // Mock getUsersWithNotificationsEnabledDb call
+      // Mock failed count query
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => Promise.resolve({
-            data: [],
-            error: null
+            data: null,
+            error: { message: 'Count failed' }
           }))
-        }))
-      } as any);
-
-      // Mock failed count query
-      mockSupabase.from.mockReturnValueOnce({
-        select: vi.fn(() => Promise.resolve({
-          data: null,
-          error: { message: 'Count failed' }
         }))
       } as any);
 
@@ -1056,9 +1042,11 @@ describe('/api/rsvp', () => {
 
       // Mock count error
       mockSupabase.from.mockReturnValueOnce({
-        select: vi.fn(() => Promise.resolve({
-          data: null,
-          error: { message: 'Count failed' }
+        select: vi.fn(() => ({
+          eq: vi.fn(() => Promise.resolve({
+            data: null,
+            error: { message: 'Count failed' }
+          }))
         }))
       } as any);
 
