@@ -553,7 +553,7 @@ describe('/api/rsvp', () => {
       expect(data.success).toBe(false);
       expect(data.error).toBe('Datos de confirmación inválidos');
       expect(data.details).toEqual(expect.arrayContaining([
-        'Número de asistentes debe ser un entero'
+        'Invalid input: expected number, received string'
       ]));
     });
 
