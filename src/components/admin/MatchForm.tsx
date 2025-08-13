@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Match, MatchInsert, MatchUpdate } from '@/lib/supabase';
-import { generateCSRFToken, sanitizeInput } from '@/lib/security';
+import { sanitizeInput } from '@/lib/security';
 
 // Note: This component should be wrapped with FeatureWrapper for 'showAdmin' flag
 // when used in admin pages to ensure proper access control
@@ -36,12 +36,6 @@ export default function MatchForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [csrfToken, setCsrfToken] = useState<string>('');
-
-  // Generate CSRF token on mount
-  useEffect(() => {
-    setCsrfToken(generateCSRFToken());
-  }, []);
 
   // Validation with security checks
   const validateForm = (): boolean => {
