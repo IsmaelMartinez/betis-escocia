@@ -293,6 +293,16 @@ describe('/api/rsvp', () => {
         }))
       } as any);
 
+      // Mock getUsersWithNotificationsEnabledDb call
+      mockSupabase.from.mockReturnValueOnce({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => Promise.resolve({
+            data: [],
+            error: null
+          }))
+        }))
+      } as any);
+
       // Mock final count query
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
@@ -848,6 +858,16 @@ describe('/api/rsvp', () => {
       mockSupabase.from.mockReturnValueOnce({
         insert: vi.fn(() => ({
           select: vi.fn(() => Promise.resolve({ data: { id: 1 }, error: null }))
+        }))
+      } as any);
+
+      // Mock getUsersWithNotificationsEnabledDb call
+      mockSupabase.from.mockReturnValueOnce({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => Promise.resolve({
+            data: [],
+            error: null
+          }))
         }))
       } as any);
 

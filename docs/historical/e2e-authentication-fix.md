@@ -66,8 +66,8 @@ run: |
 **File**: `.env.local`
 
 ```bash
-CLERK_TEST_EMAIL="test_user@betis-escocia.vercel.app"
-CLERK_TEST_PASSWORD="br#@GydMi65!xp?KBMFdLCdX3"
+CLERK_TEST_EMAIL="test_user@email.app"
+CLERK_TEST_PASSWORD="yourSecretValue"
 ```
 
 ## 🚨 Manual Action Required
@@ -79,9 +79,9 @@ You need to add the test credentials as GitHub repository secrets:
 1. **Go to**: GitHub repository → Settings → Secrets and variables → Actions
 2. **Add new secrets**:
    - Name: `CLERK_TEST_EMAIL`
-   - Value: `test_user@betis-escocia.vercel.app`
+   - Value: `test_user@email.app`
    - Name: `CLERK_TEST_PASSWORD`  
-   - Value: `br#@GydMi65!xp?KBMFdLCdX3`
+   - Value: `yourSecretValue`
 
 ### Complete Environment Variables Needed
 
@@ -91,8 +91,8 @@ Based on the updated workflow, ensure these secrets exist in GitHub:
 # Authentication
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
 CLERK_SECRET_KEY=sk_test_...
-CLERK_TEST_EMAIL=test_user@betis-escocia.vercel.app
-CLERK_TEST_PASSWORD=br#@GydMi65!xp?KBMFdLCdX3
+CLERK_TEST_EMAIL=test_user@email.app
+CLERK_TEST_PASSWORD=yourSecretValue
 
 # Database
 NEXT_PUBLIC_SUPABASE_URL=https://...

@@ -36,6 +36,9 @@ export default defineConfig({
         NEXT_PUBLIC_FEATURE_CLERK_AUTH: 'true',
         NEXT_PUBLIC_FEATURE_ADMIN: 'true',
         NEXT_PUBLIC_FEATURE_TRIVIA_GAME: 'true',
+        // Mock Flagsmith to prevent excessive API requests in tests
+        NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID: 'test-environment',
+  E2E_FLAGSMITH_MOCK: 'true',
       },
     },
 

@@ -24,10 +24,22 @@ export const footballApiHandlers = [
   }),
 ];
 
+export const notificationHandlers = [
+  // Push notifications send endpoint
+  http.post('/api/notifications/send', async ({ request }) => {
+    const body = await request.json() as any;
+    
+    // Simulate successful response by default
+    return HttpResponse.json({ 
+      message: 'Notification sent successfully' 
+    });
+  }),
+];
+
 export const errorHandlers = [
   http.get('https://api.football-data.org/v4/competitions/PD/standings', () =>
     HttpResponse.json({ message: 'Rate limit' }, { status: 429 })
   ),
 ];
 
-export const handlers = [...footballApiHandlers];
+export const handlers = [...footballApiHandlers, ...notificationHandlers];

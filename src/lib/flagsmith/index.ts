@@ -10,6 +10,29 @@ import { FlagsmithConfig, FlagsmithFeatureName, FlagsmithPerformanceMetrics, Leg
 import { getFlagsmithConfig } from './config';
 import { getLegacyEnvironmentFlags } from '../featureFlags'; // Added import
 
+// Lightweight E2E mock layer (non-invasive): if E2E_FLAGSMITH_MOCK=true we
+// bypass all network calls and return deterministic flag values.
+const E2E_MOCK = process.env.E2E_FLAGSMITH_MOCK === 'true';
+const E2E_FLAGS: Record<string, boolean> = E2E_MOCK ? {
+  'show-clasificacion': true,
+  'show-coleccionables': true,
+  'show-galeria': true,
+  'show-rsvp': true,
+  'show-partidos': true,
+  'show-social-media': true,
+  'show-history': true,
+  'show-nosotros': true,
+  'show-unete': true,
+  'show-contacto': true,
+  'show-redes-sociales': true,
+  'show-admin': true,
+  'show-clerk-auth': true,
+  'show-debug-info': false,
+  'admin-dashboard': true,
+  'trivia-game': true,
+  'admin-push-notifications': true,
+} : {};
+
 // Fallback mechanism removed
 
 class FlagsmithManager {
@@ -44,8 +67,15 @@ class FlagsmithManager {
       const startTime = Date.now();
 
       // Ensure flagsmith.init is called only once per Node.js process
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (!(global as any).__flagsmithInitialized) {
+      if (E2E_MOCK) {
+        (globalThis as unknown as { __flagsmithInitialized?: boolean }).__flagsmithInitialized = true;
+        this.initialized = true;
+        if (this.config.enableLogs) {
+          console.log('[Flagsmith] E2E mock initialized');
+        }
+        return;
+      }
+      if (!(globalThis as unknown as { __flagsmithInitialized?: boolean }).__flagsmithInitialized) {
         if (this.config.enableLogs) {
           console.log('[Flagsmith] Initializing SDK...');
         }
@@ -55,8 +85,7 @@ class FlagsmithManager {
           enableLogs: this.config.enableLogs,
           cacheOptions: this.config.cacheOptions
         });
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (global as any).__flagsmithInitialized = true;
+        (globalThis as unknown as { __flagsmithInitialized?: boolean }).__flagsmithInitialized = true;
 
         flagsmith.getState();
       }
@@ -81,6 +110,9 @@ class FlagsmithManager {
     const startTime = Date.now();
     
     try {
+      if (E2E_MOCK) {
+        return E2E_FLAGS[flagName] ?? this.getFallbackValue(flagName);
+      }
       // Ensure SDK is initialized
       await this.initialize();
       
@@ -103,6 +135,11 @@ class FlagsmithManager {
     const startTime = Date.now();
     
     try {
+      if (E2E_MOCK) {
+        const value = E2E_FLAGS[flagName];
+        const result = (typeof value === 'boolean') ? value : value === true;
+        return result ?? (defaultValue ?? this.getFallbackValue(flagName));
+      }
       // Ensure SDK is initialized
       await this.initialize();
       
@@ -127,6 +164,10 @@ class FlagsmithManager {
     const results: Record<string, boolean> = {};
 
     try {
+      if (E2E_MOCK) {
+        flagNames.forEach(name => { results[name] = E2E_FLAGS[name] ?? this.getFallbackValue(name); });
+        return results;
+      }
       // Ensure SDK is initialized
       await this.initialize();
       
@@ -162,6 +203,10 @@ class FlagsmithManager {
    */
   async refreshFlags(): Promise<void> {
     try {
+      if (E2E_MOCK) {
+        // Nothing to refresh
+        return;
+      }
       await this.initialize();
       
       // Cache logic removed; no cache to clear.

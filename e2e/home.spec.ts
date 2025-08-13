@@ -1,6 +1,12 @@
 import { test, expect } from '@playwright/test';
+import { mockFlagsmithAPI } from './helpers/flagsmith-mock';
 
 test.describe('Home Page Happy Path', () => {
+  test.beforeEach(async ({ page }) => {
+    // Mock Flagsmith API to prevent excessive requests
+    await mockFlagsmithAPI(page);
+  });
+
 test('should load successfully and display key elements', async ({ page }) => {
     // 2.1.1 Verify page loads successfully (HTTP 200)
     const response = await page.goto('/');

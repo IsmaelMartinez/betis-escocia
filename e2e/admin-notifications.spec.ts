@@ -1,15 +1,9 @@
-import { test, expect } from '@playwright/test';
-import { mockFlagsmithAPI } from './helpers/flagsmith-mock';
+import { test, expect } from './fixtures';
 
 test.describe('Admin Push Notifications', () => {
   test.use({ storageState: 'playwright/.clerk/user.json' });
 
   test.beforeEach(async ({ page }) => {
-    // Mock Flagsmith API to prevent excessive requests
-    await mockFlagsmithAPI(page, {
-      'admin-push-notifications': true
-    });
-
     // Grant notification permission to avoid permission dialogs during testing
     await page.context().grantPermissions(['notifications']);
   });
@@ -179,13 +173,6 @@ test.describe('Admin Push Notifications', () => {
 
 test.describe('Admin Notifications - Feature Integration', () => {
   test.use({ storageState: 'playwright/.clerk/user.json' });
-
-  test.beforeEach(async ({ page }) => {
-    // Mock Flagsmith API to prevent excessive requests
-    await mockFlagsmithAPI(page, {
-      'admin-push-notifications': true
-    });
-  });
 
   test('should show notifications are disabled when user preference is off', async ({ page }) => {
     await page.goto('/admin');

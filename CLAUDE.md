@@ -85,6 +85,15 @@ sql/                    # Database migrations & scripts
 - **Cache strategy**: Use `classification_cache` table for external API data
 - **Location**: `src/lib/supabase.ts` for client and types
 
+### Push Notifications System
+- **Admin-only**: Real-time notifications for RSVP and contact form submissions
+- **Database preferences**: `notification_preferences` table with user control
+- **Service Worker**: Enhanced PWA service worker handles background notifications
+- **Browser compatibility**: Supports Chrome, Firefox, Safari, Edge with HTTPS requirement
+- **Non-blocking**: Notification failures don't impact core functionality
+- **Location**: `src/lib/notifications/` for utilities and database operations
+- **Documentation**: See `docs/adr/016-admin-push-notifications.md`
+
 ## Component Development
 
 ### Storybook Integration
@@ -210,6 +219,16 @@ test('renders component correctly', () => {
 - **MSW integration**: Service worker for external API mocking
 - **Environment variables**: Test-specific values in `vitest.config.ts`
 
+### E2E Testing (Playwright)
+- **Auth setup**: Pre-configured in `playwright/global.setup.ts` with Clerk authentication
+- **Base URL**: Defaults to `http://localhost:3000`
+- **Pattern**: Test user workflows end-to-end with real authentication
+- **Test structure**: Admin tests use `storageState: 'playwright/.clerk/user.json'`
+- **Data attributes**: Use `data-testid` attributes for reliable element selection
+- **Browser permissions**: Grant permissions using `page.context().grantPermissions(['notifications'])`
+- **Multi-page testing**: Test integrations by opening new pages within same test context
+- **Flagsmith mocking**: Use `mockFlagsmithAPI()` helper from `e2e/helpers/flagsmith-mock.ts` to prevent excessive API requests
+
 ## Key Features
 
 ### Community Features
@@ -222,14 +241,15 @@ test('renders component correctly', () => {
 - **Match Data**: Football-Data.org API integration with caching
 - **User Data**: Clerk webhooks sync user profiles to Supabase
 - **Admin Dashboard**: User management, match sync, contact submissions
+- **Push Notifications**: Real-time admin notifications for RSVP and contact submissions
 
 ## Documentation References
 
 For comprehensive details, always check:
-- **GEMINI.md**: Detailed project overview and improvement areas
-- **Workflow Instructions**: `.github/instructions/*.md` for specific workflows
+- **Developer Guide**: `docs/DEVELOPER_GUIDE.md` for complete development guide
+- **Testing Guide**: `docs/TESTING_GUIDE.md` for testing strategies and patterns  
 - **ADRs**: `docs/adr/` for architectural decisions
-- **Feature Flags**: `docs/feature-flags.md` for complete flag documentation
+- **Security**: `docs/security/` for security implementation details
 
 ## Environment Setup
 

@@ -43,6 +43,27 @@ const CACHE_TTL = 60000; // 60 seconds
  */
 export async function initializeFeatureFlags(): Promise<void> {
   try {
+    if (process.env.E2E_FLAGSMITH_MOCK === 'true') {
+      // Seed cache with permissive defaults for E2E
+      flagsCache = {
+        showClasificacion: true,
+        showColeccionables: true,
+        showGaleria: true,
+        showRSVP: true,
+        showPartidos: true,
+        showSocialMedia: true,
+        showHistory: true,
+        showNosotros: true,
+        showUnete: true,
+        showContacto: true,
+        showRedesSociales: true,
+        showAdmin: true,
+        showClerkAuth: true,
+        showDebugInfo: false,
+      };
+      cacheExpiry = Date.now() + CACHE_TTL;
+      return; // Skip real initialization
+    }
     const config = getFlagsmithConfig();
     if (!config) {
       console.warn('[Feature Flags] Flagsmith configuration not available, using environment variables only');
