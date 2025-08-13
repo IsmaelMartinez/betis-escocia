@@ -4,8 +4,7 @@ import { supabase, type RSVP } from '@/lib/supabase';
 
 import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, getClientIP } from '@/lib/security';
 import { getCurrentUpcomingMatch } from '@/lib/matchUtils';
-import { sendNotificationToAdmins } from '@/lib/notifications/pushNotifications';
-import { getUsersWithNotificationsEnabledDb } from '@/lib/notifications/preferencesDb';
+import { triggerAdminNotification } from '@/lib/notifications/simpleNotifications';
 
 // Default current match info (this could be moved to env vars or a separate config)
 
@@ -304,30 +303,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Send push notification to admin users (non-blocking)
+    // Send simple notification to admin users (non-blocking)
     try {
-      // Get list of admin users with notifications enabled
-      const enabledUsers = await getUsersWithNotificationsEnabledDb();
-      if (enabledUsers.length > 0) {
-        console.log(`Sending RSVP notification to ${enabledUsers.length} admin users`);
-        sendNotificationToAdmins({
-          type: 'rsvp',
-          id: currentMatchId || 0,
-          data: {
-            userName: name.trim(),
-            userEmail: email.toLowerCase().trim(),
-            matchDate: currentMatchDate,
-            attendees: parseInt(attendees)
-          }
-        }).catch(error => {
-          console.error('Failed to send admin notification:', error);
-          // Don't fail the RSVP if notification fails
-        });
-      } else {
-        console.log('No admin users have notifications enabled');
-      }
+      console.log('Triggering admin notification for RSVP submission');
+      triggerAdminNotification('rsvp', {
+        userName: name.trim(),
+        matchDate: currentMatchDate
+      }).catch(error => {
+        console.error('Failed to send admin notification:', error);
+        // Don't fail the RSVP if notification fails
+      });
     } catch (error) {
-      console.error('Error checking notification preferences:', error);
+      console.error('Error triggering admin notification:', error);
       // Don't fail the RSVP if notification check fails
     }
 

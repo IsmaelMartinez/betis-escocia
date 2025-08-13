@@ -1,9 +1,9 @@
 /**
  * Notifications Module - Main Entry Point
  * 
- * This module provides push notification functionality for admin users,
- * including browser notifications for new RSVPs and contact form submissions.
+ * This module provides simple browser notification functionality for admin users,
+ * including notifications for new RSVPs and contact form submissions.
  */
 
-export * from './pushNotifications';
-export * from './types';
+export * from './simpleNotifications';
+export * from './preferencesDb';

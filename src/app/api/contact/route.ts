@@ -3,8 +3,7 @@ import { supabase, type ContactSubmissionInsert, getAuthenticatedSupabaseClient 
 
 import { sanitizeObject, validateEmail, validateInputLength, checkRateLimit, getClientIP } from '@/lib/security';
 import { getAuth } from '@clerk/nextjs/server';
-import { sendNotificationToAdmins } from '@/lib/notifications/pushNotifications';
-import { getUsersWithNotificationsEnabledDb } from '@/lib/notifications/preferencesDb';
+import { triggerAdminNotification } from '@/lib/notifications/simpleNotifications';
 
 // Supabase-based contact operations - no file system needed
 
@@ -98,32 +97,20 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    // Send push notification to admin users (non-blocking)
+    // Send simple notification to admin users (non-blocking)
     try {
       if (insertedSubmission) {
-        // Get list of admin users with notifications enabled
-        const enabledUsers = await getUsersWithNotificationsEnabledDb();
-        if (enabledUsers.length > 0) {
-          console.log(`Sending contact notification to ${enabledUsers.length} admin users`);
-          sendNotificationToAdmins({
-            type: 'contact',
-            id: insertedSubmission.id,
-            data: {
-              userName: name.trim(),
-              userEmail: email.toLowerCase().trim(),
-              contactType: type ?? 'general',
-              subject: subject.trim()
-            }
-          }).catch(error => {
-            console.error('Failed to send admin notification:', error);
-            // Don't fail the contact submission if notification fails
-          });
-        } else {
-          console.log('No admin users have notifications enabled');
-        }
+        console.log('Triggering admin notification for contact submission');
+        triggerAdminNotification('contact', {
+          userName: name.trim(),
+          contactType: type ?? 'general'
+        }).catch(error => {
+          console.error('Failed to send admin notification:', error);
+          // Don't fail the contact submission if notification fails
+        });
       }
     } catch (error) {
-      console.error('Error checking notification preferences:', error);
+      console.error('Error triggering admin notification:', error);
       // Don't fail the contact submission if notification check fails
     }
 

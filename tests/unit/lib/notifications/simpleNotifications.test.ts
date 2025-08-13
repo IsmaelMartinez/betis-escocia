@@ -23,7 +23,7 @@ const mockNotificationInstance = {
   onclick: null,
 };
 
-const mockNotificationConstructor = vi.fn(() => mockNotificationInstance);
+const mockNotificationConstructor = vi.fn(() => mockNotificationInstance) as any;
 Object.defineProperty(mockNotificationConstructor, 'permission', {
   get: () => mockNotification.permission,
   configurable: true
