@@ -19,8 +19,8 @@ export async function GET(request: NextRequest) {
     // Get and validate query parameters
     const { searchParams } = new URL(request.url);
     const { limit, offset } = userQuerySchema.parse({
-      limit: searchParams.get('limit'),
-      offset: searchParams.get('offset')
+      limit: searchParams.get('limit') || undefined,
+      offset: searchParams.get('offset') || undefined
     });
 
     // Fetch users using serverRoleUtils

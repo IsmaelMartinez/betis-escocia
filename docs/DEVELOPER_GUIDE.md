@@ -72,7 +72,7 @@ src/
 ```
 
 ### Key Patterns
-- **Feature flags control all functionality** - disabled by default
+- **Feature flags control most functionality** - disabled by default
 - **Dual authentication mode** - anonymous + authenticated users
 - **Mobile-first responsive design** with Betis colors (#00A651)
 - **Secure-by-default** architecture with RLS and role-based access
@@ -88,14 +88,9 @@ import { hasFeature } from '@/lib/flagsmith';
 const isEnabled = await hasFeature('show-admin');
 if (!isEnabled) return null;
 
-// Get feature value
-const maxItems = await getValue('max-gallery-items', 10);
 ```
 
 ### Key Flags
-- `show-admin` - Admin dashboard access
-- `show-rsvp` - RSVP system  
-- `show-trivia-game` - Trivia functionality
 - `show-galeria` - Photo gallery
 - `show-clerk-auth` - Authentication features
 
