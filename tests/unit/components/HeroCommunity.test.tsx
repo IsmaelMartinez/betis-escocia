@@ -20,10 +20,7 @@ vi.mock('lucide-react', () => ({
   Smile: vi.fn(({ className }) => <div data-testid="smile-icon" className={className} />)
 }));
 
-// Mock FeatureWrapper
-vi.mock('@/lib/featureProtection', () => ({
-  FeatureWrapper: vi.fn(({ children }) => <div data-testid="feature-wrapper">{children}</div>)
-}));
+// FeatureWrapper mock removed - component no longer uses feature protection
 
 // Mock dynamic import of CommunityStats
 vi.mock('next/dynamic', () => ({
@@ -113,10 +110,9 @@ describe('HeroCommunity', () => {
   });
 
   describe('Call-to-action section', () => {
-    it('renders CTA button within FeatureWrapper', () => {
+    it('renders CTA button', () => {
       render(<HeroCommunity />);
 
-      expect(screen.getByTestId('feature-wrapper')).toBeInTheDocument();
       expect(screen.getByText('ÚNETE A LA FAMILIA')).toBeInTheDocument();
     });
 
