@@ -69,7 +69,7 @@ export default function GDPRPage() {
               </p>
               <p className="text-xs text-gray-500 mb-4">
                 **Información sobre retención de datos:**
-                RSVPs are stored for 1 month, and contact information for 1 year.
+                Both RSVPs and contact information are automatically deleted after 3 months for GDPR compliance.
               </p>
               <a
                 href="/contacto" // Assuming /contacto is the path to the contact form

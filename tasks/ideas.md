@@ -51,7 +51,7 @@ This document provides a list of ideas and features for the Peña Bética Escoce
   * Data export functionality (JSON download)
   * Right to be forgotten (complete data deletion)
   * Email-based data access requests
-  * **Data Retention:** RSVPs auto-deleted after 1 month, contact submissions retained as per admin policy
+  * **Data Retention:** Both RSVPs and contact submissions auto-deleted after 3 months for GDPR compliance
 
 ### 🚧 **User Features To Be Developed**
 
