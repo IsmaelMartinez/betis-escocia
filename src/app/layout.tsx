@@ -9,7 +9,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import SentryUserContext from "@/components/SentryUserContext";
 
 import { ClerkProvider } from '@clerk/nextjs';
-import { getEnabledNavigationItemsAsync, initializeFeatureFlags } from '@/lib/featureFlags';
+import { getEnabledNavigationItems, initializeFeatureFlags } from '@/lib/featureFlags';
 import FlagsmithRefresher from '@/components/FlagsmithRefresher';
 import FacebookSDK from "@/components/FacebookSDK";
 
@@ -127,7 +127,7 @@ export default async function RootLayout({
   const debugInfo: any = null;
   try {
     await initializeFeatureFlags();
-    enabledNavigation = await getEnabledNavigationItemsAsync();
+    enabledNavigation = await getEnabledNavigationItems();
     console.debug('[RootLayout] Flagsmith initialized successfully. Enabled Navigation:', enabledNavigation);
   } catch (error) {
     console.error('[RootLayout] Error during Flagsmith initialization or flag fetching:', error);

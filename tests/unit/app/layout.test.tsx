@@ -42,7 +42,7 @@ vi.mock('@clerk/nextjs', () => ({
 }));
 vi.mock('@/lib/featureFlags', () => ({
   initializeFeatureFlags: vi.fn(),
-  getEnabledNavigationItemsAsync: vi.fn(() => Promise.resolve([])),
+  getEnabledNavigationItems: vi.fn(() => Promise.resolve([])),
 }));
 vi.mock('@/components/FlagsmithRefresher', () => ({
   default: vi.fn(() => <div data-testid="mock-flagsmith-refresher" />),
@@ -84,7 +84,7 @@ describe('RootLayout', () => {
   it('initializes feature flags on render', async () => {
     render(await RootLayout({ children: <p>Test Children</p> }));
     expect(featureFlags.initializeFeatureFlags).toHaveBeenCalledTimes(1);
-    expect(featureFlags.getEnabledNavigationItemsAsync).toHaveBeenCalledTimes(1);
+    expect(featureFlags.getEnabledNavigationItems).toHaveBeenCalledTimes(1);
   });
 
   it('logs error if feature flag initialization fails and sets empty navigation', async () => {
@@ -95,8 +95,8 @@ describe('RootLayout', () => {
     render(await RootLayout({ children: <p>Test Children</p> }));
 
     expect(consoleErrorSpy).toHaveBeenCalledWith('[RootLayout] Error during Flagsmith initialization or flag fetching:', mockError);
-    // Verify that getEnabledNavigationItemsAsync is still called, but its result might be ignored or handled by fallback
-    expect(featureFlags.getEnabledNavigationItemsAsync).not.toHaveBeenCalled(); // Modified line
+    // Verify that getEnabledNavigationItems is still called, but its result might be ignored or handled by fallback
+    expect(featureFlags.getEnabledNavigationItems).not.toHaveBeenCalled(); // Modified line
     consoleErrorSpy.mockRestore();
   });
 });

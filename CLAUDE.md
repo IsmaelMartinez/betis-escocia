@@ -66,10 +66,11 @@ sql/                    # Database migrations & scripts
 ## Critical Architectural Patterns
 
 ### Feature Flag System (Flagsmith)
-- **Secure by default**: All features disabled until explicitly enabled
+- **Hybrid approach**: Core features (RSVP, Join, Contact) always available; optional features controlled by flags
 - **Usage**: `await hasFeature('flag-name')` or `await getValue('flag-name')`
 - **Environment**: `NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID` required
 - **Location**: `src/lib/flagsmith/` - NOT `src/lib/flags/`
+- **Always-on features**: RSVP, Únete (Join), Contacto (Contact) - no flags needed
 - **Documentation**: See `docs/adr/004-flagsmith-feature-flags.md`
 
 ### Authentication Flow (Clerk + Supabase)

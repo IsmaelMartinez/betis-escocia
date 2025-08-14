@@ -120,13 +120,17 @@ The following feature flags are currently active in the system:
 - **Error Handling**: Graceful degradation with stale cache fallback
 - **Environment Fallback**: Comprehensive fallback to environment variables
 
+### Always-On Features
+The following features are always available (not feature-flagged):
+- **RSVP functionality** - Core match viewing party system, always enabled
+- **Join (Únete) functionality** - Community membership, always enabled  
+- **Contact functionality** - Communication system, always enabled
+- **Admin access** - Controlled by Clerk roles, not feature flags
+
 ### Removed Flags
 The following unused flags were removed during optimization:
 - `trivia-game` - Unused trivia functionality
 - `admin-dashboard` - Unused admin dashboard
-- `show-rsvp` - Always-enabled RSVP functionality
-- `show-unete` - Always-enabled join functionality
-- `show-contacto` - Always-enabled contact functionality
 - `show-admin` - Simplified admin access control
 
 ## References

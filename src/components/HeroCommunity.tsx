@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { MapPin, Users, Heart, Coffee, Smile } from 'lucide-react';
-import { FeatureWrapper } from '@/lib/featureProtection';
 import dynamic from 'next/dynamic';
 
 // Lazy load components that are below the fold

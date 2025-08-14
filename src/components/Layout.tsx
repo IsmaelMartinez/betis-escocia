@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash, User, LogIn, LogOut, UserPlus } from 'lucide-react';
 import BetisLogo from '@/components/BetisLogo';
-import { getEnabledNavigationItemsAsync } from '@/lib/featureFlags';
+import { getEnabledNavigationItems } from '@/lib/featureFlags';
 import { useUser, useClerk } from '@clerk/nextjs';
 import { NavigationItem } from '@/lib/flagsmith/types';
 
@@ -29,7 +29,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
 
   useEffect(() => {
     const fetchNavigation = async () => {
-      const navItems = await getEnabledNavigationItemsAsync();
+      const navItems = await getEnabledNavigationItems();
       setEnabledNavigation(navItems);
     };
 

@@ -37,22 +37,22 @@ export interface FlagsmithPerformanceMetrics {
   errorCount: number;
 }
 
-// Feature flag names based on the PRD migration map
+// Feature flag names - only flags that actually exist in Flagsmith
 export type FlagsmithFeatureName = 
   | 'show-clasificacion'
   | 'show-coleccionables'
   | 'show-galeria'
-  | 'show-rsvp'
   | 'show-partidos'
   | 'show-social-media'
   | 'show-history'
   | 'show-nosotros'
-  | 'show-unete'
-  | 'show-contacto'
   | 'show-redes-sociales'
   | 'show-clerk-auth'
   | 'show-debug-info'
   | 'admin-push-notifications'
+
+// Always-on features (no flags needed, always available)
+export type AlwaysOnFeature = 'rsvp' | 'unete' | 'contacto';
   
 
 // Legacy feature flag names (for backward compatibility during migration)
@@ -100,8 +100,8 @@ export const ENV_VAR_MIGRATION_MAP: Record<string, FlagsmithFeatureName> = {
   'NEXT_PUBLIC_FEATURE_CLERK_AUTH': 'show-clerk-auth',
 };
 
-// Default values for feature flags (from existing implementation) - only for flags that exist in Flagsmith
-export const DEFAULT_FLAG_VALUES: Record<Exclude<FlagsmithFeatureName, 'show-rsvp' | 'show-unete' | 'show-contacto'>, boolean> = {
+// Default values for feature flags (from existing implementation)
+export const DEFAULT_FLAG_VALUES: Record<FlagsmithFeatureName, boolean> = {
   'show-clasificacion': true,
   'show-coleccionables': false,
   'show-galeria': false,

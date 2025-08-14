@@ -10,7 +10,7 @@
  * Migration Status: Using Flagsmith with environment variable fallback
  */
 
-import { FlagsmithFeatureName, LegacyFeatureName, FLAG_MIGRATION_MAP, NavigationItem } from './flagsmith/types';
+import { FlagsmithFeatureName, FLAG_MIGRATION_MAP, NavigationItem } from './flagsmith/types';
 import { getValue, getMultipleValues, hasFeature, getFlagsmithManager } from './flagsmith/index';
 import { getFlagsmithConfig } from './flagsmith/config';
 
@@ -42,18 +42,18 @@ const CACHE_TTL = 60000; // 60 seconds - aligned with Flagsmith refresh interval
 export async function initializeFeatureFlags(): Promise<void> {
   try {
     if (process.env.E2E_FLAGSMITH_MOCK === 'true') {
-      // Seed cache with permissive defaults for E2E
+      // Seed cache with permissive defaults for E2E (only actual flags, always-on features handled separately)
       flagsCache = {
         showClasificacion: true,
         showColeccionables: true,
         showGaleria: true,
-        showRSVP: true,
+        showRSVP: true, // Always-on feature
         showPartidos: true,
         showSocialMedia: true,
         showHistory: true,
         showNosotros: true,
-        showUnete: true,
-        showContacto: true,
+        showUnete: true, // Always-on feature
+        showContacto: true, // Always-on feature
         showRedesSociales: true,
         showClerkAuth: true,
         showDebugInfo: false,
@@ -237,99 +237,20 @@ export async function hasFeatureFlag(flagName: FlagsmithFeatureName): Promise<bo
 }
 
 /**
- * Helper function to get all enabled navigation items (backward compatibility)
+ * Get all enabled navigation items (consolidated async function)
  */
-export function getEnabledNavigationItems() {
-  const allNavigationItems = [
-    { 
-      name: 'Inicio', 
-      href: '/', 
-      nameEn: 'Home',
-      feature: null // Always show home
-    },
-    { 
-      name: 'RSVP', 
-      href: '/rsvp', 
-      nameEn: 'RSVP',
-      feature: null // Always on
-    },
-    { 
-      name: 'Clasificación', 
-      href: '/clasificacion', 
-      nameEn: 'Standings',
-      feature: null // Always on
-    },
-    { 
-      name: 'Partidos', 
-      href: '/partidos', 
-      nameEn: 'Matches',
-      feature: null // Always on
-    },
-    
-    { 
-      name: 'Coleccionables', 
-      href: '/coleccionables', 
-      nameEn: 'Collectibles',
-      feature: 'showColeccionables' as keyof FeatureFlags
-    },
-    { 
-      name: 'Galería', 
-      href: '/galeria', 
-      nameEn: 'Gallery',
-      feature: 'showGaleria' as keyof FeatureFlags
-    },
-    { 
-      name: 'Historia', 
-      href: '/historia', 
-      nameEn: 'History',
-      feature: 'showHistory' as keyof FeatureFlags
-    },
-    { 
-      name: 'Nosotros', 
-      href: '/nosotros', 
-      nameEn: 'About',
-      feature: 'showNosotros' as keyof FeatureFlags
-    },
-    { 
-      name: 'Únete', 
-      href: '/unete', 
-      nameEn: 'Join',
-      feature: null // Always on
-    },
-    { 
-      name: 'Contacto', 
-      href: '/contacto', 
-      nameEn: 'Contact',
-      feature: null // Always on
-    },
-    { 
-      name: 'Redes Sociales', 
-      href: '/redes-sociales', 
-      nameEn: 'Social Media',
-      feature: 'showRedesSociales' as keyof FeatureFlags
-    },
-    
-  ];
-
-  return allNavigationItems.filter(item => 
-    item.feature === null || isFeatureEnabled(item.feature)
-  );
-}
-
-/**
- * Async version using modern Flagsmith API
- */
-export async function getEnabledNavigationItemsAsync(): Promise<NavigationItem[]> {
+export async function getEnabledNavigationItems(): Promise<NavigationItem[]> {
+  // Standardized navigation items in logical order
   const allNavigationItems: NavigationItem[] = [
-    { name: 'Únete', href: '/unete', nameEn: 'Join', feature: null },
+    { name: 'RSVP', href: '/rsvp', nameEn: 'RSVP', feature: null },
     { name: 'Partidos', href: '/partidos', nameEn: 'Matches', feature: null },
     { name: 'Clasificación', href: '/clasificacion', nameEn: 'Standings', feature: null },
     { name: 'Coleccionables', href: '/coleccionables', nameEn: 'Collectibles', feature: 'show-coleccionables' },
     { name: 'Galería', href: '/galeria', nameEn: 'Gallery', feature: 'show-galeria' },
-    { name: 'Redes Sociales', href: '/redes-sociales', nameEn: 'Social Media', feature: 'show-redes-sociales' },
-    { name: 'Nosotros', href: '/nosotros', nameEn: 'About', feature: 'show-nosotros' },
     { name: 'Historia', href: '/historia', nameEn: 'History', feature: 'show-history' },
-    { name: 'RSVP', href: '/rsvp', nameEn: 'RSVP', feature: null },
+    { name: 'Nosotros', href: '/nosotros', nameEn: 'About', feature: 'show-nosotros' },
+    { name: 'Redes Sociales', href: '/redes-sociales', nameEn: 'Social Media', feature: 'show-redes-sociales' },
+    { name: 'Únete', href: '/unete', nameEn: 'Join', feature: null },
     { name: 'Contacto', href: '/contacto', nameEn: 'Contact', feature: null },
   ];
 
@@ -339,7 +260,7 @@ export async function getEnabledNavigationItemsAsync(): Promise<NavigationItem[]
   return allNavigationItems.filter(item => {
     if (item.feature === null) return true;
     
-    // Convert new flag name to legacy format for lookup
+    // Convert Flagsmith feature name to legacy format for lookup
     const legacyFeature = Object.keys(FLAG_MIGRATION_MAP).find(
       key => FLAG_MIGRATION_MAP[key as keyof typeof FLAG_MIGRATION_MAP] === item.feature
     ) as keyof FeatureFlags;

@@ -4,7 +4,6 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Calendar, MapPin, Users, Clock, CheckCircle, ChevronDown } from 'lucide-react';
 import RSVPForm from '@/components/RSVPForm';
-import { withFeatureFlag } from '@/lib/featureProtection';
 import { getUpcomingMatchesWithRSVPCounts, Match } from '@/lib/supabase';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { format } from 'date-fns';
