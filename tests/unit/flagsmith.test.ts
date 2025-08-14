@@ -34,21 +34,21 @@ describe('Flagsmith Feature Flag Defaults', () => {
   });
 
   it('should return false for hasFeatureFlag when Flagsmith returns default', async () => {
-    const featureName: FlagsmithFeatureName = 'show-admin';
+    const featureName: FlagsmithFeatureName = 'show-clasificacion';
     const result = await hasFeatureFlag(featureName);
     expect(result).toBe(false);
     expect(flagsmith.hasFeature).toHaveBeenCalledWith(featureName);
   });
 
   it('should return false for getFeatureFlag when Flagsmith returns default', async () => {
-    const featureName: FlagsmithFeatureName = 'show-admin';
+    const featureName: FlagsmithFeatureName = 'show-coleccionables';
     const result = await getFeatureFlag(featureName);
     expect(result).toBe(false);
     expect(flagsmith.getValue).toHaveBeenCalledWith(featureName);
   });
 
   it('should return true for hasFeatureFlag when Flagsmith is configured to return true', async () => {
-    const featureName: FlagsmithFeatureName = 'show-rsvp';
+    const featureName: FlagsmithFeatureName = 'show-galeria';
     (flagsmith.hasFeature as Mock).mockReturnValue(true);
     const result = await hasFeatureFlag(featureName);
     expect(result).toBe(true);
@@ -56,7 +56,7 @@ describe('Flagsmith Feature Flag Defaults', () => {
   });
 
   it('should return true for getFeatureFlag when Flagsmith is configured to return true', async () => {
-    const featureName: FlagsmithFeatureName = 'show-rsvp';
+    const featureName: FlagsmithFeatureName = 'show-history';
     (flagsmith.getValue as Mock).mockReturnValue(true);
     const result = await getFeatureFlag(featureName);
     expect(result).toBe(true);

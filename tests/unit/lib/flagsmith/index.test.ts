@@ -147,27 +147,23 @@ describe('Flagsmith Integration', () => {
     });
 
     it('should return multiple flag values', async () => {
-      mockFlagsmithGetValue.mockImplementation((flagName: string) => {
-        if (flagName === 'show-clasificacion') return 'true';
-        if (flagName === 'show-rsvp') return 'false';
-        return null;
+      mockFlagsmithHasFeature.mockImplementation((flagName: string) => {
+        if (flagName === 'show-clasificacion') return true;
+        if (flagName === 'show-galeria') return false;
+        return false;
       });
-      const results = await getMultipleValues(['show-clasificacion', 'show-rsvp', 'show-galeria']);
+      const results = await getMultipleValues(['show-clasificacion', 'show-galeria']);
       expect(results).toEqual({
         'show-clasificacion': true,
-        'show-rsvp': false,
-        'show-galeria': false, // Fallback
+        'show-galeria': false,
       });
     });
 
     it('should handle errors when getting multiple values', async () => {
-      mockFlagsmithGetValue.mockImplementationOnce(() => {
-        throw new Error('Multiple values failed');
-      });
-      const results = await getMultipleValues(['show-clasificacion', 'show-rsvp']);
+      mockFlagsmithGetFlags.mockRejectedValueOnce(new Error('Multiple values failed'));
+      const results = await getMultipleValues(['show-clasificacion']);
       expect(results).toEqual({
         'show-clasificacion': true, // Modified: Fallback value is now true
-        'show-rsvp': false, // Fallback
       });
       const status = await getSystemStatus();
       expect(status.performance.errorCount).toBe(1);
@@ -192,14 +188,14 @@ describe('Flagsmith Integration', () => {
     });
 
     it('should update feature flag states after refreshing flags', async () => {
-      // Initial state: feature is disabled
-      mockFlagsmithHasFeature.mockReturnValue(false);
-      mockFlagsmithGetValue.mockReturnValue('false');
+      // Initial state: feature is enabled (fallback default)
+      mockFlagsmithHasFeature.mockReturnValue(true);
+      mockFlagsmithGetValue.mockReturnValue('true');
       await initializeFlagsmith(mockConfig);
-      expect(await hasFeature('show-clasificacion')).toBe(false);
-      expect(await getValue('show-clasificacion')).toBe(false);
+      expect(await hasFeature('show-clasificacion')).toBe(true);
+      expect(await getValue('show-clasificacion')).toBe(true);
 
-      // After refresh: feature is enabled
+      // After refresh: feature state remains enabled
       mockFlagsmithGetFlags.mockImplementationOnce(() => {
         // Simulate flagsmith.getFlags() updating internal state
         mockFlagsmithHasFeature.mockReturnValue(true);

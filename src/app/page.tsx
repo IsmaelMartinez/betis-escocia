@@ -62,16 +62,14 @@ export default function Home() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
-            <FeatureWrapper feature="showUnete">
-              <Link
-                href="/unete"
-                className="bg-betis-gold hover:bg-betis-gold-dark text-betis-black px-10 py-5 rounded-2xl font-black text-xl shadow-2xl hover:shadow-betis-gold/25 transition-all duration-300 transform hover:scale-105 group"
-              >
-                <span className="flex items-center">
-                  💬 Únete
-                </span>
-              </Link>
-            </FeatureWrapper>
+            <Link
+              href="/unete"
+              className="bg-betis-gold hover:bg-betis-gold-dark text-betis-black px-10 py-5 rounded-2xl font-black text-xl shadow-2xl hover:shadow-betis-gold/25 transition-all duration-300 transform hover:scale-105 group"
+            >
+              <span className="flex items-center">
+                💬 Únete
+              </span>
+            </Link>
             
             <FeatureWrapper feature="showSocialMedia">
               <a
@@ -99,8 +97,7 @@ export default function Home() {
           </div>
           
           {/* Contact info */}
-          <FeatureWrapper feature="showContacto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
               <div className="bg-green-600 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
                 <h3 className="text-lg font-bold mb-3 text-betis-gold">📍 Ubicación</h3>
                 <p className="text-sm text-gray-200">
@@ -128,7 +125,6 @@ export default function Home() {
                 </p>
               </div>
             </div>
-          </FeatureWrapper>
         </div>
       </section>
     </>

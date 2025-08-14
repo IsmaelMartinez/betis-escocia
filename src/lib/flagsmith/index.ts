@@ -225,15 +225,15 @@ class FlagsmithManager {
   private getFallbackValue(flagName: FlagsmithFeatureName): boolean {
     // Map Flagsmith feature name to legacy feature name
     const legacyFeatureName = Object.keys(FLAG_MIGRATION_MAP).find(
-      key => FLAG_MIGRATION_MAP[key as LegacyFeatureName] === flagName
+      key => FLAG_MIGRATION_MAP[key as keyof typeof FLAG_MIGRATION_MAP] === flagName
     ) as LegacyFeatureName | undefined;
 
     if (legacyFeatureName) {
       const legacyFlags = getLegacyEnvironmentFlags();
       return legacyFlags[legacyFeatureName];
     }
-    // Default to false if no mapping or legacy feature found
-    return false;
+    // Default to true for unknown flags (like always-on features)
+    return true;
   }
 
   /**

@@ -42,10 +42,13 @@ export type FlagsmithFeatureName =
   | 'show-clasificacion'
   | 'show-coleccionables'
   | 'show-galeria'
+  | 'show-rsvp'
   | 'show-partidos'
   | 'show-social-media'
   | 'show-history'
   | 'show-nosotros'
+  | 'show-unete'
+  | 'show-contacto'
   | 'show-redes-sociales'
   | 'show-clerk-auth'
   | 'show-debug-info'
@@ -57,18 +60,21 @@ export type LegacyFeatureName =
   | 'showClasificacion'
   | 'showColeccionables'
   | 'showGaleria'
+  | 'showRSVP'
   | 'showPartidos'
   | 'showSocialMedia'
   | 'showHistory'
   | 'showNosotros'
+  | 'showUnete'
+  | 'showContacto'
   | 'showRedesSociales'
   | 'showClerkAuth'
   | 'showDebugInfo'
   
   
 
-// Migration mapping between legacy and new flag names
-export const FLAG_MIGRATION_MAP: Record<LegacyFeatureName, FlagsmithFeatureName> = {
+// Migration mapping between legacy and new flag names (only for flags that exist in Flagsmith)
+export const FLAG_MIGRATION_MAP: Record<Exclude<LegacyFeatureName, 'showRSVP' | 'showUnete' | 'showContacto'>, FlagsmithFeatureName> = {
   showClasificacion: 'show-clasificacion',
   showColeccionables: 'show-coleccionables',
   showGaleria: 'show-galeria',
@@ -94,8 +100,8 @@ export const ENV_VAR_MIGRATION_MAP: Record<string, FlagsmithFeatureName> = {
   'NEXT_PUBLIC_FEATURE_CLERK_AUTH': 'show-clerk-auth',
 };
 
-// Default values for feature flags (from existing implementation)
-export const DEFAULT_FLAG_VALUES: Record<FlagsmithFeatureName, boolean> = {
+// Default values for feature flags (from existing implementation) - only for flags that exist in Flagsmith
+export const DEFAULT_FLAG_VALUES: Record<Exclude<FlagsmithFeatureName, 'show-rsvp' | 'show-unete' | 'show-contacto'>, boolean> = {
   'show-clasificacion': true,
   'show-coleccionables': false,
   'show-galeria': false,

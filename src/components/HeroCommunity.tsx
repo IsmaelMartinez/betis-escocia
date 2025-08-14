@@ -89,7 +89,6 @@ export default function HeroCommunity() {
             </div>
 
 {/* CTA buttons - official style */}
-          <FeatureWrapper feature="showUnete">
             <div className="flex flex-col sm:flex-row gap-4">
               <Link 
                 href="/unete"
@@ -101,7 +100,6 @@ export default function HeroCommunity() {
                 </span>
               </Link>
             </div>
-          </FeatureWrapper>
           </div>
 
           {/* Right side - Community showcase in official style */}

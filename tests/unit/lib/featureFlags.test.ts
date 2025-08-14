@@ -101,13 +101,11 @@ describe('featureFlags', () => {
     it('should respect specific environment variable overrides', () => {
       vi.stubEnv('NEXT_PUBLIC_FEATURE_CLASIFICACION', 'false');
       vi.stubEnv('NEXT_PUBLIC_FEATURE_COLECCIONABLES', 'true');
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_ADMIN', 'true');
       
       const flags = getLegacyEnvironmentFlags();
       
       expect(flags.showClasificacion).toBe(false);
       expect(flags.showColeccionables).toBe(true);
-      expect(flags.showAdmin).toBe(true);
     });
 
     it('should handle empty string environment variables', () => {
@@ -122,26 +120,20 @@ describe('featureFlags', () => {
 
     it('should handle all feature environment variables', () => {
       vi.stubEnv('NEXT_PUBLIC_FEATURE_GALERIA', 'true');
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_RSVP', 'false');
       vi.stubEnv('NEXT_PUBLIC_FEATURE_PARTIDOS', 'false');
       vi.stubEnv('NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA', 'true');
       vi.stubEnv('NEXT_PUBLIC_FEATURE_HISTORY', 'true');
       vi.stubEnv('NEXT_PUBLIC_FEATURE_NOSOTROS', 'false');
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_UNETE', 'false');
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_CONTACTO', 'true');
       vi.stubEnv('NEXT_PUBLIC_FEATURE_REDES_SOCIALES', 'true');
       vi.stubEnv('NEXT_PUBLIC_FEATURE_CLERK_AUTH', 'false');
       
       const flags = getLegacyEnvironmentFlags();
       
       expect(flags.showGaleria).toBe(true);
-      expect(flags.showRSVP).toBe(false);
       expect(flags.showPartidos).toBe(false);
       expect(flags.showSocialMedia).toBe(true);
       expect(flags.showHistory).toBe(true);
       expect(flags.showNosotros).toBe(false);
-      expect(flags.showUnete).toBe(false);
-      expect(flags.showContacto).toBe(true);
       expect(flags.showRedesSociales).toBe(true);
       expect(flags.showClerkAuth).toBe(false);
     });
@@ -175,15 +167,11 @@ describe('featureFlags', () => {
         'show-clasificacion': true,
         'show-coleccionables': false,
         'show-galeria': true,
-        'show-rsvp': true,
         'show-partidos': false,
         'show-social-media': true,
         'show-history': false,
         'show-nosotros': true,
-        'show-unete': false,
-        'show-contacto': true,
         'show-redes-sociales': false,
-        'show-admin': true,
         'show-clerk-auth': true,
         'show-debug-info': true,
       };
@@ -195,21 +183,17 @@ describe('featureFlags', () => {
         showClasificacion: true,
         showColeccionables: false,
         showGaleria: true,
-        showRSVP: true,
         showPartidos: false,
         showSocialMedia: true,
         showHistory: false,
         showNosotros: true,
-        showUnete: false,
-        showContacto: true,
         showRedesSociales: false,
-        showAdmin: true,
         showClerkAuth: true,
         showDebugInfo: true,
       });
 
       expect(mockConsole.debug).toHaveBeenCalledWith(
-        '[Feature Flags] getFeatureFlags: Fetched flags from Flagsmith:',
+        '[Feature Flags] getFeatureFlags: Fetched flags from Flagsmith (batch):',
         flags
       );
     });

@@ -19,10 +19,13 @@ export interface FeatureFlags {
   showClasificacion: boolean;
   showColeccionables: boolean;
   showGaleria: boolean;
+  showRSVP: boolean;
   showPartidos: boolean;
   showSocialMedia: boolean;
   showHistory: boolean;
   showNosotros: boolean;
+  showUnete: boolean;
+  showContacto: boolean;
   showRedesSociales: boolean;
   showClerkAuth: boolean;
   showDebugInfo: boolean;
@@ -44,10 +47,13 @@ export async function initializeFeatureFlags(): Promise<void> {
         showClasificacion: true,
         showColeccionables: true,
         showGaleria: true,
+        showRSVP: true,
         showPartidos: true,
         showSocialMedia: true,
         showHistory: true,
         showNosotros: true,
+        showUnete: true,
+        showContacto: true,
         showRedesSociales: true,
         showClerkAuth: true,
         showDebugInfo: false,
@@ -85,7 +91,7 @@ export async function getFeatureFlags(): Promise<FeatureFlags> {
   }
 
   try {
-    // Get all flags from Flagsmith using optimized batch operation
+    // Get all flags from Flagsmith using optimized batch operation (only flags that exist in Flagsmith)
     const flagNames: FlagsmithFeatureName[] = Object.values(FLAG_MIGRATION_MAP);
     const flagValues = await getMultipleValues(flagNames);
     
@@ -94,10 +100,13 @@ export async function getFeatureFlags(): Promise<FeatureFlags> {
       showClasificacion: flagValues['show-clasificacion'],
       showColeccionables: flagValues['show-coleccionables'],
       showGaleria: flagValues['show-galeria'],
+      showRSVP: true, // RSVP is always available
       showPartidos: flagValues['show-partidos'],
       showSocialMedia: flagValues['show-social-media'],
       showHistory: flagValues['show-history'],
       showNosotros: flagValues['show-nosotros'],
+      showUnete: true, // Únete is always available
+      showContacto: true, // Contacto is always available
       showRedesSociales: flagValues['show-redes-sociales'],
       showClerkAuth: flagValues['show-clerk-auth'],
       showDebugInfo: flagValues['show-debug-info'],
@@ -132,10 +141,13 @@ export function getLegacyEnvironmentFlags(): FeatureFlags {
     showClasificacion: true,
     showColeccionables: false,
     showGaleria: false,
+    showRSVP: true, // RSVP is always available
     showPartidos: true,
     showSocialMedia: false,
     showHistory: false,
     showNosotros: true,
+    showUnete: true, // Únete is always available
+    showContacto: true, // Contacto is always available
     showRedesSociales: false,
     showClerkAuth: true,
     showDebugInfo: false
@@ -156,10 +168,13 @@ export function getLegacyEnvironmentFlags(): FeatureFlags {
     showClasificacion: getEnvFlag('NEXT_PUBLIC_FEATURE_CLASIFICACION', defaultFlags.showClasificacion),
     showColeccionables: getEnvFlag('NEXT_PUBLIC_FEATURE_COLECCIONABLES', defaultFlags.showColeccionables),
     showGaleria: getEnvFlag('NEXT_PUBLIC_FEATURE_GALERIA', defaultFlags.showGaleria),
+    showRSVP: defaultFlags.showRSVP, // Always true
     showPartidos: getEnvFlag('NEXT_PUBLIC_FEATURE_PARTIDOS', defaultFlags.showPartidos),
     showSocialMedia: getEnvFlag('NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA', defaultFlags.showSocialMedia),
     showHistory: getEnvFlag('NEXT_PUBLIC_FEATURE_HISTORY', defaultFlags.showHistory),
     showNosotros: getEnvFlag('NEXT_PUBLIC_FEATURE_NOSOTROS', defaultFlags.showNosotros),
+    showUnete: defaultFlags.showUnete, // Always true
+    showContacto: defaultFlags.showContacto, // Always true
     showRedesSociales: getEnvFlag('NEXT_PUBLIC_FEATURE_REDES_SOCIALES', defaultFlags.showRedesSociales),
     showClerkAuth: getEnvFlag('NEXT_PUBLIC_FEATURE_CLERK_AUTH', defaultFlags.showClerkAuth),
     
@@ -326,10 +341,10 @@ export async function getEnabledNavigationItemsAsync(): Promise<NavigationItem[]
     
     // Convert new flag name to legacy format for lookup
     const legacyFeature = Object.keys(FLAG_MIGRATION_MAP).find(
-      key => FLAG_MIGRATION_MAP[key as LegacyFeatureName] === item.feature
+      key => FLAG_MIGRATION_MAP[key as keyof typeof FLAG_MIGRATION_MAP] === item.feature
     ) as keyof FeatureFlags;
     
-    return legacyFeature ? flags[legacyFeature] : false;
+    return legacyFeature ? flags[legacyFeature] : true;
   });
 }
 

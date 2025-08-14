@@ -309,4 +309,4 @@ function RSVPPageWithSuspense() {
   );
 }
 
-export default withFeatureFlag(RSVPPageWithSuspense, 'showRSVP');
+export default RSVPPageWithSuspense;

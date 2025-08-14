@@ -2,7 +2,7 @@ import { FlagsmithFeatureName, DEFAULT_FLAG_VALUES } from '../types';
 
 // Mock Flagsmith manager for Storybook
 class MockFlagsmithManager {
-  private featureFlags: Record<FlagsmithFeatureName, boolean> = DEFAULT_FLAG_VALUES as Record<FlagsmithFeatureName, boolean>;
+  private featureFlags: Record<string, boolean> = DEFAULT_FLAG_VALUES as Record<string, boolean>;
 
   constructor(initialFlags: Partial<Record<FlagsmithFeatureName, boolean>> = {}) {
     this.featureFlags = { ...DEFAULT_FLAG_VALUES, ...initialFlags };
@@ -25,7 +25,7 @@ class MockFlagsmithManager {
   }
 
   // Method to set flags for testing in Storybook
-  setFlags(flags: Record<FlagsmithFeatureName, boolean>) {
+  setFlags(flags: Record<string, boolean>) {
     this.featureFlags = { ...this.featureFlags, ...flags };
   }
 
@@ -42,7 +42,7 @@ class MockFlagsmithManager {
 
 let mockFlagsmithInstance: MockFlagsmithManager | null = null;
 
-export function getFlagsmithManager(initialFlags?: Record<FlagsmithFeatureName, boolean>): MockFlagsmithManager {
+export function getFlagsmithManager(initialFlags?: Record<string, boolean>): MockFlagsmithManager {
   if (!mockFlagsmithInstance) {
     mockFlagsmithInstance = new MockFlagsmithManager(initialFlags);
   }
