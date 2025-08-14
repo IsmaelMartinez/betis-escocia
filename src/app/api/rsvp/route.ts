@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from "@sentry/nextjs";
 import { supabase, type RSVP } from '@/lib/supabase';
 import { getCurrentUpcomingMatch } from '@/lib/matchUtils';
-import { triggerAdminNotification } from '@/lib/notifications/simpleNotifications';
 import { rsvpSchema } from '@/lib/schemas/rsvp';
 import { ZodError } from 'zod';
 import { formatISO } from 'date-fns';
@@ -255,19 +254,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Send simple notification to admin users (non-blocking)
+    // Queue notification for admin users (will be picked up by SSE stream)
     try {
-      console.log('Triggering admin notification for RSVP submission');
-      triggerAdminNotification('rsvp', {
-        userName: name.trim(),
-        matchDate: currentMatchDate
-      }).catch(error => {
-        console.error('Failed to send admin notification:', error);
-        // Don't fail the RSVP if notification fails
-      });
+      const notification = {
+        id: Date.now().toString(),
+        timestamp: new Date().toISOString(),
+        type: 'rsvp',
+        data: {
+          title: '🎉 Nuevo RSVP - Peña Bética',
+          body: `${name.trim()} confirmó asistencia para el partido`,
+          icon: '/images/logo_no_texto.jpg',
+          tag: 'rsvp-notification',
+          url: '/admin'
+        }
+      };
+
+      // Store in global notification queue for SSE pickup
+      global.pendingNotifications = global.pendingNotifications || [];
+      global.pendingNotifications.push(notification);
+
+      // Clean up old notifications (keep only last 100)
+      if (global.pendingNotifications.length > 100) {
+        global.pendingNotifications = global.pendingNotifications.slice(-100);
+      }
+
+      console.log('RSVP notification queued:', notification.id);
     } catch (error) {
-      console.error('Error triggering admin notification:', error);
-      // Don't fail the RSVP if notification check fails
+      console.warn('Error queueing admin notification:', error);
+      // Don't fail the RSVP if notification fails
     }
 
     // Get updated totals for the current match using match_id

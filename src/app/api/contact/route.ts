@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase, type ContactSubmissionInsert, getAuthenticatedSupabaseClient } from '@/lib/supabase';
 import { getAuth } from '@clerk/nextjs/server';
-import { triggerAdminNotification } from '@/lib/notifications/simpleNotifications';
 import { contactSchema } from '@/lib/schemas/contact';
 import { ZodError } from 'zod';
 
@@ -51,21 +50,34 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    // Send simple notification to admin users (non-blocking)
+    // Queue notification for admin users (will be picked up by SSE stream)
     try {
-      if (insertedSubmission) {
-        console.log('Triggering admin notification for contact submission');
-        triggerAdminNotification('contact', {
-          userName: name.trim(),
-          contactType: type ?? 'general'
-        }).catch(error => {
-          console.error('Failed to send admin notification:', error);
-          // Don't fail the contact submission if notification fails
-        });
+      const notification = {
+        id: Date.now().toString(),
+        timestamp: new Date().toISOString(),
+        type: 'contact',
+        data: {
+          title: '📬 Nuevo Mensaje - Peña Bética',
+          body: `${name.trim()} envió un mensaje (${type ?? 'general'})`,
+          icon: '/images/logo_no_texto.jpg',
+          tag: 'contact-notification',
+          url: '/admin'
+        }
+      };
+
+      // Store in global notification queue for SSE pickup
+      global.pendingNotifications = global.pendingNotifications || [];
+      global.pendingNotifications.push(notification);
+
+      // Clean up old notifications (keep only last 100)
+      if (global.pendingNotifications.length > 100) {
+        global.pendingNotifications = global.pendingNotifications.slice(-100);
       }
+
+      console.log('Contact notification queued:', notification.id);
     } catch (error) {
-      console.error('Error triggering admin notification:', error);
-      // Don't fail the contact submission if notification check fails
+      console.warn('Error queueing admin notification:', error);
+      // Don't fail the contact submission if notification fails
     }
 
     return NextResponse.json({ 

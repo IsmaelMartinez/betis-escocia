@@ -12,6 +12,12 @@ import {
   showNotification,
   areNotificationsEnabled
 } from '@/lib/notifications/simpleNotifications';
+import { 
+  getPushNotificationStatus,
+  initializePushNotifications,
+  registerServiceWorker
+} from '@/lib/notifications/pushNotifications';
+import { getNotificationManager } from '@/lib/notifications/notificationManager';
 
 interface SimpleNotificationPanelProps {
   className?: string;
@@ -29,6 +35,16 @@ const SimpleNotificationPanel: React.FC<SimpleNotificationPanelProps> = ({
   const [testNotificationSent, setTestNotificationSent] = useState(false);
   const [userPreferenceEnabled, setUserPreferenceEnabled] = useState(false);
   const [loadingPreference, setLoadingPreference] = useState(true);
+  const [pushNotificationStatus, setPushNotificationStatus] = useState({
+    supported: false,
+    permission: 'default' as NotificationPermission,
+    subscribed: false,
+    serviceWorkerReady: false
+  });
+  const [notificationManagerStatus, setNotificationManagerStatus] = useState({
+    connected: false,
+    reconnectAttempts: 0
+  });
 
   // Check initial state
   useEffect(() => {
@@ -41,6 +57,14 @@ const SimpleNotificationPanel: React.FC<SimpleNotificationPanelProps> = ({
         setSupported(browserSupported);
         setPermission(currentPermission);
         
+        // Check push notification status
+        try {
+          const pushStatus = await getPushNotificationStatus();
+          setPushNotificationStatus(pushStatus);
+        } catch (err) {
+          console.warn('Failed to get push notification status:', err);
+        }
+        
         // Load user preference from database
         try {
           const enabled = await areNotificationsEnabled();
@@ -49,6 +73,15 @@ const SimpleNotificationPanel: React.FC<SimpleNotificationPanelProps> = ({
           // Default to false if API fails (e.g., in test environment)
           console.warn('Failed to load notification preferences, defaulting to false:', err);
           setUserPreferenceEnabled(false);
+        }
+        
+        // Check notification manager status
+        try {
+          const manager = getNotificationManager();
+          const managerStatus = manager.getStatus();
+          setNotificationManagerStatus(managerStatus);
+        } catch (err) {
+          console.warn('Failed to get notification manager status:', err);
         }
         
         setLoadingPreference(false);
@@ -120,11 +153,18 @@ const SimpleNotificationPanel: React.FC<SimpleNotificationPanelProps> = ({
     if (!supported || permission !== 'granted') return;
 
     try {
-      showNotification({
-        title: '🎉 Test Notification - Peña Bética',
-        body: 'Your notifications are working correctly!',
-        tag: 'test'
-      });
+      // Try using the notification manager for push notifications first
+      const manager = getNotificationManager();
+      const success = await manager.testNotification();
+      
+      if (!success) {
+        // Fallback to simple notification
+        showNotification({
+          title: '🧪 Test Notification - Peña Bética',
+          body: 'Your notifications are working correctly!',
+          tag: 'test'
+        });
+      }
       
       setTestNotificationSent(true);
       setTimeout(() => setTestNotificationSent(false), 3000);
@@ -201,16 +241,42 @@ const SimpleNotificationPanel: React.FC<SimpleNotificationPanelProps> = ({
           </div>
         </div>
 
+        {/* Service Worker Status */}
+        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div>
+            <p className="font-medium">Service Worker</p>
+            <p className="text-sm text-gray-600" data-testid="service-worker-status">
+              {pushNotificationStatus.serviceWorkerReady ? 'Ready' : 'Not Ready'}
+            </p>
+          </div>
+          <div className={pushNotificationStatus.serviceWorkerReady ? 'text-green-600' : 'text-yellow-600'}>
+            {pushNotificationStatus.serviceWorkerReady ? <Check className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
+          </div>
+        </div>
+
+        {/* Background Notifications */}
+        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div>
+            <p className="font-medium">Background Notifications</p>
+            <p className="text-sm text-gray-600" data-testid="background-notifications-status">
+              {notificationManagerStatus.connected ? 'Connected' : 'Disconnected'}
+            </p>
+          </div>
+          <div className={notificationManagerStatus.connected ? 'text-green-600' : 'text-gray-400'}>
+            {notificationManagerStatus.connected ? <Check className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
+          </div>
+        </div>
+
         {/* Subscription Status (for backward compatibility with tests) */}
         <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
           <div>
-            <p className="font-medium">Subscription Status</p>
+            <p className="font-medium">Overall Status</p>
             <p className="text-sm text-gray-600" data-testid="subscription-status">
-              {permission === 'granted' && userPreferenceEnabled ? 'Active' : 'Inactive'}
+              {permission === 'granted' && userPreferenceEnabled && pushNotificationStatus.serviceWorkerReady ? 'Fully Active' : 'Inactive'}
             </p>
           </div>
-          <div className={permission === 'granted' && userPreferenceEnabled ? 'text-green-600' : 'text-gray-400'}>
-            {permission === 'granted' && userPreferenceEnabled ? <Check className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
+          <div className={permission === 'granted' && userPreferenceEnabled && pushNotificationStatus.serviceWorkerReady ? 'text-green-600' : 'text-gray-400'}>
+            {permission === 'granted' && userPreferenceEnabled && pushNotificationStatus.serviceWorkerReady ? <Check className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
           </div>
         </div>
 
@@ -261,10 +327,21 @@ const SimpleNotificationPanel: React.FC<SimpleNotificationPanelProps> = ({
         </div>
 
         {/* Info Text */}
-        <p className="text-xs text-gray-500 mt-4">
-          Notifications only work in secure contexts (HTTPS) and require user permission.
-          They will only show when you have this admin dashboard open.
-        </p>
+        <div className="text-xs text-gray-500 mt-4 space-y-1">
+          <p>
+            Notifications work in secure contexts (HTTPS) and require user permission.
+          </p>
+          <p>
+            Background notifications work even when the admin dashboard is closed, 
+            using a service worker for real-time push notifications.
+          </p>
+          <p>
+            {notificationManagerStatus.connected 
+              ? '✅ You will receive notifications in the background.' 
+              : '⚠️ Background notifications are currently disabled.'
+            }
+          </p>
+        </div>
       </CardBody>
     </Card>
   );

@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth, useUser } from '@clerk/nextjs';
 import { supabase, RSVP, ContactSubmission, Match, createMatch, updateMatch, deleteMatch, getMatches, updateContactSubmissionStatus } from '@/lib/supabase';
 import { Users, Mail, TrendingUp, Download, RefreshCw, Calendar, Plus, RotateCcw } from 'lucide-react';
@@ -21,6 +21,10 @@ import { withAdminRole } from '@/lib/withAdminRole';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { DATE_FORMAT } from '@/lib/constants/dateFormats';
+import { 
+  initializeNotifications,
+  cleanupNotifications 
+} from '@/lib/notifications/notificationManager';
 
 interface AdminStats {
   totalRSVPs: number;
@@ -146,6 +150,20 @@ function AdminPage() {
     } finally {
       setLoading(false);
       setRefreshing(false);
+    }
+  };
+
+  // Initialize background notification system
+  const initializeBackgroundNotifications = async () => {
+    try {
+      const initialized = await initializeNotifications();
+      if (initialized) {
+        console.log('Background notifications initialized successfully');
+      } else {
+        console.log('Background notifications not available or disabled');
+      }
+    } catch (error) {
+      console.warn('Failed to initialize background notifications:', error);
     }
   };
 
@@ -324,7 +342,14 @@ function AdminPage() {
   useEffect(() => {
     if (isSignedIn) {
       fetchStats();
+      // Initialize background notifications when admin dashboard loads
+      initializeBackgroundNotifications();
     }
+
+    // Cleanup on unmount
+    return () => {
+      cleanupNotifications();
+    };
   }, [isSignedIn]);
 
   // Show loading while Clerk is loading
