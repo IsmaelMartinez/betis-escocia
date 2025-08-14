@@ -28,6 +28,18 @@ This document summarizes the reorganization and consolidation of documentation f
 - **Moved `tasks/tasks-prd-admin-push-notifications.md` to `docs/historical/completed-tasks/tasks-prd-admin-push-notifications.md`**
 - **Moved `tasks/prd-admin-push-notifications.md` to `docs/historical/implemented-features/prd-admin-push-notifications.md`**
 
+### Documentation Simplification & Completed Features (August 2025)
+- **Moved `tasks/tasks-prd-simplify-security-layer.md` to `docs/historical/tasks-prd-simplify-security-layer.md`**
+- **Moved `tasks/prd-simplify-security-layer.md` to `docs/historical/prd-simplify-security-layer.md`**
+- **Moved `tasks/tasks-prd-simplify-date-utilities.md` to `docs/historical/tasks-prd-simplify-date-utilities.md`**
+- **Moved `tasks/prd-simplify-date-utilities.md` to `docs/historical/prd-simplify-date-utilities.md`**
+- **Moved `tasks/tasks-prd-flagsmith-optimization.md` to `docs/historical/tasks-prd-flagsmith-optimization.md`**
+- **Moved `tasks/prd-flagsmith-optimization.md` to `docs/historical/prd-flagsmith-optimization.md`**
+- **Moved `tasks/tasks-prd-comprehensive-test-coverage.md` to `docs/historical/tasks-prd-comprehensive-test-coverage.md`**
+- **Moved `tasks/prd-comprehensive-test-coverage.md` to `docs/historical/prd-comprehensive-test-coverage.md`**
+
+**Rationale**: These features have been completed as evidenced by ADRs 014-018 and comprehensive test coverage implementation. Moving them to historical documentation keeps the active tasks directory focused on current development priorities.
+
 ## Benefits
 - **Reduced Clutter**: The `/tasks` directory now contains only active development tasks.
 - **Clearer Focus**: Easier to identify current priorities.

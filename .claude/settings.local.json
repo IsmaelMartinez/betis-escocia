@@ -13,7 +13,8 @@
       "Bash(timeout 5 npm run test:watch)",
       "Bash(npm run test:coverage:*)",
       "Bash(npm run test:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(mv:*)"
     ],
     "deny": []
   }
