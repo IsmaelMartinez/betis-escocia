@@ -4,7 +4,7 @@
 
 Real Betis supporters club website in Edinburgh with mobile-first design, serving match viewing parties at Polwarth Tavern. Built on Next.js 15 with TypeScript, featuring secure-by-default architecture using feature flags.
 
-**📖 For comprehensive project details, architecture decisions, and implementation guides, see GEMINI.md - it contains up-to-date information about technologies, patterns, trivia game implementation, MCP server configuration, and areas for improvement.**
+**📖 For comprehensive project details, architecture decisions, and implementation guides, see [CLAUDE.md](../CLAUDE.md) - it contains up-to-date information about technologies, patterns, and development practices.**
 
 ## Storybook 9 Integration Notes
 
@@ -98,9 +98,8 @@ This workflow ensures completed work is properly archived while keeping active p
 
 ### Comprehensive Project Documentation
 
-- **GEMINI.md**: Contains detailed project overview, technologies, patterns, and improvement areas - **keep this updated as it serves as the primary reference for other AI agents**
-  - **Note**: Some references in GEMINI.md may need verification (e.g., `src/lib/flags/` should be `src/lib/flagsmith/`)
-- **Database schema**: See `sql/` directory for migrations
+- **[CLAUDE.md](../CLAUDE.md)**: Primary project reference with complete architecture, patterns, and development practices
+- **Database schema**: See `sql/` directory for migrations  
 - **Documentation**: Comprehensive ADRs in `docs/adr/`
 - **Feature flags**: Complete guide in `docs/feature-flags.md`
 
@@ -115,8 +114,8 @@ This project utilizes Model Context Protocol (MCP) servers to extend the Gemini 
 
 - **Admin dashboard**: `/admin` (requires admin role)
 - **API endpoints**: Follow RESTful patterns in `src/app/api/`
-- **Feature flag implementation**: `src/lib/flagsmith/` (not `src/lib/flags/`)
-- **Trivia game**: Full implementation details in GEMINI.md
+- **Feature flag implementation**: `src/lib/flagsmith/`
+- **Trivia game**: Full implementation details in [CLAUDE.md](../CLAUDE.md)
 
 ---
 

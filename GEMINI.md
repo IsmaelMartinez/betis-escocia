@@ -1,108 +1,12 @@
-# Task Completion Status - Comprehensive Testing Implementation
+# GEMINI.md - Project Documentation
 
-## ✅ TASK 1.8 - COMPLETED
-**Create tests for `/api/admin/contact-submissions` API**
+> **This file has been simplified. The comprehensive project documentation is now in [CLAUDE.md](./CLAUDE.md).**
 
-### Completed Implementation:
-**✅ `/api/admin/contact-submissions` Tests** - FULLY IMPLEMENTED
-- **File**: `tests/integration/api/admin/contact-submissions.test.ts`
-- **Test Count**: 15 comprehensive test scenarios
-- **Coverage Areas**: 
-  - Authentication and Authorization (3 tests)
-  - Request Validation (4 tests)
-  - Database Operations (3 tests)
-  - Error Handling (3 tests)
-  - Token and Authentication Integration (1 test)
-  - Status Tracking (1 test)
-- **Status**: All tests passing ✅
+For historical task completion records, see: [docs/historical/gemini-task-completion-archive.md](./docs/historical/gemini-task-completion-archive.md)
 
-### Achievement Summary:
-- **Admin API Test Suites**: 3 of 4 completed (roles, users, contact-submissions)
-- **Total Passing Tests**: 47 admin tests (all passing)
-- **Coverage Improvement**: Comprehensive testing patterns established
-- **Methodology**: Demonstrated complete testing framework for admin APIs
+## Quick Reference
 
----
-
-## ✅ TASK 1.9 - COMPLETED
-**Create tests for `/api/admin/sync-matches` API**
-
-### Completed Implementation:
-**✅ `/api/admin/sync-matches` Tests** - FULLY IMPLEMENTED
-- **File**: `tests/integration/api/admin/sync-matches.test.ts`
-- **Test Count**: 14 comprehensive test scenarios
-- **Coverage Areas**:
-  - Authentication and Authorization (2 tests)
-  - Rate Limiting (1 test)
-  - Successful Match Synchronization (3 tests)
-  - Error Handling (3 tests)
-  - Edge Cases (5 tests)
-- **Status**: All tests passing ✅
-
-### Achievement Summary:
-- **Admin API Test Suites**: 4 of 4 completed (roles, users, contact-submissions, sync-matches)
-- **Total Passing Tests**: 57 admin tests (all passing)
-- **Coverage Improvement**: Comprehensive testing patterns established for match synchronization
-- **Methodology**: Demonstrated complete testing framework for admin APIs
-
----
-
-## Project Overview
-
-Real Betis supporters club website in Edinburgh with mobile-first design, serving match viewing parties at Polwarth Tavern. Built on Next.js 15 with TypeScript, featuring secure-by-default architecture using feature flags.
-
-**📖 For comprehensive project details, architecture decisions, and implementation guides, please refer to the workflow-specific instruction files in `.github/instructions/` and the detailed documentation in `docs/` directory.**
-
-## Potential Areas for Improvement/Expansion (as a Principal Software Developer would think):
-
-This section outlines areas for future development and optimization. It's crucial to regularly review these points to assess progress and re-prioritize based on current project needs and completed work.
-
--   **Strategic Task Deferral:** When encountering unexpectedly complex or time-consuming tasks, consider deferring them to focus on more manageable tasks to maintain momentum and avoid getting stuck. This allows for a more agile approach to development.
-
-1.  **Centralized State Management:** For more complex UIs, consider a state management library (e.g., Zustand, Jotai, React Context API) if not already implicitly handled by Next.js/React Query patterns.
-    *   **Review Note:** This remains a relevant consideration as UI complexity grows. No explicit solution has been implemented to deprecate this.
-2.  **Robust Error Handling & Logging:** Review error boundaries (`src/app/error.tsx`, `src/app/global-error.tsx`, `src/components/ErrorBoundary.tsx`) and ensure comprehensive logging (e.g., Sentry, LogRocket) is in place for production.
-    *   **Review Note:** While error boundaries exist, comprehensive production logging and monitoring (e.g., integration with a service like Sentry) is an ongoing effort and remains a high priority.
-3.  **Performance Optimization:**
-    *   **Image Optimization:** Ensure Next.js `Image` component is used effectively with proper `priority` and `sizes` for LCP.
-    *   **Data Fetching:** Optimize Supabase queries, consider server-side caching strategies (Next.js `revalidate` options, SWR/React Query).
-    *   **Bundle Size:** Analyze and reduce JavaScript bundle size.
-    *   **Review Note:** Performance is an evergreen concern. Specific optimizations might have been made, but continuous monitoring and improvement are always necessary. This remains a high priority.
-4.  **Scalability:**
-    *   **API Rate Limiting:** Implement rate limiting for public API routes to prevent abuse.
-    *   **Database Indexing:** Ensure appropriate database indexes are in place for frequently queried columns in Supabase.
-    *   **Review Note:** Rate limiting is critical for public APIs and may not be fully implemented. Database indexing is an ongoing task as new queries and data patterns emerge. Both remain high priority.
-5.  **Developer Experience (DX):**
-    *   **Code Generation:** Explore tools like `supabase gen types` for generating TypeScript types from the database schema to improve type safety and reduce manual work.
-    *   **Storybook v9 Migration**: **COMPLETED** - Successfully migrated to Storybook v9.0.18 with performance improvements, package consolidation, and enhanced testing integration. See ADR-010 for details. Related PRDs and tasks moved to `docs/historical/completed-tasks` and `docs/historical/implemented-features`.
-    *   **Review Note**: Storybook v9 migration has been completed, providing better performance and development experience. Focus can now shift to expanding component documentation and visual testing capabilities.
-6.  **Testing Coverage:** While E2E and some unit tests exist, ensure critical business logic and UI interactions have sufficient test coverage.
-    *   **Review Note:** Testing coverage is an ongoing process. This remains a high priority to ensure code quality and prevent regressions.
-7.  **CI/CD Enhancements:** Review `github/workflows/` for opportunities to add more automated checks (e.g., performance audits, security scans).
-    *   **Review Note:** CI/CD pipelines can always be improved. Adding more automated checks is a continuous effort and remains a high priority for release quality.
-8.  **User Engagement Features:** A "Betis & Scotland Trivia Challenge" game has been implemented to boost engagement. This involved:
-    *   **Database Design:** New Supabase tables (`trivia_questions`, `trivia_answers`) for game-specific data with proper UUID relationships.
-    *   **Game Mechanics:** 3-question trivia format with 15-second timer per question, immediate feedback, and percentage scoring.
-    *   **Daily Gameplay Model:** "Once per day" messaging encourages regular engagement without enforcing strict limitations.
-    *   **Frontend Components:** Game timer (`GameTimer.tsx`), trivia page (`src/app/trivia/page.tsx`) with results section.
-    *   **Feature Flag Integration:** Controlled by `show-trivia-game` flag for safe rollout and testing.
-    *   **API Endpoints:** RESTful endpoints for fetching questions and answers with proper error handling.
-    *   **Review Note:** This feature is fully implemented and tested. The trivia pointing system has also been implemented. Future enhancements could include user progress tracking, leaderboards, and expanded question database.
-9.  **Internationalization (i18n):** If the audience is global, consider implementing i18n for content.
-    *   **Review Note:** This is a strategic decision based on target audience. If the project is currently focused on a single language, this might be a lower priority.
-
-### Plan for Reviewing Improvement Areas:
-
-Regularly revisit this section (e.g., quarterly or before major releases) to:
-1.  **Assess Progress:** For each item, determine if work has been done, if it's complete, or if it's still in progress.
-2.  **Re-prioritize:** Adjust the priority of each item based on current project goals, new insights, and resource availability.
-3.  **Update Notes:** Add specific notes under each item detailing current status, recent efforts, or changes in priority.
-4.  **Remove Completed Items:** Once an area is deemed sufficiently improved or completed, it can be removed from this list or moved to a "Completed Improvements" section for historical context.
-
-## Pointers for Future Interactions:
-- **Always check `src/lib/supabase.ts`** for database interaction patterns.
-- **Look for existing UI components in `src/components/`** before creating new ones.
-- **Consult `docs/adr/`** for architectural decisions.
-- **For authentication, assume Clerk** unless otherwise specified.
-- **For feature flags, assume Flagsmith.**
-- **When proposing new features, consider how they integrate with Supabase, Clerk, and Flagsmith.**
+- **Primary Documentation**: [CLAUDE.md](./CLAUDE.md)
+- **Architecture Decisions**: `docs/adr/`
+- **Testing Guide**: `docs/TESTING_GUIDE.md`
+- **Developer Guide**: `docs/DEVELOPER_GUIDE.md`

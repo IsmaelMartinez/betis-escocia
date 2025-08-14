@@ -182,54 +182,6 @@ test('renders component correctly', () => {
 - **Base URL**: Defaults to `http://localhost:3000`
 - **Pattern**: Test user workflows end-to-end with real authentication
 
-## Testing Patterns
-
-### Vitest Configuration
-- **Test runner**: Vitest with jsdom environment for React components
-- **Coverage**: v8 provider with 80% threshold for lines, functions, branches, statements
-- **Setup**: Global setup in `tests/setup.ts` with DOM testing library matchers
-- **Config**: `vitest.config.ts` with path aliases and environment variables
-
-### Test Organization
-- **Unit tests**: `tests/unit/` - Component and utility function testing
-- **Integration tests**: `tests/integration/` - API route and database integration testing
-- **E2E tests**: `e2e/` - Full user journey testing with Playwright
-- **Helpers**: `tests/helpers/` - Shared test utilities and mock factories
-
-### Vitest API Patterns
-```typescript
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
-
-// Mocking with Vitest
-vi.mock('@/lib/flagsmith', () => ({
-  hasFeature: vi.fn(() => Promise.resolve(false)),
-  getValue: vi.fn(() => Promise.resolve('default')),
-}));
-
-// Component testing
-test('renders component correctly', () => {
-  render(<MyComponent />);
-  expect(screen.getByRole('button')).toBeInTheDocument();
-});
-```
-
-### API Testing Patterns
-- **Clerk mocking**: Mock `@clerk/nextjs/server` for authentication tests
-- **Supabase mocking**: Mock database operations with controlled responses  
-- **MSW integration**: Service worker for external API mocking
-- **Environment variables**: Test-specific values in `vitest.config.ts`
-
-### E2E Testing (Playwright)
-- **Auth setup**: Pre-configured in `playwright/global.setup.ts` with Clerk authentication
-- **Base URL**: Defaults to `http://localhost:3000`
-- **Pattern**: Test user workflows end-to-end with real authentication
-- **Test structure**: Admin tests use `storageState: 'playwright/.clerk/user.json'`
-- **Data attributes**: Use `data-testid` attributes for reliable element selection
-- **Browser permissions**: Grant permissions using `page.context().grantPermissions(['notifications'])`
-- **Multi-page testing**: Test integrations by opening new pages within same test context
-- **Flagsmith mocking**: Use `mockFlagsmithAPI()` helper from `e2e/helpers/flagsmith-mock.ts` to prevent excessive API requests
-
 ## Key Features
 
 ### Community Features
@@ -243,6 +195,43 @@ test('renders component correctly', () => {
 - **User Data**: Clerk webhooks sync user profiles to Supabase
 - **Admin Dashboard**: User management, match sync, contact submissions
 - **Push Notifications**: Real-time admin notifications for RSVP and contact submissions
+
+## Trivia Game Implementation
+
+### Database Design
+- **Tables**: `trivia_questions`, `trivia_answers` with proper UUID relationships
+- **Data Structure**: Questions with multiple choice answers, correct answer flagging
+- **Categories**: Real Betis history, Scottish football, general knowledge
+
+### Game Mechanics
+- **Format**: 3-question trivia format
+- **Timer**: 15-second countdown per question
+- **Scoring**: Percentage-based scoring system with immediate feedback
+- **Engagement**: "Once per day" messaging encourages regular participation
+
+### Technical Implementation
+- **Frontend**: Game timer component (`GameTimer.tsx`), trivia page with results
+- **API**: RESTful endpoints for questions/answers with error handling
+- **Feature Flag**: Controlled by `show-trivia-game` flag
+- **Database**: Proper indexing for question randomization and performance
+
+## Areas for Future Enhancement
+
+### Performance & Scalability
+- **API Rate Limiting**: Implement for public routes
+- **Database Indexing**: Optimize for frequent queries
+- **Bundle Size**: Analyze and reduce JavaScript bundles
+- **Image Optimization**: Ensure proper Next.js Image usage
+
+### Developer Experience
+- **Type Generation**: Consider `supabase gen types` for schema sync
+- **CI/CD Enhancement**: Add performance audits, security scans
+- **Documentation**: Expand component documentation in Storybook
+
+### User Engagement
+- **Trivia Enhancements**: Leaderboards, expanded question database
+- **Social Features**: Enhanced photo sharing, match predictions
+- **Internationalization**: Multi-language support if needed
 
 ## Documentation References
 

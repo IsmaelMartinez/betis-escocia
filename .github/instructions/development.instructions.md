@@ -13,35 +13,30 @@ alwaysApply: false
 This document outlines the guidelines and patterns for the code development workflow, covering architectural decisions, integration patterns, and component development.
 
 ## Relevant Files
-- `src/app/`: Next.js App Router structure for pages and API routes.
-- `src/components/`: Reusable React components.
-- `src/lib/`: Utility functions, API clients (Supabase, Flagsmith), and authentication helpers.
-- `docs/adr/`: Architecture Decision Records.
-- `src/lib/flagsmith/`: Feature flag management system.
-- `src/lib/supabase.ts`: Database client and type definitions.
-- `src/lib/adminApiProtection.ts`: API security utilities.
-- `.storybook/`: Storybook configuration files.
-- `src/components/**/*.stories.tsx`: Storybook stories for components.
+> For complete architecture overview, see [CLAUDE.md](../../CLAUDE.md)
+
+Key development files:
+- `src/lib/flagsmith/`: Feature flag management system
+- `src/lib/adminApiProtection.ts`: API security utilities  
+- `src/lib/supabase.ts`: Database client and type definitions
 
 ## Guidelines
 
 ### Critical Architecture Patterns
 
 #### Feature Flag System (Flagsmith)
-- **All features disabled by default** - requires explicit activation in Flagsmith dashboard.
-- **Never use environment variables for new flags** - migrate to Flagsmith API.
-- **Pattern**: Check flags with `await hasFeature('flag-name')` or `await getValue('flag-name')`.
-- **Debugging**: Enable with `NEXT_PUBLIC_FLAGSMITH_DEBUG=true`.
-- **Config required**: `NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID` (starts with `ser_` in production).
-- **Reference**: For more details, consult `docs/adr/004-flagsmith-feature-flags.md`.
+> See [CLAUDE.md](../../CLAUDE.md) for complete implementation details
+
+- **Pattern**: `await hasFeature('flag-name')` or `await getValue('flag-name')`
+- **Location**: `src/lib/flagsmith/` directory
+- **Core features always enabled**: RSVP, Join, Contact (no flags needed)
 
 #### Authentication Flow (Clerk + Supabase)
-- **Dual pattern**: Anonymous submissions + authenticated user management.
-- **Server-side**: Always use `getAuth()` and `currentUser()` for metadata access.
-- **API protection**: Import `checkAdminRole()` from `@/lib/adminApiProtection`.
-- **Role hierarchy**: `admin` > `moderator` > `user` (stored in `publicMetadata.role`).
-- **Token passing**: Use `getAuthenticatedSupabaseClient(clerkToken)` for Row Level Security (RLS).
-- **Reference**: For more details, consult `docs/adr/001-clerk-authentication.md` and `docs/adr/006-clerk-supabase-jwt-integration.md`.
+> See [CLAUDE.md](../../CLAUDE.md) for complete authentication patterns
+
+- **API protection**: Use `checkAdminRole()` from `@/lib/adminApiProtection`
+- **Role hierarchy**: `admin` > `moderator` > `user` 
+- **Database**: Use `getAuthenticatedSupabaseClient(clerkToken)` for RLS
 
 #### API Route Patterns
 ```typescript
@@ -61,11 +56,11 @@ export async function POST(request: NextRequest) {
 ```
 
 #### Database Integration (Supabase)
-- **RLS enabled** on all user tables - always use authenticated client for user data.
-- **User linking**: Automatic email-based association via Clerk webhooks.
-- **Cache strategy**: Use `classification_cache` table pattern for external API data.
-- **Cleanup**: Implement TTL patterns (see `cleanup_old_rsvps()` function).
-- **Reference**: For more details, consult `docs/adr/003-supabase-database.md` and `docs/adr/007-clerk-webhooks-for-data-sync.md`.
+> See [CLAUDE.md](../../CLAUDE.md) for complete database patterns
+
+- **RLS enabled**: Always use authenticated client for user data
+- **Cache strategy**: Use `classification_cache` table for external API data
+- **Client location**: `src/lib/supabase.ts`
 
 ### Component & Page Patterns
 

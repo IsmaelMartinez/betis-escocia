@@ -14,25 +14,22 @@ alwaysApply: false
 This document outlines the guidelines and patterns for the testing workflow, covering unit, integration, E2E, and component testing strategies.
 
 ## Relevant Files
+> For complete testing architecture, see [CLAUDE.md](../../CLAUDE.md)
 
-- `tests/component/`: Vitest component tests integrated with Storybook.
-- `vitest.config.ts`: Vitest test runner configuration with path aliases and environment variables.
-- `tests/unit/`: Vitest unit tests.
-- `tests/integration/`: Vitest integration tests for API routes.
-- `e2e/`: Playwright end-to-end tests.
-- `tests/setup.ts`: Vitest configuration.
-- `playwright/global.setup.ts`: Playwright E2E authentication setup with Clerk.
-- `playwright.config.ts`: Playwright E2E test configuration with auth state.
+Key testing files:
+- `tests/`: Unit and integration tests (Vitest)
+- `e2e/`: End-to-end tests (Playwright)
+- `vitest.config.ts`: Test runner configuration
 
 ## Guidelines
 
 ### Testing Strategy Overview
+> See [CLAUDE.md](../../CLAUDE.md) for complete testing patterns and examples
 
-- **Unit tests**: Vitest, placed in `tests/unit/`.
-- **Integration tests**: API routes in `tests/integration/`.
-- **E2E tests**: Playwright with Clerk authentication pre-setup.
-- **Component tests**: Storybook v9 with Vitest addon integration.
-- **CI/CD Pipeline**: GitHub Actions with comprehensive checks (ESLint, TypeScript, Storybook build, Vitest, Playwright, Lighthouse).
+- **Unit tests**: Vitest in `tests/unit/`
+- **Integration tests**: API routes in `tests/integration/`  
+- **E2E tests**: Playwright with Clerk auth pre-setup
+- **Component tests**: Storybook v9 with Vitest addon
 
 ### Vitest Configuration and ES Module Handling
 
