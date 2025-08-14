@@ -48,8 +48,7 @@ The Peña Bética Escocesa website required an API to fetch live football match 
 - Error handling and rate limiting managed carefully
 
 ## References
-- [API FREE TIER SOLUTION](../../api/API_FREE_TIER_SOLUTION.md)
-- [API REALITY CHECK](../../api/API_REALITY_CHECK.md)
+- [Football-Data.org API Implementation Guide](../api/football-data-api-implementation.md) - Comprehensive implementation details and evaluation results
 
 ## Review
 - **Next review date**: 2025-12-25 (6-month review)
