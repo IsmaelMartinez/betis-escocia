@@ -17,15 +17,11 @@ const E2E_FLAGS: Record<string, boolean> = E2E_MOCK ? {
   'show-clasificacion': true,
   'show-coleccionables': true,
   'show-galeria': true,
-  'show-rsvp': true,
   'show-partidos': true,
   'show-social-media': true,
   'show-history': true,
   'show-nosotros': true,
-  'show-unete': true,
-  'show-contacto': true,
   'show-redes-sociales': true,
-  'show-admin': true,
   'show-clerk-auth': true,
   'show-debug-info': false,
   'admin-push-notifications': true,
@@ -203,19 +199,18 @@ class FlagsmithManager {
   async refreshFlags(): Promise<void> {
     try {
       if (E2E_MOCK) {
-        // Nothing to refresh
-        return;
+        return; // Nothing to refresh in mock mode
       }
       await this.initialize();
       
-      // Cache logic removed; no cache to clear.
+      if (this.config.enableLogs) {
+        console.log('[Flagsmith] Starting flags refresh...');
+      }
       
-      // Refresh Flagsmith flags
+      // Single refresh call (removed duplicate)
       await flagsmith.getFlags();
       
       if (this.config.enableLogs) {
-        console.log('[Flagsmith] Starting flags refresh...');
-        await flagsmith.getFlags();
         console.log('[Flagsmith] Flags refreshed successfully');
       }
     } catch (error) {
@@ -321,6 +316,10 @@ export function getFlagsmithManager(config?: FlagsmithConfig): FlagsmithManager 
   return globalFlagsmithInstance;
 }
 
+// Helper to reduce manager access repetition
+const withManager = <T extends unknown[], R>(fn: (manager: FlagsmithManager, ...args: T) => R) => 
+  (...args: T): R => fn(getFlagsmithManager(), ...args);
+
 /**
  * Initialize Flagsmith with configuration
  */
@@ -332,42 +331,34 @@ export async function initializeFlagsmith(config: FlagsmithConfig): Promise<void
 /**
  * Check if a feature flag is enabled
  */
-export async function hasFeature(flagName: FlagsmithFeatureName): Promise<boolean> {
-  const manager = getFlagsmithManager();
-  return manager.hasFeature(flagName);
-}
+export const hasFeature = withManager(
+  (manager: FlagsmithManager, flagName: FlagsmithFeatureName) => manager.hasFeature(flagName)
+);
 
 /**
  * Get a feature flag value
  */
-export async function getValue(flagName: FlagsmithFeatureName, defaultValue?: boolean): Promise<boolean> {
-  const manager = getFlagsmithManager();
-  return manager.getValue(flagName, defaultValue);
-}
+export const getValue = withManager(
+  (manager: FlagsmithManager, flagName: FlagsmithFeatureName, defaultValue?: boolean) => 
+    manager.getValue(flagName, defaultValue)
+);
 
 /**
  * Get multiple flag values at once
  */
-export async function getMultipleValues(flagNames: FlagsmithFeatureName[]): Promise<Record<string, boolean>> {
-  const manager = getFlagsmithManager();
-  return manager.getMultipleValues(flagNames);
-}
+export const getMultipleValues = withManager(
+  (manager: FlagsmithManager, flagNames: FlagsmithFeatureName[]) => manager.getMultipleValues(flagNames)
+);
 
 /**
  * Refresh flags from Flagsmith
  */
-export async function refreshFlags(): Promise<void> {
-  const manager = getFlagsmithManager();
-  await manager.refreshFlags();
-}
+export const refreshFlags = withManager((manager: FlagsmithManager) => manager.refreshFlags());
 
 /**
  * Get system status
  */
-export async function getSystemStatus() {
-  const manager = getFlagsmithManager();
-  return manager.getSystemStatus();
-}
+export const getSystemStatus = withManager((manager: FlagsmithManager) => manager.getSystemStatus());
 
 /**
  * Reset Flagsmith manager (useful for testing)

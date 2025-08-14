@@ -19,16 +19,11 @@ export interface FeatureFlags {
   showClasificacion: boolean;
   showColeccionables: boolean;
   showGaleria: boolean;
-  
-  showRSVP: boolean;
   showPartidos: boolean;
   showSocialMedia: boolean;
   showHistory: boolean;
   showNosotros: boolean;
-  showUnete: boolean;
-  showContacto: boolean;
   showRedesSociales: boolean;
-  showAdmin: boolean;
   showClerkAuth: boolean;
   showDebugInfo: boolean;
 }
@@ -49,15 +44,11 @@ export async function initializeFeatureFlags(): Promise<void> {
         showClasificacion: true,
         showColeccionables: true,
         showGaleria: true,
-        showRSVP: true,
         showPartidos: true,
         showSocialMedia: true,
         showHistory: true,
         showNosotros: true,
-        showUnete: true,
-        showContacto: true,
         showRedesSociales: true,
-        showAdmin: true,
         showClerkAuth: true,
         showDebugInfo: false,
       };
@@ -103,16 +94,11 @@ export async function getFeatureFlags(): Promise<FeatureFlags> {
       showClasificacion: flagValues['show-clasificacion'],
       showColeccionables: flagValues['show-coleccionables'],
       showGaleria: flagValues['show-galeria'],
-      
-      showRSVP: flagValues['show-rsvp'],
       showPartidos: flagValues['show-partidos'],
       showSocialMedia: flagValues['show-social-media'],
       showHistory: flagValues['show-history'],
       showNosotros: flagValues['show-nosotros'],
-      showUnete: flagValues['show-unete'],
-      showContacto: flagValues['show-contacto'],
       showRedesSociales: flagValues['show-redes-sociales'],
-      showAdmin: flagValues['show-admin'],
       showClerkAuth: flagValues['show-clerk-auth'],
       showDebugInfo: flagValues['show-debug-info'],
     };
@@ -146,75 +132,47 @@ export function getLegacyEnvironmentFlags(): FeatureFlags {
     showClasificacion: true,
     showColeccionables: false,
     showGaleria: false,
-    
-    showRSVP: true,
     showPartidos: true,
     showSocialMedia: false,
     showHistory: false,
     showNosotros: true,
-    showUnete: true,
-    showContacto: false,
     showRedesSociales: false,
-    showAdmin: false,
     showClerkAuth: true,
     showDebugInfo: false
   };
 
-  const environmentFlags: Partial<FeatureFlags> = {
-    // Production overrides
+  // Helper to reduce environment variable parsing repetition
+  const getEnvFlag = (envVar: string, defaultValue: boolean): boolean => {
+    return process.env[envVar] !== undefined 
+      ? process.env[envVar] === 'true'
+      : defaultValue;
+  };
+
+  // Start with defaults, then apply environment overrides
+  const environmentFlags: FeatureFlags = {
+    ...defaultFlags,
+    
+    // Feature-specific environment variables (simplified)
+    showClasificacion: getEnvFlag('NEXT_PUBLIC_FEATURE_CLASIFICACION', defaultFlags.showClasificacion),
+    showColeccionables: getEnvFlag('NEXT_PUBLIC_FEATURE_COLECCIONABLES', defaultFlags.showColeccionables),
+    showGaleria: getEnvFlag('NEXT_PUBLIC_FEATURE_GALERIA', defaultFlags.showGaleria),
+    showPartidos: getEnvFlag('NEXT_PUBLIC_FEATURE_PARTIDOS', defaultFlags.showPartidos),
+    showSocialMedia: getEnvFlag('NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA', defaultFlags.showSocialMedia),
+    showHistory: getEnvFlag('NEXT_PUBLIC_FEATURE_HISTORY', defaultFlags.showHistory),
+    showNosotros: getEnvFlag('NEXT_PUBLIC_FEATURE_NOSOTROS', defaultFlags.showNosotros),
+    showRedesSociales: getEnvFlag('NEXT_PUBLIC_FEATURE_REDES_SOCIALES', defaultFlags.showRedesSociales),
+    showClerkAuth: getEnvFlag('NEXT_PUBLIC_FEATURE_CLERK_AUTH', defaultFlags.showClerkAuth),
+    
+    // Environment-specific overrides (applied last)
     ...(process.env.NODE_ENV === 'production' && {
       showDebugInfo: false,
     }),
-    
-    // Development overrides
     ...(process.env.NODE_ENV === 'development' && {
       showDebugInfo: Boolean(process.env.NEXT_PUBLIC_DEBUG_MODE),
     }),
-    
-    // Feature-specific environment variables
-    showClasificacion: process.env.NEXT_PUBLIC_FEATURE_CLASIFICACION !== undefined 
-      ? process.env.NEXT_PUBLIC_FEATURE_CLASIFICACION === 'true'
-      : defaultFlags.showClasificacion,
-    showColeccionables: process.env.NEXT_PUBLIC_FEATURE_COLECCIONABLES !== undefined 
-      ? process.env.NEXT_PUBLIC_FEATURE_COLECCIONABLES === 'true'
-      : defaultFlags.showColeccionables,
-    showGaleria: process.env.NEXT_PUBLIC_FEATURE_GALERIA !== undefined 
-      ? process.env.NEXT_PUBLIC_FEATURE_GALERIA === 'true'
-      : defaultFlags.showGaleria,
-    
-    showRSVP: process.env.NEXT_PUBLIC_FEATURE_RSVP !== undefined 
-      ? process.env.NEXT_PUBLIC_FEATURE_RSVP === 'true'
-      : defaultFlags.showRSVP,
-    showPartidos: process.env.NEXT_PUBLIC_FEATURE_PARTIDOS !== undefined 
-      ? process.env.NEXT_PUBLIC_FEATURE_PARTIDOS === 'true'
-      : defaultFlags.showPartidos,
-    showSocialMedia: process.env.NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA !== undefined 
-      ? process.env.NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA === 'true'
-      : defaultFlags.showSocialMedia,
-    showHistory: process.env.NEXT_PUBLIC_FEATURE_HISTORY !== undefined 
-      ? process.env.NEXT_PUBLIC_FEATURE_HISTORY === 'true'
-      : defaultFlags.showHistory,
-    showNosotros: process.env.NEXT_PUBLIC_FEATURE_NOSOTROS !== undefined 
-      ? process.env.NEXT_PUBLIC_FEATURE_NOSOTROS === 'true'
-      : defaultFlags.showNosotros,
-    showUnete: process.env.NEXT_PUBLIC_FEATURE_UNETE !== undefined 
-      ? process.env.NEXT_PUBLIC_FEATURE_UNETE === 'true'
-      : defaultFlags.showUnete,
-    showContacto: process.env.NEXT_PUBLIC_FEATURE_CONTACTO !== undefined 
-      ? process.env.NEXT_PUBLIC_FEATURE_CONTACTO === 'true'
-      : defaultFlags.showContacto,
-    showRedesSociales: process.env.NEXT_PUBLIC_FEATURE_REDES_SOCIALES !== undefined 
-      ? process.env.NEXT_PUBLIC_FEATURE_REDES_SOCIALES === 'true'
-      : defaultFlags.showRedesSociales,
-    showAdmin: process.env.NEXT_PUBLIC_FEATURE_ADMIN !== undefined 
-      ? process.env.NEXT_PUBLIC_FEATURE_ADMIN === 'true'
-      : defaultFlags.showAdmin,
-    showClerkAuth: process.env.NEXT_PUBLIC_FEATURE_CLERK_AUTH !== undefined 
-      ? process.env.NEXT_PUBLIC_FEATURE_CLERK_AUTH === 'true'
-      : defaultFlags.showClerkAuth,
   };
 
-  return { ...defaultFlags, ...environmentFlags };
+  return environmentFlags;
 }
 
 /**

@@ -42,15 +42,11 @@ export type FlagsmithFeatureName =
   | 'show-clasificacion'
   | 'show-coleccionables'
   | 'show-galeria'
-  | 'show-rsvp'
   | 'show-partidos'
   | 'show-social-media'
   | 'show-history'
   | 'show-nosotros'
-  | 'show-unete'
-  | 'show-contacto'
   | 'show-redes-sociales'
-  | 'show-admin'
   | 'show-clerk-auth'
   | 'show-debug-info'
   | 'admin-push-notifications'
@@ -61,15 +57,11 @@ export type LegacyFeatureName =
   | 'showClasificacion'
   | 'showColeccionables'
   | 'showGaleria'
-  | 'showRSVP'
   | 'showPartidos'
   | 'showSocialMedia'
   | 'showHistory'
   | 'showNosotros'
-  | 'showUnete'
-  | 'showContacto'
   | 'showRedesSociales'
-  | 'showAdmin'
   | 'showClerkAuth'
   | 'showDebugInfo'
   
@@ -80,18 +72,13 @@ export const FLAG_MIGRATION_MAP: Record<LegacyFeatureName, FlagsmithFeatureName>
   showClasificacion: 'show-clasificacion',
   showColeccionables: 'show-coleccionables',
   showGaleria: 'show-galeria',
-  showRSVP: 'show-rsvp',
   showPartidos: 'show-partidos',
   showSocialMedia: 'show-social-media',
   showHistory: 'show-history',
   showNosotros: 'show-nosotros',
-  showUnete: 'show-unete',
-  showContacto: 'show-contacto',
   showRedesSociales: 'show-redes-sociales',
-  showAdmin: 'show-admin',
   showClerkAuth: 'show-clerk-auth',
   showDebugInfo: 'show-debug-info',
-  
 };
 
 // Environment variable mapping for migration
@@ -99,15 +86,11 @@ export const ENV_VAR_MIGRATION_MAP: Record<string, FlagsmithFeatureName> = {
   'NEXT_PUBLIC_FEATURE_CLASIFICACION': 'show-clasificacion',
   'NEXT_PUBLIC_FEATURE_COLECCIONABLES': 'show-coleccionables',
   'NEXT_PUBLIC_FEATURE_GALERIA': 'show-galeria',
-  'NEXT_PUBLIC_FEATURE_RSVP': 'show-rsvp',
   'NEXT_PUBLIC_FEATURE_PARTIDOS': 'show-partidos',
   'NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA': 'show-social-media',
   'NEXT_PUBLIC_FEATURE_HISTORY': 'show-history',
   'NEXT_PUBLIC_FEATURE_NOSOTROS': 'show-nosotros',
-  'NEXT_PUBLIC_FEATURE_UNETE': 'show-unete',
-  'NEXT_PUBLIC_FEATURE_CONTACTO': 'show-contacto',
   'NEXT_PUBLIC_FEATURE_REDES_SOCIALES': 'show-redes-sociales',
-  'NEXT_PUBLIC_FEATURE_ADMIN': 'show-admin',
   'NEXT_PUBLIC_FEATURE_CLERK_AUTH': 'show-clerk-auth',
 };
 
@@ -116,16 +99,11 @@ export const DEFAULT_FLAG_VALUES: Record<FlagsmithFeatureName, boolean> = {
   'show-clasificacion': true,
   'show-coleccionables': false,
   'show-galeria': false,
-  
-  'show-rsvp': true,
   'show-partidos': true,
   'show-social-media': false,
   'show-history': false,
   'show-nosotros': true,
-  'show-unete': true,
-  'show-contacto': false,
   'show-redes-sociales': false,
-  'show-admin': false,
   'show-clerk-auth': true,
   'show-debug-info': false,
   'admin-push-notifications': false,
