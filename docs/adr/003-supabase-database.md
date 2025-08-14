@@ -61,9 +61,9 @@ The Peña Bética Escocesa website needed to migrate from JSON file storage to a
 - Row Level Security (RLS) implemented for data protection
 
 ## References
-- [Database Comparison](../../database-comparison.md)
+- [Database Comparison](../historical/database-comparison.md)
 - [Supabase Documentation](https://supabase.com/docs)
-- [GDPR Implementation Notes](../../security/SECURITY.md)
+- [GDPR Implementation Notes](../security/SECURITY.md)
 
 ## Review
 - **Next review date**: 2026-01-01 (6-month review)

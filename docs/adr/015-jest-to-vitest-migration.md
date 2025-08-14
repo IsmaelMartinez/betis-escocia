@@ -106,8 +106,7 @@ The migration will follow the phases outlined in `prd-jest-to-vitest-migration.m
 
 ## Links
 
-- [PRD: Jest to Vitest Migration](../../tasks/prd-jest-to-vitest-migration.md)
+- [PRD: Jest to Vitest Migration](../historical/prd-jest-to-vitest-migration.md)
 - [Vitest Documentation](https://vitest.dev/)
 - [Jest to Vitest Migration Guide](https://vitest.dev/guide/migration.html)
-- [Current Jest Configuration](../../jest.config.js)
 - [Current Vitest Configuration](../../vitest.config.ts)
