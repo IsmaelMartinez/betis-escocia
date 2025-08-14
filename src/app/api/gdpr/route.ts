@@ -57,26 +57,44 @@ export async function POST(request: NextRequest) {
     }
 
     if (requestType === 'deletion') {
-      const { error: rsvpDeleteError } = await supabase
+      // Delete RSVPs
+      const { data: deletedRsvps, error: rsvpDeleteError } = await supabase
         .from('rsvps')
         .delete()
-        .eq('user_id', userId); // Use userId for deletion
+        .eq('user_id', userId)
+        .select(); // Return deleted records for counting
 
-      const { error: contactDeleteError } = await supabase
+      // Delete contact submissions
+      const { data: deletedContacts, error: contactDeleteError } = await supabase
         .from('contact_submissions')
         .delete()
-        .eq('user_id', userId); // Use userId for deletion
+        .eq('user_id', userId)
+        .select(); // Return deleted records for counting
+
+      // Log detailed results for debugging
+      console.log(`GDPR Deletion for user ${userId}:`);
+      console.log(`- RSVPs deleted: ${deletedRsvps?.length || 0}`, rsvpDeleteError ? `(Error: ${rsvpDeleteError.message})` : '');
+      console.log(`- Contacts deleted: ${deletedContacts?.length || 0}`, contactDeleteError ? `(Error: ${contactDeleteError.message})` : '');
 
       if (rsvpDeleteError || contactDeleteError) {
+        console.error('GDPR Deletion errors:', { rsvpDeleteError, contactDeleteError });
         return NextResponse.json({
           success: false,
-          error: 'Error deleting records'
+          error: 'Error deleting records',
+          details: {
+            rsvpError: rsvpDeleteError?.message,
+            contactError: contactDeleteError?.message
+          }
         }, { status: 500 });
       }
 
       return NextResponse.json({
         success: true,
-        message: 'Data deleted successfully'
+        message: 'Data deleted successfully',
+        deletedCounts: {
+          rsvps: deletedRsvps?.length || 0,
+          contacts: deletedContacts?.length || 0
+        }
       });
     }
 
