@@ -1,107 +1,88 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { createApiHandler } from '@/lib/apiUtils';
 import { checkAdminRole } from '@/lib/adminApiProtection';
 import { 
   getUserNotificationPreferenceDb, 
   setUserNotificationPreferenceDb 
 } from '@/lib/notifications/preferencesDb';
-import { getAuth } from '@clerk/nextjs/server';
 import { notificationPreferencesSchema } from '@/lib/schemas/admin';
-import { ZodError } from 'zod';
+import { z } from 'zod';
+import { log } from '@/lib/logger';
 
 /**
  * API endpoint for managing user notification preferences
  */
 
-// GET - Get notification preference for current user
-export async function GET(request: NextRequest) {
-  try {
-    // Check if user has admin role
-    const { user, isAdmin, error: authError } = await checkAdminRole();
-    if (!isAdmin || !user) {
-      return NextResponse.json(
-        { error: authError || 'User not found' },
-        { status: 401 }
-      );
-    }
+type NotificationPreferencesResponse = {
+  success: boolean;
+  enabled: boolean;
+  userId: string;
+  message?: string;
+};
 
-    // Notifications are always enabled for admin users
-
-    // Get authenticated Supabase client
-    const { getToken } = getAuth(request);
-    const clerkToken = await getToken({ template: 'supabase' });
-
-    // Get user preference from database
-    const enabled = await getUserNotificationPreferenceDb(user.id, clerkToken || undefined);
-
-    return NextResponse.json({
-      success: true,
-      enabled,
-      userId: user.id
-    });
-
-  } catch (error) {
-    console.error('Error getting notification preference:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+async function getNotificationPreferences(context: { clerkToken?: string }): Promise<NotificationPreferencesResponse> {
+  // Check if user has admin role
+  const { user, isAdmin, error: authError } = await checkAdminRole();
+  if (!isAdmin || !user) {
+    throw new Error(authError || 'Admin access required');
   }
+
+  // Get user preference from database
+  const enabled = await getUserNotificationPreferenceDb(user.id, context.clerkToken);
+
+  log.info('Retrieved notification preferences', { userId: user.id }, { enabled });
+
+  return {
+    success: true,
+    enabled,
+    userId: user.id
+  };
 }
+
+async function setNotificationPreferences(
+  data: z.infer<typeof notificationPreferencesSchema>,
+  context: { clerkToken?: string }
+): Promise<NotificationPreferencesResponse> {
+  // Check if user has admin role
+  const { user, isAdmin, error: authError } = await checkAdminRole();
+  if (!isAdmin || !user) {
+    throw new Error(authError || 'Admin access required');
+  }
+
+  const { enabled } = data;
+
+  // Set user preference in database
+  await setUserNotificationPreferenceDb(user.id, enabled, context.clerkToken);
+
+  log.business('notification_preference_updated', { enabled }, { userId: user.id });
+
+  return {
+    success: true,
+    enabled,
+    userId: user.id,
+    message: `Notifications ${enabled ? 'enabled' : 'disabled'} successfully`
+  };
+}
+
+// GET - Get notification preference for current user
+export const GET = createApiHandler({
+  auth: 'admin',
+  handler: async (validatedData, context) => {
+    const { getToken } = await import('@clerk/nextjs/server').then(m => m.getAuth(context.request));
+    const clerkToken = await getToken({ template: 'supabase' });
+    return await getNotificationPreferences({ clerkToken });
+  }
+});
 
 // POST - Set notification preference for current user
-export async function POST(request: NextRequest) {
-  try {
-    // Check if user has admin role
-    const { user, isAdmin, error: authError } = await checkAdminRole();
-    if (!isAdmin || !user) {
-      return NextResponse.json(
-        { error: authError || 'User not found' },
-        { status: 401 }
-      );
-    }
-
-    // Notifications are always enabled for admin users
-
-    const body = await request.json();
-    
-    // Validate input using Zod schema
-    const validatedData = notificationPreferencesSchema.parse(body);
-    const { enabled } = validatedData;
-
-    // Get authenticated Supabase client
-    const { getToken } = getAuth(request);
+export const POST = createApiHandler({
+  auth: 'admin',
+  schema: notificationPreferencesSchema,
+  handler: async (validatedData, context) => {
+    const { getToken } = await import('@clerk/nextjs/server').then(m => m.getAuth(context.request));
     const clerkToken = await getToken({ template: 'supabase' });
-
-    // Set user preference in database
-    await setUserNotificationPreferenceDb(user.id, enabled, clerkToken || undefined);
-
-    return NextResponse.json({
-      success: true,
-      enabled,
-      message: `Notifications ${enabled ? 'enabled' : 'disabled'} successfully`
-    });
-
-  } catch (error) {
-    console.error('Error setting notification preference:', error);
-    
-    // Handle Zod validation errors
-    if (error instanceof ZodError) {
-      const errorMessages = error.issues.map(issue => issue.message);
-      return NextResponse.json({
-        success: false,
-        error: 'Datos de preferencias inválidos',
-        details: errorMessages
-      }, { status: 400 });
-    }
-    
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return await setNotificationPreferences(validatedData, { clerkToken });
   }
-}
+});
 
 // PUT - Update notification preference for current user (same as POST for compatibility)
-export async function PUT(request: NextRequest) {
-  return POST(request);
-}
+export const PUT = POST;

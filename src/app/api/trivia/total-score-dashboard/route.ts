@@ -1,37 +1,42 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getAuth } from '@clerk/nextjs/server';
+import { createApiHandler } from '@/lib/apiUtils';
 import { getAuthenticatedSupabaseClient } from '@/lib/supabase';
+import { log } from '@/lib/logger';
 
-export async function GET(req: NextRequest) {
-  const { userId, getToken } = getAuth(req);
+type TotalScoreResponse = {
+  totalScore: number;
+};
 
-  if (!userId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+async function getTotalScore(context: { userId: string; clerkToken: string }): Promise<TotalScoreResponse> {
+  const { userId, clerkToken } = context;
+  const authenticatedSupabase = getAuthenticatedSupabaseClient(clerkToken);
+
+  // Fetch all scores for the user to calculate total
+  const { data: scores, error } = await authenticatedSupabase
+    .from('user_trivia_scores')
+    .select('daily_score')
+    .eq('user_id', userId);
+
+  if (error) {
+    log.error('Failed to fetch all trivia scores for dashboard', error, { userId });
+    throw new Error('Failed to fetch total score');
   }
 
-  const token = await getToken();
-  if (!token) {
-    return NextResponse.json({ error: 'Unauthorized: No Clerk token found' }, { status: 401 });
-  }
-  const authenticatedSupabase = getAuthenticatedSupabaseClient(token);
+  const totalScore = scores.reduce((sum: number, entry: { daily_score: number }) => sum + entry.daily_score, 0);
 
-  try {
-    // Fetch all scores for the user to calculate total
-    const { data: scores, error } = await authenticatedSupabase
-      .from('user_trivia_scores')
-      .select('daily_score')
-      .eq('user_id', userId);
+  log.info('Retrieved total trivia score for dashboard', { userId }, { 
+    totalScore, 
+    gameCount: scores.length 
+  });
 
-    if (error) {
-      console.error('Error fetching all trivia scores:', error);
-      return NextResponse.json({ error: 'Failed to fetch total score' }, { status: 500 });
-    }
-
-    const totalScore = scores.reduce((sum: number, entry: { daily_score: number }) => sum + entry.daily_score, 0);
-
-    return NextResponse.json({ totalScore }, { status: 200 });
-  } catch (error) {
-    console.error('Unexpected error in total-score-dashboard API:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-  }
+  return { totalScore };
 }
+
+export const GET = createApiHandler({
+  auth: 'user',
+  handler: async (validatedData, context) => {
+    const { userId } = context;
+    const { getToken } = await import('@clerk/nextjs/server').then(m => m.getAuth(context.request));
+    const clerkToken = await getToken({ template: 'supabase' });
+    return await getTotalScore({ userId: userId!, clerkToken: clerkToken! });
+  }
+});
