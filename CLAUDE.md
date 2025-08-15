@@ -87,12 +87,17 @@ sql/                    # Database migrations & scripts
 - **Location**: `src/lib/supabase.ts` for client and types
 
 ### Push Notifications System
-- **Admin-only**: Real-time notifications for RSVP and contact form submissions
-- **Database preferences**: `notification_preferences` table with user control
-- **Service Worker**: Enhanced PWA service worker handles background notifications
-- **Browser compatibility**: Supports Chrome, Firefox, Safari, Edge with HTTPS requirement
-- **Non-blocking**: Notification failures don't impact core functionality
-- **Location**: `src/lib/notifications/` for utilities and database operations
+- **Admin-only**: Real-time background notifications for RSVP and contact form submissions
+- **Service Worker**: Complete PWA service worker (`public/sw.js`) with background notification handling
+- **SSE Integration**: Server-Sent Events for real-time notification delivery via `/api/notifications/trigger`
+- **Notification Manager**: Client-side coordinator (`src/lib/notifications/notificationManager.ts`) with automatic reconnection
+- **Deduplication**: Multi-layered approach (server timestamp + client localStorage) prevents duplicate notifications
+- **Database preferences**: `notification_preferences` table with user control and RLS policies
+- **Background operation**: Works even when admin dashboard is closed - notifications persist in system tray
+- **Browser compatibility**: Full support in Chrome/Firefox/Edge, limited in Safari (HTTPS required)
+- **Non-blocking**: Notification failures don't impact core RSVP/contact functionality
+- **Auto-cleanup**: Server removes old notifications after 10 minutes, client after 1 hour
+- **Location**: `src/lib/notifications/` for utilities, `public/sw.js` for Service Worker
 - **Documentation**: See `docs/adr/016-admin-push-notifications.md`
 
 ## Component Development
