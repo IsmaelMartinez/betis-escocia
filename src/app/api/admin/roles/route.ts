@@ -1,209 +1,181 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { checkAdminRole } from '@/lib/adminApiProtection';
+import { createApiHandler, type ApiContext } from '@/lib/apiUtils';
 import { assignRole, listUsersWithRoles } from '@/lib/serverRoleUtils';
 import { validateRoleChange, ROLES, Role } from '@/lib/roleUtils';
-import { auth } from '@clerk/nextjs/server';
+import { userQuerySchema, userRoleSchema, type UserQueryParams, type UserRoleInput } from '@/lib/schemas/admin';
+import { log } from '@/lib/logger';
+import { getAuth } from '@clerk/nextjs/server';
 
-/**
- * GET /api/admin/roles
- * Get all users with their roles
- */
-export async function GET(request: NextRequest) {
-  try {
-    // Check admin role
-    const { user, isAdmin, error } = await checkAdminRole();
-    if (!isAdmin || error) {
-      return NextResponse.json({
-        success: false,
-        message: error || 'Admin access required'
-      }, { status: !user ? 401 : 403 });
-    }
+async function getUsersWithRoles(queryData: UserQueryParams) {
+  const { limit, offset } = queryData;
 
-    // Get query parameters
-    const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const offset = parseInt(searchParams.get('offset') || '0');
+  // Get users with roles
+  const result = await listUsersWithRoles(limit, offset);
 
-    // Get users with roles
-    const result = await listUsersWithRoles(limit, offset);
-
-    if (!result.success) {
-      return NextResponse.json({
-        success: false,
-        message: result.message || 'Error fetching users with roles'
-      }, { status: 500 });
-    }
-
-    return NextResponse.json({
-      success: true,
-      users: result.users,
-      totalCount: result.totalCount,
-      hasMore: result.hasMore
+  if (!result.success) {
+    log.error('Failed to fetch users with roles', undefined, {
+      limit,
+      offset,
+      errorMessage: result.message
     });
-
-  } catch (error) {
-    console.error('Error in GET /api/admin/roles:', error);
-    return NextResponse.json({
-      success: false,
-      message: 'Internal server error',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    throw new Error(result.message || 'Error obteniendo usuarios con roles');
   }
+
+  log.info('Successfully fetched users with roles', undefined, {
+    userCount: result.users?.length || 0,
+    totalCount: result.totalCount,
+    limit,
+    offset
+  });
+
+  return {
+    success: true,
+    users: result.users,
+    totalCount: result.totalCount,
+    hasMore: result.hasMore
+  };
 }
 
-/**
- * POST /api/admin/roles
- * Assign a role to a user
- */
-export async function POST(request: NextRequest) {
-  try {
-    // Check admin role
-    const { user, isAdmin, error } = await checkAdminRole();
-    if (!isAdmin || error) {
-      return NextResponse.json({
-        success: false,
-        message: error || 'Admin access required'
-      }, { status: !user ? 401 : 403 });
-    }
+// GET - Get all users with their roles
+export const GET = createApiHandler({
+  auth: 'admin',
+  handler: async (_, context) => {
+    const url = new URL(context.request.url);
+    const limitParam = url.searchParams.get('limit');
+    const offsetParam = url.searchParams.get('offset');
+    
+    const queryData = {
+      limit: limitParam ? parseInt(limitParam) : 50,
+      offset: offsetParam ? parseInt(offsetParam) : 0
+    } as UserQueryParams;
+    
+    return await getUsersWithRoles(queryData);
+  }
+});
 
-    const { userId, role } = await request.json();
+async function assignUserRole(roleData: UserRoleInput, context: ApiContext) {
+  const { userId, role } = roleData;
 
-    // Validate input
-    if (!userId || !role) {
-      return NextResponse.json({
-        success: false,
-        message: 'User ID and role are required'
-      }, { status: 400 });
-    }
+  // Get current user info for validation
+  const { userId: currentUserId } = getAuth(context.request);
+  const currentUserRole = context.user?.isAdmin ? ROLES.ADMIN : ROLES.USER;
 
-    // Validate role
-    if (!Object.values(ROLES).includes(role)) {
-      return NextResponse.json({
-        success: false,
-        message: `Invalid role: ${role}. Valid roles are: ${Object.values(ROLES).join(', ')}`
-      }, { status: 400 });
-    }
-
-    // Get current user info for validation
-    const { userId: currentUserId } = await auth();
-    const currentUserRole = user?.publicMetadata?.role as Role || ROLES.USER;
-
-    // Validate role change
-    const validation = validateRoleChange(currentUserRole, role, userId, currentUserId || '');
-    if (!validation.allowed) {
-      return NextResponse.json({
-        success: false,
-        message: validation.message || 'Role change not allowed'
-      }, { status: 403 });
-    }
-
-    // Assign role
-    const result = await assignRole(userId, role);
-
-    if (!result.success) {
-      return NextResponse.json({
-        success: false,
-        message: result.message
-      }, { status: 500 });
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: result.message,
-      user: result.user ? {
-        id: result.user.id,
-        email: result.user.emailAddresses[0]?.emailAddress || '',
-        firstName: result.user.firstName || '',
-        lastName: result.user.lastName || '',
-        role: result.user.publicMetadata?.role || ROLES.USER
-      } : null
+  // Validate role change
+  const validation = validateRoleChange(currentUserRole, role, userId, currentUserId || '');
+  if (!validation.allowed) {
+    log.warn('Role change validation failed', undefined, {
+      currentUserId,
+      targetUserId: userId,
+      requestedRole: role,
+      currentUserRole,
+      reason: validation.message
     });
-
-  } catch (error) {
-    console.error('Error in POST /api/admin/roles:', error);
-    return NextResponse.json({
-      success: false,
-      message: 'Internal server error',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    throw new Error(validation.message || 'Cambio de rol no permitido');
   }
-}
 
-/**
- * PUT /api/admin/roles
- * Update a user's role
- */
-export async function PUT(request: NextRequest) {
-  // For now, PUT and POST do the same thing (assign role)
-  return POST(request);
-}
+  // Assign role
+  const result = await assignRole(userId, role);
 
-/**
- * DELETE /api/admin/roles
- * Remove admin/moderator role from a user (set to 'user')
- */
-export async function DELETE(request: NextRequest) {
-  try {
-    // Check admin role
-    const { user, isAdmin, error } = await checkAdminRole();
-    if (!isAdmin || error) {
-      return NextResponse.json({
-        success: false,
-        message: error || 'Admin access required'
-      }, { status: !user ? 401 : 403 });
-    }
-
-    const { userId } = await request.json();
-
-    // Validate input
-    if (!userId) {
-      return NextResponse.json({
-        success: false,
-        message: 'User ID is required'
-      }, { status: 400 });
-    }
-
-    // Get current user info for validation
-    const { userId: currentUserId } = await auth();
-    const currentUserRole = user?.publicMetadata?.role as Role || ROLES.USER;
-
-    // Validate role change (removing admin/moderator role)
-    const validation = validateRoleChange(currentUserRole, ROLES.USER, userId, currentUserId || '');
-    if (!validation.allowed) {
-      return NextResponse.json({
-        success: false,
-        message: validation.message || 'Role change not allowed'
-      }, { status: 403 });
-    }
-
-    // Remove role (set to user)
-    const result = await assignRole(userId, ROLES.USER);
-
-    if (!result.success) {
-      return NextResponse.json({
-        success: false,
-        message: result.message
-      }, { status: 500 });
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: result.message,
-      user: result.user ? {
-        id: result.user.id,
-        email: result.user.emailAddresses[0]?.emailAddress || '',
-        firstName: result.user.firstName || '',
-        lastName: result.user.lastName || '',
-        role: result.user.publicMetadata?.role || ROLES.USER
-      } : null
+  if (!result.success) {
+    log.error('Failed to assign role', undefined, {
+      currentUserId,
+      targetUserId: userId,
+      requestedRole: role,
+      errorMessage: result.message
     });
-
-  } catch (error) {
-    console.error('Error in DELETE /api/admin/roles:', error);
-    return NextResponse.json({
-      success: false,
-      message: 'Internal server error',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    throw new Error(result.message || 'Error asignando rol');
   }
+
+  log.business('user_role_assigned', {
+    targetUserId: userId,
+    newRole: role
+  }, {
+    adminUserId: currentUserId
+  });
+
+  return {
+    success: true,
+    message: result.message,
+    user: result.user ? {
+      id: result.user.id,
+      email: result.user.emailAddresses[0]?.emailAddress || '',
+      firstName: result.user.firstName || '',
+      lastName: result.user.lastName || '',
+      role: result.user.publicMetadata?.role || ROLES.USER
+    } : null
+  };
 }
+
+// POST - Assign a role to a user
+export const POST = createApiHandler({
+  auth: 'admin',
+  schema: userRoleSchema,
+  handler: async (validatedData, context) => {
+    return await assignUserRole(validatedData, context);
+  }
+});
+
+// PUT - Update a user's role (same as POST)
+export const PUT = POST;
+
+// Schema for DELETE requests
+const deleteRoleSchema = userRoleSchema.pick({ userId: true });
+
+async function removeUserRole(deleteData: { userId: string }, context: ApiContext) {
+  const { userId } = deleteData;
+
+  // Get current user info for validation
+  const { userId: currentUserId } = getAuth(context.request);
+  const currentUserRole = context.user?.isAdmin ? ROLES.ADMIN : ROLES.USER;
+
+  // Validate role change (removing admin/moderator role)
+  const validation = validateRoleChange(currentUserRole, ROLES.USER, userId, currentUserId || '');
+  if (!validation.allowed) {
+    log.warn('Role removal validation failed', undefined, {
+      currentUserId,
+      targetUserId: userId,
+      currentUserRole,
+      reason: validation.message
+    });
+    throw new Error(validation.message || 'Cambio de rol no permitido');
+  }
+
+  // Remove role (set to user)
+  const result = await assignRole(userId, ROLES.USER);
+
+  if (!result.success) {
+    log.error('Failed to remove user role', undefined, {
+      currentUserId,
+      targetUserId: userId,
+      errorMessage: result.message
+    });
+    throw new Error(result.message || 'Error removiendo rol');
+  }
+
+  log.business('user_role_removed', {
+    targetUserId: userId,
+    newRole: ROLES.USER
+  }, {
+    adminUserId: currentUserId
+  });
+
+  return {
+    success: true,
+    message: result.message,
+    user: result.user ? {
+      id: result.user.id,
+      email: result.user.emailAddresses[0]?.emailAddress || '',
+      firstName: result.user.firstName || '',
+      lastName: result.user.lastName || '',
+      role: result.user.publicMetadata?.role || ROLES.USER
+    } : null
+  };
+}
+
+// DELETE - Remove admin/moderator role from a user (set to 'user')
+export const DELETE = createApiHandler({
+  auth: 'admin',
+  schema: deleteRoleSchema,
+  handler: async (validatedData, context) => {
+    return await removeUserRole(validatedData, context);
+  }
+});
