@@ -158,9 +158,9 @@ function AdminPage() {
     try {
       const initialized = await initializeNotifications();
       if (initialized) {
-        console.log('Background notifications initialized successfully');
+        // Background notifications initialized successfully
       } else {
-        console.log('Background notifications not available or disabled');
+        // Background notifications not available or disabled
       }
     } catch (error) {
       console.warn('Failed to initialize background notifications:', error);

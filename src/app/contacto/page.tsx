@@ -78,7 +78,6 @@ const formTypes = [
 ];
 
 export default function ContactPage() {
-  console.log('[ContactPage] Component rendering...');
   const { user } = useUser();
   const formRef = useRef<HTMLDivElement>(null);
   const [isContactFeatureEnabled] = useState(true);
@@ -92,7 +91,6 @@ export default function ContactPage() {
     feedback: true,
   });
 
-  console.log('[ContactPage] Initial state: loadingFeatureFlag=', loadingFeatureFlag, ' isContactFeatureEnabled=', isContactFeatureEnabled);
 
   const [formData, setFormData] = useState<ContactFormData>({
     name: '',

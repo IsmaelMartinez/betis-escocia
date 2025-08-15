@@ -45,7 +45,6 @@ export default function TriviaPage() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      console.log('Score saved successfully!');
     } catch (error) {
       console.error('Error saving score:', error);
     }

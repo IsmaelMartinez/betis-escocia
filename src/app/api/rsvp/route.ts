@@ -278,7 +278,6 @@ export async function POST(request: NextRequest) {
         global.pendingNotifications = global.pendingNotifications.slice(-100);
       }
 
-      console.log('RSVP notification queued:', notification.id);
     } catch (error) {
       console.warn('Error queueing admin notification:', error);
       // Don't fail the RSVP if notification fails
@@ -302,9 +301,6 @@ export async function POST(request: NextRequest) {
     }
 
     const totalAttendees = allRSVPs?.reduce((total: number, entry: { attendees: number }) => total + entry.attendees, 0) ?? 0;
-
-    // Log for admin purposes
-    console.log(`${isUpdate ? 'Updated' : 'New'} RSVP: ${name} (${email}) - ${attendees} attendees for ${currentMatch.opponent}`);
 
     return NextResponse.json({
       success: true,

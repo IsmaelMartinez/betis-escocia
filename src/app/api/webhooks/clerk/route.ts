@@ -51,30 +51,24 @@ export async function POST(req: Request) {
   const { id } = evt.data;
   const eventType = evt.type;
 
-  console.log(`Webhook with ID of ${id} and type of ${eventType}`);
-  console.log("Webhook body:", body);
 
   if (eventType === "user.created" || eventType === "user.updated") {
     const { id: clerkUserId, email_addresses } = evt.data;
     const primaryEmail = email_addresses[0]?.email_address;
 
     if (clerkUserId && primaryEmail) {
-      console.log(`Attempting to link submissions for user ${clerkUserId} with email ${primaryEmail}`);
       const { rsvpLinked, contactLinked, errors } = await linkExistingSubmissionsToUser(clerkUserId, primaryEmail);
       if (errors.length > 0) {
         console.error("Errors linking submissions:", errors);
       }
-      console.log(`Linked ${rsvpLinked} RSVPs and ${contactLinked} contact submissions.`);
     }
   } else if (eventType === "user.deleted") {
     const { id: clerkUserId } = evt.data;
     if (clerkUserId) {
-      console.log(`Attempting to unlink submissions for deleted user ${clerkUserId}`);
       const { rsvpUnlinked, contactUnlinked, errors } = await unlinkUserSubmissions(clerkUserId);
       if (errors.length > 0) {
         console.error("Errors unlinking submissions:", errors);
       }
-      console.log(`Unlinked ${rsvpUnlinked} RSVPs and ${contactUnlinked} contact submissions.`);
     }
   }
 

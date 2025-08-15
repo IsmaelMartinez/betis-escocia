@@ -138,12 +138,6 @@ export async function POST(request: NextRequest) {
     orders.push(newOrder);
     await saveOrders(orders);
 
-    console.log('New order created:', {
-      id: newOrder.id,
-      product: newOrder.productName,
-      customer: newOrder.customerInfo.name,
-      isPreOrder: newOrder.isPreOrder
-    });
 
     return NextResponse.json(newOrder, { status: 201 });
   } catch (error) {
@@ -210,11 +204,6 @@ export async function PUT(request: NextRequest) {
     orders[orderIndex] = updatedOrder;
     await saveOrders(orders);
 
-    console.log('Order updated:', {
-      id: updatedOrder.id,
-      status: updatedOrder.status,
-      fulfillmentDate: updatedOrder.fulfillmentDate
-    });
 
     return NextResponse.json(updatedOrder);
   } catch (error) {
@@ -269,11 +258,6 @@ export async function DELETE(request: NextRequest) {
     const deletedOrder = orders.splice(orderIndex, 1)[0];
     await saveOrders(orders);
 
-    console.log('Order deleted:', {
-      id: deletedOrder.id,
-      product: deletedOrder.productName,
-      customer: deletedOrder.customerInfo.name
-    });
 
     return NextResponse.json({ message: 'Pedido eliminado correctamente' });
   } catch (error) {

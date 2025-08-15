@@ -74,7 +74,6 @@ export async function POST(request: NextRequest) {
         global.pendingNotifications = global.pendingNotifications.slice(-100);
       }
 
-      console.log('Contact notification queued:', notification.id);
     } catch (error) {
       console.warn('Error queueing admin notification:', error);
       // Don't fail the contact submission if notification fails

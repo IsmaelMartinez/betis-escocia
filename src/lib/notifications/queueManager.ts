@@ -61,7 +61,6 @@ export function queueNotification(
     global.pendingNotifications = global.pendingNotifications.slice(-100);
   }
   
-  console.log(`Notification queued: ${notification.id} (${type})`);
   
   return notification.id;
 }
@@ -188,5 +187,4 @@ export function getNotificationQueueStats(): {
  */
 export function clearNotificationQueue(): void {
   global.pendingNotifications = [];
-  console.log('Notification queue cleared');
 }

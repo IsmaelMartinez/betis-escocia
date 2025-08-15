@@ -241,7 +241,6 @@ export async function POST(request: NextRequest) {
     // Save updated data
     await writeMerchandiseData(data);
 
-    console.log(`New merchandise item added: ${name} (${category}) - £${price}`);
 
     return NextResponse.json({
       success: true,
