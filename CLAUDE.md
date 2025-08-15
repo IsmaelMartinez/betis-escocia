@@ -127,7 +127,31 @@ export default async function MyComponent() {
 
 ## API Route Patterns
 
-### Standard Protected Route
+### Abstracted Route Pattern (Recommended)
+**All main business routes now use the `createApiHandler` pattern for consistency:**
+
+```typescript
+import { createApiHandler } from '@/lib/apiUtils';
+import { contactSchema } from '@/lib/schemas/contact';
+
+// POST - Submit contact form  
+export const POST = createApiHandler({
+  auth: 'none', // 'none' | 'user' | 'admin' | 'optional'
+  schema: contactSchema, // Zod schema for validation
+  handler: async (validatedData, context) => {
+    // validatedData is type-safe and validated
+    // context provides user info, request, supabase clients
+    const { name, email } = validatedData;
+    
+    return {
+      success: true,
+      message: 'Success message'
+    };
+  }
+});
+```
+
+### Legacy Protected Route (Being Phased Out)
 ```typescript
 import { checkAdminRole } from "@/lib/adminApiProtection";
 import { getAuth } from "@clerk/nextjs/server";
@@ -157,6 +181,42 @@ export async function POST(request: NextRequest) {
 - **Supabase mocking**: Mock database operations with controlled responses  
 - **MSW integration**: Service worker for external API mocking
 - **Environment variables**: Test-specific values in `vitest.config.ts`
+
+### Test Compatibility with Abstracted Routes
+**Important**: Tests need updating to work with the new `createApiHandler` pattern:
+
+**Old Pattern (Deprecated)**:
+```typescript
+// ❌ Old tests mock validation functions that are no longer used
+vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
+vi.spyOn(security, 'validateEmail').mockReturnValue({ isValid: true });
+```
+
+**New Pattern (Required)**:
+```typescript
+// ✅ New tests work with Zod validation by providing valid data
+const validData = {
+  name: 'Test User',
+  email: 'test@example.com', // Valid email format
+  subject: 'Test Subject',   // Meets min length requirements
+  message: 'Test message'    // Meets min length requirements
+};
+
+// Mock successful Supabase operations
+(supabase.from as any).mockReturnValue({
+  insert: vi.fn(() => ({
+    select: vi.fn(() => ({
+      single: vi.fn(() => Promise.resolve({ data: { id: 1 }, error: null }))
+    }))
+  }))
+});
+```
+
+**Key Changes Needed**:
+1. Remove mocks for `validateInputLength`, `validateEmail` 
+2. Provide data that passes Zod schema validation
+3. Test validation by providing invalid data that Zod will reject
+4. Update expected error messages to match new abstracted responses
 
 ### Example Test
 ```typescript
