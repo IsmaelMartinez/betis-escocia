@@ -29,19 +29,25 @@ export async function GET(request: NextRequest) {
 
   const encoder = new TextEncoder();
   
+  // Get last seen timestamp from query parameter (for reconnection)
+  const { searchParams } = new URL(request.url);
+  const lastSeenParam = searchParams.get('lastSeen');
+  const initialLastSeen = lastSeenParam ? parseInt(lastSeenParam) : Date.now();
+  
   const stream = new ReadableStream({
     start(controller) {
       // Send initial connection message
       const initialMessage = `data: ${JSON.stringify({
         type: 'connected',
         message: 'Connected to notification stream',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        lastSeen: initialLastSeen
       })}\n\n`;
       
       controller.enqueue(encoder.encode(initialMessage));
       
-      // Track last processed notification
-      let lastProcessedId = '';
+      // Track last processed notification timestamp (as number)
+      let lastProcessedTimestamp = initialLastSeen;
       
       // Set up interval to check for new notifications
       const interval = setInterval(async () => {
@@ -49,9 +55,14 @@ export async function GET(request: NextRequest) {
           const pendingNotifications = global.pendingNotifications || [];
           
           // Find new notifications since last check
-          const newNotifications = pendingNotifications.filter(notification => 
-            notification.id > lastProcessedId
-          );
+          const newNotifications = pendingNotifications.filter(notification => {
+            const notificationTimestamp = parseInt(notification.id);
+            return notificationTimestamp > lastProcessedTimestamp;
+          });
+          
+          if (newNotifications.length > 0) {
+            console.log(`Sending ${newNotifications.length} new notifications to user ${user.id}`);
+          }
           
           newNotifications.forEach(notification => {
             const message = `data: ${JSON.stringify({
@@ -62,8 +73,36 @@ export async function GET(request: NextRequest) {
             })}\n\n`;
             
             controller.enqueue(encoder.encode(message));
-            lastProcessedId = notification.id;
+            
+            // Update last processed timestamp
+            const notificationTimestamp = parseInt(notification.id);
+            if (notificationTimestamp > lastProcessedTimestamp) {
+              lastProcessedTimestamp = notificationTimestamp;
+            }
+            
+            // Mark this notification as delivered to this user
+            notification.deliveredToUsers = notification.deliveredToUsers || [];
+            if (!notification.deliveredToUsers.includes(user.id)) {
+              notification.deliveredToUsers.push(user.id);
+            }
+            
+            console.log(`Delivered notification ${notification.id} to user ${user.id}`);
           });
+          
+          // Clean up old notifications more aggressively
+          const tenMinutesAgo = Date.now() - (10 * 60 * 1000);
+          const initialLength = pendingNotifications.length;
+          
+          global.pendingNotifications = pendingNotifications.filter(notification => {
+            const notificationTimestamp = parseInt(notification.id);
+            // Remove if older than 10 minutes
+            return notificationTimestamp > tenMinutesAgo;
+          });
+          
+          const finalLength = global.pendingNotifications.length;
+          if (initialLength !== finalLength) {
+            console.log(`Cleaned up ${initialLength - finalLength} old notifications. ${finalLength} remaining.`);
+          }
           
           // Send keepalive every few checks
           if (Date.now() % 30000 < 5000) { // Roughly every 30 seconds

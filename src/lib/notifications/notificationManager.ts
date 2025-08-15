@@ -65,13 +65,17 @@ export class NotificationManager {
     }
 
     try {
-      this.eventSource = new EventSource('/api/notifications/trigger');
+      // Get last seen timestamp from localStorage for reconnection
+      const lastSeenTimestamp = localStorage.getItem('last_notification_timestamp') || Date.now().toString();
+      const sseUrl = `/api/notifications/trigger?lastSeen=${lastSeenTimestamp}`;
+      
+      this.eventSource = new EventSource(sseUrl);
       
       this.eventSource.addEventListener('open', this.handleOpen);
       this.eventSource.addEventListener('message', this.handleMessage);
       this.eventSource.addEventListener('error', this.handleError);
       
-      console.log('NotificationManager: Connecting to SSE stream...');
+      console.log('NotificationManager: Connecting to SSE stream with lastSeen:', lastSeenTimestamp);
     } catch (error) {
       console.error('NotificationManager: Failed to connect to SSE stream:', error);
       this.scheduleReconnect();
@@ -136,7 +140,33 @@ export class NotificationManager {
    */
   private async handleNotification(notificationData: PushNotificationData & { id: string; timestamp: string }): void {
     try {
-      console.log('NotificationManager: Received notification:', notificationData);
+      console.log('NotificationManager: Received notification:', notificationData.id);
+      
+      // Check if we've already processed this notification
+      const processedKey = `notification_${notificationData.id}`;
+      if (localStorage.getItem(processedKey)) {
+        console.log('NotificationManager: Notification already processed, skipping');
+        return;
+      }
+      
+      // Mark as processed immediately to prevent duplicates
+      localStorage.setItem(processedKey, 'true');
+      
+      // Update last seen timestamp
+      localStorage.setItem('last_notification_timestamp', notificationData.id);
+      
+      // Clean up old processed notifications (older than 1 hour)
+      const oneHourAgo = Date.now() - (60 * 60 * 1000);
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key?.startsWith('notification_')) {
+          const notificationId = key.replace('notification_', '');
+          const timestamp = parseInt(notificationId);
+          if (timestamp < oneHourAgo) {
+            localStorage.removeItem(key);
+          }
+        }
+      }
       
       // Check if push notifications are available
       const status = await getPushNotificationStatus();
