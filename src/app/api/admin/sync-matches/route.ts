@@ -4,6 +4,7 @@ import axios from 'axios';
 import { supabase } from '@/lib/supabase';
 import { checkAdminRole } from '@/lib/adminApiProtection';
 import { getYear } from 'date-fns';
+import { log } from '@/lib/logger';
 
 /**
  * Determine match result label based on Betis home/away and score
@@ -22,14 +23,16 @@ export async function POST(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   request: NextRequest
 ) {
+  let user: any = null; // Declare user outside try block for catch access
   try {
     // Check admin role
-    const { user, isAdmin, error } = await checkAdminRole();
+    const { user: adminUser, isAdmin, error } = await checkAdminRole();
+    user = adminUser;
     if (!isAdmin || error) {
       return NextResponse.json({
         success: false,
         message: error || 'Admin access required'
-      }, { status: !user ? 401 : 403 });
+      }, { status: !adminUser ? 401 : 403 });
     }
     
     // Note: Rate limiting is now handled by Next.js middleware
@@ -100,7 +103,11 @@ export async function POST(
             .eq('id', existingMatch.id);
           
           if (error) {
-            console.error(`❌ Error updating match ${match.id}:`, error);
+            log.error('Failed to update match during sync', error, {
+              matchId: match.id,
+              externalMatchId: match.id,
+              userId: user?.id
+            });
             errorCount++;
           } else {
             updatedCount++;
@@ -112,14 +119,22 @@ export async function POST(
             .insert(dbMatch);
           
           if (error) {
-            console.error(`❌ Error inserting match ${match.id}:`, error);
+            log.error('Failed to insert match during sync', error, {
+              matchId: match.id,
+              externalMatchId: match.id,
+              userId: user?.id
+            });
             errorCount++;
           } else {
             importedCount++;
           }
         }
       } catch (error) {
-        console.error(`❌ Error processing match ${match.id}:`, error);
+        log.error('Failed to process match during sync', error, {
+          matchId: match.id,
+          externalMatchId: match.id,
+          userId: user?.id
+        });
         errorCount++;
       }
     }
@@ -131,6 +146,11 @@ export async function POST(
       errors: errorCount
     };
     
+    // Log successful sync operation as business event
+    log.business('matches_sync_completed', summary, {
+      userId: user?.id,
+      seasons: seasons.join(',')
+    });
     
     return NextResponse.json({
       success: true,
@@ -139,7 +159,9 @@ export async function POST(
     });
     
   } catch (error) {
-    console.error('❌ Sync failed:', error);
+    log.error('Match sync operation failed', error, {
+      userId: user?.id || 'unknown'
+    });
     return NextResponse.json({
       success: false,
       message: 'Error durante la sincronización',

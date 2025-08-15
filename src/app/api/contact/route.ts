@@ -3,6 +3,7 @@ import { supabase, type ContactSubmissionInsert, getAuthenticatedSupabaseClient 
 import { getAuth } from '@clerk/nextjs/server';
 import { contactSchema } from '@/lib/schemas/contact';
 import { ZodError } from 'zod';
+import { log } from '@/lib/logger';
 
 // Supabase-based contact operations - no file system needed
 
@@ -43,7 +44,12 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError) {
-      console.error('Supabase insert error:', insertError);
+      log.error('Failed to insert contact submission', insertError, { 
+        name, 
+        email, 
+        type, 
+        userId: userId || undefined 
+      });
       return NextResponse.json({
         success: false,
         error: 'Error interno del servidor al procesar tu mensaje'
@@ -75,7 +81,13 @@ export async function POST(request: NextRequest) {
       }
 
     } catch (error) {
-      console.warn('Error queueing admin notification:', error);
+      log.warn('Failed to queue admin notification for contact submission', { 
+        name, 
+        email, 
+        type 
+      }, {
+        error: error instanceof Error ? error.message : String(error)
+      });
       // Don't fail the contact submission if notification fails
     }
 
@@ -85,7 +97,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error processing contact form:', error);
+    log.error('Unexpected error processing contact form', error);
     
     // Handle Zod validation errors
     if (error instanceof ZodError) {
@@ -128,7 +140,7 @@ export async function GET() {
       .select('*', { count: 'exact', head: true });
 
     if (countError) {
-      console.error('Error getting total submissions count:', countError);
+      log.error('Failed to get total contact submissions count', countError);
       return NextResponse.json({
         success: false,
         error: 'Error al obtener estadísticas de contacto'
@@ -142,7 +154,7 @@ export async function GET() {
       .eq('status', 'new');
 
     if (newCountError) {
-      console.error('Error getting new submissions count:', newCountError);
+      log.error('Failed to get new contact submissions count', newCountError);
       return NextResponse.json({
         success: false,
         error: 'Error al obtener estadísticas de contacto'
@@ -160,7 +172,7 @@ export async function GET() {
       }
     });
   } catch (error) {
-    console.error('Error reading contact statistics:', error);
+    log.error('Unexpected error reading contact statistics', error);
     
     // Provide more specific error messages for Supabase
     let errorMessage = 'Error interno al obtener estadísticas de contacto';

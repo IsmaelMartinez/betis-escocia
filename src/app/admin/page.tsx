@@ -25,6 +25,7 @@ import {
   initializeNotifications,
   cleanupNotifications 
 } from '@/lib/notifications/notificationManager';
+import { log } from '@/lib/logger';
 
 interface AdminStats {
   totalRSVPs: number;
@@ -78,7 +79,11 @@ function AdminPage() {
         setError(result.error || 'Error al actualizar el estado del contacto');
       }
     } catch (err) {
-      console.error('Error updating contact status:', err);
+      log.error('Failed to update contact status in admin panel', err, {
+        contactId: id,
+        newStatus: status,
+        userId: user?.id
+      });
       setError('Error al actualizar el estado del contacto');
     } finally {
       setRefreshing(false);
@@ -145,7 +150,9 @@ function AdminPage() {
         recentContacts
       });
     } catch (err) {
-      console.error('Error fetching admin stats:', err);
+      log.error('Failed to fetch admin stats', err, {
+        userId: user?.id
+      });
       setError('Error al cargar las estadísticas del panel de administración');
     } finally {
       setLoading(false);
@@ -163,7 +170,11 @@ function AdminPage() {
         // Background notifications not available or disabled
       }
     } catch (error) {
-      console.warn('Failed to initialize background notifications:', error);
+      log.warn('Failed to initialize background notifications in admin panel', {
+        userId: user?.id
+      }, {
+        error: error instanceof Error ? error.message : String(error)
+      });
     }
   };
 
@@ -193,7 +204,9 @@ function AdminPage() {
         setSyncMessage(`Error: ${result.message}`);
       }
     } catch (error) {
-      console.error('Error syncing matches:', error);
+      log.error('Failed to sync matches from admin panel', error, {
+        userId: user?.id
+      });
       setSyncMessage('Error al sincronizar partidos');
     } finally {
       setSyncing(false);
@@ -220,7 +233,10 @@ function AdminPage() {
         return { success: false, error: result.message };
       }
     } catch (error) {
-      console.error('Error syncing match from table:', error);
+      log.error('Failed to sync individual match from admin table', error, {
+        matchId,
+        userId: user?.id
+      });
       return { success: false, error: 'Error al sincronizar el partido' };
     }
   };
@@ -305,7 +321,9 @@ function AdminPage() {
       link.click();
       document.body.removeChild(link);
     } catch (err) {
-      console.error('Error exporting RSVPs:', err);
+      log.error('Failed to export RSVPs from admin panel', err, {
+        userId: user?.id
+      });
     }
   };
 
@@ -335,7 +353,9 @@ function AdminPage() {
       link.click();
       document.body.removeChild(link);
     } catch (err) {
-      console.error('Error exporting contacts:', err);
+      log.error('Failed to export contacts from admin panel', err, {
+        userId: user?.id
+      });
     }
   };
 

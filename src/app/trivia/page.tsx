@@ -9,6 +9,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import GameTimer from '@/components/GameTimer';
 import { useUser, useAuth } from '@clerk/nextjs';
 import TriviaScoreDisplay from '@/components/TriviaScoreDisplay';
+import { log } from '@/lib/logger';
 
 export default function TriviaPage() {
   const { isSignedIn, isLoaded } = useUser();
@@ -46,7 +47,9 @@ export default function TriviaPage() {
       }
 
     } catch (error) {
-      console.error('Error saving score:', error);
+      log.error('Failed to save trivia score', error, {
+        finalScore
+      });
     }
   };
 
@@ -100,7 +103,7 @@ export default function TriviaPage() {
           const totalScoreData: { score: number } = await totalScoreResponse.json();
           setTotalAccumulatedScore(totalScoreData.score);
         } catch (error: unknown) {
-          console.error('Error fetching accumulated scores on initial load:', error);
+          log.error('Failed to fetch accumulated scores on trivia initial load', error);
           // Don't block the page if score fetch fails, but log it.
         }
         */

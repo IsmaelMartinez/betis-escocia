@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth } from '@clerk/nextjs/server';
 import { supabase, createUserTriviaScore, getUserDailyTriviaScore, getAuthenticatedSupabaseClient } from '@/lib/supabase';
+import { log } from '@/lib/logger';
 
 export async function GET(req: NextRequest) {
   const { userId, getToken } = getAuth(req);
@@ -24,7 +25,7 @@ export async function GET(req: NextRequest) {
         .limit(100);
 
       if (error) {
-        console.error('Error fetching trivia questions for unauthenticated user:', error);
+        log.error('Failed to fetch trivia questions for unauthenticated user', error);
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
 
@@ -36,7 +37,7 @@ export async function GET(req: NextRequest) {
 
       return NextResponse.json(formattedQuestions);
     } catch (error) {
-      console.error('Unexpected error in trivia API for unauthenticated user:', error);
+      log.error('Unexpected error in trivia API for unauthenticated user', error);
       return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
   }
@@ -51,7 +52,7 @@ export async function GET(req: NextRequest) {
   const { success, data: existingScore, error: scoreError } = await getUserDailyTriviaScore(userId, authenticatedSupabase);
 
   if (!success) {
-    console.error('Error checking daily trivia score:', scoreError);
+    log.error('Failed to check daily trivia score', scoreError, { userId });
     return NextResponse.json({ error: 'Failed to check daily score' }, { status: 500 });
   }
 
@@ -77,7 +78,7 @@ export async function GET(req: NextRequest) {
       .limit(100);
 
     if (error) {
-      console.error('Error fetching trivia questions:', error);
+      log.error('Failed to fetch trivia questions for authenticated user', error, { userId });
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
@@ -90,7 +91,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(formattedQuestions);
   } catch (error) {
-    console.error('Unexpected error in trivia API:', error);
+    log.error('Unexpected error in trivia API for authenticated user', error, { userId });
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -118,7 +119,7 @@ export async function POST(req: NextRequest) {
   const { success: checkSuccess, data: existingScore, error: checkError } = await getUserDailyTriviaScore(userId, authenticatedSupabase);
 
   if (!checkSuccess) {
-    console.error('Error checking existing daily score:', checkError);
+    log.error('Failed to check existing daily trivia score before saving', checkError, { userId });
     return NextResponse.json({ error: 'Failed to check existing score' }, { status: 500 });
   }
 
@@ -129,9 +130,12 @@ export async function POST(req: NextRequest) {
   const { success, error } = await createUserTriviaScore({ user_id: userId, daily_score: score }, authenticatedSupabase);
 
   if (!success) {
-    console.error('Error saving trivia score:', error);
+    log.error('Failed to save trivia score', error, { userId, score });
     return NextResponse.json({ error: 'Failed to save score' }, { status: 500 });
   }
+
+  // Log successful score save as business event
+  log.business('trivia_score_saved', { score }, { userId });
 
   return NextResponse.json({ message: 'Score saved successfully!' }, { status: 201 });
 }

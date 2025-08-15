@@ -1,14 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { auth } from '@clerk/nextjs/server';
+import { log } from '@/lib/logger';
 
 interface GDPRRequestBody {
   requestType: 'access' | 'deletion';
 }
 
 export async function POST(request: NextRequest) {
+  let userId: string | null = null;
   try {
-    const { userId } = await auth();
+    const auth_result = await auth();
+    userId = auth_result.userId;
 
     if (!userId) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
@@ -69,13 +72,20 @@ export async function POST(request: NextRequest) {
         .delete()
         .eq('user_id', userId);
 
-      // Log detailed results for debugging
-      console.log(`GDPR Deletion for user ${userId}:`);
-      console.log(`- RSVPs deleted: ${deletedRsvps?.length || 0}`, rsvpDeleteError ? `(Error: ${rsvpDeleteError.message})` : '');
-      console.log(`- Contacts deleted: ${deletedContacts?.length || 0}`, contactDeleteError ? `(Error: ${contactDeleteError.message})` : '');
+      // Log detailed results
+      log.business('gdpr_deletion_executed', {
+        rsvpCount: (deletedRsvps as any)?.length || 0,
+        contactCount: (deletedContacts as any)?.length || 0,
+        rsvpError: rsvpDeleteError?.message,
+        contactError: contactDeleteError?.message
+      }, { userId });
 
       if (rsvpDeleteError || contactDeleteError) {
-        console.error('GDPR Deletion errors:', { rsvpDeleteError, contactDeleteError });
+        log.error('GDPR deletion failed', rsvpDeleteError || contactDeleteError, {
+          userId,
+          rsvpError: rsvpDeleteError?.message,
+          contactError: contactDeleteError?.message
+        });
         return NextResponse.json({
           success: false,
           error: 'Error deleting records',
@@ -90,15 +100,17 @@ export async function POST(request: NextRequest) {
         success: true,
         message: 'Data deleted successfully',
         deletedCounts: {
-          rsvps: deletedRsvps?.length || 0,
-          contacts: deletedContacts?.length || 0
+          rsvps: (deletedRsvps as any)?.length || 0,
+          contacts: (deletedContacts as any)?.length || 0
         }
       });
     }
 
     return NextResponse.json({ success: false, error: 'Invalid request type' }, { status: 400 });
   } catch (error) {
-    console.error('GDPR Request Error:', error);
+    log.error('Unexpected error processing GDPR request', error, {
+      userId: userId || 'unauthenticated'
+    });
     return NextResponse.json({
       success: false,
       error: 'An error occurred while processing the request'

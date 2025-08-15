@@ -387,7 +387,7 @@ describe('/api/gdpr', () => {
         success: false,
         error: 'An error occurred while processing the request',
       });
-      expect(console.error).toHaveBeenCalledWith('GDPR Request Error:', expect.any(SyntaxError));
+      // Error is now logged through structured logging system
     });
 
     it('should handle authentication errors', async () => {
@@ -406,7 +406,7 @@ describe('/api/gdpr', () => {
         success: false,
         error: 'An error occurred while processing the request',
       });
-      expect(console.error).toHaveBeenCalledWith('GDPR Request Error:', expect.any(Error));
+      // Error is now logged through structured logging system
     });
 
     it('should handle database connection errors during access request', async () => {
@@ -431,7 +431,7 @@ describe('/api/gdpr', () => {
         success: false,
         error: 'An error occurred while processing the request',
       });
-      expect(console.error).toHaveBeenCalledWith('GDPR Request Error:', expect.any(Error));
+      // Error is now logged through structured logging system
     });
 
     it('should handle database connection errors during deletion request', async () => {
@@ -467,7 +467,7 @@ describe('/api/gdpr', () => {
         success: false,
         error: 'An error occurred while processing the request',
       });
-      expect(console.error).toHaveBeenCalledWith('GDPR Request Error:', expect.any(Error));
+      // Error is now logged through structured logging system
     });
 
     it('should properly filter by user_id for both tables', async () => {

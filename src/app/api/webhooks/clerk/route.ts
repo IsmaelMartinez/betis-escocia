@@ -3,6 +3,7 @@ import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { linkExistingSubmissionsToUser, unlinkUserSubmissions } from "@/lib/supabase";
+import { log } from '@/lib/logger';
 
 export async function POST(req: Request) {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
@@ -41,7 +42,7 @@ export async function POST(req: Request) {
       "svix-signature": svix_signature,
     }) as WebhookEvent;
   } catch (err) {
-    console.error("Error verifying webhook:", err);
+    log.error('Failed to verify Clerk webhook', err);
     return new Response("Error occured", {
       status: 400,
     });
@@ -59,7 +60,19 @@ export async function POST(req: Request) {
     if (clerkUserId && primaryEmail) {
       const { rsvpLinked, contactLinked, errors } = await linkExistingSubmissionsToUser(clerkUserId, primaryEmail);
       if (errors.length > 0) {
-        console.error("Errors linking submissions:", errors);
+        log.error('Errors linking existing submissions to new user', undefined, {
+          clerkUserId,
+          email: primaryEmail,
+          errors
+        });
+      } else {
+        log.business('user_submissions_linked', {
+          rsvpLinked,
+          contactLinked
+        }, {
+          clerkUserId,
+          email: primaryEmail
+        });
       }
     }
   } else if (eventType === "user.deleted") {
@@ -67,7 +80,17 @@ export async function POST(req: Request) {
     if (clerkUserId) {
       const { rsvpUnlinked, contactUnlinked, errors } = await unlinkUserSubmissions(clerkUserId);
       if (errors.length > 0) {
-        console.error("Errors unlinking submissions:", errors);
+        log.error('Errors unlinking submissions for deleted user', undefined, {
+          clerkUserId,
+          errors
+        });
+      } else {
+        log.business('user_submissions_unlinked', {
+          rsvpUnlinked,
+          contactUnlinked
+        }, {
+          clerkUserId
+        });
       }
     }
   }

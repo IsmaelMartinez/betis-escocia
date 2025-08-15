@@ -5,6 +5,7 @@ import { getCurrentUpcomingMatch } from '@/lib/matchUtils';
 import { rsvpSchema } from '@/lib/schemas/rsvp';
 import { ZodError } from 'zod';
 import { formatISO } from 'date-fns';
+import { log } from '@/lib/logger';
 
 // Default current match info (this could be moved to env vars or a separate config)
 
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest) {
         .single();
         
       if (matchError || !matchData) {
-        console.error('Error fetching specific match:', matchError);
+        log.error('Failed to fetch specific match', matchError, { matchId });
         return NextResponse.json(
           { 
             success: false, 
@@ -66,7 +67,7 @@ export async function GET(request: NextRequest) {
     const { data: rsvps, error } = await rsvpQuery;
 
     if (error) {
-      console.error('Error reading RSVP data from Supabase:', error);
+      log.error('Failed to read RSVP data from Supabase', error, { matchId, matchDate });
       return NextResponse.json(
         { 
           success: false, 
@@ -86,7 +87,7 @@ export async function GET(request: NextRequest) {
       confirmedCount: rsvps?.length || 0
     });
   } catch (error) {
-    console.error('Error reading RSVP data:', error);
+    log.error('Unexpected error reading RSVP data', error);
     return NextResponse.json(
       { 
         success: false, 
@@ -129,7 +130,7 @@ export async function POST(request: NextRequest) {
         .maybeSingle();
         
       if (matchError || !matchData) {
-        console.error('Error fetching specific match:', matchError);
+        log.error('Failed to fetch specific match for RSVP', matchError, { matchId });
         return NextResponse.json(
           { 
             success: false, 
@@ -158,7 +159,9 @@ export async function POST(request: NextRequest) {
         .maybeSingle();
 
       if (error || !data) {
-        console.error('Error fetching upcoming match:', error);
+        log.warn('Failed to fetch upcoming match, using fallback', undefined, { 
+          error: error?.message || 'Unknown error'
+        });
         // Fallback to default match
         currentMatch = {
           opponent: "Real Madrid",
@@ -187,7 +190,10 @@ export async function POST(request: NextRequest) {
       .eq('match_id', currentMatchId);
 
     if (checkError) {
-      console.error('Error checking existing RSVP:', checkError);
+      log.error('Failed to check existing RSVP', checkError, { 
+        email: email.toLowerCase().trim(), 
+        matchId: currentMatchId 
+      });
       return NextResponse.json(
         { 
           success: false, 
@@ -222,7 +228,7 @@ export async function POST(request: NextRequest) {
         .eq('id', existingRSVPId);
       
       if (deleteError) {
-        console.error('Error deleting existing RSVP:', deleteError);
+        log.error('Failed to delete existing RSVP', deleteError, { existingRSVPId });
         operationError = deleteError;
       } else {
         // Insert the updated RSVP
@@ -244,7 +250,12 @@ export async function POST(request: NextRequest) {
     }
 
     if (operationError) {
-      console.error(`Error ${isUpdate ? 'updating' : 'inserting'} RSVP:`, operationError);
+      log.error(`Failed to ${isUpdate ? 'update' : 'insert'} RSVP`, operationError, {
+        isUpdate,
+        email: email.toLowerCase().trim(),
+        matchId: currentMatchId,
+        attendees
+      });
       return NextResponse.json(
         { 
           success: false, 
@@ -279,7 +290,13 @@ export async function POST(request: NextRequest) {
       }
 
     } catch (error) {
-      console.warn('Error queueing admin notification:', error);
+      log.warn('Failed to queue admin notification for RSVP', {
+        email: email.toLowerCase().trim(),
+        matchId: currentMatchId,
+        attendees
+      }, {
+        error: error instanceof Error ? error.message : String(error)
+      });
       // Don't fail the RSVP if notification fails
     }
 
@@ -290,7 +307,9 @@ export async function POST(request: NextRequest) {
       .eq('match_id', currentMatchId);
 
     if (countError) {
-      console.error('Error getting RSVP counts:', countError);
+      log.error('Failed to get RSVP counts after creation', countError, {
+        matchId: currentMatchId
+      });
       // Still return success since the RSVP was created, just with placeholder counts
       return NextResponse.json({
         success: true,
@@ -302,6 +321,17 @@ export async function POST(request: NextRequest) {
 
     const totalAttendees = allRSVPs?.reduce((total: number, entry: { attendees: number }) => total + entry.attendees, 0) ?? 0;
 
+    // Log successful RSVP as business event
+    log.business(isUpdate ? 'rsvp_updated' : 'rsvp_created', {
+      attendees,
+      totalAttendees,
+      confirmedCount: allRSVPs?.length ?? 0,
+      opponent: currentMatch.opponent
+    }, {
+      email: email.toLowerCase().trim(),
+      matchId: currentMatchId
+    });
+
     return NextResponse.json({
       success: true,
       message: isUpdate ? 'Confirmación actualizada correctamente' : 'Confirmación recibida correctamente',
@@ -310,11 +340,14 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error processing RSVP:', error);
+    log.error('Unexpected error processing RSVP', error);
     
     // Handle Zod validation errors
     if (error instanceof ZodError) {
       const errorMessages = error.issues.map(issue => issue.message);
+      log.warn('RSVP validation failed', undefined, { 
+        validationErrors: errorMessages 
+      });
       return NextResponse.json({
         success: false,
         error: 'Datos de confirmación inválidos',
@@ -361,7 +394,10 @@ export async function DELETE(request: NextRequest) {
     const { data: deletedRSVPs, error: deleteError } = await deleteQuery.select();
 
     if (deleteError) {
-      console.error('Error deleting RSVP:', deleteError);
+      log.error('Failed to delete RSVP', deleteError, {
+        entryId: entryId || undefined,
+        email: email || undefined
+      });
       return NextResponse.json(
         { 
           success: false, 
@@ -390,7 +426,9 @@ export async function DELETE(request: NextRequest) {
       .eq('match_date', currentMatchDate);
 
     if (countError) {
-      console.error('Error getting updated RSVP counts:', countError);
+      log.error('Failed to get updated RSVP counts after deletion', countError, {
+        currentMatchDate
+      });
       // Still return success since the deletion happened
       return NextResponse.json({
         success: true,
@@ -410,7 +448,7 @@ export async function DELETE(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error deleting RSVP:', error);
+    log.error('Unexpected error deleting RSVP', error);
     return NextResponse.json(
       { 
         success: false, 
