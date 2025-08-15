@@ -25,5 +25,28 @@ export const rsvpSchema = z.object({
   userId: z.string().optional()
 });
 
+// Query schema for GET requests  
+export const rsvpQuerySchema = z.object({
+  match: z.string().transform(val => parseInt(val)).optional()
+});
+
+// Delete schema for DELETE requests
+export const rsvpDeleteSchema = z.object({
+  id: z.string().transform(val => parseInt(val)).optional(),
+  email: z.string().email().optional()
+}).refine(data => data.id || data.email, {
+  message: "Either id or email must be provided"
+});
+
+// GDPR request schema
+export const gdprSchema = z.object({
+  requestType: z.enum(['access', 'deletion'], {
+    required_error: 'Request type is required'
+  })
+});
+
 // Type inference for TypeScript
 export type RSVPInput = z.infer<typeof rsvpSchema>;
+export type RSVPQueryInput = z.infer<typeof rsvpQuerySchema>;
+export type RSVPDeleteInput = z.infer<typeof rsvpDeleteSchema>;
+export type GDPRInput = z.infer<typeof gdprSchema>;

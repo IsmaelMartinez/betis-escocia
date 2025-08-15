@@ -1,22 +1,21 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { supabase, type ContactSubmissionInsert, getAuthenticatedSupabaseClient } from '@/lib/supabase';
-import { getAuth } from '@clerk/nextjs/server';
+import { createApiHandler } from '@/lib/apiUtils';
 import { contactSchema } from '@/lib/schemas/contact';
-import { ZodError } from 'zod';
+import { supabase, getAuthenticatedSupabaseClient, type ContactSubmissionInsert } from '@/lib/supabase';
+import { getAuth } from '@clerk/nextjs/server';
+import { queueContactNotification } from '@/lib/notifications/queueManager';
 import { log } from '@/lib/logger';
 
-// Supabase-based contact operations - no file system needed
-
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    
-    // Validate input using Zod schema
-    const validatedData = contactSchema.parse(body);
+// POST - Submit contact form
+export const POST = createApiHandler({
+  auth: 'none', // Contact supports anonymous submissions
+  schema: contactSchema,
+  handler: async (validatedData, context) => {
     const { name, email, phone, type, subject, message } = validatedData;
     
-    const { userId, getToken } = getAuth(request);
+    // Get user authentication if available
+    const { userId, getToken } = getAuth(context.request);
     let authenticatedSupabase;
+    
     if (userId) {
       const clerkToken = await getToken({ template: 'supabase' });
       if (clerkToken) {
@@ -24,7 +23,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Create new submission for Supabase (data already validated and sanitized by Zod)
+    // Create new submission
     const newSubmission: ContactSubmissionInsert = {
       name,
       email,
@@ -50,36 +49,12 @@ export async function POST(request: NextRequest) {
         type, 
         userId: userId || undefined 
       });
-      return NextResponse.json({
-        success: false,
-        error: 'Error interno del servidor al procesar tu mensaje'
-      }, { status: 500 });
+      throw new Error('Error interno del servidor al procesar tu mensaje');
     }
 
-    // Queue notification for admin users (will be picked up by SSE stream)
+    // Queue notification for admin users
     try {
-      const notification = {
-        id: Date.now().toString(),
-        timestamp: new Date().toISOString(),
-        type: 'contact' as const,
-        data: {
-          title: '📬 Nuevo Mensaje - Peña Bética',
-          body: `${name.trim()} envió un mensaje (${type ?? 'general'})`,
-          icon: '/images/logo_no_texto.jpg',
-          tag: 'contact-notification',
-          url: '/admin'
-        }
-      };
-
-      // Store in global notification queue for SSE pickup
-      global.pendingNotifications = global.pendingNotifications || [];
-      global.pendingNotifications.push(notification);
-
-      // Clean up old notifications (keep only last 100)
-      if (global.pendingNotifications.length > 100) {
-        global.pendingNotifications = global.pendingNotifications.slice(-100);
-      }
-
+      queueContactNotification(name.trim(), type);
     } catch (error) {
       log.warn('Failed to queue admin notification for contact submission', { 
         name, 
@@ -91,49 +66,22 @@ export async function POST(request: NextRequest) {
       // Don't fail the contact submission if notification fails
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Mensaje enviado correctamente. Te responderemos pronto.' 
+    log.business('contact_submission_created', { type }, { 
+      email: email.toLowerCase().trim(),
+      userId: userId || undefined
     });
 
-  } catch (error) {
-    log.error('Unexpected error processing contact form', error);
-    
-    // Handle Zod validation errors
-    if (error instanceof ZodError) {
-      const errorMessages = error.issues.map(issue => issue.message);
-      return NextResponse.json({
-        success: false,
-        error: 'Datos de formulario inválidos',
-        details: errorMessages
-      }, { status: 400 });
-    }
-    
-    // Provide more specific error messages for Supabase operations
-    let errorMessage = 'Error interno del servidor al procesar tu mensaje';
-    
-    if (error instanceof SyntaxError) {
-      errorMessage = 'Los datos enviados no son válidos. Por favor, revisa el formulario.';
-    } else if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
-      if (error.message.includes('network') || error.message.includes('fetch')) {
-        errorMessage = 'Error de conexión con la base de datos. Por favor, inténtalo de nuevo.';
-      } else if (error.message.includes('timeout')) {
-        errorMessage = 'Tiempo de espera agotado. Por favor, inténtalo de nuevo.';
-      } else if (error.message.includes('duplicate') || error.message.includes('unique')) {
-        errorMessage = 'Ya existe un mensaje similar. Por favor, verifica tu información.';
-      }
-    }
-    
-    return NextResponse.json({ 
-      success: false,
-      error: errorMessage 
-    }, { status: 500 });
+    return {
+      success: true,
+      message: 'Mensaje enviado correctamente. Te responderemos pronto.'
+    };
   }
-}
+});
 
 // GET - Retrieve contact statistics (for admin purposes)
-export async function GET() {
-  try {
+export const GET = createApiHandler({
+  auth: 'none',
+  handler: async (_, context) => {
     // Get total submissions count
     const { count: totalSubmissions, error: countError } = await supabase
       .from('contact_submissions')
@@ -141,10 +89,7 @@ export async function GET() {
 
     if (countError) {
       log.error('Failed to get total contact submissions count', countError);
-      return NextResponse.json({
-        success: false,
-        error: 'Error al obtener estadísticas de contacto'
-      }, { status: 500 });
+      throw new Error('Error al obtener estadísticas de contacto');
     }
 
     // Get new submissions count
@@ -155,42 +100,18 @@ export async function GET() {
 
     if (newCountError) {
       log.error('Failed to get new contact submissions count', newCountError);
-      return NextResponse.json({
-        success: false,
-        error: 'Error al obtener estadísticas de contacto'
-      }, { status: 500 });
+      throw new Error('Error al obtener estadísticas de contacto');
     }
     
-    return NextResponse.json({
+    return {
       success: true,
       totalSubmissions: totalSubmissions || 0,
       newSubmissions: newSubmissions || 0,
       stats: {
         totalSubmissions: totalSubmissions || 0,
-        responseRate: 0, // TODO: Calculate based on actual response data
-        averageResponseTime: 24 // TODO: Calculate based on actual response times
+        responseRate: 0,
+        averageResponseTime: 24
       }
-    });
-  } catch (error) {
-    log.error('Unexpected error reading contact statistics', error);
-    
-    // Provide more specific error messages for Supabase
-    let errorMessage = 'Error interno al obtener estadísticas de contacto';
-    
-    if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
-      if (error.message.includes('network') || error.message.includes('fetch')) {
-        errorMessage = 'Error de conexión con la base de datos';
-      } else if (error.message.includes('timeout')) {
-        errorMessage = 'Tiempo de espera agotado al obtener estadísticas';
-      }
-    }
-    
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: errorMessage 
-      },
-      { status: 500 }
-    );
+    };
   }
-}
+});
