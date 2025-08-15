@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
       const notification = {
         id: Date.now().toString(),
         timestamp: new Date().toISOString(),
-        type: 'contact',
+        type: 'contact' as const,
         data: {
           title: '📬 Nuevo Mensaje - Peña Bética',
           body: `${name.trim()} envió un mensaje (${type ?? 'general'})`,

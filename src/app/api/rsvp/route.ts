@@ -259,7 +259,7 @@ export async function POST(request: NextRequest) {
       const notification = {
         id: Date.now().toString(),
         timestamp: new Date().toISOString(),
-        type: 'rsvp',
+        type: 'rsvp' as const,
         data: {
           title: '🎉 Nuevo RSVP - Peña Bética',
           body: `${name.trim()} confirmó asistencia para el partido`,
