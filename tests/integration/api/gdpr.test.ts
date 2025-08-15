@@ -263,6 +263,10 @@ describe('/api/gdpr', () => {
       expect(data).toEqual({
         success: true,
         message: 'Data deleted successfully',
+        deletedCounts: {
+          rsvps: 0,
+          contacts: 0
+        }
       });
     });
 
@@ -309,6 +313,9 @@ describe('/api/gdpr', () => {
       expect(data).toEqual({
         success: false,
         error: 'Error deleting records',
+        details: {
+          rsvpError: 'RSVP deletion failed',
+        }
       });
     });
 
@@ -358,6 +365,9 @@ describe('/api/gdpr', () => {
       expect(data).toEqual({
         success: false,
         error: 'Error deleting records',
+        details: {
+          contactError: 'Contact deletion failed',
+        }
       });
     });
 

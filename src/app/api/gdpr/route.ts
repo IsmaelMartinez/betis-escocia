@@ -61,15 +61,13 @@ export async function POST(request: NextRequest) {
       const { data: deletedRsvps, error: rsvpDeleteError } = await supabase
         .from('rsvps')
         .delete()
-        .eq('user_id', userId)
-        .select(); // Return deleted records for counting
+        .eq('user_id', userId);
 
       // Delete contact submissions
       const { data: deletedContacts, error: contactDeleteError } = await supabase
         .from('contact_submissions')
         .delete()
-        .eq('user_id', userId)
-        .select(); // Return deleted records for counting
+        .eq('user_id', userId);
 
       // Log detailed results for debugging
       console.log(`GDPR Deletion for user ${userId}:`);
