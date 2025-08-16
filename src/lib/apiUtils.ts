@@ -20,6 +20,7 @@ export interface ApiContext {
     isAdmin: boolean;
   };
   userId?: string;
+  clerkToken?: string;
   authenticatedSupabase?: SupabaseClient;
   supabase: SupabaseClient; // Authenticated or anonymous Supabase client
 }
@@ -109,6 +110,7 @@ async function handleAuthentication(
       const token = await getToken({ template: 'supabase' });
       context.user = { id: userId, isAdmin: false };
       context.userId = userId;
+      context.clerkToken = token || undefined;
       context.authenticatedSupabase = token ? getAuthenticatedSupabaseClient(token) : undefined;
       context.supabase = token ? getAuthenticatedSupabaseClient(token) : supabase;
     }
@@ -135,6 +137,7 @@ async function handleAuthentication(
     
     context.user = { id: user.id, isAdmin: true };
     context.userId = user.id;
+    context.clerkToken = token || undefined;
     context.authenticatedSupabase = token ? getAuthenticatedSupabaseClient(token) : undefined;
     context.supabase = token ? getAuthenticatedSupabaseClient(token) : supabase;
     
@@ -156,6 +159,7 @@ async function handleAuthentication(
     
     context.user = { id: userId, isAdmin: false };
     context.userId = userId;
+    context.clerkToken = token || undefined;
     context.authenticatedSupabase = token ? getAuthenticatedSupabaseClient(token) : undefined;
     context.supabase = token ? getAuthenticatedSupabaseClient(token) : supabase;
     
