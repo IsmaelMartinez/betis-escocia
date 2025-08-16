@@ -137,20 +137,6 @@ export async function POST(req: NextRequest) {
   // Log successful score save as business event
   log.business('trivia_score_saved', { score }, { userId });
 
-  // Test: Try to read back all scores immediately after saving
-  const { data: readbackScores, error: readError } = await authenticatedSupabase
-    .from('user_trivia_scores')
-    .select('daily_score, user_id, timestamp')
-    .eq('user_id', userId)
-    .order('timestamp', { ascending: false });
-
-  log.info('Read-after-write test', { userId }, {
-    readbackSuccess: !readError,
-    readbackCount: readbackScores?.length || 0,
-    readbackScores: readbackScores?.slice(0, 3) || [], // Just first 3
-    readError: readError ? JSON.stringify(readError) : null
-  });
-
   return NextResponse.json({ message: 'Score saved successfully!' }, { status: 201 });
 }
 

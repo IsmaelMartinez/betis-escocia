@@ -23,10 +23,6 @@ async function getTotalScore(context: { userId: string; clerkToken: string }): P
     throw new Error(`Failed to fetch total score: ${error.message || JSON.stringify(error)}`);
   }
 
-  log.info('All user trivia scores query result', { userId }, { 
-    scores: allUserScores,
-    scoresLength: allUserScores?.length || 0
-  });
 
   const totalScore = allUserScores.reduce((sum: number, entry: { daily_score: number }) => sum + entry.daily_score, 0);
 
