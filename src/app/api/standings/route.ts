@@ -91,7 +91,7 @@ async function getStandings(): Promise<StandingsResponse> {
 
 export const GET = createApiHandler({
   auth: 'none',
-  handler: async (validatedData, context) => {
+  handler: async () => {
     return await getStandings();
   }
 });

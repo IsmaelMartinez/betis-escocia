@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ZodError, ZodSchema } from 'zod';
 import { checkAdminRole } from '@/lib/adminApiProtection';
 import { getAuth } from '@clerk/nextjs/server';
-import { getAuthenticatedSupabaseClient, supabase } from '@/lib/supabase';
+import { getAuthenticatedSupabaseClient, supabase, type SupabaseClient } from '@/lib/supabase';
 
 // Authentication types
 export type AuthRequirement = 'admin' | 'user' | 'optional' | 'none';
@@ -20,19 +20,19 @@ export interface ApiContext {
     isAdmin: boolean;
   };
   userId?: string;
-  authenticatedSupabase?: any;
-  supabase: any; // Authenticated or anonymous Supabase client
+  authenticatedSupabase?: SupabaseClient;
+  supabase: SupabaseClient; // Authenticated or anonymous Supabase client
 }
 
 // API handler configuration
-export interface ApiHandlerConfig<TInput = any, TOutput = any> {
+export interface ApiHandlerConfig<TInput = unknown, TOutput = unknown> {
   auth?: AuthRequirement;
   schema?: ZodSchema<TInput>;
   handler: (data: TInput, context: ApiContext) => Promise<TOutput>;
 }
 
 // Standardized API response types
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   message?: string;
@@ -168,7 +168,7 @@ async function handleAuthentication(
 /**
  * Create a standardized API handler with automatic auth, validation, and error handling
  */
-export function createApiHandler<TInput = any, TOutput = any>(
+export function createApiHandler<TInput = unknown, TOutput = unknown>(
   config: ApiHandlerConfig<TInput, TOutput>
 ) {
   return async (request: NextRequest): Promise<NextResponse> => {
@@ -229,7 +229,7 @@ export function createApiHandler<TInput = any, TOutput = any>(
 /**
  * Create handlers for different HTTP methods with the same configuration
  */
-export function createCrudHandlers<TInput = any, TOutput = any>(config: {
+export function createCrudHandlers<TInput = unknown, TOutput = unknown>(config: {
   auth?: AuthRequirement;
   handlers: {
     GET?: (context: ApiContext) => Promise<TOutput>;
@@ -239,11 +239,11 @@ export function createCrudHandlers<TInput = any, TOutput = any>(config: {
     DELETE?: (context: ApiContext) => Promise<TOutput>;
   };
   schemas?: {
-    GET?: ZodSchema<any>;
+    GET?: ZodSchema<unknown>;
     POST?: ZodSchema<TInput>;
     PUT?: ZodSchema<TInput>;
     PATCH?: ZodSchema<TInput>;
-    DELETE?: ZodSchema<any>;
+    DELETE?: ZodSchema<unknown>;
   };
 }) {
   const handlers: Record<string, (request: NextRequest) => Promise<NextResponse>> = {};
@@ -257,7 +257,7 @@ export function createCrudHandlers<TInput = any, TOutput = any>(config: {
         if (config.schemas?.GET) {
           const { searchParams } = new URL(context.request.url);
           const params = Object.fromEntries(searchParams.entries());
-          const parsedParams = config.schemas.GET.parse(params);
+          config.schemas.GET.parse(params); // Validate params
           // Pass validated params in a way that doesn't modify ApiContext type
           return config.handlers.GET!(context);
         }
@@ -308,7 +308,7 @@ export function createCrudHandlers<TInput = any, TOutput = any>(config: {
  * Database operation utilities with standardized error handling
  */
 export async function executeSupabaseOperation<T>(
-  operation: () => Promise<{ data: T | null; error: any }>,
+  operation: () => Promise<{ data: T | null; error: Error | null }>,
   errorMessage: string = 'Error de base de datos'
 ): Promise<{ success: boolean; data?: T; error?: string }> {
   try {

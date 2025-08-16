@@ -13,9 +13,7 @@ import {
   areNotificationsEnabled
 } from '@/lib/notifications/simpleNotifications';
 import { 
-  getPushNotificationStatus,
-  initializePushNotifications,
-  registerServiceWorker
+  getPushNotificationStatus
 } from '@/lib/notifications/pushNotifications';
 import { getNotificationManager } from '@/lib/notifications/notificationManager';
 

@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth, useUser } from '@clerk/nextjs';
 import { supabase, RSVP, ContactSubmission, Match, createMatch, updateMatch, deleteMatch, getMatches, updateContactSubmissionStatus } from '@/lib/supabase';
 import { Users, Mail, TrendingUp, Download, RefreshCw, Calendar, Plus, RotateCcw } from 'lucide-react';
@@ -105,7 +105,7 @@ function AdminPage() {
     }
   }, [isLoaded, isSignedIn, router]);
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       setError(null);
       
@@ -158,10 +158,10 @@ function AdminPage() {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [user?.id]);
 
   // Initialize background notification system
-  const initializeBackgroundNotifications = async () => {
+  const initializeBackgroundNotifications = useCallback(async () => {
     try {
       const initialized = await initializeNotifications();
       if (initialized) {
@@ -176,7 +176,7 @@ function AdminPage() {
         error: error instanceof Error ? error.message : String(error)
       });
     }
-  };
+  }, [user?.id]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -370,7 +370,7 @@ function AdminPage() {
     return () => {
       cleanupNotifications();
     };
-  }, [isSignedIn]);
+  }, [isSignedIn, fetchStats, initializeBackgroundNotifications]);
 
   // Show loading while Clerk is loading
   if (!isLoaded) {

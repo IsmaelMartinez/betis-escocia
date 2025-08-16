@@ -255,7 +255,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const deletedOrder = orders.splice(orderIndex, 1)[0];
+    orders.splice(orderIndex, 1);
     await saveOrders(orders);
 
 

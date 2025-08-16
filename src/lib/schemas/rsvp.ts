@@ -41,7 +41,7 @@ export const rsvpDeleteSchema = z.object({
 // GDPR request schema
 export const gdprSchema = z.object({
   requestType: z.enum(['access', 'deletion'], {
-    required_error: 'Request type is required'
+    message: 'Request type is required'
   })
 });
 

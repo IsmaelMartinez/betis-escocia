@@ -20,11 +20,11 @@ export interface UseApiDataOptions extends RequestInit {
     delay: number;
   };
   // Transform response data
-  transform?: <T>(data: any) => T;
+  transform?: <T>(data: unknown) => T;
   // Custom error handler
   onError?: (error: Error) => void;
   // Custom success handler
-  onSuccess?: (data: any) => void;
+  onSuccess?: (data: unknown) => void;
 }
 
 export interface UseApiDataResult<T> {
@@ -38,7 +38,7 @@ export interface UseApiDataResult<T> {
 /**
  * Hook for fetching data from API endpoints with standardized state management
  */
-export function useApiData<T = any>(
+export function useApiData<T = unknown>(
   url: string | null, 
   options: UseApiDataOptions = {}
 ): UseApiDataResult<T> {
@@ -208,7 +208,7 @@ export function useApiData<T = any>(
 /**
  * Specialized hook for paginated data fetching
  */
-export function usePaginatedApiData<T = any>(
+export function usePaginatedApiData<T = unknown>(
   baseUrl: string,
   options: UseApiDataOptions & {
     pageSize?: number;
@@ -260,7 +260,7 @@ export function usePaginatedApiData<T = any>(
 /**
  * Hook for mutations (POST, PUT, DELETE) with optimistic updates
  */
-export function useApiMutation<TData = any, TVariables = any>(
+export function useApiMutation<TData = unknown, TVariables = unknown>(
   mutationFn: (variables: TVariables) => Promise<TData>,
   options: {
     onSuccess?: (data: TData, variables: TVariables) => void;

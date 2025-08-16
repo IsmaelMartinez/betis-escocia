@@ -1,7 +1,7 @@
 import { createApiHandler, type ApiContext } from '@/lib/apiUtils';
 import { assignRole, listUsersWithRoles } from '@/lib/serverRoleUtils';
-import { validateRoleChange, ROLES, Role } from '@/lib/roleUtils';
-import { userQuerySchema, userRoleSchema, type UserQueryParams, type UserRoleInput } from '@/lib/schemas/admin';
+import { validateRoleChange, ROLES } from '@/lib/roleUtils';
+import { userRoleSchema, type UserQueryParams, type UserRoleInput } from '@/lib/schemas/admin';
 import { log } from '@/lib/logger';
 import { getAuth } from '@clerk/nextjs/server';
 

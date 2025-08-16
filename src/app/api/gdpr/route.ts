@@ -42,18 +42,20 @@ async function processGDPRRequest(gdprData: GDPRInput, context: ApiContext) {
     const { data: deletedRsvps, error: rsvpDeleteError } = await supabase
       .from('rsvps')
       .delete()
-      .eq('user_id', userId);
+      .eq('user_id', userId)
+      .select();
 
     // Delete contact submissions
     const { data: deletedContacts, error: contactDeleteError } = await supabase
       .from('contact_submissions')
       .delete()
-      .eq('user_id', userId);
+      .eq('user_id', userId)
+      .select();
 
     // Log detailed results
     log.business('gdpr_deletion_executed', {
-      rsvpCount: (deletedRsvps as any)?.length || 0,
-      contactCount: (deletedContacts as any)?.length || 0,
+      rsvpCount: deletedRsvps?.length || 0,
+      contactCount: deletedContacts?.length || 0,
       rsvpError: rsvpDeleteError?.message,
       contactError: contactDeleteError?.message
     }, { userId });
@@ -71,8 +73,8 @@ async function processGDPRRequest(gdprData: GDPRInput, context: ApiContext) {
       success: true,
       message: 'Datos eliminados correctamente',
       deletedCounts: {
-        rsvps: (deletedRsvps as any)?.length || 0,
-        contacts: (deletedContacts as any)?.length || 0
+        rsvps: deletedRsvps?.length || 0,
+        contacts: deletedContacts?.length || 0
       }
     };
   }

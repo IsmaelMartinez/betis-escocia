@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+// Role type definition
+export type Role = 'user' | 'moderator' | 'admin';
+
 // User query parameters schema
 export const userQuerySchema = z.object({
   limit: z.coerce.number().int().positive().max(100).default(50),

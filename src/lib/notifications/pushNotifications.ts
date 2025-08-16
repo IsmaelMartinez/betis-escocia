@@ -5,7 +5,6 @@
  * Supports notifications even when the admin dashboard is not open.
  */
 
-import { getUsersWithNotificationsEnabledDb } from './preferencesDb';
 
 export interface PushNotificationData {
   title: string;
@@ -311,7 +310,7 @@ export async function triggerPushNotification(data: PushNotificationData): Promi
       badge: data.badge || '/images/logo_no_texto.jpg',
       tag: data.tag,
       requireInteraction: data.requireInteraction,
-      actions: data.actions,
+      ...(data.actions && { actions: data.actions }),
       data: {
         url: data.url || '/admin',
         timestamp: Date.now()

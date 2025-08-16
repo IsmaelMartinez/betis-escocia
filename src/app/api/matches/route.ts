@@ -8,7 +8,7 @@ import { log } from '@/lib/logger';
 // Request validation schema
 const matchesQuerySchema = z.object({
   type: z.enum(['all', 'upcoming', 'recent', 'conference', 'friendlies']).default('all'),
-  live: z.string().transform(val => val === 'true').default('false')
+  live: z.string().default('false').transform(val => val === 'true')
 });
 
 type MatchesResponse = {
@@ -74,7 +74,7 @@ async function getMatches(params: z.infer<typeof matchesQuerySchema>): Promise<M
 export const GET = createApiHandler({
   auth: 'none',
   schema: matchesQuerySchema,
-  handler: async (validatedData, context) => {
+  handler: async (validatedData) => {
     return await getMatches(validatedData);
   }
 });

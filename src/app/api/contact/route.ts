@@ -36,7 +36,7 @@ export const POST = createApiHandler({
     };
 
     // Insert into Supabase
-    const { data: insertedSubmission, error: insertError } = await (authenticatedSupabase || supabase)
+    const { error: insertError } = await (authenticatedSupabase || supabase)
       .from('contact_submissions')
       .insert(newSubmission)
       .select()
@@ -81,7 +81,7 @@ export const POST = createApiHandler({
 // GET - Retrieve contact statistics (for admin purposes)
 export const GET = createApiHandler({
   auth: 'none',
-  handler: async (_, context) => {
+  handler: async () => {
     // Get total submissions count
     const { count: totalSubmissions, error: countError } = await supabase
       .from('contact_submissions')

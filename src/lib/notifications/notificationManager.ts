@@ -110,7 +110,7 @@ export class NotificationManager {
   /**
    * Handle incoming SSE messages
    */
-  private async handleMessage(event: MessageEvent): void {
+  private async handleMessage(event: MessageEvent): Promise<void> {
     try {
       const data = JSON.parse(event.data);
       
@@ -138,7 +138,7 @@ export class NotificationManager {
   /**
    * Handle notification data from SSE
    */
-  private async handleNotification(notificationData: PushNotificationData & { id: string; timestamp: string }): void {
+  private async handleNotification(notificationData: PushNotificationData & { id: string; timestamp: string }): Promise<void> {
     try {
       console.log('NotificationManager: Received notification:', notificationData.id);
       

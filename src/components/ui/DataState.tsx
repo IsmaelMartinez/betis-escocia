@@ -5,13 +5,12 @@
 
 import React from 'react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
-import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/ui/Button';
 
 export interface DataStateProps {
   loading: boolean;
   error: string | null;
-  data: any;
+  data: unknown;
   children: React.ReactNode;
   emptyMessage?: string;
   onRetry?: () => void;

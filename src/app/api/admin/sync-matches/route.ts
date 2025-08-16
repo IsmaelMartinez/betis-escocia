@@ -23,7 +23,7 @@ export async function POST(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   request: NextRequest
 ) {
-  let user: any = null; // Declare user outside try block for catch access
+  let user: { id: string } | null = null; // Declare user outside try block for catch access
   try {
     // Check admin role
     const { user: adminUser, isAdmin, error } = await checkAdminRole();

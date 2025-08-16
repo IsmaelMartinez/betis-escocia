@@ -1,14 +1,27 @@
 import { createApiHandler } from '@/lib/apiUtils';
 import { checkAdminRole } from '@/lib/adminApiProtection';
 import { listUsersWithRoles, updateUser, deleteUser } from '@/lib/serverRoleUtils';
-import { type Role } from '@/lib/roleUtils';
-import { userQuerySchema, userUpdateSchema, userDeleteSchema } from '@/lib/schemas/admin';
+import { userQuerySchema, userUpdateSchema, userDeleteSchema, type Role } from '@/lib/schemas/admin';
 import { z } from 'zod';
 import { log } from '@/lib/logger';
 
+// User type definition for Clerk users
+type ClerkUser = {
+  id: string;
+  emailAddresses: Array<{ emailAddress: string }>;
+  firstName: string | null;
+  lastName: string | null;
+  publicMetadata: {
+    role?: string;
+    banned?: boolean;
+  };
+  createdAt: number;
+  lastSignInAt: number | null;
+};
+
 type UsersListResponse = {
   success: boolean;
-  users: any[];
+  users: ClerkUser[];
   totalCount: number;
   hasMore: boolean;
 };
@@ -16,7 +29,7 @@ type UsersListResponse = {
 type UserUpdateResponse = {
   success: boolean;
   message: string;
-  user: any;
+  user: ClerkUser;
 };
 
 type UserDeleteResponse = {
@@ -55,7 +68,18 @@ async function getUsersList(query: z.infer<typeof userQuerySchema>): Promise<Use
 
   return {
     success: true,
-    users: result.users || [],
+    users: (result.users || []).map(user => ({
+      id: user.id,
+      emailAddresses: [{ emailAddress: user.email }],
+      firstName: user.firstName,
+      lastName: user.lastName,
+      publicMetadata: {
+        role: user.role,
+        banned: user.banned
+      },
+      createdAt: user.createdAt,
+      lastSignInAt: user.lastSignInAt
+    })),
     totalCount: result.totalCount || 0,
     hasMore: result.hasMore || false
   };
@@ -97,7 +121,26 @@ async function updateUserDetails(data: z.infer<typeof userUpdateSchema>): Promis
   return {
     success: true,
     message: 'User updated successfully',
-    user: result.user
+    user: result.user ? {
+      id: result.user.id,
+      emailAddresses: [{ emailAddress: result.user.email }],
+      firstName: result.user.firstName,
+      lastName: result.user.lastName,
+      publicMetadata: {
+        role: result.user.role,
+        banned: result.user.banned
+      },
+      createdAt: 0,
+      lastSignInAt: null
+    } : {
+      id: '',
+      emailAddresses: [],
+      firstName: '',
+      lastName: '',
+      publicMetadata: {},
+      createdAt: 0,
+      lastSignInAt: null
+    }
   };
 }
 
@@ -138,7 +181,7 @@ async function deleteUserAccount(data: z.infer<typeof userDeleteSchema>): Promis
 export const GET = createApiHandler({
   auth: 'admin',
   schema: userQuerySchema,
-  handler: async (validatedData, context) => {
+  handler: async (validatedData) => {
     return await getUsersList(validatedData);
   }
 });
@@ -147,7 +190,7 @@ export const GET = createApiHandler({
 export const PATCH = createApiHandler({
   auth: 'admin',
   schema: userUpdateSchema,
-  handler: async (validatedData, context) => {
+  handler: async (validatedData) => {
     return await updateUserDetails(validatedData);
   }
 });
@@ -156,7 +199,7 @@ export const PATCH = createApiHandler({
 export const DELETE = createApiHandler({
   auth: 'admin',
   schema: userDeleteSchema,
-  handler: async (validatedData, context) => {
+  handler: async (validatedData) => {
     return await deleteUserAccount(validatedData);
   }
 });

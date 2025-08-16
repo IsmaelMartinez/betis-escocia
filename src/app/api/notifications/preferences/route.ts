@@ -69,7 +69,7 @@ export const GET = createApiHandler({
   handler: async (validatedData, context) => {
     const { getToken } = await import('@clerk/nextjs/server').then(m => m.getAuth(context.request));
     const clerkToken = await getToken({ template: 'supabase' });
-    return await getNotificationPreferences({ clerkToken });
+    return await getNotificationPreferences({ clerkToken: clerkToken || undefined });
   }
 });
 
@@ -80,7 +80,7 @@ export const POST = createApiHandler({
   handler: async (validatedData, context) => {
     const { getToken } = await import('@clerk/nextjs/server').then(m => m.getAuth(context.request));
     const clerkToken = await getToken({ template: 'supabase' });
-    return await setNotificationPreferences(validatedData, { clerkToken });
+    return await setNotificationPreferences(validatedData, { clerkToken: clerkToken || undefined });
   }
 });
 

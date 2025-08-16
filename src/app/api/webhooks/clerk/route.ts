@@ -48,8 +48,7 @@ export async function POST(req: Request) {
     });
   }
 
-  // Get the ID and type
-  const { id } = evt.data;
+  // Get the type
   const eventType = evt.type;
 
 

@@ -1,4 +1,4 @@
-import { createApiHandler, type ApiContext } from '@/lib/apiUtils';
+import { createApiHandler } from '@/lib/apiUtils';
 import { supabase, type RSVP } from '@/lib/supabase';
 import { getCurrentUpcomingMatch } from '@/lib/matchUtils';
 import { rsvpSchema, type RSVPInput } from '@/lib/schemas/rsvp';

@@ -101,7 +101,7 @@ class Logger {
       name: error.name,
       message: error.message,
       stack: error.stack,
-      cause: (error as any).cause
+      cause: error.cause
     } : error ? { 
       name: 'Unknown Error',
       message: String(error) 
