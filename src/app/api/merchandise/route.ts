@@ -1,7 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { createApiHandler } from '@/lib/apiUtils';
 import { join } from 'path';
 import { writeFile, readFile, mkdir } from 'fs/promises';
 import type { MerchandiseItem } from '@/types/community';
+import { 
+  merchandiseQuerySchema, 
+  createMerchandiseSchema, 
+  updateMerchandiseSchema, 
+  merchandiseIdSchema 
+} from '@/lib/schemas/merchandise';
 
 interface MerchandiseData {
   items: MerchandiseItem[];
@@ -117,17 +123,19 @@ async function writeMerchandiseData(data: MerchandiseData): Promise<void> {
   await writeFile(dataPath, JSON.stringify(data, null, 2), 'utf-8');
 }
 
-// GET - Retrieve merchandise items
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const category = searchParams.get('category');
-    const featured = searchParams.get('featured') === 'true';
-    const inStock = searchParams.get('inStock') !== 'false'; // Default to true
+export const GET = createApiHandler({
+  auth: 'none',
+  handler: async (_, context) => {
+    const { searchParams } = new URL(context.request.url);
+    const queryParams = merchandiseQuerySchema.parse({
+      category: searchParams.get('category'),
+      featured: searchParams.get('featured'),
+      inStock: searchParams.get('inStock')
+    });
+    const { category, featured, inStock } = queryParams;
 
-    const data = await readMerchandiseData();
-    
-    let filteredItems = data.items;
+    const merchandiseData = await readMerchandiseData();
+    let filteredItems = merchandiseData.items;
 
     // Apply filters
     if (category && category !== 'all') {
@@ -142,264 +150,106 @@ export async function GET(request: NextRequest) {
       filteredItems = filteredItems.filter(item => item.inStock);
     }
 
-    return NextResponse.json({
+    return {
       success: true,
       items: filteredItems,
-      categories: data.categories,
+      categories: merchandiseData.categories,
       totalItems: filteredItems.length
-    });
-  } catch (error) {
-    console.error('Error reading merchandise data:', error);
-    
-    // Provide more specific error messages
-    let errorMessage = 'Error al cargar los productos de la tienda';
-    
-    if (error && typeof error === 'object' && 'code' in error) {
-      if (error.code === 'ENOENT') {
-        errorMessage = 'No se encontraron productos en la tienda';
-      } else if (error.code === 'EACCES') {
-        errorMessage = 'Error de permisos al acceder a los productos';
-      }
-    } else if (error instanceof SyntaxError) {
-      errorMessage = 'Error en el formato de los datos de productos';
-    }
-    
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: errorMessage 
-      },
-      { status: 500 }
-    );
+    };
   }
-}
+});
 
-// POST - Add new merchandise item (admin function)
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { name, description, price, images, category, sizes, colors, inStock, featured } = body;
-
-    // Validation
-    if (!name || !description || !price || !category) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Nombre, descripción, precio y categoría son obligatorios' 
-        },
-        { status: 400 }
-      );
-    }
-
-    if (price <= 0) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'El precio debe ser mayor que 0' 
-        },
-        { status: 400 }
-      );
-    }
-
-    const validCategories = ['clothing', 'accessories', 'collectibles'];
-    if (!validCategories.includes(category)) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Categoría no válida' 
-        },
-        { status: 400 }
-      );
-    }
-
+export const POST = createApiHandler({
+  auth: 'none', // Should be admin later
+  schema: createMerchandiseSchema,
+  handler: async (validatedData, context) => {
     // Read current data
-    const data = await readMerchandiseData();
+    const merchandiseData = await readMerchandiseData();
 
     // Create new item
     const newItem: MerchandiseItem = {
       id: `merch_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
-      name: name.trim(),
-      description: description.trim(),
-      price: parseFloat(price),
-      images: images || [],
-      category,
-      sizes: sizes || [],
-      colors: colors || [],
-      inStock: Boolean(inStock),
-      featured: Boolean(featured)
+      name: validatedData.name,
+      description: validatedData.description,
+      price: validatedData.price,
+      images: validatedData.images,
+      category: validatedData.category,
+      sizes: validatedData.sizes,
+      colors: validatedData.colors,
+      inStock: validatedData.inStock,
+      featured: validatedData.featured
     };
 
     // Add to items
-    data.items.push(newItem);
-    data.totalItems = data.items.length;
+    merchandiseData.items.push(newItem);
+    merchandiseData.totalItems = merchandiseData.items.length;
 
     // Update categories if new
-    if (!data.categories.includes(category)) {
-      data.categories.push(category);
+    if (!merchandiseData.categories.includes(validatedData.category)) {
+      merchandiseData.categories.push(validatedData.category);
     }
 
     // Save updated data
-    await writeMerchandiseData(data);
+    await writeMerchandiseData(merchandiseData);
 
-
-    return NextResponse.json({
+    return {
       success: true,
       message: 'Producto añadido correctamente',
-      item: newItem
-    });
-
-  } catch (error) {
-    console.error('Error adding merchandise item:', error);
-    
-    // Provide more specific error messages
-    let errorMessage = 'Error interno al añadir el producto';
-    
-    if (error instanceof SyntaxError) {
-      errorMessage = 'Los datos del producto no son válidos';
-    } else if (error && typeof error === 'object' && 'code' in error && (error.code === 'ENOENT' || error.code === 'EACCES')) {
-      errorMessage = 'Error de almacenamiento. Inténtalo de nuevo.';
-    } else if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' && error.message.includes('space')) {
-      errorMessage = 'Error de espacio de almacenamiento. Contacta al administrador.';
-    }
-    
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: errorMessage 
-      },
-      { status: 500 }
-    );
+      data: newItem
+    };
   }
-}
+});
 
-// PUT - Update merchandise item (admin function)
-export async function PUT(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const itemId = searchParams.get('id');
+export const PUT = createApiHandler({
+  auth: 'none', // Should be admin later
+  schema: updateMerchandiseSchema,
+  handler: async (validatedData, context) => {
+    const { searchParams } = new URL(context.request.url);
+    const { id: itemId } = merchandiseIdSchema.parse({ id: searchParams.get('id') });
 
-    if (!itemId) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'ID del producto requerido' 
-        },
-        { status: 400 }
-      );
-    }
-
-    const body = await request.json();
-    const data = await readMerchandiseData();
+    const merchandiseData = await readMerchandiseData();
     
     // Find item
-    const itemIndex = data.items.findIndex(item => item.id === itemId);
+    const itemIndex = merchandiseData.items.findIndex(item => item.id === itemId);
     if (itemIndex === -1) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Producto no encontrado' 
-        },
-        { status: 404 }
-      );
+      throw new Error('Producto no encontrado');
     }
 
     // Update item
-    data.items[itemIndex] = { ...data.items[itemIndex], ...body };
+    merchandiseData.items[itemIndex] = { ...merchandiseData.items[itemIndex], ...validatedData };
     
-    await writeMerchandiseData(data);
+    await writeMerchandiseData(merchandiseData);
 
-    return NextResponse.json({
+    return {
       success: true,
       message: 'Producto actualizado correctamente',
-      item: data.items[itemIndex]
-    });
-
-  } catch (error) {
-    console.error('Error updating merchandise item:', error);
-    
-    // Provide more specific error messages
-    let errorMessage = 'Error al actualizar el producto';
-    
-    if (error instanceof SyntaxError) {
-      errorMessage = 'Los datos de actualización no son válidos';
-    } else if (error && typeof error === 'object' && 'code' in error) {
-      if (error.code === 'ENOENT') {
-        errorMessage = 'No se encontraron los datos del producto';
-      } else if (error.code === 'EACCES') {
-        errorMessage = 'Error de permisos al actualizar el producto';
-      }
-    }
-    
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: errorMessage 
-      },
-      { status: 500 }
-    );
+      data: merchandiseData.items[itemIndex]
+    };
   }
-}
+});
 
-// DELETE - Remove merchandise item (admin function)
-export async function DELETE(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const itemId = searchParams.get('id');
+export const DELETE = createApiHandler({
+  auth: 'none', // Should be admin later
+  handler: async (_, context) => {
+    const { searchParams } = new URL(context.request.url);
+    const { id: itemId } = merchandiseIdSchema.parse({ id: searchParams.get('id') });
 
-    if (!itemId) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'ID del producto requerido' 
-        },
-        { status: 400 }
-      );
-    }
-
-    const data = await readMerchandiseData();
+    const merchandiseData = await readMerchandiseData();
     
     // Find and remove item
-    const initialLength = data.items.length;
-    data.items = data.items.filter(item => item.id !== itemId);
+    const initialLength = merchandiseData.items.length;
+    merchandiseData.items = merchandiseData.items.filter(item => item.id !== itemId);
 
-    if (data.items.length === initialLength) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Producto no encontrado' 
-        },
-        { status: 404 }
-      );
+    if (merchandiseData.items.length === initialLength) {
+      throw new Error('Producto no encontrado');
     }
 
-    data.totalItems = data.items.length;
-    await writeMerchandiseData(data);
+    merchandiseData.totalItems = merchandiseData.items.length;
+    await writeMerchandiseData(merchandiseData);
 
-    return NextResponse.json({
+    return {
       success: true,
       message: 'Producto eliminado correctamente'
-    });
-
-  } catch (error) {
-    console.error('Error deleting merchandise item:', error);
-    
-    // Provide more specific error messages
-    let errorMessage = 'Error al eliminar el producto';
-    
-    if (error && typeof error === 'object' && 'code' in error) {
-      if (error.code === 'ENOENT') {
-        errorMessage = 'No se encontraron los datos del producto a eliminar';
-      } else if (error.code === 'EACCES') {
-        errorMessage = 'Error de permisos al eliminar el producto';
-      }
-    }
-    
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: errorMessage 
-      },
-      { status: 500 }
-    );
+    };
   }
-}
+});

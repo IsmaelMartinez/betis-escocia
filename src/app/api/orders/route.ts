@@ -1,8 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { createApiHandler } from '@/lib/apiUtils';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { createOrderSchema, updateOrderSchema, orderQuerySchema, orderIdSchema } from '@/lib/schemas/orders';
-import { ZodError } from 'zod';
 
 interface Order {
   id: string;
@@ -46,10 +45,11 @@ async function saveOrders(orders: Order[]): Promise<void> {
   await fs.writeFile(ordersFile, JSON.stringify(orders, null, 2));
 }
 
-export async function GET(request: NextRequest) {
-  try {
+export const GET = createApiHandler({
+  auth: 'none',
+  handler: async (_, context) => {
     const orders = await getOrders();
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(context.request.url);
     
     // Validate query parameters
     const queryParams = orderQuerySchema.parse({
@@ -71,46 +71,14 @@ export async function GET(request: NextRequest) {
     // Sort by timestamp, newest first
     filteredOrders.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
-    return NextResponse.json(filteredOrders);
-  } catch (error) {
-    console.error('Error fetching orders:', error);
-    
-    // Handle Zod validation errors
-    if (error instanceof ZodError) {
-      const errorMessages = error.issues.map(issue => issue.message);
-      return NextResponse.json({
-        error: 'Parámetros de consulta inválidos',
-        details: errorMessages
-      }, { status: 400 });
-    }
-    
-    // Provide more specific error messages
-    let errorMessage = 'Error al cargar los pedidos';
-    
-    if (error && typeof error === 'object' && 'code' in error) {
-      if (error.code === 'ENOENT') {
-        errorMessage = 'No se encontraron pedidos previos';
-      } else if (error.code === 'EACCES') {
-        errorMessage = 'Error de permisos al acceder a los datos de pedidos';
-      }
-    } else if (error instanceof SyntaxError) {
-      errorMessage = 'Error en el formato de los datos de pedidos';
-    }
-    
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
-    );
+    return filteredOrders;
   }
-}
+});
 
-export async function POST(request: NextRequest) {
-  try {
-    const orderData = await request.json();
-    
-    // Validate input using Zod schema
-    const validatedData = createOrderSchema.parse(orderData);
-
+export const POST = createApiHandler({
+  auth: 'none',
+  schema: createOrderSchema,
+  handler: async (validatedData, context) => {
     const orders = await getOrders();
     
     const newOrder: Order = {
@@ -138,57 +106,26 @@ export async function POST(request: NextRequest) {
     orders.push(newOrder);
     await saveOrders(orders);
 
-
-    return NextResponse.json(newOrder, { status: 201 });
-  } catch (error) {
-    console.error('Error creating order:', error);
-    
-    // Handle Zod validation errors
-    if (error instanceof ZodError) {
-      const errorMessages = error.issues.map(issue => issue.message);
-      return NextResponse.json({
-        error: 'Datos del pedido inválidos',
-        details: errorMessages
-      }, { status: 400 });
-    }
-    
-    // Provide more specific error messages
-    let errorMessage = 'Error interno al procesar tu pedido';
-    
-    if (error instanceof SyntaxError) {
-      errorMessage = 'Los datos del pedido no son válidos. Por favor, revisa la información.';
-    } else if (error && typeof error === 'object' && 'code' in error && (error.code === 'ENOENT' || error.code === 'EACCES')) {
-      errorMessage = 'Error de almacenamiento. Por favor, inténtalo de nuevo.';
-    } else if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' && error.message.includes('space')) {
-      errorMessage = 'Error de espacio de almacenamiento. Contacta al administrador.';
-    }
-    
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
-    );
+    return {
+      success: true,
+      message: 'Pedido creado exitosamente',
+      data: newOrder
+    };
   }
-}
+});
 
-export async function PUT(request: NextRequest) {
-  try {
-    const updateData = await request.json();
-    const { searchParams } = new URL(request.url);
-    
-    // Validate order ID parameter
+export const PUT = createApiHandler({
+  auth: 'none', // Should be admin later
+  schema: updateOrderSchema,
+  handler: async (validatedData, context) => {
+    const { searchParams } = new URL(context.request.url);
     const { id: orderId } = orderIdSchema.parse({ id: searchParams.get('id') });
     
-    // Validate update data
-    const validatedData = updateOrderSchema.parse(updateData);
-
     const orders = await getOrders();
     const orderIndex = orders.findIndex(order => order.id === orderId);
 
     if (orderIndex === -1) {
-      return NextResponse.json(
-        { error: 'Pedido no encontrado' },
-        { status: 404 }
-      );
+      throw new Error('Pedido no encontrado');
     }
 
     // Update allowed fields
@@ -204,88 +141,33 @@ export async function PUT(request: NextRequest) {
     orders[orderIndex] = updatedOrder;
     await saveOrders(orders);
 
-
-    return NextResponse.json(updatedOrder);
-  } catch (error) {
-    console.error('Error updating order:', error);
-    
-    // Handle Zod validation errors
-    if (error instanceof ZodError) {
-      const errorMessages = error.issues.map(issue => issue.message);
-      return NextResponse.json({
-        error: 'Datos de actualización inválidos',
-        details: errorMessages
-      }, { status: 400 });
-    }
-    
-    // Provide more specific error messages
-    let errorMessage = 'Error al actualizar el estado del pedido';
-    
-    if (error instanceof SyntaxError) {
-      errorMessage = 'Los datos de actualización no son válidos';
-    } else if (error && typeof error === 'object' && 'code' in error) {
-      if (error.code === 'ENOENT') {
-        errorMessage = 'No se encontraron los datos del pedido';
-      } else if (error.code === 'EACCES') {
-        errorMessage = 'Error de permisos al actualizar el pedido';
-      }
-    }
-    
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
-    );
+    return {
+      success: true,
+      message: 'Pedido actualizado exitosamente',
+      data: updatedOrder
+    };
   }
-}
+});
 
-export async function DELETE(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    
-    // Validate order ID parameter
+export const DELETE = createApiHandler({
+  auth: 'none', // Should be admin later
+  handler: async (_, context) => {
+    const { searchParams } = new URL(context.request.url);
     const { id: orderId } = orderIdSchema.parse({ id: searchParams.get('id') });
 
     const orders = await getOrders();
     const orderIndex = orders.findIndex(order => order.id === orderId);
 
     if (orderIndex === -1) {
-      return NextResponse.json(
-        { error: 'Pedido no encontrado' },
-        { status: 404 }
-      );
+      throw new Error('Pedido no encontrado');
     }
 
     orders.splice(orderIndex, 1);
     await saveOrders(orders);
 
-
-    return NextResponse.json({ message: 'Pedido eliminado correctamente' });
-  } catch (error) {
-    console.error('Error deleting order:', error);
-    
-    // Handle Zod validation errors
-    if (error instanceof ZodError) {
-      const errorMessages = error.issues.map(issue => issue.message);
-      return NextResponse.json({
-        error: 'Parámetros inválidos',
-        details: errorMessages
-      }, { status: 400 });
-    }
-    
-    // Provide more specific error messages
-    let errorMessage = 'Error al eliminar el pedido';
-    
-    if (error && typeof error === 'object' && 'code' in error) {
-      if (error.code === 'ENOENT') {
-        errorMessage = 'No se encontraron los datos del pedido a eliminar';
-      } else if (error.code === 'EACCES') {
-        errorMessage = 'Error de permisos al eliminar el pedido';
-      }
-    }
-    
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
-    );
+    return { 
+      success: true,
+      message: 'Pedido eliminado correctamente' 
+    };
   }
-}
+});
