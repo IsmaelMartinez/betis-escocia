@@ -5,6 +5,7 @@ import { rsvpSchema, type RSVPInput } from '@/lib/schemas/rsvp';
 import { formatISO } from 'date-fns';
 import { log } from '@/lib/logger';
 import { queueRSVPNotification } from '@/lib/notifications/queueManager';
+import { StandardErrors } from '@/lib/standardErrors';
 
 async function getRSVPData(queryData: { match?: number }) {
   const { match: matchId } = queryData;
@@ -22,7 +23,7 @@ async function getRSVPData(queryData: { match?: number }) {
       
     if (matchError || !matchData) {
       log.error('Failed to fetch specific match', matchError, { matchId });
-      throw new Error('Partido no encontrado');
+      throw new Error(StandardErrors.RSVP.MATCH_NOT_FOUND);
     }
     
     currentMatch = {
@@ -55,7 +56,7 @@ async function getRSVPData(queryData: { match?: number }) {
 
   if (error) {
     log.error('Failed to read RSVP data from Supabase', error, { matchId, matchDate });
-    throw new Error('Error al obtener datos de confirmaciones');
+    throw new Error(StandardErrors.RSVP.DATA_ERROR);
   }
 
   // Calculate total attendees
@@ -98,7 +99,7 @@ async function createRSVP(rsvpData: RSVPInput) {
       
     if (matchError || !matchData) {
       log.error('Failed to fetch specific match for RSVP', matchError, { matchId });
-      throw new Error('Partido no encontrado');
+      throw new Error(StandardErrors.RSVP.MATCH_NOT_FOUND);
     }
     
     currentMatch = {
@@ -155,7 +156,7 @@ async function createRSVP(rsvpData: RSVPInput) {
       email: email.toLowerCase().trim(), 
       matchId: currentMatchId 
     });
-    throw new Error('Error interno del servidor al verificar confirmación existente');
+    throw new Error(StandardErrors.INTERNAL_SERVER_ERROR);
   }
 
   const isUpdate = existingRSVPs && existingRSVPs.length > 0;
@@ -211,7 +212,7 @@ async function createRSVP(rsvpData: RSVPInput) {
       matchId: currentMatchId,
       attendees
     });
-    throw new Error(`Error interno del servidor al ${isUpdate ? 'actualizar' : 'procesar'} la confirmación`);
+    throw new Error(StandardErrors.INTERNAL_SERVER_ERROR);
   }
 
   // Queue notification for admin users
@@ -295,11 +296,11 @@ async function deleteRSVP(deleteData: { id?: number; email?: string }) {
       entryId: entryId || undefined,
       email: email || undefined
     });
-    throw new Error('Error interno del servidor al eliminar confirmación');
+    throw new Error(StandardErrors.INTERNAL_SERVER_ERROR);
   }
 
   if (!deletedRSVPs || deletedRSVPs.length === 0) {
-    throw new Error('Confirmación no encontrada');
+    throw new Error(StandardErrors.NOT_FOUND);
   }
 
   // Get updated totals for the current match

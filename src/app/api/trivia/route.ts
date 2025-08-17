@@ -2,6 +2,7 @@ import { createApiHandler } from '@/lib/apiUtils';
 import { supabase, createUserTriviaScore, getUserDailyTriviaScore, type SupabaseClient } from '@/lib/supabase';
 import { triviaScoreSchema } from '@/lib/schemas/trivia';
 import { log } from '@/lib/logger';
+import { StandardErrors } from '@/lib/standardErrors';
 
 // Define response types
 type TriviaQuestion = {
@@ -32,7 +33,7 @@ async function getTriviaQuestions(userId?: string, authenticatedSupabase?: Supab
 
     if (!success) {
       log.error('Failed to check daily trivia score', scoreError, { userId });
-      throw new Error('Failed to check daily score');
+      throw new Error(StandardErrors.TRIVIA.DAILY_SCORE_ERROR);
     }
 
     if (existingScore) {
@@ -92,14 +93,14 @@ async function saveTriviaScore(
   }
 
   if (existingScore) {
-    throw new Error('You have already submitted a score today.');
+    throw new Error(StandardErrors.TRIVIA.ALREADY_PLAYED);
   }
 
   const { success, error } = await createUserTriviaScore({ user_id: userId, daily_score: score }, authenticatedSupabase);
 
   if (!success) {
     log.error('Failed to save trivia score', error, { userId, score });
-    throw new Error('Failed to save score');
+    throw new Error(StandardErrors.TRIVIA.SAVE_SCORE_ERROR);
   }
 
   // Log successful score save as business event
@@ -132,7 +133,7 @@ export const POST = createApiHandler({
     const { userId, authenticatedSupabase } = context;
     
     if (!authenticatedSupabase) {
-      throw new Error('Authentication required');
+      throw new Error(StandardErrors.TRIVIA.AUTHENTICATION_REQUIRED);
     }
 
     try {

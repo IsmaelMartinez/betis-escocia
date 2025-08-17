@@ -1,5 +1,6 @@
 import { createApiHandler } from '@/lib/apiUtils';
 import { votingRequestSchema } from '@/lib/schemas/voting';
+import { StandardErrors } from '@/lib/standardErrors';
 
 /**
  * Legacy camiseta-voting endpoint for backward compatibility
@@ -25,7 +26,7 @@ export const GET = createApiHandler({
       const data = await response.json();
       return data;
     } catch {
-      throw new Error('Error al cargar los datos de votación');
+      throw new Error(StandardErrors.VOTING.DATA_ERROR);
     }
   }
 });
@@ -53,7 +54,7 @@ export const POST = createApiHandler({
           orderData: validatedData.orderData
         };
       } else {
-        throw new Error('Acción no válida');
+        throw new Error(StandardErrors.VOTING.INVALID_ACTION);
       }
       
       const response = await fetch(targetUrl, {

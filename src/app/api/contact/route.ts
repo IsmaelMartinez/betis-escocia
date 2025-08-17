@@ -4,6 +4,7 @@ import { supabase, getAuthenticatedSupabaseClient, type ContactSubmissionInsert 
 import { getAuth } from '@clerk/nextjs/server';
 import { queueContactNotification } from '@/lib/notifications/queueManager';
 import { log } from '@/lib/logger';
+import { StandardErrors } from '@/lib/standardErrors';
 
 // POST - Submit contact form
 export const POST = createApiHandler({
@@ -49,7 +50,7 @@ export const POST = createApiHandler({
         type, 
         userId: userId || undefined 
       });
-      throw new Error('Error interno del servidor al procesar tu mensaje');
+      throw new Error(StandardErrors.CONTACT.PROCESSING_ERROR);
     }
 
     // Queue notification for admin users
@@ -89,7 +90,7 @@ export const GET = createApiHandler({
 
     if (countError) {
       log.error('Failed to get total contact submissions count', countError);
-      throw new Error('Error al obtener estadísticas de contacto');
+      throw new Error(StandardErrors.CONTACT.STATS_ERROR);
     }
 
     // Get new submissions count
@@ -100,7 +101,7 @@ export const GET = createApiHandler({
 
     if (newCountError) {
       log.error('Failed to get new contact submissions count', newCountError);
-      throw new Error('Error al obtener estadísticas de contacto');
+      throw new Error(StandardErrors.CONTACT.STATS_ERROR);
     }
     
     return {

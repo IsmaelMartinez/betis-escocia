@@ -115,6 +115,9 @@ export default defineConfig({
     testTimeout: 10000, // 10 seconds timeout for tests
     hookTimeout: 10000, // 10 seconds timeout for hooks
     // Reporter configuration  
-    reporters: ['verbose', 'html'],
+    reporters: [
+      ['default', { summary: false }], // Replaces deprecated 'basic' reporter
+      'html'
+    ],
   },
 });
