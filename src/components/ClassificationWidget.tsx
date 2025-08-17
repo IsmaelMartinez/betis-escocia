@@ -60,14 +60,21 @@ export default function ClassificationWidget({ className = '', initialStandings 
         setError(null);
         
         const response = await fetch('/api/standings');
-        const data = await response.json();
+        const apiResponse = await response.json();
         
-        if (response.ok && data.standings) {
-          setStandings(data.standings.table);
-          const betis = data.standings.table.find((entry: StandingEntry) => entry.team.id === 90);
-          setBetisEntry(betis || null);
+        if (response.ok) {
+          // Handle createApiHandler response format
+          const data = apiResponse.success ? apiResponse.data : apiResponse;
+          
+          if (data.standings) {
+            setStandings(data.standings.table);
+            const betis = data.standings.table.find((entry: StandingEntry) => entry.team.id === 90);
+            setBetisEntry(betis || null);
+          } else {
+            setError('No se pudieron cargar las clasificaciones');
+          }
         } else {
-          setError(data.error || 'No se pudieron cargar las clasificaciones');
+          setError(apiResponse.error || 'No se pudieron cargar las clasificaciones');
         }
       } catch (err) {
         console.error('Error fetching standings:', err);

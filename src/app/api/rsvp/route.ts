@@ -333,9 +333,9 @@ async function deleteRSVP(deleteData: { id?: number; email?: string }) {
   };
 }
 
-// DELETE - Remove RSVP (admin function)
+// DELETE - Remove RSVP (admin only)
 export const DELETE = createApiHandler({
-  auth: 'none', // TODO: Should this be admin only?
+  auth: 'admin',
   handler: async (_, context) => {
     const url = new URL(context.request.url);
     const entryId = url.searchParams.get('id');

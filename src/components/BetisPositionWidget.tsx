@@ -27,7 +27,8 @@ export default function BetisPositionWidget() {
           throw new Error('Error al obtener la clasificación');
         }
         
-        const data = await response.json();
+        const apiResponse = await response.json();
+        const data = apiResponse.success ? apiResponse.data : apiResponse;
         const standings = data.standings;
         
         if (standings && standings.table) {
