@@ -365,6 +365,46 @@ export const GET = createApiHandler({
 });
 ```
 
+#### Advanced Example: Focused Endpoints for Complex Features
+
+The camiseta-voting feature demonstrates how to break down complex business logic into focused endpoints:
+
+```typescript
+// /api/camiseta-voting/vote/route.ts - Dedicated voting endpoint
+export const POST = createApiHandler({
+  auth: 'none',
+  schema: voteActionSchema.omit({ action: true }),
+  handler: async (validatedData, context) => {
+    const { designId, voter } = validatedData;
+    
+    // Business logic focused on voting only
+    const data = readVotingData();
+    
+    if (!data.voting.active) {
+      throw new Error('La votación no está activa');
+    }
+    
+    // Check for duplicate votes, add vote, save
+    // ... focused voting logic
+    
+    return {
+      success: true,
+      message: 'Voto registrado correctamente',
+      data: { totalVotes: data.voting.totalVotes }
+    };
+  }
+});
+
+// /api/camiseta-voting/status/route.ts - Public status endpoint
+export const GET = createApiHandler({
+  auth: 'none',
+  handler: async (_, context) => {
+    const data = readVotingData();
+    return sanitizeVotingData(data); // Remove private voter info
+  }
+});
+```
+
 #### Benefits of `createApiHandler`
 - **Automatic authentication** handling based on requirements
 - **Built-in Zod validation** with Spanish error messages
@@ -441,16 +481,18 @@ export async function POST(request: NextRequest) {
 - **File-based operations** or external API integrations
 
 #### Examples of Legacy Pattern Routes:
-- `/api/camiseta-voting` - Complex voting/pre-order state machine (*should be refactored*)
 - Routes with multi-step workflows
 - APIs requiring 400 vs 500 error differentiation
+- Complex file operations with specific error handling
 
-> **Refactoring Note**: The `/api/camiseta-voting` endpoint should be re-implemented to use `createApiHandler` since it's not yet live. Consider breaking it down into separate endpoints:
-> - `POST /api/camiseta-voting/vote` - Handle voting operations
-> - `POST /api/camiseta-voting/pre-order` - Handle pre-order operations  
-> - `GET /api/camiseta-voting/status` - Get current voting/pre-order status
+> **✅ Completed Refactoring**: The `/api/camiseta-voting` endpoint has been successfully refactored into focused endpoints using `createApiHandler`:
 > 
-> This would simplify the business logic and make it compatible with the standardized `createApiHandler` pattern.
+> - **`POST /api/camiseta-voting/vote`** - Dedicated voting endpoint
+> - **`POST /api/camiseta-voting/pre-order`** - Dedicated pre-order endpoint  
+> - **`GET /api/camiseta-voting/status`** - Public status and analytics endpoint
+> - **`/api/camiseta-voting`** - Legacy wrapper for backward compatibility
+> 
+> This demonstrates how complex business logic can be broken down into simple, focused endpoints that work with the standardized pattern.
 
 ### Schema Development
 

@@ -163,7 +163,14 @@ export const POST = createApiHandler({
 - Routes with unique error handling needs (e.g., `/api/camiseta-voting`)
 - File-based operations or external API integrations
 
-**Note**: The `/api/camiseta-voting` endpoint should be re-implemented to use `createApiHandler` in the future. Since this feature is not yet live, we can simplify the business logic to work with the standardized pattern. This would involve breaking down the complex voting/pre-order state machine into simpler, more focused endpoints.
+**✅ Update**: The `/api/camiseta-voting` endpoint has been successfully refactored to use `createApiHandler` pattern with focused endpoints:
+
+- **`POST /api/camiseta-voting/vote`** - Handle voting operations
+- **`POST /api/camiseta-voting/pre-order`** - Handle pre-order operations  
+- **`GET /api/camiseta-voting/status`** - Get current voting/pre-order status
+- **`/api/camiseta-voting`** - Legacy compatibility wrapper (redirects to focused endpoints)
+
+This refactoring eliminated the complex state machine in favor of simple, focused endpoints that work seamlessly with the `createApiHandler` pattern.
 
 ### Legacy Protected Route Pattern
 ```typescript

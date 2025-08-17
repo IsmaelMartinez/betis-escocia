@@ -32,6 +32,14 @@ export interface ApiHandlerConfig<TInput = unknown, TOutput = unknown> {
   handler: (data: TInput, context: ApiContext) => Promise<TOutput>;
 }
 
+// Custom error class for business logic errors that should pass through
+export class BusinessLogicError extends Error {
+  constructor(message: string, public statusCode: number = 400) {
+    super(message);
+    this.name = 'BusinessLogicError';
+  }
+}
+
 // Standardized API response types
 export interface ApiResponse<T = unknown> {
   success: boolean;
@@ -224,7 +232,17 @@ export function createApiHandler<TInput = unknown, TOutput = unknown>(
         return handleZodError(error);
       }
       
-      // Generic server error
+      // Handle business logic errors that should pass through
+      if (error instanceof BusinessLogicError) {
+        return createErrorResponse(error.message, error.statusCode);
+      }
+      
+      // Handle standard Error objects with specific messages
+      if (error instanceof Error) {
+        return createErrorResponse(error.message, 400);
+      }
+      
+      // Generic server error for unknown error types
       return createErrorResponse('Error interno del servidor', 500);
     }
   };

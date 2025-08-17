@@ -201,9 +201,9 @@ describe('/api/merchandise', () => {
       const response = await PUT(request);
       const data = await response.json();
 
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Error interno del servidor');
+      expect(data.error).toBe('Producto no encontrado');
     });
 
     it('should handle malformed update data', async () => {
@@ -243,9 +243,9 @@ describe('/api/merchandise', () => {
       const response = await DELETE(request);
       const data = await response.json();
 
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Error interno del servidor');
+      expect(data.error).toBe('Producto no encontrado');
     });
   });
 });
