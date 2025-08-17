@@ -474,16 +474,17 @@ export async function POST(request: NextRequest) {
 - **Routes requiring consistent error handling**
 - **APIs with straightforward authentication needs**
 
-#### Use Legacy Pattern for:
-- **Complex business logic** requiring specific HTTP status codes
-- **Multi-step validation** with conditional requirements
-- **Routes with unique error handling** needs
-- **File-based operations** or external API integrations
+#### Use Legacy Pattern ONLY for:
+- **Server-Sent Events (SSE)** endpoints that return streaming responses
+- **Webhook endpoints** requiring custom signature validation
+- **External integrations** with very specific protocol requirements
 
-#### Examples of Legacy Pattern Routes:
-- Routes with multi-step workflows
-- APIs requiring 400 vs 500 error differentiation
-- Complex file operations with specific error handling
+#### Examples of Remaining Legacy Routes:
+- `/api/notifications/trigger` - SSE endpoint for real-time notifications
+- `/api/clerk/webhook` - Webhook with Svix signature verification
+- Routes requiring Response streaming or non-JSON responses
+
+⚠️ **Important**: All standard API routes should use `createApiHandler`. The legacy pattern is only for specialized endpoints that cannot work with the standardized response format.
 
 > **✅ Completed Refactoring**: The `/api/camiseta-voting` endpoint has been successfully refactored into focused endpoints using `createApiHandler`:
 > 
@@ -492,7 +493,9 @@ export async function POST(request: NextRequest) {
 > - **`GET /api/camiseta-voting/status`** - Public status and analytics endpoint
 > - **`/api/camiseta-voting`** - Legacy wrapper for backward compatibility
 > 
-> This demonstrates how complex business logic can be broken down into simple, focused endpoints that work with the standardized pattern.
+> **Initial Implementation Limitation**: The original camiseta-voting endpoint was initially implemented using the legacy pattern due to its complex business logic requiring multiple action types (vote vs pre-order) in a single endpoint. This made it challenging to implement with the standardized `createApiHandler` pattern, which expects single-responsibility endpoints.
+>
+> **Solution**: The complex endpoint was broken down into focused, single-responsibility endpoints, each handling one specific action. This demonstrates how to refactor complex legacy endpoints to work with the modern standardized pattern while maintaining backward compatibility.
 
 ### Schema Development
 

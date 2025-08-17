@@ -157,20 +157,23 @@ export const POST = createApiHandler({
 - Routes requiring consistent error handling
 - APIs with straightforward authentication needs
 
-**When to use Legacy Pattern:**
-- Complex business logic requiring specific HTTP status codes
-- Multi-step validation with conditional requirements
-- Routes with unique error handling needs (e.g., `/api/camiseta-voting`)
-- File-based operations or external API integrations
+**When to use Legacy Pattern (Rarely):**
+- Server-Sent Events (SSE) endpoints that return streaming responses
+- Webhook endpoints requiring custom signature validation  
+- External integrations with very specific protocol requirements
 
-**✅ Update**: The `/api/camiseta-voting` endpoint has been successfully refactored to use `createApiHandler` pattern with focused endpoints:
+**✅ Complete**: All standard API routes now use `createApiHandler`. The legacy pattern is only used for specialized endpoints like:
+- `/api/notifications/trigger` - SSE endpoint for real-time notifications
+- `/api/clerk/webhook` - Webhook with Svix signature verification
+
+**✅ Major Refactoring Complete**: The `/api/camiseta-voting` endpoint has been successfully refactored to use `createApiHandler` pattern with focused endpoints:
 
 - **`POST /api/camiseta-voting/vote`** - Handle voting operations
 - **`POST /api/camiseta-voting/pre-order`** - Handle pre-order operations  
 - **`GET /api/camiseta-voting/status`** - Get current voting/pre-order status
 - **`/api/camiseta-voting`** - Legacy compatibility wrapper (redirects to focused endpoints)
 
-This refactoring eliminated the complex state machine in favor of simple, focused endpoints that work seamlessly with the `createApiHandler` pattern.
+**Initial Challenge**: The original camiseta-voting endpoint was complex, handling multiple action types (vote vs pre-order) in a single endpoint, making it initially challenging to implement with `createApiHandler`. The solution was to break it down into focused, single-responsibility endpoints while maintaining backward compatibility.
 
 ### Legacy Protected Route Pattern
 ```typescript

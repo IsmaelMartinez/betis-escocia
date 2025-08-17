@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { createCrudHandlers } from '@/lib/apiUtils';
 
 /**
  * Legacy API endpoint for push notification subscriptions
@@ -6,30 +6,18 @@ import { NextResponse } from 'next/server';
  * since we've simplified to use browser notifications instead
  */
 
-// GET - Always return not subscribed since we don't use complex push subscriptions
-export async function GET() {
-  return NextResponse.json({
-    success: true,
-    subscribed: false,
-    supported: false,
-    message: 'Using simplified browser notifications instead'
-  });
-}
+const legacyResponse = {
+  success: true,
+  subscribed: false,
+  supported: false,
+  message: 'Using simplified browser notifications instead'
+};
 
-// POST - Return success but don't actually subscribe to anything
-export async function POST() {
-  return NextResponse.json({
-    success: true,
-    subscribed: false,
-    message: 'Using simplified browser notifications instead'
-  });
-}
-
-// DELETE - Return success but don't actually unsubscribe from anything
-export async function DELETE() {
-  return NextResponse.json({
-    success: true,
-    subscribed: false,
-    message: 'Using simplified browser notifications instead'
-  });
-}
+export const { GET, POST, DELETE } = createCrudHandlers({
+  auth: 'none',
+  handlers: {
+    GET: async () => legacyResponse,
+    POST: async () => ({ ...legacyResponse, supported: false }),
+    DELETE: async () => ({ ...legacyResponse, supported: false })
+  }
+});

@@ -64,19 +64,23 @@ export default function TriviaPage() {
     try {
       const response = await fetch('/api/trivia');
       if (!response.ok) {
-        // This case should ideally be handled by the initial check, but as a fallback
-        if (response.status === 403) {
-          const data = await response.json();
-          setError(data.message);
-          setGameCompleted(true);
-          setScore(data.score);
-          setLoading(false);
-          return;
-        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data: TriviaQuestion[] = await response.json();
-      setQuestions(data.slice(0, MAX_QUESTIONS));
+      
+      const apiResponse = await response.json();
+      
+      // Handle the case where user already played today
+      if (apiResponse.success && apiResponse.data && typeof apiResponse.data === 'object' && 'message' in apiResponse.data) {
+        setError(apiResponse.data.message);
+        setGameCompleted(true);
+        setScore(apiResponse.data.score);
+        setLoading(false);
+        return;
+      }
+      
+      // Handle the case where we get questions array
+      const questions = apiResponse.success ? apiResponse.data : apiResponse;
+      setQuestions(questions.slice(0, MAX_QUESTIONS));
       setGameStarted(true);
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'An error occurred while starting game');
@@ -112,18 +116,22 @@ export default function TriviaPage() {
         try {
           const response = await fetch('/api/trivia'); // This endpoint checks if played today
           if (!response.ok) {
-            if (response.status === 403) {
-              const data = await response.json();
-              setError(data.message);
-              setGameCompleted(true);
-              setScore(data.score);
-              setQuestions(Array(MAX_QUESTIONS).fill({} as TriviaQuestion)); // Populate questions for display
-              setLoading(false); // User already played, stop loading
-              return;
-            }
             throw new Error(`HTTP error! status: ${response.status}`);
           }
-          // If response is OK, it means user hasn't played yet, or questions are ready to be fetched
+          
+          const apiResponse = await response.json();
+          
+          // Handle the case where user already played today
+          if (apiResponse.success && apiResponse.data && typeof apiResponse.data === 'object' && 'message' in apiResponse.data) {
+            setError(apiResponse.data.message);
+            setGameCompleted(true);
+            setScore(apiResponse.data.score);
+            setQuestions(Array(MAX_QUESTIONS).fill({} as TriviaQuestion)); // Populate questions for display
+            setLoading(false); // User already played, stop loading
+            return;
+          }
+          
+          // If response is OK and we get questions, it means user hasn't played yet
           // We don't set questions here, as they will be fetched on game start
         } catch (error: unknown) {
           setError(error instanceof Error ? error.message : 'An error occurred during initial check');

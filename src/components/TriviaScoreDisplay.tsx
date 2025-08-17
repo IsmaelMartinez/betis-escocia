@@ -24,8 +24,9 @@ export default function TriviaScoreDisplay() {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json();
-        setTotalScore(data.totalScore);
+        const apiResponse = await response.json();
+        const totalScore = apiResponse.success ? apiResponse.data.totalScore : apiResponse.totalScore;
+        setTotalScore(totalScore);
       } catch (err: unknown) {
         console.error('Failed to fetch total trivia score:', err);
         if (err instanceof Error) {

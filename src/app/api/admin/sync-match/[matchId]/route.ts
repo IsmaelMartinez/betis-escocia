@@ -1,31 +1,17 @@
-import { NextResponse } from 'next/server';
+import { createApiHandler } from '@/lib/apiUtils';
 import { FootballDataService } from '@/services/footballDataService';
 import axios from 'axios';
 import { supabase } from '@/lib/supabase';
-import { checkAdminRole } from '@/lib/adminApiProtection';
 
-export async function POST(
-  request: Request,
-  { params }: { params: Promise<{ matchId: string }> }
-) {
-  try {
-    // Check admin role
-    const { user, isAdmin, error } = await checkAdminRole();
-    if (!isAdmin || error) {
-      return NextResponse.json({
-        success: false,
-        message: error || 'Admin access required'
-      }, { status: !user ? 401 : 403 });
-    }
-    
-    const { matchId } = await params;
-    const matchIdNumber = parseInt(matchId);
+export const POST = createApiHandler({
+  auth: 'admin',
+  handler: async (_, context) => {
+    // Extract matchId from URL path
+    const matchId = context.request.url.split('/').pop();
+    const matchIdNumber = parseInt(matchId || '');
     
     if (isNaN(matchIdNumber)) {
-      return NextResponse.json({
-        success: false,
-        message: 'Invalid match ID provided'
-      }, { status: 400 });
+      throw new Error('Invalid match ID provided');
     }
 
     console.log(`🔄 Updating individual match ID: ${matchIdNumber}`);
@@ -37,10 +23,7 @@ export async function POST(
     const match = await footballService.getMatchById(matchIdNumber);
     
     if (!match) {
-      return NextResponse.json({
-        success: false,
-        message: `Match with ID ${matchIdNumber} not found in API`
-      }, { status: 404 });
+      throw new Error(`Match with ID ${matchIdNumber} not found in API`);
     }
 
     console.log(`✅ Found match: ${match.homeTeam.name} vs ${match.awayTeam.name} on ${match.utcDate}`);
@@ -102,10 +85,7 @@ export async function POST(
       
       if (error) {
         console.error(`❌ Error updating match ${match.id}:`, error);
-        return NextResponse.json({
-          success: false,
-          message: `Error updating match: ${error.message}`
-        }, { status: 500 });
+        throw new Error(`Error updating match: ${error.message}`);
       }
       
       operation = 'updated';
@@ -118,17 +98,14 @@ export async function POST(
       
       if (error) {
         console.error(`❌ Error inserting match ${match.id}:`, error);
-        return NextResponse.json({
-          success: false,
-          message: `Error inserting match: ${error.message}`
-        }, { status: 500 });
+        throw new Error(`Error inserting match: ${error.message}`);
       }
       
       operation = 'created';
       console.log(`✅ Created new match ${match.id} in database`);
     }
     
-    return NextResponse.json({
+    return {
       success: true,
       message: `Match ${operation} successfully`,
       match: {
@@ -141,14 +118,6 @@ export async function POST(
         result: dbMatch.result,
         score: homeScore !== undefined && awayScore !== undefined ? `${homeScore}-${awayScore}` : null
       }
-    });
-    
-  } catch (error) {
-    console.error('❌ Individual match sync failed:', error);
-    return NextResponse.json({
-      success: false,
-      message: 'Error during individual match sync',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    };
   }
-}
+});
