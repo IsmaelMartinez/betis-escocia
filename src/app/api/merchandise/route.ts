@@ -128,9 +128,9 @@ export const GET = createApiHandler({
   handler: async (_, context) => {
     const { searchParams } = new URL(context.request.url);
     const queryParams = merchandiseQuerySchema.parse({
-      category: searchParams.get('category'),
-      featured: searchParams.get('featured'),
-      inStock: searchParams.get('inStock')
+      category: searchParams.get('category') || undefined,
+      featured: searchParams.get('featured') || undefined,
+      inStock: searchParams.get('inStock') || undefined
     });
     const { category, featured, inStock } = queryParams;
 
@@ -162,7 +162,7 @@ export const GET = createApiHandler({
 export const POST = createApiHandler({
   auth: 'none', // Should be admin later
   schema: createMerchandiseSchema,
-  handler: async (validatedData, context) => {
+  handler: async (validatedData) => {
     // Read current data
     const merchandiseData = await readMerchandiseData();
 

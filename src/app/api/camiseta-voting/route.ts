@@ -75,7 +75,7 @@ function readVotingData(): VotingData {
       options: [
         {
           id: "design_1",
-          name: "Dinnae seek mair – there’s nae mair tae be foun’",
+          name: "Dinnae seek mair – there's nae mair tae be foun'",
           description: "Lema clásico de la peña en escocés",
           image: "/images/coleccionables/camiseta-1.png",
           votes: 0,

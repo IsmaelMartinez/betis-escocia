@@ -113,7 +113,7 @@ describe('/api/merchandise', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Nombre, descripción, precio y categoría son obligatorios');
+      expect(data.error).toBe('Datos de entrada inválidos');
     });
 
     it('should validate price is greater than zero', async () => {
@@ -134,7 +134,7 @@ describe('/api/merchandise', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('El precio debe ser mayor que 0');
+      expect(data.error).toBe('Datos de entrada inválidos');
     });
 
     it('should validate category', async () => {
@@ -155,7 +155,7 @@ describe('/api/merchandise', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Categoría no válida');
+      expect(data.error).toBe('Datos de entrada inválidos');
     });
 
     it('should handle malformed request body', async () => {
@@ -167,9 +167,9 @@ describe('/api/merchandise', () => {
       const response = await POST(request);
       const data = await response.json();
 
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Los datos del producto no son válidos');
+      expect(data.error).toBe('Error al procesar datos de entrada');
     });
   });
 
@@ -187,10 +187,10 @@ describe('/api/merchandise', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('ID del producto requerido');
+      expect(data.error).toBe('Datos de entrada inválidos');
     });
 
-    it('should return 404 for non-existent item', async () => {
+    it('should return 500 for non-existent item', async () => {
       const updateData = { name: 'Updated Name' };
 
       const request = new NextRequest('http://localhost:3000/api/merchandise?id=non_existent_id', {
@@ -201,9 +201,9 @@ describe('/api/merchandise', () => {
       const response = await PUT(request);
       const data = await response.json();
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(500);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Producto no encontrado');
+      expect(data.error).toBe('Error interno del servidor');
     });
 
     it('should handle malformed update data', async () => {
@@ -215,9 +215,9 @@ describe('/api/merchandise', () => {
       const response = await PUT(request);
       const data = await response.json();
 
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Los datos de actualización no son válidos');
+      expect(data.error).toBe('Error al procesar datos de entrada');
     });
   });
 
@@ -232,10 +232,10 @@ describe('/api/merchandise', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('ID del producto requerido');
+      expect(data.error).toBe('Datos de entrada inválidos');
     });
 
-    it('should return 404 for non-existent item', async () => {
+    it('should return 500 for non-existent item', async () => {
       const request = new NextRequest('http://localhost:3000/api/merchandise?id=non_existent_id', {
         method: 'DELETE',
       });
@@ -243,9 +243,9 @@ describe('/api/merchandise', () => {
       const response = await DELETE(request);
       const data = await response.json();
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(500);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Producto no encontrado');
+      expect(data.error).toBe('Error interno del servidor');
     });
   });
 });

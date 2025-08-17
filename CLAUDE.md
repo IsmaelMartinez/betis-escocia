@@ -128,7 +128,7 @@ export default async function MyComponent() {
 ## API Route Patterns
 
 ### Abstracted Route Pattern (Recommended)
-**All main business routes now use the `createApiHandler` pattern for consistency:**
+**Most business routes use the `createApiHandler` pattern for consistency:**
 
 ```typescript
 import { createApiHandler } from '@/lib/apiUtils';
@@ -151,7 +151,21 @@ export const POST = createApiHandler({
 });
 ```
 
-### Legacy Protected Route (Being Phased Out)
+**When to use `createApiHandler`:**
+- Simple CRUD operations with standard validation
+- New API routes being developed  
+- Routes requiring consistent error handling
+- APIs with straightforward authentication needs
+
+**When to use Legacy Pattern:**
+- Complex business logic requiring specific HTTP status codes
+- Multi-step validation with conditional requirements
+- Routes with unique error handling needs (e.g., `/api/camiseta-voting`)
+- File-based operations or external API integrations
+
+**Note**: The `/api/camiseta-voting` endpoint should be re-implemented to use `createApiHandler` in the future. Since this feature is not yet live, we can simplify the business logic to work with the standardized pattern. This would involve breaking down the complex voting/pre-order state machine into simpler, more focused endpoints.
+
+### Legacy Protected Route Pattern
 ```typescript
 import { checkAdminRole } from "@/lib/adminApiProtection";
 import { getAuth } from "@clerk/nextjs/server";

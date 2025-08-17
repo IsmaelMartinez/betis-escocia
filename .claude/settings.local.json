@@ -17,7 +17,8 @@
       "Bash(mv:*)",
       "Bash(npm run lint:*)",
       "Bash(grep:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }

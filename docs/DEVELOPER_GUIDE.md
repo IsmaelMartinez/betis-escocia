@@ -310,7 +310,91 @@ export const TIME_FORMAT = 'HH:mm';             // "15:30"
 - Abbreviated months: "ene", "feb", etc.
 - Format patterns use Spanish conventions
 
-#### Secure API Pattern
+## API Route Patterns
+
+### Modern Abstracted API Pattern (Recommended)
+
+Use the `createApiHandler` utility for consistent, type-safe API development:
+
+```typescript
+import { createApiHandler } from '@/lib/apiUtils';
+import { contactSchema } from '@/lib/schemas/contact';
+
+// POST - Submit contact form  
+export const POST = createApiHandler({
+  auth: 'none', // 'none' | 'user' | 'admin' | 'optional'
+  schema: contactSchema, // Zod schema for validation
+  handler: async (validatedData, context) => {
+    // validatedData is type-safe and validated
+    // context provides user info, request, supabase clients
+    const { name, email, message } = validatedData;
+    
+    // Use context.supabase for database operations
+    const { data, error } = await context.supabase
+      .from('contact_submissions')
+      .insert([{ name, email, message }])
+      .select()
+      .single();
+    
+    if (error) throw new Error('Failed to save contact submission');
+    
+    return {
+      success: true,
+      message: 'Contacto enviado correctamente',
+      id: data.id
+    };
+  }
+});
+
+// GET with query parameters
+export const GET = createApiHandler({
+  auth: 'admin',
+  handler: async (_, context) => {
+    const { searchParams } = new URL(context.request.url);
+    const category = searchParams.get('category');
+    
+    const { data, error } = await context.supabase
+      .from('items')
+      .select('*')
+      .eq(category ? 'category' : '', category || '');
+      
+    if (error) throw new Error('Failed to fetch items');
+    
+    return data;
+  }
+});
+```
+
+#### Benefits of `createApiHandler`
+- **Automatic authentication** handling based on requirements
+- **Built-in Zod validation** with Spanish error messages
+- **Consistent error handling** and response formatting
+- **Type-safe context** with authenticated Supabase clients
+- **Standardized responses** - all success responses wrapped in `{ success: true, data: ... }`
+
+#### Authentication Types
+- `'none'` - No authentication required (anonymous access)
+- `'optional'` - Include user info if authenticated, allow anonymous
+- `'user'` - Require authenticated user
+- `'admin'` - Require admin role
+
+#### Context Object
+The handler receives a rich context object:
+```typescript
+interface ApiContext {
+  request: NextRequest;
+  user?: { id: string; isAdmin: boolean; };
+  userId?: string;
+  clerkToken?: string;
+  authenticatedSupabase?: SupabaseClient; // Only if authenticated
+  supabase: SupabaseClient; // Authenticated or anonymous client
+}
+```
+
+### Legacy Protected API Pattern
+
+**Note**: This pattern is deprecated for new development. Use `createApiHandler` instead.
+
 ```typescript
 import { checkAdminRole } from '@/lib/adminApiProtection';
 import { getAuthenticatedSupabaseClient } from '@/lib/supabase';
@@ -326,7 +410,7 @@ export async function POST(request: NextRequest) {
   const { user, isAdmin, error } = await checkAdminRole();
   if (!isAdmin) return NextResponse.json({ error }, { status: 401 });
   
-  // Validate input with Zod
+  // Manual validation with Zod
   const body = await request.json();
   const validation = requestSchema.safeParse(body);
   if (!validation.success) {
@@ -342,9 +426,37 @@ export async function POST(request: NextRequest) {
 }
 ```
 
-#### Input Validation Pattern
+### When to Use Each Pattern
+
+#### Use `createApiHandler` for:
+- **Simple CRUD operations** with standard validation
+- **New API routes** being developed
+- **Routes requiring consistent error handling**
+- **APIs with straightforward authentication needs**
+
+#### Use Legacy Pattern for:
+- **Complex business logic** requiring specific HTTP status codes
+- **Multi-step validation** with conditional requirements
+- **Routes with unique error handling** needs
+- **File-based operations** or external API integrations
+
+#### Examples of Legacy Pattern Routes:
+- `/api/camiseta-voting` - Complex voting/pre-order state machine (*should be refactored*)
+- Routes with multi-step workflows
+- APIs requiring 400 vs 500 error differentiation
+
+> **Refactoring Note**: The `/api/camiseta-voting` endpoint should be re-implemented to use `createApiHandler` since it's not yet live. Consider breaking it down into separate endpoints:
+> - `POST /api/camiseta-voting/vote` - Handle voting operations
+> - `POST /api/camiseta-voting/pre-order` - Handle pre-order operations  
+> - `GET /api/camiseta-voting/status` - Get current voting/pre-order status
+> 
+> This would simplify the business logic and make it compatible with the standardized `createApiHandler` pattern.
+
+### Schema Development
+
+Create reusable validation schemas in `src/lib/schemas/`:
+
 ```typescript
-// Create reusable schemas in src/lib/schemas/
 import { z } from 'zod';
 
 export const contactFormSchema = z.object({
@@ -353,14 +465,74 @@ export const contactFormSchema = z.object({
   message: z.string().min(5).max(500),
 });
 
-// Use in API routes for consistent validation
-const validation = contactFormSchema.safeParse(requestData);
-if (!validation.success) {
-  return NextResponse.json({
-    error: validation.error.issues.map(issue => issue.message).join(', ')
-  }, { status: 400 });
-}
+// Query parameter schemas
+export const queryParamsSchema = z.object({
+  category: z.string().optional(),
+  featured: z.string().optional(),
+  limit: z.coerce.number().min(1).max(100).optional(),
+});
 ```
+
+### Testing API Routes
+
+#### Testing `createApiHandler` Routes
+
+When testing routes that use `createApiHandler`, remember the standardized response format:
+
+```typescript
+import { describe, it, expect, vi } from 'vitest';
+
+// Mock external dependencies
+vi.mock('@/lib/supabase', () => ({
+  supabase: {
+    from: vi.fn(() => ({
+      insert: vi.fn(() => ({
+        select: vi.fn(() => ({
+          single: vi.fn(() => Promise.resolve({ data: { id: 1 }, error: null }))
+        }))
+      }))
+    }))
+  }
+}));
+
+test('POST contact form with createApiHandler', async () => {
+  const validData = {
+    name: 'Test User',
+    email: 'test@example.com',
+    message: 'Test message that meets minimum length'
+  };
+
+  const response = await POST(mockRequest);
+  const data = await response.json();
+
+  expect(response.status).toBe(200);
+  expect(data.success).toBe(true);
+  expect(data.data).toBeDefined(); // Data wrapped in success response
+});
+
+// Test validation errors
+test('returns validation error for invalid data', async () => {
+  const invalidData = {
+    name: 'T', // Too short
+    email: 'invalid-email',
+    message: 'Hi' // Too short
+  };
+
+  const response = await POST(mockRequest);
+  const data = await response.json();
+
+  expect(response.status).toBe(400);
+  expect(data.success).toBe(false);
+  expect(data.error).toBe('Datos de entrada inválidos');
+  expect(data.details).toBeInstanceOf(Array);
+});
+```
+
+#### Key Testing Changes
+- **Response format**: All successful responses are wrapped in `{ success: true, data: ... }`
+- **Error messages**: Validation errors return "Datos de entrada inválidos" instead of specific field messages
+- **Status codes**: Standardized error responses
+- **Mock data**: Provide data that passes Zod validation for successful tests
 
 ## Push Notifications
 

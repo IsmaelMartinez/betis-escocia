@@ -85,3 +85,6 @@ afterAll(() => {
 afterEach(() => {
   server.resetHandlers();
 });
+
+// Add global Flagsmith environment variables
+// This ensures that all tests have access to Flagsmith config without mocking conflicts

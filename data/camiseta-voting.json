@@ -1,7 +1,7 @@
 {
   "voting": {
     "active": true,
-    "totalVotes": 1,
+    "totalVotes": 3,
     "endDate": "2025-07-31T23:59:59.000Z",
     "options": [
       {
@@ -9,10 +9,20 @@
         "name": "Dinnae seek mair – there’s nae mair tae be foun’",
         "description": "Lema clásico de la peña en escocés",
         "image": "/images/coleccionables/camiseta-1.png",
-        "votes": 1,
+        "votes": 3,
         "voters": [
           {
             "votedAt": "2025-07-05T21:56:34.137Z"
+          },
+          {
+            "name": "Test",
+            "email": "test@example.com",
+            "votedAt": "2025-08-16T21:17:13.974Z"
+          },
+          {
+            "name": "Test2",
+            "email": "test2@example.com",
+            "votedAt": "2025-08-16T21:17:24.143Z"
           }
         ]
       },
@@ -34,7 +44,7 @@
     "orders": []
   },
   "stats": {
-    "lastUpdated": "2025-07-05T21:56:34.137Z",
-    "totalInteractions": 1
+    "lastUpdated": "2025-08-16T21:17:24.143Z",
+    "totalInteractions": 3
   }
 }

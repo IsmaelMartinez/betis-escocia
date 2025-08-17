@@ -53,8 +53,8 @@ export const GET = createApiHandler({
     
     // Validate query parameters
     const queryParams = orderQuerySchema.parse({
-      productId: searchParams.get('productId'),
-      status: searchParams.get('status')
+      productId: searchParams.get('productId') || undefined,
+      status: searchParams.get('status') || undefined
     });
     const { productId, status } = queryParams;
 
@@ -78,7 +78,7 @@ export const GET = createApiHandler({
 export const POST = createApiHandler({
   auth: 'none',
   schema: createOrderSchema,
-  handler: async (validatedData, context) => {
+  handler: async (validatedData) => {
     const orders = await getOrders();
     
     const newOrder: Order = {

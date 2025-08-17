@@ -70,9 +70,11 @@ describe('End-to-End API Workflow: Trivia with Authentication', () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-  expect(data).toHaveLength(2);
-  const texts = (data as Array<{ question_text: string }>).map(q => q.question_text);
-  expect(texts).toEqual(expect.arrayContaining(['Question 1', 'Question 2']));
+    expect(data.success).toBe(true);
+    expect(Array.isArray(data.data)).toBe(true);
+    expect(data.data).toHaveLength(2);
+    const texts = (data.data as Array<{ question_text: string }>).map(q => q.question_text);
+    expect(texts).toEqual(expect.arrayContaining(['Question 1', 'Question 2']));
     expect(mockGetAuth).toHaveBeenCalledTimes(1);
     expect(mockGetUserDailyTriviaScore).toHaveBeenCalledWith('user_test_id', expect.any(Object)); // Check userId and authenticatedSupabase
   });
