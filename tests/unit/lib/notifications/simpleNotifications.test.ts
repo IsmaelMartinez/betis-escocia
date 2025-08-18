@@ -9,7 +9,8 @@ import {
   showRSVPNotification,
   showContactNotification,
   areNotificationsEnabled,
-  triggerAdminNotification
+  triggerAdminNotification,
+  clearNotificationPreferenceCache
 } from '@/lib/notifications/simpleNotifications';
 
 // Mock Notification API
@@ -33,6 +34,9 @@ mockNotificationConstructor.requestPermission = mockNotification.requestPermissi
 describe('simpleNotifications', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    
+    // Clear notification preference cache before each test
+    clearNotificationPreferenceCache();
 
     // Mock window and Notification API
     Object.defineProperty(globalThis, 'window', {
