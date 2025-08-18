@@ -56,11 +56,17 @@ export function queueNotification(
   // Add notification to queue
   global.pendingNotifications.push(notification);
   
+  // Log for debugging
+  console.log(`📬 Queued ${type} notification:`, {
+    id: notification.id,
+    title: notification.data.title,
+    queueSize: global.pendingNotifications.length
+  });
+  
   // Cleanup old notifications (keep only last 100)
   if (global.pendingNotifications.length > 100) {
     global.pendingNotifications = global.pendingNotifications.slice(-100);
   }
-  
   
   return notification.id;
 }

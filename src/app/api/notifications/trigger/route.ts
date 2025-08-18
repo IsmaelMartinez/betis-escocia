@@ -32,7 +32,9 @@ export async function GET(request: NextRequest) {
   // Get last seen timestamp from query parameter (for reconnection)
   const { searchParams } = new URL(request.url);
   const lastSeenParam = searchParams.get('lastSeen');
-  const initialLastSeen = lastSeenParam ? parseInt(lastSeenParam) : Date.now();
+  // If no lastSeen provided, start from beginning of time to catch all existing notifications
+  // If lastSeen is provided, use it to resume from last processed notification
+  const initialLastSeen = lastSeenParam ? parseInt(lastSeenParam) : 0;
   
   const stream = new ReadableStream({
     start(controller) {
@@ -60,8 +62,19 @@ export async function GET(request: NextRequest) {
             return notificationTimestamp > lastProcessedTimestamp;
           });
           
+          // Debug logging
+          if (pendingNotifications.length > 0) {
+            console.log(`📡 SSE Check for user ${user.id}:`, {
+              totalPending: pendingNotifications.length,
+              lastProcessedTimestamp,
+              newNotifications: newNotifications.length,
+              pendingIds: pendingNotifications.map(n => n.id),
+              newIds: newNotifications.map(n => n.id)
+            });
+          }
+          
           if (newNotifications.length > 0) {
-            console.log(`Sending ${newNotifications.length} new notifications to user ${user.id}`);
+            console.log(`🚀 Sending ${newNotifications.length} new notifications to user ${user.id}`);
           }
           
           newNotifications.forEach(notification => {

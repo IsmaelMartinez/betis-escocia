@@ -111,20 +111,52 @@ export function showContactNotification(userName: string, contactType: string): 
   });
 }
 
+// Cache for notification preferences to prevent excessive API calls
+let notificationPreferenceCache: {
+  enabled: boolean;
+  timestamp: number;
+  expiry: number;
+} | null = null;
+
+const CACHE_DURATION = 30000; // 30 seconds
+
 /**
  * Check if user has notifications enabled in their preferences
+ * Includes caching to prevent excessive API calls
  */
 export async function areNotificationsEnabled(): Promise<boolean> {
+  // Check cache first
+  if (notificationPreferenceCache && Date.now() < notificationPreferenceCache.expiry) {
+    return notificationPreferenceCache.enabled;
+  }
+
   try {
     const response = await fetch('/api/notifications/preferences');
     if (!response.ok) return false;
     
     const data = await response.json();
-    return data.enabled === true;
+    const enabled = data.enabled === true;
+    
+    // Update cache
+    notificationPreferenceCache = {
+      enabled,
+      timestamp: Date.now(),
+      expiry: Date.now() + CACHE_DURATION
+    };
+    
+    return enabled;
   } catch (error) {
     console.error('Failed to check notification preferences:', error);
     return false;
   }
+}
+
+/**
+ * Clear the notification preferences cache
+ * Useful when preferences are updated
+ */
+export function clearNotificationPreferenceCache(): void {
+  notificationPreferenceCache = null;
 }
 
 /**

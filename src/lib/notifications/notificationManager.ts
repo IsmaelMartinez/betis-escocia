@@ -66,8 +66,11 @@ export class NotificationManager {
 
     try {
       // Get last seen timestamp from localStorage for reconnection
-      const lastSeenTimestamp = localStorage.getItem('last_notification_timestamp') || Date.now().toString();
-      const sseUrl = `/api/notifications/trigger?lastSeen=${lastSeenTimestamp}`;
+      // If no timestamp exists, don't include the parameter so server starts from beginning
+      const lastSeenTimestamp = localStorage.getItem('last_notification_timestamp');
+      const sseUrl = lastSeenTimestamp 
+        ? `/api/notifications/trigger?lastSeen=${lastSeenTimestamp}`
+        : '/api/notifications/trigger';
       
       this.eventSource = new EventSource(sseUrl);
       
@@ -75,7 +78,10 @@ export class NotificationManager {
       this.eventSource.addEventListener('message', this.handleMessage);
       this.eventSource.addEventListener('error', this.handleError);
       
-      console.log('NotificationManager: Connecting to SSE stream with lastSeen:', lastSeenTimestamp);
+      console.log('NotificationManager: Connecting to SSE stream', { 
+        lastSeenTimestamp: lastSeenTimestamp || 'none (starting fresh)',
+        url: sseUrl 
+      });
     } catch (error) {
       console.error('NotificationManager: Failed to connect to SSE stream:', error);
       this.scheduleReconnect();
@@ -292,6 +298,29 @@ export class NotificationManager {
       console.error('NotificationManager: Test notification failed:', error);
       return false;
     }
+  }
+
+  /**
+   * Reset notification manager and clear localStorage
+   * Useful for debugging
+   */
+  resetForDebugging(): void {
+    console.log('NotificationManager: Resetting for debugging...');
+    
+    // Clear localStorage
+    localStorage.removeItem('last_notification_timestamp');
+    
+    // Clear all processed notification keys
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const key = localStorage.key(i);
+      if (key?.startsWith('notification_')) {
+        localStorage.removeItem(key);
+      }
+    }
+    
+    // Reconnect with fresh state
+    this.disconnect();
+    this.connect();
   }
 }
 

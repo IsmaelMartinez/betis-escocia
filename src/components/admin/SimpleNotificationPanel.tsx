@@ -10,7 +10,8 @@ import {
   getNotificationPermission,
   requestNotificationPermission,
   showNotification,
-  areNotificationsEnabled
+  areNotificationsEnabled,
+  clearNotificationPreferenceCache
 } from '@/lib/notifications/simpleNotifications';
 import { 
   getPushNotificationStatus
@@ -138,6 +139,9 @@ const SimpleNotificationPanel: React.FC<SimpleNotificationPanelProps> = ({
       }
 
       console.log('Notification preference updated successfully:', newEnabledState);
+      
+      // Clear cache so other components get fresh data
+      clearNotificationPreferenceCache();
     } catch (err) {
       setError('Failed to update notification preferences');
       console.error('Preference update failed:', err);

@@ -26,11 +26,20 @@ export default function TriviaPage() {
   const [timerResetTrigger, setTimerResetTrigger] = useState(0); // To reset the timer
   const [gameCompleted, setGameCompleted] = useState(false);
   const [gameStarted, setGameStarted] = useState(false); // New state for game start
+  const [scoreSubmitted, setScoreSubmitted] = useState(false); // Track if score was already submitted
 
   const QUESTION_DURATION = 15; // seconds per question
   const MAX_QUESTIONS = 5; // Limit to 5 questions
 
   const saveScore = async (finalScore: number) => {
+    // Prevent multiple submissions
+    if (scoreSubmitted) {
+      log.warn('Attempted to submit score multiple times', { finalScore });
+      return;
+    }
+
+    setScoreSubmitted(true);
+
     try {
       const token = await getToken();
       const response = await fetch('/api/trivia', {
@@ -43,13 +52,35 @@ export default function TriviaPage() {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        // Try to get the error message from the response
+        try {
+          const errorData = await response.json();
+          const errorMessage = errorData.error || `HTTP error! status: ${response.status}`;
+          
+          // If user already played today, show a more specific message
+          if (response.status === 400 && errorMessage.includes('jugado hoy')) {
+            setError('Ya has jugado hoy. Tu puntuación anterior se mantiene. ¡Vuelve mañana para un nuevo desafío!');
+            return;
+          }
+          
+          throw new Error(errorMessage);
+        } catch (parseError) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
       }
+
+      // If we get here, the score was saved successfully
+      log.business('trivia_score_saved_frontend', { finalScore });
 
     } catch (error) {
       log.error('Failed to save trivia score', error, {
         finalScore
       });
+      
+      // Show generic error if we don't have a specific one set
+      if (!error) {
+        setError('Error al guardar la puntuación. Tu juego fue completado pero la puntuación podría no haberse guardado.');
+      }
     }
   };
 
