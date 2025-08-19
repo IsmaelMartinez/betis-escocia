@@ -37,6 +37,7 @@ export default defineConfig({
         NEXT_PUBLIC_FEATURE_CLERK_AUTH: 'true',
         NEXT_PUBLIC_FEATURE_ADMIN: 'true',
         NEXT_PUBLIC_FEATURE_TRIVIA_GAME: 'true',
+        NEXT_PUBLIC_FEATURE_ADMIN_PUSH_NOTIFICATIONS: 'true',
         // Feature flags for E2E testing
       },
     },
@@ -55,9 +56,12 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npm run dev',
+    command: 'NEXT_PUBLIC_FEATURE_ADMIN_PUSH_NOTIFICATIONS=true npm run dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000, // Increased timeout to 120 seconds
+    env: {
+      NEXT_PUBLIC_FEATURE_ADMIN_PUSH_NOTIFICATIONS: 'true',
+    }
   },
 });

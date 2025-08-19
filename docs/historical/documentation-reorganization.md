@@ -40,6 +40,12 @@ This document summarizes the reorganization and consolidation of documentation f
 
 **Rationale**: These features have been completed as evidenced by ADRs 014-018 and comprehensive test coverage implementation. Moving them to historical documentation keeps the active tasks directory focused on current development priorities.
 
+### Flagsmith Removal & Feature Flag Simplification (August 2025)
+- **Moved `tasks/tasks-prd-remove-flagsmith-simplify-feature-flags.md` to `docs/historical/tasks-prd-remove-flagsmith-simplify-feature-flags.md`**
+- **Moved `tasks/prd-remove-flagsmith-simplify-feature-flags.md` to `docs/historical/prd-remove-flagsmith-simplify-feature-flags.md`**
+
+**Rationale**: The Flagsmith external service has been completely removed and replaced with a simple environment variable-based feature flag system. All infrastructure cleanup, testing updates, and documentation have been completed. The migration maintains all existing functionality while simplifying the architecture and eliminating external dependencies.
+
 ## Benefits
 - **Reduced Clutter**: The `/tasks` directory now contains only active development tasks.
 - **Clearer Focus**: Easier to identify current priorities.

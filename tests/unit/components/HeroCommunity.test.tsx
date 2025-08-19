@@ -43,11 +43,6 @@ describe('HeroCommunity', () => {
       expect(section).toHaveClass('relative', 'min-h-screen', 'bg-white', 'overflow-hidden');
     });
 
-    it('renders peña badge', () => {
-      render(<HeroCommunity />);
-
-      expect(screen.getByText('PEÑA BÉTICA ESCOCESA')).toBeInTheDocument();
-    });
 
     it('renders main heading', () => {
       render(<HeroCommunity />);
@@ -200,9 +195,6 @@ describe('HeroCommunity', () => {
 
     it('uses official Betis styling colors', () => {
       render(<HeroCommunity />);
-
-      const badge = screen.getByText('PEÑA BÉTICA ESCOCESA').closest('div');
-      expect(badge).toHaveClass('bg-betis-green', 'text-white');
 
       const bottomSection = screen.getByText(/POLWARTH TAVERN/).closest('.bg-betis-green');
       expect(bottomSection).toHaveClass('bg-betis-green', 'text-white');

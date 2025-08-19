@@ -339,7 +339,7 @@ export default function ContactPage() {
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-green focus:border-transparent"
                     placeholder="Tu nombre y apellido"
-                    
+                    data-testid="contact-name"
                   />
                 </div>
 
@@ -356,7 +356,7 @@ export default function ContactPage() {
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-green focus:border-transparent"
                     placeholder="tu@email.com"
-                    
+                    data-testid="contact-email"
                   />
                 </div>
               </div>
@@ -391,6 +391,7 @@ export default function ContactPage() {
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-green focus:border-transparent"
                   placeholder="Breve resumen de tu consulta"
+                  data-testid="contact-subject"
                 />
               </div>
 
@@ -408,6 +409,7 @@ export default function ContactPage() {
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-green focus:border-transparent"
                   placeholder="Cuéntanos en detalle lo que necesitas..."
+                  data-testid="contact-message"
                 />
               </div>
 
@@ -445,6 +447,7 @@ export default function ContactPage() {
                 type="submit"
                 disabled={isSubmitting}
                 className="w-full bg-betis-green hover:bg-green-700 disabled:bg-gray-400 text-white py-4 px-6 rounded-lg font-bold text-lg transition-colors duration-200 disabled:cursor-not-allowed"
+                data-testid="submit-contact"
               >
                 {isSubmitting ? (
                   <FormLoadingMessage message="Enviando mensaje..." className="text-white" />

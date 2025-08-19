@@ -86,5 +86,5 @@ afterEach(() => {
   server.resetHandlers();
 });
 
-// Add global Flagsmith environment variables
-// This ensures that all tests have access to Flagsmith config without mocking conflicts
+// Test environment setup complete
+// Feature flags are now environment variable-based and don't require special test setup

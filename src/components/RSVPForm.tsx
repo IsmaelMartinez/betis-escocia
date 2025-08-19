@@ -165,6 +165,7 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
             error={errors.name}
             touched={touched.name}
             disabled={!!(isAuthEnabled && user)}
+            data-testid="name-input"
           />
         </Field>
 
@@ -189,6 +190,7 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
             error={errors.email}
             touched={touched.email}
             disabled={!!(isAuthEnabled && user)}
+            data-testid="email-input"
           />
         </Field>
 
@@ -210,6 +212,7 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
             onBlur={() => handleBlur('attendees')}
             error={errors.attendees}
             touched={touched.attendees}
+            data-testid="attendees-select"
           >
             <option value={1}>Solo yo</option>
             <option value={2}>2 personas</option>
@@ -237,6 +240,7 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
             placeholder="¿Alguna pregunta o comentario?"
             error={errors.message}
             touched={touched.message}
+            data-testid="message-textarea"
           />
         </Field>
 
@@ -271,6 +275,7 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
           type="submit"
           disabled={isSubmitting}
           className="w-full bg-betis-green hover:bg-green-700 disabled:bg-gray-400 text-white py-4 px-6 rounded-lg font-bold text-lg transition-colors duration-200 disabled:cursor-not-allowed"
+          data-testid="submit-rsvp"
         >
           {isSubmitting ? (
             <FormLoadingMessage message="Enviando confirmación..." className="text-white" />
