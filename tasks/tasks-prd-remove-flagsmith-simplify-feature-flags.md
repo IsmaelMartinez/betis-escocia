@@ -40,13 +40,13 @@ Based on PRD: `prd-remove-flagsmith-simplify-feature-flags.md`
   - [x] 2.4 Update Layout component to use new feature flag system
   - [x] 2.5 Search for and update any other components using `hasFeature` or `getValue`
   - [x] 2.6 Test that navigation and feature visibility works correctly
-- [ ] 3.0 Remove Flagsmith Infrastructure and Dependencies
-  - [ ] 3.1 Remove `src/lib/flagsmith/` directory and all its contents
-  - [ ] 3.2 Remove `src/components/FlagsmithRefresher.tsx` component
-  - [ ] 3.3 Remove Flagsmith packages from `package.json`
-  - [ ] 3.4 Remove Flagsmith environment variables from `.env.example`
-  - [ ] 3.5 Add environment variables for currently hidden features only
-  - [ ] 3.6 Remove Flagsmith initialization calls from app startup
+- [x] 3.0 Remove Flagsmith Infrastructure and Dependencies
+  - [x] 3.1 Remove `src/lib/flagsmith/` directory and all its contents
+  - [x] 3.2 Remove `src/components/FlagsmithRefresher.tsx` component
+  - [x] 3.3 Remove Flagsmith packages from `package.json`
+  - [x] 3.4 Remove Flagsmith environment variables from `.env.example`
+  - [x] 3.5 Add environment variables for currently hidden features only
+  - [x] 3.6 Remove Flagsmith initialization calls from app startup
 - [ ] 4.0 Update Tests and Documentation
   - [ ] 4.1 Remove `tests/unit/lib/flagsmith/` directory and all flagsmith tests
   - [ ] 4.2 Update `tests/unit/lib/featureFlags.test.ts` to work with new system
