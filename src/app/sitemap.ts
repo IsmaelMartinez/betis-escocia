@@ -1,9 +1,9 @@
 import { MetadataRoute } from 'next'
 import { getEnabledNavigationItems } from '@/lib/featureFlags'
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://betis-escocia.vercel.app'
-  const enabledNavigation = await getEnabledNavigationItems()
+  const enabledNavigation = getEnabledNavigationItems()
   
   // Static pages that are always available
   const staticPages = [

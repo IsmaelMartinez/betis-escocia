@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash, User, LogIn, LogOut, UserPlus } from 'lucide-react';
 import BetisLogo from '@/components/BetisLogo';
 import { getEnabledNavigationItems } from '@/lib/featureFlags';
 import { useUser, useClerk } from '@clerk/nextjs';
-import { NavigationItem } from '@/lib/flagsmith/types';
+import { NavigationItem } from '@/lib/featureConfig';
 
 interface DebugInfo {
   flags: Record<string, boolean>;
@@ -25,28 +25,8 @@ interface LayoutProps {
 }
 
 export default function Layout({ children, debugInfo }: LayoutProps) {
-  const [enabledNavigation, setEnabledNavigation] = useState<NavigationItem[]>([]);
-
-  useEffect(() => {
-    const fetchNavigation = async () => {
-      const navItems = await getEnabledNavigationItems();
-      setEnabledNavigation(navItems);
-    };
-
-    fetchNavigation();
-
-    // Listen for custom event to re-fetch navigation
-    const handleFlagsUpdated = () => {
-      console.log('[Layout] Flags updated event received, re-fetching navigation.');
-      fetchNavigation();
-    };
-
-    window.addEventListener('flags-updated', handleFlagsUpdated);
-
-    return () => {
-      window.removeEventListener('flags-updated', handleFlagsUpdated);
-    };
-  }, []);
+  // Navigation is now synchronous - no need for state or useEffect
+  const enabledNavigation = getEnabledNavigationItems();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   

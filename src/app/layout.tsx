@@ -9,8 +9,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import SentryUserContext from "@/components/SentryUserContext";
 
 import { ClerkProvider } from '@clerk/nextjs';
-import { getEnabledNavigationItems, initializeFeatureFlags } from '@/lib/featureFlags';
-import FlagsmithRefresher from '@/components/FlagsmithRefresher';
+import { getEnabledNavigationItems } from '@/lib/featureFlags';
 import FacebookSDK from "@/components/FacebookSDK";
 
 export const dynamic = 'force-dynamic';
@@ -116,24 +115,13 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let enabledNavigation: any[] = [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const debugInfo: any = null;
-  try {
-    await initializeFeatureFlags();
-    enabledNavigation = await getEnabledNavigationItems();
-    console.debug('[RootLayout] Flagsmith initialized successfully. Enabled Navigation:', enabledNavigation);
-  } catch (error) {
-    console.error('[RootLayout] Error during Flagsmith initialization or flag fetching:', error);
-    // Fallback to an empty array or default navigation items if initialization fails
-    enabledNavigation = []; 
-  }
+  // No longer need initialization - environment variables are resolved at build time
+  const debugInfo = null;
 
   return (
     <html lang="es">
@@ -149,7 +137,6 @@ export default async function RootLayout({
           signInFallbackRedirectUrl="/dashboard"
           afterSignUpUrl="/dashboard"
         >
-          <FlagsmithRefresher />
           <SentryUserContext />
           <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
             <Layout debugInfo={debugInfo}>

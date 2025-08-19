@@ -4,15 +4,21 @@
  * SECURITY PRINCIPLE: ALL features are hidden by default unless explicitly enabled.
  * This ensures that no features are accidentally exposed in production.
  * 
- * This implementation uses Flagsmith for feature flag management with fallback
- * to environment variables during migration period.
+ * This implementation uses environment variables for simple, build-time feature configuration.
  * 
- * Migration Status: Using Flagsmith with environment variable fallback
+ * Migration Status: Migrated from Flagsmith to environment variables
  */
 
-import { FlagsmithFeatureName, FLAG_MIGRATION_MAP, NavigationItem } from './flagsmith/types';
-import { getValue, getMultipleValues, hasFeature, getFlagsmithManager } from './flagsmith/index';
-import { getFlagsmithConfig } from './flagsmith/config';
+import { 
+  hasFeature, 
+  getValue, 
+  getMultipleValues, 
+  getAllFeatures, 
+  clearFeatureCache,
+  type FeatureName,
+  type LegacyFeatureName,
+  type NavigationItem 
+} from './featureConfig';
 
 // Legacy interface for backward compatibility
 export interface FeatureFlags {
@@ -31,177 +37,45 @@ export interface FeatureFlags {
   showDebugInfo: boolean;
 }
 
-// Cache for flag values to avoid repeated async calls (coordinated with Flagsmith internal cache)
-let flagsCache: FeatureFlags | null = null;
-let cacheExpiry: number = 0;
-const CACHE_TTL = 60000; // 60 seconds - aligned with Flagsmith refresh interval
-
 /**
- * Initialize Flagsmith (call this early in your app)
+ * Get all feature flags (now synchronous with environment variables)
  */
-export async function initializeFeatureFlags(): Promise<void> {
-  try {
-    if (process.env.E2E_FLAGSMITH_MOCK === 'true') {
-      // Seed cache with permissive defaults for E2E (only actual flags, always-on features handled separately)
-      flagsCache = {
-        showClasificacion: true,
-        showColeccionables: true,
-        showGaleria: true,
-        showRSVP: true, // Always-on feature
-        showPartidos: true,
-        showSocialMedia: true,
-        showHistory: true,
-        showNosotros: true,
-        showUnete: true, // Always-on feature
-        showContacto: true, // Always-on feature
-        showRedesSociales: true,
-        showClerkAuth: true,
-        showDebugInfo: false,
-      };
-      cacheExpiry = Date.now() + CACHE_TTL;
-      return; // Skip real initialization
-    }
-    const config = getFlagsmithConfig();
-    if (!config) {
-      console.warn('[Feature Flags] Flagsmith configuration not available, using environment variables only');
-      return;
-    }
-    const manager = getFlagsmithManager(config);
-    await manager.initialize();
-    
-    // Clear cache to force refresh
-    flagsCache = null;
-    cacheExpiry = 0;
-    
-    console.debug('[Feature Flags] Flagsmith initialized successfully');
-  } catch (error) {
-    console.error('[Feature Flags] Failed to initialize Flagsmith:', error);
-    // System will fall back to environment variables
-  }
-}
-
-/**
- * Get all feature flags (with optimized caching)
- */
-export async function getFeatureFlags(): Promise<FeatureFlags> {
-  // Check cache first
-  if (flagsCache && Date.now() < cacheExpiry) {
-    console.debug('[Feature Flags] getFeatureFlags: Cache hit.', flagsCache);
-    return flagsCache;
-  }
-
-  try {
-    // Get all flags from Flagsmith using optimized batch operation (only flags that exist in Flagsmith)
-    const flagNames: FlagsmithFeatureName[] = Object.values(FLAG_MIGRATION_MAP);
-    const flagValues = await getMultipleValues(flagNames);
-    
-    // Convert to legacy format
-    const flags: FeatureFlags = {
-      showClasificacion: flagValues['show-clasificacion'],
-      showColeccionables: flagValues['show-coleccionables'],
-      showGaleria: flagValues['show-galeria'],
-      showRSVP: true, // RSVP is always available
-      showPartidos: flagValues['show-partidos'],
-      showSocialMedia: flagValues['show-social-media'],
-      showHistory: flagValues['show-history'],
-      showNosotros: flagValues['show-nosotros'],
-      showUnete: true, // Únete is always available
-      showContacto: true, // Contacto is always available
-      showRedesSociales: flagValues['show-redes-sociales'],
-      showClerkAuth: flagValues['show-clerk-auth'],
-      showDebugInfo: flagValues['show-debug-info'],
-    };
-
-    console.debug('[Feature Flags] getFeatureFlags: Fetched flags from Flagsmith (batch):', flags);
-
-    // Cache the result with coordinated expiry
-    flagsCache = flags;
-    cacheExpiry = Date.now() + CACHE_TTL;
-    
-    return flags;
-  } catch (error) {
-    console.error('[Feature Flags] Error getting flags, using fallback:', error);
-    
-    // Return cached value if available (graceful degradation)
-    if (flagsCache) {
-      console.debug('[Feature Flags] Using stale cache due to error');
-      return flagsCache;
-    }
-    
-    // Final fallback to environment variables
-    return getLegacyEnvironmentFlags();
-  }
-}
-
-/**
- * Legacy environment variable fallback
- */
-export function getLegacyEnvironmentFlags(): FeatureFlags {
-  const defaultFlags: FeatureFlags = {
-    showClasificacion: true,
-    showColeccionables: false,
-    showGaleria: false,
+export function getFeatureFlags(): FeatureFlags {
+  // Convert from new system to legacy format
+  const flags: FeatureFlags = {
+    showClasificacion: hasFeature('show-clasificacion'),
+    showColeccionables: hasFeature('show-coleccionables'), 
+    showGaleria: hasFeature('show-galeria'),
     showRSVP: true, // RSVP is always available
-    showPartidos: true,
-    showSocialMedia: false,
-    showHistory: false,
-    showNosotros: true,
+    showPartidos: hasFeature('show-partidos'),
+    showSocialMedia: hasFeature('show-social-media'),
+    showHistory: hasFeature('show-history'),
+    showNosotros: hasFeature('show-nosotros'),
     showUnete: true, // Únete is always available
     showContacto: true, // Contacto is always available
-    showRedesSociales: false,
-    showClerkAuth: true,
-    showDebugInfo: false
+    showRedesSociales: hasFeature('show-redes-sociales'),
+    showClerkAuth: hasFeature('show-clerk-auth'),
+    showDebugInfo: hasFeature('show-debug-info'),
   };
 
-  // Helper to reduce environment variable parsing repetition
-  const getEnvFlag = (envVar: string, defaultValue: boolean): boolean => {
-    return process.env[envVar] !== undefined 
-      ? process.env[envVar] === 'true'
-      : defaultValue;
-  };
-
-  // Start with defaults, then apply environment overrides
-  const environmentFlags: FeatureFlags = {
-    ...defaultFlags,
-    
-    // Feature-specific environment variables (simplified)
-    showClasificacion: getEnvFlag('NEXT_PUBLIC_FEATURE_CLASIFICACION', defaultFlags.showClasificacion),
-    showColeccionables: getEnvFlag('NEXT_PUBLIC_FEATURE_COLECCIONABLES', defaultFlags.showColeccionables),
-    showGaleria: getEnvFlag('NEXT_PUBLIC_FEATURE_GALERIA', defaultFlags.showGaleria),
-    showRSVP: defaultFlags.showRSVP, // Always true
-    showPartidos: getEnvFlag('NEXT_PUBLIC_FEATURE_PARTIDOS', defaultFlags.showPartidos),
-    showSocialMedia: getEnvFlag('NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA', defaultFlags.showSocialMedia),
-    showHistory: getEnvFlag('NEXT_PUBLIC_FEATURE_HISTORY', defaultFlags.showHistory),
-    showNosotros: getEnvFlag('NEXT_PUBLIC_FEATURE_NOSOTROS', defaultFlags.showNosotros),
-    showUnete: defaultFlags.showUnete, // Always true
-    showContacto: defaultFlags.showContacto, // Always true
-    showRedesSociales: getEnvFlag('NEXT_PUBLIC_FEATURE_REDES_SOCIALES', defaultFlags.showRedesSociales),
-    showClerkAuth: getEnvFlag('NEXT_PUBLIC_FEATURE_CLERK_AUTH', defaultFlags.showClerkAuth),
-    
-    // Environment-specific overrides (applied last)
-    ...(process.env.NODE_ENV === 'production' && {
-      showDebugInfo: false,
-    }),
-    ...(process.env.NODE_ENV === 'development' && {
-      showDebugInfo: Boolean(process.env.NEXT_PUBLIC_DEBUG_MODE),
-    }),
-  };
-
-  return environmentFlags;
+  return flags;
 }
 
 /**
- * Synchronous access to cached flags (for backward compatibility)
+ * Legacy environment variable fallback (now just calls getFeatureFlags)
+ * @deprecated Use getFeatureFlags() instead
+ */
+export function getLegacyEnvironmentFlags(): FeatureFlags {
+  return getFeatureFlags();
+}
+
+/**
+ * Synchronous access to flags (simplified with new system)
  */
 export const featureFlags = new Proxy({} as FeatureFlags, {
   get(target, prop) {
-    if (flagsCache && prop in flagsCache) {
-      return flagsCache[prop as keyof FeatureFlags];
-    }
-    
-    // Fallback to environment variables
-    const legacyFlags = getLegacyEnvironmentFlags();
-    return legacyFlags[prop as keyof FeatureFlags];
+    const flags = getFeatureFlags();
+    return flags[prop as keyof FeatureFlags];
   }
 });
 
@@ -214,32 +88,30 @@ export function isFeatureEnabled(feature: keyof FeatureFlags): boolean {
 
 /**
  * Async version of isFeatureEnabled for new implementations
+ * @deprecated No longer async - use isFeatureEnabled() instead
  */
-export async function isFeatureEnabledAsync(feature: keyof FeatureFlags): Promise<boolean> {
-  console.debug('[Feature Flags] isFeatureEnabledAsync: Checking feature', feature);
-  const flags = await getFeatureFlags();
-  console.debug('[Feature Flags] isFeatureEnabledAsync: Flags available', flags);
-  return flags[feature];
+export function isFeatureEnabledAsync(feature: keyof FeatureFlags): Promise<boolean> {
+  return Promise.resolve(isFeatureEnabled(feature));
 }
 
 /**
- * Get a specific feature flag value using modern Flagsmith API
+ * Get a specific feature flag value using modern API
  */
-export async function getFeatureFlag(flagName: FlagsmithFeatureName): Promise<boolean> {
-  return await getValue(flagName);
+export function getFeatureFlag(flagName: FeatureName): boolean {
+  return getValue(flagName);
 }
 
 /**
- * Check if a feature exists using modern Flagsmith API
+ * Check if a feature exists using modern API
  */
-export async function hasFeatureFlag(flagName: FlagsmithFeatureName): Promise<boolean> {
-  return await hasFeature(flagName);
+export function hasFeatureFlag(flagName: FeatureName): boolean {
+  return hasFeature(flagName);
 }
 
 /**
- * Get all enabled navigation items (consolidated async function)
+ * Get all enabled navigation items (now synchronous)
  */
-export async function getEnabledNavigationItems(): Promise<NavigationItem[]> {
+export function getEnabledNavigationItems(): NavigationItem[] {
   // Standardized navigation items in logical order
   const allNavigationItems: NavigationItem[] = [
     { name: 'RSVP', href: '/rsvp', nameEn: 'RSVP', feature: null },
@@ -254,26 +126,17 @@ export async function getEnabledNavigationItems(): Promise<NavigationItem[]> {
     { name: 'Contacto', href: '/contacto', nameEn: 'Contact', feature: null },
   ];
 
-  // Get all flags at once for better performance
-  const flags = await getFeatureFlags();
-  
   return allNavigationItems.filter(item => {
     if (item.feature === null) return true;
-    
-    // Convert Flagsmith feature name to legacy format for lookup
-    const legacyFeature = Object.keys(FLAG_MIGRATION_MAP).find(
-      key => FLAG_MIGRATION_MAP[key as keyof typeof FLAG_MIGRATION_MAP] === item.feature
-    ) as keyof FeatureFlags;
-    
-    return legacyFeature ? flags[legacyFeature] : true;
+    return hasFeature(item.feature);
   });
 }
 
 /**
- * Debug helper for development
+ * Debug helper for development (now synchronous)
  */
-export async function getFeatureFlagsStatus() {
-  const flags = await getFeatureFlags();
+export function getFeatureFlagsStatus() {
+  const flags = getFeatureFlags();
   
   if (!flags.showDebugInfo) {
     return null;
@@ -288,24 +151,12 @@ export async function getFeatureFlagsStatus() {
     disabledFeatures: Object.entries(flags)
       .filter(([, enabled]) => !enabled)
       .map(([feature]) => feature),
-    cacheStatus: {
-      cached: flagsCache !== null,
-      expires: new Date(cacheExpiry).toISOString()
-    }
   };
 }
 
 /**
- * Clear the flags cache (useful for testing or manual refresh)
+ * Clear the flags cache (delegates to featureConfig)
  */
 export function clearFeatureFlagsCache(): void {
-  flagsCache = null;
-  cacheExpiry = 0;
-}
-
-/**
- * Pre-load feature flags (call this early in your app lifecycle)
- */
-export async function preloadFeatureFlags(): Promise<void> {
-  await getFeatureFlags();
+  clearFeatureCache();
 }

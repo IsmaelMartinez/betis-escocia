@@ -33,13 +33,13 @@ Based on PRD: `prd-remove-flagsmith-simplify-feature-flags.md`
   - [x] 1.4 Add TypeScript types for feature flag names and configuration
   - [x] 1.5 Implement fallback defaults for production-enabled features
   - [x] 1.6 Create unit tests for `featureConfig.ts`
-- [ ] 2.0 Migrate Feature Flag Usage from Flagsmith to New System
-  - [ ] 2.1 Update `src/lib/featureFlags.ts` to import from `@/lib/featureConfig` instead of `@/lib/flagsmith`
-  - [ ] 2.2 Replace all async feature flag calls with synchronous calls where possible
-  - [ ] 2.3 Update `getEnabledNavigationItems()` function to use new system
-  - [ ] 2.4 Update Layout component to use new feature flag system
-  - [ ] 2.5 Search for and update any other components using `hasFeature` or `getValue`
-  - [ ] 2.6 Test that navigation and feature visibility works correctly
+- [x] 2.0 Migrate Feature Flag Usage from Flagsmith to New System
+  - [x] 2.1 Update `src/lib/featureFlags.ts` to import from `@/lib/featureConfig` instead of `@/lib/flagsmith`
+  - [x] 2.2 Replace all async feature flag calls with synchronous calls where possible
+  - [x] 2.3 Update `getEnabledNavigationItems()` function to use new system
+  - [x] 2.4 Update Layout component to use new feature flag system
+  - [x] 2.5 Search for and update any other components using `hasFeature` or `getValue`
+  - [x] 2.6 Test that navigation and feature visibility works correctly
 - [ ] 3.0 Remove Flagsmith Infrastructure and Dependencies
   - [ ] 3.1 Remove `src/lib/flagsmith/` directory and all its contents
   - [ ] 3.2 Remove `src/components/FlagsmithRefresher.tsx` component

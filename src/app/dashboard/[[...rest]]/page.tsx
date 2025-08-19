@@ -1,12 +1,12 @@
 import { currentUser, auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { getUserRSVPs, getUserContactSubmissions, getUserSubmissionCounts } from '@/lib/supabase';
-import { isFeatureEnabledAsync } from '@/lib/featureFlags';
+import { isFeatureEnabled } from '@/lib/featureFlags';
 import DashboardTabs from '@/components/DashboardTabs';
 
 export default async function DashboardPage() {
   // Check if authentication is enabled
-  const isAuthEnabled = await isFeatureEnabledAsync('showClerkAuth');
+  const isAuthEnabled = isFeatureEnabled('showClerkAuth');
   
   if (!isAuthEnabled) {
     redirect('/');
