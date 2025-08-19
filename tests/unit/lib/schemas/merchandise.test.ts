@@ -358,12 +358,17 @@ describe('Merchandise Schema', () => {
 
   describe('Type inference', () => {
     it('should infer correct TypeScript types', () => {
-      const queryParams: MerchandiseQueryParams = { category: 'clothing', featured: true };
+      const queryParams: MerchandiseQueryParams = { category: 'clothing', featured: true, inStock: true };
       const createData: CreateMerchandiseData = {
         name: 'Test Product',
         description: 'Test Description',
         price: 50,
-        category: 'accessories'
+        category: 'accessories',
+        images: ['image1.jpg'],
+        sizes: ['M'],
+        colors: ['green'],
+        inStock: true,
+        featured: false
       };
       const updateData: UpdateMerchandiseData = { price: 60 };
       const idParams: MerchandiseIdParams = { id: 'test_id' };

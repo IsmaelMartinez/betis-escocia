@@ -99,7 +99,7 @@ describe('Internationalization and Localization Tests', () => {
 
         try {
           contactSchema.parse(invalidData);
-          fail(`Should have thrown error for field: ${field}`);
+          throw new Error(`Should have thrown error for field: ${field}`);
         } catch (error) {
           expect(error).toBeInstanceOf(ZodError);
           const zodError = error as ZodError;

@@ -44,7 +44,7 @@ describe('Logger', () => {
 
   describe('Environment Detection', () => {
     it('should detect development environment', () => {
-      process.env.NODE_ENV = 'development';
+      vi.stubEnv('NODE_ENV', 'development');
       process.env.VITEST = '';
       
       const testLogger = new (logger.constructor as any)();
@@ -55,7 +55,7 @@ describe('Logger', () => {
     });
 
     it('should detect test environment with NODE_ENV', () => {
-      process.env.NODE_ENV = 'test';
+      vi.stubEnv('NODE_ENV', 'test');
       
       const testLogger = new (logger.constructor as any)();
       testLogger.info('test message');
@@ -65,7 +65,7 @@ describe('Logger', () => {
     });
 
     it('should detect test environment with VITEST', () => {
-      process.env.NODE_ENV = 'development';
+      vi.stubEnv('NODE_ENV', 'development');
       process.env.VITEST = 'true';
       
       const testLogger = new (logger.constructor as any)();
@@ -76,7 +76,7 @@ describe('Logger', () => {
     });
 
     it('should detect production environment', () => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.VITEST = '';
       
       const testLogger = new (logger.constructor as any)();
@@ -91,7 +91,7 @@ describe('Logger', () => {
 
   describe('Global Context Management', () => {
     it('should set and use global context', () => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.VITEST = '';
       
       // Create a new logger instance for production
@@ -110,7 +110,7 @@ describe('Logger', () => {
     });
 
     it('should merge multiple global context calls', () => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.VITEST = '';
       
       const testLogger = new (logger.constructor as any)();
@@ -127,7 +127,7 @@ describe('Logger', () => {
     });
 
     it('should clear global context', () => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.VITEST = '';
       
       const testLogger = new (logger.constructor as any)();
@@ -144,7 +144,7 @@ describe('Logger', () => {
 
   describe('Child Logger', () => {
     it('should create child logger with additional context', () => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.VITEST = '';
       
       const testLogger = new (logger.constructor as any)();
@@ -161,7 +161,7 @@ describe('Logger', () => {
     });
 
     it('should inherit parent context but not affect parent', () => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.VITEST = '';
       
       const testLogger = new (logger.constructor as any)();
@@ -190,7 +190,7 @@ describe('Logger', () => {
 
   describe('Log Levels', () => {
     beforeEach(() => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.VITEST = '';
     });
 
@@ -258,7 +258,7 @@ describe('Logger', () => {
     });
 
     it('should handle debug messages in development', () => {
-      process.env.NODE_ENV = 'development';
+      vi.stubEnv('NODE_ENV', 'development');
       process.env.VITEST = '';
       
       const testLogger = new (logger.constructor as any)();
@@ -268,7 +268,7 @@ describe('Logger', () => {
     });
 
     it('should skip debug messages in production', () => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.VITEST = '';
       
       const testLogger = new (logger.constructor as any)();
@@ -279,7 +279,7 @@ describe('Logger', () => {
     });
 
     it('should skip debug messages in test environment', () => {
-      process.env.NODE_ENV = 'test';
+      vi.stubEnv('NODE_ENV', 'test');
       
       const testLogger = new (logger.constructor as any)();
       testLogger.debug('Debug message');
@@ -291,7 +291,7 @@ describe('Logger', () => {
 
   describe('Specialized Logging Methods', () => {
     beforeEach(() => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.VITEST = '';
     });
 
@@ -362,7 +362,7 @@ describe('Logger', () => {
       });
 
       it('should log database operations with duration', () => {
-        process.env.NODE_ENV = 'development';
+        vi.stubEnv('NODE_ENV', 'development');
         process.env.VITEST = '';
         
         const testLogger = new (logger.constructor as any)();
@@ -373,7 +373,7 @@ describe('Logger', () => {
       });
 
       it('should log database operations without duration', () => {
-        process.env.NODE_ENV = 'development';
+        vi.stubEnv('NODE_ENV', 'development');
         process.env.VITEST = '';
         
         const testLogger = new (logger.constructor as any)();
@@ -424,7 +424,7 @@ describe('Logger', () => {
 
     describe('featureFlag', () => {
       it('should log feature flag usage as debug', () => {
-        process.env.NODE_ENV = 'development';
+        vi.stubEnv('NODE_ENV', 'development');
         process.env.VITEST = '';
         
         const testLogger = new (logger.constructor as any)();
@@ -434,7 +434,7 @@ describe('Logger', () => {
       });
 
       it('should log disabled feature flags', () => {
-        process.env.NODE_ENV = 'development';
+        vi.stubEnv('NODE_ENV', 'development');
         process.env.VITEST = '';
         
         const testLogger = new (logger.constructor as any)();
@@ -465,7 +465,7 @@ describe('Logger', () => {
 
   describe('Development Console Output', () => {
     beforeEach(() => {
-      process.env.NODE_ENV = 'development';
+      vi.stubEnv('NODE_ENV', 'development');
       process.env.VITEST = '';
     });
 
@@ -552,7 +552,7 @@ describe('Logger', () => {
 
   describe('Test Environment Behavior', () => {
     beforeEach(() => {
-      process.env.NODE_ENV = 'test';
+      vi.stubEnv('NODE_ENV', 'test');
     });
 
     it('should skip non-error logs in test environment', () => {
@@ -578,7 +578,7 @@ describe('Logger', () => {
 
   describe('Convenience Exports', () => {
     beforeEach(() => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.VITEST = '';
     });
 
@@ -636,7 +636,7 @@ describe('Logger', () => {
 
   describe('Edge Cases and Error Handling', () => {
     beforeEach(() => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       process.env.VITEST = '';
     });
 

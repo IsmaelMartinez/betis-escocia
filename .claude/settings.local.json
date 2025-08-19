@@ -18,7 +18,14 @@
       "Bash(npm run lint:*)",
       "Bash(grep:*)",
       "Bash(sed:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(for file in *.test.ts)",
+      "Bash(do)",
+      "Bash(done)",
+      "Bash(for file in tests/unit/lib/schemas/*.test.ts)",
+      "Bash(chmod:*)",
+      "Bash(./fix_tests.sh)",
+      "Bash(/Users/ismael.martinez/projects/betis/fix_tests.sh)"
     ],
     "deny": []
   }

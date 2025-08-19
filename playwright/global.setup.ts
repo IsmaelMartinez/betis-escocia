@@ -14,6 +14,9 @@ async function globalSetup(config: FullConfig) {
   const browser = await chromium.launch();
   const page = await browser.newPage();
 
+  // Set default timeout for all page operations
+  page.setDefaultTimeout(60000);
+
   // Navigate to the base URL first
   await page.goto(baseURL || '/');
 

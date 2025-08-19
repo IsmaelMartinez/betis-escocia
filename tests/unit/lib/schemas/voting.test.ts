@@ -299,7 +299,9 @@ describe('Voting Schema', () => {
         
         const result = votingRequestSchema.parse(voteRequest);
         expect(result.action).toBe('vote');
-        expect(result.designId).toBe('design_456');
+        if (result.action === 'vote') {
+          expect(result.designId).toBe('design_456');
+        }
       });
 
       it('should validate pre-order request', () => {
@@ -315,7 +317,9 @@ describe('Voting Schema', () => {
         
         const result = votingRequestSchema.parse(preOrderRequest);
         expect(result.action).toBe('preOrder');
-        expect(result.orderData.name).toBe('Sofia García');
+        if (result.action === 'preOrder') {
+          expect(result.orderData.name).toBe('Sofia García');
+        }
       });
     });
 

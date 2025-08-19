@@ -64,7 +64,7 @@ export default function TriviaPage() {
           }
           
           throw new Error(errorMessage);
-        } catch (parseError) {
+        } catch {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
       }

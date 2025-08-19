@@ -607,4 +607,335 @@ describe('supabase', () => {
 
     // Note: Complex Promise.allSettled error handling test removed due to mock complexity
   });
+
+  describe('updateContactSubmissionStatus', () => {
+    beforeEach(() => {
+      global.fetch = vi.fn();
+    });
+
+    it('should update contact submission status successfully', async () => {
+      const mockResponse = {
+        ok: true,
+        text: vi.fn().mockResolvedValue(JSON.stringify({ success: true, data: { id: 1, status: 'resolved' } }))
+      };
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const result = await updateContactSubmissionStatus(1, 'resolved', 'admin123', 'token123');
+
+      expect(global.fetch).toHaveBeenCalledWith('/api/admin/contact-submissions/1', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer token123',
+        },
+        body: JSON.stringify({ status: 'resolved', adminUserId: 'admin123' })
+      });
+
+      expect(result).toEqual({ success: true, data: { id: 1, status: 'resolved' } });
+    });
+
+    it('should handle JSON parse errors', async () => {
+      const mockResponse = {
+        ok: true,
+        text: vi.fn().mockResolvedValue('invalid json')
+      };
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      const result = await updateContactSubmissionStatus(1, 'resolved', 'admin123', 'token123');
+
+      expect(result).toEqual({ success: false, error: 'Invalid JSON response from server.' });
+      expect(consoleSpy).toHaveBeenCalledWith('Failed to parse JSON response:', 'invalid json', expect.any(Error));
+      
+      consoleSpy.mockRestore();
+    });
+
+    it('should handle API errors', async () => {
+      const mockResponse = {
+        ok: false,
+        text: vi.fn().mockResolvedValue(JSON.stringify({ error: 'Not authorized' }))
+      };
+      (global.fetch as any).mockResolvedValue(mockResponse);
+
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      const result = await updateContactSubmissionStatus(1, 'resolved', 'admin123', 'token123');
+
+      expect(result).toEqual({ success: false, error: 'Not authorized' });
+      expect(consoleSpy).toHaveBeenCalledWith('Error updating contact submission status:', 'Not authorized');
+      
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('trivia functions', () => {
+    it('should get trivia questions', async () => {
+      const mockData = [{ id: '1', question: 'Test?', answers: [] }];
+      const mockBuilder = {
+        select: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        then: vi.fn().mockImplementation(async (resolve: any) => resolve({ data: mockData, error: null }))
+      };
+
+      mockSupabase.from.mockReturnValue(mockBuilder);
+
+      const result = await getTriviaQuestions();
+
+      expect(mockSupabase.from).toHaveBeenCalledWith('trivia_questions');
+      expect(mockBuilder.select).toHaveBeenCalledWith('*');
+      expect(mockBuilder.order).toHaveBeenCalledWith('created_at', { ascending: false });
+      expect(result).toEqual(mockData);
+    });
+
+    it('should handle trivia questions error', async () => {
+      const mockBuilder = {
+        select: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        then: vi.fn().mockImplementation(async (resolve: any) => resolve({ data: null, error: new Error('DB error') }))
+      };
+
+      mockSupabase.from.mockReturnValue(mockBuilder);
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      const result = await getTriviaQuestions();
+
+      expect(result).toBeNull();
+      expect(consoleSpy).toHaveBeenCalledWith('Error fetching trivia questions:', new Error('DB error'));
+      
+      consoleSpy.mockRestore();
+    });
+
+    it('should get single trivia question', async () => {
+      const mockData = { id: '1', question: 'Test?', answers: [] };
+      const mockBuilder = {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        maybeSingle: vi.fn().mockReturnThis(),
+        then: vi.fn().mockImplementation(async (resolve: any) => resolve({ data: mockData, error: null }))
+      };
+
+      mockSupabase.from.mockReturnValue(mockBuilder);
+
+      const result = await getTriviaQuestion('1');
+
+      expect(mockSupabase.from).toHaveBeenCalledWith('trivia_questions');
+      expect(mockBuilder.select).toHaveBeenCalledWith('*');
+      expect(mockBuilder.eq).toHaveBeenCalledWith('id', '1');
+      expect(mockBuilder.maybeSingle).toHaveBeenCalled();
+      expect(result).toEqual(mockData);
+    });
+  });
+
+  describe('getUserDailyTriviaScore', () => {
+    const mockAuthenticatedSupabase = {
+      from: vi.fn()
+    } as any;
+
+    it('should get user daily trivia score', async () => {
+      const mockData = { id: 1, user_id: 'user123', score: 100 };
+      const mockBuilder = {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        gte: vi.fn().mockReturnThis(),
+        lt: vi.fn().mockReturnThis(),
+        single: vi.fn().mockReturnThis(),
+        then: vi.fn().mockImplementation(async (resolve: any) => resolve({ data: mockData, error: null }))
+      };
+
+      mockAuthenticatedSupabase.from.mockReturnValue(mockBuilder);
+
+      const result = await getUserDailyTriviaScore('user123', mockAuthenticatedSupabase);
+
+      expect(result).toEqual({ success: true, data: mockData });
+    });
+
+    it('should handle no rows found (PGRST116)', async () => {
+      const mockBuilder = {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        gte: vi.fn().mockReturnThis(),
+        lt: vi.fn().mockReturnThis(),
+        single: vi.fn().mockReturnThis(),
+        then: vi.fn().mockImplementation(async (resolve: any) => resolve({ 
+          data: null, 
+          error: { code: 'PGRST116', message: 'No rows found' } 
+        }))
+      };
+
+      mockAuthenticatedSupabase.from.mockReturnValue(mockBuilder);
+
+      const result = await getUserDailyTriviaScore('user123', mockAuthenticatedSupabase);
+
+      expect(result).toEqual({ success: true, data: null });
+    });
+
+    it('should handle database errors', async () => {
+      const mockBuilder = {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        gte: vi.fn().mockReturnThis(),
+        lt: vi.fn().mockReturnThis(),
+        single: vi.fn().mockReturnThis(),
+        then: vi.fn().mockImplementation(async (resolve: any) => resolve({ 
+          data: null, 
+          error: { code: 'OTHER_ERROR', message: 'Database error' } 
+        }))
+      };
+
+      mockAuthenticatedSupabase.from.mockReturnValue(mockBuilder);
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      const result = await getUserDailyTriviaScore('user123', mockAuthenticatedSupabase);
+
+      expect(result).toEqual({ success: false, error: 'Database error' });
+      expect(consoleSpy).toHaveBeenCalledWith('Error fetching user daily trivia score:', { code: 'OTHER_ERROR', message: 'Database error' });
+      
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('getAllMatchesWithRSVPCounts', () => {
+    it('should get matches with RSVP counts', async () => {
+      const mockData = [{ id: 1, title: 'Match 1', rsvps: [{ id: 1, attendees: 5 }] }];
+      const mockBuilder = {
+        select: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockReturnThis(),
+        then: vi.fn().mockImplementation(async (resolve: any) => resolve({ data: mockData, error: null }))
+      };
+
+      mockSupabase.from.mockReturnValue(mockBuilder);
+
+      const result = await getAllMatchesWithRSVPCounts(5);
+
+      expect(mockSupabase.from).toHaveBeenCalledWith('matches');
+      expect(mockBuilder.select).toHaveBeenCalledWith(`
+      *,
+      rsvps(
+        id,
+        attendees
+      )
+    `);
+      expect(mockBuilder.order).toHaveBeenCalledWith('date_time', { ascending: true });
+      expect(mockBuilder.limit).toHaveBeenCalledWith(5);
+      
+      const expectedResult = [{
+        id: 1,
+        title: 'Match 1',
+        rsvps: [{ id: 1, attendees: 5 }],
+        rsvp_count: 1,
+        total_attendees: 5
+      }];
+      expect(result).toEqual(expectedResult);
+    });
+
+    it('should get all matches without limit', async () => {
+      const mockData = [{ id: 1, title: 'Match 1', rsvps: [] }];
+      const mockBuilder = {
+        select: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        limit: vi.fn(),  // Make it a spy but don't chain
+        then: vi.fn().mockImplementation(async (resolve: any) => resolve({ data: mockData, error: null }))
+      };
+
+      mockSupabase.from.mockReturnValue(mockBuilder);
+
+      const result = await getAllMatchesWithRSVPCounts();
+
+      expect(mockBuilder.limit).not.toHaveBeenCalled();
+      
+      const expectedResult = [{
+        id: 1,
+        title: 'Match 1',
+        rsvps: [],
+        rsvp_count: 0,
+        total_attendees: 0
+      }];
+      expect(result).toEqual(expectedResult);
+    });
+
+    it('should fallback to matches only on RSVP error', async () => {
+      const matchesData = [{ id: 1, title: 'Match 1' }];
+      
+      // First call (with RSVP join) fails
+      const failedBuilder = {
+        select: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        then: vi.fn().mockImplementation(async (resolve: any) => resolve({ data: null, error: new Error('RSVP join failed') }))
+      };
+
+      // Second call (fallback) succeeds
+      const successBuilder = {
+        select: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        then: vi.fn().mockImplementation(async (resolve: any) => resolve({ data: matchesData, error: null }))
+      };
+
+      mockSupabase.from
+        .mockReturnValueOnce(failedBuilder)
+        .mockReturnValueOnce(successBuilder);
+
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      const result = await getAllMatchesWithRSVPCounts();
+
+      const expectedResult = [{
+        id: 1,
+        title: 'Match 1',
+        rsvp_count: 0,
+        total_attendees: 0
+      }];
+      expect(result).toEqual(expectedResult);
+      expect(consoleSpy).toHaveBeenCalledWith('RSVP data not available, fetching matches only:', new Error('RSVP join failed'));
+      
+      consoleSpy.mockRestore();
+    });
+
+    it('should return empty array when no data', async () => {
+      const mockBuilder = {
+        select: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        then: vi.fn().mockImplementation(async (resolve: any) => resolve({ data: null, error: null }))
+      };
+
+      mockSupabase.from.mockReturnValue(mockBuilder);
+
+      const result = await getAllMatchesWithRSVPCounts();
+
+      expect(result).toEqual([]);
+    });
+
+    it('should return null when fallback also fails', async () => {
+      // First call (with RSVP join) fails
+      const failedBuilder = {
+        select: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        then: vi.fn().mockImplementation(async (resolve: any) => resolve({ data: null, error: new Error('RSVP join failed') }))
+      };
+
+      // Second call (fallback) also fails
+      const failedFallbackBuilder = {
+        select: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        then: vi.fn().mockImplementation(async (resolve: any) => resolve({ data: null, error: new Error('Matches failed') }))
+      };
+
+      mockSupabase.from
+        .mockReturnValueOnce(failedBuilder)
+        .mockReturnValueOnce(failedFallbackBuilder);
+
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      const result = await getAllMatchesWithRSVPCounts();
+
+      expect(result).toBeNull();
+      expect(consoleSpy).toHaveBeenCalledWith('RSVP data not available, fetching matches only:', new Error('RSVP join failed'));
+      expect(errorSpy).toHaveBeenCalledWith('Error fetching upcoming matches:', new Error('Matches failed'));
+      
+      consoleSpy.mockRestore();
+      errorSpy.mockRestore();
+    });
+  });
 });

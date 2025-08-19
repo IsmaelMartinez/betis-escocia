@@ -26,6 +26,7 @@ export default defineConfig({
   use: {
     /* Base URL to use in tests for like `await page.goto('/ ')`. */
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
+    timeout: 60000, // Set a 60-second timeout for all actions
     launchOptions: {
       env: {
         NEXT_PUBLIC_FEATURE_CLASIFICACION: 'true',

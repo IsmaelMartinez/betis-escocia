@@ -633,8 +633,10 @@ describe('Orders Schema', () => {
         totalPrice: 50,
         customerInfo: {
           name: 'Test User',
-          email: 'test@example.com'
-        }
+          email: 'test@example.com',
+          contactMethod: 'email'
+        },
+        isPreOrder: false
       };
       
       const updateData: UpdateOrderData = { status: 'confirmed' };

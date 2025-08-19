@@ -57,6 +57,19 @@ describe('featureFlags', () => {
       
       expect(getFlagsmithConfig).toHaveBeenCalled();
     });
+
+    it('should handle E2E_FLAGSMITH_MOCK environment variable', async () => {
+      vi.stubEnv('E2E_FLAGSMITH_MOCK', 'true');
+      
+      const { getFlagsmithConfig } = await import('@/lib/flagsmith/config');
+      (getFlagsmithConfig as any).mockReturnValue(null);
+      
+      await initializeFeatureFlags();
+      
+      // Should exit early and not call getFlagsmithConfig when mocked
+      expect(getFlagsmithConfig).not.toHaveBeenCalled();
+    });
+
   });
 
   describe('getLegacyEnvironmentFlags', () => {
@@ -212,6 +225,19 @@ describe('featureFlags', () => {
       // Console.error may or may not be called depending on implementation details
       // Focus on the functional behavior instead
     });
+
+    it('should handle errors gracefully and return some flags', async () => {
+      const { getMultipleValues } = await import('@/lib/flagsmith/index');
+      (getMultipleValues as any).mockRejectedValue(new Error('Network error'));
+      
+      const flags = await getFeatureFlags();
+      
+      // Should get fallback flags
+      expect(flags).toBeDefined();
+      expect(typeof flags.showRSVP).toBe('boolean');
+      expect(typeof flags.showUnete).toBe('boolean');
+      expect(typeof flags.showContacto).toBe('boolean');
+    });
   });
 
   describe('isFeatureEnabled', () => {
@@ -301,6 +327,16 @@ describe('featureFlags', () => {
       expect(items.some(item => item.name === 'RSVP')).toBe(true);
       expect(items.some(item => item.name === 'Únete')).toBe(true);
       expect(items.some(item => item.name === 'Contacto')).toBe(true);
+    });
+
+    it('should handle items with unknown features gracefully', async () => {
+      // This tests the edge case where the feature name lookup fails
+      // The item.feature might not map to any known FLAG_MIGRATION_MAP key
+      const items = await getEnabledNavigationItems();
+
+      // Should not crash and should return some items
+      expect(Array.isArray(items)).toBe(true);
+      expect(items.length).toBeGreaterThan(0);
     });
   });
 

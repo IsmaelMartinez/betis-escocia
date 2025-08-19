@@ -108,10 +108,10 @@ describe('apiUtils', () => {
         {
           code: 'too_small',
           minimum: 5,
-          type: 'string',
           inclusive: true,
           path: ['name'],
-          message: 'String must contain at least 5 character(s)'
+          message: 'String must contain at least 5 character(s)',
+          origin: 'string' as const
         }
       ]);
 
@@ -124,10 +124,10 @@ describe('apiUtils', () => {
         {
           code: 'too_big',
           maximum: 100,
-          type: 'string',
           inclusive: true,
           path: ['description'],
-          message: 'String must contain at most 100 character(s)'
+          message: 'String must contain at most 100 character(s)',
+          origin: 'string' as const
         }
       ]);
 
@@ -140,7 +140,6 @@ describe('apiUtils', () => {
         {
           code: 'invalid_type',
           expected: 'string',
-          received: 'number',
           path: ['email'],
           message: 'Expected string, received number'
         }
@@ -168,15 +167,14 @@ describe('apiUtils', () => {
         {
           code: 'too_small',
           minimum: 5,
-          type: 'string',
           inclusive: true,
           path: ['name'],
-          message: 'Too short'
+          message: 'Too short',
+          origin: 'string' as const
         },
         {
           code: 'invalid_type',
           expected: 'string',
-          received: 'number',
           path: ['email'],
           message: 'Wrong type'
         }
@@ -191,10 +189,10 @@ describe('apiUtils', () => {
         {
           code: 'too_small',
           minimum: 1,
-          type: 'string',
           inclusive: true,
           path: ['user', 'profile', 'name'],
-          message: 'Too short'
+          message: 'Too short',
+          origin: 'string' as const
         }
       ]);
 
@@ -623,10 +621,10 @@ describe('apiUtils', () => {
               {
                 code: 'too_small',
                 minimum: 5,
-                type: 'string',
                 inclusive: true,
                 path: ['field'],
-                message: 'Too short'
+                message: 'Too short',
+                origin: 'string' as const
               }
             ]);
           }

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { validateForm, validateField, commonValidationRules } from '@/lib/formValidation';
+import { renderHook, act } from '@testing-library/react';
+import { validateForm, validateField, commonValidationRules, useFormValidation } from '@/lib/formValidation';
 import { validateEmail } from '@/lib/security';
 
 // Mock security functions used by formValidation
@@ -296,6 +297,163 @@ describe('Form Validation Utilities', () => {
       expect(result.errors.name).toBe('Este campo es obligatorio');
       expect(result.errors.phone).toBeUndefined();
       expect(result.errors.message).toBeUndefined();
+    });
+  });
+
+  describe('useFormValidation hook', () => {
+    it('should initialize with provided data and empty errors', () => {
+      const initialData = { name: 'John', email: 'john@example.com' };
+      const rules = { name: { required: true }, email: { required: true } };
+      
+      const { result } = renderHook(() => useFormValidation(initialData, rules));
+      
+      expect(result.current.data).toEqual(initialData);
+      expect(result.current.errors).toEqual({});
+      expect(result.current.touched).toEqual({});
+    });
+
+    it('should update field data', () => {
+      const initialData = { name: '' };
+      const rules = { name: { required: true } };
+      
+      const { result } = renderHook(() => useFormValidation(initialData, rules));
+      
+      act(() => {
+        result.current.updateField('name', 'Jane');
+      });
+      
+      expect(result.current.data.name).toBe('Jane');
+    });
+
+    it('should mark field as touched and validate', () => {
+      const initialData = { name: '' };
+      const rules = { name: { required: true } };
+      
+      const { result } = renderHook(() => useFormValidation(initialData, rules));
+      
+      act(() => {
+        result.current.touchField('name');
+      });
+      
+      expect(result.current.touched.name).toBe(true);
+      expect(result.current.errors.name).toBe('Este campo es obligatorio');
+    });
+
+    it('should validate field on update when touched', () => {
+      const initialData = { name: '' };
+      const rules = { name: { required: true, minLength: 3 } };
+      
+      const { result } = renderHook(() => useFormValidation(initialData, rules));
+      
+      // Touch the field first
+      act(() => {
+        result.current.touchField('name');
+      });
+      
+      // Now update it - should validate because it's touched
+      act(() => {
+        result.current.updateField('name', 'Jo');
+      });
+      
+      expect(result.current.errors.name).toBe('Mínimo 3 caracteres');
+      
+      // Update with valid value
+      act(() => {
+        result.current.updateField('name', 'John');
+      });
+      
+      expect(result.current.errors.name).toBe('');
+    });
+
+    it('should not validate untouched fields on update', () => {
+      const initialData = { name: '' };
+      const rules = { name: { required: true } };
+      
+      const { result } = renderHook(() => useFormValidation(initialData, rules));
+      
+      // Update without touching - should not validate
+      act(() => {
+        result.current.updateField('name', 'John');
+      });
+      
+      expect(result.current.errors).toEqual({});
+    });
+
+    it('should validate all fields', () => {
+      const initialData = { name: '', email: 'invalid' };
+      const rules = { 
+        name: { required: true }, 
+        email: { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ }
+      };
+      
+      const { result } = renderHook(() => useFormValidation(initialData, rules));
+      
+      const validation = result.current.validateAll();
+      
+      expect(validation.isValid).toBe(false);
+      expect(validation.errors.name).toBe('Este campo es obligatorio');
+      expect(validation.errors.email).toBe('Formato inválido');
+    });
+
+    it('should reset form data', () => {
+      const initialData = { name: 'John' };
+      const rules = { name: { required: true } };
+      
+      const { result } = renderHook(() => useFormValidation(initialData, rules));
+      
+      // Touch field and add error
+      act(() => {
+        result.current.touchField('name');
+        result.current.updateField('name', '');
+      });
+      
+      // Should have an error (empty string after setting)
+      expect(result.current.errors.name).toBe('');
+      
+      // Reset
+      act(() => {
+        result.current.reset();
+      });
+      
+      expect(result.current.data).toEqual(initialData);
+      expect(result.current.errors).toEqual({});
+      expect(result.current.touched).toEqual({});
+    });
+
+    it('should test isValid computed property', () => {
+      const initialData = { name: 'valid' };
+      const rules = { name: { required: true } };
+      
+      const { result } = renderHook(() => useFormValidation(initialData, rules));
+      
+      // Initially should be valid (no errors)
+      expect(result.current.isValid).toBe(true);
+      
+      // After validation all, should set errors appropriately
+      const validation = result.current.validateAll();
+      expect(validation.isValid).toBe(true); // name is valid
+    });
+  });
+
+  describe('commonValidationRules edge cases', () => {
+    it('should handle custom message validation', () => {
+      const rule = commonValidationRules.message;
+      expect(validateField('hi', rule)).toBe('Mínimo 5 caracteres'); // Uses mocked function
+      expect(validateField('a'.repeat(501), rule)).toBe('Máximo 500 caracteres'); // Uses mocked function  
+      expect(validateField('valid message', rule)).toBeNull();
+    });
+
+    it('should handle custom subject validation', () => {
+      const rule = commonValidationRules.subject;
+      expect(validateField('hi', rule)).toBe('Mínimo 3 caracteres'); // Uses mocked function
+      expect(validateField('valid subject', rule)).toBeNull();
+    });
+
+    it('should handle optional fields properly', () => {
+      const phoneRule = commonValidationRules.phone;
+      expect(validateField('', phoneRule)).toBeNull(); // Phone is optional
+      expect(validateField(undefined, phoneRule)).toBeNull();
+      expect(validateField(null, phoneRule)).toBeNull();
     });
   });
 });
