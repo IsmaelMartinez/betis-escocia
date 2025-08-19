@@ -224,7 +224,7 @@ async function StandingsContent() {
 
         {/* Actions */}
         <div className="mt-8 flex justify-center">
-          <FeatureWrapper feature="showPartidos">
+          <FeatureWrapper feature="show-partidos">
             <Link
               href="/partidos"
               className="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-md"
@@ -254,4 +254,4 @@ async function StandingsPage() {
 }
 
 // Export the protected component
-export default withFeatureFlag(StandingsPage, 'showClasificacion');
+export default withFeatureFlag(StandingsPage, 'show-clasificacion');

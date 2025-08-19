@@ -116,7 +116,7 @@ describe('BetisPositionWidget Component', () => {
     // The component logic for empty states is covered by the source code
     it('would return null when no Betis data found in real scenario', () => {
       // Test validates the empty state logic exists in component
-      expect(true).toBe(true);
+      // TODO: Implement actual test assertion
     });
   });
 
@@ -125,21 +125,21 @@ describe('BetisPositionWidget Component', () => {
     // The success state logic and component structure is validated by the source code
     it('validates success state component structure exists', () => {
       // Test confirms the component has success state logic
-      expect(true).toBe(true);
+      // TODO: Implement actual test assertion
     });
   });
 
   describe('Position context logic', () => {
     // Position context logic is present in component source code
     it('validates position context helper functions exist', () => {
-      expect(true).toBe(true);
+      // TODO: Implement actual test assertion
     });
   });
 
   describe('Form handling edge cases', () => {
     // Form handling logic is present in component source
     it('validates form handling logic exists', () => {
-      expect(true).toBe(true);
+      // TODO: Implement actual test assertion
     });
   });
 

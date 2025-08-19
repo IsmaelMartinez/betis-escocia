@@ -1,7 +1,7 @@
 // Service Worker for Real Betis Peña Bética Website
 // Handles push notifications for admin users
 
-const CACHE_NAME = 'betis-pena-v1';
+const CACHE_NAME = 'betis-pena-v2-no-flagsmith';
 const urlsToCache = [
   '/',
   '/admin',
@@ -155,6 +155,12 @@ self.addEventListener('notificationclose', event => {
 self.addEventListener('fetch', event => {
   // Only handle GET requests to same origin
   if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
+    return;
+  }
+
+  // Skip caching for Next.js chunks to avoid stale code issues
+  if (event.request.url.includes('/_next/static/chunks/')) {
+    event.respondWith(fetch(event.request));
     return;
   }
 

@@ -177,4 +177,4 @@ function GalleryPage() {
   );
 }
 
-export default withFeatureFlag(GalleryPage, 'showGaleria');
+export default withFeatureFlag(GalleryPage, 'show-galeria');

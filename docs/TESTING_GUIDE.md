@@ -44,9 +44,10 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-// Mock external dependencies
-vi.mock('@/lib/flagsmith', () => ({
-  hasFeature: vi.fn(() => Promise.resolve(true)),
+// Mock external dependencies - feature flags are now synchronous
+vi.mock('@/lib/featureFlags', () => ({
+  hasFeature: vi.fn(() => true),
+  getFeatureFlags: vi.fn(() => ({ showClasificacion: true })),
 }));
 
 vi.mock('@clerk/nextjs/server', () => ({
@@ -107,16 +108,18 @@ describe('/api/rsvp', () => {
 
 ### Mocking Strategies
 
-#### Flagsmith Mocking
+#### Feature Flag Mocking
 ```typescript
-vi.mock('@/lib/flagsmith', () => ({
+vi.mock('@/lib/featureFlags', () => ({
   hasFeature: vi.fn((flag: string) => {
-    const enabledFlags = ['show-rsvp', 'show-admin'];
-    return Promise.resolve(enabledFlags.includes(flag));
+    const enabledFlags = ['show-clasificacion', 'show-partidos'];
+    return enabledFlags.includes(flag);
   }),
-  getValue: vi.fn((flag: string, defaultValue: any) => 
-    Promise.resolve(defaultValue)
-  ),
+  getFeatureFlags: vi.fn(() => ({
+    showClasificacion: true,
+    showPartidos: true,
+    showColeccionables: false,
+  })),
 }));
 ```
 
@@ -183,7 +186,7 @@ e2e/
 ├── trivia.spec.ts              # Trivia game interactions
 ├── fixtures.ts                 # Shared test fixtures
 └── helpers/
-    └── flagsmith-mock.ts       # Flagsmith API mocking
+    └── feature-flag-mock.ts    # Feature flag mocking utilities
 ```
 
 ### Testing Patterns
@@ -239,14 +242,12 @@ test('requires notification permission for admin alerts', async ({ page, context
 });
 ```
 
-#### Flagsmith Mocking in E2E
+#### Feature Flag Mocking in E2E
 ```typescript
-import { mockFlagsmithAPI } from './helpers/flagsmith-mock';
-
+// Feature flags are environment variables, so mock via env setup
 test.beforeEach(async ({ page }) => {
-  // Mock Flagsmith to prevent excessive API requests
-  await mockFlagsmithAPI(page, {
-    'show-admin': true,
+  // Set feature flags via environment (handled in global setup)
+  // Feature flags are resolved at build time
     'show-rsvp': true,
     'show-trivia-game': false
   });
@@ -308,21 +309,23 @@ export const Secondary: Story = {
 
 #### Feature Flag Testing
 ```typescript
-import { getFlagsmithManager } from '@/lib/flagsmith';
-
+// Feature flags are mocked at the module level
 export const FeatureEnabled: Story = {
-  render: (args) => {
-    // Control feature flags in stories
-    getFlagsmithManager().setFlags({ 'my-feature': true });
-    return <MyComponent {...args} />;
+  parameters: {
+    mockFeatureFlags: {
+      'show-galeria': true,
+    },
   },
+  render: (args) => <MyComponent {...args} />,
 };
 
 export const FeatureDisabled: Story = {
-  render: (args) => {
-    getFlagsmithManager().setFlags({ 'my-feature': false });
-    return <MyComponent {...args} />;
+  parameters: {
+    mockFeatureFlags: {
+      'show-galeria': false,
+    },
   },
+  render: (args) => <MyComponent {...args} />,
 };
 ```
 
@@ -395,7 +398,7 @@ export default defineConfig({
     setupFiles: ['./tests/setup.ts'],
     env: {
       NEXT_PUBLIC_SUPABASE_URL: 'http://localhost:54321',
-      NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID: 'test-env-id',
+      NEXT_PUBLIC_FEATURE_DEBUG_INFO: 'true',
     },
   },
 });
@@ -443,7 +446,7 @@ await page.click('[data-testid="submit-rsvp"]');
 #### Mock Not Working
 ```typescript
 // Ensure mocks are hoisted
-vi.mock('@/lib/flagsmith', () => ({
+vi.mock('@/lib/featureFlags', () => ({
   hasFeature: vi.fn(),
 }));
 

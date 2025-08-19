@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { isFeatureEnabled } from '@/lib/featureFlags';
+import { hasFeature, type FeatureName } from '@/lib/featureFlags';
 
 /**
  * Higher-order component to protect routes based on feature flags
@@ -7,10 +7,10 @@ import { isFeatureEnabled } from '@/lib/featureFlags';
  */
 export function withFeatureFlag<T extends object>(
   Component: React.ComponentType<T>,
-  featureFlag: keyof typeof import('@/lib/featureFlags').featureFlags
+  featureFlag: FeatureName
 ) {
   return function ProtectedComponent(props: T) {
-    if (!isFeatureEnabled(featureFlag)) {
+    if (!hasFeature(featureFlag)) {
       notFound();
     }
 
@@ -23,10 +23,10 @@ export function withFeatureFlag<T extends object>(
  * Use this in page components for client-side feature checking
  */
 export function useFeatureFlag(
-  featureFlag: keyof typeof import('@/lib/featureFlags').featureFlags,
+  featureFlag: FeatureName,
   redirectTo?: string
 ) {
-  const isEnabled = isFeatureEnabled(featureFlag);
+  const isEnabled = hasFeature(featureFlag);
 
   if (!isEnabled && redirectTo && typeof window !== 'undefined') {
     window.location.href = redirectTo;
@@ -40,13 +40,13 @@ export function useFeatureFlag(
  * Use this to conditionally render components based on feature flags
  */
 interface FeatureWrapperProps {
-  readonly feature: keyof typeof import('@/lib/featureFlags').featureFlags;
+  readonly feature: FeatureName;
   readonly fallback?: React.ReactNode;
   readonly children: React.ReactNode;
 }
 
 export function FeatureWrapper({ feature, fallback = null, children }: FeatureWrapperProps) {
-  if (!isFeatureEnabled(feature)) {
+  if (!hasFeature(feature)) {
     return <>{fallback}</>;
   }
 

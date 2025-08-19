@@ -22,7 +22,7 @@ const rsvpValidationRules = {
 
 export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) {
   const { user } = useUser();
-  const isAuthEnabled = isFeatureEnabled('showClerkAuth');
+  const isAuthEnabled = isFeatureEnabled('show-clerk-auth');
   
   const {
     data: formData,

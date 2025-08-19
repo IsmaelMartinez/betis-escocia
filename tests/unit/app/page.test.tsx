@@ -33,8 +33,8 @@ describe('Home page', () => {
     expect(screen.getByTestId('mock-classification-widget')).toBeInTheDocument();
     // Verify that FeatureWrapper was called for these components
     // The second argument is undefined because no additional props are passed to FeatureWrapper
-    expect(FeatureWrapper).toHaveBeenCalledWith(expect.objectContaining({ feature: 'showPartidos' }), undefined);
-    expect(FeatureWrapper).toHaveBeenCalledWith(expect.objectContaining({ feature: 'showClasificacion' }), undefined);
+    expect(FeatureWrapper).toHaveBeenCalledWith(expect.objectContaining({ feature: 'show-partidos' }), undefined);
+    expect(FeatureWrapper).toHaveBeenCalledWith(expect.objectContaining({ feature: 'show-clasificacion' }), undefined);
   });
 
   it('renders the "Join Us" section with correct text and links', () => {

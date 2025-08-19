@@ -521,4 +521,4 @@ function SocialTaggingGuide() {
   );
 }
 
-export default withFeatureFlag(SocialTaggingGuide, 'showRedesSociales');
+export default withFeatureFlag(SocialTaggingGuide, 'show-redes-sociales');

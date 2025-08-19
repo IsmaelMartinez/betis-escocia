@@ -98,17 +98,17 @@ describe('Trivia API', () => {
     it('should handle trivia operations correctly', async () => {
       // This is a simplified test that verifies the API structure
       // without complex mocking of the actual trivia routes
-      expect(true).toBe(true);
+      // TODO: Implement actual test assertion
     });
 
     it('should validate authentication requirements', async () => {
       // Test authentication patterns
-      expect(true).toBe(true);
+      // TODO: Implement actual test assertion
     });
 
     it('should handle score submission', async () => {
       // Test score handling
-      expect(true).toBe(true);
+      // TODO: Implement actual test assertion
     });
   });
 });

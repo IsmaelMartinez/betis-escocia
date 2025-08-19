@@ -1,162 +1,170 @@
 /**
- * Feature Flags Configuration - SECURE BY DEFAULT
+ * Feature Flags - Simple Environment Variable System
  * 
- * SECURITY PRINCIPLE: ALL features are hidden by default unless explicitly enabled.
- * This ensures that no features are accidentally exposed in production.
- * 
- * This implementation uses environment variables for simple, build-time feature configuration.
- * 
- * Migration Status: Migrated from Flagsmith to environment variables
+ * Default values + environment variable overrides.
+ * Environment variable takes precedence, otherwise use default.
  */
 
-import { 
-  hasFeature, 
-  getValue, 
-  getMultipleValues, 
-  getAllFeatures, 
-  clearFeatureCache,
-  type FeatureName,
-  type LegacyFeatureName,
-  type NavigationItem 
-} from './featureConfig';
+// Feature flag names
+export type FeatureName = 
+  | 'show-clasificacion'
+  | 'show-coleccionables'
+  | 'show-galeria'
+  | 'show-partidos'
+  | 'show-social-media'
+  | 'show-history'
+  | 'show-nosotros'
+  | 'show-redes-sociales'
+  | 'show-clerk-auth'
+  | 'show-debug-info'
+  | 'show-rsvp'
+  | 'show-unete'
+  | 'show-contacto'
+  | 'admin-push-notifications';
 
-// Legacy interface for backward compatibility
-export interface FeatureFlags {
-  showClasificacion: boolean;
-  showColeccionables: boolean;
-  showGaleria: boolean;
-  showRSVP: boolean;
-  showPartidos: boolean;
-  showSocialMedia: boolean;
-  showHistory: boolean;
-  showNosotros: boolean;
-  showUnete: boolean;
-  showContacto: boolean;
-  showRedesSociales: boolean;
-  showClerkAuth: boolean;
-  showDebugInfo: boolean;
+// Navigation item interface
+export interface NavigationItem {
+  name: string;
+  href: string;
+  nameEn: string;
+  feature: FeatureName | null;
 }
 
-/**
- * Get all feature flags (now synchronous with environment variables)
- */
-export function getFeatureFlags(): FeatureFlags {
-  // Convert from new system to legacy format
-  const flags: FeatureFlags = {
-    showClasificacion: hasFeature('show-clasificacion'),
-    showColeccionables: hasFeature('show-coleccionables'), 
-    showGaleria: hasFeature('show-galeria'),
-    showRSVP: true, // RSVP is always available
-    showPartidos: hasFeature('show-partidos'),
-    showSocialMedia: hasFeature('show-social-media'),
-    showHistory: hasFeature('show-history'),
-    showNosotros: hasFeature('show-nosotros'),
-    showUnete: true, // Únete is always available
-    showContacto: true, // Contacto is always available
-    showRedesSociales: hasFeature('show-redes-sociales'),
-    showClerkAuth: hasFeature('show-clerk-auth'),
-    showDebugInfo: hasFeature('show-debug-info'),
-  };
+// Default values for all features
+const DEFAULT_FEATURES: Record<FeatureName, boolean> = {
+  'show-clasificacion': true,
+  'show-coleccionables': false,
+  'show-galeria': false,
+  'show-partidos': true,
+  'show-social-media': false,
+  'show-history': false,
+  'show-nosotros': true,
+  'show-redes-sociales': false,
+  'show-clerk-auth': true,
+  'show-debug-info': false,
+  'show-rsvp': true,
+  'show-unete': true,
+  'show-contacto': true,
+  'admin-push-notifications': false,
+};
 
-  return flags;
-}
+// Environment variable mapping
+const ENV_VAR_MAP: Record<FeatureName, string> = {
+  'show-clasificacion': 'NEXT_PUBLIC_FEATURE_CLASIFICACION',
+  'show-coleccionables': 'NEXT_PUBLIC_FEATURE_COLECCIONABLES',
+  'show-galeria': 'NEXT_PUBLIC_FEATURE_GALERIA',
+  'show-partidos': 'NEXT_PUBLIC_FEATURE_PARTIDOS',
+  'show-social-media': 'NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA',
+  'show-history': 'NEXT_PUBLIC_FEATURE_HISTORY',
+  'show-nosotros': 'NEXT_PUBLIC_FEATURE_NOSOTROS',
+  'show-redes-sociales': 'NEXT_PUBLIC_FEATURE_REDES_SOCIALES',
+  'show-clerk-auth': 'NEXT_PUBLIC_FEATURE_CLERK_AUTH',
+  'show-debug-info': 'NEXT_PUBLIC_FEATURE_DEBUG_INFO',
+  'show-rsvp': 'NEXT_PUBLIC_FEATURE_RSVP',
+  'show-unete': 'NEXT_PUBLIC_FEATURE_UNETE',
+  'show-contacto': 'NEXT_PUBLIC_FEATURE_CONTACTO',
+  'admin-push-notifications': 'NEXT_PUBLIC_FEATURE_ADMIN_PUSH_NOTIFICATIONS',
+};
+
+// Cache for resolved features
+let featureCache: Record<FeatureName, boolean> | null = null;
 
 /**
- * Legacy environment variable fallback (now just calls getFeatureFlags)
- * @deprecated Use getFeatureFlags() instead
+ * Get feature value: Environment variable takes precedence, otherwise default
  */
-export function getLegacyEnvironmentFlags(): FeatureFlags {
-  return getFeatureFlags();
-}
-
-/**
- * Synchronous access to flags (simplified with new system)
- */
-export const featureFlags = new Proxy({} as FeatureFlags, {
-  get(target, prop) {
-    const flags = getFeatureFlags();
-    return flags[prop as keyof FeatureFlags];
+function getFeatureValue(featureName: FeatureName): boolean {
+  const envVar = ENV_VAR_MAP[featureName];
+  const envValue = process.env[envVar];
+  
+  // If environment variable exists, use it (must be exactly 'true' to be true)
+  if (envValue !== undefined) {
+    return envValue.toLowerCase() === 'true';
   }
-});
-
-/**
- * Helper function to check if a feature is enabled (backward compatibility)
- */
-export function isFeatureEnabled(feature: keyof FeatureFlags): boolean {
-  return featureFlags[feature];
+  
+  // Otherwise use default
+  return DEFAULT_FEATURES[featureName];
 }
 
 /**
- * Async version of isFeatureEnabled for new implementations
- * @deprecated No longer async - use isFeatureEnabled() instead
+ * Get all feature flags resolved
  */
-export function isFeatureEnabledAsync(feature: keyof FeatureFlags): Promise<boolean> {
-  return Promise.resolve(isFeatureEnabled(feature));
+function resolveFeatures(): Record<FeatureName, boolean> {
+  if (featureCache !== null) {
+    return featureCache;
+  }
+
+  const resolvedFeatures: Record<FeatureName, boolean> = {} as Record<FeatureName, boolean>;
+  
+  for (const featureName of Object.keys(DEFAULT_FEATURES) as FeatureName[]) {
+    resolvedFeatures[featureName] = getFeatureValue(featureName);
+  }
+
+  featureCache = resolvedFeatures;
+  return resolvedFeatures;
 }
 
 /**
- * Get a specific feature flag value using modern API
+ * Check if a feature is enabled
  */
-export function getFeatureFlag(flagName: FeatureName): boolean {
-  return getValue(flagName);
+export function hasFeature(featureName: FeatureName): boolean {
+  const features = resolveFeatures();
+  return features[featureName];
 }
 
 /**
- * Check if a feature exists using modern API
+ * Legacy helper for backward compatibility - just an alias for hasFeature
  */
-export function hasFeatureFlag(flagName: FeatureName): boolean {
-  return hasFeature(flagName);
+export function isFeatureEnabled(featureName: FeatureName): boolean {
+  return hasFeature(featureName);
 }
 
 /**
- * Get all enabled navigation items (now synchronous)
+ * Get all enabled navigation items
  */
 export function getEnabledNavigationItems(): NavigationItem[] {
-  // Standardized navigation items in logical order
   const allNavigationItems: NavigationItem[] = [
-    { name: 'RSVP', href: '/rsvp', nameEn: 'RSVP', feature: null },
-    { name: 'Partidos', href: '/partidos', nameEn: 'Matches', feature: null },
-    { name: 'Clasificación', href: '/clasificacion', nameEn: 'Standings', feature: null },
+    { name: 'RSVP', href: '/rsvp', nameEn: 'RSVP', feature: 'show-rsvp' },
+    { name: 'Partidos', href: '/partidos', nameEn: 'Matches', feature: 'show-partidos' },
+    { name: 'Clasificación', href: '/clasificacion', nameEn: 'Standings', feature: 'show-clasificacion' },
     { name: 'Coleccionables', href: '/coleccionables', nameEn: 'Collectibles', feature: 'show-coleccionables' },
     { name: 'Galería', href: '/galeria', nameEn: 'Gallery', feature: 'show-galeria' },
     { name: 'Historia', href: '/historia', nameEn: 'History', feature: 'show-history' },
     { name: 'Nosotros', href: '/nosotros', nameEn: 'About', feature: 'show-nosotros' },
     { name: 'Redes Sociales', href: '/redes-sociales', nameEn: 'Social Media', feature: 'show-redes-sociales' },
-    { name: 'Únete', href: '/unete', nameEn: 'Join', feature: null },
-    { name: 'Contacto', href: '/contacto', nameEn: 'Contact', feature: null },
+    { name: 'Únete', href: '/unete', nameEn: 'Join', feature: 'show-unete' },
+    { name: 'Contacto', href: '/contacto', nameEn: 'Contact', feature: 'show-contacto' },
   ];
 
   return allNavigationItems.filter(item => {
-    if (item.feature === null) return true;
-    return hasFeature(item.feature);
+    return hasFeature(item.feature!);
   });
 }
 
 /**
- * Debug helper for development (now synchronous)
+ * Clear the feature cache
  */
-export function getFeatureFlagsStatus() {
-  const flags = getFeatureFlags();
-  
-  if (!flags.showDebugInfo) {
-    return null;
-  }
-  
-  return {
-    flags,
-    environment: process.env.NODE_ENV,
-    enabledFeatures: Object.entries(flags)
-      .filter(([, enabled]) => enabled)
-      .map(([feature]) => feature),
-    disabledFeatures: Object.entries(flags)
-      .filter(([, enabled]) => !enabled)
-      .map(([feature]) => feature),
-  };
+export function clearFeatureCache(): void {
+  featureCache = null;
 }
 
 /**
- * Clear the flags cache (delegates to featureConfig)
+ * Get debug info if debug mode is enabled
  */
-export function clearFeatureFlagsCache(): void {
-  clearFeatureCache();
+export function getFeatureFlagsStatus() {
+  if (!hasFeature('show-debug-info')) {
+    return null;
+  }
+  
+  const features = resolveFeatures();
+  
+  return {
+    features,
+    environment: process.env.NODE_ENV,
+    enabledFeatures: Object.entries(features)
+      .filter(([, enabled]) => enabled)
+      .map(([feature]) => feature),
+    disabledFeatures: Object.entries(features)
+      .filter(([, enabled]) => !enabled)
+      .map(([feature]) => feature),
+  };
 }

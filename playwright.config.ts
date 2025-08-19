@@ -26,7 +26,7 @@ export default defineConfig({
   use: {
     /* Base URL to use in tests for like `await page.goto('/ ')`. */
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
-    timeout: 60000, // Set a 60-second timeout for all actions
+    
     launchOptions: {
       env: {
         NEXT_PUBLIC_FEATURE_CLASIFICACION: 'true',
@@ -37,9 +37,7 @@ export default defineConfig({
         NEXT_PUBLIC_FEATURE_CLERK_AUTH: 'true',
         NEXT_PUBLIC_FEATURE_ADMIN: 'true',
         NEXT_PUBLIC_FEATURE_TRIVIA_GAME: 'true',
-        // Mock Flagsmith to prevent excessive API requests in tests
-        NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID: 'test-environment',
-  E2E_FLAGSMITH_MOCK: 'true',
+        // Feature flags for E2E testing
       },
     },
 

@@ -6,7 +6,6 @@ import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash, User, LogIn, LogOu
 import BetisLogo from '@/components/BetisLogo';
 import { getEnabledNavigationItems } from '@/lib/featureFlags';
 import { useUser, useClerk } from '@clerk/nextjs';
-import { NavigationItem } from '@/lib/featureConfig';
 
 interface DebugInfo {
   flags: Record<string, boolean>;

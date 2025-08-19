@@ -42,7 +42,7 @@ npm run lighthouse:accessibility # Run Lighthouse audit
 - **Styling**: Tailwind CSS 4 with custom Betis branding
 - **Database**: Supabase (PostgreSQL) with Row Level Security
 - **Authentication**: Clerk with role-based permissions
-- **Feature Flags**: Flagsmith for secure feature rollouts
+- **Feature Flags**: Environment variables for feature rollouts
 - **Testing**: Vitest + Playwright + Storybook v9
 
 ### Key Directories
@@ -72,7 +72,7 @@ sql/                    # Database migrations & scripts
 - **Location**: `src/lib/featureConfig.ts` - replaces Flagsmith
 - **Always-on features**: RSVP, Únete (Join), Contacto (Contact) - no flags needed
 - **Production-ready features**: Clasificación, Partidos, Nosotros, Clerk Auth - enabled by default
-- **Documentation**: See `docs/adr/004-flagsmith-feature-flags.md` (migration documented)
+- **Documentation**: See `docs/adr/004-flagsmith-feature-flags.md` (deprecated migration documented)
 
 ### Authentication Flow (Clerk + Supabase)
 - **Dual mode**: Anonymous submissions + authenticated user management  
@@ -249,9 +249,9 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 // Mocking with Vitest
-vi.mock('@/lib/flagsmith', () => ({
-  hasFeature: vi.fn(() => Promise.resolve(false)),
-  getValue: vi.fn(() => Promise.resolve('default')),
+vi.mock('@/lib/featureFlags', () => ({
+  hasFeature: vi.fn(() => true),
+  getFeatureFlags: vi.fn(() => ({ showClasificacion: true })),
 }));
 
 // Component testing

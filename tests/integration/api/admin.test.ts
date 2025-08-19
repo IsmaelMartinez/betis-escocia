@@ -17,25 +17,20 @@ describe('Admin API', () => {
   });
 
   describe('Admin Functionality', () => {
-    it('should handle admin operations correctly', async () => {
-      // This is a simplified test that verifies the API structure
-      // without complex mocking of the actual admin routes
-      expect(true).toBe(true);
+    it.skip('should handle admin operations correctly', async () => {
+      // TODO: Implement admin operations test
     });
 
-    it('should validate admin authentication requirements', async () => {
-      // Test admin authentication patterns
-      expect(true).toBe(true);
+    it.skip('should validate admin authentication requirements', async () => {
+      // TODO: Implement admin authentication test
     });
 
-    it('should handle user role management', async () => {
-      // Test role assignment handling
-      expect(true).toBe(true);
+    it.skip('should handle user role management', async () => {
+      // TODO: Implement role management test
     });
 
-    it('should handle user management operations', async () => {
-      // Test user management handling
-      expect(true).toBe(true);
+    it.skip('should handle user management operations', async () => {
+      // TODO: Implement user management test
     });
   });
 });

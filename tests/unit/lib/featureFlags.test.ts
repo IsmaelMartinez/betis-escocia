@@ -1,432 +1,174 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { 
-  initializeFeatureFlags,
-  getFeatureFlags,
-  getLegacyEnvironmentFlags,
-  isFeatureEnabled,
-  isFeatureEnabledAsync,
-  getFeatureFlag,
-  hasFeatureFlag,
+  hasFeature,
   getEnabledNavigationItems,
   getFeatureFlagsStatus,
-  clearFeatureFlagsCache,
-  preloadFeatureFlags,
-  featureFlags,
-  FeatureFlags
+  clearFeatureCache,
+  type FeatureName
 } from '@/lib/featureFlags';
 
-// Mock the flagsmith modules
-vi.mock('@/lib/flagsmith/config', () => ({
-  getFlagsmithConfig: vi.fn(),
-}));
+// Mock environment variables
+const mockEnv: Record<string, string | undefined> = {};
 
-vi.mock('@/lib/flagsmith/index', () => ({
-  getValue: vi.fn(),
-  getMultipleValues: vi.fn(),
-  hasFeature: vi.fn(),
-  getFlagsmithManager: vi.fn(),
-}));
+// Mock process.env properly
+vi.stubGlobal('process', {
+  env: mockEnv,
+});
 
-// Mock console methods to avoid cluttering test output
-const mockConsole = {
-  warn: vi.spyOn(console, 'warn').mockImplementation(() => {}),
-  error: vi.spyOn(console, 'error').mockImplementation(() => {}),
-  debug: vi.spyOn(console, 'debug').mockImplementation(() => {}),
-};
-
-describe('featureFlags', () => {
+describe('Feature Flags - Simplified System', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-    // Clear cache before each test
-    clearFeatureFlagsCache();
+    // Reset environment variables
+    Object.keys(mockEnv).forEach(key => delete mockEnv[key]);
     
-    Object.values(mockConsole).forEach(mock => mock.mockClear());
+    // Clear feature cache
+    clearFeatureCache();
   });
 
-  describe('initializeFeatureFlags', () => {
-    it('should complete without throwing when called', async () => {
-      // This test ensures the function can be called without throwing
-      // regardless of mocking issues
-      await expect(initializeFeatureFlags()).resolves.not.toThrow();
-    });
-
-    it('should call getFlagsmithConfig', async () => {
-      const { getFlagsmithConfig } = await import('@/lib/flagsmith/config');
+  describe('Default Feature Values', () => {
+    it('should return default values when no environment variables are set', () => {
+      expect(hasFeature('show-rsvp')).toBe(true);
+      expect(hasFeature('show-unete')).toBe(true);
+      expect(hasFeature('show-contacto')).toBe(true);
+      expect(hasFeature('show-clasificacion')).toBe(true);
+      expect(hasFeature('show-partidos')).toBe(true);
+      expect(hasFeature('show-nosotros')).toBe(true);
+      expect(hasFeature('show-clerk-auth')).toBe(true);
       
-      await initializeFeatureFlags();
-      
-      expect(getFlagsmithConfig).toHaveBeenCalled();
-    });
-
-    it('should handle E2E_FLAGSMITH_MOCK environment variable', async () => {
-      vi.stubEnv('E2E_FLAGSMITH_MOCK', 'true');
-      
-      const { getFlagsmithConfig } = await import('@/lib/flagsmith/config');
-      (getFlagsmithConfig as any).mockReturnValue(null);
-      
-      await initializeFeatureFlags();
-      
-      // Should exit early and not call getFlagsmithConfig when mocked
-      expect(getFlagsmithConfig).not.toHaveBeenCalled();
-    });
-
-  });
-
-  describe('getLegacyEnvironmentFlags', () => {
-    it('should return default flags in test environment', () => {
-      vi.stubEnv('NODE_ENV', 'test');
-      
-      const flags = getLegacyEnvironmentFlags();
-      
-      expect(flags.showClasificacion).toBe(true);
-      expect(flags.showColeccionables).toBe(false);
-      expect(flags.showDebugInfo).toBe(false);
-      expect(flags.showClerkAuth).toBe(true);
-    });
-
-    it('should apply production overrides', () => {
-      vi.stubEnv('NODE_ENV', 'production');
-      
-      const flags = getLegacyEnvironmentFlags();
-      
-      expect(flags.showDebugInfo).toBe(false);
-    });
-
-    it('should apply development overrides with debug mode', () => {
-      vi.stubEnv('NODE_ENV', 'development');
-      vi.stubEnv('NEXT_PUBLIC_DEBUG_MODE', 'true');
-      
-      const flags = getLegacyEnvironmentFlags();
-      
-      expect(flags.showDebugInfo).toBe(true);
-    });
-
-    it('should apply development overrides without debug mode', () => {
-      vi.stubEnv('NODE_ENV', 'development');
-      vi.stubEnv('NEXT_PUBLIC_DEBUG_MODE', undefined); // undefined should result in false
-      
-      const flags = getLegacyEnvironmentFlags();
-      
-      expect(flags.showDebugInfo).toBe(false);
-    });
-
-    it('should respect specific environment variable overrides', () => {
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_CLASIFICACION', 'false');
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_COLECCIONABLES', 'true');
-      
-      const flags = getLegacyEnvironmentFlags();
-      
-      expect(flags.showClasificacion).toBe(false);
-      expect(flags.showColeccionables).toBe(true);
-    });
-
-    it('should handle empty string environment variables', () => {
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_CLASIFICACION', '');
-      
-      const flags = getLegacyEnvironmentFlags();
-      
-      // Empty string is not undefined, so the logic env !== undefined is true
-      // Then env === 'true' is false for empty string, so it gets false
-      expect(flags.showClasificacion).toBe(false);
-    });
-
-    it('should handle all feature environment variables', () => {
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_GALERIA', 'true');
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_PARTIDOS', 'false');
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA', 'true');
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_HISTORY', 'true');
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_NOSOTROS', 'false');
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_REDES_SOCIALES', 'true');
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_CLERK_AUTH', 'false');
-      
-      const flags = getLegacyEnvironmentFlags();
-      
-      expect(flags.showGaleria).toBe(true);
-      expect(flags.showPartidos).toBe(false);
-      expect(flags.showSocialMedia).toBe(true);
-      expect(flags.showHistory).toBe(true);
-      expect(flags.showNosotros).toBe(false);
-      expect(flags.showRedesSociales).toBe(true);
-      expect(flags.showClerkAuth).toBe(false);
+      expect(hasFeature('show-coleccionables')).toBe(false);
+      expect(hasFeature('show-galeria')).toBe(false);
+      expect(hasFeature('show-social-media')).toBe(false);
+      expect(hasFeature('show-history')).toBe(false);
+      expect(hasFeature('show-redes-sociales')).toBe(false);
+      expect(hasFeature('show-debug-info')).toBe(false);
+      expect(hasFeature('admin-push-notifications')).toBe(false);
     });
   });
 
-  describe('getFeatureFlags', () => {
-    it('should return cached flags when cache is valid', async () => {
-      const { getMultipleValues } = await import('@/lib/flagsmith/index');
-      (getMultipleValues as any).mockResolvedValue({
-        'show-clasificacion': true,
-        'show-coleccionables': true,
-      });
-
-      // First call should fetch and cache
-      const firstCall = await getFeatureFlags();
+  describe('Environment Variable Overrides', () => {
+    it('should override defaults when environment variables are set to "true"', () => {
+      mockEnv.NEXT_PUBLIC_FEATURE_GALERIA = 'true';
+      mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = 'true';
+      clearFeatureCache();
       
-      // Second call should use cache
-      const secondCall = await getFeatureFlags();
-      
-      expect(firstCall).toEqual(secondCall);
-      expect(getMultipleValues).toHaveBeenCalledTimes(1);
-      expect(mockConsole.debug).toHaveBeenCalledWith(
-        '[Feature Flags] getFeatureFlags: Cache hit.',
-        expect.any(Object)
-      );
+      expect(hasFeature('show-galeria')).toBe(true);
+      expect(hasFeature('show-debug-info')).toBe(true);
     });
 
-    it('should fetch flags from Flagsmith when cache is expired', async () => {
-      const { getMultipleValues } = await import('@/lib/flagsmith/index');
-      const mockFlags = {
-        'show-clasificacion': true,
-        'show-coleccionables': false,
-        'show-galeria': true,
-        'show-partidos': false,
-        'show-social-media': true,
-        'show-history': false,
-        'show-nosotros': true,
-        'show-redes-sociales': false,
-        'show-clerk-auth': true,
-        'show-debug-info': true,
-      };
-      (getMultipleValues as any).mockResolvedValue(mockFlags);
-
-      const flags = await getFeatureFlags();
-
-      expect(flags).toEqual({
-        showClasificacion: true,
-        showColeccionables: false,
-        showGaleria: true,
-        showRSVP: true, // Always-on feature
-        showPartidos: false,
-        showSocialMedia: true,
-        showHistory: false,
-        showNosotros: true,
-        showUnete: true, // Always-on feature
-        showContacto: true, // Always-on feature
-        showRedesSociales: false,
-        showClerkAuth: true,
-        showDebugInfo: true,
-      });
-
-      expect(mockConsole.debug).toHaveBeenCalledWith(
-        '[Feature Flags] getFeatureFlags: Fetched flags from Flagsmith (batch):',
-        flags
-      );
+    it('should override defaults when environment variables are set to "false"', () => {
+      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = 'false';
+      mockEnv.NEXT_PUBLIC_FEATURE_CLASIFICACION = 'false';
+      clearFeatureCache();
+      
+      expect(hasFeature('show-rsvp')).toBe(false);
+      expect(hasFeature('show-clasificacion')).toBe(false);
     });
 
-    it('should fallback to environment flags when Flagsmith fails', async () => {
-      const { getMultipleValues } = await import('@/lib/flagsmith/index');
-      (getMultipleValues as any).mockRejectedValue(new Error('Network error'));
-
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_CLASIFICACION', 'false');
+    it('should be case insensitive for environment variables', () => {
+      mockEnv.NEXT_PUBLIC_FEATURE_GALERIA = 'TRUE';
+      mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = 'True';
+      mockEnv.NEXT_PUBLIC_FEATURE_HISTORY = 'FALSE';
+      clearFeatureCache();
       
-      const flags = await getFeatureFlags();
-
-      expect(flags.showClasificacion).toBe(false);
-      // Console.error may or may not be called depending on implementation details
-      // Focus on the functional behavior instead
+      expect(hasFeature('show-galeria')).toBe(true);
+      expect(hasFeature('show-debug-info')).toBe(true);
+      expect(hasFeature('show-history')).toBe(false);
     });
 
-    it('should handle errors gracefully and return some flags', async () => {
-      const { getMultipleValues } = await import('@/lib/flagsmith/index');
-      (getMultipleValues as any).mockRejectedValue(new Error('Network error'));
+    it('should default to false for any non-"true" value', () => {
+      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = 'yes';
+      mockEnv.NEXT_PUBLIC_FEATURE_CLASIFICACION = '1';
+      mockEnv.NEXT_PUBLIC_FEATURE_PARTIDOS = 'enabled';
+      clearFeatureCache();
       
-      const flags = await getFeatureFlags();
-      
-      // Should get fallback flags
-      expect(flags).toBeDefined();
-      expect(typeof flags.showRSVP).toBe('boolean');
-      expect(typeof flags.showUnete).toBe('boolean');
-      expect(typeof flags.showContacto).toBe('boolean');
+      expect(hasFeature('show-rsvp')).toBe(false);
+      expect(hasFeature('show-clasificacion')).toBe(false);
+      expect(hasFeature('show-partidos')).toBe(false);
     });
   });
 
-  describe('isFeatureEnabled', () => {
-    it('should return feature flag value from proxy', () => {
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_CLASIFICACION', 'false');
+  describe('Navigation Items', () => {
+    it('should return only enabled navigation items', () => {
+      const enabledItems = getEnabledNavigationItems();
       
-      const result = isFeatureEnabled('showClasificacion');
+      // Should include items that are enabled by default
+      expect(enabledItems.some(item => item.name === 'RSVP')).toBe(true);
+      expect(enabledItems.some(item => item.name === 'Partidos')).toBe(true);
+      expect(enabledItems.some(item => item.name === 'Clasificación')).toBe(true);
+      expect(enabledItems.some(item => item.name === 'Nosotros')).toBe(true);
+      expect(enabledItems.some(item => item.name === 'Únete')).toBe(true);
+      expect(enabledItems.some(item => item.name === 'Contacto')).toBe(true);
       
-      expect(result).toBe(false);
+      // Should not include items that are disabled by default
+      expect(enabledItems.some(item => item.name === 'Galería')).toBe(false);
+      expect(enabledItems.some(item => item.name === 'Coleccionables')).toBe(false);
+    });
+
+    it('should include items when enabled via environment variables', () => {
+      mockEnv.NEXT_PUBLIC_FEATURE_GALERIA = 'true';
+      mockEnv.NEXT_PUBLIC_FEATURE_COLECCIONABLES = 'true';
+      clearFeatureCache();
+      
+      const enabledItems = getEnabledNavigationItems();
+      
+      expect(enabledItems.some(item => item.name === 'Galería')).toBe(true);
+      expect(enabledItems.some(item => item.name === 'Coleccionables')).toBe(true);
+    });
+
+    it('should exclude items when disabled via environment variables', () => {
+      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = 'false';
+      mockEnv.NEXT_PUBLIC_FEATURE_PARTIDOS = 'false';
+      clearFeatureCache();
+      
+      const enabledItems = getEnabledNavigationItems();
+      
+      expect(enabledItems.some(item => item.name === 'RSVP')).toBe(false);
+      expect(enabledItems.some(item => item.name === 'Partidos')).toBe(false);
     });
   });
 
-  describe('isFeatureEnabledAsync', () => {
-    it('should return feature flag value asynchronously', async () => {
-      const { getMultipleValues } = await import('@/lib/flagsmith/index');
-      (getMultipleValues as any).mockResolvedValue({
-        'show-clasificacion': false,
-      });
-
-      const result = await isFeatureEnabledAsync('showClasificacion');
-
-      expect(result).toBe(false);
-      expect(mockConsole.debug).toHaveBeenCalledWith(
-        '[Feature Flags] isFeatureEnabledAsync: Checking feature',
-        'showClasificacion'
-      );
-    });
-  });
-
-  describe('getFeatureFlag', () => {
-    it('should call getValue with correct flag name', async () => {
-      const { getValue } = await import('@/lib/flagsmith/index');
-      (getValue as any).mockResolvedValue(true);
-
-      const result = await getFeatureFlag('show-clasificacion');
-
-      expect(getValue).toHaveBeenCalledWith('show-clasificacion');
-      expect(result).toBe(true);
-    });
-  });
-
-  describe('hasFeatureFlag', () => {
-    it('should call hasFeature with correct flag name', async () => {
-      const { hasFeature } = await import('@/lib/flagsmith/index');
-      (hasFeature as any).mockResolvedValue(true);
-
-      const result = await hasFeatureFlag('show-clasificacion');
-
-      expect(hasFeature).toHaveBeenCalledWith('show-clasificacion');
-      expect(result).toBe(true);
-    });
-  });
-
-  describe('getEnabledNavigationItems', () => {
-    it('should return all items when all features are enabled', async () => {
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_COLECCIONABLES', 'true');
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_GALERIA', 'true');
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_HISTORY', 'true');
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_NOSOTROS', 'true');
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_REDES_SOCIALES', 'true');
-
-      const items = await getEnabledNavigationItems();
-
-      // There are 5 always-on items (null feature) and we expect some feature-flagged items
-      expect(items.length).toBeGreaterThanOrEqual(5); // At least the always-on items
-      expect(items.some(item => item.name === 'RSVP')).toBe(true); // Always on
-      expect(items.some(item => item.name === 'Únete')).toBe(true); // Always on
-      expect(items.some(item => item.name === 'Contacto')).toBe(true); // Always on
-      // Note: Coleccionables and Galería might not be enabled if env vars don't take effect in tests
-    });
-
-    it('should filter out disabled features', async () => {
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_COLECCIONABLES', 'false');
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_GALERIA', 'false');
-
-      const items = await getEnabledNavigationItems();
-
-      expect(items.some(item => item.name === 'Coleccionables')).toBe(false);
-      expect(items.some(item => item.name === 'Galería')).toBe(false);
-    });
-
-    it('should always include items with null feature (always enabled)', async () => {
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_COLECCIONABLES', 'false');
-
-      const items = await getEnabledNavigationItems();
-
-      expect(items.some(item => item.name === 'RSVP')).toBe(true);
-      expect(items.some(item => item.name === 'Únete')).toBe(true);
-      expect(items.some(item => item.name === 'Contacto')).toBe(true);
-    });
-
-    it('should handle items with unknown features gracefully', async () => {
-      // This tests the edge case where the feature name lookup fails
-      // The item.feature might not map to any known FLAG_MIGRATION_MAP key
-      const items = await getEnabledNavigationItems();
-
-      // Should not crash and should return some items
-      expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
-    });
-  });
-
-  describe('getFeatureFlagsStatus', () => {
-    it('should return null when debug info is disabled', async () => {
-      const { getMultipleValues } = await import('@/lib/flagsmith/index');
-      (getMultipleValues as any).mockResolvedValue({
-        'show-debug-info': false,
-      });
-
-      const status = await getFeatureFlagsStatus();
-
+  describe('Feature Flags Status Debug', () => {
+    it('should return null when debug mode is disabled', () => {
+      const status = getFeatureFlagsStatus();
       expect(status).toBeNull();
     });
 
-    it('should return detailed status when debug info is enabled', async () => {
-      const { getMultipleValues } = await import('@/lib/flagsmith/index');
-      vi.stubEnv('NODE_ENV', 'development');
-      (getMultipleValues as any).mockResolvedValue({
-        'show-debug-info': true,
-        'show-clasificacion': true,
-        'show-coleccionables': false,
-      });
-
-      const status = await getFeatureFlagsStatus();
-
-      expect(status).toEqual(
-        expect.objectContaining({
-          environment: 'development',
-          enabledFeatures: expect.arrayContaining(['showDebugInfo', 'showClasificacion']),
-          disabledFeatures: expect.arrayContaining(['showColeccionables']),
-          cacheStatus: expect.objectContaining({
-            cached: expect.any(Boolean),
-            expires: expect.any(String),
-          }),
-        })
-      );
+    it('should return debug info when debug mode is enabled', () => {
+      mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = 'true';
+      clearFeatureCache();
+      
+      const status = getFeatureFlagsStatus();
+      
+      expect(status).not.toBeNull();
+      expect(status).toHaveProperty('features');
+      expect(status).toHaveProperty('environment');
+      expect(status).toHaveProperty('enabledFeatures');
+      expect(status).toHaveProperty('disabledFeatures');
+      
+      expect(Array.isArray(status!.enabledFeatures)).toBe(true);
+      expect(Array.isArray(status!.disabledFeatures)).toBe(true);
+      expect(status!.enabledFeatures.includes('show-debug-info')).toBe(true);
     });
   });
 
-  describe('clearFeatureFlagsCache', () => {
-    it('should clear the cache', async () => {
-      const { getMultipleValues } = await import('@/lib/flagsmith/index');
-      (getMultipleValues as any).mockResolvedValue({});
-
-      // Load cache
-      await getFeatureFlags();
+  describe('Cache Management', () => {
+    it('should cache feature flag results', () => {
+      // First call resolves and caches
+      expect(hasFeature('show-rsvp')).toBe(true);
       
-      // Clear cache
-      clearFeatureFlagsCache();
+      // Change environment variable after first call
+      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = 'false';
       
-      // Next call should fetch again
-      await getFeatureFlags();
-
-      expect(getMultipleValues).toHaveBeenCalledTimes(2);
-    });
-  });
-
-  describe('preloadFeatureFlags', () => {
-    it('should preload feature flags', async () => {
-      const { getMultipleValues } = await import('@/lib/flagsmith/index');
-      (getMultipleValues as any).mockResolvedValue({});
-
-      await preloadFeatureFlags();
-
-      expect(getMultipleValues).toHaveBeenCalled();
-    });
-  });
-
-  describe('featureFlags proxy', () => {
-    it('should access cached flags when available', async () => {
-      const { getMultipleValues } = await import('@/lib/flagsmith/index');
-      (getMultipleValues as any).mockResolvedValue({
-        'show-clasificacion': true,
-      });
-
-      // Load cache
-      await getFeatureFlags();
-      
-      // Access through proxy
-      expect(featureFlags.showClasificacion).toBe(true);
+      // Should still return cached result
+      expect(hasFeature('show-rsvp')).toBe(true);
     });
 
-    it('should fallback to environment flags when cache is empty', () => {
-      vi.stubEnv('NEXT_PUBLIC_FEATURE_CLASIFICACION', 'false');
+    it('should clear cache and re-evaluate after clearFeatureCache', () => {
+      expect(hasFeature('show-rsvp')).toBe(true);
       
-      // Clear any existing cache
-      clearFeatureFlagsCache();
+      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = 'false';
+      clearFeatureCache();
       
-      expect(featureFlags.showClasificacion).toBe(false);
+      expect(hasFeature('show-rsvp')).toBe(false);
     });
   });
 });

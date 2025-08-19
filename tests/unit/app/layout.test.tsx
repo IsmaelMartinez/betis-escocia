@@ -6,11 +6,9 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import * as Sentry from '@sentry/nextjs';
-import * as featureFlags from '@/lib/featureFlags';
 import Layout from '@/components/Layout';
 import OfflineDetector from '@/components/OfflineDetector';
 import SentryUserContext from '@/components/SentryUserContext';
-import FlagsmithRefresher from '@/components/FlagsmithRefresher';
 import FacebookSDK from '@/components/FacebookSDK';
 
 // Mock external modules and components
@@ -40,13 +38,6 @@ vi.mock('@/components/SentryUserContext', () => ({
 vi.mock('@clerk/nextjs', () => ({
   ClerkProvider: vi.fn(({ children }: any) => <div data-testid="mock-clerk-provider">{children}</div>),
 }));
-vi.mock('@/lib/featureFlags', () => ({
-  initializeFeatureFlags: vi.fn(),
-  getEnabledNavigationItems: vi.fn(() => Promise.resolve([])),
-}));
-vi.mock('@/components/FlagsmithRefresher', () => ({
-  default: vi.fn(() => <div data-testid="mock-flagsmith-refresher" />),
-}));
 vi.mock('@/components/FacebookSDK', () => ({
   default: vi.fn(() => <div data-testid="mock-facebook-sdk" />),
 }));
@@ -61,8 +52,8 @@ describe('RootLayout', () => {
     vi.mocked(ClerkProvider).mockImplementation((props: any) => <div data-testid="mock-clerk-provider">{props.children}</div> as any);
   });
 
-  it('renders children correctly within the layout structure', async () => {
-    render(await RootLayout({ children: <p>Test Children</p> }));
+  it('renders children correctly within the layout structure', () => {
+    render(RootLayout({ children: <p>Test Children</p> }));
 
     expect(screen.getByText('Test Children')).toBeInTheDocument();
     expect(screen.getByTestId('mock-layout')).toBeInTheDocument();
@@ -70,33 +61,30 @@ describe('RootLayout', () => {
     expect(screen.getByTestId('mock-clerk-provider')).toBeInTheDocument();
   });
 
-  it('renders all expected top-level components', async () => {
-    render(await RootLayout({ children: <p>Test Children</p> }));
+  it('renders all expected top-level components', () => {
+    render(RootLayout({ children: <p>Test Children</p> }));
 
     expect(screen.getByTestId('mock-facebook-sdk')).toBeInTheDocument();
     expect(screen.getByTestId('mock-offline-detector')).toBeInTheDocument();
-    expect(screen.getByTestId('mock-flagsmith-refresher')).toBeInTheDocument();
     expect(screen.getByTestId('mock-sentry-user-context')).toBeInTheDocument();
     expect(screen.getByTestId('mock-analytics')).toBeInTheDocument();
     expect(screen.getByTestId('mock-speed-insights')).toBeInTheDocument();
   });
 
-  it('initializes feature flags on render', async () => {
-    render(await RootLayout({ children: <p>Test Children</p> }));
-    expect(featureFlags.initializeFeatureFlags).toHaveBeenCalledTimes(1);
-    expect(featureFlags.getEnabledNavigationItems).toHaveBeenCalledTimes(1);
+  it('renders without errors', () => {
+    expect(() => {
+      render(RootLayout({ children: <p>Test Children</p> }));
+    }).not.toThrow();
   });
 
-  it('logs error if feature flag initialization fails and sets empty navigation', async () => {
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const mockError = new Error('Flagsmith init failed');
-    vi.mocked(featureFlags.initializeFeatureFlags).mockRejectedValueOnce(mockError);
-
-    render(await RootLayout({ children: <p>Test Children</p> }));
-
-    expect(consoleErrorSpy).toHaveBeenCalledWith('[RootLayout] Error during Flagsmith initialization or flag fetching:', mockError);
-    // Verify that getEnabledNavigationItems is still called, but its result might be ignored or handled by fallback
-    expect(featureFlags.getEnabledNavigationItems).not.toHaveBeenCalled(); // Modified line
-    consoleErrorSpy.mockRestore();
+  it('passes debugInfo to Layout component', () => {
+    render(RootLayout({ children: <p>Test Children</p> }));
+    
+    // Layout should be called with debugInfo as null (simplified implementation)
+    const layoutCalls = vi.mocked(Layout).mock.calls;
+    expect(layoutCalls.length).toBeGreaterThan(0);
+    expect(layoutCalls[0][0]).toMatchObject({
+      debugInfo: null,
+    });
   });
 });

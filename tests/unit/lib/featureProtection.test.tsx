@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { notFound } from 'next/navigation';
 import { withFeatureFlag, useFeatureFlag, FeatureWrapper } from '@/lib/featureProtection';
-import { isFeatureEnabled } from '@/lib/featureFlags';
+import { isFeatureEnabled, hasFeature } from '@/lib/featureFlags';
 
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
@@ -13,9 +13,10 @@ vi.mock('next/navigation', () => ({
 // Mock featureFlags
 vi.mock('@/lib/featureFlags', () => ({
   isFeatureEnabled: vi.fn(),
+  hasFeature: vi.fn(),
 }));
 
-const mockIsFeatureEnabled = vi.mocked(isFeatureEnabled);
+const mockHasFeature = vi.mocked(hasFeature);
 const mockNotFound = vi.mocked(notFound);
 
 // Test component for HOC testing
@@ -34,8 +35,8 @@ describe('featureProtection', () => {
 
   describe('withFeatureFlag', () => {
     it('should render component when feature is enabled', () => {
-      mockIsFeatureEnabled.mockReturnValue(true);
-      const ProtectedComponent = withFeatureFlag(TestComponent, 'trivia' as any);
+      mockHasFeature.mockReturnValue(true);
+      const ProtectedComponent = withFeatureFlag(TestComponent, 'show-galeria');
 
       render(<ProtectedComponent title="Protected Component" />);
 
@@ -45,30 +46,30 @@ describe('featureProtection', () => {
     });
 
     it('should call notFound when feature is disabled', () => {
-      mockIsFeatureEnabled.mockReturnValue(false);
+      mockHasFeature.mockReturnValue(false);
       // Mock notFound to throw an error to simulate Next.js behavior
       mockNotFound.mockImplementation(() => {
         throw new Error('NEXT_NOT_FOUND');
       });
       
-      const ProtectedComponent = withFeatureFlag(TestComponent, 'trivia' as any);
+      const ProtectedComponent = withFeatureFlag(TestComponent, 'show-galeria');
 
       expect(() => render(<ProtectedComponent />)).toThrow('NEXT_NOT_FOUND');
       expect(mockNotFound).toHaveBeenCalled();
     });
 
     it('should check the correct feature flag', () => {
-      mockIsFeatureEnabled.mockReturnValue(true);
-      const ProtectedComponent = withFeatureFlag(TestComponent, 'rsvp' as any);
+      mockHasFeature.mockReturnValue(true);
+      const ProtectedComponent = withFeatureFlag(TestComponent, 'show-rsvp');
 
       render(<ProtectedComponent />);
 
-      expect(mockIsFeatureEnabled).toHaveBeenCalledWith('rsvp');
+      expect(mockHasFeature).toHaveBeenCalledWith('show-rsvp');
     });
 
     it('should pass through all props to the wrapped component', () => {
-      mockIsFeatureEnabled.mockReturnValue(true);
-      const ProtectedComponent = withFeatureFlag(TestComponent, 'trivia' as any);
+      mockHasFeature.mockReturnValue(true);
+      const ProtectedComponent = withFeatureFlag(TestComponent, 'show-galeria');
 
       render(<ProtectedComponent title="Custom Title" />);
 
@@ -76,27 +77,27 @@ describe('featureProtection', () => {
     });
 
     it('should maintain component display name', () => {
-      mockIsFeatureEnabled.mockReturnValue(true);
-      const ProtectedComponent = withFeatureFlag(TestComponent, 'trivia' as any);
+      mockHasFeature.mockReturnValue(true);
+      const ProtectedComponent = withFeatureFlag(TestComponent, 'show-galeria');
 
       expect((ProtectedComponent as any).displayName || ProtectedComponent.name).toBe('ProtectedComponent');
     });
 
     it('should handle multiple instances with different feature flags', () => {
-      mockIsFeatureEnabled.mockImplementation((flag) => (flag as string) === 'trivia');
+      mockHasFeature.mockImplementation((flag) => (flag as string) === 'show-galeria');
       // Mock notFound to throw for disabled features
       mockNotFound.mockImplementation(() => {
         throw new Error('NEXT_NOT_FOUND');
       });
       
-      const TriviaProtected = withFeatureFlag(TestComponent, 'trivia' as any);
-      const RSVPProtected = withFeatureFlag(TestComponent, 'rsvp' as any);
+      const TriviaProtected = withFeatureFlag(TestComponent, 'show-galeria');
+      const RSVPProtected = withFeatureFlag(TestComponent, 'show-rsvp');
 
       render(<TriviaProtected title="Trivia" />);
       expect(screen.getByText('Trivia')).toBeInTheDocument();
 
       expect(() => render(<RSVPProtected title="RSVP" />)).toThrow('NEXT_NOT_FOUND');
-      expect(mockIsFeatureEnabled).toHaveBeenCalledWith('rsvp');
+      expect(mockHasFeature).toHaveBeenCalledWith('show-rsvp');
     });
   });
 
@@ -121,24 +122,24 @@ describe('featureProtection', () => {
     });
 
     it('should return true when feature is enabled', () => {
-      mockIsFeatureEnabled.mockReturnValue(true);
+      mockHasFeature.mockReturnValue(true);
       
       const TestHookComponent = () => {
-        const isEnabled = useFeatureFlag('trivia' as any);
+        const isEnabled = useFeatureFlag('show-galeria');
         return <div>{isEnabled ? 'enabled' : 'disabled'}</div>;
       };
 
       render(<TestHookComponent />);
 
       expect(screen.getByText('enabled')).toBeInTheDocument();
-      expect(mockIsFeatureEnabled).toHaveBeenCalledWith('trivia');
+      expect(mockHasFeature).toHaveBeenCalledWith('show-galeria');
     });
 
     it('should return false when feature is disabled', () => {
-      mockIsFeatureEnabled.mockReturnValue(false);
+      mockHasFeature.mockReturnValue(false);
       
       const TestHookComponent = () => {
-        const isEnabled = useFeatureFlag('trivia' as any);
+        const isEnabled = useFeatureFlag('show-galeria');
         return <div>{isEnabled ? 'enabled' : 'disabled'}</div>;
       };
 
@@ -148,10 +149,10 @@ describe('featureProtection', () => {
     });
 
     it('should redirect when feature is disabled and redirectTo is provided', () => {
-      mockIsFeatureEnabled.mockReturnValue(false);
+      mockHasFeature.mockReturnValue(false);
       
       const TestHookComponent = () => {
-        useFeatureFlag('trivia' as any, '/dashboard');
+        useFeatureFlag('show-galeria', '/dashboard');
         return <div>content</div>;
       };
 
@@ -161,11 +162,11 @@ describe('featureProtection', () => {
     });
 
     it('should not redirect when feature is enabled even with redirectTo', () => {
-      mockIsFeatureEnabled.mockReturnValue(true);
+      mockHasFeature.mockReturnValue(true);
       const originalHref = window.location.href;
       
       const TestHookComponent = () => {
-        useFeatureFlag('trivia' as any, '/dashboard');
+        useFeatureFlag('show-galeria', '/dashboard');
         return <div>content</div>;
       };
 
@@ -175,11 +176,11 @@ describe('featureProtection', () => {
     });
 
     it('should not redirect when redirectTo is not provided', () => {
-      mockIsFeatureEnabled.mockReturnValue(false);
+      mockHasFeature.mockReturnValue(false);
       const originalHref = window.location.href;
       
       const TestHookComponent = () => {
-        useFeatureFlag('trivia' as any);
+        useFeatureFlag('show-galeria');
         return <div>content</div>;
       };
 
@@ -191,10 +192,10 @@ describe('featureProtection', () => {
     it('should handle server-side rendering (no window)', () => {
       // Skip this test since React Testing Library requires window
       // The actual implementation handles this case properly in real SSR
-      mockIsFeatureEnabled.mockReturnValue(false);
+      mockHasFeature.mockReturnValue(false);
       
       const TestHookComponent = () => {
-        const isEnabled = useFeatureFlag('trivia' as any, '/dashboard');
+        const isEnabled = useFeatureFlag('show-galeria', '/dashboard');
         return <div>{isEnabled ? 'enabled' : 'disabled'}</div>;
       };
 
@@ -206,10 +207,10 @@ describe('featureProtection', () => {
 
   describe('FeatureWrapper', () => {
     it('should render children when feature is enabled', () => {
-      mockIsFeatureEnabled.mockReturnValue(true);
+      mockHasFeature.mockReturnValue(true);
 
       render(
-        <FeatureWrapper feature={'trivia' as any}>
+        <FeatureWrapper feature={'show-galeria'}>
           <div data-testid="feature-content">Feature Content</div>
         </FeatureWrapper>
       );
@@ -219,11 +220,11 @@ describe('featureProtection', () => {
     });
 
     it('should render fallback when feature is disabled and fallback is provided', () => {
-      mockIsFeatureEnabled.mockReturnValue(false);
+      mockHasFeature.mockReturnValue(false);
 
       render(
         <FeatureWrapper 
-          feature={'trivia' as any} 
+          feature={'show-galeria'} 
           fallback={<div data-testid="fallback">Fallback Content</div>}
         >
           <div data-testid="feature-content">Feature Content</div>
@@ -236,10 +237,10 @@ describe('featureProtection', () => {
     });
 
     it('should render null when feature is disabled and no fallback is provided', () => {
-      mockIsFeatureEnabled.mockReturnValue(false);
+      mockHasFeature.mockReturnValue(false);
 
       const { container } = render(
-        <FeatureWrapper feature={'trivia' as any}>
+        <FeatureWrapper feature={'show-galeria'}>
           <div data-testid="feature-content">Feature Content</div>
         </FeatureWrapper>
       );
@@ -249,7 +250,7 @@ describe('featureProtection', () => {
     });
 
     it('should check the correct feature flag', () => {
-      mockIsFeatureEnabled.mockReturnValue(true);
+      mockHasFeature.mockReturnValue(true);
 
       render(
         <FeatureWrapper feature={'merchandise' as any}>
@@ -257,14 +258,14 @@ describe('featureProtection', () => {
         </FeatureWrapper>
       );
 
-      expect(mockIsFeatureEnabled).toHaveBeenCalledWith('merchandise');
+      expect(mockHasFeature).toHaveBeenCalledWith('merchandise');
     });
 
     it('should handle multiple children', () => {
-      mockIsFeatureEnabled.mockReturnValue(true);
+      mockHasFeature.mockReturnValue(true);
 
       render(
-        <FeatureWrapper feature={'trivia' as any}>
+        <FeatureWrapper feature={'show-galeria'}>
           <div data-testid="child-1">Child 1</div>
           <div data-testid="child-2">Child 2</div>
           <span>Child 3</span>
@@ -277,11 +278,11 @@ describe('featureProtection', () => {
     });
 
     it('should handle complex fallback content', () => {
-      mockIsFeatureEnabled.mockReturnValue(false);
+      mockHasFeature.mockReturnValue(false);
 
       render(
         <FeatureWrapper 
-          feature={'trivia' as any}
+          feature={'show-galeria'}
           fallback={
             <div data-testid="complex-fallback">
               <h2>Feature Disabled</h2>
@@ -301,10 +302,10 @@ describe('featureProtection', () => {
     });
 
     it('should re-render when feature flag changes', () => {
-      mockIsFeatureEnabled.mockReturnValue(false);
+      mockHasFeature.mockReturnValue(false);
 
       const { rerender } = render(
-        <FeatureWrapper feature={'trivia' as any}>
+        <FeatureWrapper feature={'show-galeria'}>
           <div data-testid="feature-content">Feature Content</div>
         </FeatureWrapper>
       );
@@ -312,10 +313,10 @@ describe('featureProtection', () => {
       expect(screen.queryByTestId('feature-content')).not.toBeInTheDocument();
 
       // Simulate feature being enabled
-      mockIsFeatureEnabled.mockReturnValue(true);
+      mockHasFeature.mockReturnValue(true);
 
       rerender(
-        <FeatureWrapper feature={'trivia' as any}>
+        <FeatureWrapper feature={'show-galeria'}>
           <div data-testid="feature-content">Feature Content</div>
         </FeatureWrapper>
       );
@@ -324,10 +325,10 @@ describe('featureProtection', () => {
     });
 
     it('should handle string children', () => {
-      mockIsFeatureEnabled.mockReturnValue(true);
+      mockHasFeature.mockReturnValue(true);
 
       render(
-        <FeatureWrapper feature={'trivia' as any}>
+        <FeatureWrapper feature={'show-galeria'}>
           Simple string content
         </FeatureWrapper>
       );
@@ -336,12 +337,12 @@ describe('featureProtection', () => {
     });
 
     it('should handle nested FeatureWrapper components', () => {
-      mockIsFeatureEnabled.mockImplementation((flag) => (flag as string) === 'trivia' || (flag as string) === 'rsvp');
+      mockHasFeature.mockImplementation((flag) => (flag as string) === 'show-galeria' || (flag as string) === 'show-rsvp');
 
       render(
-        <FeatureWrapper feature={'trivia' as any}>
+        <FeatureWrapper feature={'show-galeria'}>
           <div data-testid="outer-feature">
-            <FeatureWrapper feature={'rsvp' as any}>
+            <FeatureWrapper feature={'show-rsvp'}>
               <div data-testid="inner-feature">Nested Feature Content</div>
             </FeatureWrapper>
           </div>
@@ -352,14 +353,14 @@ describe('featureProtection', () => {
       expect(screen.getByTestId('inner-feature')).toBeInTheDocument();
       expect(screen.getByText('Nested Feature Content')).toBeInTheDocument();
       
-      expect(mockIsFeatureEnabled).toHaveBeenCalledWith('trivia');
-      expect(mockIsFeatureEnabled).toHaveBeenCalledWith('rsvp');
+      expect(mockHasFeature).toHaveBeenCalledWith('show-galeria');
+      expect(mockHasFeature).toHaveBeenCalledWith('show-rsvp');
     });
   });
 
   describe('integration and edge cases', () => {
     it('should handle undefined feature flags gracefully', () => {
-      mockIsFeatureEnabled.mockReturnValue(false);
+      mockHasFeature.mockReturnValue(false);
 
       expect(() => {
         render(
@@ -371,13 +372,13 @@ describe('featureProtection', () => {
     });
 
     it('should work with functional components', () => {
-      mockIsFeatureEnabled.mockReturnValue(true);
+      mockHasFeature.mockReturnValue(true);
       
       const FunctionalComponent: React.FC<{ message: string }> = ({ message }) => (
         <div data-testid="functional">{message}</div>
       );
 
-      const ProtectedFunctional = withFeatureFlag(FunctionalComponent, 'trivia' as any);
+      const ProtectedFunctional = withFeatureFlag(FunctionalComponent, 'show-galeria');
 
       render(<ProtectedFunctional message="Functional works" />);
 
@@ -386,7 +387,7 @@ describe('featureProtection', () => {
     });
 
     it('should work with class components', () => {
-      mockIsFeatureEnabled.mockReturnValue(true);
+      mockHasFeature.mockReturnValue(true);
 
       class ClassComponent extends React.Component<{ title: string }> {
         render() {
@@ -394,7 +395,7 @@ describe('featureProtection', () => {
         }
       }
 
-      const ProtectedClass = withFeatureFlag(ClassComponent, 'trivia' as any);
+      const ProtectedClass = withFeatureFlag(ClassComponent, 'show-galeria');
 
       render(<ProtectedClass title="Class works" />);
 
@@ -404,13 +405,13 @@ describe('featureProtection', () => {
 
     it('should handle rapid feature flag changes', () => {
       let callCount = 0;
-      mockIsFeatureEnabled.mockImplementation(() => {
+      mockHasFeature.mockImplementation(() => {
         callCount++;
         return callCount % 2 === 0; // Alternate between true/false
       });
 
       const TestComponent = () => {
-        const isEnabled = useFeatureFlag('trivia' as any);
+        const isEnabled = useFeatureFlag('show-galeria');
         return <div>{isEnabled ? 'enabled' : 'disabled'}</div>;
       };
 

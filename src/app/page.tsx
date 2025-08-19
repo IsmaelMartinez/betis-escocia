@@ -16,14 +16,14 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Upcoming Matches */}
             <div className="lg:col-span-3">
-              <FeatureWrapper feature="showPartidos">
+              <FeatureWrapper feature="show-partidos">
                 <UpcomingMatchesWidget className="" />
               </FeatureWrapper>
             </div>
             
             {/* Classification */}
             <div className="lg:col-span-1">
-              <FeatureWrapper feature="showClasificacion">
+              <FeatureWrapper feature="show-clasificacion">
                 <ClassificationWidget className="" />
               </FeatureWrapper>
             </div>
@@ -71,7 +71,7 @@ export default function Home() {
               </span>
             </Link>
             
-            <FeatureWrapper feature="showSocialMedia">
+            <FeatureWrapper feature="show-social-media">
               <a
                 href="https://www.facebook.com/groups/beticosenescocia/"
                 target="_blank"

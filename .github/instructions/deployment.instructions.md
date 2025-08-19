@@ -46,12 +46,13 @@ This document outlines the guidelines and patterns for CI/CD and deployment work
   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
   CLERK_SECRET_KEY=
 
-  # Feature flags (required)
-  NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID=
+  # Feature flags (optional - use to override defaults)
+  # NEXT_PUBLIC_FEATURE_CLASIFICACION=true
+  # NEXT_PUBLIC_FEATURE_PARTIDOS=true
+  # NEXT_PUBLIC_FEATURE_NOSOTROS=true
 
   # Development helpers (for local development)
   NEXT_PUBLIC_DEBUG_MODE=true
-  NEXT_PUBLIC_FLAGSMITH_DEBUG=true
   ```
 
 - **Validation Steps**: Verify that all necessary environment variables are correctly configured in the deployment environment to prevent runtime errors.

@@ -6,7 +6,7 @@ import DashboardTabs from '@/components/DashboardTabs';
 
 export default async function DashboardPage() {
   // Check if authentication is enabled
-  const isAuthEnabled = isFeatureEnabled('showClerkAuth');
+  const isAuthEnabled = isFeatureEnabled('show-clerk-auth');
   
   if (!isAuthEnabled) {
     redirect('/');

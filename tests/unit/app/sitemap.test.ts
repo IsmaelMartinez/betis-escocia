@@ -22,10 +22,10 @@ describe('sitemap', () => {
     vi.useRealTimers();
   });
 
-  it('should generate sitemap with only static pages when no dynamic navigation items are enabled', async () => {
-    vi.mocked(getEnabledNavigationItems).mockResolvedValue([]);
+  it('should generate sitemap with only static pages when no dynamic navigation items are enabled', () => {
+    vi.mocked(getEnabledNavigationItems).mockReturnValue([]);
 
-    const result = await sitemap();
+    const result = sitemap();
 
     expect(result).toEqual([
       {
@@ -43,15 +43,15 @@ describe('sitemap', () => {
     ]);
   });
 
-  it('should generate sitemap with dynamic pages when navigation items are enabled', async () => {
-    vi.mocked(getEnabledNavigationItems).mockResolvedValue([
+  it('should generate sitemap with dynamic pages when navigation items are enabled', () => {
+    vi.mocked(getEnabledNavigationItems).mockReturnValue([
       { href: '/', name: 'Home', nameEn: 'Home', feature: null }, // Should be filtered out as it's a static page
       { href: '/unete', name: 'Únete', nameEn: 'Join Us', feature: null },
       { href: '/contacto', name: 'Contacto', nameEn: 'Contact', feature: null },
       { href: '/galeria', name: 'Galería', nameEn: 'Gallery', feature: 'show-galeria' },
     ]);
 
-    const result = await sitemap();
+    const result = sitemap();
 
     expect(result).toEqual(expect.arrayContaining([
       {
@@ -88,13 +88,13 @@ describe('sitemap', () => {
     expect(result.length).toBe(5); // Static + partidos + 3 dynamic
   });
 
-  it('should handle different priorities for dynamic pages', async () => {
-    vi.mocked(getEnabledNavigationItems).mockResolvedValue([
+  it('should handle different priorities for dynamic pages', () => {
+    vi.mocked(getEnabledNavigationItems).mockReturnValue([
       { href: '/unete', name: 'Únete', nameEn: 'Join Us', feature: null },
       { href: '/galeria', name: 'Galería', nameEn: 'Gallery', feature: 'show-galeria' },
     ]);
 
-    const result = await sitemap();
+    const result = sitemap();
 
     const unetePage = result.find(page => page.url === `${baseUrl}/unete`);
     const galeriaPage = result.find(page => page.url === `${baseUrl}/galeria`);

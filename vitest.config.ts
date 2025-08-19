@@ -24,11 +24,8 @@ export default defineConfig({
       NEXT_PUBLIC_SUPABASE_URL: 'https://test-supabase-url.com',
       NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
       SUPABASE_SERVICE_ROLE_KEY: 'test-service-role-key',
-      // Flagsmith environment variables for tests
-      NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID: 'test-flagsmith-env',
-      FLAGSMITH_ENVIRONMENT_ID: 'test-flagsmith-env',
+      // Test environment configuration
       NEXT_PUBLIC_DEBUG_MODE: 'false',
-      NEXT_PUBLIC_FLAGSMITH_DEBUG: 'false',
     },
     // Include all unit and integration tests, exclude E2E tests
     include: [

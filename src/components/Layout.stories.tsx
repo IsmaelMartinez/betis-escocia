@@ -26,7 +26,7 @@ export const Default: Story = {
     debugInfo: {
       flags: { showClerkAuth: true, showPartidos: true },
       environment: 'development',
-      enabledFeatures: ['showClerkAuth', 'showPartidos'],
+      enabledFeatures: ['show-clerk-auth', 'showPartidos'],
       disabledFeatures: [],
       cacheStatus: { cached: false, expires: 'N/A' },
     },
@@ -42,7 +42,7 @@ export const LoggedIn: Story = {
     debugInfo: {
       flags: { showClerkAuth: true, showPartidos: true },
       environment: 'development',
-      enabledFeatures: ['showClerkAuth', 'showPartidos'],
+      enabledFeatures: ['show-clerk-auth', 'showPartidos'],
       disabledFeatures: [],
       cacheStatus: { cached: false, expires: 'N/A' },
     },
@@ -67,7 +67,7 @@ export const LoggedInAdmin: Story = {
     debugInfo: {
       flags: { showClerkAuth: true, showPartidos: true },
       environment: 'development',
-      enabledFeatures: ['showClerkAuth', 'showPartidos'],
+      enabledFeatures: ['show-clerk-auth', 'showPartidos'],
       disabledFeatures: [],
       cacheStatus: { cached: false, expires: 'N/A' },
     },
@@ -93,7 +93,7 @@ export const FeatureFlagsDisabled: Story = {
       flags: { showClerkAuth: false, showPartidos: false },
       environment: 'development',
       enabledFeatures: [],
-      disabledFeatures: ['showClerkAuth', 'showPartidos'],
+      disabledFeatures: ['show-clerk-auth', 'showPartidos'],
       cacheStatus: { cached: false, expires: 'N/A' },
     },
   },

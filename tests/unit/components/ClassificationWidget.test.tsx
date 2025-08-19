@@ -177,12 +177,12 @@ describe('ClassificationWidget Component', () => {
     // The component logic for empty states is validated by the source code
     it('validates empty state logic exists in component', () => {
       // Test confirms the component has empty state logic
-      expect(true).toBe(true);
+      // TODO: Implement actual test assertion
     });
 
     it('validates Betis-not-found logic exists in component', () => {
       // Test confirms the component handles when Betis is not found
-      expect(true).toBe(true);
+      // TODO: Implement actual test assertion
     });
   });
 

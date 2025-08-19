@@ -30,8 +30,10 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
 CLERK_SECRET_KEY=your_clerk_secret
 
-# Feature Flags
-NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID=your_flagsmith_env_id
+# Feature Flags (optional - only for experimental features)
+# NEXT_PUBLIC_FEATURE_COLECCIONABLES=true
+# NEXT_PUBLIC_FEATURE_GALERIA=true  
+# NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
 ```
 
 ### Start Development
@@ -45,7 +47,7 @@ npm run dev  # Open http://localhost:3000
 - **Next.js 15** with App Router and TypeScript
 - **Supabase** for database with Row Level Security  
 - **Clerk** for authentication with role-based permissions
-- **Flagsmith** for secure-by-default feature flags
+- **Environment Variables** for secure rollout feature flags
 - **Tailwind CSS 4** with Betis branding
 - **Vitest + Playwright + Storybook** for testing
 - **Framework-based security** with Zod validation
@@ -79,31 +81,46 @@ src/
 
 ## Feature Flags
 
-The project uses **Flagsmith** for dynamic feature control:
+The project uses **environment variables** for simple, build-time feature control:
 
 ```typescript
-import { hasFeature } from '@/lib/flagsmith';
+import { hasFeature } from '@/lib/featureFlags';
 
-// Check if feature is enabled
-const isEnabled = await hasFeature('show-admin');
+// Check if feature is enabled (synchronous)
+const isEnabled = hasFeature('show-galeria');
 if (!isEnabled) return null;
-
 ```
 
+### Implementation
+- **Simple 2-option system**: Environment variable takes precedence, otherwise use default
+- **Synchronous resolution**: No async/await needed
+- **Build-time configuration**: Features resolved at build time for performance
+
 ### Key Flags
-- `show-galeria` - Photo gallery
-- `show-clerk-auth` - Authentication features
+- `show-galeria` - Photo gallery (default: disabled)
+- `show-coleccionables` - Merchandise collection (default: disabled)
+- `show-debug-info` - Debug information (default: disabled)
+- `show-clerk-auth` - Authentication features (default: enabled)
+
+### Always-On Features (No Flags Needed)
+- `rsvp` - Core RSVP functionality
+- `unete` - Join/membership functionality
+- `contacto` - Contact form functionality
 
 ### Setup
-1. Create account at [flagsmith.com](https://flagsmith.com)
-2. Get environment ID from dashboard
-3. Add to `.env.local`: `NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID=your_id`
+Add environment variables for experimental features only:
+
+```bash
+# Only set these to override defaults for experimental features
+NEXT_PUBLIC_FEATURE_GALERIA=true
+NEXT_PUBLIC_FEATURE_COLECCIONABLES=true
+NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
+```
 
 ### Debugging
 ```bash
-# Enable debug mode
-NEXT_PUBLIC_DEBUG_MODE=true
-NEXT_PUBLIC_FLAGSMITH_DEBUG=true
+# Enable debug mode to see feature flag status
+NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
 ```
 
 ## Authentication & Roles
@@ -233,10 +250,10 @@ npm run update-trivia  # Updates all trivia questions safely
 
 #### Feature Flag Pattern
 ```typescript
-import { hasFeature } from '@/lib/flagsmith';
+import { hasFeature } from '@/lib/featureFlags';
 
-export default async function FeatureComponent() {
-  const isEnabled = await hasFeature('my-feature');
+export default function FeatureComponent() {
+  const isEnabled = hasFeature('show-galeria');
   if (!isEnabled) return null;
   
   return <div>Feature content</div>;
@@ -624,9 +641,10 @@ Official peña gear with integrated photo gallery
 - Ensure user has correct role metadata
 
 #### Feature Flags Not Working
-- Check Flagsmith environment ID
-- Enable debug mode: `NEXT_PUBLIC_FLAGSMITH_DEBUG=true`
-- Verify network connectivity to Flagsmith API
+- Check environment variable names: `NEXT_PUBLIC_FEATURE_*`
+- Enable debug mode: `NEXT_PUBLIC_FEATURE_DEBUG_INFO=true`
+- Verify environment variables are properly loaded
+- Clear Next.js cache and restart dev server
 
 #### Database Connection
 - Verify Supabase URL and keys
@@ -644,7 +662,7 @@ Key technical decisions are documented in [ADRs](adr/):
 
 - [ADR-001: Clerk Authentication](adr/001-clerk-authentication.md) - Why Clerk over alternatives
 - [ADR-003: Supabase Database](adr/003-supabase-database.md) - Database choice and patterns  
-- [ADR-004: Flagsmith Feature Flags](adr/004-flagsmith-feature-flags.md) - Feature flag provider selection
+- [ADR-004: Environment Variable Feature Flags](adr/004-flagsmith-feature-flags.md) - Feature flag system migration
 - [ADR-016: Admin Push Notifications](adr/016-admin-push-notifications.md) - Real-time notification system
 
 ## Contributing

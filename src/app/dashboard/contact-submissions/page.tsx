@@ -9,7 +9,7 @@ import { es } from 'date-fns/locale';
 import { DATE_FORMAT } from '@/lib/constants/dateFormats';
 
 export default async function UserContactSubmissionsPage() {
-  const isAuthEnabled = isFeatureEnabled('showClerkAuth');
+  const isAuthEnabled = isFeatureEnabled('show-clerk-auth');
   
   if (!isAuthEnabled) {
     redirect('/');

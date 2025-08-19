@@ -389,4 +389,4 @@ function PreOrderModal({ item, onClose }: Readonly<PreOrderModalProps>) {
   );
 }
 
-export default withFeatureFlag(ColeccionablesPage, 'showColeccionables');
+export default withFeatureFlag(ColeccionablesPage, 'show-coleccionables');

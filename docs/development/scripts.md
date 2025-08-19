@@ -163,7 +163,7 @@ export { myScript };
 1. Check script-specific README files in `scripts/`
 2. Review error messages for specific guidance
 3. Verify environment configuration
-4. Check service status (Supabase, Clerk, Flagsmith)
+4. Check service status (Supabase, Clerk)
 
 ## Security Considerations
 

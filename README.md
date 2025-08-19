@@ -23,7 +23,7 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 - **Frontend**: Next.js 15, TypeScript, Tailwind CSS 4
 - **Database**: Supabase (PostgreSQL with RLS)
 - **Authentication**: Clerk.com with role-based permissions
-- **Feature Flags**: Flagsmith for dynamic feature control
+- **Feature Flags**: Environment variables for simple feature control
 - **Testing**: Vitest + Playwright + Storybook
 - **Deployment**: Vercel with GitHub Actions
 
@@ -56,8 +56,9 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
    CLERK_SECRET_KEY=your_clerk_secret
    
-   # Feature Flags
-   NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID=your_flagsmith_env_id
+   # Feature Flags (optional - only for experimental features)
+   # NEXT_PUBLIC_FEATURE_GALERIA=true
+   # NEXT_PUBLIC_FEATURE_COLECCIONABLES=true
    ```
 
 3. **Initialize database:**
@@ -75,7 +76,6 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 - **Next.js 15** with App Router and TypeScript
 - **Supabase** for database with Row Level Security
 - **Clerk** for authentication with role-based permissions
-- **Flagsmith** for secure-by-default feature flags
 - **Tailwind CSS 4** with Betis branding
 
 ### Key Patterns
@@ -93,27 +93,32 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 
 ## 🚩 Feature Flags
 
-The project uses **Flagsmith** for dynamic feature control:
+The project uses **environment variables** for simple feature control:
 
 ```typescript
-import { hasFeature } from '@/lib/flagsmith';
+import { hasFeature } from '@/lib/featureFlags';
 
-// Check if a feature is enabled
-const isEnabled = await hasFeature('show-admin');
+// Check if a feature is enabled (synchronous)
+const isEnabled = hasFeature('show-galeria');
 if (!isEnabled) return null;
 ```
 
 ### Key Flags
-- `show-admin` - Admin dashboard access
-- `show-rsvp` - RSVP system
-- `show-trivia-game` - Trivia functionality
-- `show-galeria` - Photo gallery
-- `show-clerk-auth` - Authentication features
+- `show-galeria` - Photo gallery (default: disabled)
+- `show-coleccionables` - Merchandise collection (default: disabled)
+- `show-debug-info` - Debug information (default: disabled)
+
+### Always-On Features
+- `rsvp` - RSVP functionality (always available)
+- `unete` - Join functionality (always available) 
+- `contacto` - Contact functionality (always available)
 
 ### Setup
-1. Create account at [flagsmith.com](https://flagsmith.com)
-2. Get environment ID from dashboard
-3. Add to `.env.local`: `NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID=your_id`
+Set environment variables only for experimental features:
+```bash
+NEXT_PUBLIC_FEATURE_GALERIA=true
+NEXT_PUBLIC_FEATURE_COLECCIONABLES=true
+```
 
 ## 🧪 Development
 

@@ -43,13 +43,6 @@ export default function HeroCommunity() {
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Header section - inspired by Betis official layout */}
-        <div className="text-center mb-16">
-          {/* Official-style badge */}
-          <div className="inline-flex items-center px-8 py-4 rounded-lg bg-betis-green text-white mb-8 font-bold text-lg shadow-lg">
-            <Users className="h-6 w-6 mr-3" />
-            <span>PEÑA BÉTICA ESCOCESA</span>
-          </div>
-        </div>
 
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Left side - Main message in official style */}

@@ -169,4 +169,4 @@ function HistoriaPage() {
   );
 }
 
-export default withFeatureFlag(HistoriaPage, 'showHistory');
+export default withFeatureFlag(HistoriaPage, 'show-history');

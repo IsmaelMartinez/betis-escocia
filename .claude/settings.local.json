@@ -24,8 +24,7 @@
       "Bash(done)",
       "Bash(for file in tests/unit/lib/schemas/*.test.ts)",
       "Bash(chmod:*)",
-      "Bash(./fix_tests.sh)",
-      "Bash(/Users/ismael.martinez/projects/betis/fix_tests.sh)"
+      "Bash(npm run dev:*)"
     ],
     "deny": []
   }

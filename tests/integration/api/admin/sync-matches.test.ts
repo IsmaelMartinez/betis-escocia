@@ -4,50 +4,40 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkAdminRole } from '@/lib/adminApiProtection';
 import { supabase } from '@/lib/supabase';
 import { FootballDataService } from '@/services/footballDataService';
+import { Match } from '@/types/match';
 
 // Mock external dependencies
 vi.mock('@/lib/adminApiProtection');
 vi.mock('@/lib/supabase');
-vi.mock('@/services/footballDataService', () => {
-  const mockGetBetisMatchesForSeasons = vi.fn();
-  
-  class MockFootballDataService {
-    constructor() {
-      this.getBetisMatchesForSeasons = mockGetBetisMatchesForSeasons;
-    }
-    getBetisMatchesForSeasons: typeof mockGetBetisMatchesForSeasons;
-  }
-
-  return {
-    FootballDataService: MockFootballDataService,
-    mockGetBetisMatchesForSeasons,
-  };
-});
-
-// Import the mock after vi.mock is defined
-const { mockGetBetisMatchesForSeasons } = await import('@/services/footballDataService');
+vi.mock('@/services/footballDataService');
 
 describe('POST /api/admin/sync-matches', () => {
-  const mockMatchesData = [
+  const mockMatchesData: Match[] = [
     {
       id: 123,
-      homeTeam: { id: 90, name: 'Real Betis' },
-      awayTeam: { id: 1, name: 'Opponent 1' },
       utcDate: '2025-01-01T12:00:00Z',
       status: 'FINISHED',
-      score: { fullTime: { home: 2, away: 1 } },
-      competition: { name: 'La Liga' },
-      matchday: 1
+      matchday: 1,
+      stage: 'REGULAR_SEASON',
+      lastUpdated: '2025-01-01T12:00:00Z',
+      homeTeam: { id: 90, name: 'Real Betis', shortName: 'Betis', tla: 'BET', crest: 'betis_crest_url' },
+      awayTeam: { id: 1, name: 'Opponent 1', shortName: 'Opp1', tla: 'OP1', crest: 'opponent1_crest_url' },
+      score: { fullTime: { home: 2, away: 1 }, duration: 'REGULAR', halfTime: { home: 1, away: 0 } },
+      competition: { id: 2014, name: 'La Liga', code: 'PD', type: 'LEAGUE', emblem: 'laliga_emblem_url' },
+      season: { id: 1, startDate: '2024-08-01', endDate: '2025-05-31', currentMatchday: 1 }
     },
     {
       id: 124,
-      homeTeam: { id: 90, name: 'Real Betis' },
-      awayTeam: { id: 2, name: 'Opponent 2' },
       utcDate: '2025-01-05T15:00:00Z',
       status: 'SCHEDULED',
-      score: { fullTime: { home: null, away: null } },
-      competition: { name: 'La Liga' },
-      matchday: 2
+      matchday: 2,
+      stage: 'REGULAR_SEASON',
+      lastUpdated: '2025-01-05T15:00:00Z',
+      homeTeam: { id: 90, name: 'Real Betis', shortName: 'Betis', tla: 'BET', crest: 'betis_crest_url' },
+      awayTeam: { id: 2, name: 'Opponent 2', shortName: 'Opp2', tla: 'OP2', crest: 'opponent2_crest_url' },
+      score: { fullTime: { home: null, away: null }, duration: 'REGULAR', halfTime: { home: null, away: null } },
+      competition: { id: 2014, name: 'La Liga', code: 'PD', type: 'LEAGUE', emblem: 'laliga_emblem_url' },
+      season: { id: 1, startDate: '2024-08-01', endDate: '2025-05-31', currentMatchday: 1 }
     },
   ];
 
@@ -109,7 +99,7 @@ describe('POST /api/admin/sync-matches', () => {
 
   it('should synchronize multiple matches successfully for an admin', async () => {
     vi.mocked(checkAdminRole).mockResolvedValue({ isAdmin: true, user: mockAdminUser, error: undefined });
-    mockGetBetisMatchesForSeasons.mockResolvedValue(mockMatchesData);
+    vi.mocked(FootballDataService.prototype.getBetisMatchesForSeasons).mockResolvedValue(mockMatchesData);
     vi.mocked(supabase.from).mockReturnValue({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -127,7 +117,7 @@ describe('POST /api/admin/sync-matches', () => {
     expect(data.message).toContain('Sincronización completada');
     expect(data.summary.total).toBe(2);
     expect(data.summary.imported).toBe(2);
-    expect(mockGetBetisMatchesForSeasons).toHaveBeenCalledWith(expect.any(Array), 50);
+    expect(vi.mocked(FootballDataService.prototype.getBetisMatchesForSeasons)).toHaveBeenCalledWith(expect.any(Array), 50);
     expect(supabase.from).toHaveBeenCalledWith('matches');
   });
 
@@ -145,7 +135,7 @@ describe('POST /api/admin/sync-matches', () => {
 
   it('should return 500 if external API call fails', async () => {
     vi.mocked(checkAdminRole).mockResolvedValue({ isAdmin: true, user: mockAdminUser, error: undefined });
-    mockGetBetisMatchesForSeasons.mockRejectedValue(new Error('Network error'));
+    vi.mocked(FootballDataService.prototype.getBetisMatchesForSeasons).mockRejectedValue(new Error('Network error'));
 
     const request = new NextRequest('http://localhost/api/admin/sync-matches', { method: 'POST' });
     const response = await POST(request);
@@ -158,7 +148,7 @@ describe('POST /api/admin/sync-matches', () => {
 
   it('should handle partial database failures', async () => {
     vi.mocked(checkAdminRole).mockResolvedValue({ isAdmin: true, user: mockAdminUser, error: undefined });
-    mockGetBetisMatchesForSeasons.mockResolvedValue(mockMatchesData);
+    vi.mocked(FootballDataService.prototype.getBetisMatchesForSeasons).mockResolvedValue(mockMatchesData);
 
     // Mock Supabase to fail for the first match, succeed for the second
     let insertCallCount = 0;
@@ -190,7 +180,7 @@ describe('POST /api/admin/sync-matches', () => {
 
   it('should return 200 even if all database operations fail', async () => {
     vi.mocked(checkAdminRole).mockResolvedValue({ isAdmin: true, user: mockAdminUser, error: undefined });
-    mockGetBetisMatchesForSeasons.mockResolvedValue(mockMatchesData);
+    vi.mocked(FootballDataService.prototype.getBetisMatchesForSeasons).mockResolvedValue(mockMatchesData);
     vi.mocked(supabase.from).mockReturnValue({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -212,7 +202,7 @@ describe('POST /api/admin/sync-matches', () => {
 
   it('should return 200 with 0 synchronized matches if no matches are fetched', async () => {
     vi.mocked(checkAdminRole).mockResolvedValue({ isAdmin: true, user: mockAdminUser, error: undefined });
-    mockGetBetisMatchesForSeasons.mockResolvedValue([]);
+    vi.mocked(FootballDataService.prototype.getBetisMatchesForSeasons).mockResolvedValue([]);
 
     const request = new NextRequest('http://localhost/api/admin/sync-matches', { method: 'POST' });
     const response = await POST(request);

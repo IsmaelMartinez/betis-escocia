@@ -424,7 +424,7 @@ function AdminPage() {
               )}
             </div>
             <div className="flex items-center space-x-3">
-              <FeatureWrapper feature="showPartidos">
+              <FeatureWrapper feature="show-partidos">
                 <Button
                   onClick={handleSyncMatches}
                   variant="secondary"
@@ -460,7 +460,7 @@ function AdminPage() {
                 Dashboard
               </button>
               
-              <FeatureWrapper feature="showPartidos">
+              <FeatureWrapper feature="show-partidos">
                 <button
                   onClick={() => setCurrentView('matches')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${
@@ -545,7 +545,7 @@ function AdminPage() {
             </CardBody>
           </Card>
 
-          <FeatureWrapper feature="showPartidos">
+          <FeatureWrapper feature="show-partidos">
             <Card className="hover-lift">
               <CardBody className="text-center">
                 <div className="mx-auto w-12 h-12 bg-betis-green/10 rounded-lg flex items-center justify-center mb-4">
@@ -677,7 +677,7 @@ function AdminPage() {
 
         {/* Matches Management View */}
         {currentView === 'matches' && (
-          <FeatureWrapper feature="showPartidos">
+          <FeatureWrapper feature="show-partidos">
             <div className="mb-6 flex justify-between items-center">
               <Button
                 onClick={() => {
@@ -703,7 +703,7 @@ function AdminPage() {
 
         {/* Match Form View */}
         {currentView === 'match-form' && (
-          <FeatureWrapper feature="showPartidos">
+          <FeatureWrapper feature="show-partidos">
             <MatchForm
               match={matchFormData.match}
               onSubmit={handleMatchFormSubmit}

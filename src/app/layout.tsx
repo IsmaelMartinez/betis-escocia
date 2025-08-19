@@ -9,7 +9,6 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import SentryUserContext from "@/components/SentryUserContext";
 
 import { ClerkProvider } from '@clerk/nextjs';
-import { getEnabledNavigationItems } from '@/lib/featureFlags';
 import FacebookSDK from "@/components/FacebookSDK";
 
 export const dynamic = 'force-dynamic';
