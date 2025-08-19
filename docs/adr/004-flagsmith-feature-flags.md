@@ -1,11 +1,18 @@
-# ADR-004: Flagsmith Feature Flag Provider
+# ADR-004: Feature Flag Implementation (Flagsmith → Environment Variables)
 
 ## Status
-- **Status**: Implemented & Optimized
+- **Status**: **SUPERSEDED** → Migrated to Environment Variables
 - **Date**: 2025-07-17
-- **Updated**: 2025-08-13
+- **Updated**: 2025-08-19 (Migration Complete)
 - **Authors**: Development Team
 - **Decision Maker**: Technical Lead
+
+## Summary
+**This ADR documents the complete migration from Flagsmith to environment variable-based feature flags completed on 2025-08-19.**
+
+**Original Decision**: Implement Flagsmith for real-time feature flag management
+**Final Decision**: Remove Flagsmith and simplify to environment variable-based feature flags
+**Reason**: The complexity and external dependencies of Flagsmith were not justified for this project's simple feature toggling needs.
 
 ## Context
 The Peña Bética Escocesa website currently uses environment variable-based feature flags for controlling feature visibility. While this approach works, it has several limitations:
@@ -133,10 +140,60 @@ The following unused flags were removed during optimization:
 - `admin-dashboard` - Unused admin dashboard
 - `show-admin` - Simplified admin access control
 
-## References
-- [Flagsmith Documentation](https://docs.flagsmith.com/)
-- [Project Ideas](../../tasks/ideas.md)
+---
 
-## Review
-- **Next review date**: 2025-10-17 (3-month review)
-- **Review criteria**: Usage patterns, cost effectiveness, feature adoption, team satisfaction
+## 2025-08-19 Update: Migration to Environment Variables Complete
+
+### New Implementation
+The project has migrated to a **simplified environment variable-based feature flag system**:
+
+**File**: `src/lib/featureConfig.ts`
+- **API Compatibility**: Maintains same `hasFeature()` and `getValue()` interface
+- **Performance**: Synchronous resolution (no async/await needed)
+- **Simplicity**: Environment variables resolved at build time
+- **Types**: Full TypeScript support with proper types
+- **Fallbacks**: Environment-specific defaults (dev/prod/test)
+
+### Environment Variables (Only for Hidden Features)
+```bash
+# Only set these for features currently disabled/experimental
+NEXT_PUBLIC_FEATURE_COLECCIONABLES=false
+NEXT_PUBLIC_FEATURE_GALERIA=false  
+NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=false
+NEXT_PUBLIC_FEATURE_HISTORY=false
+NEXT_PUBLIC_FEATURE_REDES_SOCIALES=false
+NEXT_PUBLIC_FEATURE_DEBUG_INFO=false
+NEXT_PUBLIC_FEATURE_ADMIN_PUSH_NOTIFICATIONS=false
+```
+
+### Always-On Features (No Environment Variables Needed)
+- `RSVP` - Core functionality
+- `Únete` (Join) - Core functionality  
+- `Contacto` (Contact) - Core functionality
+- `Clasificación` - Production ready
+- `Partidos` - Production ready
+- `Nosotros` - Production ready
+- `Clerk Auth` - Production ready
+
+### Migration Benefits Achieved
+- ✅ **Reduced Complexity**: ~800+ lines of Flagsmith code removed
+- ✅ **No External Dependencies**: Removed flagsmith package
+- ✅ **Better Performance**: Synchronous flag resolution
+- ✅ **Simplified Deployment**: No external service configuration needed
+- ✅ **Same Functionality**: All existing features work identically
+
+### Migration Summary
+- **Removed**: Flagsmith SDK, configuration, components, tests (~15 files)
+- **Added**: Simple environment variable system (1 file + tests)
+- **Updated**: All components now use synchronous feature flag calls
+- **Result**: Significantly simpler architecture with identical user experience
+
+## References
+- **Original Flagsmith Documentation**: [docs.flagsmith.com](https://docs.flagsmith.com/) (no longer used)
+- **Migration PRD**: `tasks/prd-remove-flagsmith-simplify-feature-flags.md`
+- **New Implementation**: `src/lib/featureConfig.ts`
+
+## Final Status
+- **Migration Complete**: 2025-08-19
+- **Status**: Environment variables successfully replace all Flagsmith functionality
+- **Recommendation**: Continue with environment variable approach for this project's needs

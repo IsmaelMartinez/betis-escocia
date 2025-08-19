@@ -65,13 +65,14 @@ sql/                    # Database migrations & scripts
 
 ## Critical Architectural Patterns
 
-### Feature Flag System (Flagsmith)
-- **Hybrid approach**: Core features (RSVP, Join, Contact) always available; optional features controlled by flags
-- **Usage**: `await hasFeature('flag-name')` or `await getValue('flag-name')`
-- **Environment**: `NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID` required
-- **Location**: `src/lib/flagsmith/` - NOT `src/lib/flags/`
+### Feature Flag System (Environment Variables)
+- **Simple approach**: Environment variable-based flags resolved at build time
+- **Usage**: `hasFeature('flag-name')` or `getValue('flag-name')` (synchronous)
+- **Configuration**: Only set environment variables for disabled/experimental features
+- **Location**: `src/lib/featureConfig.ts` - replaces Flagsmith
 - **Always-on features**: RSVP, Únete (Join), Contacto (Contact) - no flags needed
-- **Documentation**: See `docs/adr/004-flagsmith-feature-flags.md`
+- **Production-ready features**: Clasificación, Partidos, Nosotros, Clerk Auth - enabled by default
+- **Documentation**: See `docs/adr/004-flagsmith-feature-flags.md` (migration documented)
 
 ### Authentication Flow (Clerk + Supabase)
 - **Dual mode**: Anonymous submissions + authenticated user management  
@@ -115,10 +116,10 @@ sql/                    # Database migrations & scripts
 
 ### Secure Component Pattern
 ```typescript
-import { hasFeature } from "@/lib/flagsmith";
+import { hasFeature } from "@/lib/featureFlags";
 
-export default async function MyComponent() {
-  const isEnabled = await hasFeature("my-feature-flag");
+export default function MyComponent() {
+  const isEnabled = hasFeature("my-feature-flag");
   if (!isEnabled) return null;
   
   return <div>Feature content</div>;
@@ -335,8 +336,15 @@ For comprehensive details, always check:
 Required environment variables:
 - `NEXT_PUBLIC_SUPABASE_URL` & `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` & `CLERK_SECRET_KEY` 
-- `NEXT_PUBLIC_FLAGSMITH_ENVIRONMENT_ID`
+
+Optional feature flags (only for disabled/experimental features):
+- `NEXT_PUBLIC_FEATURE_COLECCIONABLES=false`
+- `NEXT_PUBLIC_FEATURE_GALERIA=false`
+- `NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=false`
+- `NEXT_PUBLIC_FEATURE_HISTORY=false`
+- `NEXT_PUBLIC_FEATURE_REDES_SOCIALES=false`
+- `NEXT_PUBLIC_FEATURE_DEBUG_INFO=false`
+- `NEXT_PUBLIC_FEATURE_ADMIN_PUSH_NOTIFICATIONS=false`
 
 Optional debugging:
 - `NEXT_PUBLIC_DEBUG_MODE=true`
-- `NEXT_PUBLIC_FLAGSMITH_DEBUG=true`

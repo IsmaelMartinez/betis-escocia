@@ -48,11 +48,11 @@ Based on PRD: `prd-remove-flagsmith-simplify-feature-flags.md`
   - [x] 3.5 Add environment variables for currently hidden features only
   - [x] 3.6 Remove Flagsmith initialization calls from app startup
 - [ ] 4.0 Update Tests and Documentation
-  - [ ] 4.1 Remove `tests/unit/lib/flagsmith/` directory and all flagsmith tests
+  - [x] 4.1 Remove `tests/unit/lib/flagsmith/` directory and all flagsmith tests
   - [ ] 4.2 Update `tests/unit/lib/featureFlags.test.ts` to work with new system
   - [ ] 4.3 Update any components tests that mock Flagsmith to use new system
-  - [ ] 4.4 Update `docs/adr/004-flagsmith-feature-flags.md` to document removal decision
-  - [ ] 4.5 Update `CLAUDE.md` feature flags section to reflect new environment variable approach
+  - [x] 4.4 Update `docs/adr/004-flagsmith-feature-flags.md` to document removal decision
+  - [x] 4.5 Update `CLAUDE.md` feature flags section to reflect new environment variable approach
   - [ ] 4.6 Update `README.md` to remove Flagsmith setup instructions
 - [ ] 5.0 Cleanup and Verification
   - [ ] 5.1 Run full test suite to ensure no regressions

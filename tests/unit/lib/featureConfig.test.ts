@@ -88,7 +88,7 @@ describe('featureConfig', () => {
     });
 
     it('should handle mixed feature types', () => {
-      const features = ['show-clasificacion', 'rsvp', 'showUnete'] as const;
+      const features: AnyFeatureName[] = ['show-clasificacion', 'rsvp', 'showUnete'];
       const result = getMultipleValues(features);
 
       expect(result).toEqual({
