@@ -7,17 +7,32 @@ import OneSignalNotificationPanel from '@/components/admin/OneSignalNotification
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
-// Mock OneSignal SDK
+// Mock OneSignal SDK v5 API
 const mockOneSignal = {
   init: vi.fn(),
-  sendTag: vi.fn(),
-  getNotificationPermission: vi.fn(),
-  showSlidedownPrompt: vi.fn(),
+  login: vi.fn(),
+  User: {
+    addTag: vi.fn(),
+  },
+  Notifications: {
+    permission: 'default',
+    requestPermission: vi.fn(),
+  },
 };
 
 // Mock dynamic import of react-onesignal
 vi.mock('react-onesignal', () => ({
   default: mockOneSignal
+}));
+
+// Mock Clerk user context
+const mockUser = {
+  id: 'user_123',
+  primaryEmailAddress: { emailAddress: 'admin@test.com' }
+};
+
+vi.mock('@clerk/nextjs', () => ({
+  useUser: vi.fn(() => ({ user: mockUser }))
 }));
 
 // Mock environment variables
@@ -30,6 +45,9 @@ describe('OneSignalNotificationPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockFetch.mockClear();
+    
+    // Reset OneSignal permission state
+    mockOneSignal.Notifications.permission = 'default';
     
     // Default successful preference fetch
     mockFetch.mockResolvedValueOnce(new Response(JSON.stringify({
@@ -79,6 +97,7 @@ describe('OneSignalNotificationPanel', () => {
     });
 
     it('should display enabled state when preference is true', async () => {
+      mockFetch.mockClear(); // Clear the default mock from beforeEach
       mockFetch.mockResolvedValueOnce(new Response(JSON.stringify({
         success: true,
         data: { enabled: true }
@@ -112,8 +131,9 @@ describe('OneSignalNotificationPanel', () => {
       
       // Mock OneSignal initialization
       mockOneSignal.init.mockResolvedValueOnce(undefined);
-      mockOneSignal.sendTag.mockResolvedValueOnce(undefined);
-      mockOneSignal.getNotificationPermission.mockResolvedValueOnce('granted');
+      mockOneSignal.login.mockResolvedValueOnce(undefined);
+      mockOneSignal.User.addTag.mockResolvedValueOnce(undefined);
+      mockOneSignal.Notifications.permission = 'granted';
 
       // Mock preference update
       mockFetch
@@ -138,23 +158,23 @@ describe('OneSignalNotificationPanel', () => {
       await waitFor(() => {
         expect(mockOneSignal.init).toHaveBeenCalledWith({
           appId: 'test-app-id',
-          safari_web_id: 'test-app-id',
-          notifyButton: { enable: false },
           allowLocalhostAsSecureOrigin: true
         });
       });
 
-      expect(mockOneSignal.sendTag).toHaveBeenCalledWith('user_type', 'admin');
+      expect(mockOneSignal.login).toHaveBeenCalledWith('user_123');
+      expect(mockOneSignal.User.addTag).toHaveBeenCalledWith('user_type', 'admin');
     });
 
     it('should request permission when needed', async () => {
       const user = userEvent.setup();
       
-      // Mock OneSignal with permission denied initially
+      // Mock OneSignal with permission default initially
       mockOneSignal.init.mockResolvedValueOnce(undefined);
-      mockOneSignal.sendTag.mockResolvedValueOnce(undefined);
-      mockOneSignal.getNotificationPermission.mockResolvedValueOnce('default');
-      mockOneSignal.showSlidedownPrompt.mockResolvedValueOnce(true);
+      mockOneSignal.login.mockResolvedValueOnce(undefined);
+      mockOneSignal.User.addTag.mockResolvedValueOnce(undefined);
+      mockOneSignal.Notifications.permission = false; // Permission not granted initially
+      mockOneSignal.Notifications.requestPermission.mockResolvedValueOnce(true);
 
       // Mock preference update
       mockFetch
@@ -177,18 +197,20 @@ describe('OneSignalNotificationPanel', () => {
       const toggle = screen.getByRole('checkbox');
       await user.click(toggle);
 
+      // Wait for the delayed permission request (setTimeout 1000ms in component)
       await waitFor(() => {
-        expect(mockOneSignal.showSlidedownPrompt).toHaveBeenCalled();
-      });
+        expect(mockOneSignal.Notifications.requestPermission).toHaveBeenCalled();
+      }, { timeout: 2000 });
     });
 
     it('should handle permission denied gracefully', async () => {
       const user = userEvent.setup();
       
       mockOneSignal.init.mockResolvedValueOnce(undefined);
-      mockOneSignal.sendTag.mockResolvedValueOnce(undefined);
-      mockOneSignal.getNotificationPermission.mockResolvedValueOnce('default');
-      mockOneSignal.showSlidedownPrompt.mockResolvedValueOnce(false);
+      mockOneSignal.login.mockResolvedValueOnce(undefined);
+      mockOneSignal.User.addTag.mockResolvedValueOnce(undefined);
+      mockOneSignal.Notifications.permission = false;
+      mockOneSignal.Notifications.requestPermission.mockResolvedValueOnce(false); // Permission denied
 
       mockFetch.mockResolvedValueOnce(new Response(JSON.stringify({
         success: true,
@@ -206,16 +228,17 @@ describe('OneSignalNotificationPanel', () => {
       await user.click(toggle);
 
       await waitFor(() => {
-        expect(screen.getByText('Las notificaciones push requieren permisos del navegador')).toBeInTheDocument();
-      });
+        expect(screen.getByText('Se requieren permisos de notificación para recibir alertas.')).toBeInTheDocument();
+      }, { timeout: 2000 });
     });
 
     it('should update preference in database', async () => {
       const user = userEvent.setup();
       
       mockOneSignal.init.mockResolvedValueOnce(undefined);
-      mockOneSignal.sendTag.mockResolvedValueOnce(undefined);
-      mockOneSignal.getNotificationPermission.mockResolvedValueOnce('granted');
+      mockOneSignal.login.mockResolvedValueOnce(undefined);
+      mockOneSignal.User.addTag.mockResolvedValueOnce(undefined);
+      mockOneSignal.Notifications.permission = 'granted';
 
       mockFetch
         .mockResolvedValueOnce(new Response(JSON.stringify({
@@ -245,6 +268,8 @@ describe('OneSignalNotificationPanel', () => {
 
   describe('Status Display', () => {
     it('should show active status when enabled and permission granted', async () => {
+      mockOneSignal.Notifications.permission = 'granted';
+      
       mockFetch.mockResolvedValueOnce(new Response(JSON.stringify({
         success: true,
         data: { enabled: true }
@@ -258,21 +283,17 @@ describe('OneSignalNotificationPanel', () => {
     });
 
     it('should show permission needed when enabled but permission denied', async () => {
+      mockOneSignal.Notifications.permission = 'denied';
+      
       mockFetch.mockResolvedValueOnce(new Response(JSON.stringify({
         success: true,
         data: { enabled: true }
       }), { status: 200 }));
 
-      const { rerender } = render(<OneSignalNotificationPanel />);
-
-      // Simulate permission denied state
-      const component = screen.getByTestId('onesignal-notification-panel');
-      fireEvent(component, new CustomEvent('permissionDenied'));
-
-      rerender(<OneSignalNotificationPanel />);
+      render(<OneSignalNotificationPanel />);
 
       await waitFor(() => {
-        expect(screen.getByText('Desactivado')).toBeInTheDocument();
+        expect(screen.getByText('Permisos necesarios')).toBeInTheDocument();
       });
     });
   });
@@ -280,6 +301,8 @@ describe('OneSignalNotificationPanel', () => {
   describe('Test Notification', () => {
     beforeEach(async () => {
       // Setup component with enabled notifications and granted permission
+      mockOneSignal.Notifications.permission = 'granted';
+      
       mockFetch.mockResolvedValueOnce(new Response(JSON.stringify({
         success: true,
         data: { enabled: true }
@@ -308,7 +331,9 @@ describe('OneSignalNotificationPanel', () => {
       await user.click(testButton);
 
       await waitFor(() => {
-        expect(mockFetch).toHaveBeenCalledTimes(2); // Initial load + test
+        expect(mockFetch).toHaveBeenCalledWith('/api/admin/notifications/test', {
+          method: 'POST'
+        });
       });
     });
 
@@ -351,17 +376,13 @@ describe('OneSignalNotificationPanel', () => {
       await user.click(toggle);
 
       await waitFor(() => {
-        expect(screen.getByText('Error initializing push notifications')).toBeInTheDocument();
+        expect(screen.getByText('Error initializing push notifications: OneSignal init failed')).toBeInTheDocument();
       });
     });
 
     it('should display preference update errors', async () => {
       const user = userEvent.setup();
       
-      mockOneSignal.init.mockResolvedValueOnce(undefined);
-      mockOneSignal.sendTag.mockResolvedValueOnce(undefined);
-      mockOneSignal.getNotificationPermission.mockResolvedValueOnce('granted');
-
       mockFetch
         .mockResolvedValueOnce(new Response(JSON.stringify({
           success: true,
@@ -401,13 +422,13 @@ describe('OneSignalNotificationPanel', () => {
     it('should disable toggle during loading', async () => {
       const user = userEvent.setup();
       
-      // Mock slow OneSignal init
-      mockOneSignal.init.mockImplementationOnce(() => new Promise(() => {}));
-
-      mockFetch.mockResolvedValueOnce(new Response(JSON.stringify({
-        success: true,
-        data: { enabled: false }
-      }), { status: 200 }));
+      // Mock slow preference update
+      mockFetch
+        .mockResolvedValueOnce(new Response(JSON.stringify({
+          success: true,
+          data: { enabled: false }
+        }), { status: 200 }))
+        .mockImplementationOnce(() => new Promise(() => {})); // Never resolves
 
       render(<OneSignalNotificationPanel />);
 

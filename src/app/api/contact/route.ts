@@ -2,7 +2,7 @@ import { createApiHandler } from '@/lib/apiUtils';
 import { contactSchema } from '@/lib/schemas/contact';
 import { supabase, getAuthenticatedSupabaseClient, type ContactSubmissionInsert } from '@/lib/supabase';
 import { getAuth } from '@clerk/nextjs/server';
-import { queueContactNotification } from '@/lib/notifications/queueManager';
+import { sendAdminNotification, createContactNotificationPayload } from '@/lib/notifications/oneSignalClient';
 import { log } from '@/lib/logger';
 import { StandardErrors } from '@/lib/standardErrors';
 
@@ -53,11 +53,16 @@ export const POST = createApiHandler({
       throw new Error(StandardErrors.CONTACT.PROCESSING_ERROR);
     }
 
-    // Queue notification for admin users
+    // Send notification to admin users via OneSignal
     try {
-      queueContactNotification(name.trim(), type);
+      const notificationPayload = createContactNotificationPayload(
+        name.trim(),
+        subject,
+        type
+      );
+      await sendAdminNotification(notificationPayload);
     } catch (error) {
-      log.warn('Failed to queue admin notification for contact submission', { 
+      log.warn('Failed to send admin notification for contact submission', { 
         name, 
         email, 
         type 

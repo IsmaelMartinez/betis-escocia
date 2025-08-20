@@ -44,17 +44,17 @@
 	- [x] 2.5 Add unit tests for wrapper: success path, missing env, mock mode, failure logging
 	- [x] 2.6 Ensure no REST API key exposure client-side (search for usage in client bundles)
 
-- [ ] 3.0 Add Admin Dashboard Preference Toggle & Lazy SDK Load with Tagging
-	- [ ] 3.1 Design minimal UI (toggle + status + test button) in `admin/page.tsx`
-	- [ ] 3.2 Create preference endpoint (`PUT /api/admin/notifications/preferences`) using existing auth helper
-	- [ ] 3.3 Define Supabase table (if not existing) `admin_notification_preferences` (user_id PK, enabled bool, updated_at)
-	- [ ] 3.4 Update migration SQL file (new migration) for preference table
-	- [ ] 3.5 Implement lazy dynamic import of OneSignal SDK only after toggle enabled & role confirmed
-	- [ ] 3.6 After init, set tag `user_type=admin`
-	- [ ] 3.7 Handle deny permission state (show message / keep toggle off)
-	- [ ] 3.8 Store/reflect current preference on page load (server query or API fetch)
-	- [ ] 3.9 Add loading & error states around toggle interactions
-	- [ ] 3.10 Add unit/component tests for toggle behaviour (mock SDK module)
+- [x] 3.0 Add Admin Dashboard Preference Toggle & Lazy SDK Load with Tagging
+	- [x] 3.1 Design minimal UI (toggle + status + test button) in `admin/page.tsx`
+	- [x] 3.2 Create preference endpoint (`PUT /api/admin/notifications/preferences`) using existing auth helper
+	- [x] 3.3 Define Supabase table (if not existing) `admin_notification_preferences` (user_id PK, enabled bool, updated_at)
+	- [x] 3.4 Update migration SQL file (new migration) for preference table
+	- [x] 3.5 Implement lazy dynamic import of OneSignal SDK only after toggle enabled & role confirmed
+	- [x] 3.6 After init, set tag `user_type=admin`
+	- [x] 3.7 Handle deny permission state (show message / keep toggle off)
+	- [x] 3.8 Store/reflect current preference on page load (server query or API fetch)
+	- [x] 3.9 Add loading & error states around toggle interactions
+	- [x] 3.10 Add unit/component tests for toggle behaviour (mock SDK module)
 
 - [ ] 4.0 Wire RSVP & Contact Flows + Test Notification Endpoint to OneSignal Wrapper
 	- [ ] 4.1 Identify RSVP submission handler (API route) and contact form handler files

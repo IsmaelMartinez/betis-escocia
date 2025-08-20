@@ -4,7 +4,7 @@ import { getCurrentUpcomingMatch } from '@/lib/matchUtils';
 import { rsvpSchema, type RSVPInput } from '@/lib/schemas/rsvp';
 import { formatISO } from 'date-fns';
 import { log } from '@/lib/logger';
-import { queueRSVPNotification } from '@/lib/notifications/queueManager';
+import { sendAdminNotification, createRSVPNotificationPayload } from '@/lib/notifications/oneSignalClient';
 import { StandardErrors } from '@/lib/standardErrors';
 
 async function getRSVPData(queryData: { match?: number }) {
@@ -215,11 +215,16 @@ async function createRSVP(rsvpData: RSVPInput) {
     throw new Error(StandardErrors.INTERNAL_SERVER_ERROR);
   }
 
-  // Queue notification for admin users
+  // Send notification to admin users via OneSignal
   try {
-    queueRSVPNotification(name.trim(), currentMatchDate);
+    const notificationPayload = createRSVPNotificationPayload(
+      name.trim(),
+      attendees,
+      currentMatchDate
+    );
+    await sendAdminNotification(notificationPayload);
   } catch (error) {
-    log.warn('Failed to queue admin notification for RSVP', {
+    log.warn('Failed to send admin notification for RSVP', {
       email: email.toLowerCase().trim(),
       matchId: currentMatchId,
       attendees

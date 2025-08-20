@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Bell, BellOff, Check, AlertCircle, TestTube } from 'lucide-react';
+import { useUser } from '@clerk/nextjs';
 import Button from '@/components/ui/Button';
 import Card, { CardHeader, CardBody } from '@/components/ui/Card';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -24,6 +25,7 @@ interface NotificationState {
 const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({ 
   className = '' 
 }) => {
+  const { user } = useUser();
   const [state, setState] = useState<NotificationState>({
     enabled: false,
     loading: true,
@@ -62,28 +64,101 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
 
   // Initialize OneSignal SDK dynamically
   const initializeOneSignal = useCallback(async () => {
-    if (typeof window === 'undefined') return;
+    console.log('[OneSignal] Initialize function called');
+    console.log('[OneSignal] Window check:', typeof window);
+    console.log('[OneSignal] Current URL:', window?.location?.href);
+    
+    if (typeof window === 'undefined') {
+      console.log('[OneSignal] Skipping - not in browser');
+      return false;
+    }
 
     try {
-      // Dynamic import of OneSignal SDK
-      const OneSignal = await import('react-onesignal').then(mod => mod.default);
-      
-      await OneSignal.init({
-        appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID!,
-        safari_web_id: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID,
-        notifyButton: {
-          enable: false, // We'll handle the UI ourselves
-        },
-        allowLocalhostAsSecureOrigin: process.env.NODE_ENV === 'development',
+      console.log('[OneSignal] Environment variables:', {
+        appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID,
+        nodeEnv: process.env.NODE_ENV,
+        mockPush: process.env.MOCK_PUSH,
+        isDev: process.env.NODE_ENV === 'development'
       });
 
+      // Check and unregister existing service workers to avoid conflicts
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        console.log('[OneSignal] Existing service workers:', registrations.length);
+        
+        for (const reg of registrations) {
+          console.log('[OneSignal] Unregistering SW:', reg.scope, reg.active?.scriptURL);
+          await reg.unregister();
+        }
+        console.log('[OneSignal] All existing service workers unregistered');
+      }
+
+      console.log('[OneSignal] Importing react-onesignal...');
+      // Dynamic import of OneSignal SDK
+      const OneSignal = await import('react-onesignal').then(mod => mod.default);
+      console.log('[OneSignal] Import successful:', !!OneSignal);
+      console.log('[OneSignal] OneSignal object methods:', Object.getOwnPropertyNames(OneSignal));
+      
+      const initConfig = {
+        appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID!,
+        allowLocalhostAsSecureOrigin: process.env.NODE_ENV === 'development',
+        // Let OneSignal handle everything automatically
+      };
+
+      console.log('[OneSignal] Initializing with config:', initConfig);
+
+      // Check if OneSignal is already initialized to avoid double initialization
+      if (typeof window !== 'undefined' && (window as any).OneSignal && (window as any).OneSignal._initialized) {
+        console.log('[OneSignal] Already initialized, skipping init');
+      } else {
+        await OneSignal.init(initConfig);
+        console.log('[OneSignal] Init completed successfully');
+      }
+
+      // Set the external user ID to the Clerk user ID for precise targeting
+      if (user?.id) {
+        try {
+          console.log('[OneSignal] Setting external user ID:', user.id);
+          await OneSignal.login(user.id);
+          console.log('[OneSignal] External user ID set successfully');
+        } catch (err) {
+          console.warn('[OneSignal] Failed to set external user ID:', err);
+        }
+      } else {
+        console.warn('[OneSignal] No user ID available for external user ID');
+      }
+
       // Set admin tag
-      await OneSignal.sendTag('user_type', 'admin');
+      try {
+        console.log('[OneSignal] Setting admin tag');
+        await OneSignal.User.addTag('user_type', 'admin');
+        console.log('[OneSignal] Admin tag set successfully');
+      } catch (err) {
+        console.warn('[OneSignal] Failed to set admin tag:', err);
+      }
 
       // Check notification permission
-      const permission = await OneSignal.getNotificationPermission();
-      const permissionGranted = permission === 'granted';
-      const permissionDenied = permission === 'denied';
+      console.log('[OneSignal] Checking notification permission...');
+      const permission = OneSignal.Notifications.permission;
+      console.log('[OneSignal] Permission result:', permission);
+      
+      // Handle both boolean and string responses
+      let permissionGranted = false;
+      let permissionDenied = false;
+      
+      if (typeof permission === 'boolean') {
+        permissionGranted = permission;
+        permissionDenied = false;
+      } else {
+        permissionGranted = permission === 'granted';
+        permissionDenied = permission === 'denied';
+      }
+
+      console.log('[OneSignal] Permission status:', {
+        permission,
+        permissionGranted,
+        permissionDenied
+      });
 
       setState(prev => ({
         ...prev,
@@ -92,65 +167,35 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
         permissionDenied
       }));
 
+      console.log('[OneSignal] Initialization completed successfully');
       return true;
     } catch (error) {
-      console.error('OneSignal initialization failed:', error);
+      console.error('[OneSignal] Initialization failed with error:', error);
+      console.error('[OneSignal] Error details:', {
+        name: error instanceof Error ? error.name : 'Unknown',
+        message: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      });
       setState(prev => ({
         ...prev,
-        error: 'Error initializing push notifications',
+        error: `Error initializing push notifications: ${error instanceof Error ? error.message : String(error)}`,
         oneSignalReady: false
       }));
       return false;
     }
-  }, []);
+  }, [user?.id]);
 
   // Handle toggle change
   const handleToggleChange = useCallback(async (enabled: boolean) => {
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
 
-      if (enabled) {
-        // Initialize OneSignal first
-        const initialized = await initializeOneSignal();
-        if (!initialized) {
-          setState(prev => ({ ...prev, loading: false }));
-          return;
-        }
+      console.log('[OneSignal] Starting toggle change:', enabled);
+      console.log('[OneSignal] User ID:', user?.id);
+      console.log('[OneSignal] Current state:', state);
 
-        // Request permission if needed
-        if (!state.permissionGranted) {
-          try {
-            const OneSignal = await import('react-onesignal').then(mod => mod.default);
-            const permission = await OneSignal.showSlidedownPrompt();
-            
-            if (permission !== true) {
-              setState(prev => ({
-                ...prev,
-                permissionDenied: true,
-                loading: false,
-                error: 'Las notificaciones push requieren permisos del navegador'
-              }));
-              return;
-            }
-            
-            setState(prev => ({
-              ...prev,
-              permissionGranted: true,
-              permissionDenied: false
-            }));
-          } catch (permError) {
-            console.error('Permission request failed:', permError);
-            setState(prev => ({
-              ...prev,
-              loading: false,
-              error: 'No se pudieron solicitar permisos de notificación'
-            }));
-            return;
-          }
-        }
-      }
-
-      // Update preference in database
+      // ALWAYS update preference in database first
+      console.log('[OneSignal] Updating preference in database:', enabled);
       const response = await fetch('/api/admin/notifications/preferences', {
         method: 'PUT',
         headers: {
@@ -160,18 +205,77 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
       });
 
       const data = await response.json();
+      console.log('[OneSignal] Database response:', data);
       
-      if (data.success) {
-        setState(prev => ({ 
-          ...prev, 
-          enabled: data.data.enabled,
-          loading: false,
-          error: null
-        }));
-      } else {
+      if (!data.success) {
         throw new Error(data.error || 'Error updating preferences');
       }
+
+      // Update state with the database result
+      console.log('[OneSignal] Updating state with database result:', data.data);
+      setState(prev => ({ 
+        ...prev, 
+        enabled: data.data.enabled,
+        loading: false,
+        error: null
+      }));
+
+      // If enabling, try to initialize OneSignal (but don't fail if it doesn't work)
+      if (enabled) {
+        try {
+          console.log('[OneSignal] Attempting to initialize OneSignal...');
+          console.log('[OneSignal] Environment check:', {
+            appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID,
+            nodeEnv: process.env.NODE_ENV,
+            mockPush: process.env.MOCK_PUSH
+          });
+          const initialized = await initializeOneSignal();
+          
+          if (!initialized) {
+            console.warn('OneSignal initialization failed, but preference saved');
+            setState(prev => ({ 
+              ...prev, 
+              error: 'Preferencia guardada, pero hay problemas con OneSignal. Revisa la configuración.' 
+            }));
+            return;
+          }
+
+          console.log('[OneSignal] OneSignal fully initialized successfully');
+          
+          // Request permissions if needed (after a short delay to ensure OneSignal is ready)
+          setTimeout(async () => {
+            try {
+              const OneSignal = await import('react-onesignal').then(mod => mod.default);
+              const currentPermission = OneSignal.Notifications.permission;
+              console.log('[OneSignal] Current permission after init:', currentPermission);
+              
+              if (!currentPermission) {
+                console.log('[OneSignal] Requesting notification permissions...');
+                const permissionResult = await OneSignal.Notifications.requestPermission();
+                console.log('[OneSignal] Permission request result:', permissionResult);
+                
+                // Update state based on permission result
+                setState(prev => ({
+                  ...prev,
+                  permissionGranted: permissionResult === true,
+                  permissionDenied: permissionResult === false,
+                  error: permissionResult === false ? 'Se requieren permisos de notificación para recibir alertas.' : null
+                }));
+              }
+            } catch (permError) {
+              console.error('[OneSignal] Permission request failed:', permError);
+            }
+          }, 1000);
+        } catch (oneSignalError) {
+          console.error('OneSignal setup failed:', oneSignalError);
+          setState(prev => ({
+            ...prev,
+            error: 'Preferencia guardada, pero OneSignal no está disponible. Revisa la configuración.'
+          }));
+        }
+      }
     } catch (error) {
+      console.error('Toggle change failed:', error);
       setState(prev => ({ 
         ...prev, 
         error: error instanceof Error ? error.message : 'Error updating preferences',

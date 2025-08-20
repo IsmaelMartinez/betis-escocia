@@ -30,9 +30,10 @@ vi.mock('@/lib/supabase', () => {
   };
 });
 
-// Mock notification queue manager
-vi.mock('@/lib/notifications/queueManager', () => ({
-  queueContactNotification: vi.fn(() => 'mocked-notification-id'),
+// Mock OneSignal client
+vi.mock('@/lib/notifications/oneSignalClient', () => ({
+  sendAdminNotification: vi.fn(),
+  createContactNotificationPayload: vi.fn(),
 }));
 
 // Mock logger
@@ -272,10 +273,26 @@ describe('Contact API - GET', () => {
 });
 
 describe('Contact API - POST', () => {
-  beforeEach(() => {
+  let mockSendAdminNotification: any;
+  let mockCreateContactNotificationPayload: any;
+
+  beforeEach(async () => {
     vi.clearAllMocks();
     // Reset all spies to their original implementation
     vi.restoreAllMocks();
+    
+    // Get references to mocked functions
+    const oneSignalModule = await import('@/lib/notifications/oneSignalClient');
+    mockSendAdminNotification = vi.mocked(oneSignalModule.sendAdminNotification);
+    mockCreateContactNotificationPayload = vi.mocked(oneSignalModule.createContactNotificationPayload);
+    
+    // Default OneSignal success behavior
+    mockCreateContactNotificationPayload.mockReturnValue({
+      type: 'contact',
+      title: 'Nuevo mensaje de contacto',
+      body: 'Test User ha enviado un mensaje'
+    });
+    mockSendAdminNotification.mockResolvedValue({ success: true, notificationId: 'test-123' });
   });
 
   it('should successfully submit a contact form', async () => {
@@ -315,6 +332,14 @@ describe('Contact API - POST', () => {
       message: 'Mensaje enviado correctamente. Te responderemos pronto.',
     });
     expect(supabase.from).toHaveBeenCalledWith('contact_submissions');
+    
+    // Verify OneSignal notification was sent
+    expect(mockCreateContactNotificationPayload).toHaveBeenCalledWith('Test User', 'Test Subject', 'general');
+    expect(mockSendAdminNotification).toHaveBeenCalledWith({
+      type: 'contact',
+      title: 'Nuevo mensaje de contacto',
+      body: 'Test User ha enviado un mensaje'
+    });
   });
 
   it('should return 400 for invalid input (missing required fields)', async () => {
@@ -719,6 +744,88 @@ describe('Contact API - POST', () => {
 
       expect(response.status).toBe(200);
       expect(json.success).toBe(true);
+    }
+  });
+
+  it('should handle OneSignal notification failure gracefully', async () => {
+    // Mock OneSignal to fail
+    mockSendAdminNotification.mockRejectedValueOnce(new Error('OneSignal API error'));
+
+    const mockRequest = {
+      method: 'POST',
+      url: 'http://localhost:3000/api/contact',
+      json: () => Promise.resolve({
+        name: 'Test User',
+        email: 'test@example.com',
+        type: 'general',
+        subject: 'Test Subject',
+        message: 'This is a test message.',
+      }),
+    } as unknown as NextRequest;
+
+    // Mock successful database insert
+    (supabase.from as any).mockReturnValue({
+      insert: vi.fn(() => ({
+        select: vi.fn(() => ({
+          single: vi.fn(() => Promise.resolve({ data: { id: 1 }, error: null })),
+        })),
+      })),
+    });
+
+    const response = await POST(mockRequest);
+    const json = await response.json();
+
+    // Contact submission should still succeed even if notification fails
+    expect(response.status).toBe(200);
+    expect(json.success).toBe(true);
+    expect(json.message).toBe('Mensaje enviado correctamente. Te responderemos pronto.');
+    
+    // Verify notification was attempted
+    expect(mockCreateContactNotificationPayload).toHaveBeenCalledWith('Test User', 'Test Subject', 'general');
+    expect(mockSendAdminNotification).toHaveBeenCalled();
+  });
+
+  it('should send correct notification payload for different contact types', async () => {
+    const contactTypes = [
+      { type: 'general', expectedType: 'general' },
+      { type: 'rsvp', expectedType: 'rsvp' },
+      { type: 'merchandise', expectedType: 'merchandise' }
+    ];
+
+    for (const { type, expectedType } of contactTypes) {
+      // Reset mocks for each iteration
+      mockCreateContactNotificationPayload.mockClear();
+      mockSendAdminNotification.mockClear();
+
+      const mockRequest = {
+        method: 'POST',
+        url: 'http://localhost:3000/api/contact',
+        json: () => Promise.resolve({
+          name: 'Test User',
+          email: 'test@example.com',
+          type: type,
+          subject: 'Type-specific Subject',
+          message: 'Type-specific message.',
+        }),
+      } as unknown as NextRequest;
+
+      // Mock successful database insert
+      (supabase.from as any).mockReturnValue({
+        insert: vi.fn(() => ({
+          select: vi.fn(() => ({
+            single: vi.fn(() => Promise.resolve({ data: { id: 1 }, error: null })),
+          })),
+        })),
+      });
+
+      const response = await POST(mockRequest);
+      const json = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(json.success).toBe(true);
+      
+      // Verify correct notification payload was created
+      expect(mockCreateContactNotificationPayload).toHaveBeenCalledWith('Test User', 'Type-specific Subject', expectedType);
     }
   });
 });

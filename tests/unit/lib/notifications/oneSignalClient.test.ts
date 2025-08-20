@@ -17,6 +17,12 @@ vi.mock('@/lib/logger', () => ({
   }
 }));
 
+// Mock the preferencesDb module
+const mockGetUsersWithNotificationsEnabled = vi.hoisted(() => vi.fn());
+vi.mock('@/lib/notifications/preferencesDb', () => ({
+  getUsersWithNotificationsEnabledDb: mockGetUsersWithNotificationsEnabled
+}));
+
 // Mock fetch globally
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
@@ -28,6 +34,9 @@ describe('OneSignal Client', () => {
     delete process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID;
     delete process.env.ONESIGNAL_REST_API_KEY;
     delete process.env.MOCK_PUSH;
+    
+    // Default mock behavior - return empty array (no enabled users)
+    mockGetUsersWithNotificationsEnabled.mockResolvedValue([]);
   });
 
   afterEach(() => {
@@ -137,6 +146,9 @@ describe('OneSignal Client', () => {
       });
 
       it('should send notification successfully', async () => {
+        // Mock that there are enabled admin users
+        mockGetUsersWithNotificationsEnabled.mockResolvedValue(['admin1', 'admin2']);
+        
         const mockResponse = {
           id: 'notification-123',
           recipients: 2
@@ -165,6 +177,9 @@ describe('OneSignal Client', () => {
       });
 
       it('should handle API errors gracefully', async () => {
+        // Mock that there are enabled admin users
+        mockGetUsersWithNotificationsEnabled.mockResolvedValue(['admin1']);
+        
         const errorResponse = {
           errors: ['Invalid app_id parameter']
         };
@@ -187,6 +202,9 @@ describe('OneSignal Client', () => {
       });
 
       it('should handle network errors gracefully', async () => {
+        // Mock that there are enabled admin users
+        mockGetUsersWithNotificationsEnabled.mockResolvedValue(['admin1']);
+        
         mockFetch.mockRejectedValueOnce(new Error('Network connection failed'));
 
         const result = await sendAdminNotification(testPayload);
@@ -202,6 +220,9 @@ describe('OneSignal Client', () => {
       });
 
       it('should use default values for optional payload fields', async () => {
+        // Mock that there are enabled admin users
+        mockGetUsersWithNotificationsEnabled.mockResolvedValue(['admin1']);
+        
         const minimalPayload = {
           title: 'Test',
           body: 'Test body'

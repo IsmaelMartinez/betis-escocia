@@ -6,6 +6,7 @@
  */
 
 import { log } from '@/lib/logger';
+import { getUsersWithNotificationsEnabledDb } from '@/lib/notifications/preferencesDb';
 
 // OneSignal notification payload structure
 export interface OneSignalNotificationPayload {
@@ -100,34 +101,64 @@ export async function sendAdminNotification(
   
   // Mock mode short-circuit
   if (config.mockMode) {
+    // In mock mode, still check preferences to simulate real behavior
+    const enabledAdminUserIds = await getUsersWithNotificationsEnabledDb();
+    
     log.info('Mock push notification sent', {
       title: payload.title,
       body: payload.body,
       url: payload.url,
-      mockMode: true
+      mockMode: true,
+      enabledAdminCount: enabledAdminUserIds.length,
+      userIds: enabledAdminUserIds
     });
     
     return { 
       success: true, 
-      notificationId: `mock-${Date.now()}` 
+      notificationId: `mock-${Date.now()}`,
+      error: enabledAdminUserIds.length === 0 ? 'No admin users have notifications enabled' : undefined
     };
   }
   
   try {
-    // Prepare OneSignal API request
-    const oneSignalPayload = {
+    // Get list of admin users who have notifications enabled
+    const enabledAdminUserIds = await getUsersWithNotificationsEnabledDb();
+    
+    if (enabledAdminUserIds.length === 0) {
+      log.info('No admin users have notifications enabled', {
+        title: payload.title,
+        body: payload.body
+      });
+      return { 
+        success: true, 
+        notificationId: 'no-recipients',
+        error: 'No admin users have notifications enabled'
+      };
+    }
+
+    log.info('Sending notification to enabled admin users', {
+      title: payload.title,
+      enabledAdminCount: enabledAdminUserIds.length,
+      userIds: enabledAdminUserIds
+    });
+
+    // Prepare OneSignal API request targeting specific admin users by external ID
+    const oneSignalPayload: any = {
       app_id: config.appId,
-      included_segments: [], // We'll use filters instead
-      filters: [
-        { field: 'tag', key: 'user_type', relation: '=', value: 'admin' }
-      ],
+      include_external_user_ids: enabledAdminUserIds, // Target specific Clerk user IDs
       headings: { en: payload.title },
       contents: { en: payload.body },
       url: payload.url || '/admin',
-      chrome_web_icon: payload.icon || '/images/logo_no_texto.jpg',
-      chrome_web_badge: payload.badge || '/images/logo_no_texto.jpg',
       data: payload.data || {}
     };
+
+    // Only add icons if they're provided and look like valid URLs
+    if (payload.icon && (payload.icon.startsWith('http://') || payload.icon.startsWith('https://'))) {
+      oneSignalPayload.chrome_web_icon = payload.icon;
+    }
+    if (payload.badge && (payload.badge.startsWith('http://') || payload.badge.startsWith('https://'))) {
+      oneSignalPayload.chrome_web_badge = payload.badge;
+    }
     
     // Make request to OneSignal REST API
     const response = await fetch('https://onesignal.com/api/v1/notifications', {
@@ -235,5 +266,6 @@ export function createTestNotificationPayload(): OneSignalNotificationPayload {
       type: 'test',
       timestamp: new Date().toISOString()
     }
+    // No icon/badge specified to avoid URL construction errors
   };
 }

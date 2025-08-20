@@ -24,7 +24,8 @@
       "Bash(done)",
       "Bash(for file in tests/unit/lib/schemas/*.test.ts)",
       "Bash(chmod:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(npx playwright test:*)"
     ],
     "deny": []
   }
