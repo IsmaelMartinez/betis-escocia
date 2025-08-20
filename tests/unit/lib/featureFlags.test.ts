@@ -40,7 +40,6 @@ describe('Feature Flags - Simplified System', () => {
       expect(hasFeature('show-history')).toBe(false);
       expect(hasFeature('show-redes-sociales')).toBe(false);
       expect(hasFeature('show-debug-info')).toBe(false);
-      expect(hasFeature('admin-push-notifications')).toBe(false);
     });
   });
 

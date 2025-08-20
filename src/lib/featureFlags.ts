@@ -19,8 +19,7 @@ export type FeatureName =
   | 'show-debug-info'
   | 'show-rsvp'
   | 'show-unete'
-  | 'show-contacto'
-  | 'admin-push-notifications';
+  | 'show-contacto';
 
 // Navigation item interface
 export interface NavigationItem {
@@ -45,7 +44,6 @@ const DEFAULT_FEATURES: Record<FeatureName, boolean> = {
   'show-rsvp': true,
   'show-unete': true,
   'show-contacto': true,
-  'admin-push-notifications': false,
 };
 
 // Environment variable mapping
@@ -63,7 +61,6 @@ const ENV_VAR_MAP: Record<FeatureName, string> = {
   'show-rsvp': 'NEXT_PUBLIC_FEATURE_RSVP',
   'show-unete': 'NEXT_PUBLIC_FEATURE_UNETE',
   'show-contacto': 'NEXT_PUBLIC_FEATURE_CONTACTO',
-  'admin-push-notifications': 'NEXT_PUBLIC_FEATURE_ADMIN_PUSH_NOTIFICATIONS',
 };
 
 // Cache for resolved features
