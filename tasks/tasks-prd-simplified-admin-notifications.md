@@ -27,14 +27,14 @@
 
 ## Tasks
 
-- [ ] 1.0 Decommission Legacy Notification System (SSE / queue / dedupe / old service worker logic)
-	- [ ] 1.1 Inventory all notification-related legacy files (SSE endpoint, queue, dedupe logic, NotificationManager usage)
-	- [ ] 1.2 Remove `notificationManager.ts` and references in `admin/page.tsx`
-	- [ ] 1.3 Delete/disable SSE trigger endpoint (`/api/notifications/trigger`) if no longer required
-	- [ ] 1.4 Simplify `public/sw.js` (remove SSE-specific or legacy fallback code; retain only click handling if needed for OneSignal or note replacement by provider SW)
-	- [ ] 1.5 Remove obsolete localStorage dedupe keys / cleanup code
-	- [ ] 1.6 Run type-check & lint to ensure no dangling imports
-	- [ ] 1.7 Update ADR-016 references (pointing readers to ADR-020) if any remain in docs
+- [x] 1.0 Decommission Legacy Notification System (SSE / queue / dedupe / old service worker logic)
+	- [x] 1.1 Inventory all notification-related legacy files (SSE endpoint, queue, dedupe logic, NotificationManager usage)
+	- [x] 1.2 Remove `notificationManager.ts` and references in `admin/page.tsx`
+	- [x] 1.3 Delete/disable SSE trigger endpoint (`/api/notifications/trigger`) if no longer required
+	- [x] 1.4 Simplify `public/sw.js` (remove SSE-specific or legacy fallback code; retain only click handling if needed for OneSignal or note replacement by provider SW)
+	- [x] 1.5 Remove obsolete localStorage dedupe keys / cleanup code
+	- [x] 1.6 Run type-check & lint to ensure no dangling imports
+	- [x] 1.7 Update ADR-016 references (pointing readers to ADR-020) if any remain in docs
 
 - [ ] 2.0 Implement OneSignal Server Integration (env vars, wrapper module, config validation)
 	- [ ] 2.1 Add env vars to `.env.example`: `NEXT_PUBLIC_ONESIGNAL_APP_ID`, `ONESIGNAL_REST_API_KEY`, `MOCK_PUSH`
