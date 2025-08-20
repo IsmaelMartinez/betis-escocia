@@ -14,7 +14,7 @@ export interface OneSignalNotificationPayload {
   url?: string;
   icon?: string;
   badge?: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
 }
 
 // OneSignal API response structure
