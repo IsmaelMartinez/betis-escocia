@@ -11,7 +11,6 @@ import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import MessageComponent from '@/components/MessageComponent';
 import { FeatureWrapper } from '@/lib/featureProtection';
-import SimpleNotificationPanel from '@/components/admin/SimpleNotificationPanel';
 import MatchForm from '@/components/admin/MatchForm';
 import MatchesList from '@/components/admin/MatchesList';
 import UserManagement from '@/components/admin/UserManagement';
@@ -21,10 +20,6 @@ import { withAdminRole } from '@/lib/withAdminRole';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { DATE_FORMAT } from '@/lib/constants/dateFormats';
-import { 
-  initializeNotifications,
-  cleanupNotifications 
-} from '@/lib/notifications/notificationManager';
 import { log } from '@/lib/logger';
 
 interface AdminStats {
@@ -160,23 +155,6 @@ function AdminPage() {
     }
   }, [user?.id]);
 
-  // Initialize background notification system
-  const initializeBackgroundNotifications = useCallback(async () => {
-    try {
-      const initialized = await initializeNotifications();
-      if (initialized) {
-        // Background notifications initialized successfully
-      } else {
-        // Background notifications not available or disabled
-      }
-    } catch (error) {
-      log.warn('Failed to initialize background notifications in admin panel', {
-        userId: user?.id
-      }, {
-        error: error instanceof Error ? error.message : String(error)
-      });
-    }
-  }, [user?.id]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -362,15 +340,8 @@ function AdminPage() {
   useEffect(() => {
     if (isSignedIn) {
       fetchStats();
-      // Initialize background notifications when admin dashboard loads
-      initializeBackgroundNotifications();
     }
-
-    // Cleanup on unmount
-    return () => {
-      cleanupNotifications();
-    };
-  }, [isSignedIn, fetchStats, initializeBackgroundNotifications]);
+  }, [isSignedIn, fetchStats]);
 
   // Show loading while Clerk is loading
   if (!isLoaded) {
@@ -585,10 +556,6 @@ function AdminPage() {
           </Card>
         </div>
 
-        {/* Push Notifications Panel */}
-        <div className="mb-8">
-          <SimpleNotificationPanel />
-        </div>
 
         {/* Recent Data */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

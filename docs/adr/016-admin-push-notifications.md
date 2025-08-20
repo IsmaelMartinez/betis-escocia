@@ -1,11 +1,13 @@
 # ADR-016: Admin Push Notifications Implementation
 
 ## Status
-- **Status**: Implemented
+- **Status**: Superseded by ADR-020
 - **Date**: 2025-01-12
-- **Updated**: 2025-01-14
+- **Updated**: 2025-08-20
 - **Authors**: Claude Code
 - **Decision Maker**: Development Team
+
+> **⚠️ SUPERSEDED**: This ADR describes the legacy SSE-based notification system that has been replaced by OneSignal. See [ADR-020: Adopt OneSignal for Admin Notifications](./020-adopt-onesignal-admin-notifications.md) for the current implementation.
 
 ## Context
 
@@ -182,12 +184,19 @@ CREATE TABLE notification_preferences (
 - **Issue**: Service Worker not activating
   - **Solution**: Added explicit `skipWaiting()` and `claim()` calls
 
+---
+
+## Superseded Implementation
+
+**This legacy SSE-based notification system has been replaced by OneSignal.** The implementation described in this document has been decommissioned as of August 2025.
+
+**Migration to OneSignal**: See [ADR-020: Adopt OneSignal for Admin Notifications](./020-adopt-onesignal-admin-notifications.md) for the current implementation, which provides:
+- Simplified architecture (no SSE, queue, or deduplication logic)
+- Better mobile support and reliability
+- Reduced maintenance overhead
+- Professional notification delivery service
+
 ## Review
-- **Next review date**: 2025-04-14 (3 months)
-- **Review criteria**: 
-  - User adoption and feedback from admin users
-  - Performance impact on application
-  - Browser compatibility changes
-  - Security considerations for push notification endpoints
-  - Notification delivery reliability metrics
-  - Potential extension to non-admin users
+- **Status**: No longer applicable (superseded)
+- **Final review date**: 2025-08-20
+- **Legacy system decommissioned**: 2025-08-20
