@@ -11,6 +11,7 @@ import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import MessageComponent from '@/components/MessageComponent';
 import { FeatureWrapper } from '@/lib/featureProtection';
+import OneSignalNotificationPanel from '@/components/admin/OneSignalNotificationPanel';
 import MatchForm from '@/components/admin/MatchForm';
 import MatchesList from '@/components/admin/MatchesList';
 import UserManagement from '@/components/admin/UserManagement';
@@ -556,6 +557,10 @@ function AdminPage() {
           </Card>
         </div>
 
+        {/* OneSignal Push Notifications Panel */}
+        <div className="mb-8">
+          <OneSignalNotificationPanel />
+        </div>
 
         {/* Recent Data */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

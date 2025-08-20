@@ -36,13 +36,13 @@
 	- [x] 1.6 Run type-check & lint to ensure no dangling imports
 	- [x] 1.7 Update ADR-016 references (pointing readers to ADR-020) if any remain in docs
 
-- [ ] 2.0 Implement OneSignal Server Integration (env vars, wrapper module, config validation)
-	- [ ] 2.1 Add env vars to `.env.example`: `NEXT_PUBLIC_ONESIGNAL_APP_ID`, `ONESIGNAL_REST_API_KEY`, `MOCK_PUSH`
-	- [ ] 2.2 Create `src/lib/notifications/oneSignalClient.ts` with `sendAdminNotification` & payload type
-	- [ ] 2.3 Implement mock short-circuit when `MOCK_PUSH=1`
-	- [ ] 2.4 Add runtime validation/log warning if env vars missing (avoid crash)
-	- [ ] 2.5 Add unit tests for wrapper: success path, missing env, mock mode, failure logging
-	- [ ] 2.6 Ensure no REST API key exposure client-side (search for usage in client bundles)
+- [x] 2.0 Implement OneSignal Server Integration (env vars, wrapper module, config validation)
+	- [x] 2.1 Add env vars to `.env.example`: `NEXT_PUBLIC_ONESIGNAL_APP_ID`, `ONESIGNAL_REST_API_KEY`, `MOCK_PUSH`
+	- [x] 2.2 Create `src/lib/notifications/oneSignalClient.ts` with `sendAdminNotification` & payload type
+	- [x] 2.3 Implement mock short-circuit when `MOCK_PUSH=1`
+	- [x] 2.4 Add runtime validation/log warning if env vars missing (avoid crash)
+	- [x] 2.5 Add unit tests for wrapper: success path, missing env, mock mode, failure logging
+	- [x] 2.6 Ensure no REST API key exposure client-side (search for usage in client bundles)
 
 - [ ] 3.0 Add Admin Dashboard Preference Toggle & Lazy SDK Load with Tagging
 	- [ ] 3.1 Design minimal UI (toggle + status + test button) in `admin/page.tsx`
