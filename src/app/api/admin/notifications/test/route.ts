@@ -11,6 +11,10 @@ export const POST = createApiHandler({
   handler: async (validatedData, context) => {
     const { user } = context;
 
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
     try {
       const payload = createTestNotificationPayload();
       const result = await sendAdminNotification(payload);

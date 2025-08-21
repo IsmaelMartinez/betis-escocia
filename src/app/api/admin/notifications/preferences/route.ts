@@ -17,6 +17,10 @@ export const GET = createApiHandler({
   handler: async (validatedData, context) => {
     const { user, clerkToken } = context;
 
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
     try {
       const enabled = await getUserNotificationPreferenceDb(user.id, clerkToken);
       
@@ -48,6 +52,10 @@ export const PUT = createApiHandler({
   handler: async (validatedData, context) => {
     const { user, clerkToken } = context;
     const { enabled } = validatedData;
+
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
 
     try {
       const success = await setUserNotificationPreferenceDb(

@@ -25,7 +25,9 @@
       "Bash(for file in tests/unit/lib/schemas/*.test.ts)",
       "Bash(chmod:*)",
       "Bash(npm run dev:*)",
-      "Bash(npx playwright test:*)"
+      "Bash(npx playwright test:*)",
+      "Bash(rm tests/unit/lib/hooks/useApiData.comprehensive.test.ts)",
+      "Bash(rm tests/unit/components/AllDatabaseMatches.test.tsx)"
     ],
     "deny": []
   }

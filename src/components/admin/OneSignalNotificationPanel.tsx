@@ -248,7 +248,10 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
               const currentPermission = OneSignal.Notifications.permission;
               console.log('[OneSignal] Current permission after init:', currentPermission);
               
-              if (currentPermission !== 'granted' && currentPermission !== true) {
+              const isPermissionGranted = (perm: any) => perm === 'granted' || perm === true;
+              const isPermissionDenied = (perm: any) => perm === 'denied' || perm === false;
+              
+              if (!isPermissionGranted(currentPermission)) {
                 console.log('[OneSignal] Requesting notification permissions...');
                 await OneSignal.Notifications.requestPermission();
                 console.log('[OneSignal] Permission request completed');
@@ -259,9 +262,9 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
                 // Update state based on permission result
                 setState(prev => ({
                   ...prev,
-                  permissionGranted: newPermission === 'granted',
-                  permissionDenied: newPermission === 'denied',
-                  error: newPermission === 'denied' ? 'Se requieren permisos de notificación para recibir alertas.' : null
+                  permissionGranted: isPermissionGranted(newPermission),
+                  permissionDenied: isPermissionDenied(newPermission),
+                  error: isPermissionDenied(newPermission) ? 'Se requieren permisos de notificación para recibir alertas.' : null
                 }));
               }
             } catch (permError) {
