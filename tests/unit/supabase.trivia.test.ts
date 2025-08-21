@@ -73,7 +73,7 @@ describe('Trivia Score Supabase Functions', () => {
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockData);
       expect(supabase.from).toHaveBeenCalledWith('user_trivia_scores');
-      expect((supabase.from as Mock)().select).toHaveBeenCalledWith('*');
+      expect((supabase.from as Mock)().select).toHaveBeenCalledWith('id, daily_score, timestamp');
       expect((supabase.from as Mock)().select().eq).toHaveBeenCalledWith('user_id', 'user1');
     });
 
