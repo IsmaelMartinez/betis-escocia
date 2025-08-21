@@ -119,7 +119,7 @@ export default defineConfig({
         isolate: true,
         useAtomics: true,
         minThreads: 1,
-        maxThreads: 4, // Use up to 4 threads for faster execution
+        maxThreads: 10, // Use up to 10 threads for faster execution
       },
     },
     // Reporter configuration  

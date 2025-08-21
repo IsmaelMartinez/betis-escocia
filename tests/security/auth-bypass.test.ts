@@ -18,8 +18,13 @@ vi.mock('@/lib/supabase', () => ({
 }));
 
 describe('Authentication Bypass Security Tests', () => {
-  const mockGetAuth = vi.mocked(await import('@clerk/nextjs/server')).getAuth;
-  const mockCheckAdminRole = vi.mocked(await import('@/lib/adminApiProtection')).checkAdminRole;
+  let mockGetAuth: any;
+  let mockCheckAdminRole: any;
+
+  beforeAll(async () => {
+    mockGetAuth = vi.mocked((await import('@clerk/nextjs/server')).getAuth);
+    mockCheckAdminRole = vi.mocked((await import('@/lib/adminApiProtection')).checkAdminRole);
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -34,7 +39,19 @@ describe('Authentication Bypass Security Tests', () => {
       } as any);
 
       mockCheckAdminRole.mockResolvedValue({
-        user: { id: 'user_123' },
+        user: { 
+          id: 'user_123',
+          passwordEnabled: false,
+          totpEnabled: false,
+          backupCodeEnabled: false,
+          twoFactorEnabled: false,
+          emailAddresses: [],
+          phoneNumbers: [],
+          externalAccounts: [],
+          firstName: 'Test',
+          lastName: 'User',
+          fullName: 'Test User'
+        } as any,
         isAdmin: false,
         error: 'Insufficient privileges'
       });
@@ -122,9 +139,9 @@ describe('Authentication Bypass Security Tests', () => {
 
       // Test rapid requests with different spoofed IPs
       for (const ip of spoofedIPs) {
-        const requests = Array(20).fill(0).map(() => {
-          const { POST } = import('@/app/api/contact/route');
-          return POST.then(handler => handler(new NextRequest('http://localhost:3000/api/contact', {
+        const requests = Array(20).fill(0).map(async () => {
+          const { POST } = await import('@/app/api/contact/route');
+          return POST(new NextRequest('http://localhost:3000/api/contact', {
             method: 'POST',
             headers: {
               'X-Forwarded-For': ip,
@@ -139,14 +156,14 @@ describe('Authentication Bypass Security Tests', () => {
               subject: 'Test',
               message: 'Test message'
             })
-          })));
+          }));
         });
 
         // Execute rapid requests
         const responses = await Promise.all(requests);
         
         // At least some requests should be rate limited (status 429)
-        const rateLimitedCount = responses.filter(r => r.status === 429).length;
+        const rateLimitedCount = responses.filter((r: any) => r.status === 429).length;
         
         // Allow some requests through but expect rate limiting to kick in
         expect(rateLimitedCount).toBeGreaterThan(0);
@@ -239,9 +256,21 @@ describe('Authentication Bypass Security Tests', () => {
 
     it('should validate origin headers on admin operations', async () => {
       mockCheckAdminRole.mockResolvedValue({
-        user: { id: 'admin_123' },
+        user: { 
+          id: 'admin_123',
+          passwordEnabled: false,
+          totpEnabled: false,
+          backupCodeEnabled: false,
+          twoFactorEnabled: false,
+          emailAddresses: [],
+          phoneNumbers: [],
+          externalAccounts: [],
+          firstName: 'Admin',
+          lastName: 'User',
+          fullName: 'Admin User'
+        } as any,
         isAdmin: true,
-        error: null
+        error: undefined
       });
 
       const maliciousOrigins = [
@@ -333,9 +362,21 @@ describe('Authentication Bypass Security Tests', () => {
   describe('Concurrent Session Attacks', () => {
     it('should handle concurrent admin sessions securely', async () => {
       mockCheckAdminRole.mockResolvedValue({
-        user: { id: 'admin_123' },
+        user: { 
+          id: 'admin_123',
+          passwordEnabled: false,
+          totpEnabled: false,
+          backupCodeEnabled: false,
+          twoFactorEnabled: false,
+          emailAddresses: [],
+          phoneNumbers: [],
+          externalAccounts: [],
+          firstName: 'Admin',
+          lastName: 'User',
+          fullName: 'Admin User'
+        } as any,
         isAdmin: true,
-        error: null
+        error: undefined
       });
 
       const { GET } = await import('@/app/api/admin/contact-submissions/route');

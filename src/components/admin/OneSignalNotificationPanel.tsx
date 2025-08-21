@@ -248,8 +248,8 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
               const currentPermission = OneSignal.Notifications.permission;
               console.log('[OneSignal] Current permission after init:', currentPermission);
               
-              const isPermissionGranted = (perm: any) => perm === 'granted' || perm === true;
-              const isPermissionDenied = (perm: any) => perm === 'denied' || perm === false;
+              const isPermissionGranted = (perm: string | boolean) => perm === 'granted' || perm === true;
+              const isPermissionDenied = (perm: string | boolean) => perm === 'denied' || perm === false;
               
               if (!isPermissionGranted(currentPermission)) {
                 console.log('[OneSignal] Requesting notification permissions...');

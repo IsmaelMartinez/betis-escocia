@@ -65,11 +65,26 @@ export const StandardErrors = {
   },
   
   TRIVIA: {
+    // Existing errors
     DAILY_SCORE_ERROR: 'Error al verificar puntuación diaria',
     ALREADY_PLAYED: 'Ya has jugado hoy. Vuelve mañana para una nueva partida',
     SAVE_SCORE_ERROR: 'Error al guardar la puntuación',
     FETCH_SCORE_ERROR: 'Error al obtener puntuación total',
     AUTHENTICATION_REQUIRED: 'Se requiere autenticación para jugar',
+    
+    // Enhanced error handling
+    QUESTIONS_FETCH_ERROR: 'Error al obtener preguntas del trivia',
+    QUESTIONS_NOT_AVAILABLE: 'No hay preguntas disponibles en este momento',
+    INVALID_ACTION: 'Acción no válida para el endpoint de trivia',
+    DATABASE_CONNECTION_FAILED: 'Error de conexión con la base de datos',
+    SCORE_VALIDATION_ERROR: 'Puntuación inválida',
+    DAILY_LIMIT_EXCEEDED: 'Has excedido el límite diario de intentos',
+    SESSION_EXPIRED: 'Tu sesión ha expirado, por favor inicia sesión nuevamente',
+    RATE_LIMITED: 'Demasiadas solicitudes, intenta de nuevo más tarde',
+    SERVICE_MAINTENANCE: 'El servicio de trivia está en mantenimiento',
+    AGGREGATION_ERROR: 'Error al calcular puntuaciones totales',
+    TOKEN_INVALID: 'Token de autenticación inválido',
+    UNEXPECTED_ERROR: 'Error inesperado en el sistema de trivia',
   },
   
   GDPR: {
