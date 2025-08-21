@@ -67,7 +67,7 @@ describe('TriviaScoreDisplay', () => {
 
   describe('Success state', () => {
     it('displays trivia score when API call succeeds', async () => {
-      mockFetch.mockResolvedValue(createMockResponse({ totalScore: 150 }));
+      mockFetch.mockResolvedValue(createMockResponse({ success: true, data: { totalScore: 150 } }));
       
       render(<TriviaScoreDisplay />);
       
@@ -79,7 +79,7 @@ describe('TriviaScoreDisplay', () => {
     });
 
     it('displays zero score correctly', async () => {
-      mockFetch.mockResolvedValue(createMockResponse({ totalScore: 0 }));
+      mockFetch.mockResolvedValue(createMockResponse({ success: true, data: { totalScore: 0 } }));
       
       render(<TriviaScoreDisplay />);
       
@@ -89,7 +89,7 @@ describe('TriviaScoreDisplay', () => {
     });
 
     it('displays large scores correctly', async () => {
-      mockFetch.mockResolvedValue(createMockResponse({ totalScore: 999999 }));
+      mockFetch.mockResolvedValue(createMockResponse({ success: true, data: { totalScore: 999999 } }));
       
       render(<TriviaScoreDisplay />);
       
@@ -99,7 +99,7 @@ describe('TriviaScoreDisplay', () => {
     });
 
     it('includes PieChart icon when score loads', async () => {
-      mockFetch.mockResolvedValue(createMockResponse({ totalScore: 100 }));
+      mockFetch.mockResolvedValue(createMockResponse({ success: true, data: { totalScore: 100 } }));
       
       render(<TriviaScoreDisplay />);
       
@@ -109,7 +109,7 @@ describe('TriviaScoreDisplay', () => {
     });
 
     it('applies correct styling to score display', async () => {
-      mockFetch.mockResolvedValue(createMockResponse({ totalScore: 75 }));
+      mockFetch.mockResolvedValue(createMockResponse({ success: true, data: { totalScore: 75 } }));
       
       render(<TriviaScoreDisplay />);
       
@@ -168,7 +168,7 @@ describe('TriviaScoreDisplay', () => {
 
   describe('Authentication integration', () => {
     it('calls getToken before making API request', async () => {
-      mockFetch.mockResolvedValue(createMockResponse({ totalScore: 50 }));
+      mockFetch.mockResolvedValue(createMockResponse({ success: true, data: { totalScore: 50 } }));
       
       render(<TriviaScoreDisplay />);
       
@@ -189,7 +189,7 @@ describe('TriviaScoreDisplay', () => {
 
     it('makes API request when token is available', async () => {
       mockGetToken.mockResolvedValue('test-auth-token');
-      mockFetch.mockResolvedValue(createMockResponse({ totalScore: 25 }));
+      mockFetch.mockResolvedValue(createMockResponse({ success: true, data: { totalScore: 25 } }));
       
       render(<TriviaScoreDisplay />);
       
@@ -202,7 +202,7 @@ describe('TriviaScoreDisplay', () => {
 
   describe('API response handling', () => {
     it('handles null totalScore in response', async () => {
-      mockFetch.mockResolvedValue(createMockResponse({ totalScore: null }));
+      mockFetch.mockResolvedValue(createMockResponse({ success: true, data: { totalScore: null } }));
       
       render(<TriviaScoreDisplay />);
       
@@ -253,7 +253,7 @@ describe('TriviaScoreDisplay', () => {
 
   describe('Component lifecycle', () => {
     it('fetches data on mount', async () => {
-      mockFetch.mockResolvedValue(createMockResponse({ totalScore: 88 }));
+      mockFetch.mockResolvedValue(createMockResponse({ success: true, data: { totalScore: 88 } }));
       
       render(<TriviaScoreDisplay />);
       
@@ -264,7 +264,7 @@ describe('TriviaScoreDisplay', () => {
 
     it('handles unmounting gracefully', async () => {
       mockFetch.mockImplementation(() => new Promise(resolve => {
-        setTimeout(() => resolve(createMockResponse({ totalScore: 42 })), 1000);
+        setTimeout(() => resolve(createMockResponse({ success: true, data: { totalScore: 42 } })), 1000);
       }));
       
       const { unmount } = render(<TriviaScoreDisplay />);
@@ -279,7 +279,7 @@ describe('TriviaScoreDisplay', () => {
 
   describe('Layout and styling', () => {
     it('applies correct container styling', async () => {
-      mockFetch.mockResolvedValue(createMockResponse({ totalScore: 123 }));
+      mockFetch.mockResolvedValue(createMockResponse({ success: true, data: { totalScore: 123 } }));
       
       render(<TriviaScoreDisplay />);
       
@@ -290,7 +290,7 @@ describe('TriviaScoreDisplay', () => {
     });
 
     it('applies correct layout classes', async () => {
-      mockFetch.mockResolvedValue(createMockResponse({ totalScore: 200 }));
+      mockFetch.mockResolvedValue(createMockResponse({ success: true, data: { totalScore: 200 } }));
       
       render(<TriviaScoreDisplay />);
       
@@ -301,7 +301,7 @@ describe('TriviaScoreDisplay', () => {
     });
 
     it('applies correct text styling', async () => {
-      mockFetch.mockResolvedValue(createMockResponse({ totalScore: 250 }));
+      mockFetch.mockResolvedValue(createMockResponse({ success: true, data: { totalScore: 250 } }));
       
       render(<TriviaScoreDisplay />);
       
@@ -312,7 +312,7 @@ describe('TriviaScoreDisplay', () => {
     });
 
     it('applies correct icon styling', async () => {
-      mockFetch.mockResolvedValue(createMockResponse({ totalScore: 300 }));
+      mockFetch.mockResolvedValue(createMockResponse({ success: true, data: { totalScore: 300 } }));
       
       render(<TriviaScoreDisplay />);
       
@@ -325,7 +325,7 @@ describe('TriviaScoreDisplay', () => {
 
   describe('Accessibility', () => {
     it('provides meaningful text content', async () => {
-      mockFetch.mockResolvedValue(createMockResponse({ totalScore: 180 }));
+      mockFetch.mockResolvedValue(createMockResponse({ success: true, data: { totalScore: 180 } }));
       
       render(<TriviaScoreDisplay />);
       
@@ -336,7 +336,7 @@ describe('TriviaScoreDisplay', () => {
     });
 
     it('maintains proper semantic structure', async () => {
-      mockFetch.mockResolvedValue(createMockResponse({ totalScore: 220 }));
+      mockFetch.mockResolvedValue(createMockResponse({ success: true, data: { totalScore: 220 } }));
       
       render(<TriviaScoreDisplay />);
       
@@ -365,7 +365,7 @@ describe('TriviaScoreDisplay', () => {
       expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
       
       // Resolve the promise
-      resolvePromise!(createMockResponse({ totalScore: 99 }));
+      resolvePromise!(createMockResponse({ success: true, data: { totalScore: 99 } }));
       
       await waitFor(() => {
         expect(screen.queryByTestId('loading-spinner')).not.toBeInTheDocument();

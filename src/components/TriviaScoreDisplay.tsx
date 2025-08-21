@@ -16,7 +16,7 @@ export default function TriviaScoreDisplay() {
     async function fetchTotalTriviaScore() {
       try {
         const token = await getToken();
-        const response = await fetch('/api/trivia/total-score-dashboard', {
+        const response = await fetch('/api/trivia?action=total', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -25,7 +25,7 @@ export default function TriviaScoreDisplay() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const apiResponse = await response.json();
-        const totalScore = apiResponse.success ? apiResponse.data.totalScore : apiResponse.totalScore;
+        const totalScore = apiResponse.success ? apiResponse.data.totalScore : 0;
         setTotalScore(totalScore);
       } catch (err: unknown) {
         console.error('Failed to fetch total trivia score:', err);
