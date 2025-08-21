@@ -4,7 +4,11 @@
 Trivia Game Implementation
 
 ## Status
-Implemented
+Superseded
+
+**Superseded by**: [ADR 017 - Trivia System Architectural Simplification](017-trivia-system-simplification.md)
+
+*Note: The trivia system described in this ADR has been identified as over-engineered and is being simplified through a comprehensive architectural refactoring documented in ADR 017. While the original implementation successfully delivered all planned functionality, the complexity has grown beyond what is needed for a daily quiz feature, necessitating significant simplification for better maintainability and performance.*
 
 ## Context
 To enhance user engagement and provide an interactive experience, a trivia game feature has been implemented for the Peña Bética Escocesa website. This game tests users' knowledge of Real Betis and Scottish culture/history, reinforcing the unique blend of Betis fandom and Scottish heritage that defines our community.

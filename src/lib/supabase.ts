@@ -657,9 +657,10 @@ export async function getUserDailyTriviaScore(userId: string, authenticatedSupab
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
 
+  // Optimized: Only select needed fields instead of '*'
   const { data, error } = await authenticatedSupabase
     .from('user_trivia_scores')
-    .select('*')
+    .select('id, daily_score, timestamp')
     .eq('user_id', userId)
     .gte('timestamp', today.toISOString())
     .lt('timestamp', tomorrow.toISOString())
