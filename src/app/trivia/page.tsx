@@ -1,44 +1,56 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { TriviaQuestion } from '@/lib/supabase';
 import ErrorMessage from '@/components/ErrorMessage';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import GameTimer from '@/components/GameTimer';
 import { useUser, useAuth } from '@clerk/nextjs';
 import TriviaScoreDisplay from '@/components/TriviaScoreDisplay';
 import { log } from '@/lib/logger';
+
+// Simplified state machine type
+type GameState = 'idle' | 'loading' | 'playing' | 'feedback' | 'completed' | 'error';
+
+// Consolidated data structure
+interface CurrentData {
+  questions: TriviaQuestion[];
+  questionIndex: number;
+  score: number;
+  selectedAnswer: string | null;
+  timeLeft: number;
+  scoreSubmitted: boolean;
+}
 
 export default function TriviaPage() {
   const { isSignedIn, isLoaded } = useUser();
   const { getToken } = useAuth();
   const router = useRouter();
 
-  const [questions, setQuestions] = useState<TriviaQuestion[]>([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [score, setScore] = useState(0);
-  const [loading, setLoading] = useState(true);
+  // Simplified 3-variable state system
+  const [gameState, setGameState] = useState<GameState>('loading');
+  const [currentData, setCurrentData] = useState<CurrentData>({
+    questions: [],
+    questionIndex: 0,
+    score: 0,
+    selectedAnswer: null,
+    timeLeft: 15,
+    scoreSubmitted: false,
+  });
   const [error, setError] = useState<string | null>(null);
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [timerResetTrigger, setTimerResetTrigger] = useState(0); // To reset the timer
-  const [gameCompleted, setGameCompleted] = useState(false);
-  const [gameStarted, setGameStarted] = useState(false); // New state for game start
-  const [scoreSubmitted, setScoreSubmitted] = useState(false); // Track if score was already submitted
 
   const QUESTION_DURATION = 15; // seconds per question
   const MAX_QUESTIONS = 5; // Limit to 5 questions
 
-  const saveScore = async (finalScore: number) => {
+  const saveScore = useCallback(async (finalScore: number) => {
     // Prevent multiple submissions
-    if (scoreSubmitted) {
+    if (currentData.scoreSubmitted) {
       log.warn('Attempted to submit score multiple times', { finalScore });
       return;
     }
 
-    setScoreSubmitted(true);
+    setCurrentData(prev => ({ ...prev, scoreSubmitted: true }));
 
     try {
       const token = await getToken();
@@ -82,7 +94,7 @@ export default function TriviaPage() {
         setError('Error al guardar la puntuación. Tu juego fue completado pero la puntuación podría no haberse guardado.');
       }
     }
-  };
+  }, [currentData.scoreSubmitted, getToken]);
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -91,7 +103,7 @@ export default function TriviaPage() {
   }, [isLoaded, isSignedIn, router]);
 
   const handleStartGame = async () => {
-    setLoading(true); // Show spinner while fetching questions
+    setGameState('loading');
     try {
       const response = await fetch('/api/trivia');
       if (!response.ok) {
@@ -103,45 +115,36 @@ export default function TriviaPage() {
       // Handle the case where user already played today
       if (apiResponse.success && apiResponse.data && typeof apiResponse.data === 'object' && 'message' in apiResponse.data) {
         setError(apiResponse.data.message);
-        setGameCompleted(true);
-        setScore(apiResponse.data.score);
-        setLoading(false);
+        setCurrentData(prev => ({ 
+          ...prev, 
+          score: apiResponse.data.score,
+          questions: Array(MAX_QUESTIONS).fill({} as TriviaQuestion)
+        }));
+        setGameState('completed');
         return;
       }
       
       // Handle the case where we get questions array
       const questions = apiResponse.success ? apiResponse.data : apiResponse;
-      setQuestions(questions.slice(0, MAX_QUESTIONS));
-      setGameStarted(true);
+      setCurrentData(prev => ({ 
+        ...prev, 
+        questions: questions.slice(0, MAX_QUESTIONS),
+        questionIndex: 0,
+        score: 0,
+        timeLeft: QUESTION_DURATION,
+        selectedAnswer: null
+      }));
+      setGameState('playing');
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'An error occurred while starting game');
-    } finally {
-      setLoading(false); // Hide spinner after fetching questions
+      setGameState('error');
     }
   };
 
   useEffect(() => {
     if (isLoaded && isSignedIn) {
       async function initializeTriviaPage() {
-        setLoading(true); // Start loading for initial checks
-
-        
-
-        // Fetch accumulated scores on initial load
-        // This is now handled by TriviaScoreDisplay component
-        /*
-        try {
-          const totalScoreResponse = await fetch('/api/trivia/total-score');
-          if (!totalScoreResponse.ok) {
-            throw new Error(`HTTP error! status: ${totalScoreResponse.status}`);
-          }
-          const totalScoreData: { score: number } = await totalScoreResponse.json();
-          setTotalAccumulatedScore(totalScoreData.score);
-        } catch (error: unknown) {
-          log.error('Failed to fetch accumulated scores on trivia initial load', error);
-          // Don't block the page if score fetch fails, but log it.
-        }
-        */
+        setGameState('loading');
 
         // Check if user has already played today
         try {
@@ -155,70 +158,81 @@ export default function TriviaPage() {
           // Handle the case where user already played today
           if (apiResponse.success && apiResponse.data && typeof apiResponse.data === 'object' && 'message' in apiResponse.data) {
             setError(apiResponse.data.message);
-            setGameCompleted(true);
-            setScore(apiResponse.data.score);
-            setQuestions(Array(MAX_QUESTIONS).fill({} as TriviaQuestion)); // Populate questions for display
-            setLoading(false); // User already played, stop loading
+            setCurrentData(prev => ({
+              ...prev,
+              score: apiResponse.data.score,
+              questions: Array(MAX_QUESTIONS).fill({} as TriviaQuestion)
+            }));
+            setGameState('completed');
             return;
           }
           
           // If response is OK and we get questions, it means user hasn't played yet
           // We don't set questions here, as they will be fetched on game start
+          setGameState('idle');
         } catch (error: unknown) {
           setError(error instanceof Error ? error.message : 'An error occurred during initial check');
-        } finally {
-          setLoading(false); // All initial checks done, stop loading
+          setGameState('error');
         }
       }
       initializeTriviaPage();
     }
   }, [isLoaded, isSignedIn]); // Only run once when user is loaded and signed in
 
-  const goToNextQuestion = (answeredCorrectly: boolean | null = null) => {
-    setShowFeedback(false);
-    setSelectedAnswer(null);
-    setTimerResetTrigger(prev => prev + 1); // Reset timer for next question
 
-    let newScore = score;
-    if (answeredCorrectly) {
-      newScore = score + 1;
-      setScore(newScore);
-    }
-
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(prevIndex => prevIndex + 1);
+  const goToNextQuestion = useCallback((answeredCorrectly: boolean | null = null) => {
+    const newScore = answeredCorrectly ? currentData.score + 1 : currentData.score;
+    
+    if (currentData.questionIndex < currentData.questions.length - 1) {
+      // Move to next question
+      setCurrentData(prev => ({
+        ...prev,
+        questionIndex: prev.questionIndex + 1,
+        score: newScore,
+        selectedAnswer: null,
+        timeLeft: QUESTION_DURATION
+      }));
+      setGameState('playing');
     } else {
       // Game over - show results and save score
-      setGameCompleted(true);
+      setCurrentData(prev => ({ ...prev, score: newScore }));
+      setGameState('completed');
       saveScore(newScore);
     }
-  };
+  }, [currentData.score, currentData.questionIndex, currentData.questions.length, QUESTION_DURATION, saveScore]);
 
   const handleAnswerClick = (answerId: string, isCorrect: boolean) => {
-    if (selectedAnswer) return; // Prevent multiple answers
+    if (currentData.selectedAnswer) return; // Prevent multiple answers
 
-    setSelectedAnswer(answerId);
-    setShowFeedback(true);
+    setCurrentData(prev => ({ ...prev, selectedAnswer: answerId }));
+    setGameState('feedback');
 
     setTimeout(() => goToNextQuestion(isCorrect), 2000); // Show feedback for 2 seconds
   };
 
-  const handleTimeUp = () => {
-    // If time runs out, treat as an incorrect answer and move to next question
-    goToNextQuestion();
-  };
 
-  
+  // Simple timer implementation using setTimeout
+  useEffect(() => {
+    if (gameState === 'playing' && currentData.timeLeft > 0) {
+      const timerId = setTimeout(() => {
+        setCurrentData(prev => ({ ...prev, timeLeft: prev.timeLeft - 1 }));
+      }, 1000);
 
-  if (loading && !gameStarted) {
+      return () => clearTimeout(timerId);
+    } else if (gameState === 'playing' && currentData.timeLeft === 0) {
+      // Time's up - treat as incorrect answer and move to next question
+      goToNextQuestion();
+    }
+  }, [gameState, currentData.timeLeft, goToNextQuestion]);
+
+  // Simplified render logic based on gameState
+  if (gameState === 'loading') {
     return <LoadingSpinner />;
   }
 
-  
-
-  if (gameCompleted) {
-    const totalQuestions = gameStarted ? questions.length : MAX_QUESTIONS;
-    const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
+  if (gameState === 'completed') {
+    const totalQuestions = currentData.questions.length || MAX_QUESTIONS;
+    const percentage = totalQuestions > 0 ? Math.round((currentData.score / totalQuestions) * 100) : 0;
     let resultMessage = '';
     let resultColor = '';
 
@@ -244,7 +258,7 @@ export default function TriviaPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
             <div className="text-center">
               <div className="text-6xl font-bold text-green-600 mb-2">
-                {score}/{totalQuestions}
+                {currentData.score}/{totalQuestions}
               </div>
               <div className="text-2xl text-gray-600 mb-4">
                 {percentage}% Correct
@@ -274,7 +288,7 @@ export default function TriviaPage() {
     );
   }
 
-  if (!gameStarted) {
+  if (gameState === 'idle' || gameState === 'error') {
     return (
       <div className="container mx-auto p-4">
         <div className="bg-white shadow-md rounded-lg p-8 text-center">
@@ -282,25 +296,26 @@ export default function TriviaPage() {
           {error && (
             <div className="mb-4 text-red-500 font-medium">
               <ErrorMessage message={error} />
-              {score !== null && <p>Your score today: {score}</p>}
+              {currentData.score !== null && <p>Your score today: {currentData.score}</p>}
             </div>
           )}
           <p className="text-lg text-gray-700 mb-6">¡Pon a prueba tus conocimientos sobre el Real Betis y Escocia!</p>
           <button
             onClick={handleStartGame}
             className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg inline-block"
-            disabled={loading}
+            disabled={false}
           >
-            {loading ? <LoadingSpinner /> : "Comenzar Trivia"}
+            Comenzar Trivia
           </button>
         </div>
       </div>
     );
   }
 
-  const currentQuestion = questions[currentQuestionIndex];
+  // Playing or feedback state
+  const currentQuestion = currentData.questions[currentData.questionIndex];
 
-  if (questions.length === 0) {
+  if (currentData.questions.length === 0) {
     return <div className="text-center text-xl text-gray-600">No trivia questions available.</div>;
   }
 
@@ -308,22 +323,22 @@ export default function TriviaPage() {
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold text-center mb-8 text-gray-900">Betis & Scotland Trivia Challenge</h1>
       <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-        <p className="text-lg font-semibold mb-4">Pregunta {currentQuestionIndex + 1} of {questions.length}</p>
-        <GameTimer
-          duration={QUESTION_DURATION}
-          onTimeUp={handleTimeUp}
-          resetTrigger={timerResetTrigger}
-        />
+        <p className="text-lg font-semibold mb-4">Pregunta {currentData.questionIndex + 1} of {currentData.questions.length}</p>
+        <div className="text-center mb-4" data-testid="game-timer">
+          <div className={`text-2xl font-bold ${currentData.timeLeft <= 5 ? 'text-red-500' : currentData.timeLeft <= 10 ? 'text-yellow-500' : 'text-green-500'}`}>
+            {currentData.timeLeft}s
+          </div>
+        </div>
         <h2 className="text-2xl font-bold mb-6">{currentQuestion.question_text}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {currentQuestion.trivia_answers.map(answer => {
-            const isSelected = selectedAnswer === answer.id;
+            const isSelected = currentData.selectedAnswer === answer.id;
             const isCorrect = answer.is_correct;
             let buttonClass = "w-full py-3 px-4 rounded-lg text-left transition-colors duration-300";
 
-            if (showFeedback && isSelected) {
+            if (gameState === 'feedback' && isSelected) {
               buttonClass += isCorrect ? " bg-green-500 text-white" : " bg-red-500 text-white";
-            } else if (showFeedback && isCorrect) {
+            } else if (gameState === 'feedback' && isCorrect) {
               buttonClass += " bg-green-300"; // Highlight correct answer even if not selected
             } else {
               buttonClass += " bg-gray-200 hover:bg-gray-300";
@@ -334,7 +349,7 @@ export default function TriviaPage() {
                 key={answer.id}
                 className={buttonClass}
                 onClick={() => handleAnswerClick(answer.id, isCorrect)}
-                disabled={selectedAnswer !== null}
+                disabled={currentData.selectedAnswer !== null}
               >
                 {answer.answer_text}
               </button>
@@ -342,7 +357,7 @@ export default function TriviaPage() {
           })}
         </div>
       </div>
-      <div className="text-center text-2xl font-bold">Puntuación: {score}</div>
+      <div className="text-center text-2xl font-bold">Puntuación: {currentData.score}</div>
     </div>
   );
 }
