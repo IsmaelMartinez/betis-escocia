@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { UserProfile } from '@clerk/nextjs';
 import DashboardDisplay from '@/components/DashboardDisplay';
-import TriviaScoreDisplay from '@/components/TriviaScoreDisplay';
 import GDPRTabContent from '@/components/user/GDPRTabContent';
-import { User } from 'lucide-react';
+import { User, PieChart } from 'lucide-react';
+import { useAuth } from '@clerk/nextjs';
 import { RSVP, ContactSubmission } from '@/lib/supabase';
 
 interface Counts {
@@ -37,6 +37,39 @@ export default function DashboardTabs({
   userName,
 }: DashboardTabsProps) {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'profile' | 'gdpr'>('dashboard');
+  const [totalScore, setTotalScore] = useState<number | null>(null);
+  const [totalScoreLoading, setTotalScoreLoading] = useState(true);
+  const [totalScoreError, setTotalScoreError] = useState<string | null>(null);
+  const { getToken } = useAuth();
+
+  const fetchTotalScore = useCallback(async () => {
+    setTotalScoreLoading(true);
+    try {
+      const token = await getToken();
+      const response = await fetch('/api/trivia?action=total', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const apiResponse = await response.json();
+      const totalScore = apiResponse.success ? apiResponse.data.totalScore : 0;
+      setTotalScore(totalScore);
+      setTotalScoreError(null);
+    } catch (err: unknown) {
+      console.error('Failed to fetch total trivia score:', err);
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      setTotalScoreError(`Error loading trivia score: ${errorMessage}`);
+    } finally {
+      setTotalScoreLoading(false);
+    }
+  }, [getToken]);
+
+  useEffect(() => {
+    fetchTotalScore();
+  }, [fetchTotalScore]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -55,7 +88,23 @@ export default function DashboardTabs({
               </div>
             </div>
             <div className="w-full sm:w-auto">
-              <TriviaScoreDisplay />
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">Puntuación Total Trivia</p>
+                    {totalScoreLoading ? (
+                      <div className="text-2xl font-bold text-betis-green">Cargando...</div>
+                    ) : totalScoreError ? (
+                      <div className="text-sm text-red-500">Error</div>
+                    ) : (
+                      <p className="text-3xl font-bold text-betis-green">
+                        {totalScore !== null ? totalScore : 'N/A'}
+                      </p>
+                    )}
+                  </div>
+                  <PieChart className="h-12 w-12 text-betis-green opacity-20" />
+                </div>
+              </div>
             </div>
             </div>
         </div>

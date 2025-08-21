@@ -6,7 +6,7 @@
 - `src/components/user/GDPRTabContent.test.tsx` - Unit tests for the new GDPR tab content component.
 - `src/components/layout/Footer.tsx` - Footer component (for GDPR link).
 - `src/components/layout/Footer.test.tsx` - Unit tests for the Footer component.
-- `src/app/user-dashboard/page.tsx` - User profile dashboard component (where the new tab will be integrated).
+- `src/app/dashboard/page.tsx` - User profile dashboard component (where the new tab will be integrated).
 - `src/app/api/gdpr/route.test.ts` - Unit tests for the GDPR API endpoint.
 - `docs/historical/documentation-reorganization.md` - Documentation of file moves.
 - `tasks/prd-gdpr-user-profile-integration.md` - The PRD itself.

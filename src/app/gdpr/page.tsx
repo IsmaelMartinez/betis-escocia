@@ -16,7 +16,7 @@ export default function GDPRPage() {
   useEffect(() => {
     if (isSignedIn) {
       // Redirect authenticated users to their profile dashboard
-      router.push('/user-dashboard'); // Assuming /user-dashboard is the path to the user dashboard
+      router.push('/dashboard');
     }
   }, [isSignedIn, router]);
 

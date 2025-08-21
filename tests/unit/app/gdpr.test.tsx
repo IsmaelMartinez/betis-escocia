@@ -46,7 +46,7 @@ describe('GDPR Page', () => {
     const GDPRPage = (await import('@/app/gdpr/page')).default;
     render(<GDPRPage />);
 
-    expect(mockPush).toHaveBeenCalledWith('/user-dashboard');
+    expect(mockPush).toHaveBeenCalledWith('/dashboard');
   });
 
   it('should return null for authenticated users (fallback)', async () => {

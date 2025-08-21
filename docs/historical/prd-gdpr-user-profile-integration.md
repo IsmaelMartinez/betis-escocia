@@ -46,7 +46,7 @@ This Product Requirements Document outlines the integration of GDPR data access 
 ## 7. Technical Considerations
 
 *   **Frontend:**
-    *   Identify the appropriate location within the user profile dashboard component (`src/app/user-dashboard/page.tsx` or similar) to add the new GDPR tab/section.
+    *   Identify the appropriate location within the user profile dashboard component (`src/app/dashboard/page.tsx` or similar) to add the new GDPR tab/section.
     *   Adapt the existing `src/app/gdpr/page.tsx` component to be integrated as a tab/section within the user profile, ensuring it can receive authenticated user context.
     *   Ensure secure handling of user data on the client-side, especially during data display and download.
 *   **Backend:**
