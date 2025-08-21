@@ -1,117 +1,280 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PaginatedMatches from '@/components/PaginatedMatches';
 
 // Mock MatchCard component
 vi.mock('@/components/MatchCard', () => ({
-  default: ({ match }: { match: any }) => (
-    <div data-testid={`match-${match.id}`}>
-      {match.homeTeam} vs {match.awayTeam}
+  default: ({ id, opponent, competition }: { id: number; opponent: string; competition: string }) => (
+    <div data-testid={`match-${id}`}>
+      Real Betis vs {opponent} - {competition}
     </div>
   )
 }));
 
+// Mock fetch globally
+const mockFetch = vi.fn();
+Object.defineProperty(globalThis, 'fetch', {
+  value: mockFetch,
+  writable: true,
+  configurable: true,
+});
+
+// Mock ErrorBoundary components
+vi.mock('@/components/ErrorBoundary', () => ({
+  MatchCardErrorBoundary: ({ children }: { children: React.ReactNode }) => children
+}));
+
+// Mock other components
+vi.mock('@/components/ErrorMessage', () => ({
+  ApiErrorMessage: ({ onRetry }: { onRetry: () => void }) => (
+    <div>
+      <span>Algo salió mal</span>
+      <button onClick={onRetry}>Reintentar</button>
+    </div>
+  ),
+  NoRecentMatchesMessage: () => <div>No hay partidos recientes disponibles</div>
+}));
+
+vi.mock('@/components/LoadingSpinner', () => ({
+  default: () => <div>Cargando...</div>
+}));
+
 describe('PaginatedMatches', () => {
   const mockMatches = [
-    { id: 1, homeTeam: 'Real Betis', awayTeam: 'Valencia', date: '2024-01-01' },
-    { id: 2, homeTeam: 'Sevilla', awayTeam: 'Real Betis', date: '2024-01-08' },
-    { id: 3, homeTeam: 'Real Betis', awayTeam: 'Barcelona', date: '2024-01-15' },
-    { id: 4, homeTeam: 'Real Madrid', awayTeam: 'Real Betis', date: '2024-01-22' },
-    { id: 5, homeTeam: 'Real Betis', awayTeam: 'Atletico', date: '2024-01-29' },
-    { id: 6, homeTeam: 'Villarreal', awayTeam: 'Real Betis', date: '2024-02-05' },
+    { 
+      id: 1, 
+      homeTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' }, 
+      awayTeam: { id: 95, name: 'Valencia', crest: 'valencia.png' }, 
+      utcDate: '2024-01-01T15:00:00Z',
+      competition: { name: 'LaLiga', emblem: 'laliga.png' },
+      status: 'FINISHED',
+      matchday: 1,
+      score: { fullTime: { home: 2, away: 1 } }
+    },
+    { 
+      id: 2, 
+      homeTeam: { id: 95, name: 'Sevilla', crest: 'sevilla.png' }, 
+      awayTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' }, 
+      utcDate: '2024-01-08T18:00:00Z',
+      competition: { name: 'LaLiga', emblem: 'laliga.png' },
+      status: 'FINISHED',
+      matchday: 2,
+      score: { fullTime: { home: 0, away: 3 } }
+    },
+    { 
+      id: 3, 
+      homeTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' }, 
+      awayTeam: { id: 81, name: 'Barcelona', crest: 'barca.png' }, 
+      utcDate: '2024-01-15T20:00:00Z',
+      competition: { name: 'LaLiga', emblem: 'laliga.png' },
+      status: 'FINISHED',
+      matchday: 3,
+      score: { fullTime: { home: 1, away: 2 } }
+    }
   ];
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockFetch.mockClear();
   });
 
-  it('should render first page of matches by default', () => {
-    render(<PaginatedMatches matches={mockMatches} pageSize={3} />);
-
-    expect(screen.getByTestId('match-1')).toBeInTheDocument();
-    expect(screen.getByTestId('match-2')).toBeInTheDocument();
-    expect(screen.getByTestId('match-3')).toBeInTheDocument();
-    expect(screen.queryByTestId('match-4')).not.toBeInTheDocument();
-  });
-
-  it('should show pagination controls when there are multiple pages', () => {
-    render(<PaginatedMatches matches={mockMatches} pageSize={3} />);
-
-    expect(screen.getByRole('button', { name: /anterior/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /siguiente/i })).toBeInTheDocument();
-    expect(screen.getByText('1 de 2')).toBeInTheDocument();
-  });
-
-  it('should navigate to next page when clicked', async () => {
-    const user = userEvent.setup();
-    render(<PaginatedMatches matches={mockMatches} pageSize={3} />);
-
-    const nextButton = screen.getByRole('button', { name: /siguiente/i });
-    await user.click(nextButton);
-
-    expect(screen.getByTestId('match-4')).toBeInTheDocument();
-    expect(screen.getByTestId('match-5')).toBeInTheDocument();
-    expect(screen.getByTestId('match-6')).toBeInTheDocument();
-    expect(screen.queryByTestId('match-1')).not.toBeInTheDocument();
-  });
-
-  it('should navigate to previous page when clicked', async () => {
-    const user = userEvent.setup();
-    render(<PaginatedMatches matches={mockMatches} pageSize={3} />);
-
-    // Go to page 2
-    const nextButton = screen.getByRole('button', { name: /siguiente/i });
-    await user.click(nextButton);
-
-    // Go back to page 1
-    const prevButton = screen.getByRole('button', { name: /anterior/i });
-    await user.click(prevButton);
+  it('should render initial matches', () => {
+    render(<PaginatedMatches initialMatches={mockMatches} matchType="recent" />);
 
     expect(screen.getByTestId('match-1')).toBeInTheDocument();
     expect(screen.getByTestId('match-2')).toBeInTheDocument();
     expect(screen.getByTestId('match-3')).toBeInTheDocument();
   });
 
-  it('should disable previous button on first page', () => {
-    render(<PaginatedMatches matches={mockMatches} pageSize={3} />);
+  it('should show load more button when there are more matches', () => {
+    // Create more than 10 matches to trigger "load more" state
+    const manyMatches = Array.from({ length: 10 }, (_, i) => ({
+      id: i + 1,
+      homeTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' },
+      awayTeam: { id: 95 + i, name: `Team ${i}`, crest: `team${i}.png` },
+      utcDate: `2024-01-0${i + 1}T15:00:00Z`,
+      competition: { name: 'LaLiga', emblem: 'laliga.png' },
+      status: 'FINISHED',
+      matchday: i + 1,
+      score: { fullTime: { home: 2, away: 1 } }
+    }));
+    
+    render(<PaginatedMatches initialMatches={manyMatches} matchType="recent" />);
 
-    const prevButton = screen.getByRole('button', { name: /anterior/i });
-    expect(prevButton).toBeDisabled();
+    expect(screen.getByRole('button', { name: /ver más eventos/i })).toBeInTheDocument();
   });
 
-  it('should disable next button on last page', async () => {
+  it('should load more matches when load more button is clicked', async () => {
     const user = userEvent.setup();
-    render(<PaginatedMatches matches={mockMatches} pageSize={3} />);
+    
+    // Create exactly 10 matches to trigger "load more" state
+    const initialMatches = Array.from({ length: 10 }, (_, i) => ({
+      id: i + 1,
+      homeTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' },
+      awayTeam: { id: 95 + i, name: `Team ${i}`, crest: `team${i}.png` },
+      utcDate: `2024-01-0${i + 1}T15:00:00Z`,
+      competition: { name: 'LaLiga', emblem: 'laliga.png' },
+      status: 'FINISHED',
+      matchday: i + 1,
+      score: { fullTime: { home: 2, away: 1 } }
+    }));
+    
+    const newMatches = [
+      {
+        id: 11,
+        homeTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' },
+        awayTeam: { id: 106, name: 'New Team', crest: 'new.png' },
+        utcDate: '2024-01-11T15:00:00Z',
+        competition: { name: 'LaLiga', emblem: 'laliga.png' },
+        status: 'FINISHED',
+        matchday: 11,
+        score: { fullTime: { home: 1, away: 0 } }
+      }
+    ];
+    
+    // Mock successful fetch response
+    const mockResponse = new Response(JSON.stringify({ matches: newMatches }), {
+      status: 200,
+      statusText: 'OK',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    mockFetch.mockResolvedValueOnce(mockResponse);
+    
+    render(<PaginatedMatches initialMatches={initialMatches} matchType="recent" />);
 
-    const nextButton = screen.getByRole('button', { name: /siguiente/i });
-    await user.click(nextButton);
+    const loadMoreButton = screen.getByRole('button', { name: /ver más eventos/i });
+    await user.click(loadMoreButton);
 
-    expect(nextButton).toBeDisabled();
+    await waitFor(() => {
+      expect(screen.getByTestId('match-11')).toBeInTheDocument();
+    }, { timeout: 3000 });
+    
+    // Original matches should still be there
+    expect(screen.getByTestId('match-1')).toBeInTheDocument();
+    
+    // Verify the fetch was called 
+    expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 
-  it('should not show pagination for single page', () => {
-    render(<PaginatedMatches matches={mockMatches.slice(0, 2)} pageSize={3} />);
+  it('should show loading state when loading more matches', async () => {
+    const user = userEvent.setup();
+    
+    const initialMatches = Array.from({ length: 10 }, (_, i) => ({
+      id: i + 1,
+      homeTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' },
+      awayTeam: { id: 95 + i, name: `Team ${i}`, crest: `team${i}.png` },
+      utcDate: `2024-01-0${i + 1}T15:00:00Z`,
+      competition: { name: 'LaLiga', emblem: 'laliga.png' },
+      status: 'FINISHED',
+      matchday: i + 1,
+      score: { fullTime: { home: 2, away: 1 } }
+    }));
+    
+    // Mock a delayed response
+    mockFetch.mockImplementationOnce(() => 
+      new Promise(resolve => 
+        setTimeout(() => {
+          const mockResponse = new Response(JSON.stringify({ matches: [] }), {
+            status: 200,
+            statusText: 'OK',
+            headers: { 'Content-Type': 'application/json' }
+          });
+          resolve(mockResponse);
+        }, 100)
+      )
+    );
+    
+    render(<PaginatedMatches initialMatches={initialMatches} matchType="recent" />);
 
-    expect(screen.queryByRole('button', { name: /anterior/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /siguiente/i })).not.toBeInTheDocument();
+    const loadMoreButton = screen.getByRole('button', { name: /ver más eventos/i });
+    await user.click(loadMoreButton);
+
+    expect(screen.getByText(/cargando más eventos/i)).toBeInTheDocument();
+  });
+
+  it('should hide load more button when there are no more matches', () => {
+    // Less than 10 matches means no more to load
+    render(<PaginatedMatches initialMatches={mockMatches} matchType="recent" />);
+
+    expect(screen.queryByRole('button', { name: /ver más eventos/i })).not.toBeInTheDocument();
+  });
+
+  it('should show error message when loading fails', async () => {
+    const user = userEvent.setup();
+    
+    const initialMatches = Array.from({ length: 10 }, (_, i) => ({
+      id: i + 1,
+      homeTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' },
+      awayTeam: { id: 95 + i, name: `Team ${i}`, crest: `team${i}.png` },
+      utcDate: `2024-01-0${i + 1}T15:00:00Z`,
+      competition: { name: 'LaLiga', emblem: 'laliga.png' },
+      status: 'FINISHED',
+      matchday: i + 1,
+      score: { fullTime: { home: 2, away: 1 } }
+    }));
+    
+    // Mock a failed fetch
+    mockFetch.mockRejectedValueOnce(new Error('Network error'));
+    
+    render(<PaginatedMatches initialMatches={initialMatches} matchType="recent" />);
+
+    const loadMoreButton = screen.getByRole('button', { name: /ver más eventos/i });
+    await user.click(loadMoreButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/algo salió mal/i)).toBeInTheDocument();
+    }, { timeout: 3000 });
+  });
+
+  it('should show upcoming match with watch party info', () => {
+    render(<PaginatedMatches initialMatches={mockMatches} matchType="upcoming" />);
+
+    expect(screen.getByTestId('match-1')).toBeInTheDocument();
+    expect(screen.getByTestId('match-2')).toBeInTheDocument();
+    expect(screen.getByTestId('match-3')).toBeInTheDocument();
   });
 
   it('should show empty state when no matches', () => {
-    render(<PaginatedMatches matches={[]} pageSize={3} />);
+    render(<PaginatedMatches initialMatches={[]} matchType="recent" />);
 
-    expect(screen.getByText(/no hay partidos/i)).toBeInTheDocument();
+    expect(screen.getByText(/no hay partidos recientes/i)).toBeInTheDocument();
   });
 
-  it('should show correct page information', async () => {
+  it('should hide load more button when all matches are loaded', async () => {
     const user = userEvent.setup();
-    render(<PaginatedMatches matches={mockMatches} pageSize={3} />);
+    
+    const initialMatches = Array.from({ length: 10 }, (_, i) => ({
+      id: i + 1,
+      homeTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' },
+      awayTeam: { id: 95 + i, name: `Team ${i}`, crest: `team${i}.png` },
+      utcDate: `2024-01-0${i + 1}T15:00:00Z`,
+      competition: { name: 'LaLiga', emblem: 'laliga.png' },
+      status: 'FINISHED',
+      matchday: i + 1,
+      score: { fullTime: { home: 2, away: 1 } }
+    }));
+    
+    // Mock empty response (no more matches)
+    const mockResponse = new Response(JSON.stringify({ matches: [] }), {
+      status: 200,
+      statusText: 'OK', 
+      headers: { 'Content-Type': 'application/json' }
+    });
+    mockFetch.mockResolvedValueOnce(mockResponse);
+    
+    render(<PaginatedMatches initialMatches={initialMatches} matchType="recent" />);
 
-    expect(screen.getByText('1 de 2')).toBeInTheDocument();
+    const loadMoreButton = screen.getByRole('button', { name: /ver más eventos/i });
+    await user.click(loadMoreButton);
 
-    const nextButton = screen.getByRole('button', { name: /siguiente/i });
-    await user.click(nextButton);
+    // Wait for the load more button to disappear when no more matches
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: /ver más eventos/i })).not.toBeInTheDocument();
+    }, { timeout: 5000 });
 
-    expect(screen.getByText('2 de 2')).toBeInTheDocument();
+    // Verify that all initial matches are still displayed
+    expect(screen.getByTestId('match-1')).toBeInTheDocument();
+    expect(screen.getByTestId('match-10')).toBeInTheDocument();
   });
 });

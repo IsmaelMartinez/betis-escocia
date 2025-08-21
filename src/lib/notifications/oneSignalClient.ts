@@ -143,7 +143,19 @@ export async function sendAdminNotification(
     });
 
     // Prepare OneSignal API request targeting specific admin users by external ID
-    const oneSignalPayload: any = {
+    interface OneSignalPayload {
+      app_id: string;
+      include_external_user_ids: string[];
+      headings: { en: string };
+      contents: { en: string };
+      url?: string;
+      web_url?: string;
+      data?: Record<string, unknown>;
+      chrome_web_icon?: string;
+      chrome_web_badge?: string;
+    }
+
+    const oneSignalPayload: OneSignalPayload = {
       app_id: config.appId,
       include_external_user_ids: enabledAdminUserIds, // Target specific Clerk user IDs
       headings: { en: payload.title },

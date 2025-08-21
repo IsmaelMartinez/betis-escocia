@@ -5,25 +5,37 @@ import OrderForm from '@/components/OrderForm';
 
 // Mock fetch globally
 const mockFetch = vi.fn();
-global.fetch = mockFetch;
+Object.defineProperty(globalThis, 'fetch', {
+  value: mockFetch,
+  writable: true,
+  configurable: true,
+});
 
 // Mock the form validation hook
+const mockValidateAll = vi.fn(() => ({ isValid: true, errors: {} }));
+const mockUpdateField = vi.fn();
+const mockTouchField = vi.fn();
+
 vi.mock('@/lib/formValidation', () => ({
   useFormValidation: vi.fn(() => ({
     data: {
-      name: '',
-      email: '',
-      phone: '',
+      name: 'Test User',
+      email: 'test@example.com',
+      phone: '+34123456789',
       quantity: 1,
-      size: '',
+      size: 'M',
       message: '',
       contactMethod: 'email'
     },
     errors: {},
-    touched: {},
-    updateField: vi.fn(),
-    touchField: vi.fn(),
-    validateAll: vi.fn(() => ({ isValid: true }))
+    touched: {
+      name: true,
+      email: true,
+      phone: true
+    },
+    updateField: mockUpdateField,
+    touchField: mockTouchField,
+    validateAll: mockValidateAll
   })),
   commonValidationRules: {
     name: { required: true },
@@ -98,29 +110,50 @@ describe('OrderForm', () => {
   it('should display success message after successful submission', async () => {
     const user = userEvent.setup();
     
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve({ success: true })
+    // Debug: log what validateAll returns
+    mockValidateAll.mockImplementation(() => {
+      console.log('validateAll called');
+      return { isValid: true, errors: {} };
     });
+    
+    // Mock successful API response
+    const mockResponse = new Response(JSON.stringify({ success: true }), {
+      status: 200,
+      statusText: 'OK',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    mockFetch.mockResolvedValueOnce(mockResponse);
 
     render(<OrderForm {...defaultProps} />);
 
-    // Submit form (assuming validation passes)
+    // Submit form
     const submitButton = screen.getByText(/Enviar Pedido/);
     await user.click(submitButton);
 
+    // Check if validateAll was called
+    expect(mockValidateAll).toHaveBeenCalled();
+
+    // Wait for the success message to appear
     await waitFor(() => {
       expect(screen.getByText(/¡Pedido Enviado!/)).toBeInTheDocument();
-    });
+    }, { timeout: 5000 });
+
+    // Verify the API was called
+    expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 
   it('should show error message on submission failure', async () => {
     const user = userEvent.setup();
     
-    mockFetch.mockResolvedValueOnce({
-      ok: false,
-      status: 500
+    // Reset mocks
+    mockValidateAll.mockReturnValue({ isValid: true, errors: {} });
+    
+    // Mock failed API response
+    const mockResponse = new Response(JSON.stringify({ error: 'Server error' }), {
+      status: 500,
+      statusText: 'Internal Server Error'
     });
+    mockFetch.mockResolvedValueOnce(mockResponse);
 
     render(<OrderForm {...defaultProps} />);
 
@@ -142,8 +175,14 @@ describe('OrderForm', () => {
   it('should include contact method selection', () => {
     render(<OrderForm {...defaultProps} />);
 
-    expect(screen.getByLabelText(/método de contacto/i)).toBeInTheDocument();
-    expect(screen.getByText('Email')).toBeInTheDocument();
-    expect(screen.getByText('WhatsApp')).toBeInTheDocument();
+    expect(screen.getByLabelText(/método de contacto preferido/i)).toBeInTheDocument();
+    
+    // Check for the contact method select element by its id
+    const contactSelectElement = screen.getByDisplayValue('Email');
+    expect(contactSelectElement).toBeInTheDocument();
+    
+    // Check that options exist within the select
+    expect(screen.getByRole('option', { name: 'Email' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'WhatsApp' })).toBeInTheDocument();
   });
 });

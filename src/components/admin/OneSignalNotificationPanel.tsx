@@ -1,12 +1,11 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Bell, BellOff, Check, AlertCircle, TestTube } from 'lucide-react';
+import { Bell, Check, AlertCircle, TestTube } from 'lucide-react';
 import { useUser } from '@clerk/nextjs';
 import Button from '@/components/ui/Button';
 import Card, { CardHeader, CardBody } from '@/components/ui/Card';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { createTestNotificationPayload } from '@/lib/notifications/oneSignalClient';
 
 interface OneSignalNotificationPanelProps {
   className?: string;
@@ -108,7 +107,7 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
       console.log('[OneSignal] Initializing with config:', initConfig);
 
       // Check if OneSignal is already initialized to avoid double initialization
-      if (typeof window !== 'undefined' && (window as any).OneSignal && (window as any).OneSignal._initialized) {
+      if (typeof window !== 'undefined' && (window as unknown as { OneSignal?: { _initialized?: boolean } }).OneSignal?._initialized) {
         console.log('[OneSignal] Already initialized, skipping init');
       } else {
         await OneSignal.init(initConfig);
@@ -249,17 +248,20 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
               const currentPermission = OneSignal.Notifications.permission;
               console.log('[OneSignal] Current permission after init:', currentPermission);
               
-              if (!currentPermission) {
+              if (currentPermission !== 'granted' && currentPermission !== true) {
                 console.log('[OneSignal] Requesting notification permissions...');
-                const permissionResult = await OneSignal.Notifications.requestPermission();
-                console.log('[OneSignal] Permission request result:', permissionResult);
+                await OneSignal.Notifications.requestPermission();
+                console.log('[OneSignal] Permission request completed');
+                
+                // Check permission after request
+                const newPermission = OneSignal.Notifications.permission;
                 
                 // Update state based on permission result
                 setState(prev => ({
                   ...prev,
-                  permissionGranted: permissionResult === true,
-                  permissionDenied: permissionResult === false,
-                  error: permissionResult === false ? 'Se requieren permisos de notificación para recibir alertas.' : null
+                  permissionGranted: newPermission === 'granted',
+                  permissionDenied: newPermission === 'denied',
+                  error: newPermission === 'denied' ? 'Se requieren permisos de notificación para recibir alertas.' : null
                 }));
               }
             } catch (permError) {
@@ -282,7 +284,7 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
         loading: false 
       }));
     }
-  }, [state.permissionGranted, initializeOneSignal]);
+  }, [initializeOneSignal, user?.id, state]);
 
   // Handle test notification
   const handleTestNotification = useCallback(async () => {

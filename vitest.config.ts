@@ -111,6 +111,17 @@ export default defineConfig({
     // Test execution settings
     testTimeout: 10000, // 10 seconds timeout for tests
     hookTimeout: 10000, // 10 seconds timeout for hooks
+    // Parallel execution configuration
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        singleThread: false,
+        isolate: true,
+        useAtomics: true,
+        minThreads: 1,
+        maxThreads: 4, // Use up to 4 threads for faster execution
+      },
+    },
     // Reporter configuration  
     reporters: [
       ['default', { summary: false }], // Replaces deprecated 'basic' reporter

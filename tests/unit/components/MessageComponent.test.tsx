@@ -4,43 +4,43 @@ import MessageComponent, { FormSuccessMessage, FormErrorMessage, FormLoadingMess
 
 describe('MessageComponent', () => {
   it('should render success message with correct styling', () => {
-    render(<MessageComponent type="success" message="Operation completed successfully" />);
+    const { container } = render(<MessageComponent type="success" message="Operation completed successfully" />);
 
     expect(screen.getByText('Operation completed successfully')).toBeInTheDocument();
     
-    const messageDiv = screen.getByText('Operation completed successfully').closest('div');
-    expect(messageDiv).toHaveClass('bg-green-50', 'border-green-200');
+    const messageContainer = container.firstChild as HTMLElement;
+    expect(messageContainer).toHaveClass('bg-green-50', 'border-green-200', 'text-green-800');
   });
 
   it('should render error message with correct styling', () => {
-    render(<MessageComponent type="error" message="An error occurred" />);
+    const { container } = render(<MessageComponent type="error" message="An error occurred" />);
 
     expect(screen.getByText('An error occurred')).toBeInTheDocument();
     
-    const messageDiv = screen.getByText('An error occurred').closest('div');
-    expect(messageDiv).toHaveClass('bg-red-50', 'border-red-200');
+    const messageContainer = container.firstChild as HTMLElement;
+    expect(messageContainer).toHaveClass('bg-red-50', 'border-red-200', 'text-red-800');
   });
 
   it('should render warning message with correct styling', () => {
-    render(<MessageComponent type="warning" message="Warning message" />);
+    const { container } = render(<MessageComponent type="warning" message="Warning message" />);
 
     expect(screen.getByText('Warning message')).toBeInTheDocument();
     
-    const messageDiv = screen.getByText('Warning message').closest('div');
-    expect(messageDiv).toHaveClass('bg-yellow-50', 'border-yellow-200');
+    const messageContainer = container.firstChild as HTMLElement;
+    expect(messageContainer).toHaveClass('bg-yellow-50', 'border-yellow-200', 'text-yellow-800');
   });
 
   it('should render info message with correct styling', () => {
-    render(<MessageComponent type="info" message="Information message" />);
+    const { container } = render(<MessageComponent type="info" message="Information message" />);
 
     expect(screen.getByText('Information message')).toBeInTheDocument();
     
-    const messageDiv = screen.getByText('Information message').closest('div');
-    expect(messageDiv).toHaveClass('bg-blue-50', 'border-blue-200');
+    const messageContainer = container.firstChild as HTMLElement;
+    expect(messageContainer).toHaveClass('bg-blue-50', 'border-blue-200', 'text-blue-800');
   });
 
   it('should render with custom className', () => {
-    render(
+    const { container } = render(
       <MessageComponent 
         type="success" 
         message="Test message" 
@@ -48,8 +48,8 @@ describe('MessageComponent', () => {
       />
     );
 
-    const messageDiv = screen.getByText('Test message').closest('div');
-    expect(messageDiv).toHaveClass('custom-class');
+    const messageContainer = container.firstChild as HTMLElement;
+    expect(messageContainer).toHaveClass('custom-class');
   });
 
   it('should render with title when provided', () => {
@@ -83,7 +83,10 @@ describe('MessageComponent', () => {
     
     // Component should render even with empty message
     expect(container.firstChild).not.toBeNull();
-    expect(screen.getByText('')).toBeInTheDocument();
+    // Check for the presence of the empty paragraph element instead
+    const paragraph = container.querySelector('p.text-base.leading-relaxed');
+    expect(paragraph).toBeInTheDocument();
+    expect(paragraph?.textContent).toBe('');
   });
 });
 
