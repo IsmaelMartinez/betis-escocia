@@ -315,7 +315,7 @@ describe('Orders API - Comprehensive Tests', () => {
     });
 
     it('should generate unique order ID', async () => {
-      vi.spyOn(Date, 'now').mockReturnValue(1234567890123);
+      const mockDateNow = vi.spyOn(Date, 'now').mockReturnValue(1234567890123);
 
       const { POST } = await import('@/app/api/orders/route');
       const request = new NextRequest('http://localhost:3000/api/orders', {
@@ -329,7 +329,7 @@ describe('Orders API - Comprehensive Tests', () => {
 
       expect(data.data.id).toBe('1234567890123');
       
-      Date.now.mockRestore();
+      mockDateNow.mockRestore();
     });
 
     it('should handle file write errors', async () => {

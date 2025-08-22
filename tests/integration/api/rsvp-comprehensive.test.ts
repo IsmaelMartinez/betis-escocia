@@ -341,8 +341,7 @@ describe('RSVP API - Comprehensive Tests', () => {
     });
 
     it('should use fallback match when no match found', async () => {
-      const dataWithoutMatchId = { ...validRSVPData };
-      delete dataWithoutMatchId.matchId;
+      const { matchId, ...dataWithoutMatchId } = validRSVPData;
 
       // Mock no upcoming matches found
       mockSupabase.from.mockImplementation((table) => {
