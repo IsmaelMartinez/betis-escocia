@@ -16,9 +16,9 @@ vi.mock('@/lib/config', () => ({
 
 // Mock Supabase client
 const mockSupabase = {
-  from: vi.fn(() => ({
-    select: vi.fn(() => ({
-      limit: vi.fn(() => Promise.resolve({ data: [], error: null }))
+  from: vi.fn((table: string) => ({
+    select: vi.fn((columns: string) => ({
+      limit: vi.fn((count: number) => Promise.resolve({ data: [], error: null }))
     }))
   }))
 };
@@ -36,8 +36,8 @@ describe('Health Check API', () => {
     it('should return healthy status when all services are available', async () => {
       // Mock successful database connection
       mockSupabase.from.mockReturnValue({
-        select: vi.fn(() => ({
-          limit: vi.fn(() => Promise.resolve({ data: [], error: null }))
+        select: vi.fn((columns: string) => ({
+          limit: vi.fn((count: number) => Promise.resolve({ data: [], error: null }))
         }))
       });
 
@@ -84,12 +84,12 @@ describe('Health Check API', () => {
 
     it('should return unhealthy status when database is unavailable', async () => {
       // Mock database error
-      mockSupabase.from.mockReturnValue({
-        select: vi.fn(() => ({
-          limit: vi.fn(() => Promise.resolve({ 
+      (mockSupabase.from as any).mockReturnValue({
+        select: vi.fn((columns: string) => ({
+          limit: vi.fn((count: number) => Promise.resolve({ 
             data: null, 
             error: { message: 'Database connection failed' }
-          }))
+          } as any))
         }))
       });
 
@@ -182,7 +182,7 @@ describe('Health Check API', () => {
 
     it('should handle unexpected errors gracefully', async () => {
       // Mock unexpected error
-      mockSupabase.from.mockImplementation(() => {
+      mockSupabase.from.mockImplementation((table: string) => {
         throw new Error('Unexpected error');
       });
 

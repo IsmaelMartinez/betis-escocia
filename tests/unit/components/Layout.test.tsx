@@ -221,8 +221,12 @@ describe('Layout Component', () => {
           id: 'user_123',
           firstName: 'John',
           lastName: 'Doe',
-          publicMetadata: { role: 'user' }
-        },
+          emailAddresses: [{ emailAddress: 'john.doe@example.com' }],
+          publicMetadata: { role: 'user' },
+          createdAt: new Date(),
+          lastSignInAt: new Date(),
+          imageUrl: 'https://www.gravatar.com/avatar/?d=mp'
+        } as any,
         isLoaded: true,
         isSignedIn: true
       });
@@ -247,7 +251,7 @@ describe('Layout Component', () => {
           firstName: 'Admin',
           lastName: 'User',
           publicMetadata: { role: 'admin' }
-        },
+        } as any,
         isLoaded: true,
         isSignedIn: true
       });
@@ -270,15 +274,19 @@ describe('Layout Component', () => {
       
       mockUseClerk.mockReturnValue({
         signOut: mockSignOut
-      });
+      } as any);
 
       mockUseUser.mockReturnValue({
         user: {
           id: 'user_123',
           firstName: 'John',
           lastName: 'Doe',
-          publicMetadata: { role: 'user' }
-        },
+          emailAddresses: [{ emailAddress: 'john.doe@example.com' }],
+          publicMetadata: { role: 'user' },
+          createdAt: new Date(),
+          lastSignInAt: new Date(),
+          imageUrl: 'https://www.gravatar.com/avatar/?d=mp'
+        } as any,
         isLoaded: true,
         isSignedIn: true
       });
@@ -334,7 +342,7 @@ describe('Layout Component', () => {
         user: null,
         isLoaded: false,
         isSignedIn: false
-      });
+      } as any);
 
       render(
         <Layout debugInfo={null}>
@@ -356,8 +364,12 @@ describe('Layout Component', () => {
           id: 'user_123',
           firstName: null,
           lastName: 'Doe',
-          publicMetadata: { role: 'user' }
-        },
+          emailAddresses: [{ emailAddress: 'john.doe@example.com' }],
+          publicMetadata: { role: 'user' },
+          createdAt: new Date(),
+          lastSignInAt: new Date(),
+          imageUrl: 'https://www.gravatar.com/avatar/?d=mp'
+        } as any,
         isLoaded: true,
         isSignedIn: true
       });

@@ -101,7 +101,7 @@ describe.skip('useApiData - Advanced Testing (Features not yet implemented)', ()
       });
 
       const { result } = renderHook(() => 
-        useApiData('/api/test', { retryCount: 3, retryDelay: 10 })
+        useApiData('/api/test', { retry: { attempts: 3, delay: 10 } })
       );
 
       await waitFor(() => {
@@ -117,7 +117,7 @@ describe.skip('useApiData - Advanced Testing (Features not yet implemented)', ()
       mockFetch.mockRejectedValue(new Error('Persistent network error'));
 
       const { result } = renderHook(() => 
-        useApiData('/api/test', { retryCount: 2, retryDelay: 10 })
+        useApiData('/api/test', { retry: { attempts: 2, delay: 10 } })
       );
 
       await waitFor(() => {
@@ -140,7 +140,7 @@ describe.skip('useApiData - Advanced Testing (Features not yet implemented)', ()
       } as any);
 
       const { result: result1 } = renderHook(() => 
-        useApiData('/api/cached-test', { cacheTime: 1000 })
+        useApiData('/api/cached-test', {})
       );
 
       await waitFor(() => {
@@ -151,7 +151,7 @@ describe.skip('useApiData - Advanced Testing (Features not yet implemented)', ()
 
       // Second request - should serve cached data immediately
       const { result: result2 } = renderHook(() => 
-        useApiData('/api/cached-test', { cacheTime: 1000 })
+        useApiData('/api/cached-test', {})
       );
 
       // Should immediately have cached data
@@ -176,7 +176,7 @@ describe.skip('useApiData - Advanced Testing (Features not yet implemented)', ()
         } as any);
 
       const { result, rerender } = renderHook(() => 
-        useApiData('/api/cached-test-expiry', { cacheTime: 1000 })
+        useApiData('/api/cached-test-expiry', {})
       );
 
       await waitFor(() => {
@@ -332,7 +332,7 @@ describe.skip('useApiData - Advanced Testing (Features not yet implemented)', ()
 
       const { result } = renderHook(() => 
         useApiData('/api/test', {
-          transform: (data: any) => ({ count: data.items.length })
+          transform: <T>(data: unknown): T => ({ count: (data as any).items.length }) as T
         })
       );
 

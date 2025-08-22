@@ -44,33 +44,54 @@ describe('PaginatedMatches', () => {
   const mockMatches = [
     { 
       id: 1, 
-      homeTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' }, 
-      awayTeam: { id: 95, name: 'Valencia', crest: 'valencia.png' }, 
+      homeTeam: { id: 90, name: 'Real Betis', shortName: 'Betis', tla: 'BET', crest: 'betis.png' }, 
+      awayTeam: { id: 95, name: 'Valencia', shortName: 'Valencia', tla: 'VAL', crest: 'valencia.png' }, 
       utcDate: '2024-01-01T15:00:00Z',
-      competition: { name: 'LaLiga', emblem: 'laliga.png' },
-      status: 'FINISHED',
+      competition: { id: 2014, name: 'LaLiga', code: 'PD', type: 'LEAGUE', emblem: 'laliga.png' },
+      status: 'FINISHED' as const,
       matchday: 1,
-      score: { fullTime: { home: 2, away: 1 } }
+      stage: 'REGULAR_SEASON',
+      lastUpdated: '2024-01-01T15:00:00Z',
+      season: { id: 2024, startDate: '2024-08-01', endDate: '2025-05-31', currentMatchday: 10 },
+      score: { 
+        duration: 'REGULAR' as const, 
+        fullTime: { home: 2, away: 1 }, 
+        halfTime: { home: 1, away: 0 } 
+      }
     },
     { 
       id: 2, 
-      homeTeam: { id: 95, name: 'Sevilla', crest: 'sevilla.png' }, 
-      awayTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' }, 
+      homeTeam: { id: 95, name: 'Sevilla', shortName: 'Sevilla', tla: 'SEV', crest: 'sevilla.png' }, 
+      awayTeam: { id: 90, name: 'Real Betis', shortName: 'Betis', tla: 'BET', crest: 'betis.png' }, 
       utcDate: '2024-01-08T18:00:00Z',
-      competition: { name: 'LaLiga', emblem: 'laliga.png' },
-      status: 'FINISHED',
+      competition: { id: 2014, name: 'LaLiga', code: 'PD', type: 'LEAGUE', emblem: 'laliga.png' },
+      status: 'FINISHED' as const,
       matchday: 2,
-      score: { fullTime: { home: 0, away: 3 } }
+      stage: 'REGULAR_SEASON',
+      lastUpdated: '2024-01-08T18:00:00Z',
+      season: { id: 2024, startDate: '2024-08-01', endDate: '2025-05-31', currentMatchday: 10 },
+      score: { 
+        duration: 'REGULAR' as const, 
+        fullTime: { home: 0, away: 3 }, 
+        halfTime: { home: 0, away: 1 } 
+      }
     },
     { 
       id: 3, 
-      homeTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' }, 
-      awayTeam: { id: 81, name: 'Barcelona', crest: 'barca.png' }, 
+      homeTeam: { id: 90, name: 'Real Betis', shortName: 'Betis', tla: 'BET', crest: 'betis.png' }, 
+      awayTeam: { id: 81, name: 'Barcelona', shortName: 'Barça', tla: 'BAR', crest: 'barca.png' }, 
       utcDate: '2024-01-15T20:00:00Z',
-      competition: { name: 'LaLiga', emblem: 'laliga.png' },
-      status: 'FINISHED',
+      competition: { id: 2014, name: 'LaLiga', code: 'PD', type: 'LEAGUE', emblem: 'laliga.png' },
+      status: 'FINISHED' as const,
       matchday: 3,
-      score: { fullTime: { home: 1, away: 2 } }
+      stage: 'REGULAR_SEASON',
+      lastUpdated: '2024-01-15T20:00:00Z',
+      season: { id: 2024, startDate: '2024-08-01', endDate: '2025-05-31', currentMatchday: 10 },
+      score: { 
+        duration: 'REGULAR' as const, 
+        fullTime: { home: 1, away: 2 }, 
+        halfTime: { home: 1, away: 1 } 
+      }
     }
   ];
 
@@ -91,13 +112,20 @@ describe('PaginatedMatches', () => {
     // Create more than 10 matches to trigger "load more" state
     const manyMatches = Array.from({ length: 10 }, (_, i) => ({
       id: i + 1,
-      homeTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' },
-      awayTeam: { id: 95 + i, name: `Team ${i}`, crest: `team${i}.png` },
+      homeTeam: { id: 90, name: 'Real Betis', shortName: 'Betis', tla: 'BET', crest: 'betis.png' },
+      awayTeam: { id: 95 + i, name: `Team ${i}`, shortName: `T${i}`, tla: `T${i}`, crest: `team${i}.png` },
       utcDate: `2024-01-0${i + 1}T15:00:00Z`,
-      competition: { name: 'LaLiga', emblem: 'laliga.png' },
-      status: 'FINISHED',
+      competition: { id: 2014, name: 'LaLiga', code: 'PD', type: 'LEAGUE', emblem: 'laliga.png' },
+      status: 'FINISHED' as const,
       matchday: i + 1,
-      score: { fullTime: { home: 2, away: 1 } }
+      stage: 'REGULAR_SEASON',
+      lastUpdated: `2024-01-0${i + 1}T15:00:00Z`,
+      season: { id: 2024, startDate: '2024-08-01', endDate: '2025-05-31', currentMatchday: 10 },
+      score: { 
+        duration: 'REGULAR' as const, 
+        fullTime: { home: 2, away: 1 }, 
+        halfTime: { home: 1, away: 0 } 
+      }
     }));
     
     render(<PaginatedMatches initialMatches={manyMatches} matchType="recent" />);
@@ -111,25 +139,39 @@ describe('PaginatedMatches', () => {
     // Create exactly 10 matches to trigger "load more" state
     const initialMatches = Array.from({ length: 10 }, (_, i) => ({
       id: i + 1,
-      homeTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' },
-      awayTeam: { id: 95 + i, name: `Team ${i}`, crest: `team${i}.png` },
+      homeTeam: { id: 90, name: 'Real Betis', shortName: 'Betis', tla: 'BET', crest: 'betis.png' },
+      awayTeam: { id: 95 + i, name: `Team ${i}`, shortName: `T${i}`, tla: `T${i}`, crest: `team${i}.png` },
       utcDate: `2024-01-0${i + 1}T15:00:00Z`,
-      competition: { name: 'LaLiga', emblem: 'laliga.png' },
-      status: 'FINISHED',
+      competition: { id: 2014, name: 'LaLiga', code: 'PD', type: 'LEAGUE', emblem: 'laliga.png' },
+      status: 'FINISHED' as const,
       matchday: i + 1,
-      score: { fullTime: { home: 2, away: 1 } }
+      stage: 'REGULAR_SEASON',
+      lastUpdated: `2024-01-0${i + 1}T15:00:00Z`,
+      season: { id: 2024, startDate: '2024-08-01', endDate: '2025-05-31', currentMatchday: 10 },
+      score: { 
+        duration: 'REGULAR' as const, 
+        fullTime: { home: 2, away: 1 }, 
+        halfTime: { home: 1, away: 0 } 
+      }
     }));
     
     const newMatches = [
       {
         id: 11,
-        homeTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' },
-        awayTeam: { id: 106, name: 'New Team', crest: 'new.png' },
+        homeTeam: { id: 90, name: 'Real Betis', shortName: 'Betis', tla: 'BET', crest: 'betis.png' },
+        awayTeam: { id: 106, name: 'New Team', shortName: 'New', tla: 'NEW', crest: 'new.png' },
         utcDate: '2024-01-11T15:00:00Z',
-        competition: { name: 'LaLiga', emblem: 'laliga.png' },
-        status: 'FINISHED',
+        competition: { id: 2014, name: 'LaLiga', code: 'PD', type: 'LEAGUE', emblem: 'laliga.png' },
+        status: 'FINISHED' as const,
         matchday: 11,
-        score: { fullTime: { home: 1, away: 0 } }
+        stage: 'REGULAR_SEASON',
+        lastUpdated: '2024-01-11T15:00:00Z',
+        season: { id: 2024, startDate: '2024-08-01', endDate: '2025-05-31', currentMatchday: 10 },
+        score: { 
+          duration: 'REGULAR' as const, 
+          fullTime: { home: 1, away: 0 }, 
+          halfTime: { home: 0, away: 0 } 
+        }
       }
     ];
     
@@ -162,13 +204,20 @@ describe('PaginatedMatches', () => {
     
     const initialMatches = Array.from({ length: 10 }, (_, i) => ({
       id: i + 1,
-      homeTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' },
-      awayTeam: { id: 95 + i, name: `Team ${i}`, crest: `team${i}.png` },
+      homeTeam: { id: 90, name: 'Real Betis', shortName: 'Betis', tla: 'BET', crest: 'betis.png' },
+      awayTeam: { id: 95 + i, name: `Team ${i}`, shortName: `T${i}`, tla: `T${i}`, crest: `team${i}.png` },
       utcDate: `2024-01-0${i + 1}T15:00:00Z`,
-      competition: { name: 'LaLiga', emblem: 'laliga.png' },
-      status: 'FINISHED',
+      competition: { id: 2014, name: 'LaLiga', code: 'PD', type: 'LEAGUE', emblem: 'laliga.png' },
+      status: 'FINISHED' as const,
       matchday: i + 1,
-      score: { fullTime: { home: 2, away: 1 } }
+      stage: 'REGULAR_SEASON',
+      lastUpdated: `2024-01-0${i + 1}T15:00:00Z`,
+      season: { id: 2024, startDate: '2024-08-01', endDate: '2025-05-31', currentMatchday: 10 },
+      score: { 
+        duration: 'REGULAR' as const, 
+        fullTime: { home: 2, away: 1 }, 
+        halfTime: { home: 1, away: 0 } 
+      }
     }));
     
     // Mock a delayed response
@@ -205,13 +254,20 @@ describe('PaginatedMatches', () => {
     
     const initialMatches = Array.from({ length: 10 }, (_, i) => ({
       id: i + 1,
-      homeTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' },
-      awayTeam: { id: 95 + i, name: `Team ${i}`, crest: `team${i}.png` },
+      homeTeam: { id: 90, name: 'Real Betis', shortName: 'Betis', tla: 'BET', crest: 'betis.png' },
+      awayTeam: { id: 95 + i, name: `Team ${i}`, shortName: `T${i}`, tla: `T${i}`, crest: `team${i}.png` },
       utcDate: `2024-01-0${i + 1}T15:00:00Z`,
-      competition: { name: 'LaLiga', emblem: 'laliga.png' },
-      status: 'FINISHED',
+      competition: { id: 2014, name: 'LaLiga', code: 'PD', type: 'LEAGUE', emblem: 'laliga.png' },
+      status: 'FINISHED' as const,
       matchday: i + 1,
-      score: { fullTime: { home: 2, away: 1 } }
+      stage: 'REGULAR_SEASON',
+      lastUpdated: `2024-01-0${i + 1}T15:00:00Z`,
+      season: { id: 2024, startDate: '2024-08-01', endDate: '2025-05-31', currentMatchday: 10 },
+      score: { 
+        duration: 'REGULAR' as const, 
+        fullTime: { home: 2, away: 1 }, 
+        halfTime: { home: 1, away: 0 } 
+      }
     }));
     
     // Mock a failed fetch
@@ -246,13 +302,20 @@ describe('PaginatedMatches', () => {
     
     const initialMatches = Array.from({ length: 10 }, (_, i) => ({
       id: i + 1,
-      homeTeam: { id: 90, name: 'Real Betis', crest: 'betis.png' },
-      awayTeam: { id: 95 + i, name: `Team ${i}`, crest: `team${i}.png` },
+      homeTeam: { id: 90, name: 'Real Betis', shortName: 'Betis', tla: 'BET', crest: 'betis.png' },
+      awayTeam: { id: 95 + i, name: `Team ${i}`, shortName: `T${i}`, tla: `T${i}`, crest: `team${i}.png` },
       utcDate: `2024-01-0${i + 1}T15:00:00Z`,
-      competition: { name: 'LaLiga', emblem: 'laliga.png' },
-      status: 'FINISHED',
+      competition: { id: 2014, name: 'LaLiga', code: 'PD', type: 'LEAGUE', emblem: 'laliga.png' },
+      status: 'FINISHED' as const,
       matchday: i + 1,
-      score: { fullTime: { home: 2, away: 1 } }
+      stage: 'REGULAR_SEASON',
+      lastUpdated: `2024-01-0${i + 1}T15:00:00Z`,
+      season: { id: 2024, startDate: '2024-08-01', endDate: '2025-05-31', currentMatchday: 10 },
+      score: { 
+        duration: 'REGULAR' as const, 
+        fullTime: { home: 2, away: 1 }, 
+        halfTime: { home: 1, away: 0 } 
+      }
     }));
     
     // Mock empty response (no more matches)

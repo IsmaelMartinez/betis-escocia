@@ -47,7 +47,7 @@ describe('Notifications PreferencesDb', () => {
           })),
         })),
       }));
-      mockSupabase.from.mockReturnValue({ select: mockSelect });
+      (mockSupabase.from as any).mockReturnValue({ select: mockSelect });
 
       const result = await getUserNotificationPreferenceDb('user-123', 'mock-token');
       
@@ -64,7 +64,7 @@ describe('Notifications PreferencesDb', () => {
           })),
         })),
       }));
-      mockSupabase.from.mockReturnValue({ select: mockSelect });
+      (mockSupabase.from as any).mockReturnValue({ select: mockSelect });
 
       const result = await getUserNotificationPreferenceDb('user-123', 'mock-token');
       
@@ -80,7 +80,7 @@ describe('Notifications PreferencesDb', () => {
           })),
         })),
       }));
-      mockSupabase.from.mockReturnValue({ select: mockSelect });
+      (mockSupabase.from as any).mockReturnValue({ select: mockSelect });
 
       const result = await getUserNotificationPreferenceDb('user-123', 'mock-token');
       
@@ -96,7 +96,7 @@ describe('Notifications PreferencesDb', () => {
           })),
         })),
       }));
-      mockSupabase.from.mockReturnValue({ select: mockSelect });
+      (mockSupabase.from as any).mockReturnValue({ select: mockSelect });
 
       const result = await getUserNotificationPreferenceDb('user-123', 'mock-token');
       
@@ -117,7 +117,7 @@ describe('Notifications PreferencesDb', () => {
         data: { enabled: true }, 
         error: null 
       }));
-      mockSupabase.from.mockReturnValue({ upsert: mockUpsert });
+      (mockSupabase.from as any).mockReturnValue({ upsert: mockUpsert });
 
       const result = await setUserNotificationPreferenceDb('user-123', true, 'mock-token');
       
@@ -130,7 +130,7 @@ describe('Notifications PreferencesDb', () => {
         data: { enabled: false }, 
         error: null 
       }));
-      mockSupabase.from.mockReturnValue({ upsert: mockUpsert });
+      (mockSupabase.from as any).mockReturnValue({ upsert: mockUpsert });
 
       const result = await setUserNotificationPreferenceDb('user-123', false, 'mock-token');
       
@@ -142,7 +142,7 @@ describe('Notifications PreferencesDb', () => {
         data: null, 
         error: { code: 'OTHER_ERROR', message: 'Database error' }
       }));
-      mockSupabase.from.mockReturnValue({ upsert: mockUpsert });
+      (mockSupabase.from as any).mockReturnValue({ upsert: mockUpsert });
 
       try {
         await setUserNotificationPreferenceDb('user-123', true, 'mock-token');
@@ -167,7 +167,7 @@ describe('Notifications PreferencesDb', () => {
         data: { enabled: true }, 
         error: null 
       }));
-      mockSupabase.from.mockReturnValue({ upsert: mockUpsert });
+      (mockSupabase.from as any).mockReturnValue({ upsert: mockUpsert });
 
       const result = await setUserNotificationPreferenceDb('user-123', true);
       
@@ -186,7 +186,7 @@ describe('Notifications PreferencesDb', () => {
           })),
         })),
       }));
-      mockSupabase.from.mockReturnValue({ select: mockSelect });
+      (mockSupabase.from as any).mockReturnValue({ select: mockSelect });
 
       const result = await getUserNotificationPreferenceDb('invalid-user-id!@#', 'mock-token');
       
@@ -203,7 +203,7 @@ describe('Notifications PreferencesDb', () => {
           })),
         })),
       }));
-      mockSupabase.from.mockReturnValue({ select: mockSelect });
+      (mockSupabase.from as any).mockReturnValue({ select: mockSelect });
 
       const result = await getUserNotificationPreferenceDb(longUserId, 'mock-token');
       
@@ -220,7 +220,7 @@ describe('Notifications PreferencesDb', () => {
           })),
         })),
       }));
-      mockSupabase.from.mockReturnValue({ select: mockSelect });
+      (mockSupabase.from as any).mockReturnValue({ select: mockSelect });
 
       const result = await getUserNotificationPreferenceDb(specialUserId, 'mock-token');
       
@@ -238,7 +238,7 @@ describe('Notifications PreferencesDb', () => {
           })),
         })),
       }));
-      mockSupabase.from.mockReturnValue({ select: mockSelect });
+      (mockSupabase.from as any).mockReturnValue({ select: mockSelect });
 
       const requests = Array(5).fill(0).map(() => 
         getUserNotificationPreferenceDb('user-123', 'mock-token')
@@ -259,7 +259,7 @@ describe('Notifications PreferencesDb', () => {
           ),
         })),
       }));
-      mockSupabase.from.mockReturnValue({ select: mockSelect });
+      (mockSupabase.from as any).mockReturnValue({ select: mockSelect });
 
       const result = await getUserNotificationPreferenceDb('user-123', 'mock-token');
       

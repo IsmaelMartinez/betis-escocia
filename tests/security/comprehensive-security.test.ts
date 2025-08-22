@@ -244,8 +244,16 @@ describe('Comprehensive Security Testing', () => {
       });
 
       for (const attempt of bypassAttempts) {
+        const headers: Record<string, string> = {};
+        if (attempt.headers) {
+          Object.entries(attempt.headers).forEach(([key, value]) => {
+            if (value !== undefined) {
+              headers[key] = value;
+            }
+          });
+        }
         const request = new NextRequest(attempt.url || 'http://localhost:3000/api/admin/test', {
-          headers: attempt.headers || {}
+          headers
         });
 
         const response = await mockHandler(request);
@@ -379,7 +387,7 @@ describe('Comprehensive Security Testing', () => {
         timestamps.push(now);
 
         // Remove old timestamps outside the burst window
-        const recentTimestamps = timestamps.filter(ts => now - ts <= BURST_WINDOW);
+        const recentTimestamps = timestamps.filter((ts: number) => now - ts <= BURST_WINDOW);
         requestCounts.set(ip, recentTimestamps);
 
         // Check for burst pattern

@@ -467,7 +467,6 @@ describe('RSVP API - GET', () => {
     // Mock getCurrentUpcomingMatch for GET request
     const { getCurrentUpcomingMatch } = await import('@/lib/matchUtils');
     vi.mocked(getCurrentUpcomingMatch).mockResolvedValue({
-      id: 1,
       opponent: 'Real Madrid',
       date: '2025-06-28T20:00:00',
       competition: 'LaLiga'

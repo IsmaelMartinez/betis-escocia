@@ -41,7 +41,12 @@ vi.mock('@clerk/nextjs', () => ({
 // Mock environment variables
 beforeEach(() => {
   process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID = 'test-app-id';
-  process.env.NODE_ENV = 'test';
+  Object.defineProperty(process.env, 'NODE_ENV', { 
+    value: 'test', 
+    configurable: true,
+    writable: true,
+    enumerable: true
+  });
 });
 
 describe('OneSignalNotificationPanel', () => {

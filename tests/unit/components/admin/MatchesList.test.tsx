@@ -50,8 +50,8 @@ describe('MatchesList', () => {
       competition: 'LaLiga',
       home_away: 'home',
       date_time: '2024-08-25T21:00:00Z',
-      notes: null,
-      external_id: null,
+      notes: undefined,
+      external_id: undefined,
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z'
     }

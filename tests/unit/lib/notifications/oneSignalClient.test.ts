@@ -330,7 +330,7 @@ describe('OneSignal Client', () => {
         });
 
         // Verify timestamp is a valid ISO string
-        expect(() => new Date(payload.data?.timestamp)).not.toThrow();
+        expect(() => new Date(payload.data?.timestamp as string)).not.toThrow();
       });
     });
   });

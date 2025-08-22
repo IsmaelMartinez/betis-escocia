@@ -227,22 +227,30 @@ describe('Admin Notifications Test API', () => {
   describe('Security Validations', () => {
     it('should only allow POST requests', async () => {
       // Test GET request
-      const { GET } = await import('@/app/api/admin/notifications/test/route').catch(() => ({ GET: undefined }));
+      const routeModule = await import('@/app/api/admin/notifications/test/route').catch(() => ({}));
       
-      if (GET) {
+      // Check if GET method is exported (it shouldn't be for security)
+      const hasGetMethod = 'GET' in routeModule;
+      
+      if (hasGetMethod) {
         const request = new NextRequest('http://localhost:3000/api/admin/notifications/test');
-        const response = await GET(request);
+        const response = await (routeModule as any).GET(request);
         expect(response.status).toBe(405); // Method Not Allowed
       } else {
         // If GET is not exported, that's also valid security practice
-        expect(GET).toBeUndefined();
+        expect(hasGetMethod).toBe(false);
       }
     });
 
     it('should validate request origin in production-like environment', async () => {
       // Mock production-like environment
       const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'production';
+      Object.defineProperty(process.env, 'NODE_ENV', { 
+        value: 'production', 
+        configurable: true,
+        writable: true,
+        enumerable: true
+      });
 
       mockCheckAdminRole.mockResolvedValue({
         user: { id: 'admin-123', firstName: 'Admin', lastName: 'User' },
@@ -268,7 +276,12 @@ describe('Admin Notifications Test API', () => {
       const response = await POST(request);
 
       // Restore environment
-      process.env.NODE_ENV = originalEnv;
+      Object.defineProperty(process.env, 'NODE_ENV', { 
+        value: originalEnv, 
+        configurable: true,
+        writable: true,
+        enumerable: true
+      });
 
       // The actual behavior depends on implementation, but we're testing the endpoint exists
       expect(response).toBeDefined();
