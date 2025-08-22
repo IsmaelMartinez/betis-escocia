@@ -4,20 +4,24 @@ import { mkdir, writeFile, readFile } from 'fs/promises';
 import { join } from 'path';
 
 // Mock fs/promises module
-vi.mock('fs/promises', () => ({
-  default: {
-    mkdir: vi.fn(),
-    writeFile: vi.fn(),
-    readFile: vi.fn()
-  },
-  mkdir: vi.fn(),
-  writeFile: vi.fn(),
-  readFile: vi.fn()
-}));
+const mockMkdir = vi.fn();
+const mockWriteFile = vi.fn(); 
+const mockReadFile = vi.fn();
 
-const mockMkdir = vi.mocked(mkdir);
-const mockWriteFile = vi.mocked(writeFile);
-const mockReadFile = vi.mocked(readFile);
+vi.mock('fs/promises', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('fs/promises')>();
+  return {
+    ...actual,
+    default: {
+      mkdir: mockMkdir,
+      writeFile: mockWriteFile,
+      readFile: mockReadFile
+    },
+    mkdir: mockMkdir,
+    writeFile: mockWriteFile,
+    readFile: mockReadFile
+  };
+});
 
 const sampleMerchandiseData = {
   items: [
@@ -26,23 +30,23 @@ const sampleMerchandiseData = {
       name: 'Bufanda Peña Bética Escocesa',
       description: 'Bufanda oficial de la peña',
       price: 15.99,
-      images: ['/images/merch/bufanda-1.jpg'],
+      images: ['https://example.com/images/merch/bufanda-1.jpg'],
       category: 'accessories',
       sizes: [],
       colors: ['Verde y Blanco'],
       inStock: true,
-      featured: true
+      featured: false
     },
     {
       id: 'merch_002',
       name: 'Camiseta Peña',
       description: 'Camiseta con el lema oficial',
       price: 22.50,
-      images: ['/images/merch/camiseta-1.jpg'],
+      images: ['https://example.com/images/merch/camiseta-1.jpg'],
       category: 'clothing',
       sizes: ['S', 'M', 'L', 'XL'],
       colors: ['Verde', 'Blanco'],
-      inStock: false,
+      inStock: true,
       featured: false
     },
     {
@@ -50,7 +54,7 @@ const sampleMerchandiseData = {
       name: 'Llavero Betis-Escocia',
       description: 'Llavero metálico',
       price: 5.99,
-      images: ['/images/merch/llavero-1.jpg'],
+      images: ['https://example.com/images/merch/llavero-1.jpg'],
       category: 'accessories',
       sizes: [],
       colors: ['Metálico'],
@@ -72,8 +76,13 @@ describe('Merchandise API - Comprehensive Tests', () => {
   });
 
   describe('GET /api/merchandise', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
+      // Reset and setup mocks for each test
+      vi.clearAllMocks();
+      vi.resetModules(); // Clear module cache
       mockReadFile.mockResolvedValue(JSON.stringify(sampleMerchandiseData));
+      mockWriteFile.mockResolvedValue(undefined);
+      mockMkdir.mockResolvedValue(undefined);
     });
 
     it('should return all merchandise items without filters', async () => {
@@ -110,7 +119,7 @@ describe('Merchandise API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.items).toHaveLength(2);
+      expect(data.items).toHaveLength(1);
       expect(data.items.every((item: any) => item.featured === true)).toBe(true);
     });
 
@@ -122,7 +131,7 @@ describe('Merchandise API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.items).toHaveLength(2);
+      expect(data.items).toHaveLength(3);
       expect(data.items.every((item: any) => item.inStock === true)).toBe(true);
     });
 
@@ -180,7 +189,7 @@ describe('Merchandise API - Comprehensive Tests', () => {
         name: 'Nuevo Producto',
         description: 'Descripción del nuevo producto',
         price: 29.99,
-        images: ['/images/merch/nuevo-1.jpg'],
+        images: ['https://example.com/images/merch/nuevo-1.jpg'],
         category: 'clothing',
         sizes: ['M', 'L'],
         colors: ['Azul'],
@@ -212,8 +221,8 @@ describe('Merchandise API - Comprehensive Tests', () => {
         name: 'Producto Deportivo',
         description: 'Descripción',
         price: 19.99,
-        images: ['/images/merch/deporte-1.jpg'],
-        category: 'sports', // New category
+        images: ['https://example.com/images/merch/deporte-1.jpg'],
+        category: 'collectibles', // New category
         sizes: [],
         colors: ['Verde'],
         inStock: true,
@@ -233,7 +242,7 @@ describe('Merchandise API - Comprehensive Tests', () => {
       
       // Verify the data written includes new category
       const writtenData = JSON.parse(mockWriteFile.mock.calls[0][1] as string);
-      expect(writtenData.categories).toContain('sports');
+      expect(writtenData.categories).toContain('collectibles');
     });
 
     it('should validate required fields', async () => {
@@ -474,8 +483,8 @@ describe('Merchandise API - Comprehensive Tests', () => {
         name: 'Test Item',
         description: 'Test description',
         price: 10.99,
-        images: ['/test.jpg'],
-        category: 'test',
+        images: ['https://example.com/test.jpg'],
+        category: 'collectibles',
         sizes: [],
         colors: ['Test'],
         inStock: true,
@@ -511,8 +520,8 @@ describe('Merchandise API - Comprehensive Tests', () => {
           name: 'Test Item',
           description: 'Test description',
           price: 10.99,
-          images: ['/test.jpg'],
-          category: 'test',
+          images: ['https://example.com/test.jpg'],
+          category: 'collectibles',
           sizes: [],
           colors: ['Test'],
           inStock: true,

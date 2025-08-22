@@ -47,7 +47,7 @@ async function getStandings(): Promise<StandingsResponse> {
   // Check cache first
   const cachedData = await getCachedStandings();
   
-  if (cachedData) {
+  if (cachedData && cachedData.data) {
     const lastUpdated = new Date(cachedData.last_updated);
     const now = new Date();
     const diffHours = (now.getTime() - lastUpdated.getTime()) / (1000 * 60 * 60);

@@ -18,9 +18,16 @@ export const POST = createApiHandler({
     let authenticatedSupabase;
     
     if (userId) {
-      const clerkToken = await getToken({ template: 'supabase' });
-      if (clerkToken) {
-        authenticatedSupabase = getAuthenticatedSupabaseClient(clerkToken);
+      try {
+        const clerkToken = await getToken({ template: 'supabase' });
+        if (clerkToken) {
+          authenticatedSupabase = getAuthenticatedSupabaseClient(clerkToken);
+        }
+      } catch (error) {
+        // Token retrieval failed, continue with anonymous access
+        log.warn('Token retrieval failed for contact submission, using anonymous access', { userId }, {
+          error: error instanceof Error ? error.message : String(error)
+        });
       }
     }
 

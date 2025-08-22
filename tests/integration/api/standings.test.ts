@@ -115,9 +115,9 @@ describe('Standings API', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.source).toBe('cache');
-      expect(data.standings.table).toHaveLength(1);
-      expect(data.standings.table[0].team.name).toBe('Real Betis');
+      expect(data.data.source).toBe('cache');
+      expect(data.data.standings.table).toHaveLength(1);
+      expect(data.data.standings.table[0].team.name).toBe('Real Betis');
     });
 
     it('should fetch fresh data when cache is stale', async () => {
@@ -145,8 +145,8 @@ describe('Standings API', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.source).toBe('api');
-      expect(data.standings.table).toHaveLength(2);
+      expect(data.data.source).toBe('api');
+      expect(data.data.standings.table).toHaveLength(2);
     });
 
     it('should fetch fresh data when no cache exists', async () => {
@@ -170,9 +170,9 @@ describe('Standings API', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.source).toBe('api');
-      expect(data.standings.table).toHaveLength(2);
-      expect(data.standings.table[0].team.name).toBe('Real Betis');
+      expect(data.data.source).toBe('api');
+      expect(data.data.standings.table).toHaveLength(2);
+      expect(data.data.standings.table[0].team.name).toBe('Real Betis');
     });
 
     it('should handle database cache read errors gracefully', async () => {
@@ -196,8 +196,8 @@ describe('Standings API', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.source).toBe('api');
-      expect(data.standings.table).toHaveLength(2);
+      expect(data.data.source).toBe('api');
+      expect(data.data.standings.table).toHaveLength(2);
     });
 
     it('should handle external API failures', async () => {
@@ -252,8 +252,8 @@ describe('Standings API', () => {
 
       // Should still succeed even if cache write fails
       expect(response.status).toBe(200);
-      expect(data.source).toBe('api');
-      expect(data.standings.table).toHaveLength(2);
+      expect(data.data.source).toBe('api');
+      expect(data.data.standings.table).toHaveLength(2);
     });
 
     it('should return proper response structure', async () => {
@@ -280,11 +280,11 @@ describe('Standings API', () => {
       expect(response.headers.get('Content-Type')).toBe('application/json');
       
       // Verify response structure
-      expect(data).toHaveProperty('standings');
-      expect(data).toHaveProperty('lastUpdated');
-      expect(data).toHaveProperty('source');
-      expect(data.standings).toHaveProperty('table');
-      expect(Array.isArray(data.standings.table)).toBe(true);
+      expect(data.data).toHaveProperty('standings');
+      expect(data.data).toHaveProperty('lastUpdated');
+      expect(data.data).toHaveProperty('source');
+      expect(data.data.standings).toHaveProperty('table');
+      expect(Array.isArray(data.data.standings.table)).toBe(true);
     });
 
     it('should validate team data structure', async () => {
@@ -309,7 +309,7 @@ describe('Standings API', () => {
 
       expect(response.status).toBe(200);
       
-      const team = data.standings.table[0];
+      const team = data.data.standings.table[0];
       expect(team).toHaveProperty('position');
       expect(team).toHaveProperty('team');
       expect(team).toHaveProperty('playedGames');
@@ -352,7 +352,7 @@ describe('Standings API', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.source).toBe('api'); // Should fall back to API
+      expect(data.data.source).toBe('api'); // Should fall back to API
     });
 
     it('should handle invalid date formats in cache', async () => {
@@ -379,7 +379,7 @@ describe('Standings API', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.source).toBe('api'); // Should fall back to API due to invalid date
+      expect(data.data.source).toBe('api'); // Should fall back to API due to invalid date
     });
   });
 
@@ -411,7 +411,7 @@ describe('Standings API', () => {
       responses.forEach(async (response) => {
         expect(response.status).toBe(200);
         const data = await response.json();
-        expect(data.standings.table).toHaveLength(2);
+        expect(data.data.standings.table).toHaveLength(2);
       });
     });
 
