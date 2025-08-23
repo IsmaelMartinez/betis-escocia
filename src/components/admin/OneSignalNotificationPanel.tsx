@@ -73,6 +73,11 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
     }
 
     try {
+      // Validate required environment variables
+      if (!process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID) {
+        throw new Error('NEXT_PUBLIC_ONESIGNAL_APP_ID environment variable is not configured');
+      }
+
       console.log('[OneSignal] Environment variables:', {
         appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID,
         nodeEnv: process.env.NODE_ENV,
@@ -80,16 +85,27 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
         isDev: process.env.NODE_ENV === 'development'
       });
 
-      // Check and unregister existing service workers to avoid conflicts
+      // Check for conflicting service workers (only unregister legacy ones, not OneSignal)
       if ('serviceWorker' in navigator) {
         const registrations = await navigator.serviceWorker.getRegistrations();
         console.log('[OneSignal] Existing service workers:', registrations.length);
         
         for (const reg of registrations) {
-          console.log('[OneSignal] Unregistering SW:', reg.scope, reg.active?.scriptURL);
-          await reg.unregister();
+          const scriptURL = reg.active?.scriptURL || reg.waiting?.scriptURL || reg.installing?.scriptURL;
+          console.log('[OneSignal] Checking SW:', reg.scope, scriptURL);
+          
+          // Only unregister legacy service workers, not OneSignal ones
+          if (scriptURL && (
+            scriptURL.includes('/sw.js') || 
+            scriptURL.includes('mockServiceWorker.js') ||
+            (scriptURL.includes('localhost') && !scriptURL.includes('OneSignal'))
+          )) {
+            console.log('[OneSignal] Unregistering legacy SW:', scriptURL);
+            await reg.unregister();
+          } else {
+            console.log('[OneSignal] Keeping SW (likely OneSignal):', scriptURL);
+          }
         }
-        console.log('[OneSignal] All existing service workers unregistered');
       }
 
       console.log('[OneSignal] Importing react-onesignal...');
@@ -101,7 +117,11 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
       const initConfig = {
         appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID!,
         allowLocalhostAsSecureOrigin: process.env.NODE_ENV === 'development',
-        // Let OneSignal handle everything automatically
+        serviceWorkerParam: {
+          scope: '/',
+        },
+        serviceWorkerPath: 'OneSignalSDKWorker.js',
+        serviceWorkerUpdaterPath: 'OneSignalSDKUpdaterWorker.js',
       };
 
       console.log('[OneSignal] Initializing with config:', initConfig);
@@ -110,8 +130,12 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
       if (typeof window !== 'undefined' && (window as unknown as { OneSignal?: { _initialized?: boolean } }).OneSignal?._initialized) {
         console.log('[OneSignal] Already initialized, skipping init');
       } else {
+        console.log('[OneSignal] Starting OneSignal initialization...');
         await OneSignal.init(initConfig);
         console.log('[OneSignal] Init completed successfully');
+        
+        // Wait a moment for initialization to complete
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
 
       // Set the external user ID to the Clerk user ID for precise targeting
@@ -136,25 +160,33 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
         console.warn('[OneSignal] Failed to set admin tag:', err);
       }
 
-      // Check notification permission
+      // Check notification permission with error handling
       console.log('[OneSignal] Checking notification permission...');
-      const permission = OneSignal.Notifications.permission;
-      console.log('[OneSignal] Permission result:', permission);
-      
-      // Handle both boolean and string responses
       let permissionGranted = false;
       let permissionDenied = false;
       
-      if (typeof permission === 'boolean') {
-        permissionGranted = permission;
-        permissionDenied = false;
-      } else {
-        permissionGranted = permission === 'granted';
-        permissionDenied = permission === 'denied';
+      try {
+        const permission = OneSignal.Notifications.permission;
+        console.log('[OneSignal] Permission result:', permission);
+        
+        // Handle both boolean and string responses
+        if (typeof permission === 'boolean') {
+          permissionGranted = permission;
+          permissionDenied = false;
+        } else {
+          permissionGranted = permission === 'granted';
+          permissionDenied = permission === 'denied';
+        }
+      } catch (permError) {
+        console.warn('[OneSignal] Error checking permission:', permError);
+        // Fall back to browser Notification API
+        const browserPermission = Notification.permission;
+        permissionGranted = browserPermission === 'granted';
+        permissionDenied = browserPermission === 'denied';
+        console.log('[OneSignal] Using browser permission fallback:', browserPermission);
       }
 
       console.log('[OneSignal] Permission status:', {
-        permission,
         permissionGranted,
         permissionDenied
       });

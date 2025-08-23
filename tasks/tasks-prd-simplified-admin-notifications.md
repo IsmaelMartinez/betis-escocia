@@ -24,6 +24,8 @@
 - Keep wrapper isolated; no direct OneSignal calls elsewhere.
 - Tag only after confirming admin role to avoid leakage.
 - Avoid adding heavy SDK to main bundle (dynamic import on admin route only).
+- **Service Worker Fix**: Removed legacy `pushNotifications.ts` causing conflicts with OneSignal worker registration.
+- **OneSignal Configuration**: Added explicit service worker paths and improved error handling for initialization.
 
 ## Tasks
 
@@ -56,13 +58,14 @@
 	- [x] 3.9 Add loading & error states around toggle interactions
 	- [x] 3.10 Add unit/component tests for toggle behaviour (mock SDK module)
 
-- [ ] 4.0 Wire RSVP & Contact Flows + Test Notification Endpoint to OneSignal Wrapper
+- [x] 4.0 Wire RSVP & Contact Flows + Test Notification Endpoint to OneSignal Wrapper
 	- [x] 4.1 Identify RSVP submission handler (API route) and contact form handler files
 	- [x] 4.2 Import and call `sendAdminNotification` with minimal payload (type, title, body, optional URL)
 	- [x] 4.3 Ensure failures are caught & logged; do not affect primary operation response
 	- [x] 4.4 Implement `POST /api/admin/notifications/test` endpoint (admin-only)
 	- [x] 4.5 Add Playwright step in admin spec to trigger test notification (mock mode)
 	- [x] 4.6 Add integration tests for RSVP/contact handlers verifying wrapper call (mock fetch)
+	- [x] 4.7 Fix OneSignal service worker registration conflicts (remove legacy `pushNotifications.ts`, improve configuration)
 
 - [ ] 5.0 Testing & QA (unit, integration, e2e with MOCK_PUSH, bundle impact check)
 	- [ ] 5.1 Update Vitest setup to set `MOCK_PUSH=1`
