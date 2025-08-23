@@ -195,13 +195,23 @@ export function createApiHandler<TInput = unknown, TOutput = unknown>(
         return authError;
       }
 
-      // Parse and validate request body if needed
+      // Parse and validate request data
       let validatedData: TInput;
       
-      if (config.schema && (request.method === 'POST' || request.method === 'PUT' || request.method === 'PATCH' || request.method === 'DELETE')) {
+      if (config.schema) {
         try {
-          const body = await request.json();
-          validatedData = config.schema.parse(body);
+          if (request.method === 'GET') {
+            // Parse query parameters for GET requests
+            const url = new URL(request.url);
+            const queryParams = Object.fromEntries(url.searchParams.entries());
+            validatedData = config.schema.parse(queryParams);
+          } else if (request.method === 'POST' || request.method === 'PUT' || request.method === 'PATCH' || request.method === 'DELETE') {
+            // Parse request body for other methods
+            const body = await request.json();
+            validatedData = config.schema.parse(body);
+          } else {
+            validatedData = {} as TInput;
+          }
         } catch (error) {
           if (error instanceof ZodError) {
             return handleZodError(error);

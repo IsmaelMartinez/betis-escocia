@@ -104,10 +104,10 @@ describe('Matches API - Comprehensive Tests', () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.data.matches).toHaveLength(0);
-      expect(data.data.count).toBe(0);
-      expect(data.data.source).toBe('local-data');
-      expect(data.data.timestamp).toBeDefined();
+      expect(data.matches).toHaveLength(0);
+      expect(data.count).toBe(0);
+      expect(data.source).toBe('local-data');
+      expect(data.timestamp).toBeDefined();
     });
 
     it('should validate request structure and response format', async () => {
@@ -119,11 +119,10 @@ describe('Matches API - Comprehensive Tests', () => {
 
       expect(response.status).toBe(200);
       expect(data).toHaveProperty('success');
-      expect(data).toHaveProperty('data');
-      expect(data.data).toHaveProperty('matches');
-      expect(data.data).toHaveProperty('count');
-      expect(data.data).toHaveProperty('timestamp');
-      expect(data.data).toHaveProperty('source');
+      expect(data).toHaveProperty('matches');
+      expect(data).toHaveProperty('count');
+      expect(data).toHaveProperty('timestamp');
+      expect(data).toHaveProperty('source');
     });
   });
 
@@ -136,9 +135,9 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.matches).toHaveLength(2);
-      expect(data.data.count).toBe(2);
-      expect(data.data.source).toBe('live-api');
+      expect(data.matches).toHaveLength(2);
+      expect(data.count).toBe(2);
+      expect(data.source).toBe('live-api');
       expect(mockGetUpcomingBetisMatchesForCards).toHaveBeenCalledWith(10);
       expect(mockGetRecentBetisResultsForCards).not.toHaveBeenCalled();
     });
@@ -151,9 +150,9 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.matches).toHaveLength(2);
-      expect(data.data.count).toBe(2);
-      expect(data.data.source).toBe('live-api');
+      expect(data.matches).toHaveLength(2);
+      expect(data.count).toBe(2);
+      expect(data.source).toBe('live-api');
       expect(mockGetRecentBetisResultsForCards).toHaveBeenCalledWith(10);
       expect(mockGetUpcomingBetisMatchesForCards).not.toHaveBeenCalled();
     });
@@ -166,9 +165,9 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.matches).toHaveLength(4); // 2 upcoming + 2 recent
-      expect(data.data.count).toBe(4);
-      expect(data.data.source).toBe('live-api');
+      expect(data.matches).toHaveLength(4); // 2 upcoming + 2 recent
+      expect(data.count).toBe(4);
+      expect(data.source).toBe('live-api');
       expect(mockGetUpcomingBetisMatchesForCards).toHaveBeenCalledWith(5);
       expect(mockGetRecentBetisResultsForCards).toHaveBeenCalledWith(5);
     });
@@ -181,9 +180,9 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.matches).toHaveLength(0);
-      expect(data.data.count).toBe(0);
-      expect(data.data.source).toBe('live-api');
+      expect(data.matches).toHaveLength(0);
+      expect(data.count).toBe(0);
+      expect(data.source).toBe('live-api');
       expect(mockGetUpcomingBetisMatchesForCards).not.toHaveBeenCalled();
       expect(mockGetRecentBetisResultsForCards).not.toHaveBeenCalled();
     });
@@ -212,7 +211,7 @@ describe('Matches API - Comprehensive Tests', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toContain('validation');
+      expect(data.error).toBe('Datos de entrada inválidos');
     });
 
     it('should handle live parameter as string boolean', async () => {
@@ -233,9 +232,9 @@ describe('Matches API - Comprehensive Tests', () => {
         expect(response.status).toBe(200);
         
         if (testCase.expected) {
-          expect(data.data.source).toBe('live-api');
+          expect(data.source).toBe('live-api');
         } else {
-          expect(data.data.source).toBe('local-data');
+          expect(data.source).toBe('local-data');
         }
       }
     });
@@ -248,8 +247,8 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.source).toBe('local-data'); // Default live=false
-      expect(data.data.matches).toHaveLength(0); // Default type=all with local data
+      expect(data.source).toBe('local-data'); // Default live=false
+      expect(data.matches).toHaveLength(0); // Default type=all with local data
     });
   });
 
@@ -264,8 +263,8 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.matches).toHaveLength(0);
-      expect(data.data.source).toBe('live-api');
+      expect(data.matches).toHaveLength(0);
+      expect(data.source).toBe('live-api');
       expect(data.success).toBe(true);
     });
 
@@ -279,8 +278,8 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.matches).toHaveLength(0);
-      expect(data.data.source).toBe('live-api');
+      expect(data.matches).toHaveLength(0);
+      expect(data.source).toBe('live-api');
       expect(data.success).toBe(true);
     });
 
@@ -295,8 +294,8 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.matches).toHaveLength(0); // All or nothing due to error in any service
-      expect(data.data.source).toBe('live-api');
+      expect(data.matches).toHaveLength(0); // All or nothing due to error in any service
+      expect(data.source).toBe('live-api');
     });
 
     it('should handle API returning null values', async () => {
@@ -310,8 +309,8 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.matches).toHaveLength(0);
-      expect(data.data.count).toBe(0);
+      expect(data.matches).toHaveLength(0);
+      expect(data.count).toBe(0);
     });
 
     it('should handle API returning undefined values', async () => {
@@ -324,7 +323,7 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.matches).toHaveLength(0);
+      expect(data.matches).toHaveLength(0);
     });
   });
 
@@ -337,11 +336,11 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.matches[0]).toHaveProperty('id');
-      expect(data.data.matches[0]).toHaveProperty('opponent');
-      expect(data.data.matches[0]).toHaveProperty('date');
-      expect(data.data.matches[0]).toHaveProperty('competition');
-      expect(data.data.matches[0]).toHaveProperty('venue');
+      expect(data.matches[0]).toHaveProperty('id');
+      expect(data.matches[0]).toHaveProperty('opponent');
+      expect(data.matches[0]).toHaveProperty('date');
+      expect(data.matches[0]).toHaveProperty('competition');
+      expect(data.matches[0]).toHaveProperty('venue');
     });
 
     it('should include result data for recent matches', async () => {
@@ -352,10 +351,10 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.matches[0]).toHaveProperty('result');
-      expect(data.data.matches[0].result).toHaveProperty('homeGoals');
-      expect(data.data.matches[0].result).toHaveProperty('awayGoals');
-      expect(data.data.matches[0].result).toHaveProperty('winner');
+      expect(data.matches[0]).toHaveProperty('result');
+      expect(data.matches[0].result).toHaveProperty('homeGoals');
+      expect(data.matches[0].result).toHaveProperty('awayGoals');
+      expect(data.matches[0].result).toHaveProperty('winner');
     });
 
     it('should validate timestamp format', async () => {
@@ -366,8 +365,8 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/);
-      expect(new Date(data.data.timestamp)).toBeInstanceOf(Date);
+      expect(data.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/);
+      expect(new Date(data.timestamp)).toBeInstanceOf(Date);
     });
 
     it('should maintain count consistency with matches array', async () => {
@@ -378,7 +377,7 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.count).toBe(data.data.matches.length);
+      expect(data.count).toBe(data.matches.length);
     });
   });
 
@@ -405,8 +404,8 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.matches).toHaveLength(50);
-      expect(data.data.count).toBe(50);
+      expect(data.matches).toHaveLength(50);
+      expect(data.count).toBe(50);
       expect(endTime - startTime).toBeLessThan(1000); // Should complete within 1 second
     });
 
@@ -421,8 +420,8 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.matches).toHaveLength(0);
-      expect(data.data.count).toBe(0);
+      expect(data.matches).toHaveLength(0);
+      expect(data.count).toBe(0);
       expect(data.success).toBe(true);
     });
 
@@ -478,7 +477,7 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.matches).toHaveLength(0);
+      expect(data.matches).toHaveLength(0);
       expect(data.success).toBe(true);
     });
 
@@ -495,7 +494,7 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.matches).toHaveLength(0);
+      expect(data.matches).toHaveLength(0);
       expect(data.success).toBe(true);
     });
 
@@ -513,7 +512,7 @@ describe('Matches API - Comprehensive Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.matches).toHaveLength(0);
+      expect(data.matches).toHaveLength(0);
       expect(data.success).toBe(true);
     });
   });

@@ -61,5 +61,761 @@
     "isPreOrder": false,
     "status": "pending",
     "timestamp": "2025-07-23T00:31:00.898Z"
+  },
+  {
+    "id": "1755868129403",
+    "productId": "merch_004",
+    "productName": "Nueva Camiseta",
+    "price": 30,
+    "quantity": 1,
+    "totalPrice": 30,
+    "customerInfo": {
+      "name": "María González",
+      "email": "maria@example.com",
+      "phone": "+34987654321",
+      "contactMethod": "whatsapp"
+    },
+    "orderDetails": {
+      "size": "M",
+      "message": "Urgente por favor"
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2024-12-16T12:00:00.000Z"
+  },
+  {
+    "id": "1755868129410",
+    "productId": "merch_005",
+    "productName": "Minimal Product",
+    "price": 15.99,
+    "quantity": 1,
+    "totalPrice": 15.99,
+    "customerInfo": {
+      "name": "Test User",
+      "email": "test@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": true,
+    "status": "pending",
+    "timestamp": "2025-08-22T13:08:49.410Z"
+  },
+  {
+    "id": "1234567890123",
+    "productId": "merch_004",
+    "productName": "Nueva Camiseta",
+    "price": 30,
+    "quantity": 1,
+    "totalPrice": 30,
+    "customerInfo": {
+      "name": "María González",
+      "email": "maria@example.com",
+      "phone": "+34987654321",
+      "contactMethod": "whatsapp"
+    },
+    "orderDetails": {
+      "size": "M",
+      "message": "Urgente por favor"
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2024-12-16T12:00:00.000Z"
+  },
+  {
+    "id": "1755868129418",
+    "productId": "merch_004",
+    "productName": "Nueva Camiseta",
+    "price": 30,
+    "quantity": 1,
+    "totalPrice": 30,
+    "customerInfo": {
+      "name": "María González",
+      "email": "maria@example.com",
+      "phone": "+34987654321",
+      "contactMethod": "whatsapp"
+    },
+    "orderDetails": {
+      "size": "M",
+      "message": "Urgente por favor"
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2024-12-16T12:00:00.000Z"
+  },
+  {
+    "id": "1755868129422",
+    "productId": "merch_004",
+    "productName": "Nueva Camiseta",
+    "price": 30,
+    "quantity": 1,
+    "totalPrice": 30,
+    "customerInfo": {
+      "name": "María González",
+      "email": "maria@example.com",
+      "phone": "+34987654321",
+      "contactMethod": "whatsapp"
+    },
+    "orderDetails": {
+      "size": "M",
+      "message": "Urgente por favor"
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2024-12-16T12:00:00.000Z"
+  },
+  {
+    "id": "1755868129435",
+    "productId": "merch_concurrent_2",
+    "productName": "Concurrent Product 2",
+    "price": 10,
+    "quantity": 1,
+    "totalPrice": 10,
+    "customerInfo": {
+      "name": "User 2",
+      "email": "user2@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2025-08-22T13:08:49.435Z"
+  },
+  {
+    "id": "1755868129443",
+    "productId": "test",
+    "productName": "Test Product",
+    "price": 10,
+    "quantity": 1,
+    "totalPrice": 10,
+    "customerInfo": {
+      "name": "Test",
+      "email": "test@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2025-08-22T13:08:49.443Z"
+  },
+  {
+    "id": "1755868129449",
+    "productId": "integrity_test",
+    "productName": "Integrity Test Product",
+    "price": 20,
+    "quantity": 2,
+    "totalPrice": 40,
+    "customerInfo": {
+      "name": "Test User",
+      "email": "integrity@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2025-08-22T13:08:49.449Z"
+  },
+  {
+    "id": "1755868129454",
+    "productId": "price_test",
+    "productName": "Price Test Product",
+    "price": 10,
+    "quantity": 3,
+    "totalPrice": 25,
+    "customerInfo": {
+      "name": "Test User",
+      "email": "price@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2025-08-22T13:08:49.454Z"
+  },
+  {
+    "id": "1755869274478",
+    "productId": "merch_004",
+    "productName": "Nueva Camiseta",
+    "price": 30,
+    "quantity": 1,
+    "totalPrice": 30,
+    "customerInfo": {
+      "name": "María González",
+      "email": "maria@example.com",
+      "phone": "+34987654321",
+      "contactMethod": "whatsapp"
+    },
+    "orderDetails": {
+      "size": "M",
+      "message": "Urgente por favor"
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2024-12-16T12:00:00.000Z"
+  },
+  {
+    "id": "1755869274494",
+    "productId": "merch_005",
+    "productName": "Minimal Product",
+    "price": 15.99,
+    "quantity": 1,
+    "totalPrice": 15.99,
+    "customerInfo": {
+      "name": "Test User",
+      "email": "test@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": true,
+    "status": "pending",
+    "timestamp": "2025-08-22T13:27:54.494Z"
+  },
+  {
+    "id": "1234567890123",
+    "productId": "merch_004",
+    "productName": "Nueva Camiseta",
+    "price": 30,
+    "quantity": 1,
+    "totalPrice": 30,
+    "customerInfo": {
+      "name": "María González",
+      "email": "maria@example.com",
+      "phone": "+34987654321",
+      "contactMethod": "whatsapp"
+    },
+    "orderDetails": {
+      "size": "M",
+      "message": "Urgente por favor"
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2024-12-16T12:00:00.000Z"
+  },
+  {
+    "id": "1755869274513",
+    "productId": "merch_004",
+    "productName": "Nueva Camiseta",
+    "price": 30,
+    "quantity": 1,
+    "totalPrice": 30,
+    "customerInfo": {
+      "name": "María González",
+      "email": "maria@example.com",
+      "phone": "+34987654321",
+      "contactMethod": "whatsapp"
+    },
+    "orderDetails": {
+      "size": "M",
+      "message": "Urgente por favor"
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2024-12-16T12:00:00.000Z"
+  },
+  {
+    "id": "1755869274521",
+    "productId": "merch_004",
+    "productName": "Nueva Camiseta",
+    "price": 30,
+    "quantity": 1,
+    "totalPrice": 30,
+    "customerInfo": {
+      "name": "María González",
+      "email": "maria@example.com",
+      "phone": "+34987654321",
+      "contactMethod": "whatsapp"
+    },
+    "orderDetails": {
+      "size": "M",
+      "message": "Urgente por favor"
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2024-12-16T12:00:00.000Z"
+  },
+  {
+    "id": "1755869274550",
+    "productId": "merch_concurrent_2",
+    "productName": "Concurrent Product 2",
+    "price": 10,
+    "quantity": 1,
+    "totalPrice": 10,
+    "customerInfo": {
+      "name": "User 2",
+      "email": "user2@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2025-08-22T13:27:54.550Z"
+  },
+  {
+    "id": "1755869274571",
+    "productId": "test",
+    "productName": "Test Product",
+    "price": 10,
+    "quantity": 1,
+    "totalPrice": 10,
+    "customerInfo": {
+      "name": "Test",
+      "email": "test@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2025-08-22T13:27:54.571Z"
+  },
+  {
+    "id": "1755869274585",
+    "productId": "integrity_test",
+    "productName": "Integrity Test Product",
+    "price": 20,
+    "quantity": 2,
+    "totalPrice": 40,
+    "customerInfo": {
+      "name": "Test User",
+      "email": "integrity@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2025-08-22T13:27:54.585Z"
+  },
+  {
+    "id": "1755869274604",
+    "productId": "price_test",
+    "productName": "Price Test Product",
+    "price": 10,
+    "quantity": 3,
+    "totalPrice": 25,
+    "customerInfo": {
+      "name": "Test User",
+      "email": "price@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2025-08-22T13:27:54.604Z"
+  },
+  {
+    "id": "1755869426611",
+    "productId": "merch_004",
+    "productName": "Nueva Camiseta",
+    "price": 30,
+    "quantity": 1,
+    "totalPrice": 30,
+    "customerInfo": {
+      "name": "María González",
+      "email": "maria@example.com",
+      "phone": "+34987654321",
+      "contactMethod": "whatsapp"
+    },
+    "orderDetails": {
+      "size": "M",
+      "message": "Urgente por favor"
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2024-12-16T12:00:00.000Z"
+  },
+  {
+    "id": "1755869426619",
+    "productId": "merch_005",
+    "productName": "Minimal Product",
+    "price": 15.99,
+    "quantity": 1,
+    "totalPrice": 15.99,
+    "customerInfo": {
+      "name": "Test User",
+      "email": "test@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": true,
+    "status": "pending",
+    "timestamp": "2025-08-22T13:30:26.619Z"
+  },
+  {
+    "id": "1234567890123",
+    "productId": "merch_004",
+    "productName": "Nueva Camiseta",
+    "price": 30,
+    "quantity": 1,
+    "totalPrice": 30,
+    "customerInfo": {
+      "name": "María González",
+      "email": "maria@example.com",
+      "phone": "+34987654321",
+      "contactMethod": "whatsapp"
+    },
+    "orderDetails": {
+      "size": "M",
+      "message": "Urgente por favor"
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2024-12-16T12:00:00.000Z"
+  },
+  {
+    "id": "1755869426636",
+    "productId": "merch_004",
+    "productName": "Nueva Camiseta",
+    "price": 30,
+    "quantity": 1,
+    "totalPrice": 30,
+    "customerInfo": {
+      "name": "María González",
+      "email": "maria@example.com",
+      "phone": "+34987654321",
+      "contactMethod": "whatsapp"
+    },
+    "orderDetails": {
+      "size": "M",
+      "message": "Urgente por favor"
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2024-12-16T12:00:00.000Z"
+  },
+  {
+    "id": "1755869426642",
+    "productId": "merch_004",
+    "productName": "Nueva Camiseta",
+    "price": 30,
+    "quantity": 1,
+    "totalPrice": 30,
+    "customerInfo": {
+      "name": "María González",
+      "email": "maria@example.com",
+      "phone": "+34987654321",
+      "contactMethod": "whatsapp"
+    },
+    "orderDetails": {
+      "size": "M",
+      "message": "Urgente por favor"
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2024-12-16T12:00:00.000Z"
+  },
+  {
+    "id": "1755869426666",
+    "productId": "merch_concurrent_2",
+    "productName": "Concurrent Product 2",
+    "price": 10,
+    "quantity": 1,
+    "totalPrice": 10,
+    "customerInfo": {
+      "name": "User 2",
+      "email": "user2@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2025-08-22T13:30:26.666Z"
+  },
+  {
+    "id": "1755869426675",
+    "productId": "test",
+    "productName": "Test Product",
+    "price": 10,
+    "quantity": 1,
+    "totalPrice": 10,
+    "customerInfo": {
+      "name": "Test",
+      "email": "test@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2025-08-22T13:30:26.675Z"
+  },
+  {
+    "id": "1755869426682",
+    "productId": "integrity_test",
+    "productName": "Integrity Test Product",
+    "price": 20,
+    "quantity": 2,
+    "totalPrice": 40,
+    "customerInfo": {
+      "name": "Test User",
+      "email": "integrity@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2025-08-22T13:30:26.682Z"
+  },
+  {
+    "id": "1755869426688",
+    "productId": "price_test",
+    "productName": "Price Test Product",
+    "price": 10,
+    "quantity": 3,
+    "totalPrice": 25,
+    "customerInfo": {
+      "name": "Test User",
+      "email": "price@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2025-08-22T13:30:26.688Z"
+  },
+  {
+    "id": "1755873385022",
+    "productId": "merch_004",
+    "productName": "Nueva Camiseta",
+    "price": 30,
+    "quantity": 1,
+    "totalPrice": 30,
+    "customerInfo": {
+      "name": "María González",
+      "email": "maria@example.com",
+      "phone": "+34987654321",
+      "contactMethod": "whatsapp"
+    },
+    "orderDetails": {
+      "size": "M",
+      "message": "Urgente por favor"
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2024-12-16T12:00:00.000Z"
+  },
+  {
+    "id": "1755873385053",
+    "productId": "merch_005",
+    "productName": "Minimal Product",
+    "price": 15.99,
+    "quantity": 1,
+    "totalPrice": 15.99,
+    "customerInfo": {
+      "name": "Test User",
+      "email": "test@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": true,
+    "status": "pending",
+    "timestamp": "2025-08-22T14:36:25.053Z"
+  },
+  {
+    "id": "1234567890123",
+    "productId": "merch_004",
+    "productName": "Nueva Camiseta",
+    "price": 30,
+    "quantity": 1,
+    "totalPrice": 30,
+    "customerInfo": {
+      "name": "María González",
+      "email": "maria@example.com",
+      "phone": "+34987654321",
+      "contactMethod": "whatsapp"
+    },
+    "orderDetails": {
+      "size": "M",
+      "message": "Urgente por favor"
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2024-12-16T12:00:00.000Z"
+  },
+  {
+    "id": "1755873385100",
+    "productId": "merch_004",
+    "productName": "Nueva Camiseta",
+    "price": 30,
+    "quantity": 1,
+    "totalPrice": 30,
+    "customerInfo": {
+      "name": "María González",
+      "email": "maria@example.com",
+      "phone": "+34987654321",
+      "contactMethod": "whatsapp"
+    },
+    "orderDetails": {
+      "size": "M",
+      "message": "Urgente por favor"
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2024-12-16T12:00:00.000Z"
+  },
+  {
+    "id": "1755873385144",
+    "productId": "merch_004",
+    "productName": "Nueva Camiseta",
+    "price": 30,
+    "quantity": 1,
+    "totalPrice": 30,
+    "customerInfo": {
+      "name": "María González",
+      "email": "maria@example.com",
+      "phone": "+34987654321",
+      "contactMethod": "whatsapp"
+    },
+    "orderDetails": {
+      "size": "M",
+      "message": "Urgente por favor"
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2024-12-16T12:00:00.000Z"
+  },
+  {
+    "id": "1755873385180",
+    "productId": "merch_concurrent_2",
+    "productName": "Concurrent Product 2",
+    "price": 10,
+    "quantity": 1,
+    "totalPrice": 10,
+    "customerInfo": {
+      "name": "User 2",
+      "email": "user2@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2025-08-22T14:36:25.180Z"
+  },
+  {
+    "id": "1755873385194",
+    "productId": "test",
+    "productName": "Test Product",
+    "price": 10,
+    "quantity": 1,
+    "totalPrice": 10,
+    "customerInfo": {
+      "name": "Test",
+      "email": "test@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2025-08-22T14:36:25.194Z"
+  },
+  {
+    "id": "1755873385202",
+    "productId": "integrity_test",
+    "productName": "Integrity Test Product",
+    "price": 20,
+    "quantity": 2,
+    "totalPrice": 40,
+    "customerInfo": {
+      "name": "Test User",
+      "email": "integrity@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2025-08-22T14:36:25.202Z"
+  },
+  {
+    "id": "1755873385211",
+    "productId": "price_test",
+    "productName": "Price Test Product",
+    "price": 10,
+    "quantity": 3,
+    "totalPrice": 25,
+    "customerInfo": {
+      "name": "Test User",
+      "email": "price@example.com",
+      "phone": "",
+      "contactMethod": "email"
+    },
+    "orderDetails": {
+      "size": "",
+      "message": ""
+    },
+    "isPreOrder": false,
+    "status": "pending",
+    "timestamp": "2025-08-22T14:36:25.211Z"
   }
 ]
