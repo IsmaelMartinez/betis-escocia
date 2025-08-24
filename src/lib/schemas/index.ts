@@ -1,8 +1,7 @@
 // Main exports for all schemas
 export * from './contact';
 export * from './rsvp';
-export * from './orders';
-export * from './voting';
+export * from './trivia';
 export * from './admin';
 
 // Common validation utilities

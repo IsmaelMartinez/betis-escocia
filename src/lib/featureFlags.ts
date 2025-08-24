@@ -8,7 +8,6 @@
 // Feature flag names
 export type FeatureName = 
   | 'show-clasificacion'
-  | 'show-coleccionables'
   | 'show-galeria'
   | 'show-partidos'
   | 'show-social-media'
@@ -32,7 +31,6 @@ export interface NavigationItem {
 // Default values for all features
 const DEFAULT_FEATURES: Record<FeatureName, boolean> = {
   'show-clasificacion': true,
-  'show-coleccionables': false,
   'show-galeria': false,
   'show-partidos': true,
   'show-social-media': false,
@@ -49,7 +47,6 @@ const DEFAULT_FEATURES: Record<FeatureName, boolean> = {
 // Environment variable mapping
 const ENV_VAR_MAP: Record<FeatureName, string> = {
   'show-clasificacion': 'NEXT_PUBLIC_FEATURE_CLASIFICACION',
-  'show-coleccionables': 'NEXT_PUBLIC_FEATURE_COLECCIONABLES',
   'show-galeria': 'NEXT_PUBLIC_FEATURE_GALERIA',
   'show-partidos': 'NEXT_PUBLIC_FEATURE_PARTIDOS',
   'show-social-media': 'NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA',

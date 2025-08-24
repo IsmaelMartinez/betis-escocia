@@ -10,7 +10,6 @@ const isPublicRoute = createRouteMatcher([
   '/clasificacion',
   '/partidos',
   '/partidos/(.*)',
-  '/coleccionables',
   '/galeria',
   '/historia',
   '/nosotros',
@@ -24,9 +23,6 @@ const isPublicRoute = createRouteMatcher([
   '/api/matches',
   '/api/standings',
   '/api/gdpr',
-  '/api/camiseta-voting',
-  '/api/merchandise',
-  '/api/orders',
 ]);
 
 // Protected routes that require authentication

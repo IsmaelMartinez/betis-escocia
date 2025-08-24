@@ -9,8 +9,7 @@ import {
   // Test that all exports are available
   contactSchema,
   rsvpSchema,
-  createOrderSchema,
-  voterSchema,
+  triviaScoreSchema,
   userUpdateSchema
 } from '@/lib/schemas/index';
 import { ZodError } from 'zod';
@@ -21,8 +20,7 @@ describe('Schemas Index', () => {
       // Test that main schema exports are available
       expect(contactSchema).toBeDefined();
       expect(rsvpSchema).toBeDefined();
-      expect(createOrderSchema).toBeDefined();
-      expect(voterSchema).toBeDefined();
+      expect(triviaScoreSchema).toBeDefined();
       expect(userUpdateSchema).toBeDefined();
     });
 

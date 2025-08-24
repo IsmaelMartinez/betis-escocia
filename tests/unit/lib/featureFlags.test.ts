@@ -34,7 +34,6 @@ describe('Feature Flags - Simplified System', () => {
       expect(hasFeature('show-nosotros')).toBe(true);
       expect(hasFeature('show-clerk-auth')).toBe(true);
       
-      expect(hasFeature('show-coleccionables')).toBe(false);
       expect(hasFeature('show-galeria')).toBe(false);
       expect(hasFeature('show-social-media')).toBe(false);
       expect(hasFeature('show-history')).toBe(false);
@@ -99,18 +98,15 @@ describe('Feature Flags - Simplified System', () => {
       
       // Should not include items that are disabled by default
       expect(enabledItems.some(item => item.name === 'Galería')).toBe(false);
-      expect(enabledItems.some(item => item.name === 'Coleccionables')).toBe(false);
     });
 
     it('should include items when enabled via environment variables', () => {
       mockEnv.NEXT_PUBLIC_FEATURE_GALERIA = 'true';
-      mockEnv.NEXT_PUBLIC_FEATURE_COLECCIONABLES = 'true';
       clearFeatureCache();
       
       const enabledItems = getEnabledNavigationItems();
       
       expect(enabledItems.some(item => item.name === 'Galería')).toBe(true);
-      expect(enabledItems.some(item => item.name === 'Coleccionables')).toBe(true);
     });
 
     it('should exclude items when disabled via environment variables', () => {
