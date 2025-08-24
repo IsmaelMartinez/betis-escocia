@@ -74,10 +74,17 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
     console.log('[OneSignal] Initialize function called');
     console.log('[OneSignal] Window check:', typeof window);
     console.log('[OneSignal] Current URL:', window?.location?.href);
+    console.log('[OneSignal] Current state:', { oneSignalReady: state.oneSignalReady, loading: state.loading });
     
     if (typeof window === 'undefined') {
       console.log('[OneSignal] Skipping - not in browser');
       return false;
+    }
+
+    // Check if already ready to avoid duplicate initialization
+    if (state.oneSignalReady) {
+      console.log('[OneSignal] Already ready, skipping initialization');
+      return true;
     }
 
     try {
@@ -93,54 +100,66 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
         isDev: process.env.NODE_ENV === 'development'
       });
 
-      // Check for conflicting service workers (only unregister legacy ones, not OneSignal)
-      if ('serviceWorker' in navigator) {
-        const registrations = await navigator.serviceWorker.getRegistrations();
-        console.log('[OneSignal] Existing service workers:', registrations.length);
-        
-        for (const reg of registrations) {
-          const scriptURL = reg.active?.scriptURL || reg.waiting?.scriptURL || reg.installing?.scriptURL;
-          console.log('[OneSignal] Checking SW:', reg.scope, scriptURL);
-          
-          // Only unregister legacy service workers, not OneSignal ones
-          if (scriptURL && (
-            scriptURL.includes('/sw.js') || 
-            scriptURL.includes('mockServiceWorker.js') ||
-            (scriptURL.includes('localhost') && !scriptURL.includes('OneSignal'))
-          )) {
-            console.log('[OneSignal] Unregistering legacy SW:', scriptURL);
-            await reg.unregister();
-          } else {
-            console.log('[OneSignal] Keeping SW (likely OneSignal):', scriptURL);
-          }
-        }
-      }
-
-      console.log('[OneSignal] Importing react-onesignal...');
       // Dynamic import of OneSignal SDK
+      console.log('[OneSignal] Importing react-onesignal...');
       const OneSignal = await import('react-onesignal').then(mod => mod.default);
       console.log('[OneSignal] Import successful:', !!OneSignal);
-      console.log('[OneSignal] OneSignal object methods:', Object.getOwnPropertyNames(OneSignal));
-      
-      const initConfig = {
-        appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID!,
-        allowLocalhostAsSecureOrigin: process.env.NODE_ENV === 'development',
-        serviceWorkerParam: {
-          scope: '/',
-        },
-        serviceWorkerPath: 'OneSignalSDKWorker.js',
-        serviceWorkerUpdaterPath: 'OneSignalSDKUpdaterWorker.js',
-      };
 
-      console.log('[OneSignal] Initializing with config:', initConfig);
+      // Check if OneSignal is already initialized 
+      const windowWithOneSignal = window as unknown as { OneSignalDeferred?: unknown[] };
+      const isAlreadyInitialized = typeof window !== 'undefined' && 
+        windowWithOneSignal.OneSignalDeferred && 
+        windowWithOneSignal.OneSignalDeferred.length === 0;
 
-      // Check if OneSignal is already initialized to avoid double initialization
-      if (typeof window !== 'undefined' && (window as unknown as { OneSignal?: { _initialized?: boolean } }).OneSignal?._initialized) {
-        console.log('[OneSignal] Already initialized, skipping init');
+      if (isAlreadyInitialized) {
+        console.log('[OneSignal] SDK already initialized, skipping init() call');
       } else {
-        console.log('[OneSignal] Starting OneSignal initialization...');
-        await OneSignal.init(initConfig);
-        console.log('[OneSignal] Init completed successfully');
+        // Check for conflicting service workers (only unregister legacy ones, not OneSignal)
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          console.log('[OneSignal] Existing service workers:', registrations.length);
+          
+          for (const reg of registrations) {
+            const scriptURL = reg.active?.scriptURL || reg.waiting?.scriptURL || reg.installing?.scriptURL;
+            console.log('[OneSignal] Checking SW:', reg.scope, scriptURL);
+            
+            // Only unregister legacy service workers, not OneSignal ones
+            if (scriptURL && (
+              scriptURL.includes('/sw.js') || 
+              scriptURL.includes('mockServiceWorker.js') ||
+              (scriptURL.includes('localhost') && !scriptURL.includes('OneSignal'))
+            )) {
+              console.log('[OneSignal] Unregistering legacy SW:', scriptURL);
+              await reg.unregister();
+            } else {
+              console.log('[OneSignal] Keeping SW (likely OneSignal):', scriptURL);
+            }
+          }
+        }
+
+        const initConfig = {
+          appId: process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID!,
+          allowLocalhostAsSecureOrigin: process.env.NODE_ENV === 'development',
+          serviceWorkerParam: {
+            scope: '/',
+          },
+          serviceWorkerPath: 'OneSignalSDKWorker.js',
+          serviceWorkerUpdaterPath: 'OneSignalSDKUpdaterWorker.js',
+        };
+
+        console.log('[OneSignal] Starting OneSignal initialization with config:', initConfig);
+        
+        try {
+          await OneSignal.init(initConfig);
+          console.log('[OneSignal] Init completed successfully');
+        } catch (initError) {
+          // Check if the error is about already being initialized
+          if (initError instanceof Error && initError.message.includes('already initialized')) {
+            console.log('[OneSignal] Already initialized (caught during init), continuing...');
+          } else {
+            throw initError; // Re-throw other errors
+          }
+        }
         
         // Wait a moment for initialization to complete
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -222,7 +241,7 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
       }));
       return false;
     }
-  }, [user?.id]);
+  }, [user?.id, state.oneSignalReady, state.loading]);
 
   // Handle toggle change
   const handleToggleChange = useCallback(async (enabled: boolean) => {
@@ -422,13 +441,18 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
       console.log('[OneSignal] Preferences loaded and enabled, initializing OneSignal...');
       const initTimeout = setTimeout(async () => {
         try {
-          await initializeOneSignal();
+          const success = await initializeOneSignal();
+          if (success) {
+            console.log('[OneSignal] Initialization on preference load successful');
+          }
         } catch (error) {
           console.warn('[OneSignal] Failed to initialize on preference load:', error);
         }
       }, 500);
 
       return () => clearTimeout(initTimeout);
+    } else if (state.oneSignalReady) {
+      console.log('[OneSignal] OneSignal already ready, skipping preference-based initialization');
     }
   }, [state.enabled, state.loading, state.oneSignalReady, initializeOneSignal]);
 
