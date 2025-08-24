@@ -7,7 +7,6 @@ import { TriviaQuestion } from '@/lib/supabase';
 import ErrorMessage from '@/components/ErrorMessage';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useUser, useAuth } from '@clerk/nextjs';
-import { PieChart } from 'lucide-react';
 import { log } from '@/lib/logger';
 
 // Simplified state machine type
@@ -21,8 +20,6 @@ interface CurrentData {
   selectedAnswer: string | null;
   timeLeft: number;
   scoreSubmitted: boolean;
-  totalScore: number | null;
-  totalScoreLoading: boolean;
 }
 
 export default function TriviaPage() {
@@ -39,8 +36,6 @@ export default function TriviaPage() {
     selectedAnswer: null,
     timeLeft: 15,
     scoreSubmitted: false,
-    totalScore: null,
-    totalScoreLoading: false,
   });
   const [error, setError] = useState<string | null>(null);
 
@@ -100,28 +95,6 @@ export default function TriviaPage() {
     }
   }, [currentData.scoreSubmitted, getToken]);
 
-  const fetchTotalScore = useCallback(async () => {
-    setCurrentData(prev => ({ ...prev, totalScoreLoading: true }));
-    try {
-      const token = await getToken();
-      const response = await fetch('/api/trivia?action=total', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const apiResponse = await response.json();
-      const totalScore = apiResponse.success ? apiResponse.data.totalScore : 0;
-      setCurrentData(prev => ({ ...prev, totalScore, totalScoreLoading: false }));
-    } catch (err: unknown) {
-      console.error('Failed to fetch total trivia score:', err);
-      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
-      setError(`Error loading trivia score: ${errorMessage}`);
-      setCurrentData(prev => ({ ...prev, totalScoreLoading: false }));
-    }
-  }, [getToken]);
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -225,9 +198,8 @@ export default function TriviaPage() {
       setCurrentData(prev => ({ ...prev, score: newScore }));
       setGameState('completed');
       saveScore(newScore);
-      fetchTotalScore(); // Fetch updated total score after game completion
     }
-  }, [currentData.score, currentData.questionIndex, currentData.questions.length, QUESTION_DURATION, saveScore, fetchTotalScore]);
+  }, [currentData.score, currentData.questionIndex, currentData.questions.length, QUESTION_DURATION, saveScore]);
 
   const handleAnswerClick = (answerId: string, isCorrect: boolean) => {
     if (currentData.selectedAnswer) return; // Prevent multiple answers
@@ -296,23 +268,6 @@ export default function TriviaPage() {
               </div>
               <div className="text-sm text-gray-500 italic">
                 Tu puntuación ha sido registrada. ¡Nueva trivia disponible mañana!
-              </div>
-            </div>
-            <div className="flex items-center justify-center">
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Puntuación Total Trivia</p>
-                    {currentData.totalScoreLoading ? (
-                      <div className="text-2xl font-bold text-betis-green">Cargando...</div>
-                    ) : (
-                      <p className="text-3xl font-bold text-betis-green">
-                        {currentData.totalScore !== null ? currentData.totalScore : 'N/A'}
-                      </p>
-                    )}
-                  </div>
-                  <PieChart className="h-12 w-12 text-betis-green opacity-20" />
-                </div>
               </div>
             </div>
           </div>
