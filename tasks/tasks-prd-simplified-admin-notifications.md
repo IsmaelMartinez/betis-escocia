@@ -26,6 +26,8 @@
 - Avoid adding heavy SDK to main bundle (dynamic import on admin route only).
 - **Service Worker Fix**: Removed legacy `pushNotifications.ts` causing conflicts with OneSignal worker registration.
 - **OneSignal Configuration**: Added explicit service worker paths and improved error handling for initialization.
+- **Preference Persistence**: Fixed state management to properly persist notification preferences on page refresh.
+- **Browser Notifications**: Enhanced permission handling with fallback to native browser notifications for better user experience.
 
 ## Tasks
 
@@ -66,6 +68,7 @@
 	- [x] 4.5 Add Playwright step in admin spec to trigger test notification (mock mode)
 	- [x] 4.6 Add integration tests for RSVP/contact handlers verifying wrapper call (mock fetch)
 	- [x] 4.7 Fix OneSignal service worker registration conflicts (remove legacy `pushNotifications.ts`, improve configuration)
+	- [x] 4.8 Fix notification preference persistence on refresh and improve browser notification display
 
 - [ ] 5.0 Testing & QA (unit, integration, e2e with MOCK_PUSH, bundle impact check)
 	- [ ] 5.1 Update Vitest setup to set `MOCK_PUSH=1`

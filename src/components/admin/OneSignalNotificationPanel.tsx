@@ -43,16 +43,24 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
       const response = await fetch('/api/admin/notifications/preferences');
       const data = await response.json();
       
+      console.log('[OneSignal] Loaded preferences from API:', data);
+      
       if (data.success) {
+        const enabled = data.data.enabled;
+        console.log('[OneSignal] Setting enabled state to:', enabled);
+        
         setState(prev => ({ 
           ...prev, 
-          enabled: data.data.enabled,
+          enabled,
           loading: false 
         }));
+
+        // Note: OneSignal initialization will be handled by the toggle handler if needed
       } else {
         throw new Error(data.error || 'Error loading preferences');
       }
     } catch (error) {
+      console.error('[OneSignal] Error loading preferences:', error);
       setState(prev => ({ 
         ...prev, 
         error: error instanceof Error ? error.message : 'Error loading preferences',
@@ -281,22 +289,48 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
               console.log('[OneSignal] Current permission after init:', currentPermission);
               
               const isPermissionGranted = (perm: string | boolean) => perm === 'granted' || perm === true;
-              const isPermissionDenied = (perm: string | boolean) => perm === 'denied' || perm === false;
               
               if (!isPermissionGranted(currentPermission)) {
                 console.log('[OneSignal] Requesting notification permissions...');
-                await OneSignal.Notifications.requestPermission();
-                console.log('[OneSignal] Permission request completed');
                 
-                // Check permission after request
-                const newPermission = OneSignal.Notifications.permission;
+                // Try both OneSignal and browser native permissions
+                try {
+                  // First try OneSignal's permission request
+                  await OneSignal.Notifications.requestPermission();
+                  console.log('[OneSignal] OneSignal permission request completed');
+                } catch (oneSignalError) {
+                  console.warn('[OneSignal] OneSignal permission request failed, trying browser native:', oneSignalError);
+                  
+                  // Fallback to browser native permission request
+                  if (typeof Notification !== 'undefined' && Notification.requestPermission) {
+                    const browserPermission = await Notification.requestPermission();
+                    console.log('[OneSignal] Browser permission request result:', browserPermission);
+                  }
+                }
+                
+                // Check permission after request (use browser API as source of truth)
+                const browserPermission = typeof Notification !== 'undefined' ? Notification.permission : 'denied';
+                let newPermission;
+                
+                try {
+                  newPermission = OneSignal.Notifications.permission;
+                } catch (error) {
+                  console.warn('[OneSignal] Could not get OneSignal permission, using browser permission:', error);
+                  newPermission = browserPermission;
+                }
+                
+                console.log('[OneSignal] Final permissions:', { oneSignal: newPermission, browser: browserPermission });
+                
+                // Use browser permission as the authoritative source
+                const finalPermissionGranted = browserPermission === 'granted';
+                const finalPermissionDenied = browserPermission === 'denied';
                 
                 // Update state based on permission result
                 setState(prev => ({
                   ...prev,
-                  permissionGranted: isPermissionGranted(newPermission),
-                  permissionDenied: isPermissionDenied(newPermission),
-                  error: isPermissionDenied(newPermission) ? 'Se requieren permisos de notificación para recibir alertas.' : null
+                  permissionGranted: finalPermissionGranted,
+                  permissionDenied: finalPermissionDenied,
+                  error: finalPermissionDenied ? 'Se requieren permisos de notificación para recibir alertas.' : null
                 }));
               }
             } catch (permError) {
@@ -326,18 +360,48 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
     try {
       setState(prev => ({ ...prev, testLoading: true, error: null }));
       
+      console.log('[OneSignal] Sending test notification...');
+      
+      // Send OneSignal notification
       const response = await fetch('/api/admin/notifications/test', {
         method: 'POST'
       });
       
       const data = await response.json();
+      console.log('[OneSignal] Test notification API response:', data);
       
       if (data.success) {
-        // Success - no need to show anything as the notification will appear
+        console.log('[OneSignal] OneSignal test notification sent successfully');
+        
+        // Also show a local browser notification as a fallback/confirmation
+        if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+          try {
+            const browserNotification = new Notification('🧪 Notificación de Prueba - Peña Bética', {
+              body: 'Esta es una notificación de prueba para confirmar que funcionan correctamente.',
+              icon: '/images/logo_no_texto.jpg',
+              badge: '/images/logo_no_texto.jpg',
+              tag: 'test-notification',
+              requireInteraction: false,
+              silent: false
+            });
+
+            // Auto-close after 5 seconds
+            setTimeout(() => {
+              browserNotification.close();
+            }, 5000);
+
+            console.log('[OneSignal] Browser notification also displayed');
+          } catch (browserError) {
+            console.warn('[OneSignal] Could not show browser notification:', browserError);
+          }
+        } else {
+          console.warn('[OneSignal] Browser notifications not available or not permitted');
+        }
       } else {
         throw new Error(data.error || 'Error sending test notification');
       }
     } catch (error) {
+      console.error('[OneSignal] Test notification failed:', error);
       setState(prev => ({ 
         ...prev, 
         error: error instanceof Error ? error.message : 'Error sending test notification'
@@ -351,6 +415,22 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
   useEffect(() => {
     loadPreference();
   }, [loadPreference]);
+
+  // Initialize OneSignal when preferences are loaded and enabled
+  useEffect(() => {
+    if (state.enabled && !state.loading && !state.oneSignalReady) {
+      console.log('[OneSignal] Preferences loaded and enabled, initializing OneSignal...');
+      const initTimeout = setTimeout(async () => {
+        try {
+          await initializeOneSignal();
+        } catch (error) {
+          console.warn('[OneSignal] Failed to initialize on preference load:', error);
+        }
+      }, 500);
+
+      return () => clearTimeout(initTimeout);
+    }
+  }, [state.enabled, state.loading, state.oneSignalReady, initializeOneSignal]);
 
   return (
     <Card className={`hover-lift ${className}`} data-testid="onesignal-notification-panel">
