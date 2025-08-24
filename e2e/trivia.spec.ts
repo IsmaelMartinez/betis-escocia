@@ -27,79 +27,107 @@ const TEST_USER_ID = process.env.CLERK_TEST_USER_ID || 'your_clerk_test_user_id'
 test.describe('Trivia Page', () => {
   test.beforeEach(async ({ page }) => {
 
-    // Mock the /api/trivia endpoint to return a consistent set of questions (GET)
+    // Mock the consolidated /api/trivia endpoint for the new simplified architecture
     await page.route('/api/trivia', route => {
+      const url = new URL(route.request().url());
+      const action = url.searchParams.get('action') || 'questions';
+      
       if (route.request().method() === 'GET') {
+        if (action === 'questions') {
+          // Return 5 questions for the new simplified game format
+          route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify([
+              {
+                id: 'q1',
+                question_text: '¿Cuál es el estadio del Real Betis?',
+                category: 'betis',
+                difficulty: 'easy',
+                trivia_answers: [
+                  { id: 'a1', answer_text: 'Benito Villamarín', is_correct: true },
+                  { id: 'a2', answer_text: 'Ramón Sánchez-Pizjuán', is_correct: false },
+                  { id: 'a3', answer_text: 'Camp Nou', is_correct: false },
+                  { id: 'a4', answer_text: 'Santiago Bernabéu', is_correct: false },
+                ],
+              },
+              {
+                id: 'q2',
+                question_text: '¿Qué río atraviesa Glasgow?',
+                category: 'scotland',
+                difficulty: 'medium',
+                trivia_answers: [
+                  { id: 'b1', answer_text: 'Clyde', is_correct: true },
+                  { id: 'b2', answer_text: 'Támesis', is_correct: false },
+                  { id: 'b3', answer_text: 'Sena', is_correct: false },
+                  { id: 'b4', answer_text: 'Danubio', is_correct: false },
+                ],
+              },
+              {
+                id: 'q3',
+                question_text: '¿En qué año se fundó el Real Betis Balompié?',
+                category: 'betis',
+                difficulty: 'hard',
+                trivia_answers: [
+                  { id: 'c1', answer_text: '1907', is_correct: true },
+                  { id: 'c2', answer_text: '1900', is_correct: false },
+                  { id: 'c3', answer_text: '1910', is_correct: false },
+                  { id: 'c4', answer_text: '1914', is_correct: false },
+                ],
+              },
+              {
+                id: 'q4',
+                question_text: '¿Cuál es el himno del Real Betis?',
+                category: 'betis',
+                difficulty: 'medium',
+                trivia_answers: [
+                  { id: 'd1', answer_text: 'Himno del Centenario', is_correct: true },
+                  { id: 'd2', answer_text: 'Viva el Betis manque pierda', is_correct: false },
+                  { id: 'd3', answer_text: 'Que viva er Betis', is_correct: false },
+                  { id: 'd4', answer_text: 'Verde y Blanco', is_correct: false },
+                ],
+              },
+              {
+                id: 'q5',
+                question_text: '¿Cuál es la capital de Escocia?',
+                category: 'scotland',
+                difficulty: 'easy',
+                trivia_answers: [
+                  { id: 'e1', answer_text: 'Edimburgo', is_correct: true },
+                  { id: 'e2', answer_text: 'Glasgow', is_correct: false },
+                  { id: 'e3', answer_text: 'Aberdeen', is_correct: false },
+                  { id: 'e4', answer_text: 'Dundee', is_correct: false },
+                ],
+              },
+            ]),
+          });
+        } else if (action === 'total') {
+          // Mock total score endpoint
+          route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({ totalScore: 15 }),
+          });
+        } else if (action === 'score') {
+          // Mock daily score endpoint
+          route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({ score: 5 }),
+          });
+        } else {
+          route.continue();
+        }
+      } else if (route.request().method() === 'POST') {
+        // Handle POST requests for score submission (new simplified format)
         route.fulfill({
           status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify([
-            {
-              id: 'q1',
-              question_text: '¿Cuál es el estadio del Real Betis?',
-              category: 'betis',
-              difficulty: 'easy',
-              trivia_answers: [
-                { id: 'a1', answer_text: 'Benito Villamarín', is_correct: true },
-                { id: 'a2', answer_text: 'Ramón Sánchez-Pizjuán', is_correct: false },
-                { id: 'a3', answer_text: 'Camp Nou', is_correct: false },
-                { id: 'a4', answer_text: 'Santiago Bernabéu', is_correct: false },
-              ],
-            },
-            {
-              id: 'q2',
-              question_text: '¿Qué río atraviesa Glasgow?',
-              category: 'scotland',
-              difficulty: 'medium',
-              trivia_answers: [
-                { id: 'b1', answer_text: 'Clyde', is_correct: true },
-                { id: 'b2', answer_text: 'Támesis', is_correct: false },
-                { id: 'b3', answer_text: 'Sena', is_correct: false },
-                { id: 'b4', answer_text: 'Danubio', is_correct: false },
-              ],
-            },
-            {
-              id: 'q3',
-              question_text: '¿En qué año se fundó el Real Betis Balompié?',
-              category: 'betis',
-              difficulty: 'hard',
-              trivia_answers: [
-                { id: 'c1', answer_text: '1907', is_correct: true },
-                { id: 'c2', answer_text: '1900', is_correct: false },
-                { id: 'c3', answer_text: '1910', is_correct: false },
-                { id: 'c4', answer_text: '1914', is_correct: false },
-              ],
-            },
-          ]),
-        });
-      } else if (route.request().method() === 'POST') {
-        // Handle POST requests for score submission
-        route.fulfill({
-          status: 201,
           contentType: 'application/json',
           body: JSON.stringify({ message: 'Score saved successfully!' }),
         });
       } else {
         route.continue();
       }
-    });
-
-    // Mock the /api/trivia/total-score-dashboard endpoint
-    await page.route('/api/trivia/total-score-dashboard', route => {
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ totalScore: 10 }), // Example total score
-      });
-    });
-
-    // Mock the /api/trivia/total-score endpoint
-    await page.route('/api/trivia/total-score', route => {
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ score: 10 }), // Example total score
-      });
     });
 
   });
@@ -166,22 +194,41 @@ test.describe('Trivia Page', () => {
     await page.waitForSelector('h2', { timeout: 10000 });
     await expect(page.locator('h2')).toBeVisible();
 
-    // Answer first question correctly (assuming first button is correct for mock data)
+    // Answer first few questions correctly to test flow
     await page.locator('div.grid button').first().click();
     await expect(page.locator('text=Puntuación: 1')).toBeVisible();
+    
+    // Wait for next question
+    await page.waitForTimeout(2500); // Wait for feedback display
     await expect(page.locator('p', { hasText: 'Pregunta 2 of' })).toBeVisible({ timeout: 5000 });
 
     // Answer second question correctly
     await page.locator('div.grid button').first().click();
     await expect(page.locator('text=Puntuación: 2')).toBeVisible();
+    
+    // Wait for next question
+    await page.waitForTimeout(2500);
     await expect(page.locator('p', { hasText: 'Pregunta 3 of' })).toBeVisible({ timeout: 5000 });
 
     // Answer third question correctly
     await page.locator('div.grid button').first().click();
+    await expect(page.locator('text=Puntuación: 3')).toBeVisible();
+    
+    // Wait and complete the game
+    await page.waitForTimeout(2500);
+    await expect(page.locator('p', { hasText: 'Pregunta 4 of' })).toBeVisible({ timeout: 5000 });
+    
+    // Answer fourth question correctly
+    await page.locator('div.grid button').first().click();
+    await page.waitForTimeout(2500);
+    await expect(page.locator('p', { hasText: 'Pregunta 5 of' })).toBeVisible({ timeout: 5000 });
+    
+    // Answer fifth question correctly
+    await page.locator('div.grid button').first().click();
     
     // Wait for game completion with longer timeout since there's processing time
     await expect(page.locator('h1', { hasText: '¡Trivia Diaria Completada!' })).toBeVisible({ timeout: 8000 });
-    await expect(page.locator('text=3/3')).toBeVisible();
+    await expect(page.locator('text=5/5')).toBeVisible();
     await expect(page.locator('text=100% Correct')).toBeVisible();
     await expect(page.locator('text=Puntuación Total Trivia')).toBeVisible();
     await expect(page.locator('a', { hasText: 'Volver al Inicio' })).toBeVisible();
@@ -191,14 +238,38 @@ test.describe('Trivia Page', () => {
     // First unroute any existing mocks, then add our specific one
     await page.unroute('/api/trivia');
     
-    // Mock the /api/trivia endpoint to return 403 (already played)
+    // Mock the /api/trivia endpoint to return already played response
     await page.route('/api/trivia', route => {
+      const url = new URL(route.request().url());
+      const action = url.searchParams.get('action') || 'questions';
+      
       if (route.request().method() === 'GET') {
-        route.fulfill({
-          status: 403,
-          contentType: 'application/json',
-          body: JSON.stringify({ message: 'You have already played today.', score: 2 }),
-        });
+        if (action === 'questions') {
+          // Return already played response structure matching createApiHandler format
+          route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              success: true,
+              data: {
+                message: 'You have already played today.',
+                score: 2
+              }
+            }),
+          });
+        } else if (action === 'total') {
+          // Mock total score endpoint
+          route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              success: true,
+              data: { totalScore: 15 }
+            }),
+          });
+        } else {
+          route.continue();
+        }
       } else {
         route.continue();
       }
