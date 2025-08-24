@@ -278,8 +278,60 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
         error: null
       }));
 
-      // If enabling, try to initialize OneSignal (but don't fail if it doesn't work)
+      // If enabling, first request browser permissions, then try OneSignal
       if (enabled) {
+        // First, always request browser permissions
+        console.log('[OneSignal] Requesting browser permissions first...');
+        try {
+          if (typeof Notification !== 'undefined') {
+            const currentPermission = Notification.permission;
+            console.log('[OneSignal] Current browser permission:', currentPermission);
+            
+            if (currentPermission === 'default') {
+              console.log('[OneSignal] Requesting permission...');
+              const newPermission = await Notification.requestPermission();
+              console.log('[OneSignal] Permission request result:', newPermission);
+              
+              // Update state immediately with permission result
+              setState(prev => ({
+                ...prev,
+                permissionGranted: newPermission === 'granted',
+                permissionDenied: newPermission === 'denied'
+              }));
+              
+              if (newPermission !== 'granted') {
+                setState(prev => ({
+                  ...prev,
+                  error: 'Se requieren permisos de notificación para activar las alertas.'
+                }));
+                return; // Don't proceed with OneSignal if permissions denied
+              }
+            } else if (currentPermission === 'granted') {
+              // Permission already granted
+              setState(prev => ({
+                ...prev,
+                permissionGranted: true,
+                permissionDenied: false
+              }));
+            } else {
+              // Permission denied
+              setState(prev => ({
+                ...prev,
+                permissionGranted: false,
+                permissionDenied: true,
+                error: 'Los permisos de notificación están denegados. Puedes habilitarlos en la configuración del navegador.'
+              }));
+              return;
+            }
+          }
+        } catch (permError) {
+          console.error('[OneSignal] Browser permission request failed:', permError);
+          setState(prev => ({
+            ...prev,
+            error: 'Error solicitando permisos de notificación.'
+          }));
+          return;
+        }
         try {
           console.log('[OneSignal] Attempting to initialize OneSignal...');
           console.log('[OneSignal] Environment check:', {
@@ -293,7 +345,10 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
             console.warn('OneSignal initialization failed, but preference saved');
             setState(prev => ({ 
               ...prev, 
-              error: 'Preferencia guardada, pero hay problemas con OneSignal. Revisa la configuración.' 
+              error: 'Preferencia guardada, pero hay problemas con OneSignal. Revisa la configuración.',
+              // Still show as enabled since the database preference was saved
+              permissionGranted: false,
+              permissionDenied: false
             }));
             return;
           }
@@ -358,11 +413,46 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
           }, 1000);
         } catch (oneSignalError) {
           console.error('OneSignal setup failed:', oneSignalError);
-          setState(prev => ({
-            ...prev,
-            error: 'Preferencia guardada, pero OneSignal no está disponible. Revisa la configuración.'
-          }));
+          
+          // If OneSignal fails, still try to get browser permissions directly
+          console.log('[OneSignal] OneSignal failed, requesting browser permissions directly...');
+          try {
+            if (typeof Notification !== 'undefined') {
+              const browserPermission = await Notification.requestPermission();
+              console.log('[OneSignal] Direct browser permission result:', browserPermission);
+              
+              setState(prev => ({
+                ...prev,
+                error: browserPermission === 'granted' 
+                  ? 'OneSignal no disponible, pero notificaciones del navegador activas.'
+                  : 'Error: OneSignal no disponible y permisos de navegador denegados.',
+                permissionGranted: browserPermission === 'granted',
+                permissionDenied: browserPermission === 'denied'
+              }));
+            } else {
+              setState(prev => ({
+                ...prev,
+                error: 'Las notificaciones no están soportadas en este navegador.'
+              }));
+            }
+          } catch (browserPermError) {
+            console.error('[OneSignal] Browser permission request failed:', browserPermError);
+            setState(prev => ({
+              ...prev,
+              error: 'Error solicitando permisos de notificación.'
+            }));
+          }
         }
+      } else {
+        // If disabling, clear permission states
+        console.log('[OneSignal] Disabling notifications, clearing states...');
+        setState(prev => ({ 
+          ...prev, 
+          permissionGranted: false,
+          permissionDenied: false,
+          oneSignalReady: false,
+          error: null
+        }));
       }
     } catch (error) {
       console.error('Toggle change failed:', error);
