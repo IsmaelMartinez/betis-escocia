@@ -255,20 +255,18 @@ export default function TriviaPage() {
         <div className="bg-white shadow-md rounded-lg p-8 text-center">
           <h1 className="text-3xl font-bold text-green-600 mb-6">¡Trivia Diaria Completada!</h1>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
-            <div className="text-center">
-              <div className="text-6xl font-bold text-green-600 mb-2">
-                {currentData.score}/{totalQuestions}
-              </div>
-              <div className="text-2xl text-gray-600 mb-4">
-                {percentage}% Correct
-              </div>
-              <div className={`text-xl font-semibold ${resultColor} mb-4`}>
-                {resultMessage}
-              </div>
-              <div className="text-sm text-gray-500 italic">
-                Tu puntuación ha sido registrada. ¡Nueva trivia disponible mañana!
-              </div>
+          <div className="text-center mb-6">
+            <div className="text-6xl font-bold text-green-600 mb-2">
+              {currentData.score}/{totalQuestions}
+            </div>
+            <div className="text-2xl text-gray-600 mb-4">
+              {percentage}% Correct
+            </div>
+            <div className={`text-xl font-semibold ${resultColor} mb-4`}>
+              {resultMessage}
+            </div>
+            <div className="text-sm text-gray-500 italic">
+              Tu puntuación ha sido registrada. ¡Nueva trivia disponible mañana!
             </div>
           </div>
 
