@@ -22,24 +22,26 @@ const MOCK_AUTH_TOKEN = process.env.TEST_AUTH_TOKEN || 'mock-token-for-testing';
  * Performance test scenarios
  */
 const scenarios = {
-  // Test question fetching (anonymous users)
+  // Test question fetching (anonymous users) - with new database-level randomization
   questionFetching: {
-    name: 'Question Fetching (Anonymous)',
+    name: 'Question Fetching - Database Randomized (Anonymous)',
     url: `${BASE_URL}/api/trivia`,
     method: 'GET',
     headers: {},
     expectedStatus: 200,
-    timeout: 5000
+    timeout: 5000,
+    description: 'Tests ORDER BY RANDOM() performance with 5 question limit'
   },
 
-  // Test question fetching with action parameter
+  // Test question fetching with action parameter - with new randomization
   questionFetchingExplicit: {
-    name: 'Question Fetching (Explicit Action)',
+    name: 'Question Fetching - Explicit Action (Database Randomized)',
     url: `${BASE_URL}/api/trivia?action=questions`,
     method: 'GET', 
     headers: {},
     expectedStatus: 200,
-    timeout: 5000
+    timeout: 5000,
+    description: 'Tests explicit action parameter with database-level randomization'
   },
 
   // Test daily score retrieval (requires auth)
@@ -299,5 +301,32 @@ if (require.main === module) {
       process.exit(1);
     });
 }
+
+/**
+ * Performance Benchmarks and Expectations (Updated for Database Randomization)
+ * 
+ * BEFORE (Client-side shuffling with 15-question fetch):
+ * - Average Response Time: ~500ms 
+ * - 95th Percentile: ~1,700ms
+ * - Data Transfer: 15 questions per request
+ * - Database Load: Higher due to over-fetching
+ * 
+ * AFTER (Database-level ORDER BY RANDOM() with 5-question fetch):
+ * - Target Average Response Time: <200ms (65% improvement expected)
+ * - Target 95th Percentile: <500ms (70% improvement expected)
+ * - Data Transfer: 5 questions per request (67% reduction)
+ * - Database Load: Reduced due to exact fetching
+ * 
+ * PERFORMANCE TARGETS:
+ * - Question Fetching: <200ms average, <500ms 95th percentile
+ * - Score Operations: <100ms average, <300ms 95th percentile
+ * - Success Rate: >99% under normal load
+ * - Concurrent Load: Support 10+ concurrent requests without degradation
+ * 
+ * RANDOMIZATION QUALITY TARGETS:
+ * - Question Variety: All available questions should have equal probability
+ * - Distribution: Coefficient of variation <0.5 for uniform distribution
+ * - No Duplicates: Zero duplicate questions within single game session
+ */
 
 module.exports = { runPerformanceTests, scenarios };

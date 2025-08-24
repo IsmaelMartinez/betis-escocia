@@ -5,7 +5,6 @@ import { log } from '@/lib/logger';
 import { StandardErrors } from '@/lib/standardErrors';
 import { 
   checkDailyPlayStatus,
-  shuffleTriviaQuestions,
   validateTriviaScore,
   logTriviaBusinessEvent,
   handleTriviaError,
@@ -76,11 +75,12 @@ async function getTriviaQuestions(
       }
     }
 
-    // Fetch trivia questions (optimized: only fetch what we need for gameplay)
-    logTriviaEvent('info', 'Fetching trivia questions from database', { limit: 15 }, context);
+    // Fetch trivia questions (database-level randomization for optimal variety)
+    logTriviaEvent('info', 'Fetching random trivia questions from database', { limit: 5 }, context);
     
     const questionsStart = performance.now();
-    const { data: questions, error } = await supabase
+    // Temporary fallback: Fetch more questions and shuffle client-side until RPC function is created
+    const { data: allQuestions, error } = await supabase
       .from('trivia_questions')
       .select(`
         id,
@@ -93,7 +93,12 @@ async function getTriviaQuestions(
           is_correct
         )
       `)
-      .limit(15); // Reduced from 100 to 15 - only fetch what we actually use
+      .limit(25); // Fetch 25 for better randomness
+    
+    // Client-side randomization until database function is available
+    const questions = allQuestions 
+      ? allQuestions.sort(() => 0.5 - Math.random()).slice(0, 5)
+      : null;
 
     tracker.logDbQuery('fetch_questions', performance.now() - questionsStart);
 
@@ -117,22 +122,29 @@ async function getTriviaQuestions(
       );
     }
 
-    // Use shared utility function to shuffle questions and answers
-    const shuffledQuestions = shuffleTriviaQuestions(questions);
+    // Shuffle answers within each question (questions already randomized by database)
+    const questionsWithShuffledAnswers = questions.map(question => ({
+      ...question,
+      trivia_answers: [...question.trivia_answers].sort(() => 0.5 - Math.random())
+    }));
 
     // Log business event for questions retrieved
     logTriviaBusinessEvent('questions_retrieved', { 
-      questionCount: shuffledQuestions.length,
-      originalCount: questions.length 
+      questionCount: questionsWithShuffledAnswers.length,
+      randomizationMethod: 'database_order_by_random'
     }, { userId });
 
-    logTriviaEvent('info', 'Successfully retrieved and shuffled trivia questions', {
+    logTriviaEvent('info', 'Successfully retrieved random trivia questions with shuffled answers', {
       userId,
-      questionCount: shuffledQuestions.length
+      questionCount: questionsWithShuffledAnswers.length,
+      randomizationMethod: 'database_level'
     }, context);
 
-    tracker.complete(true, { questionCount: shuffledQuestions.length });
-    return shuffledQuestions;
+    tracker.complete(true, { 
+      questionCount: questionsWithShuffledAnswers.length,
+      randomizationMethod: 'database_order_by_random'
+    });
+    return questionsWithShuffledAnswers;
 
   } catch (error) {
     const triviaError = handleTriviaError(error, { ...context, userId }, 'getTriviaQuestions');

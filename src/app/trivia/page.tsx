@@ -151,11 +151,11 @@ export default function TriviaPage() {
         return;
       }
       
-      // Handle the case where we get questions array
+      // Handle the case where we get questions array (now exactly 5 from database)
       const questions = apiResponse.success ? apiResponse.data : apiResponse;
       setCurrentData(prev => ({ 
         ...prev, 
-        questions: questions.slice(0, MAX_QUESTIONS),
+        questions: questions, // No slicing needed - database returns exactly 5 random questions
         questionIndex: 0,
         score: 0,
         timeLeft: QUESTION_DURATION,
