@@ -230,7 +230,7 @@ test.describe('Trivia Page', () => {
     await expect(page.locator('h1', { hasText: '¡Trivia Diaria Completada!' })).toBeVisible({ timeout: 8000 });
     await expect(page.locator('text=5/5')).toBeVisible();
     await expect(page.locator('text=100% Correct')).toBeVisible();
-    await expect(page.locator('text=Puntuación Total Trivia')).toBeVisible();
+    await expect(page.locator('text=Tu puntuación ha sido registrada')).toBeVisible();
     await expect(page.locator('a', { hasText: 'Volver al Inicio' })).toBeVisible();
   });
 
@@ -286,7 +286,7 @@ test.describe('Trivia Page', () => {
     // Check that the game completion screen is shown directly (since user already played)
     await expect(page.locator('h1', { hasText: '¡Trivia Diaria Completada!' })).toBeVisible({ timeout: 8000 });
     await expect(page.locator('text=2/5')).toBeVisible(); // Shows the score from mock (2)
-    await expect(page.locator('text=Puntuación Total Trivia')).toBeVisible(); // Still shows total from mock
+    await expect(page.locator('text=Tu puntuación ha sido registrada')).toBeVisible(); // Still shows total from mock
     await expect(page.locator('div.grid button')).not.toBeVisible(); // Game elements should not be visible
     await expect(page.locator('button', { hasText: 'Comenzar Trivia' })).not.toBeVisible(); // Start button should not be visible
   });
