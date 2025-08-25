@@ -27,7 +27,12 @@
       "Bash(npm run dev:*)",
       "Bash(npx playwright test:*)",
       "Bash(rm tests/unit/lib/hooks/useApiData.comprehensive.test.ts)",
-      "Bash(rm tests/unit/components/AllDatabaseMatches.test.tsx)"
+      "Bash(rm tests/unit/components/AllDatabaseMatches.test.tsx)",
+      "Bash(timeout 60 npx storybook dev -p 6006 --debug-webpack)",
+      "WebSearch",
+      "Bash(npm run storybook:*)",
+      "Bash(timeout 30 npm run storybook)",
+      "Bash(timeout 60 npm run storybook)"
     ],
     "deny": []
   }
