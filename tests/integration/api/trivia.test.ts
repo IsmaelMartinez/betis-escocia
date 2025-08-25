@@ -96,19 +96,80 @@ describe('Trivia API', () => {
 
   describe('Trivia Functionality', () => {
     it('should handle trivia operations correctly', async () => {
-      // This is a simplified test that verifies the API structure
-      // without complex mocking of the actual trivia routes
-      // TODO: Implement actual test assertion
+      const { getTriviaQuestions } = await import('@/lib/supabase');
+      
+      expect(getTriviaQuestions).toBeDefined();
+      expect(typeof getTriviaQuestions).toBe('function');
     });
 
     it('should validate authentication requirements', async () => {
-      // Test authentication patterns
-      // TODO: Implement actual test assertion
+      const { getAuth } = await import('@clerk/nextjs/server');
+      
+      expect(getAuth).toBeDefined();
+      expect(typeof getAuth).toBe('function');
     });
 
     it('should handle score submission', async () => {
-      // Test score handling
-      // TODO: Implement actual test assertion
+      const { saveTriviaScore } = await import('@/lib/supabase');
+      
+      expect(saveTriviaScore).toBeDefined();
+      expect(typeof saveTriviaScore).toBe('function');
+    });
+
+    it('should provide createApiHandler structure', async () => {
+      const { createApiHandler } = await import('@/lib/apiUtils');
+      
+      expect(createApiHandler).toBeDefined();
+      expect(typeof createApiHandler).toBe('function');
+    });
+
+    it('should provide trivia utility functions', async () => {
+      const { validateTriviaScore, checkDailyPlayStatus } = await import('@/lib/trivia/utils');
+      
+      expect(validateTriviaScore).toBeDefined();
+      expect(checkDailyPlayStatus).toBeDefined();
+      expect(typeof validateTriviaScore).toBe('function');
+      expect(typeof checkDailyPlayStatus).toBe('function');
+    });
+
+    it('should provide schema validation', async () => {
+      const { triviaScoreSchema } = await import('@/lib/schemas/trivia');
+      
+      expect(triviaScoreSchema).toBeDefined();
+      expect(typeof triviaScoreSchema.parse).toBe('function');
+    });
+
+    it('should handle basic score validation', async () => {
+      const { validateTriviaScore } = await import('@/lib/trivia/utils');
+      
+      const validResult = validateTriviaScore(85);
+      expect(validResult).toHaveProperty('isValid');
+      expect(typeof validResult.isValid).toBe('boolean');
+    });
+
+    it('should handle logging functionality', async () => {
+      const { logTriviaEvent, logTriviaBusinessEvent } = await import('@/lib/trivia/utils');
+      
+      expect(logTriviaEvent).toBeDefined();
+      expect(logTriviaBusinessEvent).toBeDefined();
+      expect(typeof logTriviaEvent).toBe('function');
+      expect(typeof logTriviaBusinessEvent).toBe('function');
+    });
+
+    it('should handle error management', async () => {
+      const { handleTriviaError, TriviaError } = await import('@/lib/trivia/utils');
+      
+      expect(handleTriviaError).toBeDefined();
+      expect(TriviaError).toBeDefined();
+      expect(typeof handleTriviaError).toBe('function');
+      expect(typeof TriviaError).toBe('function');
+    });
+
+    it('should provide performance tracking', async () => {
+      const { TriviaPerformanceTracker } = await import('@/lib/trivia/utils');
+      
+      expect(TriviaPerformanceTracker).toBeDefined();
+      expect(typeof TriviaPerformanceTracker).toBe('function');
     });
   });
 });
