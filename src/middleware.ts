@@ -11,7 +11,6 @@ const isPublicRoute = createRouteMatcher([
   '/partidos',
   '/partidos/(.*)',
   '/galeria',
-  '/historia',
   '/nosotros',
   '/unete',
   '/redes-sociales',

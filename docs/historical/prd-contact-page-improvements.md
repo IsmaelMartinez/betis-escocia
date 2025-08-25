@@ -20,7 +20,7 @@ This PRD outlines the enhancements for the existing "Contacto" page. The primary
 ## 4. Functional Requirements
 
 1.  **Highlight Display:** The "Contacto" page must display a set of "highlights" at the top, representing different contact categories or purposes.
-    *   These highlights will be determined by existing feature flags (e.g., `showRSVP`, `showPartidos`, `showAdmin`, `showContacto`).
+    *   These highlights will be determined by existing feature flags (e.g., `showRSVP`, `showPartidos`, `showContacto`).
     *   Only highlights corresponding to enabled feature flags will be displayed.
 2.  **Scroll-to-Form Functionality:** When a user clicks on a highlight:
     *   The page must smoothly scroll down to the relevant section of the contact form.

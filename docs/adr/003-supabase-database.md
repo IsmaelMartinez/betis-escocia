@@ -8,7 +8,7 @@
 
 ## Context
 The Peña Bética Escocesa website needed to migrate from JSON file storage to a proper database solution. The requirements included:
-- Store RSVP responses, merchandise orders, and contact form submissions
+- Store RSVP responses and contact form submissions
 - GDPR compliance with data retention policies
 - Free tier availability for small-scale community website
 - Easy integration with existing Next.js/Vercel architecture
@@ -54,7 +54,7 @@ The Peña Bética Escocesa website needed to migrate from JSON file storage to a
 - **Reason for rejection**: PostgreSQL preferred for full SQL feature set
 
 ## Implementation Notes
-- Database schema includes tables for RSVPs, contact forms, and merchandise orders
+- Database schema includes tables for RSVPs and contact forms
 - Scheduled functions implemented for GDPR compliance (3-month data retention)
 - Integration with Next.js via Supabase client library
 - Admin dashboard access through Supabase web interface

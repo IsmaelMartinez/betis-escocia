@@ -4,9 +4,7 @@
 
 Currently using JSON files for data storage. Need to migrate to a proper database for:
 - RSVP responses
-- Merchandise orders
 - Contact form submissions  
-- Camiseta voting data
 - Admin analytics
 
 ## Top Database Options for Vercel

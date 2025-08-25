@@ -15,12 +15,6 @@ export default function Nosotros() {
       description: "Co-fundador de la peña en 2010. Regresó a España por motivos profesionales. Asiduo del Benito Villamarín en Sevilla.",
       emoji: "⚽"
     },
-    {
-      name: "Javi Guerra",
-      role: "Vicepresidente",
-      description: "Vicepresidente activo de la peña, colabora en la organización y promoción de las actividades béticas.",
-      emoji: "🛡️"
-    }
   ];
 
   const milestones = [
@@ -35,14 +29,9 @@ export default function Nosotros() {
       description: "Con el ascenso del Betis, la peña toma forma en The Cuckoo's Nest. Los partidos por fin se ven en TV."
     },
     {
-      year: "2013",
-      event: "José Mari toma las riendas",
-      description: "Juan regresa a España y José Mari queda como presidente único, cargo que mantiene hasta hoy."
-    },
-    {
       year: "2015",
       event: "Nueva casa en Polwarth",
-      description: "Tras problemas con The Cuckoo's Nest, encontramos nuestro hogar actual: Polwarth Tavern."
+      description: "Después de años en The Cuckoo's Nest, encontramos nuestro hogar actual: Polwarth Tavern."
     },
     {
       year: "2018",
@@ -93,7 +82,7 @@ export default function Nosotros() {
                 El Comienzo
               </h3>
               <p className="text-gray-800 leading-relaxed mb-6 text-base">
-                Todo empezó el 4 de diciembre de 2010 cuando Juan Morata y José María Conde 
+                Todo empezó en el 2010 cuando Juan Morata y José María Conde 
                 se encontraron casualmente jugando fútbol en Edimburgo. Ambos llevaban la camiseta 
                 del Betis, y esa coincidencia fue el inicio de una gran amistad bética.
               </p>
@@ -122,8 +111,8 @@ export default function Nosotros() {
                 viven en Escocia, estudiantes de intercambio, turistas de paso... todos son bienvenidos.
               </p>
               <p className="text-gray-800 leading-relaxed mb-6 text-base">
-                Con José Mari como presidente desde 2013, hemos celebrado ascensos, títulos, bodas 
-                y nacimientos juntos. También hemos llorado derrotas y nos hemos consolado con una 
+                Hemos celebrado ascensos, títulos, bodas y nacimientos juntos. 
+                También hemos llorado derrotas y nos hemos consolado con una 
                 cerveza y la certeza de que &ldquo;el año que viene será el nuestro&rdquo;.
               </p>
               <div className="grid grid-cols-2 gap-4">

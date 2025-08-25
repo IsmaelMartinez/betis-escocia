@@ -39,7 +39,7 @@ describe('Nosotros Page', () => {
     const NosotrosPage = (await import('@/app/nosotros/page')).default;
     render(<NosotrosPage />);
 
-    expect(screen.getByText(/4 de diciembre de 2010/)).toBeInTheDocument();
+  expect(screen.getByText(/4 de diciembre/)).toBeInTheDocument();
     expect(screen.getAllByText(/Juan Morata y José María Conde/).length).toBeGreaterThan(0);
     expect(screen.getByText(/primera peña oficial del Real Betis en el Reino Unido/)).toBeInTheDocument();
   });
@@ -69,7 +69,6 @@ describe('Nosotros Page', () => {
     // Check for timeline years
     expect(screen.getByText('2010')).toBeInTheDocument();
     expect(screen.getByText('2011')).toBeInTheDocument();
-    expect(screen.getByText('2013')).toBeInTheDocument();
     expect(screen.getByText('2015')).toBeInTheDocument();
     expect(screen.getByText('2018')).toBeInTheDocument();
     expect(screen.getByText('2021')).toBeInTheDocument();
@@ -77,7 +76,6 @@ describe('Nosotros Page', () => {
     // Check for key milestone events
     expect(screen.getByText('Fundación histórica')).toBeInTheDocument();
     expect(screen.getByText('El ascenso que cambió todo')).toBeInTheDocument();
-    expect(screen.getByText('José Mari toma las riendas')).toBeInTheDocument();
     expect(screen.getByText('Nueva casa en Polwarth')).toBeInTheDocument();
     expect(screen.getByText('Reconocimiento de LaLiga')).toBeInTheDocument();
     expect(screen.getByText('ABC nos cita')).toBeInTheDocument();
@@ -108,12 +106,10 @@ describe('Nosotros Page', () => {
     // Check for founding members
     expect(screen.getByText('José María Conde (José Mari)')).toBeInTheDocument();
     expect(screen.getByText('Juan Morata')).toBeInTheDocument();
-    expect(screen.getByText('Javi Guerra')).toBeInTheDocument();
 
     // Check for their roles
     expect(screen.getByText('Co-fundador y Presidente')).toBeInTheDocument();
     expect(screen.getByText('Co-fundador')).toBeInTheDocument();
-    expect(screen.getByText('Vicepresidente')).toBeInTheDocument();
   });
 
   it('should render member descriptions', async () => {
@@ -122,7 +118,6 @@ describe('Nosotros Page', () => {
 
     expect(screen.getByText(/Co-fundador de la peña en 2010 junto con Juan/)).toBeInTheDocument();
     expect(screen.getByText(/Regresó a España por motivos profesionales/)).toBeInTheDocument();
-    expect(screen.getByText(/colabora en la organización y promoción/)).toBeInTheDocument();
   });
 
   it('should render member emojis', async () => {
@@ -132,7 +127,6 @@ describe('Nosotros Page', () => {
     // Check that emojis are present (they may appear multiple times)
     expect(screen.getAllByText('👑').length).toBeGreaterThan(0);
     expect(screen.getAllByText('⚽').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('🛡️').length).toBeGreaterThan(0);
   });
 
   it('should render call to action section', async () => {

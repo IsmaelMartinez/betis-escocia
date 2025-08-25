@@ -11,7 +11,6 @@ export type FeatureName =
   | 'show-galeria'
   | 'show-partidos'
   | 'show-social-media'
-  | 'show-history'
   | 'show-nosotros'
   | 'show-redes-sociales'
   | 'show-clerk-auth'
@@ -34,7 +33,6 @@ const DEFAULT_FEATURES: Record<FeatureName, boolean> = {
   'show-galeria': false,
   'show-partidos': true,
   'show-social-media': false,
-  'show-history': false,
   'show-nosotros': true,
   'show-redes-sociales': false,
   'show-clerk-auth': true,
@@ -50,7 +48,6 @@ const ENV_VAR_MAP: Record<FeatureName, string> = {
   'show-galeria': 'NEXT_PUBLIC_FEATURE_GALERIA',
   'show-partidos': 'NEXT_PUBLIC_FEATURE_PARTIDOS',
   'show-social-media': 'NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA',
-  'show-history': 'NEXT_PUBLIC_FEATURE_HISTORY',
   'show-nosotros': 'NEXT_PUBLIC_FEATURE_NOSOTROS',
   'show-redes-sociales': 'NEXT_PUBLIC_FEATURE_REDES_SOCIALES',
   'show-clerk-auth': 'NEXT_PUBLIC_FEATURE_CLERK_AUTH',
@@ -121,7 +118,6 @@ export function getEnabledNavigationItems(): NavigationItem[] {
     { name: 'Partidos', href: '/partidos', nameEn: 'Matches', feature: 'show-partidos' },
     { name: 'Clasificación', href: '/clasificacion', nameEn: 'Standings', feature: 'show-clasificacion' },
     { name: 'Galería', href: '/galeria', nameEn: 'Gallery', feature: 'show-galeria' },
-    { name: 'Historia', href: '/historia', nameEn: 'History', feature: 'show-history' },
     { name: 'Nosotros', href: '/nosotros', nameEn: 'About', feature: 'show-nosotros' },
     { name: 'Redes Sociales', href: '/redes-sociales', nameEn: 'Social Media', feature: 'show-redes-sociales' },
     { name: 'Únete', href: '/unete', nameEn: 'Join', feature: 'show-unete' },

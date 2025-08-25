@@ -14,8 +14,6 @@
 -   `src/components/CommunityStats.stories.tsx` - New file for Storybook stories for `CommunityStats`.
 -   `src/components/Hero.tsx` - The component for which stories will be created.
 -   `src/components/Hero.stories.tsx` - New file for Storybook stories for `Hero`.
--   `src/components/MerchandiseCard.tsx` - The component for which stories will be created.
--   `src/components/MerchandiseCard.stories.tsx` - New file for Storybook stories for `MerchandiseCard`.
 -   `src/components/TriviaScoreDisplay.tsx` - The component for which stories will be created.
 -   `src/components/TriviaScoreDisplay.stories.tsx` - New file for Storybook stories for `TriviaScoreDisplay`.
 -   `src/lib/supabase.ts` - May need to reference types or mock data structures from here.
@@ -106,12 +104,7 @@
 
 -   [ ] 8.0 **Skipped** Stories for `Hero.tsx` (Component is highly static and lacks props for dynamic content, making Storybook integration impractical without refactoring).
 
--   [x] 9.0 Create Stories for `MerchandiseCard.tsx`
-    -   [x] 9.1 Create `src/components/MerchandiseCard.stories.tsx` file.
-    -   [x] 9.2 Define `Meta` for `MerchandiseCard`.
-    -   [x] 9.3 Create a default story with sample merchandise data.
-    -   [x] 9.4 Add stories for different states (e.g., out of stock, discounted).
-    -   [x] 9.5 Ensure `args` and `argTypes` are used.
+    
 
 -   [x] 10.0 Create Stories for `TriviaScoreDisplay.tsx`
     -   [x] 10.1 Create `src/components/TriviaScoreDisplay.stories.tsx` file.

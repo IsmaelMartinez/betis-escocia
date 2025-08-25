@@ -82,8 +82,8 @@ export interface RSVP {
   message?: string
   whatsapp_interest: boolean
   match_date: string
-  match_id?: number  // New field for linking to matches
-  user_id?: string   // New field for linking to authenticated users
+  match_id?: number  // linking to matches
+  user_id?: string   // linking to authenticated users
   created_at: string
 }
 
@@ -94,8 +94,8 @@ export interface RSVPInsert {
   message?: string
   whatsapp_interest: boolean
   match_date: string
-  match_id?: number  // New field for linking to matches
-  user_id?: string   // New field for linking to authenticated users
+  match_id?: number  // linking to matches
+  user_id?: string   // linking to authenticated users
 }
 
 // Type definitions for our contact_submissions table
@@ -108,10 +108,10 @@ export interface ContactSubmission {
   subject: string;
   message: string;
   status: 'new' | 'in progress' | 'resolved' | 'closed';
-  user_id?: string   // New field for linking to authenticated users
+  user_id?: string   // linking to authenticated users
   created_at: string
   updated_at: string
-  updated_by?: string // New field to store the user who updated the submission
+  updated_by?: string // linking to the user who updated the submission
 }
 
 export interface ContactSubmissionInsert {
@@ -122,8 +122,8 @@ export interface ContactSubmissionInsert {
   subject: string
   message: string
   status?: 'new' | 'in progress' | 'resolved' | 'closed';
-  user_id?: string   // New field for linking to authenticated users
-  updated_by?: string // New field to store the user who updated the submission
+  user_id?: string   // linking to authenticated users
+  updated_by?: string // linking to the user who updated the submission
 }
 
 // Type definitions for our trivia_questions table
@@ -144,7 +144,7 @@ export interface TriviaQuestionInsert {
 
 export interface TriviaQuestionUpdate {
   question_text?: string;
-  category?: 'betis' | 'scotland';
+  category?: 'betis' | 'scotland' | 'whisky';
   difficulty?: 'easy' | 'medium' | 'hard';
 }
 

@@ -63,8 +63,5 @@ storybook-static
 # trivia questions
 data/trivia-questions.json
 
-# notification preferences (user data)
-data/notification-preferences.json
-
 # ignore generated html folder
 html/

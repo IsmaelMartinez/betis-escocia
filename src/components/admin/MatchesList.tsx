@@ -6,9 +6,6 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { DATE_FORMAT, TIME_FORMAT } from '@/lib/constants/dateFormats';
 
-// Note: This component should be wrapped with FeatureWrapper for 'showAdmin' flag
-// when used in admin pages to ensure proper access control
-
 interface MatchesListProps {
   matches: Match[];
   onEdit: (match: Match) => void;

@@ -47,8 +47,6 @@ export const StandardErrors = {
     FORMAT_ERROR: 'Error en el formato de los datos de votación',
   },
   
-  
-  
   TRIVIA: {
     // Existing errors
     DAILY_SCORE_ERROR: 'Error al verificar puntuación diaria',

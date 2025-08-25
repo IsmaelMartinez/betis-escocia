@@ -4,9 +4,6 @@ import { useState } from 'react';
 import { Match, MatchInsert, MatchUpdate } from '@/lib/supabase';
 import { formatISO, parseISO, format } from 'date-fns';
 
-// Note: This component should be wrapped with FeatureWrapper for 'showAdmin' flag
-// when used in admin pages to ensure proper access control
-
 interface MatchFormProps {
   match?: Match; // If provided, we're editing; if not, we're creating
   onSubmit: (data: MatchInsert | MatchUpdate) => Promise<{ success: boolean; error?: string }>;

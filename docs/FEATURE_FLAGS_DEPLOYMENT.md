@@ -26,7 +26,6 @@ The project uses environment variables for simple feature flag control. This doc
 #### Optional Features (Environment Variable Controlled)
 - `show-galeria` - Photo gallery
 - `show-social-media` - Social media integration
-- `show-history` - Club history
 - `show-redes-sociales` - Social networks
 - `show-debug-info` - Debug information
 - `admin-push-notifications` - Admin push notifications
@@ -52,7 +51,6 @@ NEXT_PUBLIC_FEATURE_GALERIA=true
 # Enable all features for testing
 NEXT_PUBLIC_FEATURE_GALERIA=true
 NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=true
-NEXT_PUBLIC_FEATURE_HISTORY=true
 NEXT_PUBLIC_FEATURE_REDES_SOCIALES=true
 NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
 NEXT_PUBLIC_FEATURE_ADMIN_PUSH_NOTIFICATIONS=true

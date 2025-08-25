@@ -61,27 +61,6 @@ export async function checkDailyPlayStatus(
 }
 
 /**
- * @deprecated This function is no longer used since implementing database-level randomization.
- * Questions are now randomized using PostgreSQL ORDER BY RANDOM() for better variety.
- * Only answer shuffling is done client-side within each question.
- * 
- * Legacy function - kept for reference during migration period.
- * TODO: Remove after confirming no dependencies (Phase 6 cleanup)
- */
-export function shuffleTriviaQuestions(questions: TriviaQuestion[]): TriviaQuestion[] {
-  console.warn('shuffleTriviaQuestions is deprecated - using database-level randomization instead');
-  
-  // Shuffle the questions array (legacy behavior)
-  const shuffledQuestions = [...questions].sort(() => 0.5 - Math.random());
-  
-  // Shuffle answers within each question for additional randomization
-  return shuffledQuestions.map(question => ({
-    ...question,
-    trivia_answers: [...question.trivia_answers].sort(() => 0.5 - Math.random())
-  }));
-}
-
-/**
  * Shared utility function to validate trivia score
  * Provides consistent score validation logic
  */

@@ -6,7 +6,6 @@
 - `src/lib/dateUtils.ts` - Current custom date utilities file to be removed
 - `tests/unit/lib/dateUtils.test.ts` - Test file for custom date utilities to be removed
 - `src/app/partidos/[matchId]/page.tsx` - Match details page with date operations to migrate
-- `src/app/coleccionables/page.tsx` - Collectibles page with date operations to migrate
 - `src/app/admin/page.tsx` - Admin dashboard with date operations to migrate
 - `src/app/dashboard/contact-submissions/page.tsx` - Contact submissions with date operations to migrate
 - `src/app/sitemap.ts` - Sitemap generation with date operations to migrate
@@ -27,7 +26,6 @@
   - [x] 1.3 Test that Spanish locale import works: `import { es } from 'date-fns/locale'`
 - [x] 2.0 Identify and migrate existing date operations to use date-fns directly
   - [x] 2.1 Audit `src/app/partidos/[matchId]/page.tsx` for date operations and migrate to date-fns with Spanish locale
-  - [x] 2.2 Audit `src/app/coleccionables/page.tsx` for date operations and migrate to date-fns with Spanish locale
   - [x] 2.3 Audit `src/app/admin/page.tsx` for date operations and migrate to date-fns with Spanish locale
   - [x] 2.4 Audit `src/app/dashboard/contact-submissions/page.tsx` for date operations and migrate to date-fns with Spanish locale
   - [x] 2.5 Audit `src/app/sitemap.ts` for date operations and migrate to date-fns with Spanish locale

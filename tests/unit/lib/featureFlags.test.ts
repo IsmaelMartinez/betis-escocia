@@ -35,7 +35,6 @@ describe('Feature Flags - Simplified System', () => {
       
       expect(hasFeature('show-galeria')).toBe(false);
       expect(hasFeature('show-social-media')).toBe(false);
-      expect(hasFeature('show-history')).toBe(false);
       expect(hasFeature('show-redes-sociales')).toBe(false);
       expect(hasFeature('show-debug-info')).toBe(false);
     });
@@ -63,12 +62,10 @@ describe('Feature Flags - Simplified System', () => {
     it('should be case insensitive for environment variables', () => {
       mockEnv.NEXT_PUBLIC_FEATURE_GALERIA = 'TRUE';
       mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = 'True';
-      mockEnv.NEXT_PUBLIC_FEATURE_HISTORY = 'FALSE';
       clearFeatureCache();
       
       expect(hasFeature('show-galeria')).toBe(true);
       expect(hasFeature('show-debug-info')).toBe(true);
-      expect(hasFeature('show-history')).toBe(false);
     });
 
     it('should default to false for any non-"true" value', () => {

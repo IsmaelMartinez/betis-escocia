@@ -72,13 +72,11 @@ The current Flagsmith integration adds unnecessary complexity to the Real Betis 
 interface FeatureConfig {
   // Only include actively managed features
   'show-trivia-game': boolean;
-  'show-merchandise': boolean;
   // etc.
 }
 
 // Environment variables (only for hidden features)
 NEXT_PUBLIC_FEATURE_TRIVIA_GAME=true
-NEXT_PUBLIC_FEATURE_MERCHANDISE=false
 ```
 
 ### API Compatibility

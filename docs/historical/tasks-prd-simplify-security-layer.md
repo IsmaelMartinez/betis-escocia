@@ -27,7 +27,7 @@
 - [x] 2.0 Migrate API Routes to Zod Schema Validation
   - [x] 2.1 Create `src/lib/schemas/` directory for Zod validation schemas.
   - [x] 2.2 Define Zod schemas for all API route inputs within `src/lib/schemas/`.
-  - [x] 2.3 Update all API routes (`src/app/api/**/*.ts`) to use Zod schema validation for input - Updated contact, rsvp, orders, notifications/preferences, camiseta-voting, and admin/users routes.
+  - [x] 2.3 Update all API routes (`src/app/api/**/*.ts`) to use Zod schema validation for input - Updated contact, rsvp, notifications/preferences, and admin/users routes.
   - [x] 2.4 Implement consistent error handling patterns for Zod validation failures across API routes.
   - [x] 2.5 Ensure TypeScript type safety is maintained or improved with Zod integration.
 - [x] 3.0 Clean Up Legacy Security Implementations

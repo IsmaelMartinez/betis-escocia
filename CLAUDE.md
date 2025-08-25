@@ -374,7 +374,6 @@ Optional feature flags (only for disabled/experimental features):
 
 - `NEXT_PUBLIC_FEATURE_GALERIA=false`
 - `NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=false`
-- `NEXT_PUBLIC_FEATURE_HISTORY=false`
 - `NEXT_PUBLIC_FEATURE_REDES_SOCIALES=false`
 - `NEXT_PUBLIC_FEATURE_DEBUG_INFO=false`
 
