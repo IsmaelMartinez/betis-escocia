@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { 
-  contactSchema, 
-  contactStatusSchema, 
-  type ContactInput, 
-  type ContactStatusInput 
-} from '@/lib/schemas/contact';
+import {
+  contactSchema,
+  contactStatusSchema,
+  type ContactInput,
+  type ContactStatusInput,
+} from '../../../../src/lib/schemas/contact';
 import { ZodError } from 'zod';
 
 describe('Contact Schema', () => {
@@ -31,7 +31,8 @@ describe('Contact Schema', () => {
       });
 
       it('should validate contact form without phone', () => {
-        const { phone, ...dataWithoutPhone } = validContactData;
+        const dataWithoutPhone: any = { ...validContactData };
+        delete dataWithoutPhone.phone;
         const result = contactSchema.parse(dataWithoutPhone);
         expect(result).toEqual(dataWithoutPhone);
       });
@@ -43,7 +44,7 @@ describe('Contact Schema', () => {
       });
 
       it('should handle different contact types', () => {
-        const types: ContactInput['type'][] = ['rsvp', 'general', 'merchandise', 'photo', 'whatsapp', 'feedback'];
+        const types: ContactInput['type'][] = ['rsvp', 'general', 'photo', 'whatsapp', 'feedback'];
         
         types.forEach(type => {
           const data = { ...validContactData, type };
@@ -53,7 +54,8 @@ describe('Contact Schema', () => {
       });
 
       it('should default to general type when not provided', () => {
-        const { type, ...dataWithoutType } = validContactData;
+        const dataWithoutType: any = { ...validContactData };
+        delete dataWithoutType.type;
         const result = contactSchema.parse(dataWithoutType);
         expect(result.type).toBe('general');
       });
@@ -103,7 +105,8 @@ describe('Contact Schema', () => {
       });
 
       it('should reject missing name', () => {
-        const { name, ...invalidData } = validContactData;
+        const invalidData: any = { ...validContactData };
+        delete invalidData.name;
         expect(() => contactSchema.parse(invalidData)).toThrow(ZodError);
       });
     });
@@ -137,7 +140,8 @@ describe('Contact Schema', () => {
       });
 
       it('should reject missing email', () => {
-        const { email, ...invalidData } = validContactData;
+        const invalidData: any = { ...validContactData };
+        delete invalidData.email;
         expect(() => contactSchema.parse(invalidData)).toThrow(ZodError);
       });
     });
@@ -198,7 +202,8 @@ describe('Contact Schema', () => {
       });
 
       it('should reject missing subject', () => {
-        const { subject, ...invalidData } = validContactData;
+        const invalidData: any = { ...validContactData };
+        delete invalidData.subject;
         expect(() => contactSchema.parse(invalidData)).toThrow(ZodError);
       });
     });
@@ -231,14 +236,15 @@ describe('Contact Schema', () => {
       });
 
       it('should reject missing message', () => {
-        const { message, ...invalidData } = validContactData;
+        const invalidData: any = { ...validContactData };
+        delete invalidData.message;
         expect(() => contactSchema.parse(invalidData)).toThrow(ZodError);
       });
     });
 
     describe('Invalid cases - Type validation', () => {
       it('should reject invalid contact type', () => {
-        const invalidData = { ...validContactData, type: 'invalid' as any };
+  const invalidData = { ...validContactData, type: 'invalid' as unknown as ContactInput['type'] };
         expect(() => contactSchema.parse(invalidData)).toThrow(ZodError);
       });
     });

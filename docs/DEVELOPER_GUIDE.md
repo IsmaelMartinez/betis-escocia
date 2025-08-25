@@ -31,7 +31,6 @@ NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
 CLERK_SECRET_KEY=your_clerk_secret
 
 # Feature Flags (optional - only for experimental features)
-# NEXT_PUBLIC_FEATURE_COLECCIONABLES=true
 # NEXT_PUBLIC_FEATURE_GALERIA=true  
 # NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
 ```
@@ -98,7 +97,6 @@ if (!isEnabled) return null;
 
 ### Key Flags
 - `show-galeria` - Photo gallery (default: disabled)
-- `show-coleccionables` - Merchandise collection (default: disabled)
 - `show-debug-info` - Debug information (default: disabled)
 - `show-clerk-auth` - Authentication features (default: enabled)
 
@@ -113,7 +111,6 @@ Add environment variables for experimental features only:
 ```bash
 # Only set these to override defaults for experimental features
 NEXT_PUBLIC_FEATURE_GALERIA=true
-NEXT_PUBLIC_FEATURE_COLECCIONABLES=true
 NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
 ```
 
@@ -382,45 +379,6 @@ export const GET = createApiHandler({
 });
 ```
 
-#### Advanced Example: Focused Endpoints for Complex Features
-
-The camiseta-voting feature demonstrates how to break down complex business logic into focused endpoints:
-
-```typescript
-// /api/camiseta-voting/vote/route.ts - Dedicated voting endpoint
-export const POST = createApiHandler({
-  auth: 'none',
-  schema: voteActionSchema.omit({ action: true }),
-  handler: async (validatedData, context) => {
-    const { designId, voter } = validatedData;
-    
-    // Business logic focused on voting only
-    const data = readVotingData();
-    
-    if (!data.voting.active) {
-      throw new Error('La votación no está activa');
-    }
-    
-    // Check for duplicate votes, add vote, save
-    // ... focused voting logic
-    
-    return {
-      success: true,
-      message: 'Voto registrado correctamente',
-      data: { totalVotes: data.voting.totalVotes }
-    };
-  }
-});
-
-// /api/camiseta-voting/status/route.ts - Public status endpoint
-export const GET = createApiHandler({
-  auth: 'none',
-  handler: async (_, context) => {
-    const data = readVotingData();
-    return sanitizeVotingData(data); // Remove private voter info
-  }
-});
-```
 
 #### Benefits of `createApiHandler`
 - **Automatic authentication** handling based on requirements
@@ -502,17 +460,6 @@ export async function POST(request: NextRequest) {
 - Routes requiring Response streaming or non-JSON responses
 
 ⚠️ **Important**: All standard API routes should use `createApiHandler`. The legacy pattern is only for specialized endpoints that cannot work with the standardized response format.
-
-> **✅ Completed Refactoring**: The `/api/camiseta-voting` endpoint has been successfully refactored into focused endpoints using `createApiHandler`:
-> 
-> - **`POST /api/camiseta-voting/vote`** - Dedicated voting endpoint
-> - **`POST /api/camiseta-voting/pre-order`** - Dedicated pre-order endpoint  
-> - **`GET /api/camiseta-voting/status`** - Public status and analytics endpoint
-> - **`/api/camiseta-voting`** - Legacy wrapper for backward compatibility
-> 
-> **Initial Implementation Limitation**: The original camiseta-voting endpoint was initially implemented using the legacy pattern due to its complex business logic requiring multiple action types (vote vs pre-order) in a single endpoint. This made it challenging to implement with the standardized `createApiHandler` pattern, which expects single-responsibility endpoints.
->
-> **Solution**: The complex endpoint was broken down into focused, single-responsibility endpoints, each handling one specific action. This demonstrates how to refactor complex legacy endpoints to work with the modern standardized pattern while maintaining backward compatibility.
 
 ### Schema Development
 
@@ -623,9 +570,6 @@ Notifications require HTTPS (localhost exception applies). Users must grant brow
 - User management with push notifications
 - RSVP and contact form oversight
 - Real-time community activity monitoring
-
-### Merchandise Showcase
-Official peña gear with integrated photo gallery
 
 ## Troubleshooting
 

@@ -43,7 +43,7 @@ describe('Galeria Page', () => {
     render(<GaleriaPage />);
 
     expect(screen.getByText('Share Your Betis Moments!')).toBeInTheDocument();
-    expect(screen.getByText(/Tag us in your photos wearing peña merchandise/)).toBeInTheDocument();
+    expect(screen.getByText(/Tag us in your photos at Polwarth Tavern/)).toBeInTheDocument();
   });
 
   it('should render social media handles and hashtags', async () => {
@@ -97,11 +97,9 @@ describe('Galeria Page', () => {
     const GaleriaPage = (await import('@/app/galeria/page')).default;
     render(<GaleriaPage />);
 
-    const merchandiseLink = screen.getByRole('link', { name: /View Our Merchandise/ });
     const rsvpLink = screen.getByRole('link', { name: /Join Us at Polwarth/ });
     const socialLink = screen.getByRole('link', { name: /Social Media Guide/ });
 
-    expect(merchandiseLink).toHaveAttribute('href', '/coleccionables');
     expect(rsvpLink).toHaveAttribute('href', '/rsvp');
     expect(socialLink).toHaveAttribute('href', '/redes-sociales');
   });
@@ -136,7 +134,6 @@ describe('Galeria Page', () => {
     render(<GaleriaPage />);
 
     expect(screen.getByText(/Match day photos at Polwarth Tavern/)).toBeInTheDocument();
-    expect(screen.getByText(/Merchandise collection photos/)).toBeInTheDocument();
     expect(screen.getByText(/Community events and gatherings/)).toBeInTheDocument();
     expect(screen.getByText(/Real Betis celebration moments/)).toBeInTheDocument();
     expect(screen.getByText(/Edinburgh Betis fan meetups/)).toBeInTheDocument();

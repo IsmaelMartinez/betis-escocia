@@ -11,8 +11,7 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 - **Mobile-first responsive design** optimized for smartphones
 - **Community RSVP System** - "¿Vienes al Polwarth?" attendance confirmation
 - **Interactive Trivia Game** - Test your knowledge of Real Betis and Scotland
-- **Merchandise Showcase** - Official peña gear
-- **Photo Gallery** - Share match day photos with your peña merch
+- **Photo Gallery** - Share match day photos
 - **Admin Dashboard** - User management with push notifications
 - **Real Betis branding** with official colors
 - **Bilingual content** (Spanish/English)
@@ -58,7 +57,6 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
    
    # Feature Flags (optional - only for experimental features)
    # NEXT_PUBLIC_FEATURE_GALERIA=true
-   # NEXT_PUBLIC_FEATURE_COLECCIONABLES=true
    ```
 
 3. **Initialize database:**
@@ -105,7 +103,6 @@ if (!isEnabled) return null;
 
 ### Key Flags
 - `show-galeria` - Photo gallery (default: disabled)
-- `show-coleccionables` - Merchandise collection (default: disabled)
 - `show-debug-info` - Debug information (default: disabled)
 
 ### Always-On Features
@@ -117,7 +114,6 @@ if (!isEnabled) return null;
 Set environment variables only for experimental features:
 ```bash
 NEXT_PUBLIC_FEATURE_GALERIA=true
-NEXT_PUBLIC_FEATURE_COLECCIONABLES=true
 ```
 
 ## 🧪 Development

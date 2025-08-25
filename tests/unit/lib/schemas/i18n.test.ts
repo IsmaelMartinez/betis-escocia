@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { contactSchema } from '@/lib/schemas/contact';
-import { rsvpSchema } from '@/lib/schemas/rsvp';
-import { matchSchema } from '@/lib/schemas/admin';
+import { contactSchema } from '../../../../src/lib/schemas/contact';
+import { rsvpSchema } from '../../../../src/lib/schemas/rsvp';
+import { matchSchema } from '../../../../src/lib/schemas/admin';
 import { ZodError } from 'zod';
 
 describe('Internationalization and Localization Tests', () => {

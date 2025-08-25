@@ -30,7 +30,7 @@ function GalleryPage() {
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-4">Share Your Betis Moments!</h2>
             <p className="text-lg mb-6 opacity-90">
-              Tag us in your photos wearing peña merchandise or at Polwarth Tavern to be featured in our community feeds
+              Tag us in your photos at Polwarth Tavern to be featured in our community feeds
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <div className="flex items-center gap-2 bg-white bg-opacity-20 px-4 py-2 rounded-lg">
@@ -99,15 +99,9 @@ function GalleryPage() {
         <div className="bg-white rounded-lg shadow-md p-8 text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-4">Ready to Share Your Betis Pride?</h3>
           <p className="text-gray-600 mb-6">
-            Join hundreds of béticos sharing their match day experiences, merchandise collections, and memories from Polwarth Tavern.
+            Join hundreds of béticos sharing their match day experiences and memories from Polwarth Tavern.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="/coleccionables"
-              className="inline-flex items-center gap-2 bg-betis-green text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
-            >
-              View Our Merchandise
-            </a>
             <a
               href="/rsvp"
               className="inline-flex items-center gap-2 bg-gray-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-700 transition-colors"
@@ -154,7 +148,6 @@ function GalleryPage() {
               <h4 className="font-bold mb-3">📸 What to Post:</h4>
               <ul className="space-y-2 text-sm opacity-90">
                 <li>• Match day photos at Polwarth Tavern</li>
-                <li>• Merchandise collection photos</li>
                 <li>• Community events and gatherings</li>
                 <li>• Real Betis celebration moments</li>
                 <li>• Edinburgh Betis fan meetups</li>

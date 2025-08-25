@@ -15,7 +15,7 @@ export const contactSchema = z.object({
     .regex(/^[+]?[\d\s-()]{9,15}$/, 'Formato de teléfono inválido')
     .optional()
     .or(z.literal('')),
-  type: z.enum(['rsvp', 'general', 'merchandise', 'photo', 'whatsapp', 'feedback'])
+  type: z.enum(['rsvp', 'general', 'photo', 'whatsapp', 'feedback'])
     .default('general'),
   subject: z.string()
     .min(3, 'Asunto debe tener al menos 3 caracteres')

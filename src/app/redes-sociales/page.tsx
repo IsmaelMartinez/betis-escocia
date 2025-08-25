@@ -13,16 +13,11 @@ function SocialTaggingGuide() {
 
   const hashtags = {
     general: '#RealBetis #BetisEscocia #PeñaBéticaEscocesa #Edinburgh #Polwarth #VivaElBetis #ManquePierdaEscocia',
-    merchandise: '#MerchBético #BufandaBética #EscudoBético #CamisetaBetis',
     matches: '#BetisMatch #PolwarthTavern #BetisAway #BetisFans',
     spanish: '#Béticos #VerdeyBlanco #ManquePierda #FueraBetis'
   };
 
   const instagramTemplates = [
-    {
-      title: "Foto con Merchandising",
-      template: "🔥 Orgulloso de ser bético en Escocia! 🏴💚 #RealBetis #BetisEscocia #MerchBético #Edinburgh #ManquePierda"
-    },
     {
       title: "Partido en el Polwarth",
       template: "¡Qué ambiente en el Polwarth Tavern! 🍻⚽ Los béticos de Escocia siempre presentes 💚🤍 #BetisMatch #PolwarthTavern #BetisEscocia #VivaElBetis"
@@ -38,10 +33,7 @@ function SocialTaggingGuide() {
       title: "Evento en el Polwarth",
       template: "¡Nos vemos en el Polwarth Tavern para ver al Betis! 🍻⚽ Siempre mejor en buena compañía bética. ¿Quién se apunta? 💚🤍\n\n#RealBetis #BetisEscocia #PolwarthTavern #Edinburgh"
     },
-    {
-      title: "Nuevo Merchandising",
-      template: "¡Mirad qué preciosidad! 😍 Nuevo merchandising de la Peña Bética Escocesa. Nada como lucir los colores verdiblanco por las tierras escocesas 🏴💚\n\n#MerchBético #BetisEscocia #PeñaBéticaEscocesa #RealBetis"
-    }
+    
   ];
 
   const copyToClipboard = async (text: string, type: string) => {
@@ -79,8 +71,8 @@ function SocialTaggingGuide() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="bg-gray-50 p-6 rounded-lg text-center">
               <Camera className="h-8 w-8 text-betis-green mx-auto mb-3" />
-              <h3 className="font-bold text-lg mb-2">Muestra el Merchandising</h3>
-              <p className="text-gray-600 text-sm">Asegúrate de que se vea claramente la bufanda, camiseta o cualquier artículo bético en la foto</p>
+              <h3 className="font-bold text-lg mb-2">Ambiente Bético</h3>
+              <p className="text-gray-600 text-sm">Capta el ambiente del día de partido: bufandas, banderas y sonrisas verdiblancas</p>
             </div>
             
             <div className="bg-gray-50 p-6 rounded-lg text-center">
@@ -132,14 +124,6 @@ function SocialTaggingGuide() {
               <div className="text-xs opacity-80">Quick victory post</div>
             </button>
             
-            <a
-              href="/coleccionables"
-              className="bg-blue-600 text-white p-4 rounded-xl hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 text-center"
-            >
-              <div className="text-2xl mb-2">📦</div>
-              <div className="text-sm font-semibold">Show Merch</div>
-              <div className="text-xs opacity-80">Tag our products</div>
-            </a>
           </div>
           
           {copiedText.startsWith('quick-') && (
@@ -260,28 +244,7 @@ function SocialTaggingGuide() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <h3 className="text-lg font-bold mb-3 text-betis-green">Merchandising</h3>
-              <div className="bg-gray-50 rounded p-3 text-sm font-mono mb-3">
-                {hashtags.merchandise}
-              </div>
-              <button
-                onClick={() => copyToClipboard(hashtags.merchandise, 'hashtags-merch')}
-                className="bg-betis-green text-white px-3 py-2 rounded font-medium hover:bg-green-700 transition-colors flex items-center text-sm"
-              >
-                {copiedText === 'hashtags-merch' ? (
-                  <>
-                    <Check className="h-3 w-3 mr-1" />
-                    Copiado
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-3 w-3 mr-1" />
-                    Copiar
-                  </>
-                )}
-              </button>
-            </div>
+            
 
             <div className="bg-white rounded-lg p-6 shadow-md">
               <h3 className="text-lg font-bold mb-3 text-betis-green">Partidos</h3>
@@ -397,7 +360,7 @@ function SocialTaggingGuide() {
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">Instagram</h3>
                 <p className="text-gray-600 mb-4">@rbetisescocia</p>
-                <p className="text-sm text-gray-500 mb-6">Share your match day photos, merchandise, and Betis pride!</p>
+                <p className="text-sm text-gray-500 mb-6">Share your match day photos and Betis pride!</p>
                 
                 {/* QR Code Placeholder */}
                 <div className="bg-gray-100 w-32 h-32 mx-auto mb-4 rounded-lg flex items-center justify-center">
@@ -463,7 +426,7 @@ function SocialTaggingGuide() {
                 <h4 className="font-bold mb-2">What to Post</h4>
                 <ul className="text-sm space-y-1 opacity-90">
                   <li>• Match day at Polwarth</li>
-                  <li>• Merchandise photos</li>
+                  <li>• Celebration moments</li>
                   <li>• Celebration moments</li>
                   <li>• Community meetups</li>
                 </ul>

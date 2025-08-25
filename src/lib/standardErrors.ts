@@ -47,22 +47,7 @@ export const StandardErrors = {
     FORMAT_ERROR: 'Error en el formato de los datos de votación',
   },
   
-  PRE_ORDER: {
-    NOT_ACTIVE: 'Los pre-pedidos no están activos en este momento',
-    PERIOD_ENDED: 'El período de pre-pedidos ha terminado',
-    ALREADY_EXISTS: 'Ya tienes un pre-pedido registrado. Solo se permite un pre-pedido por persona',
-    DATA_NOT_INITIALIZED: 'No se encontraron datos de pre-pedidos. El sistema podría no estar inicializado',
-    PERMISSION_ERROR: 'Error de permisos al acceder a los datos de pre-pedidos',
-    STORAGE_ERROR: 'Error de espacio de almacenamiento. Contacta al administrador',
-  },
   
-  MERCHANDISE: {
-    PRODUCT_NOT_FOUND: 'Producto no encontrado',
-  },
-  
-  ORDERS: {
-    ORDER_NOT_FOUND: 'Pedido no encontrado',
-  },
   
   TRIVIA: {
     // Existing errors

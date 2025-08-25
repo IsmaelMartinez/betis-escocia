@@ -8,7 +8,6 @@ import {
   Send, 
   MessageSquare, 
   UserPlus, 
-  Package, 
   Camera, 
   MessageCircle, 
   HelpCircle
@@ -21,7 +20,7 @@ interface ContactFormData {
   name: string;
   email: string;
   phone?: string;
-  type: 'general' | 'rsvp' | 'coleccionables' | 'galeria' | 'whatsapp' | 'feedback';
+  type: 'general' | 'rsvp' | 'photo' | 'whatsapp' | 'feedback';
   subject: string;
   message: string;
 }
@@ -44,15 +43,7 @@ const formTypes = [
     feature: null // Always enabled
   },
   {
-    id: 'coleccionables' as const,
-    name: 'Colleccionables/Tienda',
-    description: 'Consultas sobre productos y pedidos',
-    icon: Package,
-    color: 'bg-purple-500',
-    feature: null // Always enabled
-  },
-  {
-    id: 'galeria' as const,
+  id: 'photo' as const,
     name: 'Fotos y Galería',
     description: 'Envío de fotos o problemas con la galería',
     icon: Camera,
@@ -85,8 +76,7 @@ export default function ContactPage() {
   const [highlightFeatures] = useState<Record<string, boolean>>({
     general: true,
     rsvp: true,
-    coleccionables: true,
-    galeria: true,
+  photo: true,
     whatsapp: true,
     feedback: true,
   });
@@ -144,8 +134,7 @@ export default function ContactPage() {
   const getDefaultSubject = (type: ContactFormData['type']): string => {
     switch (type) {
       case 'rsvp': return 'Consulta sobre eventos';
-      case 'coleccionables': return 'Consulta sobre productos';
-      case 'galeria': return 'Envío de fotos';
+  case 'photo': return 'Envío de fotos';
       case 'whatsapp': return 'Solicitud de invitación a WhatsApp';
       case 'feedback': return 'Sugerencias para la web';
       default: return '';
@@ -424,20 +413,11 @@ export default function ContactPage() {
                 </div>
               )}
 
-              {formData.type === 'galeria' && (
+              {formData.type === 'photo' && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <p className="text-blue-800 text-sm">
                     📸 <strong>Envío de fotos:</strong> Puedes adjuntar fotos directamente en la galería 
                     o enviárnoslas por email. Menciona si quieres que se publiquen en redes sociales.
-                  </p>
-                </div>
-              )}
-
-              {formData.type === 'coleccionables' && (
-                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                  <p className="text-purple-800 text-sm">
-                    🛍️ <strong>Consulta de productos:</strong> Especifica qué producto te interesa, 
-                    talla (si aplica) y si prefieres recogida en persona o envío.
                   </p>
                 </div>
               )}
@@ -492,16 +472,11 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <h3 className="text-lg font-bold mb-3 text-betis-green">¿Cómo funciona la tienda?</h3>
-              <p className="text-gray-700 mb-6">
-                Puedes ver los productos online y hacer pre-pedidos. Te contactamos 
-                para confirmar y coordinar recogida.
-              </p>
 
               <h3 className="text-lg font-bold mb-3 text-betis-green">¿Puedo enviar fotos?</h3>
               <p className="text-gray-700 mb-6">
                 Sí, usa la galería online o escríbenos. Nos encanta ver fotos de 
-                béticos con nuestros productos.
+                béticos animando al Betis.
               </p>
 
               <h3 className="text-lg font-bold mb-3 text-betis-green">¿Hay grupo de WhatsApp?</h3>

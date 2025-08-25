@@ -10,11 +10,11 @@ A TypeScript script that completely replaces all trivia questions and answers in
 
 **Features:**
 - ✅ Clears all existing trivia data safely
-- ✅ Inserts 55 new questions (30 Betis + 25 Scotland)
+- ✅ Inserts new questions
 - ✅ Handles UUIDs automatically
 - ✅ Provides progress feedback
 - ✅ Verifies data after insertion
-- ✅ Bilingual questions (Spanish/English)
+- ✅ Spanish questions only
 
 **Usage:**
 ```bash
@@ -29,20 +29,6 @@ npx tsx scripts/update-trivia-questions.ts
 - Environment variables configured in `.env.local`:
   - `NEXT_PUBLIC_SUPABASE_URL`
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-
-### Question Categories
-
-**Betis Questions (30 total):**
-- Stadium, location, history
-- Players, managers, achievements
-- Colors, nicknames, traditions
-- Recent history and current information
-
-**Scotland Questions (25 total):**
-- Geography, culture, history
-- Government, currency, symbols
-- Sports, inventions, traditions
-- Edinburgh connections
 
 ## Database Schema
 

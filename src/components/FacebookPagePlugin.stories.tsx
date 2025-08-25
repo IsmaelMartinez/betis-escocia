@@ -92,7 +92,7 @@ export const ErrorState: Story = {
       if (typeof window !== 'undefined') {
         window.FB = undefined;
         window.fbAsyncInit = undefined;
-        // Note: Error simulation removed for Storybook compatibility
+  // Note: Error simulation is disabled for Storybook compatibility
         console.log('Error state: Facebook script loading would fail');
       }
       return Story();

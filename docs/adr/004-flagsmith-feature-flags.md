@@ -103,7 +103,6 @@ We chose **Flagsmith** as our feature flag provider for the following reasons:
 The following feature flags are currently active in the system:
 
 - `show-clasificacion` - League standings display (default: enabled)
-- `show-coleccionables` - Merchandise collection (default: disabled)
 - `show-galeria` - Photo gallery (default: disabled)
 - `show-partidos` - Match listings (default: enabled)
 - `show-social-media` - Social media integrations (default: disabled)
@@ -157,7 +156,6 @@ The project has migrated to a **simplified environment variable-based feature fl
 ### Environment Variables (Only for Hidden Features)
 ```bash
 # Only set these for features currently disabled/experimental
-NEXT_PUBLIC_FEATURE_COLECCIONABLES=false
 NEXT_PUBLIC_FEATURE_GALERIA=false  
 NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=false
 NEXT_PUBLIC_FEATURE_HISTORY=false

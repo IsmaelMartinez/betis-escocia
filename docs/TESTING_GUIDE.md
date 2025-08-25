@@ -118,7 +118,6 @@ vi.mock('@/lib/featureFlags', () => ({
   getFeatureFlags: vi.fn(() => ({
     showClasificacion: true,
     showPartidos: true,
-    showColeccionables: false,
   })),
 }));
 ```

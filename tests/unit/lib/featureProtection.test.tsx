@@ -2,8 +2,8 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { notFound } from 'next/navigation';
-import { withFeatureFlag, useFeatureFlag, FeatureWrapper } from '@/lib/featureProtection';
-import { isFeatureEnabled, hasFeature } from '@/lib/featureFlags';
+import { withFeatureFlag, useFeatureFlag, FeatureWrapper } from '../../../src/lib/featureProtection';
+import { isFeatureEnabled, hasFeature } from '../../../src/lib/featureFlags';
 
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
@@ -11,7 +11,7 @@ vi.mock('next/navigation', () => ({
 }));
 
 // Mock featureFlags
-vi.mock('@/lib/featureFlags', () => ({
+vi.mock('../../../src/lib/featureFlags', () => ({
   isFeatureEnabled: vi.fn(),
   hasFeature: vi.fn(),
 }));
@@ -64,7 +64,7 @@ describe('featureProtection', () => {
 
       render(<ProtectedComponent />);
 
-      expect(mockHasFeature).toHaveBeenCalledWith('show-rsvp');
+  expect(mockHasFeature).toHaveBeenCalledWith('show-rsvp');
     });
 
     it('should pass through all props to the wrapped component', () => {
@@ -253,12 +253,12 @@ describe('featureProtection', () => {
       mockHasFeature.mockReturnValue(true);
 
       render(
-        <FeatureWrapper feature={'merchandise' as any}>
+        <FeatureWrapper feature={'show-rsvp'}>
           <div>Content</div>
         </FeatureWrapper>
       );
 
-      expect(mockHasFeature).toHaveBeenCalledWith('merchandise');
+      expect(mockHasFeature).toHaveBeenCalledWith('show-rsvp');
     });
 
     it('should handle multiple children', () => {

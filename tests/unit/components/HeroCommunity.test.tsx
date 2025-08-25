@@ -20,7 +20,6 @@ vi.mock('lucide-react', () => ({
   Smile: vi.fn(({ className }) => <div data-testid="smile-icon" className={className} />)
 }));
 
-// FeatureWrapper mock removed - component no longer uses feature protection
 
 // Mock dynamic import of CommunityStats
 vi.mock('next/dynamic', () => ({

@@ -7,7 +7,6 @@ Allow: /unete
 Allow: /contacto
 Allow: /rsvp
 Allow: /galeria
-Allow: /coleccionables
 Allow: /partidos
 Allow: /clasificacion
 

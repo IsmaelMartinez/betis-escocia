@@ -119,7 +119,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // No longer need initialization - environment variables are resolved at build time
+  // Environment variables are resolved at build time; no runtime initialization required
   const debugInfo = null;
 
   return (

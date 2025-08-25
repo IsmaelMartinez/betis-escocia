@@ -24,17 +24,7 @@ export const footballApiHandlers = [
   }),
 ];
 
-export const notificationHandlers = [
-  // Push notifications send endpoint
-  http.post('/api/notifications/send', async ({ request }) => {
-    const body = await request.json() as any;
-    
-    // Simulate successful response by default
-    return HttpResponse.json({ 
-      message: 'Notification sent successfully' 
-    });
-  }),
-];
+// Notifications endpoints are handled via OneSignal/browser APIs in-app; no MSW handlers needed
 
 export const errorHandlers = [
   http.get('https://api.football-data.org/v4/competitions/PD/standings', () =>
@@ -42,4 +32,4 @@ export const errorHandlers = [
   ),
 ];
 
-export const handlers = [...footballApiHandlers, ...notificationHandlers];
+export const handlers = [...footballApiHandlers];

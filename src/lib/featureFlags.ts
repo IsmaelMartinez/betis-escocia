@@ -120,7 +120,6 @@ export function getEnabledNavigationItems(): NavigationItem[] {
     { name: 'RSVP', href: '/rsvp', nameEn: 'RSVP', feature: 'show-rsvp' },
     { name: 'Partidos', href: '/partidos', nameEn: 'Matches', feature: 'show-partidos' },
     { name: 'Clasificación', href: '/clasificacion', nameEn: 'Standings', feature: 'show-clasificacion' },
-    { name: 'Coleccionables', href: '/coleccionables', nameEn: 'Collectibles', feature: 'show-coleccionables' },
     { name: 'Galería', href: '/galeria', nameEn: 'Gallery', feature: 'show-galeria' },
     { name: 'Historia', href: '/historia', nameEn: 'History', feature: 'show-history' },
     { name: 'Nosotros', href: '/nosotros', nameEn: 'About', feature: 'show-nosotros' },

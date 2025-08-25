@@ -388,7 +388,7 @@ describe('FacebookPagePlugin', () => {
       
       unmount();
       
-      // Script should be removed
+      // Script should no longer be present
       const scriptAfterUnmount = document.querySelector('script[src*="connect.facebook.net"]');
       expect(scriptAfterUnmount).not.toBeInTheDocument();
     });

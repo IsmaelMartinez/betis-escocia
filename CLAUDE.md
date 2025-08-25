@@ -69,10 +69,10 @@ sql/                    # Database migrations & scripts
 - **Simple approach**: Environment variable-based flags resolved at build time
 - **Usage**: `hasFeature('flag-name')` or `getValue('flag-name')` (synchronous)
 - **Configuration**: Only set environment variables for disabled/experimental features
-- **Location**: `src/lib/featureConfig.ts` - replaces Flagsmith
+- **Location**: `src/lib/featureConfig.ts`
 - **Always-on features**: RSVP, Únete (Join), Contacto (Contact) - no flags needed
 - **Production-ready features**: Clasificación, Partidos, Nosotros, Clerk Auth - enabled by default
-- **Documentation**: See `docs/adr/004-flagsmith-feature-flags.md` (deprecated migration documented)
+- **Documentation**: See `docs/adr/004-flagsmith-feature-flags.md`
 
 ### Authentication Flow (Clerk + Supabase)
 - **Dual mode**: Anonymous submissions + authenticated user management  
@@ -167,15 +167,6 @@ export const POST = createApiHandler({
 - `/api/notifications/trigger` - SSE endpoint for real-time notifications
 - `/api/clerk/webhook` - Webhook with Svix signature verification
 
-**✅ Major Refactoring Complete**: The `/api/camiseta-voting` endpoint has been successfully refactored to use `createApiHandler` pattern with focused endpoints:
-
-- **`POST /api/camiseta-voting/vote`** - Handle voting operations
-- **`POST /api/camiseta-voting/pre-order`** - Handle pre-order operations  
-- **`GET /api/camiseta-voting/status`** - Get current voting/pre-order status
-- **`/api/camiseta-voting`** - Legacy compatibility wrapper (redirects to focused endpoints)
-
-**Initial Challenge**: The original camiseta-voting endpoint was complex, handling multiple action types (vote vs pre-order) in a single endpoint, making it initially challenging to implement with `createApiHandler`. The solution was to break it down into focused, single-responsibility endpoints while maintaining backward compatibility.
-
 ### Legacy Protected Route Pattern
 ```typescript
 import { checkAdminRole } from "@/lib/adminApiProtection";
@@ -210,7 +201,7 @@ export async function POST(request: NextRequest) {
 ### Test Compatibility with Abstracted Routes
 **Important**: Tests need updating to work with the new `createApiHandler` pattern:
 
-**Old Pattern (Deprecated)**:
+**Old Pattern (Legacy)**:
 ```typescript
 // ❌ Old tests mock validation functions that are no longer used
 vi.spyOn(security, 'validateInputLength').mockReturnValue({ isValid: true });
@@ -277,8 +268,7 @@ test('renders component correctly', () => {
 ### Community Features
 - **RSVP System**: Match viewing party confirmations at Polwarth Tavern
 - **Trivia Game**: Betis & Scotland themed with 15-second timer, pointing system
-- **Merchandise**: Official peña gear showcase with order system
-- **Photo Gallery**: Community photo sharing with merchandise
+- **Photo Gallery**: Community photo sharing
 
 ### Data Management
 - **Match Data**: Football-Data.org API integration with caching
@@ -288,27 +278,33 @@ test('renders component correctly', () => {
 
 ## Trivia Game Implementation
 
-### Simplified Architecture (2025 Update)
-- **Major Simplification**: 91% state reduction (11+ variables → 3 variables)
-- **Component Consolidation**: Single `TriviaPage` component (eliminated `GameTimer`, `TriviaScoreDisplay`)
-- **API Consolidation**: Single `/api/trivia` endpoint with query parameters (3 endpoints → 1)
+### Architecture (2025 Update)
+
+- **State**: Streamlined to three core variables
+- **Component**: Single `TriviaPage` component
+- **API**: Single `/api/trivia` endpoint with query parameters
 - **Performance**: 65% faster API responses, 85% less data transfer per request
-- **Code Reduction**: 1,000+ lines eliminated while preserving all functionality
+
 
 ### Database Design
+
 - **Tables**: `trivia_questions`, `trivia_answers` with proper UUID relationships
 - **Data Structure**: Questions with multiple choice answers, correct answer flagging
 - **Categories**: Real Betis history, Scottish football, general knowledge
 - **Optimization**: Direct database randomization with `ORDER BY RANDOM() LIMIT 5`
 
+
 ### Game Mechanics
+
 - **Format**: 5-question trivia format with daily play limitation
 - **Timer**: Simple 15-second countdown per question using `setTimeout`
 - **Scoring**: Percentage-based scoring system with immediate feedback
 - **Engagement**: "Once per day" messaging encourages regular participation
 - **State Machine**: Clear transitions: `idle → loading → playing → feedback → completed`
 
+
 ### Technical Implementation
+
 - **Frontend**: Single consolidated component (`src/app/trivia/page.tsx`) with inline timer/score
 - **API**: Consolidated endpoint `/api/trivia?action=questions|submit|score|total`
 - **State Management**: 3-variable system: `gameState`, `currentData`, `error`
@@ -317,6 +313,7 @@ test('renders component correctly', () => {
 - **Error Handling**: Structured errors with context using `TriviaError` class
 
 ### Key Patterns for Development
+
 ```typescript
 // Simplified state system (USE THIS PATTERN)
 const [gameState, setGameState] = useState<GameState>('loading');
@@ -339,17 +336,20 @@ const handleAnswerClick = () => {
 ## Areas for Future Enhancement
 
 ### Performance & Scalability
+
 - **API Rate Limiting**: Implement for public routes
 - **Database Indexing**: Optimize for frequent queries
 - **Bundle Size**: Analyze and reduce JavaScript bundles
 - **Image Optimization**: Ensure proper Next.js Image usage
 
 ### Developer Experience
+
 - **Type Generation**: Consider `supabase gen types` for schema sync
 - **CI/CD Enhancement**: Add performance audits, security scans
 - **Documentation**: Expand component documentation in Storybook
 
 ### User Engagement
+
 - **Trivia Enhancements**: Leaderboards, expanded question database
 - **Social Features**: Enhanced photo sharing, match predictions
 - **Internationalization**: Multi-language support if needed
@@ -357,6 +357,7 @@ const handleAnswerClick = () => {
 ## Documentation References
 
 For comprehensive details, always check:
+
 - **Developer Guide**: `docs/DEVELOPER_GUIDE.md` for complete development guide
 - **Testing Guide**: `docs/TESTING_GUIDE.md` for testing strategies and patterns  
 - **ADRs**: `docs/adr/` for architectural decisions
@@ -365,11 +366,12 @@ For comprehensive details, always check:
 ## Environment Setup
 
 Required environment variables:
+
 - `NEXT_PUBLIC_SUPABASE_URL` & `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` & `CLERK_SECRET_KEY` 
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` & `CLERK_SECRET_KEY`
 
 Optional feature flags (only for disabled/experimental features):
-- `NEXT_PUBLIC_FEATURE_COLECCIONABLES=false`
+
 - `NEXT_PUBLIC_FEATURE_GALERIA=false`
 - `NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=false`
 - `NEXT_PUBLIC_FEATURE_HISTORY=false`
@@ -377,4 +379,6 @@ Optional feature flags (only for disabled/experimental features):
 - `NEXT_PUBLIC_FEATURE_DEBUG_INFO=false`
 
 Optional debugging:
+
 - `NEXT_PUBLIC_DEBUG_MODE=true`
+ 

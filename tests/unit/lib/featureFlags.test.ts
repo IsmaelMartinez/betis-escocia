@@ -1,11 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { 
+import {
   hasFeature,
   getEnabledNavigationItems,
   getFeatureFlagsStatus,
   clearFeatureCache,
-  type FeatureName
-} from '@/lib/featureFlags';
+} from '../../../src/lib/featureFlags';
 
 // Mock environment variables
 const mockEnv: Record<string, string | undefined> = {};
@@ -123,6 +122,8 @@ describe('Feature Flags - Simplified System', () => {
 
   describe('Feature Flags Status Debug', () => {
     it('should return null when debug mode is disabled', () => {
+      mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = 'false';
+      clearFeatureCache();
       const status = getFeatureFlagsStatus();
       expect(status).toBeNull();
     });

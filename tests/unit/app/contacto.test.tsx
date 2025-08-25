@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import ContactPage from '@/app/contacto/page';
+import ContactPage from '../../../src/app/contacto/page';
 import { useUser } from '@clerk/nextjs';
 
 // Mock the dependencies
@@ -92,7 +92,7 @@ describe('Contact Page', () => {
       expect(screen.getByText('💬 ¿Qué necesitas?')).toBeInTheDocument();
       expect(screen.getAllByText('Consulta General').length).toBeGreaterThan(0);
       expect(screen.getByText('Eventos y RSVP')).toBeInTheDocument();
-      expect(screen.getByText('Colleccionables/Tienda')).toBeInTheDocument();
+  // No shop/collectibles button expected
       expect(screen.getByText('Fotos y Galería')).toBeInTheDocument();
       expect(screen.getByText('Unirse a WhatsApp')).toBeInTheDocument();
       expect(screen.getByText('Sugerencias Web')).toBeInTheDocument();
@@ -248,16 +248,6 @@ describe('Contact Page', () => {
       });
     });
 
-    it('shows special instructions for collectibles type', async () => {
-      render(<ContactPage />);
-
-      const collectiblesButton = screen.getByRole('button', { name: /Colleccionables\/Tienda/ });
-      fireEvent.click(collectiblesButton);
-
-      await waitFor(() => {
-        expect(screen.getByText(/Consulta de productos:/)).toBeInTheDocument();
-      });
-    });
   });
 
   describe('Form submission', () => {
@@ -482,7 +472,6 @@ describe('Contact Page', () => {
 
       const testCases = [
         { buttonSelector: { name: /Eventos y RSVP/ }, expectedSubject: 'Consulta sobre eventos' },
-        { buttonSelector: { name: /Colleccionables\/Tienda/ }, expectedSubject: 'Consulta sobre productos' },
         { buttonSelector: { name: /Fotos y Galería/ }, expectedSubject: 'Envío de fotos' },
         { buttonSelector: { name: /Unirse a WhatsApp/ }, expectedSubject: 'Solicitud de invitación a WhatsApp' },
         { buttonSelector: { name: /Sugerencias Web/ }, expectedSubject: 'Sugerencias para la web' },

@@ -24,7 +24,6 @@ The project uses environment variables for simple feature flag control. This doc
 - `show-clerk-auth` - Authentication
 
 #### Optional Features (Environment Variable Controlled)
-- `show-coleccionables` - Merchandise collection
 - `show-galeria` - Photo gallery
 - `show-social-media` - Social media integration
 - `show-history` - Club history
@@ -38,7 +37,6 @@ The project uses environment variables for simple feature flag control. This doc
 ```bash
 # Enable experimental features for testing
 NEXT_PUBLIC_FEATURE_GALERIA=true
-NEXT_PUBLIC_FEATURE_COLECCIONABLES=true
 NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
 ```
 
@@ -47,14 +45,12 @@ NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
 # Only set variables for features you want to enable
 # Omit variables for disabled features (they default to false)
 NEXT_PUBLIC_FEATURE_GALERIA=true
-# NEXT_PUBLIC_FEATURE_COLECCIONABLES=false  # Not needed - defaults to false
 ```
 
 ### Staging Environment
 ```bash
 # Enable all features for testing
 NEXT_PUBLIC_FEATURE_GALERIA=true
-NEXT_PUBLIC_FEATURE_COLECCIONABLES=true
 NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=true
 NEXT_PUBLIC_FEATURE_HISTORY=true
 NEXT_PUBLIC_FEATURE_REDES_SOCIALES=true

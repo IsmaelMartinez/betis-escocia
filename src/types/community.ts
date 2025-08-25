@@ -22,49 +22,12 @@ export interface RSVPData {
   totalAttendees: number;
 }
 
-export interface MerchandiseItem {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  images: string[];
-  category: 'clothing' | 'accessories' | 'collectibles';
-  type?: string;
-  sizes?: string[];
-  colors?: string[];
-  inStock: boolean;
-  featured: boolean;
-}
-
-export interface MerchandiseOrder {
-  id: string;
-  customerName: string;
-  customerEmail: string;
-  customerPhone?: string;
-  items: {
-    itemId: string;
-    quantity: number;
-    size?: string;
-    color?: string;
-  }[];
-  totalAmount: number;
-  message?: string;
-  status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
-  orderDate: string;
-  shippingAddress?: {
-    street: string;
-    city: string;
-    postalCode: string;
-    country: string;
-  };
-}
-
 export interface ContactFormSubmission {
   id: string;
   name: string;
   email: string;
   phone?: string;
-  type: 'general' | 'rsvp' | 'merchandise' | 'whatsapp' | 'feedback';
+  type: 'general' | 'rsvp' | 'whatsapp' | 'feedback' | 'photo';
   subject: string;
   message: string;
   submittedAt: string;
@@ -86,7 +49,6 @@ export interface CommunityStats {
   activeMembers: number;
   totalRSVPs: number;
   averageAttendance: number;
-  totalOrders: number;
   monthlyGrowth: number;
 }
 
@@ -99,27 +61,8 @@ export interface RSVPFormData {
   whatsappInterest: boolean;
 }
 
-export interface MerchandiseOrderFormData {
-  customerName: string;
-  customerEmail: string;
-  customerPhone?: string;
-  items: {
-    itemId: string;
-    quantity: number;
-    size?: string;
-    color?: string;
-  }[];
-  message?: string;
-  shippingAddress?: {
-    street: string;
-    city: string;
-    postalCode: string;
-    country: string;
-  };
-}
-
 export interface ContactFormData {
-  type: 'general' | 'rsvp' | 'merchandise' | 'whatsapp';
+  type: 'general' | 'rsvp' | 'whatsapp' | 'photo';
   name: string;
   email: string;
   phone?: string;
@@ -145,31 +88,4 @@ export interface RSVPResponse extends APIResponse {
   };
 }
 
-export interface MerchandiseResponse extends APIResponse {
-  items?: MerchandiseItem[];
-  totalItems?: number;
-  categories?: string[];
-}
 
-export interface Order {
-  id: string;
-  productId: string;
-  productName: string;
-  price: number;
-  quantity: number;
-  totalPrice: number;
-  customerInfo: {
-    name: string;
-    email: string;
-    phone: string;
-    contactMethod: 'email' | 'whatsapp';
-  };
-  orderDetails: {
-    size?: string;
-    message: string;
-  };
-  isPreOrder: boolean;
-  status: 'pending' | 'confirmed' | 'fulfilled' | 'cancelled';
-  timestamp: string;
-  fulfillmentDate?: string;
-}

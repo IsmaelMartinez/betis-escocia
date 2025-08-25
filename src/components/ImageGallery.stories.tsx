@@ -3,10 +3,9 @@ import ImageGallery from './ImageGallery';
 import { fn } from 'storybook/test';
 
 const mockImages = [
-  '/images/merchandise/camiseta-betis.webp',
-  '/images/merchandise/sudadera-betis-1.webp',
-  '/images/merchandise/sudadera-betis-2.webp',
-  '/images/merchandise/sudadera-betis-3.webp',
+  '/images/logo_full.jpg',
+  '/images/logo_no_hay.jpg',
+  '/images/logo_no_texto.jpg',
 ];
 
 const meta: Meta<typeof ImageGallery> = {

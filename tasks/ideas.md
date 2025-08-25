@@ -16,16 +16,11 @@ This document provides a list of ideas and features for the Peña Bética Escoce
 ### Rumors Page (Soylenti)
 * Add a soylenti (rumors in Turkish) page where rumors spread. Ceballos, again, is coming back to Betis, etc. It can be a fun page where people can share their opinions and rumors about the team. Fran mode to provide % values to the rumors.
 
-### E-commerce Integration
-* Implement merchandise management system to allow users to buy Peña merchandise directly from the website. (low priority at the moment)
-
-### Voting System
-* Implement a voting system for Peña members to vote on various collection items (like t-shirts etc).
 
 ## 📊 **Admin Features**
 
 * Develop admin dashboard for RSVP management and statistics
-* Add push notifications for new RSVPs and orders
+* Add push notifications for new RSVPs
 
 ## 👥 **User Features**
 

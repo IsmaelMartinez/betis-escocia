@@ -124,7 +124,7 @@ export default defineConfig({
     },
     // Reporter configuration  
     reporters: [
-      ['default', { summary: false }], // Replaces deprecated 'basic' reporter
+  ['default', { summary: false }], // Use default reporter (supersedes old 'basic')
       'html'
     ],
   },
