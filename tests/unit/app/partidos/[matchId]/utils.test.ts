@@ -7,13 +7,20 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // Mock date-fns
 vi.mock('date-fns', () => ({
   format: vi.fn((date, formatString, options) => {
+    const testDate = new Date(date);
     if (formatString.includes('MMM')) {
-      return '25 ago 2024';
+      // Return month-based format based on actual date
+      const month = testDate.getMonth();
+      const months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+      return `${testDate.getDate()} ${months[month]} ${testDate.getFullYear()}`;
     }
     if (formatString.includes('HH:mm')) {
-      return '15:30';
+      // Return time in HH:mm format
+      const hours = testDate.getHours().toString().padStart(2, '0');
+      const minutes = testDate.getMinutes().toString().padStart(2, '0');
+      return `${hours}:${minutes}`;
     }
-    return '2024-08-25';
+    return testDate.toISOString().split('T')[0];
   }),
 }));
 
@@ -114,15 +121,15 @@ describe('Match Detail Utility Functions', () => {
       const result = formatMatchDateTime(utcDate);
 
       expect(result.date).toBe('25 ago 2024');
-      expect(result.time).toBe('14:30'); // Adjusted to match actual mock behavior
+      expect(result.time).toBe('14:30'); // Adjusted for local timezone
     });
 
     it('should handle different date formats', () => {
       const utcDate = '2024-12-31T23:59:00Z';
       const result = formatMatchDateTime(utcDate);
 
-      expect(result.date).toBe('31 dic 2024'); // Adjusted to match actual mock behavior
-      expect(result.time).toBe('23:59'); // Adjusted to match actual mock behavior
+      expect(result.date).toBe('31 dic 2024'); // December 31st
+      expect(result.time).toBe('23:59'); // 23:59 UTC
     });
 
     it('should handle edge case dates', () => {
