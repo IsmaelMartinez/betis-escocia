@@ -33,7 +33,11 @@
       "Bash(npm run storybook:*)",
       "Bash(timeout 30 npm run storybook)",
       "Bash(timeout 60 npm run storybook)",
-      "Bash(npx playwright:*)"
+      "Bash(npx playwright:*)",
+      "Bash(gh workflow list:*)",
+      "Bash(gh run view:*)",
+      "Bash(gh api:*)",
+      "Bash(git pull:*)"
     ],
     "deny": []
   }

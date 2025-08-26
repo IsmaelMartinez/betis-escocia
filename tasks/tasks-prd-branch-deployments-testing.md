@@ -4,9 +4,9 @@ Based on PRD: `prd-branch-deployments-testing.md`
 
 ## Relevant Files
 
-- `.github/workflows/ci.yml` - GitHub Actions workflow for testing and deployment pipeline
+- `.github/workflows/ci.yml` - GitHub Actions workflow for testing and deployment pipeline ✓
 - `.github/workflows/deploy.yml` - Deployment workflow for staging and production
-- `vercel.json` - Vercel configuration for multiple environments
+- `vercel.json` - Vercel configuration for branch-based deployments ✓
 - `.env.production` - Production environment variables  
 - `.env.staging` - Staging environment variables (current production becomes staging)
 - `scripts/db-consolidate.js` - Script to analyze and consolidate database migrations
@@ -17,21 +17,22 @@ Based on PRD: `prd-branch-deployments-testing.md`
 
 ### Notes
 
-- Current production environment will become staging/testing environment
-- New environments will become the production setup
+- Using Vercel branch deployments: main branch for production, staging branch for testing
+- **Custom domain requirement**: Clerk production requires custom domain (not *.vercel.app)
+- **Shared services approach**: Use same database and authentication provider for both environments initially
 - Database migration consolidation may require significant effort to analyze existing schema
 - Use `npm run test` for unit/integration tests, `npm run test:e2e` for E2E tests
 - Use `npm run lighthouse` for performance testing
 
 ## Tasks
 
-- [ ] 1.0 Create New Production Environment Infrastructure (Vercel)
-  - [ ] 1.1 Create new Vercel project for production deployment
-  - [ ] 1.2 Configure custom domain `betis-escocia.vercel.app` for new production
-  - [ ] 1.3 Set up staging domain using current production setup
-  - [ ] 1.4 Configure Vercel environment variables for production
-  - [ ] 1.5 Test deployment to new production environment
-  - [ ] 1.6 Update `vercel.json` to support multiple environments
+- [ ] 1.0 Configure Vercel Branch Deployments
+  - [x] 1.1 Create `vercel.json` configuration for branch-based deployments
+  - [x] 1.2 Configure shared environment variables (same DB and auth for both environments)
+  - [ ] 1.3 Set up custom domain for production Clerk requirements (DEFERRED - manual DNS setup required)
+  - [x] 1.4 Create staging branch for testing deployments
+  - [x] 1.5 Test branch deployment setup with staging branch
+  - [ ] 1.6 Verify production deployment from main branch
 
 - [ ] 2.0 Set up New Production Database and Services (Supabase + Clerk)
   - [ ] 2.1 Create new Supabase project for production database
