@@ -121,7 +121,7 @@ describe('Match Detail Utility Functions', () => {
       const result = formatMatchDateTime(utcDate);
 
       expect(result.date).toBe('25 ago 2024');
-      expect(result.time).toBe('14:30'); // Adjusted for local timezone
+      expect(result.time).toBe('14:30'); // Local timezone conversion
     });
 
     it('should handle different date formats', () => {
