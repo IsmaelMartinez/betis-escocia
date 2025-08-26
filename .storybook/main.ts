@@ -15,7 +15,7 @@ const config: StorybookConfig = {
       "nextConfigPath": "../next.config.mjs"
     }
   },
-  "webpackFinal": async (config, { configType }) => {
+  "webpackFinal": async (config) => {
     // Ensure config.resolve exists
     if (!config.resolve) {
       config.resolve = {};

@@ -22,7 +22,7 @@ vi.mock('next/server', () => ({
       url: input,
       headers: request.headers,
     };
-  }) as unknown as any,
+  }) as unknown as typeof NextRequest,
 }));
 
 // Mock Clerk
@@ -35,8 +35,8 @@ vi.mock('@clerk/nextjs/server', () => {
 
   const createRouteMatcher = vi.fn((routes: string[]) => {
     return (req: NextRequest) => {
-      const anyReq = req as unknown as { nextUrl?: { pathname: string }; url: string };
-      const pathname = anyReq.nextUrl?.pathname ?? new URL(anyReq.url).pathname;
+      const reqWithUrl = req as unknown as { nextUrl?: { pathname: string }; url: string };
+      const pathname = reqWithUrl.nextUrl?.pathname ?? new URL(reqWithUrl.url).pathname;
       return routes.some((route) => {
         if (route.endsWith('(.*)')) {
           const base = route.slice(0, -4);
@@ -57,7 +57,7 @@ vi.mock('@clerk/nextjs/server', () => {
   return { clerkMiddleware, createRouteMatcher };
 });
 
-const mockNextResponseNext = NextResponse.next as any;
+const mockNextResponseNext = NextResponse.next as typeof NextResponse.next;
 
 describe('Middleware', () => {
   let originalNodeEnv: string | undefined;
@@ -67,7 +67,7 @@ describe('Middleware', () => {
     // Store original NODE_ENV
     originalNodeEnv = process.env.NODE_ENV;
     // Set NODE_ENV for consistent testing
-    (process.env as any).NODE_ENV = 'test';
+    (process.env as Record<string, string>).NODE_ENV = 'test';
     // Default to unauthenticated unless overridden in a test
     (globalThis as unknown as { __clerkAuthMock: () => Promise<{ userId: string | null }> }).__clerkAuthMock =
       vi.fn(async () => ({ userId: null }));
@@ -76,9 +76,9 @@ describe('Middleware', () => {
   afterEach(() => {
     // Restore original NODE_ENV
     if (originalNodeEnv !== undefined) {
-      (process.env as any).NODE_ENV = originalNodeEnv;
+      (process.env as Record<string, string>).NODE_ENV = originalNodeEnv;
     } else {
-      delete (process.env as any).NODE_ENV;
+      delete (process.env as Record<string, string | undefined>).NODE_ENV;
     }
     vi.restoreAllMocks();
   });

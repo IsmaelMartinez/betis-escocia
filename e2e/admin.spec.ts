@@ -40,7 +40,7 @@ test.describe('Admin Dashboard', () => {
     // Mock OneSignal SDK to prevent external dependencies
     await page.addInitScript(() => {
       // Mock OneSignal global object
-      (window as any).OneSignal = {
+      (window as unknown as Record<string, unknown>).OneSignal = {
         init: () => Promise.resolve(),
         sendTag: () => Promise.resolve(),
         getNotificationPermission: () => Promise.resolve('granted'),

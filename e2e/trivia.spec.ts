@@ -2,7 +2,8 @@ import { test, expect } from './fixtures';
 import { createClient } from '@supabase/supabase-js';
 
 // Load environment variables
-require('dotenv').config({ path: '.env.local' });
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
 
 // Initialize Supabase client with service role key for cleanup
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

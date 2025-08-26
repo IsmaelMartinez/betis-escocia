@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { NextRequest } from 'next/server';
 
 // Mock Next.js middleware functions
 const mockNextResponse = {

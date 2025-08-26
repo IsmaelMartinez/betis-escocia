@@ -13,8 +13,37 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    ignores: [
+      "node_modules/**", 
+      ".next/**", 
+      "out/**", 
+      "build/**", 
+      "next-env.d.ts",
+      "coverage/**",
+      "html/**",
+      ".storybook-static/**",
+      "storybook-static/**",
+      "public/mockServiceWorker.js"
+    ]
+  },
+  ...compat.extends("next/core-web-vitals", "next/typescript"), 
   ...storybook.configs["flat/recommended"],
+  {
+    files: ["tests/**/*", "**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "@next/next/no-assign-module-variable": "off",
+      "@next/next/no-img-element": "off"
+    }
+  },
+  {
+    files: ["*.config.js", "*.config.ts", "*.config.mjs", "playwright.config.ts"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off"
+    }
+  }
 ];
 
 export default eslintConfig;

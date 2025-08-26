@@ -1,5 +1,4 @@
 // Vitest setup file for global test configuration
-/* eslint-disable */
 import '@testing-library/jest-dom';
 import { beforeAll, afterAll, afterEach, vi } from 'vitest';
 

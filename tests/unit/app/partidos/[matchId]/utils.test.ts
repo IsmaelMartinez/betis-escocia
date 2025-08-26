@@ -28,7 +28,9 @@ vi.mock('@/lib/constants/dateFormats', () => ({
 
 // Utility functions extracted from the page component for testing
 function formatMatchDateTime(utcDate: string): { date: string; time: string } {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { format } = require('date-fns');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { es } = require('date-fns/locale');
   
   const matchDate = new Date(utcDate);
