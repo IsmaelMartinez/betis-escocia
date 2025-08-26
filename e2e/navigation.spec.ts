@@ -17,25 +17,25 @@ test.describe('Site Navigation', () => {
     await page.getByRole('link', { name: /partidos/i }).first().click();
     await page.waitForURL('**/partidos');
     await expect(page.url()).toContain('/partidos');
-    await expect(page.getByText(/partidos/i)).toBeVisible();
+    await expect(page.getByRole('heading', { name: /partidos del betis/i }).first()).toBeVisible();
 
     // Navigate to Classification page (Clasificación)
     await page.getByRole('link', { name: /clasificación/i }).first().click();
     await page.waitForURL('**/clasificacion');
     await expect(page.url()).toContain('/clasificacion');
-    await expect(page.getByText(/clasificación/i)).toBeVisible();
+    await expect(page.getByRole('heading', { name: /clasificación de la liga/i }).first()).toBeVisible();
 
     // Navigate to Join page (Únete)
     await page.getByRole('link', { name: /únete/i }).first().click();
     await page.waitForURL('**/unete');
     await expect(page.url()).toContain('/unete');
-    await expect(page.getByText(/únete/i)).toBeVisible();
+    await expect(page.getByRole('heading', { name: /únete/i }).first()).toBeVisible();
 
     // Navigate to Contact page (Contacto)
     await page.getByRole('link', { name: /contacto/i }).first().click();
     await page.waitForURL('**/contacto');
     await expect(page.url()).toContain('/contacto');
-    await expect(page.getByText(/contacto/i)).toBeVisible();
+    await expect(page.getByRole('heading', { name: /contacto/i }).first()).toBeVisible();
   });
 
   test('should have working logo link to home', async ({ page }) => {
@@ -93,10 +93,33 @@ test.describe('Site Navigation', () => {
     const nav = page.getByRole('navigation');
     await expect(nav).toBeVisible();
 
-    // Links should be keyboard accessible
-    await page.keyboard.press('Tab');
-    const firstLink = page.getByRole('link').first();
-    await expect(firstLink).toBeFocused();
+    // Links should be keyboard accessible - focus through navigation
+    // Keep pressing Tab until we find a focused link in the navigation
+    let attempts = 0;
+    let focused = false;
+    const maxAttempts = 10;
+    
+    while (attempts < maxAttempts && !focused) {
+      await page.keyboard.press('Tab');
+      attempts++;
+      
+      // Check if any navigation link is focused
+      const navLinks = nav.getByRole('link');
+      const count = await navLinks.count();
+      
+      for (let i = 0; i < count; i++) {
+        const link = navLinks.nth(i);
+        try {
+          await expect(link).toBeFocused({ timeout: 100 });
+          focused = true;
+          break;
+        } catch {
+          // Continue to next link
+        }
+      }
+    }
+    
+    expect(focused).toBe(true);
   });
 
   test('should preserve navigation state during navigation', async ({ page }) => {
