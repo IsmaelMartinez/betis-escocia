@@ -317,10 +317,10 @@ describe('TriviaPage', () => {
         fireEvent.click(screen.getByText('1907'));
       });
 
-      // Wait for second question and answer correctly
+      // Wait for second question and answer correctly  
       await waitFor(() => {
-        expect(screen.getByText('Edinburgh')).toBeInTheDocument();
-      }, { timeout: 3000 });
+        expect(screen.getByText(/Edinburgh/)).toBeInTheDocument();
+      });
 
       fireEvent.click(screen.getByText('Edinburgh'));
 
@@ -330,7 +330,7 @@ describe('TriviaPage', () => {
         expect(screen.getByText('2/2')).toBeInTheDocument();
         expect(screen.getByText('100% Correct')).toBeInTheDocument();
         expect(screen.getByText('¡Perfecto! ¡Conoces tu Betis y Escocia! ¡Vuelve mañana para otro desafío!')).toBeInTheDocument();
-      }, { timeout: 3000 });
+      });
     });
 
     it('should call API to save score on completion', async () => {
@@ -347,8 +347,8 @@ describe('TriviaPage', () => {
       });
 
       await waitFor(() => {
-        fireEvent.click(screen.getByText('Edinburgh'));
-      }, { timeout: 3000 });
+        fireEvent.click(screen.getByText(/Edinburgh/));
+      });
 
       // Should have called the save score API
       await waitFor(() => {
@@ -360,7 +360,7 @@ describe('TriviaPage', () => {
           },
           body: JSON.stringify({ score: 2 })
         });
-      }, { timeout: 3000 });
+      });
     });
 
     it('should show different messages based on score percentage', async () => {
@@ -379,15 +379,15 @@ describe('TriviaPage', () => {
 
       // Answer second question incorrectly
       await waitFor(() => {
-        fireEvent.click(screen.getByText('Glasgow'));
-      }, { timeout: 3000 });
+        fireEvent.click(screen.getByText(/Glasgow/));
+      });
 
       // Should show completion screen with low score message
       await waitFor(() => {
         expect(screen.getByText('0/2')).toBeInTheDocument();
         expect(screen.getByText('0% Correct')).toBeInTheDocument();
         expect(screen.getByText('¡Sigue aprendiendo sobre el Betis y Escocia! ¡Nuevas preguntas mañana!')).toBeInTheDocument();
-      }, { timeout: 3000 });
+      });
     });
 
     it('should show back to home link on completion', async () => {
@@ -505,13 +505,13 @@ describe('TriviaPage', () => {
       });
 
       await waitFor(() => {
-        fireEvent.click(screen.getByText('Edinburgh'));
-      }, { timeout: 3000 });
+        fireEvent.click(screen.getByText(/Edinburgh/));
+      });
 
       // Should still show completion but without error blocking the UI
       await waitFor(() => {
         expect(screen.getByText('¡Trivia Diaria Completada!')).toBeInTheDocument();
-      }, { timeout: 3000 });
+      });
     });
   });
 });
