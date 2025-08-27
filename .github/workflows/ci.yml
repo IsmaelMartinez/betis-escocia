@@ -100,14 +100,23 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-  # Deployment notification (Vercel handles actual deployment)
-  deployment-status:
-    name: Deployment Status
+  # Deploy to production only if all tests pass
+  deploy:
+    name: Deploy to Production
     runs-on: ubuntu-latest
     needs: [test]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
     steps:
-      - name: Production deployment triggered
+      - uses: actions/checkout@v4
+      - name: Deploy to Vercel
+        uses: vercel-community/vercel-action@v3
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+      - name: Deployment successful
         run: |
-          echo "✅ Tests passed! Vercel will automatically deploy to production."
-          echo "🔗 Production URL will be: https://betis-escocia.vercel.app"
+          echo "✅ Tests passed and deployment completed!"
+          echo "🔗 Production URL: https://betis-escocia.vercel.app"

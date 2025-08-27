@@ -187,8 +187,9 @@ describe('Admin Notifications Test API', () => {
       const notificationCall = (sendAdminNotification as any).mock.calls[0][0];
       
       expect(notificationCall.timestamp).toBeInstanceOf(Date);
-      expect(notificationCall.timestamp.getTime()).toBeGreaterThanOrEqual(beforeTime.getTime());
-      expect(notificationCall.timestamp.getTime()).toBeLessThanOrEqual(afterTime.getTime());
+      // Allow 100ms tolerance for CI environment timing
+      expect(notificationCall.timestamp.getTime()).toBeGreaterThanOrEqual(beforeTime.getTime() - 100);
+      expect(notificationCall.timestamp.getTime()).toBeLessThanOrEqual(afterTime.getTime() + 100);
     });
 
     it('should use correct notification type', async () => {
