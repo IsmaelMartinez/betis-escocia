@@ -5,6 +5,12 @@ import path from 'path';
 async function globalSetup(config: FullConfig) {
   const { baseURL } = config.projects[0].use;
 
+  // Ensure compatibility with @clerk/testing by setting the expected environment variable
+  // if it's not already set but NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is available
+  if (!process.env.CLERK_PUBLISHABLE_KEY && process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
+    process.env.CLERK_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  }
+
   // Configure Playwright with Clerk
   await clerkSetup();
 

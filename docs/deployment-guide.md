@@ -27,24 +27,30 @@ The following branch protection rules need to be configured manually in GitHub r
 2. **Branch name pattern**: `main`
 3. **Configure the following rules**:
 
-#### Required Settings
-- ✅ **Require pull request reviews before merging**
-  - Required approving reviews: 1
+#### Core Protection Rules
+- ✅ **Require a pull request before merging**
+  - Required approving reviews: 0 (small project - PRs required but approvals optional)
   - Dismiss stale PR reviews when new commits are pushed
   - Require review from code owners (if CODEOWNERS file exists)
 
-- ✅ **Require status checks to pass before merging**
-  - Require branches to be up to date before merging
+- ✅ **Require status checks to pass**
+  - Choose which status checks must pass before the ref is updated
   - Required status checks:
     - `Tests (Required)` (from CI/CD Pipeline workflow)
+    - `Snyk` (security vulnerability scanning)
+    - `CodeQL` (code security analysis)
 
-- ✅ **Require linear history** (optional but recommended)
-- ✅ **Include administrators** (apply rules to repository admins)
+#### Recommended Additional Rules
+- ✅ **Block force pushes** - Prevent users with push access from force pushing
+- ✅ **Restrict deletions** - Only allow users with bypass permissions to delete refs
+- ✅ **Require linear history** - Prevent merge commits from being pushed
+- ✅ **Require signed commits** - Commits must have verified signatures (optional but recommended)
 
-#### Additional Recommended Settings
-- ✅ **Allow force pushes**: DISABLED
-- ✅ **Allow deletions**: DISABLED
-- ✅ **Restrict pushes that create files** (optional)
+#### Optional Advanced Rules
+- ⚠️ **Restrict creations** - Only allow users with bypass permission to create refs
+- ⚠️ **Restrict updates** - Only allow users with bypass permission to update refs  
+- ⚠️ **Require deployments to succeed** - Choose environments that must deploy successfully first
+- ⚠️ **Require code scanning results** - Choose which code scanning tools must provide results
 
 ### Repository Settings
 1. **Navigate to**: Repository Settings → General
@@ -124,8 +130,8 @@ on:
 
 ### For Solo Development (Current)
 1. **Direct Push Protection**: Prevented by branch protection
-2. **Required Workflow**: Feature branch → PR → Review → Merge
-3. **Self-Review**: Can approve own PRs if needed
+2. **Required Workflow**: Feature branch → PR → Merge (no approvals required)
+3. **Quality Gates**: All status checks must pass before merge allowed
 
 ## Troubleshooting
 
