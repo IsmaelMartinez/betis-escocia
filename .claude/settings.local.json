@@ -1,47 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run lint)",
-      "Bash(npm run type-check:*)",
-      "Bash(npm run build:*)",
-      "Bash(npm run test:silent:*)",
-      "Bash(npm test:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(npm run test:integration:*)",
-      "Bash(npx vitest:*)",
-      "Bash(timeout 5 npm run test:watch)",
-      "Bash(npm run test:coverage:*)",
-      "Bash(npm run test:*)",
-      "Bash(npx tsc:*)",
-      "Bash(mv:*)",
-      "Bash(npm run lint:*)",
-      "Bash(grep:*)",
-      "Bash(sed:*)",
-      "Bash(find:*)",
-      "Bash(for file in *.test.ts)",
-      "Bash(do)",
-      "Bash(done)",
-      "Bash(for file in tests/unit/lib/schemas/*.test.ts)",
-      "Bash(chmod:*)",
-      "Bash(npm run dev:*)",
-      "Bash(npx playwright test:*)",
-      "Bash(rm tests/unit/lib/hooks/useApiData.comprehensive.test.ts)",
-      "Bash(rm tests/unit/components/AllDatabaseMatches.test.tsx)",
-      "Bash(timeout 60 npx storybook dev -p 6006 --debug-webpack)",
-      "WebSearch",
-      "Bash(npm run storybook:*)",
-      "Bash(timeout 30 npm run storybook)",
-      "Bash(timeout 60 npm run storybook)",
-      "Bash(npx playwright:*)",
-      "Bash(gh workflow list:*)",
-      "Bash(gh run view:*)",
-      "Bash(gh api:*)",
-      "Bash(git pull:*)",
-      "Bash(git push:*)",
-      "Bash(git checkout:*)",
-      "Bash(npm update)"
+      "Bash(git add:*)"
     ],
-    "deny": []
+    "deny": [],
+    "ask": []
   }
 }
