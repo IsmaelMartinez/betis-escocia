@@ -290,12 +290,25 @@ async function getUserTotalTriviaScore(
     tracker.logDbQuery('get_total_scores', performance.now() - queryStart);
 
     if (error) {
+      // Handle common "no data found" errors gracefully
+      if (error.code === 'PGRST116' || error.code === 'PGRST301') {
+        // No records found - return zero score for new users
+        logTriviaEvent('info', 'No trivia scores found for user (new user)', { 
+          userId, 
+          errorCode: error.code 
+        }, context);
+        
+        tracker.complete(true, { totalScore: 0, gameCount: 0, method: 'no_data' });
+        return { totalScore: 0 };
+      }
+      
+      // Handle actual database errors
       throw new TriviaError(
         'DATABASE_ERROR',
         `Failed to fetch user scores: ${error.message}`,
         StandardErrors.TRIVIA.AGGREGATION_ERROR,
         500,
-        { ...context, userId, error: error.message }
+        { ...context, userId, error: error.message, errorCode: error.code }
       );
     }
     
