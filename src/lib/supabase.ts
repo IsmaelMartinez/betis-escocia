@@ -666,7 +666,8 @@ export async function getUserDailyTriviaScore(userId: string, authenticatedSupab
     .lt('timestamp', tomorrow.toISOString())
     .single(); // Assuming only one score per user per day
 
-  if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
+  if (error && error.code !== 'PGRST116' && error.code !== 'PGRST301') { 
+    // PGRST116 means no rows found, PGRST301 means "No suitable key or wrong key type" 
     console.error('Error fetching user daily trivia score:', error);
     return { success: false, error: error.message };
   }

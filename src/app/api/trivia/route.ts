@@ -280,65 +280,35 @@ async function getUserTotalTriviaScore(
   try {
     logTriviaEvent('info', 'Starting total trivia score retrieval', { userId }, context);
 
-    // Optimized: Use SQL aggregation instead of client-side calculation
-    const aggregateStart = performance.now();
-    const { data: aggregateResult, error } = await authenticatedSupabase
+    // Fetch all user scores and calculate client-side (more reliable than PostgREST aggregation)
+    const queryStart = performance.now();
+    const { data: allUserScores, error } = await authenticatedSupabase
       .from('user_trivia_scores')
-      .select(`
-        daily_score.sum(),
-        id.count()
-      `)
+      .select('daily_score')
       .eq('user_id', userId);
     
-    tracker.logDbQuery('aggregate_total_score', performance.now() - aggregateStart);
+    tracker.logDbQuery('get_total_scores', performance.now() - queryStart);
 
     if (error) {
-      logTriviaEvent('warn', 'SQL aggregation failed, falling back to client-side calculation', { 
-        userId, 
-        aggregateError: error.message 
-      }, context);
-      
-      // Fallback to client-side calculation if SQL aggregation fails
-      const fallbackStart = performance.now();
-      const { data: allUserScores, error: fallbackError } = await authenticatedSupabase
-        .from('user_trivia_scores')
-        .select('daily_score')
-        .eq('user_id', userId);
-      
-      tracker.logDbQuery('fallback_total_score', performance.now() - fallbackStart);
-      
-      if (fallbackError) {
-        throw new TriviaError(
-          'DATABASE_ERROR',
-          `Failed to fetch total score with fallback: ${fallbackError.message}`,
-          StandardErrors.TRIVIA.AGGREGATION_ERROR,
-          500,
-          { ...context, userId, fallbackError: fallbackError.message }
-        );
-      }
-      
-      const totalScore = allUserScores?.reduce((sum: number, entry: { daily_score: number }) => sum + entry.daily_score, 0) || 0;
-      
-      logTriviaEvent('info', 'Successfully retrieved total score via fallback', { 
-        userId, 
-        totalScore,
-        gameCount: allUserScores?.length || 0 
-      }, context);
-      
-      tracker.complete(true, { totalScore, gameCount: allUserScores?.length || 0, method: 'fallback' });
-      return { totalScore };
+      throw new TriviaError(
+        'DATABASE_ERROR',
+        `Failed to fetch user scores: ${error.message}`,
+        StandardErrors.TRIVIA.AGGREGATION_ERROR,
+        500,
+        { ...context, userId, error: error.message }
+      );
     }
-
-    const totalScore = aggregateResult?.[0]?.sum || 0;
-    const gameCount = aggregateResult?.[0]?.count || 0;
-
-    logTriviaEvent('info', 'Successfully retrieved total score via SQL aggregation', { 
+    
+    const totalScore = allUserScores?.reduce((sum: number, entry: { daily_score: number }) => sum + entry.daily_score, 0) || 0;
+    const gameCount = allUserScores?.length || 0;
+    
+    logTriviaEvent('info', 'Successfully retrieved total score', { 
       userId, 
-      totalScore, 
-      gameCount 
+      totalScore,
+      gameCount
     }, context);
-
-    tracker.complete(true, { totalScore, gameCount, method: 'aggregation' });
+    
+    tracker.complete(true, { totalScore, gameCount, method: 'client_side' });
     return { totalScore };
 
   } catch (error) {
