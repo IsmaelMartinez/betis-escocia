@@ -284,9 +284,11 @@ async function getUserTotalTriviaScore(
     const aggregateStart = performance.now();
     const { data: aggregateResult, error } = await authenticatedSupabase
       .from('user_trivia_scores')
-      .select('daily_score.sum(), user_id.count()')
-      .eq('user_id', userId)
-      .single();
+      .select(`
+        daily_score.sum(),
+        id.count()
+      `)
+      .eq('user_id', userId);
     
     tracker.logDbQuery('aggregate_total_score', performance.now() - aggregateStart);
 
@@ -327,8 +329,8 @@ async function getUserTotalTriviaScore(
       return { totalScore };
     }
 
-    const totalScore = aggregateResult?.sum || 0;
-    const gameCount = aggregateResult?.count || 0;
+    const totalScore = aggregateResult?.[0]?.sum || 0;
+    const gameCount = aggregateResult?.[0]?.count || 0;
 
     logTriviaEvent('info', 'Successfully retrieved total score via SQL aggregation', { 
       userId, 

@@ -69,7 +69,7 @@ Create your local environment file:
 
 ```bash
 # Copy the template
-cp .env.local .env.local.example
+cp .env.local.example .env.local
 
 # Edit with your values
 code .env.local
@@ -89,6 +89,8 @@ code .env.local
 | Variable | Description | Purpose |
 |----------|-------------|---------|
 | `FOOTBALL_DATA_API_KEY` | Football-Data.org API key | Match data synchronization |
+| `NEXT_PUBLIC_ONESIGNAL_APP_ID` | OneSignal app ID | Admin push notifications |
+| `ONESIGNAL_REST_API_KEY` | OneSignal REST API key | Admin push notifications |
 | `NEXT_PUBLIC_DEBUG_MODE=true` | Enable debug mode | Development debugging |
 
 ## External Service Setup
@@ -137,6 +139,16 @@ code .env.local
 1. **Create Account**: Go to [football-data.org](https://www.football-data.org/client/register)
 2. **Get Free Tier**: 10 requests/minute (sufficient for development)
 3. **Copy API Key**: Add to your `.env.local`
+
+### 4. OneSignal Push Notifications (Optional)
+
+1. **Create Account**: Go to [onesignal.com](https://onesignal.com)
+2. **Create App**: For web push notifications
+3. **Get Keys**: 
+   - App ID from Settings → Keys & IDs
+   - REST API Key from Settings → Keys & IDs
+4. **Add to .env.local**: `NEXT_PUBLIC_ONESIGNAL_APP_ID` and `ONESIGNAL_REST_API_KEY`
+5. **Purpose**: Enables real-time admin notifications for RSVP and contact form submissions
 
 ## Development Workflow
 
