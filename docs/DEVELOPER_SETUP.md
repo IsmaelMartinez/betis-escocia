@@ -106,11 +106,10 @@ code .env.local
 3. **Set up Database**:
    ```bash
    # Navigate to SQL Editor in Supabase Dashboard
-   # Copy and paste the complete schema:
+   # Run the SQL scripts in order:
    ```
-   - Copy contents of `sql/0000_complete_schema.sql`
-   - Execute in Supabase SQL Editor
-   - Optionally run `sql/0001_seed_data.sql` for sample data
+   - Copy contents of `sql/0000_complete_schema.sql` and execute in Supabase SQL Editor
+   - Copy contents of `sql/0001_seed_data.sql` and execute (includes sample data + trivia table fixes)
 
 4. **Get API Keys**:
    - Go to Settings → API

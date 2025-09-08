@@ -209,6 +209,58 @@ INSERT INTO contact_submissions (name, email, subject, type, message, status) VA
 ON CONFLICT DO NOTHING;
 
 -- ===============================================================================
+-- FIX USER_TRIVIA_SCORES TABLE AND RLS POLICIES
+-- ===============================================================================
+-- Consolidates fixes from scripts 0002, 0003, and 0004 for trivia functionality
+
+-- Fix user_trivia_scores table structure (from script 0002)
+DROP TABLE IF EXISTS user_trivia_scores CASCADE;
+
+-- Recreate with SERIAL primary key (more reliable than UUID generation)
+CREATE TABLE user_trivia_scores (
+    id SERIAL PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    daily_score INTEGER NOT NULL,
+    timestamp TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Create indexes for performance
+CREATE INDEX idx_user_trivia_scores_user_id ON user_trivia_scores(user_id);
+CREATE INDEX idx_user_trivia_scores_timestamp ON user_trivia_scores(timestamp);
+CREATE INDEX idx_user_trivia_scores_user_id_timestamp ON user_trivia_scores(user_id, timestamp DESC);
+
+-- Enable Row Level Security
+ALTER TABLE user_trivia_scores ENABLE ROW LEVEL SECURITY;
+
+-- Create RLS policies for Clerk JWT integration (from scripts 0003 and 0004)
+-- These policies use Clerk JWT subject claim to match user_id directly
+CREATE POLICY "Users can view own trivia scores via Clerk JWT" ON user_trivia_scores
+    FOR SELECT
+    USING (user_id = auth.jwt() ->> 'sub');
+
+CREATE POLICY "Users can insert own trivia scores via Clerk JWT" ON user_trivia_scores
+    FOR INSERT
+    WITH CHECK (user_id = auth.jwt() ->> 'sub');
+
+-- Add table comment
+COMMENT ON TABLE user_trivia_scores IS 'Daily trivia scores for authenticated users';
+
+-- Verify RLS policies are correctly created
+SELECT 
+    schemaname, 
+    tablename, 
+    policyname, 
+    cmd, 
+    CASE 
+        WHEN qual IS NOT NULL THEN qual 
+        WHEN with_check IS NOT NULL THEN with_check
+        ELSE 'No condition'
+    END as condition
+FROM pg_policies 
+WHERE tablename = 'user_trivia_scores'
+ORDER BY cmd, policyname;
+
+-- ===============================================================================
 -- CLEANUP AND VERIFICATION
 -- ===============================================================================
 

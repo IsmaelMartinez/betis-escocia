@@ -638,6 +638,9 @@ export async function deleteTriviaAnswer(id: string) {
 
 // User Trivia Score CRUD operations
 export async function createUserTriviaScore(score: UserTriviaScoreInsert, authenticatedSupabase: SupabaseClient) {
+  console.log('Attempting to insert trivia score:', score);
+  console.log('Table: user_trivia_scores');
+  
   const { data, error } = await authenticatedSupabase
     .from('user_trivia_scores')
     .insert([score])
@@ -646,6 +649,12 @@ export async function createUserTriviaScore(score: UserTriviaScoreInsert, authen
 
   if (error) {
     console.error('Error creating user trivia score:', error);
+    console.error('Error details:', {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint
+    });
     return { success: false, error: error.message };
   }
   return { success: true, data: data as UserTriviaScore };
