@@ -42,7 +42,7 @@ INSERT INTO trivia_questions (question_text, category, difficulty) VALUES
 ('¿Cuántos años debe envejecer un whisky para ser considerado "aged"?', 'whisky', 'hard'),
 ('¿Cuál es la diferencia principal entre whisky y whiskey?', 'whisky', 'hard')
 
-ON CONFLICT (question_text) DO NOTHING;
+ON CONFLICT DO NOTHING;
 
 -- Insert answers for Real Betis questions
 INSERT INTO trivia_answers (question_id, answer_text, is_correct) 
@@ -141,18 +141,18 @@ ON CONFLICT DO NOTHING;
 -- ===============================================================================
 
 -- Insert sample upcoming matches
-INSERT INTO matches (date_time, opponent, competition, home_away, status, notes) VALUES
-(NOW() + INTERVAL '7 days', 'Sevilla FC', 'LaLiga EA Sports', 'home', 'SCHEDULED', 'Derbi sevillano en el Villamarín'),
-(NOW() + INTERVAL '14 days', 'Athletic Club', 'LaLiga EA Sports', 'away', 'SCHEDULED', 'Partido en San Mamés'),
-(NOW() + INTERVAL '21 days', 'Real Madrid', 'LaLiga EA Sports', 'home', 'SCHEDULED', 'Partido contra los merengues'),
-(NOW() + INTERVAL '28 days', 'Valencia CF', 'LaLiga EA Sports', 'away', 'SCHEDULED', 'Visita a Mestalla')
+INSERT INTO matches (date_time, opponent, competition, home_away, status, notes, external_id, external_source) VALUES
+(NOW() + INTERVAL '7 days', 'Sevilla FC', 'LaLiga EA Sports', 'home', 'SCHEDULED', 'Derbi sevillano en el Villamarín', 1001, 'seed_data'),
+(NOW() + INTERVAL '14 days', 'Athletic Club', 'LaLiga EA Sports', 'away', 'SCHEDULED', 'Partido en San Mamés', 1002, 'seed_data'),
+(NOW() + INTERVAL '21 days', 'Real Madrid', 'LaLiga EA Sports', 'home', 'SCHEDULED', 'Partido contra los merengues', 1003, 'seed_data'),
+(NOW() + INTERVAL '28 days', 'Valencia CF', 'LaLiga EA Sports', 'away', 'SCHEDULED', 'Visita a Mestalla', 1004, 'seed_data')
 ON CONFLICT (external_id, external_source) DO NOTHING;
 
 -- Insert some historical matches
-INSERT INTO matches (date_time, opponent, competition, home_away, status, result, home_score, away_score, notes) VALUES
-(NOW() - INTERVAL '7 days', 'Barcelona', 'LaLiga EA Sports', 'away', 'FINISHED', 'AWAY_WIN', 1, 2, 'Victoria histórica en el Camp Nou'),
-(NOW() - INTERVAL '14 days', 'Getafe CF', 'LaLiga EA Sports', 'home', 'FINISHED', 'HOME_WIN', 3, 1, 'Buen partido en casa'),
-(NOW() - INTERVAL '21 days', 'Celta Vigo', 'LaLiga EA Sports', 'away', 'FINISHED', 'DRAW', 2, 2, 'Empate con sabor agridulce')
+INSERT INTO matches (date_time, opponent, competition, home_away, status, result, home_score, away_score, notes, external_id, external_source) VALUES
+(NOW() - INTERVAL '7 days', 'Barcelona', 'LaLiga EA Sports', 'away', 'FINISHED', 'AWAY_WIN', 1, 2, 'Victoria histórica en el Camp Nou', 1005, 'seed_data'),
+(NOW() - INTERVAL '14 days', 'Getafe CF', 'LaLiga EA Sports', 'home', 'FINISHED', 'HOME_WIN', 3, 1, 'Buen partido en casa', 1006, 'seed_data'),
+(NOW() - INTERVAL '21 days', 'Celta Vigo', 'LaLiga EA Sports', 'away', 'FINISHED', 'DRAW', 2, 2, 'Empate con sabor agridulce', 1007, 'seed_data')
 ON CONFLICT (external_id, external_source) DO NOTHING;
 
 -- ===============================================================================

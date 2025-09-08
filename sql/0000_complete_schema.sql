@@ -273,84 +273,134 @@ ALTER TABLE classification_cache ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notification_preferences ENABLE ROW LEVEL SECURITY;
 
 -- Matches table policies
-CREATE POLICY IF NOT EXISTS "Allow public read access on matches" ON matches
-    FOR SELECT USING (true);
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public read access on matches' AND tablename = 'matches') THEN
+        CREATE POLICY "Allow public read access on matches" ON matches FOR SELECT USING (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow admin insert on matches' AND tablename = 'matches') THEN
+        CREATE POLICY "Allow admin insert on matches" ON matches FOR INSERT WITH CHECK (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow admin update on matches' AND tablename = 'matches') THEN
+        CREATE POLICY "Allow admin update on matches" ON matches FOR UPDATE USING (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow admin delete on matches' AND tablename = 'matches') THEN
+        CREATE POLICY "Allow admin delete on matches" ON matches FOR DELETE USING (true);
+    END IF;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Allow admin insert on matches" ON matches
-    FOR INSERT WITH CHECK (true);
-
-CREATE POLICY IF NOT EXISTS "Allow admin update on matches" ON matches
-    FOR UPDATE USING (true);
-
-CREATE POLICY IF NOT EXISTS "Allow admin delete on matches" ON matches
-    FOR DELETE USING (true);
-
--- RSVPs table policies
-CREATE POLICY IF NOT EXISTS "Allow public read access on rsvps" ON rsvps
-    FOR SELECT USING (true);
-
-CREATE POLICY IF NOT EXISTS "Allow public insert on rsvps" ON rsvps
-    FOR INSERT WITH CHECK (true);
-
-CREATE POLICY IF NOT EXISTS "Allow users to view own rsvps" ON rsvps
-    FOR SELECT USING (user_id = auth.jwt() ->> 'sub' OR true);
-
-CREATE POLICY IF NOT EXISTS "Allow admin delete on rsvps" ON rsvps
-    FOR DELETE USING (true);
+-- RSVPs table policies  
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public read access on rsvps' AND tablename = 'rsvps') THEN
+        CREATE POLICY "Allow public read access on rsvps" ON rsvps FOR SELECT USING (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public insert on rsvps' AND tablename = 'rsvps') THEN
+        CREATE POLICY "Allow public insert on rsvps" ON rsvps FOR INSERT WITH CHECK (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow users to view own rsvps' AND tablename = 'rsvps') THEN
+        CREATE POLICY "Allow users to view own rsvps" ON rsvps FOR SELECT USING (user_id = auth.jwt() ->> 'sub' OR true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow admin delete on rsvps' AND tablename = 'rsvps') THEN
+        CREATE POLICY "Allow admin delete on rsvps" ON rsvps FOR DELETE USING (true);
+    END IF;
+END $$;
 
 -- Contact submissions table policies
-CREATE POLICY IF NOT EXISTS "Allow public insert on contact_submissions" ON contact_submissions
-    FOR INSERT WITH CHECK (true);
-
-CREATE POLICY IF NOT EXISTS "Allow public read on contact_submissions" ON contact_submissions
-    FOR SELECT USING (true);
-
-CREATE POLICY IF NOT EXISTS "Allow users to view own contact_submissions" ON contact_submissions
-    FOR SELECT USING (user_id = auth.jwt() ->> 'sub' OR true);
-
-CREATE POLICY IF NOT EXISTS "Allow admin update on contact_submissions" ON contact_submissions
-    FOR UPDATE USING (true);
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public insert on contact_submissions' AND tablename = 'contact_submissions') THEN
+        CREATE POLICY "Allow public insert on contact_submissions" ON contact_submissions FOR INSERT WITH CHECK (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public read on contact_submissions' AND tablename = 'contact_submissions') THEN
+        CREATE POLICY "Allow public read on contact_submissions" ON contact_submissions FOR SELECT USING (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow users to view own contact_submissions' AND tablename = 'contact_submissions') THEN
+        CREATE POLICY "Allow users to view own contact_submissions" ON contact_submissions FOR SELECT USING (user_id = auth.jwt() ->> 'sub' OR true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow admin update on contact_submissions' AND tablename = 'contact_submissions') THEN
+        CREATE POLICY "Allow admin update on contact_submissions" ON contact_submissions FOR UPDATE USING (true);
+    END IF;
+END $$;
 
 -- Trivia tables policies
-CREATE POLICY IF NOT EXISTS "Allow public read on trivia_questions" ON trivia_questions
-    FOR SELECT USING (true);
-
-CREATE POLICY IF NOT EXISTS "Allow public read on trivia_answers" ON trivia_answers
-    FOR SELECT USING (true);
-
-CREATE POLICY IF NOT EXISTS "Allow admin insert on trivia_questions" ON trivia_questions
-    FOR INSERT WITH CHECK (true);
-
-CREATE POLICY IF NOT EXISTS "Allow admin insert on trivia_answers" ON trivia_answers
-    FOR INSERT WITH CHECK (true);
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public read on trivia_questions' AND tablename = 'trivia_questions') THEN
+        CREATE POLICY "Allow public read on trivia_questions" ON trivia_questions FOR SELECT USING (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public read on trivia_answers' AND tablename = 'trivia_answers') THEN
+        CREATE POLICY "Allow public read on trivia_answers" ON trivia_answers FOR SELECT USING (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow admin insert on trivia_questions' AND tablename = 'trivia_questions') THEN
+        CREATE POLICY "Allow admin insert on trivia_questions" ON trivia_questions FOR INSERT WITH CHECK (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow admin insert on trivia_answers' AND tablename = 'trivia_answers') THEN
+        CREATE POLICY "Allow admin insert on trivia_answers" ON trivia_answers FOR INSERT WITH CHECK (true);
+    END IF;
+END $$;
 
 -- User trivia scores policies
-CREATE POLICY IF NOT EXISTS "Allow users to view own trivia scores" ON user_trivia_scores
-    FOR SELECT USING (user_id = auth.jwt() ->> 'sub');
-
-CREATE POLICY IF NOT EXISTS "Allow users to insert own trivia scores" ON user_trivia_scores
-    FOR INSERT WITH CHECK (user_id = auth.jwt() ->> 'sub');
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow users to view own trivia scores' AND tablename = 'user_trivia_scores') THEN
+        CREATE POLICY "Allow users to view own trivia scores" ON user_trivia_scores FOR SELECT USING (user_id = auth.jwt() ->> 'sub');
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow users to insert own trivia scores' AND tablename = 'user_trivia_scores') THEN
+        CREATE POLICY "Allow users to insert own trivia scores" ON user_trivia_scores FOR INSERT WITH CHECK (user_id = auth.jwt() ->> 'sub');
+    END IF;
+END $$;
 
 -- Classification cache policies
-CREATE POLICY IF NOT EXISTS "Allow public read on classification_cache" ON classification_cache
-    FOR SELECT USING (true);
-
-CREATE POLICY IF NOT EXISTS "Allow public insert on classification_cache" ON classification_cache
-    FOR INSERT WITH CHECK (true);
-
-CREATE POLICY IF NOT EXISTS "Allow public update on classification_cache" ON classification_cache
-    FOR UPDATE USING (true);
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public read on classification_cache' AND tablename = 'classification_cache') THEN
+        CREATE POLICY "Allow public read on classification_cache" ON classification_cache FOR SELECT USING (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public insert on classification_cache' AND tablename = 'classification_cache') THEN
+        CREATE POLICY "Allow public insert on classification_cache" ON classification_cache FOR INSERT WITH CHECK (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public update on classification_cache' AND tablename = 'classification_cache') THEN
+        CREATE POLICY "Allow public update on classification_cache" ON classification_cache FOR UPDATE USING (true);
+    END IF;
+END $$;
 
 -- Notification preferences policies
-CREATE POLICY IF NOT EXISTS "Users can view own notification preferences" ON notification_preferences
-    FOR SELECT USING (user_id = auth.jwt() ->> 'sub');
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can view own notification preferences' AND tablename = 'notification_preferences') THEN
+        CREATE POLICY "Users can view own notification preferences" ON notification_preferences FOR SELECT USING (user_id = auth.jwt() ->> 'sub');
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can insert own notification preferences' AND tablename = 'notification_preferences') THEN
+        CREATE POLICY "Users can insert own notification preferences" ON notification_preferences FOR INSERT WITH CHECK (user_id = auth.jwt() ->> 'sub');
+    END IF;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Users can insert own notification preferences" ON notification_preferences
-    FOR INSERT WITH CHECK (user_id = auth.jwt() ->> 'sub');
-
-CREATE POLICY IF NOT EXISTS "Users can update own notification preferences" ON notification_preferences
-    FOR UPDATE USING (user_id = auth.jwt() ->> 'sub')
-    WITH CHECK (user_id = auth.jwt() ->> 'sub');
+-- Additional notification preferences policy
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can update own notification preferences' AND tablename = 'notification_preferences') THEN
+        CREATE POLICY "Users can update own notification preferences" ON notification_preferences 
+        FOR UPDATE USING (user_id = auth.jwt() ->> 'sub') 
+        WITH CHECK (user_id = auth.jwt() ->> 'sub');
+    END IF;
+END $$;
 
 -- ===============================================================================
 -- GRANTS AND PERMISSIONS
@@ -435,7 +485,7 @@ SELECT
     schemaname,
     tablename,
     attname,
-    typename
+    typ.typname as column_type
 FROM pg_catalog.pg_tables t
 LEFT JOIN pg_catalog.pg_attribute a ON a.attrelid = (schemaname||'.'||tablename)::regclass
 LEFT JOIN pg_catalog.pg_type typ ON typ.oid = a.atttypid
