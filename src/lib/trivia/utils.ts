@@ -161,6 +161,7 @@ export interface TriviaErrorContext {
   operation?: string;
   fallbackError?: string;
   aggregateError?: string;
+  errorCode?: string;
 }
 
 export class TriviaError extends Error {

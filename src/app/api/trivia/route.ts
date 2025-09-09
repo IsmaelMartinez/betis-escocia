@@ -308,7 +308,7 @@ async function getUserTotalTriviaScore(
         `Failed to fetch user scores: ${error.message}`,
         StandardErrors.TRIVIA.AGGREGATION_ERROR,
         500,
-        { ...context, userId, error: error.message, errorCode: error.code }
+        { ...context, userId, dbError: error.message, errorCode: error.code }
       );
     }
     
