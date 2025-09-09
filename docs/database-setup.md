@@ -6,8 +6,8 @@ This guide explains how to set up the complete database schema for the Peña Bé
 
 ## Files
 
-- **`sql/00_complete_schema.sql`** - Complete database schema with all tables, indexes, policies, and functions
-- **`sql/01_seed_data.sql`** - Sample data for development and testing  
+- **`sql/0000_complete_schema.sql`** - Complete database schema with all tables, indexes, policies, and functions
+- **`sql/0001_seed_data.sql`** - Sample data for development and testing  
 - **`sql/legacy/`** - Individual migration files (for reference only)
 
 ## Quick Setup for New Environment
