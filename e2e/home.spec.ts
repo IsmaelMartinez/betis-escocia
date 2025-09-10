@@ -7,11 +7,12 @@ test.describe('Home Page Happy Path', () => {
     expect(response?.status()).toBe(200);
 
     // 2.1.2 Assert visibility of key elements (e.g., hero section, main headings, navigation bar)
-    await expect(page.locator('h1', { hasText: 'No busques más' })).toBeVisible();
+    await expect(page.locator('h1', { hasText: 'MÁS QUE' })).toBeVisible();
     await expect(page.locator('nav')).toBeVisible();
     // Look for the logo/home link instead of "Inicio" text
     await expect(page.locator('header a[href="/"]')).toBeVisible();
-    await expect(page.getByRole('link', { name: 'RSVP' })).toBeVisible();
+    // Check for RSVP widget (now embedded on homepage)
+    await expect(page.getByText('🍺 Confirmar Asistencia')).toBeVisible();
 
     // 2.1.4 Ensure no console errors or network failures on page load
     page.on('console', msg => {
@@ -30,9 +31,10 @@ test.describe('Home Page Happy Path', () => {
     await page.goto('/');
 
     // 2.1.3 Verify basic navigation to other unauthenticated pages
-    await page.getByRole('link', { name: 'RSVP' }).click();
-    await expect(page).toHaveURL('/rsvp');
-    await expect(page.locator('h1', { hasText: '¿Vienes al Polwarth?' })).toBeVisible();
+    // Navigate to Partidos page instead (RSVP is now embedded)
+    await page.getByRole('link', { name: 'Partidos' }).click();
+    await expect(page).toHaveURL('/partidos');
+    await expect(page.locator('h1', { hasText: 'Partidos del Betis' })).toBeVisible();
 
     // Click the logo/home link instead of "Inicio" text
     await page.locator('header a[href="/"]').click();
