@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { MapPin, Heart, Coffee, Smile } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import RSVPWidget from './RSVPWidget';
 
 // Lazy load components that are below the fold
 const CommunityStats = dynamic(() => import('./CommunityStats'), {
@@ -98,36 +99,21 @@ export default function HeroCommunity() {
           <div className="relative">
             {/* Main community card */}
             <div className="bg-white rounded-lg p-8 shadow-xl border border-gray-200">
-              <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold text-betis-black mb-4 uppercase tracking-wide">NUESTROS MOMENTOS</h3>
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-betis-black mb-6 uppercase tracking-wide text-center">CONFIRMA TU ASISTENCIA</h3>
                 
-                {/* Photo grid in official style */}
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="bg-betis-green/10 rounded-lg aspect-square flex items-center justify-center border border-betis-green/20">
-                    <div className="text-center">
-                      <span className="text-4xl mb-2 block">📸</span>
-                      <span className="text-betis-green text-sm font-bold">CELEBRACIONES</span>
-                    </div>
-                  </div>
-                  <div className="bg-gray-100 rounded-lg aspect-square flex items-center justify-center border border-gray-200">
-                    <div className="text-center">
-                      <span className="text-4xl mb-2 block">🍺</span>
-                      <span className="text-gray-600 text-sm font-bold">ANTES DEL PARTIDO</span>
-                    </div>
-                  </div>
-                  <div className="bg-gray-100 rounded-lg aspect-square flex items-center justify-center border border-gray-200">
-                    <div className="text-center">
-                      <span className="text-4xl mb-2 block">⚽</span>
-                      <span className="text-gray-600 text-sm font-bold">CADA PARTIDO</span>
-                    </div>
-                  </div>
-                  <div className="bg-betis-green/10 rounded-lg aspect-square flex items-center justify-center border border-betis-green/20">
-                    <div className="text-center">
-                      <span className="text-4xl mb-2 block">🎉</span>
-                      <span className="text-betis-green text-sm font-bold">FAMÍLIA BÉTICA</span>
-                    </div>
-                  </div>
-                </div>
+                {/* RSVP Widget - Medium size */}
+                <RSVPWidget
+                  event={{
+                    id: undefined, // General RSVP for next match
+                    title: "Real Betis - Próximo Partido",
+                    date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Next week as default
+                    location: "Polwarth Tavern, Edinburgh",
+                    description: "Únete a la peña para el próximo partido del Betis"
+                  }}
+                  displayMode="inline"
+                  className="border-none shadow-none"
+                />
               </div>
 
               {/* Stats section - official style */}
