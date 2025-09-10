@@ -3,6 +3,14 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DashboardTabs from '@/components/DashboardTabs';
 
+// Mock global fetch to prevent network calls
+global.fetch = vi.fn(() =>
+  Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve({ success: true, data: { totalScore: 42 } }),
+  })
+) as any;
+
 // Mock Clerk components
 vi.mock('@clerk/nextjs', () => ({
   UserProfile: () => <div data-testid="user-profile">User Profile</div>,

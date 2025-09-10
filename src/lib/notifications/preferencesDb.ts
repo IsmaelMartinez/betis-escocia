@@ -37,6 +37,10 @@ export async function getUserNotificationPreferenceDb(userId: string, clerkToken
         // No record found - default to false for new users
         return false;
       }
+      if (error.code === 'PGRST301') {
+        // "No suitable key or wrong key type" - usually means no results for .single()
+        return false;
+      }
       if (error.code === '42501') {
         // Permission denied - return default false (database policy issue)
         console.warn('[NotificationPreferencesDb] Database permission issue, defaulting to false');

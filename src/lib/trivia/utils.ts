@@ -33,7 +33,7 @@ export async function checkDailyPlayStatus(
     const { success, data: existingScore, error: scoreError } = await getUserDailyTriviaScore(userId, authenticatedSupabase);
 
     if (!success) {
-      log.error('Failed to check daily trivia score in utility', scoreError, { userId });
+      log.error('Failed to check daily trivia score in utility', { userId, error: scoreError });
       return {
         hasPlayedToday: false,
         error: 'Failed to check daily play status'
@@ -161,6 +161,7 @@ export interface TriviaErrorContext {
   operation?: string;
   fallbackError?: string;
   aggregateError?: string;
+  errorCode?: string;
 }
 
 export class TriviaError extends Error {
