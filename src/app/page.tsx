@@ -2,6 +2,7 @@ import Link from 'next/link';
 import HeroCommunity from '@/components/HeroCommunity';
 import UpcomingMatchesWidget from '@/components/UpcomingMatchesWidget';
 import ClassificationWidget from '@/components/ClassificationWidget';
+import RSVPWidget from '@/components/RSVPWidget';
 import { FeatureWrapper } from '@/lib/featureProtection';
 
 export default function Home() {
@@ -27,6 +28,34 @@ export default function Home() {
                 <ClassificationWidget className="" />
               </FeatureWrapper>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* RSVP Section */}
+      <section className="py-16 bg-gradient-to-r from-betis-green to-betis-green-dark">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+              🍺 Confirma tu Asistencia
+            </h2>
+            <p className="text-lg text-betis-gold font-medium">
+              ¿Vienes al próximo partido? ¡Haz tu reserva en el Polwarth Tavern!
+            </p>
+          </div>
+          
+          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+            <RSVPWidget
+              event={{
+                id: undefined, // General RSVP for next match
+                title: "Real Betis - Próximo Partido",
+                date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Next week as default
+                location: "Polwarth Tavern, Edinburgh",
+                description: "Únete a la peña para el próximo partido del Betis"
+              }}
+              displayMode="inline"
+              className="border-none shadow-none"
+            />
           </div>
         </div>
       </section>

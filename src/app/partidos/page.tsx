@@ -1,6 +1,7 @@
 import { ApiErrorBoundary } from '@/components/ErrorBoundary';
 import BetisPositionWidget from '@/components/BetisPositionWidget';
 import AllDatabaseMatches from '@/components/AllDatabaseMatches';
+import RSVPWidget from '@/components/RSVPWidget';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,9 +29,24 @@ export default function MatchesPage() {
               </ApiErrorBoundary>
             </div>
             
-            {/* Sidebar - Betis Position Widget */}
+            {/* Sidebar - RSVP Widget and Position Widget */}
             <div className="lg:col-span-1">
-              <div className="sticky top-8">
+              <div className="sticky top-8 space-y-6">
+                {/* RSVP Widget for match-specific confirmations */}
+                <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                  <RSVPWidget
+                    event={{
+                      id: undefined, // Will be match-specific in future enhancement
+                      title: "Próximo Partido del Betis",
+                      date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Next week as default
+                      location: "Polwarth Tavern, Edinburgh",
+                      description: "Confirma tu asistencia para ver el partido con la peña"
+                    }}
+                    displayMode="inline"
+                    className="border-none shadow-none"
+                  />
+                </div>
+                
                 <BetisPositionWidget />
               </div>
             </div>
