@@ -1,11 +1,14 @@
+'use client';
+
 import Link from 'next/link';
 import HeroCommunity from '@/components/HeroCommunity';
 import UpcomingMatchesWidget from '@/components/UpcomingMatchesWidget';
 import ClassificationWidget from '@/components/ClassificationWidget';
-import RSVPWidget from '@/components/RSVPWidget';
+import RSVPModal, { useRSVPModal } from '@/components/RSVPModal';
 import { FeatureWrapper } from '@/lib/featureProtection';
 
 export default function Home() {
+  const { isOpen, openModal, closeModal } = useRSVPModal();
   
   return (
     <>
@@ -44,18 +47,19 @@ export default function Home() {
             </p>
           </div>
           
-          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-            <RSVPWidget
-              event={{
-                id: undefined, // General RSVP for next match
-                title: "Real Betis - Próximo Partido",
-                date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Next week as default
-                location: "Polwarth Tavern, Edinburgh",
-                description: "Únete a la peña para el próximo partido del Betis"
-              }}
-              displayMode="inline"
-              className="border-none shadow-none"
-            />
+          <div className="text-center">
+            <button
+              onClick={openModal}
+              className="bg-betis-gold hover:bg-betis-gold-dark text-betis-black px-12 py-6 rounded-2xl font-black text-2xl shadow-2xl hover:shadow-betis-gold/25 transition-all duration-300 transform hover:scale-105 group"
+            >
+              <span className="flex items-center justify-center">
+                ✅ Confirmar Asistencia
+              </span>
+            </button>
+            
+            <p className="text-white/80 text-sm mt-4">
+              Haz clic para abrir el formulario de confirmación
+            </p>
           </div>
         </div>
       </section>
@@ -156,6 +160,20 @@ export default function Home() {
             </div>
         </div>
       </section>
+
+      {/* RSVP Modal */}
+      <RSVPModal
+        isOpen={isOpen}
+        onClose={closeModal}
+        event={{
+          id: undefined, // General RSVP for next match
+          title: "Real Betis - Próximo Partido",
+          date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Next week as default
+          location: "Polwarth Tavern, Edinburgh",
+          description: "Únete a la peña para el próximo partido del Betis"
+        }}
+        modalTitle="¿Vienes al próximo partido?"
+      />
     </>
   );
 }
