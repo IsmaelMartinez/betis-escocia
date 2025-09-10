@@ -51,6 +51,21 @@ This document summarizes the reorganization and consolidation of documentation f
 - **Clearer Focus**: Easier to identify current priorities.
 - **Preserved History**: Important historical documentation is retained in a dedicated archive.
 
+### Branch Deployments & Testing Implementation (September 2025)
+- **Moved `tasks/tasks-prd-branch-deployments-testing.md` to `docs/historical/completed-tasks/tasks-prd-branch-deployments-testing.md`**
+- **Moved `tasks/prd-branch-deployments-testing.md` to `docs/historical/implemented-features/prd-branch-deployments-testing.md`**
+
+### Trivia System Simplification (September 2025)
+- **Moved `tasks/tasks-prd-trivia-system-simplification.md` to `docs/historical/completed-tasks/tasks-prd-trivia-system-simplification.md`**
+
+**Rationale**: Branch deployment infrastructure has been successfully implemented with Vercel configuration and GitHub Actions workflows. Trivia system has been completely streamlined with 91% state variable reduction and 60% API endpoint consolidation while maintaining 100% functionality.
+
+### Simplified Admin Notifications (September 2025)
+- **Moved `tasks/tasks-prd-simplified-admin-notifications.md` to `docs/historical/completed-tasks/tasks-prd-simplified-admin-notifications.md`**
+- **Moved `tasks/prd-simplified-admin-notifications.md` to `docs/historical/implemented-features/prd-simplified-admin-notifications.md`**
+
+**Rationale**: OneSignal-based notification system has been implemented and tested. The system is fully functional but requires a custom domain for production use (Clerk limitation). Implementation is complete and ready for activation once domain is configured.
+
 ## Next Steps
 - Continue to move completed PRDs and task lists to the `docs/historical/` directory as features are implemented.
 - Regularly review and update this document to reflect ongoing documentation reorganization efforts.

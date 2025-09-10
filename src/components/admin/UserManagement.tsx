@@ -14,15 +14,17 @@ import { DATE_FORMAT } from '@/lib/constants/dateFormats';
 
 interface User {
   id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: string;
-  createdAt: string;
-  lastSignInAt: string | null;
-  imageUrl: string;
-  banned: boolean;
-  emailVerified: boolean;
+  emailAddresses: Array<{ emailAddress: string }>;
+  firstName: string | null;
+  lastName: string | null;
+  publicMetadata: {
+    role?: string;
+    banned?: boolean;
+  };
+  createdAt: number;
+  lastSignInAt: number | null;
+  imageUrl?: string;
+  emailVerified?: boolean;
 }
 
 interface UserManagementProps {
@@ -179,7 +181,8 @@ export default function UserManagement({ className = '' }: UserManagementProps) 
     }
   };
 
-  const getRoleBadge = (role: string) => {
+  const getRoleBadge = (user: User) => {
+    const role = user.publicMetadata?.role || ROLES.USER;
     switch (role) {
       case ROLES.ADMIN:
         return (
@@ -207,7 +210,7 @@ export default function UserManagement({ className = '' }: UserManagementProps) 
   };
 
   const getStatusBadge = (user: User) => {
-    if (user.banned) {
+    if (user.publicMetadata?.banned) {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
           <Ban className="w-3 h-3 mr-1" />
@@ -306,22 +309,22 @@ export default function UserManagement({ className = '' }: UserManagementProps) 
                         <Image
                           className="h-10 w-10 rounded-full"
                           src={user.imageUrl || '/images/default-avatar.png'}
-                          alt={`${user.firstName} ${user.lastName}`}
+                          alt={`${user.firstName || ''} ${user.lastName || ''}`}
                           width={40}
                           height={40}
                         />
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
-                            {user.firstName} {user.lastName}
+                            {user.firstName || ''} {user.lastName || ''}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {user.email}
+                            {user.emailAddresses[0]?.emailAddress || ''}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {getRoleBadge(user.role)}
+                      {getRoleBadge(user)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(user)}
@@ -337,7 +340,7 @@ export default function UserManagement({ className = '' }: UserManagementProps) 
                         {/* Role Management */}
                         <div className="flex space-x-1">
                           {/* Make Admin */}
-                          {user.role !== ROLES.ADMIN && (
+                          {(user.publicMetadata?.role || ROLES.USER) !== ROLES.ADMIN && (
                             <button
                               onClick={() => assignRole(user.id, ROLES.ADMIN)}
                               disabled={updatingUser === user.id}
@@ -350,7 +353,7 @@ export default function UserManagement({ className = '' }: UserManagementProps) 
                           )}
                           
                           {/* Make Moderator */}
-                          {user.role !== ROLES.MODERATOR && user.role !== ROLES.ADMIN && (
+                          {(user.publicMetadata?.role || ROLES.USER) !== ROLES.MODERATOR && (user.publicMetadata?.role || ROLES.USER) !== ROLES.ADMIN && (
                             <button
                               onClick={() => assignRole(user.id, ROLES.MODERATOR)}
                               disabled={updatingUser === user.id}
@@ -363,7 +366,7 @@ export default function UserManagement({ className = '' }: UserManagementProps) 
                           )}
                           
                           {/* Remove Special Role */}
-                          {(user.role === ROLES.ADMIN || user.role === ROLES.MODERATOR) && (
+                          {((user.publicMetadata?.role || ROLES.USER) === ROLES.ADMIN || (user.publicMetadata?.role || ROLES.USER) === ROLES.MODERATOR) && (
                             <button
                               onClick={() => removeRole(user.id)}
                               disabled={updatingUser === user.id}
@@ -378,17 +381,17 @@ export default function UserManagement({ className = '' }: UserManagementProps) 
 
                         {/* Ban/Unban toggle */}
                         <button
-                          onClick={() => updateUser(user.id, { banned: !user.banned })}
+                          onClick={() => updateUser(user.id, { banned: !(user.publicMetadata?.banned || false) })}
                           disabled={updatingUser === user.id}
                           className={`inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white transition-colors ${
-                            user.banned 
+                            user.publicMetadata?.banned 
                               ? 'bg-green-600 hover:bg-green-700' 
                               : 'bg-yellow-600 hover:bg-yellow-700'
                           } disabled:opacity-50`}
-                          title={user.banned ? 'Desbloquear usuario' : 'Bloquear usuario'}
+                          title={user.publicMetadata?.banned ? 'Desbloquear usuario' : 'Bloquear usuario'}
                         >
-                          {user.banned ? <CheckCircle className="w-3 h-3 mr-1" /> : <Ban className="w-3 h-3 mr-1" />}
-                          {user.banned ? 'Desbloquear' : 'Bloquear'}
+                          {user.publicMetadata?.banned ? <CheckCircle className="w-3 h-3 mr-1" /> : <Ban className="w-3 h-3 mr-1" />}
+                          {user.publicMetadata?.banned ? 'Desbloquear' : 'Bloquear'}
                         </button>
 
                         {/* Delete user */}
