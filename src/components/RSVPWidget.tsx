@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { User, Mail, MessageSquare, Users, Calendar, MapPin, Clock } from 'lucide-react';
 import { FormSuccessMessage, FormErrorMessage, FormLoadingMessage } from '@/components/MessageComponent';
 import Field, { ValidatedInput, ValidatedTextarea } from '@/components/Field';
@@ -88,6 +88,28 @@ export default function RSVPWidget({
   const currentRSVP = propCurrentRSVP !== undefined ? propCurrentRSVP : hookCurrentRSVP;
   const attendeeCount = propAttendeeCount !== undefined ? propAttendeeCount : hookAttendeeCount;
   
+  // Create initial form data with user information pre-filled for authenticated users
+  const initialFormData = useMemo(() => {
+    let initialName = '';
+    let initialEmail = '';
+    
+    // Pre-fill with user data if authenticated and available
+    if (isAuthEnabled && user) {
+      initialName = user.firstName && user.lastName 
+        ? `${user.firstName} ${user.lastName}` 
+        : user.firstName || '';
+      initialEmail = user.emailAddresses[0]?.emailAddress || '';
+    }
+    
+    return {
+      name: initialName,
+      email: initialEmail,
+      attendees: currentRSVP?.attendees || 1,
+      message: currentRSVP?.message || '',
+      whatsappInterest: false
+    };
+  }, [isAuthEnabled, user, currentRSVP]);
+  
   const {
     data: formData,
     errors,
@@ -96,13 +118,7 @@ export default function RSVPWidget({
     touchField,
     validateAll,
     reset
-  } = useFormValidation({
-    name: '',
-    email: '',
-    attendees: currentRSVP?.attendees || 1,
-    message: currentRSVP?.message || '',
-    whatsappInterest: false
-  }, rsvpValidationRules);
+  } = useFormValidation(initialFormData, rsvpValidationRules);
   
   // Use hook states when data fetching is enabled, fallback to local state for Storybook/testing
   const [localIsSubmitting, setLocalIsSubmitting] = useState(false);
@@ -115,19 +131,26 @@ export default function RSVPWidget({
   const submitStatus = disableDataFetching ? localSubmitStatus : (hookSubmitError ? 'error' : 'idle');
   const errorMessage = disableDataFetching ? localErrorMessage : (hookSubmitError || hookError || '');
   const isLoading = disableDataFetching ? false : hookIsLoading;
-  
-  // Pre-fill form with user data when authenticated
+
+  // Update form data when user becomes available (but only if fields are still empty)
   useEffect(() => {
-    if (isAuthEnabled && user) {
+    if (isAuthEnabled && user && (!formData.name || !formData.email)) {
       const userName = user.firstName && user.lastName 
         ? `${user.firstName} ${user.lastName}` 
         : user.firstName || '';
       const userEmail = user.emailAddresses[0]?.emailAddress || '';
       
-      if (userName) updateField('name', userName);
-      if (userEmail) updateField('email', userEmail);
+      // Only update if the field is currently empty (don't overwrite user edits)
+      if (userName && !formData.name) {
+        updateField('name', userName);
+      }
+      if (userEmail && !formData.email) {
+        updateField('email', userEmail);
+      }
     }
-  }, [user, isAuthEnabled, updateField]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthEnabled, user]); // Only depend on user auth changes, not form data to avoid infinite loops
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -351,7 +374,6 @@ export default function RSVPWidget({
               placeholder="Tu nombre y apellido"
               error={errors.name}
               touched={touched.name}
-              disabled={!!(isAuthEnabled && user)}
               data-testid="name-input"
             />
           </Field>
@@ -376,7 +398,6 @@ export default function RSVPWidget({
               placeholder="tu@email.com"
               error={errors.email}
               touched={touched.email}
-              disabled={!!(isAuthEnabled && user)}
               data-testid="email-input"
             />
           </Field>
