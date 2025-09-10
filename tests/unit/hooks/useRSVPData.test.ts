@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { useRSVPData } from './useRSVPData';
+import { useRSVPData } from '@/hooks/useRSVPData';
 import { EventDetails } from '@/components/RSVPWidget';
 
 // Mock @clerk/nextjs
@@ -9,7 +9,11 @@ const mockUser = {
   firstName: 'Test',
   lastName: 'User',
   emailAddresses: [{ emailAddress: 'test@example.com' }],
-};
+  publicMetadata: {},
+  imageUrl: '',
+  createdAt: new Date(),
+  lastSignInAt: new Date(),
+} as any; // Use any to avoid full UserResource interface requirements
 
 vi.mock('@clerk/nextjs', () => ({
   useUser: vi.fn(() => ({ user: null })),
@@ -37,7 +41,16 @@ describe('useRSVPData', () => {
     mockUseUser.mockReturnValue({ user: null, isLoaded: true, isSignedIn: false });
     
     // Default successful responses
-    mockFetch.mockImplementation((url: string) => {
+    mockFetch.mockImplementation((input: RequestInfo | URL) => {
+      let url: string;
+      if (typeof input === 'string') {
+        url = input;
+      } else if (input instanceof URL) {
+        url = input.toString();
+      } else {
+        url = input.url;
+      }
+
       if (url.includes('/api/rsvp/attendees')) {
         return Promise.resolve({
           ok: true,
@@ -51,7 +64,7 @@ describe('useRSVPData', () => {
           json: () => Promise.resolve({ error: 'Not found' }),
         });
       }
-      if (url.includes('/api/rsvp')) {
+      if (url.includes('/api/rsvp') && !url.includes('/attendees') && !url.includes('/status')) {
         return Promise.resolve({
           ok: true,
           json: () => Promise.resolve({ 
@@ -62,7 +75,7 @@ describe('useRSVPData', () => {
           }),
         });
       }
-      return Promise.reject(new Error('Unknown URL'));
+      return Promise.reject(new Error('Unknown URL: ' + url));
     });
   });
 
@@ -145,7 +158,16 @@ describe('useRSVPData', () => {
         isSignedIn: true 
       });
       
-      mockFetch.mockImplementation((url: string) => {
+      mockFetch.mockImplementation((input: RequestInfo | URL) => {
+        let url: string;
+        if (typeof input === 'string') {
+          url = input;
+        } else if (input instanceof URL) {
+          url = input.toString();
+        } else {
+          url = input.url;
+        }
+
         if (url.includes('/api/rsvp/status')) {
           return Promise.resolve({
             ok: true,
@@ -164,7 +186,7 @@ describe('useRSVPData', () => {
             json: () => Promise.resolve({ count: 12 }),
           });
         }
-        return Promise.reject(new Error('Unknown URL'));
+        return Promise.reject(new Error('Unknown URL: ' + url));
       });
 
       const { result } = renderHook(() => 

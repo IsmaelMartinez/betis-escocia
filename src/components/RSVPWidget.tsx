@@ -222,7 +222,7 @@ export default function RSVPWidget({
     }).format(date);
   };
 
-  const getStatusText = (status: string) => {
+  const getStatusText = () => {
     return 'Confirmado';
   };
 
@@ -300,7 +300,7 @@ export default function RSVPWidget({
       {currentRSVP && (
         <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
           <p className="text-sm text-green-800">
-            <strong>Estado actual:</strong> {getStatusText(currentRSVP.status)} 
+            <strong>Estado actual:</strong> {getStatusText()} 
             {currentRSVP.attendees > 1 && ` (${currentRSVP.attendees} personas)`}
           </p>
         </div>

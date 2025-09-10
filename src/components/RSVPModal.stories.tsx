@@ -74,6 +74,7 @@ const ModalWrapper = ({ isOpen: initialOpen = false, ...props }) => {
       
       <RSVPModal
         {...props}
+        event={sampleEvent}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
       />
@@ -298,7 +299,7 @@ export const NoBackdropClose: Story = {
       <div>
         <div className="p-8 bg-gray-100 min-h-screen">
           <h1 className="text-2xl font-bold mb-4">Page Content</h1>
-          <p className="text-gray-600">Click backdrop - modal won't close</p>
+          <p className="text-gray-600">Click backdrop - modal won&apos;t close</p>
         </div>
         <RSVPModal {...args} />
       </div>
@@ -322,7 +323,7 @@ export const NoEscapeClose: Story = {
       <div>
         <div className="p-8 bg-gray-100 min-h-screen">
           <h1 className="text-2xl font-bold mb-4">Page Content</h1>
-          <p className="text-gray-600">Press Escape - modal won't close</p>
+          <p className="text-gray-600">Press Escape - modal won&apos;t close</p>
         </div>
         <RSVPModal {...args} />
       </div>

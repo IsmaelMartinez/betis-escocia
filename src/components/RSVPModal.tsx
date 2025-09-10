@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { X } from 'lucide-react';
-import RSVPWidget, { EventDetails, RSVPWidgetProps } from './RSVPWidget';
+import RSVPWidget, { RSVPWidgetProps } from './RSVPWidget';
 
 export interface RSVPModalProps extends Omit<RSVPWidgetProps, 'displayMode'> {
   /** Whether the modal is open */
@@ -44,6 +44,14 @@ export default function RSVPModal({
   const modalRef = useRef<HTMLDivElement>(null);
   const [isAnimating, setIsAnimating] = useState(false);
 
+  const handleClose = useCallback(() => {
+    setIsAnimating(true);
+    setTimeout(() => {
+      setIsAnimating(false);
+      onClose();
+    }, 200); // Match animation duration
+  }, [onClose]);
+
   // Handle escape key
   useEffect(() => {
     if (!isOpen || disableEscapeKey) return;
@@ -56,7 +64,7 @@ export default function RSVPModal({
 
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
-  }, [isOpen, disableEscapeKey]);
+  }, [isOpen, disableEscapeKey, handleClose]);
 
   // Focus management
   useEffect(() => {
@@ -83,14 +91,6 @@ export default function RSVPModal({
       };
     }
   }, [isOpen]);
-
-  const handleClose = () => {
-    setIsAnimating(true);
-    setTimeout(() => {
-      setIsAnimating(false);
-      onClose();
-    }, 200); // Match animation duration
-  };
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (disableBackdropClick) return;

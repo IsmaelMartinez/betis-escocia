@@ -1,7 +1,7 @@
 import { createApiHandler } from '@/lib/apiUtils';
 import { supabase } from '@/lib/supabase';
 import { getCurrentUpcomingMatch } from '@/lib/matchUtils';
-import { formatISO } from 'date-fns';
+// formatISO not needed for this endpoint
 import { log } from '@/lib/logger';
 import { StandardErrors } from '@/lib/standardErrors';
 
@@ -119,7 +119,9 @@ export const GET = createApiHandler({
     
     // Get user info from context (if authenticated)
     const userId = context.user?.id;
-    const userEmail = context.user?.primaryEmailAddress?.emailAddress || emailParam;
+    // Note: context.user from createApiHandler doesn't have primaryEmailAddress
+    // Use emailParam for anonymous lookups
+    const userEmail = emailParam || undefined;
     
     return await getRSVPStatus(queryData, userId, userEmail);
   }

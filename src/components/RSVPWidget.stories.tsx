@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import RSVPWidget, { EventDetails, RSVPWidgetProps } from './RSVPWidget';
+import RSVPWidget, { EventDetails } from './RSVPWidget';
 import { fn, userEvent, within } from 'storybook/test';
 import { setMockUser, resetClerkMocks } from '@/lib/clerk/__mocks__/storybook';
 

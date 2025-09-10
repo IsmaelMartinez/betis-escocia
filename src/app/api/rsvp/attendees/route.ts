@@ -90,9 +90,9 @@ async function getAttendeeCount(queryData: { match?: number }) {
     },
     match: {
       id: actualMatchId,
-      opponent: currentMatch.opponent,
+      opponent: currentMatch?.opponent || 'Unknown',
       date: matchDate,
-      competition: 'competition' in currentMatch ? currentMatch.competition : 'LaLiga'
+      competition: (currentMatch && 'competition' in currentMatch) ? currentMatch.competition : 'LaLiga'
     }
   };
 }
