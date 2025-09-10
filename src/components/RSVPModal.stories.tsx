@@ -114,6 +114,7 @@ const meta: Meta<typeof RSVPModal> = {
     onClose: fn(),
     onSuccess: fn(),
     onError: fn(),
+    disableDataFetching: true, // Disable hook data fetching in Storybook
   },
   decorators: [
     (Story) => {

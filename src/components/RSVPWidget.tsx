@@ -7,6 +7,7 @@ import Field, { ValidatedInput, ValidatedTextarea } from '@/components/Field';
 import { useFormValidation, commonValidationRules } from '@/lib/formValidation';
 import { useUser } from '@clerk/nextjs';
 import { isFeatureEnabled } from '@/lib/featureFlags';
+import { useRSVPData } from '@/hooks/useRSVPData';
 
 export interface EventDetails {
   id?: number;
@@ -25,9 +26,9 @@ export interface RSVPWidgetProps {
   showEventDetails?: boolean;
   /** Show attendee count */
   showAttendeeCount?: boolean;
-  /** Current attendee count */
+  /** Override attendee count (if not provided, will fetch from API) */
   attendeeCount?: number;
-  /** User's current RSVP status if any */
+  /** Override current RSVP status (if not provided, will fetch from API for authenticated users) */
   currentRSVP?: {
     status: 'confirmed';
     attendees: number;
@@ -41,6 +42,8 @@ export interface RSVPWidgetProps {
   className?: string;
   /** Compact mode for smaller spaces */
   compact?: boolean;
+  /** Disable hook data fetching (for Storybook/testing) */
+  disableDataFetching?: boolean;
 }
 
 const rsvpValidationRules = {
@@ -55,15 +58,35 @@ export default function RSVPWidget({
   displayMode = 'inline',
   showEventDetails = true,
   showAttendeeCount = true,
-  attendeeCount = 0,
-  currentRSVP = null,
+  attendeeCount: propAttendeeCount,
+  currentRSVP: propCurrentRSVP,
   onSuccess,
   onError,
   className = '',
-  compact = false
+  compact = false,
+  disableDataFetching = false
 }: RSVPWidgetProps) {
   const { user } = useUser();
   const isAuthEnabled = isFeatureEnabled('show-clerk-auth');
+  
+  // Use hook for data fetching when not disabled (e.g., in Storybook)
+  const {
+    currentRSVP: hookCurrentRSVP,
+    attendeeCount: hookAttendeeCount,
+    isLoading: hookIsLoading,
+    isSubmitting: hookIsSubmitting,
+    error: hookError,
+    submitError: hookSubmitError,
+    submitRSVP,
+    clearErrors
+  } = useRSVPData({ 
+    event, 
+    enabled: !disableDataFetching 
+  });
+  
+  // Use prop values if provided, otherwise use hook values
+  const currentRSVP = propCurrentRSVP !== undefined ? propCurrentRSVP : hookCurrentRSVP;
+  const attendeeCount = propAttendeeCount !== undefined ? propAttendeeCount : hookAttendeeCount;
   
   const {
     data: formData,
@@ -81,10 +104,17 @@ export default function RSVPWidget({
     whatsappInterest: false
   }, rsvpValidationRules);
   
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
+  // Use hook states when data fetching is enabled, fallback to local state for Storybook/testing
+  const [localIsSubmitting, setLocalIsSubmitting] = useState(false);
+  const [localSubmitStatus, setLocalSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [localErrorMessage, setLocalErrorMessage] = useState('');
   const [isExpanded, setIsExpanded] = useState(!compact);
+  
+  // Determine which states to use
+  const isSubmitting = disableDataFetching ? localIsSubmitting : hookIsSubmitting;
+  const submitStatus = disableDataFetching ? localSubmitStatus : (hookSubmitError ? 'error' : 'idle');
+  const errorMessage = disableDataFetching ? localErrorMessage : (hookSubmitError || hookError || '');
+  const isLoading = disableDataFetching ? false : hookIsLoading;
   
   // Pre-fill form with user data when authenticated
   useEffect(() => {
@@ -107,44 +137,69 @@ export default function RSVPWidget({
       return;
     }
     
-    setIsSubmitting(true);
-    setSubmitStatus('idle');
-
-    try {
-      const apiUrl = event.id ? `/api/rsvp?match=${event.id}` : '/api/rsvp';
-      const submissionData = {
-        ...formData,
-        matchId: event.id,
-        ...(isAuthEnabled && user ? { userId: user.id } : {})
-      };
+    if (!disableDataFetching) {
+      // Use the hook for submission
+      clearErrors(); // Clear any previous errors
       
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submissionData),
+      const result = await submitRSVP({
+        name: formData.name as string,
+        email: formData.email as string,
+        attendees: formData.attendees as number,
+        message: formData.message as string,
+        whatsappInterest: formData.whatsappInterest as boolean,
+        matchId: event.id,
       });
 
-      if (!response.ok) {
-        throw new Error('Error al enviar la confirmación');
+      if (result.success) {
+        reset();
+        // Call success callback after a delay
+        setTimeout(() => {
+          onSuccess?.();
+        }, 2000);
+      } else {
+        onError?.(result.message || 'Error desconocido');
       }
+    } else {
+      // Fallback for Storybook/testing - use local state management
+      setLocalIsSubmitting(true);
+      setLocalSubmitStatus('idle');
 
-      setSubmitStatus('success');
-      reset();
-      
-      // Call success callback after a delay
-      setTimeout(() => {
-        onSuccess?.();
-      }, 2000);
+      try {
+        const apiUrl = event.id ? `/api/rsvp?match=${event.id}` : '/api/rsvp';
+        const submissionData = {
+          ...formData,
+          matchId: event.id,
+          ...(isAuthEnabled && user ? { userId: user.id } : {})
+        };
+        
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(submissionData),
+        });
 
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Error desconocido';
-      setSubmitStatus('error');
-      setErrorMessage(errorMsg);
-      onError?.(errorMsg);
-    } finally {
-      setIsSubmitting(false);
+        if (!response.ok) {
+          throw new Error('Error al enviar la confirmación');
+        }
+
+        setLocalSubmitStatus('success');
+        reset();
+        
+        // Call success callback after a delay
+        setTimeout(() => {
+          onSuccess?.();
+        }, 2000);
+
+      } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : 'Error desconocido';
+        setLocalSubmitStatus('error');
+        setLocalErrorMessage(errorMsg);
+        onError?.(errorMsg);
+      } finally {
+        setLocalIsSubmitting(false);
+      }
     }
   };
 
@@ -171,7 +226,9 @@ export default function RSVPWidget({
     return 'Confirmado';
   };
 
-  if (submitStatus === 'success') {
+  const showSuccessState = disableDataFetching ? localSubmitStatus === 'success' : false; // Hook handles success internally
+  
+  if (showSuccessState) {
     return (
       <div className={`${displayMode === 'modal' ? 'p-6' : ''} ${className}`}>
         <FormSuccessMessage
@@ -179,6 +236,17 @@ export default function RSVPWidget({
           message="Gracias por confirmar tu asistencia. Te esperamos en el Polwarth Tavern. Recordatorio: Llega 15 minutos antes del partido para asegurar sitio."
           className="text-center"
         />
+      </div>
+    );
+  }
+
+  // Show loading state when hook is initially loading data
+  if (isLoading && !disableDataFetching) {
+    return (
+      <div className={`bg-white rounded-2xl shadow-xl border border-gray-200 p-6 ${className}`}>
+        <div className="text-center">
+          <FormLoadingMessage message="Cargando datos..." className="text-gray-600" />
+        </div>
       </div>
     );
   }

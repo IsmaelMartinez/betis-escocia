@@ -35,15 +35,15 @@
   - [x] 1.7 Test all component variations and edge cases in Storybook environment
   - [x] 1.8 **UPDATED**: Simplify to confirmation-only (remove yes/maybe/no options) per user request
 
-- [ ] 2.0 Core Widget Implementation
-  - [ ] 2.1 Implement RSVP status selection (Yes, No, Maybe) with clear visual feedback
-  - [ ] 2.2 Add optional comment field with character limit and validation
-  - [ ] 2.3 Create form validation for required fields (name, email for anonymous users)
-  - [ ] 2.4 Implement loading states during form submission and data fetching
-  - [ ] 2.5 Add error handling with user-friendly error messages
-  - [ ] 2.6 Display current RSVP status for authenticated users who have previously responded
-  - [ ] 2.7 Show real-time attendee count for the event
-  - [ ] 2.8 Add WhatsApp interest checkbox to maintain existing functionality
+- [x] 2.0 Core Widget Implementation
+  - [x] 2.1 **UPDATED**: Implement confirmation-only functionality (removed status selection per user request)
+  - [x] 2.2 Add optional comment field with character limit and validation
+  - [x] 2.3 Create form validation for required fields (name, email for anonymous users)
+  - [x] 2.4 Implement loading states during form submission and data fetching
+  - [x] 2.5 Add error handling with user-friendly error messages and retry mechanisms
+  - [x] 2.6 Display current RSVP status for authenticated users who have previously responded
+  - [x] 2.7 Show real-time attendee count for the event via useRSVPData hook
+  - [x] 2.8 Add WhatsApp interest checkbox to maintain existing functionality
 
 - [ ] 3.0 Modal Functionality
   - [ ] 3.1 Implement modal trigger mechanisms (button clicks, programmatic opening)

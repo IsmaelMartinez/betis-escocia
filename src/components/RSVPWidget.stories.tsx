@@ -80,6 +80,7 @@ const meta: Meta<typeof RSVPWidget> = {
     event: sampleEvent,
     onSuccess: fn(),
     onError: fn(),
+    disableDataFetching: true, // Disable hook data fetching in Storybook
   },
   decorators: [
     (Story) => {
