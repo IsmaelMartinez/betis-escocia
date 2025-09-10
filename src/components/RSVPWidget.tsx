@@ -29,7 +29,7 @@ export interface RSVPWidgetProps {
   attendeeCount?: number;
   /** User's current RSVP status if any */
   currentRSVP?: {
-    status: 'yes' | 'no' | 'maybe';
+    status: 'confirmed';
     attendees: number;
     message?: string;
   } | null;
@@ -76,7 +76,6 @@ export default function RSVPWidget({
   } = useFormValidation({
     name: '',
     email: '',
-    status: currentRSVP?.status || 'yes' as 'yes' | 'no' | 'maybe',
     attendees: currentRSVP?.attendees || 1,
     message: currentRSVP?.message || '',
     whatsappInterest: false
@@ -169,12 +168,7 @@ export default function RSVPWidget({
   };
 
   const getStatusText = (status: string) => {
-    switch (status) {
-      case 'yes': return 'Sí, estaré allí';
-      case 'no': return 'No podré ir';
-      case 'maybe': return 'Quizás pueda ir';
-      default: return 'Sí, estaré allí';
-    }
+    return 'Confirmado';
   };
 
   if (submitStatus === 'success') {
@@ -236,8 +230,8 @@ export default function RSVPWidget({
 
       {/* Current RSVP Status */}
       {currentRSVP && (
-        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-blue-800">
+        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+          <p className="text-sm text-green-800">
             <strong>Estado actual:</strong> {getStatusText(currentRSVP.status)} 
             {currentRSVP.attendees > 1 && ` (${currentRSVP.attendees} personas)`}
           </p>
@@ -268,29 +262,6 @@ export default function RSVPWidget({
       {/* Form */}
       {(!compact || isExpanded) && (
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* RSVP Status */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              ¿Vas a venir?
-            </label>
-            <div className="space-y-2">
-              {(['yes', 'maybe', 'no'] as const).map((status) => (
-                <label key={status} className="flex items-center">
-                  <input
-                    type="radio"
-                    name="status"
-                    value={status}
-                    checked={formData.status === status}
-                    onChange={(e) => handleInputChange('status', e.target.value)}
-                    className="h-4 w-4 text-betis-green border-gray-300 focus:ring-betis-green"
-                  />
-                  <span className="ml-2 text-sm text-gray-700">
-                    {getStatusText(status)}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </div>
 
           {/* Name */}
           <Field
@@ -343,32 +314,30 @@ export default function RSVPWidget({
           </Field>
 
           {/* Number of attendees - Number input instead of dropdown */}
-          {formData.status !== 'no' && (
-            <Field
-              label="¿Cuántos venís?"
-              htmlFor="rsvp-attendees"
+          <Field
+            label="¿Cuántos venís?"
+            htmlFor="rsvp-attendees"
+            required
+            icon={<Users className="h-4 w-4" />}
+            error={errors.attendees}
+            touched={touched.attendees}
+          >
+            <ValidatedInput
+              type="number"
+              id="rsvp-attendees"
+              name="attendees"
               required
-              icon={<Users className="h-4 w-4" />}
+              min={1}
+              max={50}
+              value={formData.attendees as number}
+              onChange={(e) => handleInputChange('attendees', parseInt(e.target.value) || 1)}
+              onBlur={() => handleBlur('attendees')}
               error={errors.attendees}
               touched={touched.attendees}
-            >
-              <ValidatedInput
-                type="number"
-                id="rsvp-attendees"
-                name="attendees"
-                required
-                min={1}
-                max={50}
-                value={formData.attendees as number}
-                onChange={(e) => handleInputChange('attendees', parseInt(e.target.value) || 1)}
-                onBlur={() => handleBlur('attendees')}
-                error={errors.attendees}
-                touched={touched.attendees}
-                data-testid="attendees-input"
-                placeholder="Número de personas"
-              />
-            </Field>
-          )}
+              data-testid="attendees-input"
+              placeholder="Número de personas"
+            />
+          </Field>
 
           {/* Message */}
           <Field

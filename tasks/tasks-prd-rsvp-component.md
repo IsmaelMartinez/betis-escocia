@@ -20,18 +20,20 @@
 - Replace dropdown attendee selection (1-5+) with number input field
 - Remove RSVP menu item but preserve confirmation page functionality  
 - Component must support both modal and inline display modes
+- **SIMPLIFIED**: Component only handles confirmations - no "maybe" or "no" options, only "confirm attendance"
 - Maintain existing RSVP database schema and API endpoints where possible
 
 ## Tasks
 
-- [ ] 1.0 Storybook Component Development
-  - [ ] 1.1 Create RSVPWidget Storybook stories with various states (loading, success, error, authenticated vs anonymous)
-  - [ ] 1.2 Build RSVPWidget component structure with proper TypeScript interfaces and props
-  - [ ] 1.3 Implement basic widget UI with event details display (date, time, location)
-  - [ ] 1.4 Add number input field for attendee count (replace current 1-5+ dropdown)
-  - [ ] 1.5 Create RSVPModal Storybook stories showcasing modal behavior and responsive design
-  - [ ] 1.6 Build RSVPModal component with overlay, backdrop, and close functionality
-  - [ ] 1.7 Test all component variations and edge cases in Storybook environment
+- [x] 1.0 Storybook Component Development
+  - [x] 1.1 Create RSVPWidget Storybook stories with various states (loading, success, error, authenticated vs anonymous)
+  - [x] 1.2 Build RSVPWidget component structure with proper TypeScript interfaces and props
+  - [x] 1.3 Implement basic widget UI with event details display (date, time, location)
+  - [x] 1.4 Add number input field for attendee count (replace current 1-5+ dropdown)
+  - [x] 1.5 Create RSVPModal Storybook stories showcasing modal behavior and responsive design
+  - [x] 1.6 Build RSVPModal component with overlay, backdrop, and close functionality
+  - [x] 1.7 Test all component variations and edge cases in Storybook environment
+  - [x] 1.8 **UPDATED**: Simplify to confirmation-only (remove yes/maybe/no options) per user request
 
 - [ ] 2.0 Core Widget Implementation
   - [ ] 2.1 Implement RSVP status selection (Yes, No, Maybe) with clear visual feedback

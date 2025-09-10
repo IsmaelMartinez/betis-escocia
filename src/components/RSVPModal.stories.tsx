@@ -204,7 +204,7 @@ export const WithExistingRSVP: Story = {
     showAttendeeCount: true,
     attendeeCount: 22,
     currentRSVP: {
-      status: 'yes',
+      status: 'confirmed',
       attendees: 3,
       message: 'Confirmado con la familia!'
     },

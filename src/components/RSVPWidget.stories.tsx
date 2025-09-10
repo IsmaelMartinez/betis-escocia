@@ -138,7 +138,7 @@ export const WithCurrentRSVP: Story = {
     showAttendeeCount: true,
     attendeeCount: 18,
     currentRSVP: {
-      status: 'yes',
+      status: 'confirmed',
       attendees: 2,
       message: 'Vamos con muchas ganas!'
     },
@@ -357,17 +357,17 @@ export const ValidationErrors: Story = {
   },
 };
 
-// Different RSVP Status Stories
-export const RSVPStatusMaybe: Story = {
+// Updated RSVP Confirmation Story
+export const UpdateExistingRSVP: Story = {
   args: {
     event: sampleEvent,
     showEventDetails: true,
     showAttendeeCount: true,
-    attendeeCount: 12,
+    attendeeCount: 15,
     currentRSVP: {
-      status: 'maybe',
-      attendees: 1,
-      message: 'Depende del trabajo'
+      status: 'confirmed',
+      attendees: 2,
+      message: 'Ya confirmado anteriormente'
     },
     displayMode: 'inline',
   },
@@ -381,34 +381,6 @@ export const RSVPStatusMaybe: Story = {
       createdAt: new Date(),
       lastSignInAt: new Date(),
       imageUrl: 'https://example.com/avatar3.jpg',
-    });
-    return <RSVPWidget {...args} />;
-  },
-};
-
-export const RSVPStatusNo: Story = {
-  args: {
-    event: sampleEvent,
-    showEventDetails: true,
-    showAttendeeCount: true,
-    attendeeCount: 12,
-    currentRSVP: {
-      status: 'no',
-      attendees: 0,
-      message: 'No puedo ir esta vez'
-    },
-    displayMode: 'inline',
-  },
-  render: (args) => {
-    setMockUser({
-      id: 'user_101',
-      firstName: 'Pedro',
-      lastName: 'Martín',
-      emailAddresses: [{ emailAddress: 'pedro.martin@example.com' }],
-      publicMetadata: { role: 'member' },
-      createdAt: new Date(),
-      lastSignInAt: new Date(),
-      imageUrl: 'https://example.com/avatar4.jpg',
     });
     return <RSVPWidget {...args} />;
   },
