@@ -66,6 +66,12 @@ This document summarizes the reorganization and consolidation of documentation f
 
 **Rationale**: OneSignal-based notification system has been implemented and tested. The system is fully functional but requires a custom domain for production use (Clerk limitation). Implementation is complete and ready for activation once domain is configured.
 
+### RSVP Widget & Modal Implementation (September 2025)
+- **Moved `tasks/tasks-prd-rsvp-component.md` to `docs/historical/completed-tasks/tasks-prd-rsvp-component.md`**
+- **Moved `tasks/prd-rsvp-component.md` to `docs/historical/prd-rsvp-component.md`**
+
+**Rationale**: Complete RSVP widget and modal system has been successfully implemented with all 5 major task groups completed (Storybook development, core widget implementation, modal functionality, API integration, and page integration). The system provides both inline widgets and expandable/collapsible functionality with full authentication support, form validation, and responsive design. RSVP menu navigation has been removed in favor of embedded widgets on homepage and partidos page.
+
 ## Next Steps
 - Continue to move completed PRDs and task lists to the `docs/historical/` directory as features are implemented.
 - Regularly review and update this document to reflect ongoing documentation reorganization efforts.
