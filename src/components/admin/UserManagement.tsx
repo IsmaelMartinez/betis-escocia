@@ -302,112 +302,119 @@ export default function UserManagement({ className = '' }: UserManagementProps) 
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {users.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <Image
-                          className="h-10 w-10 rounded-full"
-                          src={user.imageUrl || '/images/default-avatar.png'}
-                          alt={`${user.firstName || ''} ${user.lastName || ''}`}
-                          width={40}
-                          height={40}
-                        />
-                        <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
-                            {user.firstName || ''} {user.lastName || ''}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {user.emailAddresses[0]?.emailAddress || ''}
+                {users.map((user) => {
+                  // Extract repeated expressions for better readability and maintainability
+                  const userRole = user.publicMetadata?.role || ROLES.USER;
+                  const isBanned = user.publicMetadata?.banned || false;
+                  const isUpdating = updatingUser === user.id;
+                  
+                  return (
+                    <tr key={user.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <Image
+                            className="h-10 w-10 rounded-full"
+                            src={user.imageUrl || '/images/default-avatar.png'}
+                            alt={`${user.firstName || ''} ${user.lastName || ''}`}
+                            width={40}
+                            height={40}
+                          />
+                          <div className="ml-4">
+                            <div className="text-sm font-medium text-gray-900">
+                              {user.firstName || ''} {user.lastName || ''}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {user.emailAddresses[0]?.emailAddress || ''}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {getRoleBadge(user)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {getStatusBadge(user)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {user.lastSignInAt 
-                        ? format(new Date(user.lastSignInAt), DATE_FORMAT, { locale: es })
-                        : 'Nunca'
-                      }
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex flex-wrap gap-2">
-                        {/* Role Management */}
-                        <div className="flex space-x-1">
-                          {/* Make Admin */}
-                          {(user.publicMetadata?.role || ROLES.USER) !== ROLES.ADMIN && (
-                            <button
-                              onClick={() => assignRole(user.id, ROLES.ADMIN)}
-                              disabled={updatingUser === user.id}
-                              className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 transition-colors"
-                              title="Asignar rol de administrador"
-                            >
-                              <Shield className="w-3 h-3 mr-1" />
-                              Admin
-                            </button>
-                          )}
-                          
-                          {/* Make Moderator */}
-                          {(user.publicMetadata?.role || ROLES.USER) !== ROLES.MODERATOR && (user.publicMetadata?.role || ROLES.USER) !== ROLES.ADMIN && (
-                            <button
-                              onClick={() => assignRole(user.id, ROLES.MODERATOR)}
-                              disabled={updatingUser === user.id}
-                              className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 transition-colors"
-                              title="Asignar rol de moderador"
-                            >
-                              <Crown className="w-3 h-3 mr-1" />
-                              Moderador
-                            </button>
-                          )}
-                          
-                          {/* Remove Special Role */}
-                          {((user.publicMetadata?.role || ROLES.USER) === ROLES.ADMIN || (user.publicMetadata?.role || ROLES.USER) === ROLES.MODERATOR) && (
-                            <button
-                              onClick={() => removeRole(user.id)}
-                              disabled={updatingUser === user.id}
-                              className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-orange-600 hover:bg-orange-700 disabled:opacity-50 transition-colors"
-                              title="Quitar rol especial"
-                            >
-                              <UserCog className="w-3 h-3 mr-1" />
-                              Quitar Rol
-                            </button>
-                          )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {getRoleBadge(user)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {getStatusBadge(user)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {user.lastSignInAt 
+                          ? format(new Date(user.lastSignInAt), DATE_FORMAT, { locale: es })
+                          : 'Nunca'
+                        }
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex flex-wrap gap-2">
+                          {/* Role Management */}
+                          <div className="flex space-x-1">
+                            {/* Make Admin */}
+                            {userRole !== ROLES.ADMIN && (
+                              <button
+                                onClick={() => assignRole(user.id, ROLES.ADMIN)}
+                                disabled={isUpdating}
+                                className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 transition-colors"
+                                title="Asignar rol de administrador"
+                              >
+                                <Shield className="w-3 h-3 mr-1" />
+                                Admin
+                              </button>
+                            )}
+                            
+                            {/* Make Moderator */}
+                            {userRole !== ROLES.MODERATOR && userRole !== ROLES.ADMIN && (
+                              <button
+                                onClick={() => assignRole(user.id, ROLES.MODERATOR)}
+                                disabled={isUpdating}
+                                className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                                title="Asignar rol de moderador"
+                              >
+                                <Crown className="w-3 h-3 mr-1" />
+                                Moderador
+                              </button>
+                            )}
+                            
+                            {/* Remove Special Role */}
+                            {(userRole === ROLES.ADMIN || userRole === ROLES.MODERATOR) && (
+                              <button
+                                onClick={() => removeRole(user.id)}
+                                disabled={isUpdating}
+                                className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-orange-600 hover:bg-orange-700 disabled:opacity-50 transition-colors"
+                                title="Quitar rol especial"
+                              >
+                                <UserCog className="w-3 h-3 mr-1" />
+                                Quitar Rol
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Ban/Unban toggle */}
+                          <button
+                            onClick={() => updateUser(user.id, { banned: !isBanned })}
+                            disabled={isUpdating}
+                            className={`inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white transition-colors ${
+                              isBanned 
+                                ? 'bg-green-600 hover:bg-green-700' 
+                                : 'bg-yellow-600 hover:bg-yellow-700'
+                            } disabled:opacity-50`}
+                            title={isBanned ? 'Desbloquear usuario' : 'Bloquear usuario'}
+                          >
+                            {isBanned ? <CheckCircle className="w-3 h-3 mr-1" /> : <Ban className="w-3 h-3 mr-1" />}
+                            {isBanned ? 'Desbloquear' : 'Bloquear'}
+                          </button>
+
+                          {/* Delete user */}
+                          <button
+                            onClick={() => deleteUser(user.id)}
+                            disabled={isUpdating}
+                            className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 transition-colors"
+                            title="Eliminar usuario permanentemente"
+                          >
+                            <Trash2 className="w-3 h-3 mr-1" />
+                            Eliminar
+                          </button>
                         </div>
-
-                        {/* Ban/Unban toggle */}
-                        <button
-                          onClick={() => updateUser(user.id, { banned: !(user.publicMetadata?.banned || false) })}
-                          disabled={updatingUser === user.id}
-                          className={`inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white transition-colors ${
-                            user.publicMetadata?.banned 
-                              ? 'bg-green-600 hover:bg-green-700' 
-                              : 'bg-yellow-600 hover:bg-yellow-700'
-                          } disabled:opacity-50`}
-                          title={user.publicMetadata?.banned ? 'Desbloquear usuario' : 'Bloquear usuario'}
-                        >
-                          {user.publicMetadata?.banned ? <CheckCircle className="w-3 h-3 mr-1" /> : <Ban className="w-3 h-3 mr-1" />}
-                          {user.publicMetadata?.banned ? 'Desbloquear' : 'Bloquear'}
-                        </button>
-
-                        {/* Delete user */}
-                        <button
-                          onClick={() => deleteUser(user.id)}
-                          disabled={updatingUser === user.id}
-                          className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 transition-colors"
-                          title="Eliminar usuario permanentemente"
-                        >
-                          <Trash2 className="w-3 h-3 mr-1" />
-                          Eliminar
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
 
