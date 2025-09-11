@@ -102,28 +102,23 @@ export function useRSVPData({ event, enabled = true }: UseRSVPDataProps): UseRSV
 
   // Fetch attendee count for the event
   const fetchAttendeeCount = useCallback(async (): Promise<number> => {
-    try {
-      const url = event.id 
-        ? `/api/rsvp/attendees?match=${event.id}`
-        : '/api/rsvp/attendees';
+    const url = event.id 
+      ? `/api/rsvp/attendees?match=${event.id}`
+      : '/api/rsvp/attendees';
 
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-      if (!response.ok) {
-        throw new Error('Error al obtener el número de asistentes');
-      }
-
-      const data = await response.json();
-      return data.count || 0;
-    } catch (err) {
-      console.error('Error fetching attendee count:', err);
-      return 0;
+    if (!response.ok) {
+      throw new Error('Error al obtener el número de asistentes');
     }
+
+    const data = await response.json();
+    return data.count || 0;
   }, [event.id]);
 
   // Retry wrapper for API calls
@@ -169,9 +164,12 @@ export function useRSVPData({ event, enabled = true }: UseRSVPDataProps): UseRSV
         setAttendeeCount(count.value);
       }
 
-      // Set error only if both requests failed
-      if (rsvpData.status === 'rejected' && count.status === 'rejected') {
+      // Set error if critical requests failed
+      if (count.status === 'rejected') {
         setError('Error al cargar los datos de confirmación');
+      } else if (rsvpData.status === 'rejected' && user) {
+        // Only show RSVP error if user is authenticated and we tried to fetch it
+        setError('Error al cargar el estado de confirmación');
       }
     } catch (err) {
       setError('Error al cargar los datos de confirmación');
@@ -179,7 +177,7 @@ export function useRSVPData({ event, enabled = true }: UseRSVPDataProps): UseRSV
     } finally {
       setIsLoading(false);
     }
-  }, [enabled, fetchCurrentRSVP, fetchAttendeeCount]);
+  }, [enabled, fetchCurrentRSVP, fetchAttendeeCount, user]);
 
   // Refresh data manually
   const refreshData = useCallback(async () => {
