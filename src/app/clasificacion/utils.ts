@@ -18,7 +18,13 @@ export function getPositionBadge(position: number): { text: string; color: strin
 
 // Helper function to format form
 export function formatForm(form: string): string[] {
-  return form ? form.split('').slice(-5) : [];
+  if (!form) return [];
+  
+  // Filter out commas and other unwanted characters, only keep W, D, L
+  return form
+    .split('')
+    .filter(char => ['W', 'D', 'L'].includes(char))
+    .slice(-5); // Take last 5 valid results
 }
 
 // Helper function to get form result style

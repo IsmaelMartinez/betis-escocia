@@ -138,7 +138,7 @@ describe('Clasificacion Utils', () => {
     });
 
     it('should handle form with mixed case', () => {
-      expect(formatForm('WwLdL')).toEqual(['W', 'w', 'L', 'd', 'L']);
+      expect(formatForm('WwLdL')).toEqual(['W', 'L', 'L']);
     });
 
     it('should handle exactly 5 results', () => {

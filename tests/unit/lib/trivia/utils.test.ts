@@ -109,8 +109,7 @@ describe('Trivia Utils', () => {
       });
       expect(log.error).toHaveBeenCalledWith(
         'Failed to check daily trivia score in utility',
-        'Database error',
-        { userId: mockUserId }
+        { userId: mockUserId, error: 'Database error' }
       );
     });
 

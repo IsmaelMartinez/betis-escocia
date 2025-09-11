@@ -83,9 +83,9 @@ This workflow ensures completed work is properly archived while keeping active p
 
 ### User Submission Flow
 
-1. Anonymous form submission → Supabase
-2. Webhook associates with user by email
-3. User dashboard shows historical data via authenticated queries
+1. Anonymous form submission → Supabase (remains anonymous)
+2. Authenticated submissions → Supabase (linked to user)
+3. User dashboard shows authenticated submissions via RLS queries
 
 ### External API Integration
 

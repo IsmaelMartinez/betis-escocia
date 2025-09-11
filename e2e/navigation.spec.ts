@@ -11,7 +11,7 @@ test.describe('Site Navigation', () => {
     await page.getByRole('link', { name: /nosotros/i }).first().click();
     await page.waitForURL('**/nosotros');
     await expect(page.url()).toContain('/nosotros');
-    await expect(page.getByText(/peña bética/i)).toBeVisible();
+    await expect(page.getByRole('heading').filter({ hasText: /nosotros/i })).toBeVisible();
 
     // Navigate to Matches page (Partidos)
     await page.getByRole('link', { name: /partidos/i }).first().click();

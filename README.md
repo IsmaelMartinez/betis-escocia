@@ -9,7 +9,7 @@ This website serves as the digital home for **Peña Bética Escocesa**, the Real
 ## ✨ Features
 
 - **Mobile-first responsive design** optimized for smartphones
-- **Community RSVP System** - "¿Vienes al Polwarth?" attendance confirmation
+- **Community RSVP System** - Embedded widgets with expandable forms for match attendance
 - **Interactive Trivia Game** - Test your knowledge of Real Betis and Scotland
 - **Photo Gallery** - Share match day photos
 - **Admin Dashboard** - User management with push notifications
@@ -106,7 +106,7 @@ if (!isEnabled) return null;
 - `show-debug-info` - Debug information (default: disabled)
 
 ### Always-On Features
-- `rsvp` - RSVP functionality (always available)
+- `rsvp` - RSVP widgets embedded in homepage and matches page (fully implemented)
 - `unete` - Join functionality (always available) 
 - `contacto` - Contact functionality (always available)
 

@@ -1,7 +1,9 @@
 # 007-Clerk-Webhooks-for-Data-Synchronization
 
 ## Status
-Proposed
+**Superseded** by [ADR-0022: Deprecate Clerk Webhooks](./0022-deprecate-clerk-webhooks.md)
+
+**Historical Status**: Implemented → Deprecated (2025-09-08)
 
 ## Context
 The Betis application utilizes Clerk for authentication and Supabase for its database. ADR 006 established the decision to use Supabase's native JWT integration with Clerk for Row Level Security (RLS) and real-time authentication. This handles the secure association of a Clerk user's `user_id` with new data submissions and enforces access policies.

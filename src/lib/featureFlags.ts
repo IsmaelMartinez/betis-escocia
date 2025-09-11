@@ -37,7 +37,7 @@ const DEFAULT_FEATURES: Record<FeatureName, boolean> = {
   'show-redes-sociales': false,
   'show-clerk-auth': true,
   'show-debug-info': false,
-  'show-rsvp': true,
+  'show-rsvp': false,  // Disabled - RSVP functionality moved to inline widgets
   'show-unete': true,
   'show-contacto': true,
 };

@@ -1,10 +1,12 @@
+'use client';
+
 import { ApiErrorBoundary } from '@/components/ErrorBoundary';
 import BetisPositionWidget from '@/components/BetisPositionWidget';
 import AllDatabaseMatches from '@/components/AllDatabaseMatches';
-
-export const dynamic = 'force-dynamic';
+import RSVPModal, { useRSVPModal } from '@/components/RSVPModal';
 
 export default function MatchesPage() {
+  const { isOpen, openModal, closeModal } = useRSVPModal();
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
@@ -28,9 +30,25 @@ export default function MatchesPage() {
               </ApiErrorBoundary>
             </div>
             
-            {/* Sidebar - Betis Position Widget */}
+            {/* Sidebar - RSVP Button and Position Widget */}
             <div className="lg:col-span-1">
-              <div className="sticky top-8">
+              <div className="sticky top-8 space-y-6">
+                {/* RSVP Button for match-specific confirmations */}
+                <div className="bg-white rounded-2xl shadow-lg p-6">
+                  <h3 className="text-lg font-bold text-gray-900 mb-3 text-center">
+                    🍺 Próximo Partido
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4 text-center">
+                    ¿Vienes al Polwarth Tavern?
+                  </p>
+                  <button
+                    onClick={openModal}
+                    className="w-full bg-betis-green hover:bg-betis-green-dark text-white font-bold py-3 px-4 rounded-xl transition-colors duration-200 shadow-md hover:shadow-lg"
+                  >
+                    ✅ Confirmar Asistencia
+                  </button>
+                </div>
+                
                 <BetisPositionWidget />
               </div>
             </div>
@@ -69,6 +87,20 @@ export default function MatchesPage() {
           </div>
         </div>
       </section>
+
+      {/* RSVP Modal */}
+      <RSVPModal
+        isOpen={isOpen}
+        onClose={closeModal}
+        event={{
+          id: undefined, // Will be match-specific in future enhancement
+          title: "Próximo Partido del Betis",
+          date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Next week as default
+          location: "Polwarth Tavern, Edinburgh",
+          description: "Confirma tu asistencia para ver el partido con la peña"
+        }}
+        modalTitle="¿Vienes al próximo partido?"
+      />
     </div>
   );
 }

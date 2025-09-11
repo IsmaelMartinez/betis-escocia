@@ -25,7 +25,7 @@ describe('Feature Flags - Simplified System', () => {
 
   describe('Default Feature Values', () => {
     it('should return default values when no environment variables are set', () => {
-      expect(hasFeature('show-rsvp')).toBe(true);
+      expect(hasFeature('show-rsvp')).toBe(false); // Updated - RSVP menu disabled by default
       expect(hasFeature('show-unete')).toBe(true);
       expect(hasFeature('show-contacto')).toBe(true);
       expect(hasFeature('show-clasificacion')).toBe(true);
@@ -85,7 +85,7 @@ describe('Feature Flags - Simplified System', () => {
       const enabledItems = getEnabledNavigationItems();
       
       // Should include items that are enabled by default
-      expect(enabledItems.some(item => item.name === 'RSVP')).toBe(true);
+      expect(enabledItems.some(item => item.name === 'RSVP')).toBe(false); // Updated - RSVP menu disabled
       expect(enabledItems.some(item => item.name === 'Partidos')).toBe(true);
       expect(enabledItems.some(item => item.name === 'Clasificación')).toBe(true);
       expect(enabledItems.some(item => item.name === 'Nosotros')).toBe(true);
@@ -145,23 +145,23 @@ describe('Feature Flags - Simplified System', () => {
 
   describe('Cache Management', () => {
     it('should cache feature flag results', () => {
-      // First call resolves and caches
-      expect(hasFeature('show-rsvp')).toBe(true);
+      // First call resolves and caches (RSVP is now false by default)
+      expect(hasFeature('show-rsvp')).toBe(false);
       
       // Change environment variable after first call
-      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = 'false';
+      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = 'true';
       
       // Should still return cached result
-      expect(hasFeature('show-rsvp')).toBe(true);
+      expect(hasFeature('show-rsvp')).toBe(false);
     });
 
     it('should clear cache and re-evaluate after clearFeatureCache', () => {
-      expect(hasFeature('show-rsvp')).toBe(true);
+      expect(hasFeature('show-rsvp')).toBe(false);
       
-      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = 'false';
+      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = 'true'; // Set to true to test cache clearing
       clearFeatureCache();
       
-      expect(hasFeature('show-rsvp')).toBe(false);
+      expect(hasFeature('show-rsvp')).toBe(true); // Should now be true after cache clear
     });
   });
 });

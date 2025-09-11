@@ -83,7 +83,7 @@ sql/                    # Database migrations & scripts
 
 ### Database Patterns (Supabase)
 - **RLS enabled**: Always use authenticated client for user data
-- **User linking**: Automatic email-based association via Clerk webhooks
+- **User data**: Anonymous and authenticated submissions stored separately
 - **Cache strategy**: Use `classification_cache` table for external API data
 - **Location**: `src/lib/supabase.ts` for client and types
 
@@ -160,12 +160,10 @@ export const POST = createApiHandler({
 
 **When to use Legacy Pattern (Rarely):**
 - Server-Sent Events (SSE) endpoints that return streaming responses
-- Webhook endpoints requiring custom signature validation  
 - External integrations with very specific protocol requirements
 
 **✅ Complete**: All standard API routes now use `createApiHandler`. The legacy pattern is only used for specialized endpoints like:
 - `/api/notifications/trigger` - SSE endpoint for real-time notifications
-- `/api/clerk/webhook` - Webhook with Svix signature verification
 
 ### Legacy Protected Route Pattern
 ```typescript
@@ -266,13 +264,13 @@ test('renders component correctly', () => {
 ## Key Features
 
 ### Community Features
-- **RSVP System**: Match viewing party confirmations at Polwarth Tavern
+- **RSVP System**: Embedded widgets with expandable forms for match viewing confirmations at Polwarth Tavern
 - **Trivia Game**: Betis & Scotland themed with 15-second timer, pointing system
 - **Photo Gallery**: Community photo sharing
 
 ### Data Management
 - **Match Data**: Football-Data.org API integration with caching
-- **User Data**: Clerk webhooks sync user profiles to Supabase
+- **User Data**: Clerk authentication with separate anonymous/authenticated submissions
 - **Admin Dashboard**: User management, match sync, contact submissions
 - **Push Notifications**: Real-time admin notifications for RSVP and contact submissions
 
