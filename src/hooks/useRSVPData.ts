@@ -126,7 +126,7 @@ export function useRSVPData({ event, enabled = true }: UseRSVPDataProps): UseRSV
     operation: () => Promise<T>, 
     attempts = RETRY_ATTEMPTS
   ): Promise<T> => {
-    let lastError: Error;
+    let lastError: Error = new Error('Operation failed after maximum retry attempts');
 
     for (let i = 0; i < attempts; i++) {
       try {
@@ -140,7 +140,7 @@ export function useRSVPData({ event, enabled = true }: UseRSVPDataProps): UseRSV
       }
     }
 
-    throw lastError!;
+    throw lastError;
   };
 
   // Load initial data

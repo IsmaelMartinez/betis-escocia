@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { User, Mail, MessageSquare, Users, Calendar, MapPin, Clock } from 'lucide-react';
 import { FormSuccessMessage, FormErrorMessage, FormLoadingMessage } from '@/components/MessageComponent';
 import Field, { ValidatedInput, ValidatedTextarea } from '@/components/Field';
@@ -132,24 +132,33 @@ export default function RSVPWidget({
   const errorMessage = disableDataFetching ? localErrorMessage : (hookSubmitError || hookError || '');
   const isLoading = disableDataFetching ? false : hookIsLoading;
 
-  // Update form data when user becomes available (but only if fields are still empty)
-  useEffect(() => {
-    if (isAuthEnabled && user && (!formData.name || !formData.email)) {
-      const userName = user.firstName && user.lastName 
-        ? `${user.firstName} ${user.lastName}` 
-        : user.firstName || '';
-      const userEmail = user.emailAddresses[0]?.emailAddress || '';
-      
-      // Only update if the field is currently empty (don't overwrite user edits)
-      if (userName && !formData.name) {
-        updateField('name', userName);
-      }
-      if (userEmail && !formData.email) {
-        updateField('email', userEmail);
-      }
+  // Track if we've already populated form from user data to avoid loops
+  const hasPopulatedFromUser = useRef(false);
+  
+  // Memoized function to populate form data from user
+  const populateFromUser = useCallback(() => {
+    if (!isAuthEnabled || !user || hasPopulatedFromUser.current) return;
+    
+    const userName = user.firstName && user.lastName 
+      ? `${user.firstName} ${user.lastName}` 
+      : user.firstName || '';
+    const userEmail = user.emailAddresses[0]?.emailAddress || '';
+    
+    // Only update if the field is currently empty (don't overwrite user edits)
+    if (userName && !formData.name) {
+      updateField('name', userName);
+      hasPopulatedFromUser.current = true;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthEnabled, user]); // Only depend on user auth changes, not form data to avoid infinite loops
+    if (userEmail && !formData.email) {
+      updateField('email', userEmail);
+      hasPopulatedFromUser.current = true;
+    }
+  }, [isAuthEnabled, user, formData.name, formData.email, updateField]);
+
+  // Update form data when user becomes available
+  useEffect(() => {
+    populateFromUser();
+  }, [populateFromUser]);
   
 
   const handleSubmit = async (e: React.FormEvent) => {
