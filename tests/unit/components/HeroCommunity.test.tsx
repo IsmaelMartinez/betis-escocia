@@ -17,7 +17,9 @@ vi.mock('lucide-react', () => ({
   Users: vi.fn(({ className }) => <div data-testid="users-icon" className={className} />),
   Heart: vi.fn(({ className }) => <div data-testid="heart-icon" className={className} />),
   Coffee: vi.fn(({ className }) => <div data-testid="coffee-icon" className={className} />),
-  Smile: vi.fn(({ className }) => <div data-testid="smile-icon" className={className} />)
+  Smile: vi.fn(({ className }) => <div data-testid="smile-icon" className={className} />),
+  ChevronDown: vi.fn(({ className }) => <div data-testid="chevron-down-icon" className={className} />),
+  ChevronUp: vi.fn(({ className }) => <div data-testid="chevron-up-icon" className={className} />)
 }));
 
 
@@ -124,33 +126,26 @@ describe('HeroCommunity', () => {
     });
   });
 
-  describe('Community showcase section', () => {
-    it('renders community showcase title', () => {
+  describe('RSVP section', () => {
+    it('renders RSVP section title', () => {
       render(<HeroCommunity />);
 
-      expect(screen.getByText('NUESTROS MOMENTOS')).toBeInTheDocument();
+      expect(screen.getByText('🍺 Confirmar Asistencia')).toBeInTheDocument();
     });
 
-    it('renders photo grid with community moments', () => {
+    it('renders RSVP expandable button', () => {
       render(<HeroCommunity />);
 
-      expect(screen.getByText('CELEBRACIONES')).toBeInTheDocument();
-      expect(screen.getByText('ANTES DEL PARTIDO')).toBeInTheDocument();
-      expect(screen.getByText('CADA PARTIDO')).toBeInTheDocument();
-      expect(screen.getByText('FAMÍLIA BÉTICA')).toBeInTheDocument();
+      const rsvpButton = screen.getByRole('button', { name: /confirmar asistencia/i });
+      expect(rsvpButton).toBeInTheDocument();
+      expect(rsvpButton).toHaveClass('w-full', 'flex', 'items-center', 'justify-between');
     });
 
-    it('renders photo grid with emojis', () => {
+    it('renders chevron down icon when collapsed', () => {
       render(<HeroCommunity />);
 
-      const photoGrid = screen.getByText('CELEBRACIONES').closest('.grid');
-      expect(photoGrid).toBeInTheDocument();
-      
-      // Check for emoji content
-      expect(screen.getByText('📸')).toBeInTheDocument();
-      expect(screen.getByText('🍺')).toBeInTheDocument();
-      expect(screen.getByText('⚽')).toBeInTheDocument();
-      expect(screen.getByText('🎉')).toBeInTheDocument();
+      const chevronDown = screen.getByTestId('chevron-down-icon');
+      expect(chevronDown).toBeInTheDocument();
     });
   });
 

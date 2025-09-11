@@ -30,7 +30,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      
+
       {/* Join Us CTA */}
       <section className="py-20 bg-gradient-to-br from-betis-green via-betis-green-dark to-betis-black text-white relative overflow-hidden">
         {/* Background pattern */}

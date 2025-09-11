@@ -264,7 +264,7 @@ test('renders component correctly', () => {
 ## Key Features
 
 ### Community Features
-- **RSVP System**: Match viewing party confirmations at Polwarth Tavern
+- **RSVP System**: Embedded widgets with expandable forms for match viewing confirmations at Polwarth Tavern
 - **Trivia Game**: Betis & Scotland themed with 15-second timer, pointing system
 - **Photo Gallery**: Community photo sharing
 
