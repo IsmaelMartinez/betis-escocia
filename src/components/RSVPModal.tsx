@@ -112,7 +112,7 @@ export default function RSVPModal({
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center p-4 transition-all duration-200 z-${zIndex}`}
+      className="fixed inset-0 flex items-center justify-center p-4 transition-all duration-200"
       style={{ zIndex }}
       onClick={handleBackdropClick}
       role="dialog"
