@@ -60,9 +60,6 @@ vi.mock('@/components/admin/MatchesList', () => ({
   default: vi.fn(() => <div data-testid="matches-list">Matches List</div>),
 }));
 
-vi.mock('@/components/admin/UserManagement', () => ({
-  default: vi.fn(() => <div data-testid="user-management">User Management</div>),
-}));
 
 vi.mock('@/components/admin/ContactSubmissionsList', () => ({
   default: vi.fn(() => <div data-testid="contact-submissions">Contact Submissions</div>),
@@ -462,9 +459,6 @@ describe('AdminPage', () => {
       
       const MatchesList = await import('@/components/admin/MatchesList');
       expect(MatchesList.default).toBeDefined();
-      
-      const UserManagement = await import('@/components/admin/UserManagement');
-      expect(UserManagement.default).toBeDefined();
       
       const ContactSubmissionsList = await import('@/components/admin/ContactSubmissionsList');
       expect(ContactSubmissionsList.default).toBeDefined();
