@@ -144,6 +144,12 @@ describe('Clasificacion Utils', () => {
     it('should handle exactly 5 results', () => {
       expect(formatForm('WDLWW')).toEqual(['W', 'D', 'L', 'W', 'W']);
     });
+
+    it('should filter out commas from form data', () => {
+      expect(formatForm('W,D,L,W,W')).toEqual(['W', 'D', 'L', 'W', 'W']);
+      expect(formatForm('W,D,L')).toEqual(['W', 'D', 'L']);
+      expect(formatForm('W,,D,L,W,W,L,D')).toEqual(['L', 'W', 'W', 'L', 'D']); // Last 5 after filtering commas
+    });
   });
 
   describe('getFormResultStyle', () => {

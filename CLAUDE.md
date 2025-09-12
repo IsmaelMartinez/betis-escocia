@@ -270,9 +270,38 @@ test('renders component correctly', () => {
 
 ### Data Management
 - **Match Data**: Football-Data.org API integration with caching
-- **User Data**: Clerk authentication with separate anonymous/authenticated submissions
-- **Admin Dashboard**: User management, match sync, contact submissions
+- **User Data**: Clerk authentication with separate anonymous/authenticated submissions  
+- **Admin Dashboard**: Match sync, contact submissions management
+- **User Management**: Handled directly through Clerk dashboard or API
 - **Push Notifications**: Real-time admin notifications for RSVP and contact submissions
+
+## Admin Panel Architecture
+
+### Current Structure (Post User Management Removal)
+
+The admin panel (`/admin`) provides a streamlined interface for content management with three main sections:
+
+- **Dashboard**: Overview with statistics, recent RSVPs, and contact submissions
+- **Partidos (Matches)**: Complete match management including creation, editing, deletion, and sync
+- **Contactos (Contacts)**: Contact form submissions management with status filtering
+
+### User Management Migration
+
+User management functionality has been removed from the admin panel to:
+- Reduce complexity and maintenance burden
+- Leverage Clerk's robust user management capabilities
+- Focus admin panel on core content management
+
+**User operations now handled via:**
+- Clerk Dashboard: Web-based user management interface
+- Clerk Management API: Programmatic user operations
+- Clerk Webhooks: User lifecycle event handling
+
+### Admin Authentication & Authorization
+
+- **Authentication**: Clerk-based with admin role requirement
+- **Route Protection**: `withAdminRole` HOC ensures admin access
+- **API Security**: All admin API routes use `createApiHandler` with `auth: 'admin'`
 
 ## Trivia Game Implementation
 
