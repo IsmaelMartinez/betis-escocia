@@ -23,7 +23,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.31.10",
+    "@clerk/nextjs": "^6.32.0",
     "@sentry/nextjs": "^10.11.0",
     "@supabase/supabase-js": "^2.57.4",
     "@vercel/analytics": "^1.5.0",
