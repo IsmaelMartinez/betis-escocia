@@ -41,7 +41,7 @@
     "zod": "^4.1.9"
   },
   "devDependencies": {
-    "@clerk/testing": "^1.12.5",
+    "@clerk/testing": "^1.13.3",
     "@eslint/eslintrc": "^3",
     "@playwright/test": "^1.55.0",
     "@storybook/addon-docs": "^9.1.5",
