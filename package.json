@@ -78,7 +78,7 @@
     "wait-on": "^8.0.4"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "^4.50.1",
+    "@rollup/rollup-linux-x64-gnu": "^4.52.4",
     "@tailwindcss/oxide-linux-x64-gnu": "^4.1.13",
     "lightningcss-linux-x64-gnu": "^1.27.0"
   }
