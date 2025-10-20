@@ -23,7 +23,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.32.1",
+    "@clerk/nextjs": "^6.32.2",
     "@sentry/nextjs": "^10.12.0",
     "@supabase/supabase-js": "^2.57.4",
     "@vercel/analytics": "^1.5.0",
@@ -35,7 +35,7 @@
     "next": "^15.5.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-onesignal": "^3.3.0",
+    "react-onesignal": "^3.4.0",
     "svix": "^1.76.1",
     "web-push": "^3.6.7",
     "zod": "^4.1.9"
