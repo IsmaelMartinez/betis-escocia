@@ -38,7 +38,7 @@
     "react-onesignal": "^3.4.0",
     "svix": "^1.76.1",
     "web-push": "^3.6.7",
-    "zod": "^4.1.9"
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@clerk/testing": "^1.12.5",
