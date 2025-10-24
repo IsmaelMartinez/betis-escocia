@@ -34,7 +34,7 @@
     "lucide-react": "^0.544.0",
     "next": "^15.5.4",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1",
+    "react-dom": "^19.2.0",
     "react-onesignal": "^3.4.0",
     "svix": "^1.76.1",
     "web-push": "^3.6.7",
