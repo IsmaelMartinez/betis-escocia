@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.local.example
 
 # vercel
 .vercel
@@ -65,3 +66,4 @@ data/trivia-questions.json
 
 # ignore generated html folder
 html/
+.env.local
