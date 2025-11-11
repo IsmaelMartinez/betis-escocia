@@ -78,19 +78,6 @@ npm run test:e2e
 
 **Solution:** This is just a warning. The app will use fallback fonts. If you're in an isolated network environment, this is expected.
 
-### Port Already in Use
-
-**Symptom:** `Error: listen EADDRINUSE: address already in use :::3000`
-
-**Solution:**
-```bash
-# Find and kill the process using port 3000
-lsof -ti:3000 | xargs kill -9
-
-# Or use a different port
-PORT=3001 npm run dev
-```
-
 ## Development Workflow
 
 ### Before Committing
