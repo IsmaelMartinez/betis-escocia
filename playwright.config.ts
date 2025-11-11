@@ -61,6 +61,12 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000, // Increased timeout to 120 seconds
     env: {
+      // Pass through all required environment variables (especially for CI)
+      NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || '',
+      CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY || '',
+      FOOTBALL_DATA_API_KEY: process.env.FOOTBALL_DATA_API_KEY || '',
       NEXT_PUBLIC_FEATURE_ADMIN_PUSH_NOTIFICATIONS: 'true',
     }
   },
