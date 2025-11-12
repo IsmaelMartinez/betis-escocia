@@ -35,6 +35,21 @@ npm run update-trivia   # Update trivia questions in database
 npm run lighthouse:accessibility # Run Lighthouse audit
 ```
 
+### Pre-commit Hooks (Lefthook)
+
+Pre-commit hooks automatically run before each commit to catch issues early:
+
+- **ESLint**: Auto-fixes linting errors
+- **Prettier**: Auto-formats code
+- **TypeScript**: Type checking
+
+**Skip hooks** (if needed):
+```bash
+LEFTHOOK=0 git commit -m "message"
+```
+
+Hooks are configured in `lefthook.yml` and install automatically via the `prepare` script.
+
 ## Architecture Overview
 
 ### Core Technology Stack
