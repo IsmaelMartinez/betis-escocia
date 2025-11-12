@@ -11,6 +11,9 @@ jobs:
   test:
     name: Tests (Required)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read        # Read repository contents
+      checks: write         # Write check results
     env:
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
@@ -39,6 +42,8 @@ jobs:
   quality:
     name: Quality Checks (Non-blocking)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read        # Read repository contents
     continue-on-error: true
     env:
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
@@ -71,6 +76,9 @@ jobs:
   e2e:
     name: E2E Tests (Non-blocking)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read        # Read repository contents
+      actions: write        # Upload artifacts
     continue-on-error: true
     if: github.event_name == 'pull_request'
     env:
@@ -107,6 +115,9 @@ jobs:
   deploy:
     name: Deploy to Production
     runs-on: ubuntu-latest
+    permissions:
+      contents: read        # Read repository contents
+      deployments: write    # Write deployment status
     needs: [test]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment: production
