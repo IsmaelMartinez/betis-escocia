@@ -7,6 +7,62 @@ import { defineConfig, devices } from '@playwright/test';
 require('dotenv').config({ path: '.env.local' });
 
 /**
+ * Required environment variables for E2E tests
+ * In CI: These are set via GitHub Actions secrets
+ * Locally: These are loaded from .env.local via dotenv
+ */
+const REQUIRED_ENV_VARS = [
+  'NEXT_PUBLIC_SUPABASE_URL',
+  'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+  'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY',
+  'CLERK_SECRET_KEY',
+] as const;
+
+const OPTIONAL_ENV_VARS = [
+  'FOOTBALL_DATA_API_KEY',
+] as const;
+
+/**
+ * Validate that required environment variables are set in CI
+ * Locally, .env.local handles this, so we only validate in CI
+ */
+function validateEnvironmentVariables() {
+  if (!process.env.CI) {
+    // Skip validation locally - .env.local should handle this
+    return;
+  }
+
+  const missing = REQUIRED_ENV_VARS.filter(varName => !process.env[varName]);
+
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing required environment variables in CI: ${missing.join(', ')}\n` +
+      'Please ensure these are set in GitHub Actions secrets.'
+    );
+  }
+}
+
+// Validate before running tests
+validateEnvironmentVariables();
+
+/**
+ * Build environment object for webServer
+ * Pass through all environment variables needed by Next.js
+ */
+function buildWebServerEnv(): Record<string, string> {
+  const env: Record<string, string> = {
+    NEXT_PUBLIC_FEATURE_ADMIN_PUSH_NOTIFICATIONS: 'true',
+  };
+
+  // Add all required and optional env vars
+  [...REQUIRED_ENV_VARS, ...OPTIONAL_ENV_VARS].forEach(varName => {
+    env[varName] = process.env[varName] || '';
+  });
+
+  return env;
+}
+
+/**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
@@ -26,7 +82,7 @@ export default defineConfig({
   use: {
     /* Base URL to use in tests for like `await page.goto('/ ')`. */
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000',
-    
+
     launchOptions: {
       env: {
         NEXT_PUBLIC_FEATURE_CLASIFICACION: 'true',
@@ -60,14 +116,6 @@ export default defineConfig({
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000, // Increased timeout to 120 seconds
-    env: {
-      // Pass through all required environment variables (especially for CI)
-      NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
-      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || '',
-      CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY || '',
-      FOOTBALL_DATA_API_KEY: process.env.FOOTBALL_DATA_API_KEY || '',
-      NEXT_PUBLIC_FEATURE_ADMIN_PUSH_NOTIFICATIONS: 'true',
-    }
+    env: buildWebServerEnv(),
   },
 });
