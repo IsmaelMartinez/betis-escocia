@@ -13,11 +13,13 @@
 ### Completed Tasks
 
 #### ✅ Task 1.1: Fix GitHub Workflow Permissions (CodeQL Warnings)
+
 **Priority:** Critical | **Effort:** 15 minutes | **Status:** ✅ DONE
 
 **Resolved:** All 4 CodeQL security warnings by adding explicit least-privilege permissions to workflow jobs.
 
 **Changes Made:**
+
 - `.github/workflows/ci.yml` - Added permissions to all 4 jobs:
   - `test`: `contents: read`, `checks: write`
   - `quality`: `contents: read`
@@ -29,11 +31,13 @@
 ---
 
 #### ✅ Task 1.2: Add Scheduled Build (Keep Supabase DB Alive)
+
 **Priority:** High | **Effort:** 20 minutes | **Status:** ✅ DONE
 
 **Implemented:** Weekly scheduled build workflow to prevent Supabase database pausing.
 
 **Changes Made:**
+
 - `.github/workflows/scheduled-build.yml` (new file)
   - Runs every Monday at 3 AM UTC
   - Full test suite + build execution
@@ -45,11 +49,13 @@
 ---
 
 #### ✅ Task 1.3: Update Investigation Report
+
 **Priority:** Low | **Effort:** 10 minutes | **Status:** ✅ DONE
 
 **Updated:** `INVESTIGATION_REPORT.md` with Phase 1 completion status.
 
 **Changes Made:**
+
 - Added resolution section documenting 8 completed tasks
 - Clear reference to this plan for next steps
 - Maintains historical context of investigation
@@ -67,6 +73,7 @@
 ### Completed Tasks
 
 #### ✅ Task 2.1: Add Pre-commit Hooks with Lefthook
+
 **Priority:** Medium | **Effort:** 25 minutes | **Status:** ✅ DONE
 
 **Implemented:** Automated code quality checks before commits using Lefthook.
@@ -74,6 +81,7 @@
 **Purpose:** Catch issues before they reach CI, improve developer experience.
 
 **Changes Made:**
+
 - Installed lefthook v2.0.3 as dev dependency
 - Created `lefthook.yml` with parallel hook execution
 - Configured pre-commit hooks:
@@ -83,6 +91,7 @@
 - Added prepare script to package.json for automatic setup
 
 **Impact:**
+
 - ✅ Prevents commit of linting errors
 - ✅ Auto-formats code on commit
 - ✅ Reduces CI failures from simple issues
@@ -94,6 +103,7 @@
 ---
 
 #### ✅ Task 2.2: Update Deprecated npm Packages
+
 **Priority:** Medium | **Effort:** 30 minutes | **Status:** ✅ DONE
 
 **Resolved:** All deprecation warnings from transitive dependencies.
@@ -102,6 +112,7 @@
 All deprecated packages (glob@7.2.3, rimraf@3.0.2, inflight@1.0.6) were transitive dependencies from Storybook's dependency chain.
 
 **Changes Made:**
+
 - Updated Storybook packages: 9.1.5 → 9.1.16
 - Added npm overrides in package.json:
   - `glob`: 7.2.3 → 10.4.5 (deprecated v7 removed)
@@ -109,11 +120,13 @@ All deprecated packages (glob@7.2.3, rimraf@3.0.2, inflight@1.0.6) were transiti
   - `inflight`: removed entirely (no longer needed)
 
 **Results:**
+
 - ✅ Zero deprecation warnings during npm install
 - ✅ Removed 10 packages, changed 4 packages
 - ✅ Zero vulnerabilities found
 
 **Validation:**
+
 - ✅ Linting passed
 - ✅ Type checking passed
 - ✅ All tests passed: 2485 passed | 3 skipped (2488 total)
@@ -129,11 +142,13 @@ All deprecated packages (glob@7.2.3, rimraf@3.0.2, inflight@1.0.6) were transiti
 **Estimated Time:** ~5 minutes
 
 ### Task 3.1: Make E2E Tests Blocking
+
 **Priority:** Low | **Effort:** 5 minutes
 
 **⚠️ IMPORTANT:** Do NOT implement until all prerequisites are met.
 
 **Prerequisites (Must All Be True):**
+
 - ✅ E2E tests pass consistently for 1-2 weeks in CI
 - ✅ All team members can run E2E tests locally
 - ✅ No flaky tests observed in at least 10 consecutive runs
@@ -141,13 +156,15 @@ All deprecated packages (glob@7.2.3, rimraf@3.0.2, inflight@1.0.6) were transiti
 - ✅ Team consensus on making tests blocking
 
 **Current State:**
+
 ```yaml
 e2e:
   name: E2E Tests (Non-blocking)
-  continue-on-error: true  # ← E2E failures don't block merge
+  continue-on-error: true # ← E2E failures don't block merge
 ```
 
 **Proposed Change:**
+
 ```yaml
 e2e:
   name: E2E Tests (Required)
@@ -155,6 +172,7 @@ e2e:
 ```
 
 **Implementation:**
+
 1. Monitor E2E test success rate for 1-2 weeks
 2. Track any failures in a spreadsheet/issue
 3. Get team consensus via discussion/meeting
@@ -162,9 +180,11 @@ e2e:
 5. In the same e2e job, update the name from "E2E Tests (Non-blocking)" to "E2E Tests (Required)".
 
 **Files to modify:**
+
 - .github/workflows/ci.yml
 
 **Success Metrics:**
+
 - E2E tests must have >95% success rate over 2 weeks
 - Zero false positives (failures due to test flakiness)
 - All real failures must be due to actual code issues
@@ -173,14 +193,14 @@ e2e:
 
 ## 📋 Task Summary
 
-| Sprint | Task | Priority | Effort | Status | Dependencies |
-|--------|------|----------|--------|--------|--------------|
-| 1 | Fix workflow permissions | Critical | 15m | ✅ DONE | None |
-| 1 | Add scheduled build | High | 20m | ✅ DONE | None |
-| 1 | Update investigation report | Low | 10m | ✅ DONE | None |
-| 2 | Add pre-commit hooks (lefthook) | Medium | 25m | ✅ DONE | None |
-| 2 | Update deprecated packages | Medium | 30m | ✅ DONE | None |
-| 3 | Make E2E blocking | Low | 5m | ⏳ Future | 1-2 weeks validation |
+| Sprint | Task                            | Priority | Effort | Status    | Dependencies         |
+| ------ | ------------------------------- | -------- | ------ | --------- | -------------------- |
+| 1      | Fix workflow permissions        | Critical | 15m    | ✅ DONE   | None                 |
+| 1      | Add scheduled build             | High     | 20m    | ✅ DONE   | None                 |
+| 1      | Update investigation report     | Low      | 10m    | ✅ DONE   | None                 |
+| 2      | Add pre-commit hooks (lefthook) | Medium   | 25m    | ✅ DONE   | None                 |
+| 2      | Update deprecated packages      | Medium   | 30m    | ✅ DONE   | None                 |
+| 3      | Make E2E blocking               | Low      | 5m     | ⏳ Future | 1-2 weeks validation |
 
 **Sprint 1 Total Time:** 45 minutes ✅ COMPLETED
 **Sprint 2 Total Time:** 55 minutes ✅ COMPLETED
@@ -192,6 +212,7 @@ e2e:
 ## 🎯 Recommended Execution Timeline
 
 ### ✅ Sprint 1 (Week of 2025-11-12) - COMPLETED
+
 1. ✅ Fix GitHub workflow permissions (15m) - Security critical
 2. ✅ Add scheduled build workflow (20m) - Keep DB alive
 3. ✅ Update investigation report (10m) - Close the loop
@@ -201,6 +222,7 @@ e2e:
 ---
 
 ### ✅ Sprint 2 (Week of 2025-11-12) - COMPLETED
+
 4. ✅ Add pre-commit hooks with lefthook (25m) - Improve DX
 5. ✅ Update deprecated packages (30m) - Reduce tech debt
 
@@ -210,9 +232,11 @@ e2e:
 ---
 
 ### ⏳ Sprint 3 (Week of 2025-11-25 or later) - WAITING
+
 6. Make E2E tests blocking (5m) - After validation period
 
 **Blockers:**
+
 - Needs 1-2 weeks of E2E test stability data
 - Needs team consensus
 
@@ -225,6 +249,7 @@ e2e:
 ### Context from Sprint 1
 
 **What Was Fixed:**
+
 - E2E tests were failing in CI due to missing environment variables in `playwright.config.ts`
 - Fixed by passing all required env vars to `webServer.env`
 - Added validation and improved maintainability with array-based approach
@@ -232,6 +257,7 @@ e2e:
 - All CodeQL security warnings resolved
 
 **Current State:**
+
 - ✅ E2E tests passing in CI
 - ✅ Zero npm vulnerabilities
 - ✅ Zero deprecation warnings
@@ -245,6 +271,7 @@ e2e:
 ### Success Criteria by Sprint
 
 **✅ Sprint 1 Success Criteria (ALL MET):**
+
 - ✅ All 4 CodeQL warnings resolved
 - ✅ All workflow jobs still run successfully
 - ✅ Scheduled build workflow triggers successfully
@@ -252,6 +279,7 @@ e2e:
 - ✅ Investigation report clearly marks Phase 1 complete
 
 **✅ Sprint 2 Success Criteria (ALL MET):**
+
 - ✅ Pre-commit hooks run on every commit
 - ✅ Linting/formatting errors caught before push
 - ✅ Type-check runs successfully in pre-commit
@@ -261,6 +289,7 @@ e2e:
 - ✅ Zero deprecation warnings in `npm install` output
 
 **Sprint 3 Success Criteria:**
+
 - E2E tests have >95% success rate over 2 weeks
 - Zero flaky test failures observed
 - Team consensus achieved on making tests blocking
