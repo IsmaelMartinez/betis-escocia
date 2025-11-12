@@ -211,11 +211,11 @@ e2e:
 1. Monitor E2E test success rate for 1-2 weeks
 2. Track any failures in a spreadsheet/issue
 3. Get team consensus via discussion/meeting
-4. Remove `continue-on-error: true` from line 77 in `.github/workflows/ci.yml`
-5. Update job name from "Non-blocking" to "Required"
+4. In .github/workflows/ci.yml, remove the continue-on-error: true line from the e2e job.
+5. In the same e2e job, update the name from "E2E Tests (Non-blocking)" to "E2E Tests (Required)".
 
 **Files to modify:**
-- `.github/workflows/ci.yml` (lines 72, 77)
+- .github/workflows/ci.yml
 
 **Success Metrics:**
 - E2E tests must have >95% success rate over 2 weeks
