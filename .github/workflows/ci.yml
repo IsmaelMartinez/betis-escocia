@@ -72,14 +72,13 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-  # E2E tests - run in parallel but don't block merge
+  # E2E tests - required checks that block PR merge
   e2e:
-    name: E2E Tests (Non-blocking)
+    name: E2E Tests (Required)
     runs-on: ubuntu-latest
     permissions:
       contents: read        # Read repository contents
       actions: write        # Upload artifacts
-    continue-on-error: true
     if: github.event_name == 'pull_request'
     env:
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
