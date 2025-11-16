@@ -233,20 +233,12 @@ export async function POST(request: NextRequest) {
 
 ### Test Compatibility with Abstracted Routes
 
-**Important**: Tests need updating to work with the new `createApiHandler` pattern:
+**✅ Complete**: All API route tests have been updated to work with the `createApiHandler` pattern.
 
-**Old Pattern (Legacy)**:
-
-```typescript
-// ❌ Old tests mock validation functions that are no longer used
-vi.spyOn(security, "validateInputLength").mockReturnValue({ isValid: true });
-vi.spyOn(security, "validateEmail").mockReturnValue({ isValid: true });
-```
-
-**New Pattern (Required)**:
+**Current Pattern (All Tests Use This)**:
 
 ```typescript
-// ✅ New tests work with Zod validation by providing valid data
+// ✅ Tests work with Zod validation by providing valid data
 const validData = {
   name: "Test User",
   email: "test@example.com", // Valid email format
@@ -264,12 +256,20 @@ const validData = {
 });
 ```
 
-**Key Changes Needed**:
+**Legacy Pattern (No Longer Used)**:
 
-1. Remove mocks for `validateInputLength`, `validateEmail`
-2. Provide data that passes Zod schema validation
-3. Test validation by providing invalid data that Zod will reject
-4. Update expected error messages to match new abstracted responses
+```typescript
+// ❌ Old tests mocked validation functions that are no longer used
+vi.spyOn(security, "validateInputLength").mockReturnValue({ isValid: true });
+vi.spyOn(security, "validateEmail").mockReturnValue({ isValid: true });
+```
+
+**When Writing New Tests**:
+
+1. Provide valid data that passes Zod schema validation
+2. Test validation by providing invalid data that Zod will reject
+3. Mock Supabase operations rather than validation functions
+4. Expect error messages from Zod validation failures
 
 ### Example Test
 
