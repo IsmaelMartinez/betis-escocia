@@ -37,6 +37,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { DATE_FORMAT } from "@/lib/constants/dateFormats";
 import { log } from "@/lib/logger";
+import clsx from "clsx";
 
 // Lazy load heavy admin components to reduce initial bundle size
 const OneSignalNotificationPanel = dynamicImport(
@@ -113,7 +114,6 @@ function AdminPage() {
       const clerkToken = await getToken();
       if (!clerkToken) {
         setError("Authentication token not available.");
-        setRefreshing(false);
         return;
       }
       const result = await updateContactSubmissionStatus(
@@ -158,20 +158,23 @@ function AdminPage() {
     try {
       setError(null);
 
-      // Fetch RSVP data
-      const { data: rsvpData, error: rsvpError } = await supabase
-        .from("rsvps")
-        .select("*")
-        .order("created_at", { ascending: false });
+      // Fetch all data in parallel for better performance
+      const [rsvpResult, allContactResult, matchesData] = await Promise.all([
+        supabase
+          .from("rsvps")
+          .select("*")
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("contact_submissions")
+          .select("*")
+          .order("created_at", { ascending: false }),
+        getMatches(),
+      ]);
 
+      const { data: rsvpData, error: rsvpError } = rsvpResult;
       if (rsvpError) throw rsvpError;
 
-      // Fetch all contact data
-      const { data: allContactData, error: allContactError } = await supabase
-        .from("contact_submissions")
-        .select("*")
-        .order("created_at", { ascending: false });
-
+      const { data: allContactData, error: allContactError } = allContactResult;
       if (allContactError) throw allContactError;
       setAllContactSubmissions(allContactData || []);
 
@@ -180,8 +183,6 @@ function AdminPage() {
         .filter((c) => c.status === "new")
         .slice(0, 5);
 
-      // Fetch matches data
-      const matchesData = await getMatches();
       setMatches(matchesData || []);
 
       // Calculate stats
@@ -244,8 +245,6 @@ function AdminPage() {
       setSyncMessage("Error al sincronizar partidos");
     } finally {
       setSyncing(false);
-      // Clear message after 5 seconds
-      setTimeout(() => setSyncMessage(null), 5000);
     }
   };
 
@@ -335,6 +334,20 @@ function AdminPage() {
     return result;
   };
 
+  // Helper function to download CSV files and prevent memory leaks
+  const downloadCSV = (content: string, filename: string) => {
+    const blob = new Blob([content], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", filename);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url); // Prevent memory leak
+  };
+
   const exportRSVPs = async () => {
     try {
       const { data, error } = await supabase
@@ -352,18 +365,7 @@ function AdminPage() {
         ),
       ].join("\n");
 
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-      const link = document.createElement("a");
-      const url = URL.createObjectURL(blob);
-      link.setAttribute("href", url);
-      link.setAttribute(
-        "download",
-        `rsvps-${format(new Date(), "yyyy-MM-dd")}.csv`,
-      );
-      link.style.visibility = "hidden";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      downloadCSV(csvContent, `rsvps-${format(new Date(), "yyyy-MM-dd")}.csv`);
     } catch (err) {
       log.error("Failed to export RSVPs from admin panel", err, {
         userId: user?.id,
@@ -388,18 +390,10 @@ function AdminPage() {
         ),
       ].join("\n");
 
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-      const link = document.createElement("a");
-      const url = URL.createObjectURL(blob);
-      link.setAttribute("href", url);
-      link.setAttribute(
-        "download",
+      downloadCSV(
+        csvContent,
         `contacts-${format(new Date(), "yyyy-MM-dd")}.csv`,
       );
-      link.style.visibility = "hidden";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
     } catch (err) {
       log.error("Failed to export contacts from admin panel", err, {
         userId: user?.id,
@@ -412,6 +406,17 @@ function AdminPage() {
       fetchStats();
     }
   }, [isSignedIn, fetchStats]);
+
+  // Auto-clear sync message after 5 seconds with proper cleanup
+  useEffect(() => {
+    if (syncMessage) {
+      const timerId = setTimeout(() => {
+        setSyncMessage(null);
+      }, 5000);
+
+      return () => clearTimeout(timerId);
+    }
+  }, [syncMessage]);
 
   // Show loading while Clerk is loading
   if (!isLoaded) {
@@ -507,11 +512,12 @@ function AdminPage() {
             <nav className="-mb-px flex space-x-8">
               <button
                 onClick={() => setCurrentView("dashboard")}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                className={clsx(
+                  "py-2 px-1 border-b-2 font-medium text-sm",
                   currentView === "dashboard"
                     ? "border-betis-green text-betis-green"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
+                )}
               >
                 <Users className="h-4 w-4 inline mr-2" />
                 Dashboard
@@ -520,11 +526,12 @@ function AdminPage() {
               <FeatureWrapper feature="show-partidos">
                 <button
                   onClick={() => setCurrentView("matches")}
-                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  className={clsx(
+                    "py-2 px-1 border-b-2 font-medium text-sm",
                     currentView === "matches"
                       ? "border-betis-green text-betis-green"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  }`}
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
+                  )}
                 >
                   <Calendar className="h-4 w-4 inline mr-2" />
                   Partidos
@@ -533,11 +540,12 @@ function AdminPage() {
 
               <button
                 onClick={() => setCurrentView("contacts")}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                className={clsx(
+                  "py-2 px-1 border-b-2 font-medium text-sm",
                   currentView === "contacts"
                     ? "border-betis-green text-betis-green"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
+                )}
               >
                 <Mail className="h-4 w-4 inline mr-2" />
                 Contactos
