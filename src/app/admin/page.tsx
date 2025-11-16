@@ -114,6 +114,7 @@ function AdminPage() {
       const clerkToken = await getToken();
       if (!clerkToken) {
         setError("Authentication token not available.");
+        setRefreshing(false);
         return;
       }
       const result = await updateContactSubmissionStatus(
