@@ -11,16 +11,28 @@ import Button from '@/components/ui/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import MessageComponent from '@/components/MessageComponent';
 import { FeatureWrapper } from '@/lib/featureProtection';
-import OneSignalNotificationPanel from '@/components/admin/OneSignalNotificationPanel';
-import MatchForm from '@/components/admin/MatchForm';
-import MatchesList from '@/components/admin/MatchesList';
-import ContactSubmissionsList from '@/components/admin/ContactSubmissionsList';
+import dynamicImport from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { withAdminRole } from '@/lib/withAdminRole';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { DATE_FORMAT } from '@/lib/constants/dateFormats';
 import { log } from '@/lib/logger';
+
+// Lazy load heavy admin components to reduce initial bundle size
+const OneSignalNotificationPanel = dynamicImport(() => import('@/components/admin/OneSignalNotificationPanel'), {
+  loading: () => <LoadingSpinner />,
+  ssr: false
+});
+const MatchForm = dynamicImport(() => import('@/components/admin/MatchForm'), {
+  loading: () => <LoadingSpinner />
+});
+const MatchesList = dynamicImport(() => import('@/components/admin/MatchesList'), {
+  loading: () => <LoadingSpinner />
+});
+const ContactSubmissionsList = dynamicImport(() => import('@/components/admin/ContactSubmissionsList'), {
+  loading: () => <LoadingSpinner />
+});
 
 interface AdminStats {
   totalRSVPs: number;

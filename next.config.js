@@ -79,9 +79,14 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === "production",
   },
   productionBrowserSourceMaps: true,
-  // experimental: {
-  //   optimizePackageImports: ['lucide-react'],
-  // },
+  experimental: {
+    optimizePackageImports: [
+      'lucide-react',
+      'date-fns',
+      '@clerk/nextjs',
+      '@supabase/supabase-js'
+    ],
+  },
 };
 
 const { withSentryConfig } = require("@sentry/nextjs");
