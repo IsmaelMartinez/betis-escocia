@@ -94,6 +94,8 @@ export default defineConfig({
       include: [
         'src/**/*.{js,jsx,ts,tsx}',
       ],
+      // @ts-expect-error - all is valid in vitest but types may be outdated
+      all: true, // Include all source files in coverage, not just tested ones
       // Coverage thresholds matching existing Jest setup
       thresholds: {
         global: {
@@ -105,13 +107,25 @@ export default defineConfig({
       },
       // Additional coverage options
       clean: true,
+      cleanOnRerun: true, // Clear coverage data between reruns in watch mode
     },
     // Test execution settings
     testTimeout: 10000, // 10 seconds timeout for tests
     hookTimeout: 10000, // 10 seconds timeout for hooks
+    // Parallel execution configuration
+    // Using forks instead of threads for better compatibility with v8 coverage
+    pool: 'forks',
+    poolOptions: {
+      forks: {
+        singleFork: false,
+        isolate: true,
+        minForks: 1,
+        maxForks: 10, // Use up to 10 forks for faster execution
+      },
+    },
     // Reporter configuration  
     reporters: [
-  ['default', { summary: false }], // Use default reporter (supersedes old 'basic')
+      ['default', { summary: false }], // Use default reporter (supersedes old 'basic')
       'html'
     ],
   },
