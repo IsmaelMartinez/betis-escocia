@@ -12,6 +12,8 @@ This document provides a list of ideas and features for the Peña Bética Escoce
 
 ### AI Assistant
 * Provide a cheap AI assistant for the users that access the website. It can guide them through the website, help them with the porra, and answer questions about Real Betis.
+* 📋 **Research completed**: See [docs/research/2025-12-ai-assistant-research.md](../docs/research/2025-12-ai-assistant-research.md)
+* **Recommended solution**: Google Gemini API (free tier: 1,500 requests/day) with topic-restricted system prompt
 
 ### Rumors Page (Soylenti)
 * Add a soylenti (rumors in Turkish) page where rumors spread. Ceballos, again, is coming back to Betis, etc. It can be a fun page where people can share their opinions and rumors about the team. Fran mode to provide % values to the rumors.
