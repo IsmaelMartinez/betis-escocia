@@ -38,9 +38,12 @@ try {
       },
     },
   ];
-} catch {
+} catch (err) {
   // Fallback if plugins aren't available
-  console.warn("Some ESLint plugins could not be loaded");
+  console.warn(
+    "Failed to load one or more ESLint plugins (e.g., @next/eslint-plugin-next, @typescript-eslint/eslint-plugin, eslint-plugin-react, eslint-plugin-react-hooks). " +
+    "Please ensure all required plugins are installed. Error details:", err
+  );
 }
 
 const eslintConfig = [
