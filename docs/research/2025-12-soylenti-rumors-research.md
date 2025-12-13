@@ -115,9 +115,9 @@ const RSS_FEEDS = [
 
 | Model | Cost | Speed | Quality | Recommendation |
 |-------|------|-------|---------|----------------|
-| Gemini 1.5 Flash | Free tier | Fast | Good | ✅ **Recommended** |
-| Gemini 1.5 Pro | Paid | Medium | Excellent | For complex analysis |
-| Gemini 2.0 Flash | Free tier | Very Fast | Good | Alternative |
+| Gemini 2.5 Flash | Free tier | Very Fast | Excellent | ✅ **Recommended** |
+| Gemini 2.5 Pro | Free tier (limited) | Fast | Excellent | For complex analysis |
+| Gemini 2.0 Flash | Free tier | Very Fast | Good | Fallback option |
 
 ### System Prompt (Fran Mode)
 
@@ -486,7 +486,7 @@ Add these to your GitHub repository secrets:
 **Confirmed approach:**
 
 1. **News Sources**: Start with 3 RSS feeds (Google News, Marca, AS)
-2. **AI Provider**: Google Gemini 1.5 Flash (free tier)
+2. **AI Provider**: Google Gemini 2.5 Flash (free tier)
 3. **Scheduler**: GitHub Actions (free, unlimited)
 4. **Update Frequency**: Every 6 hours (4 times daily)
 5. **Probability System**: AI-assigned with transparency (show reasoning)

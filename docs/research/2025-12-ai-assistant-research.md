@@ -21,11 +21,11 @@ This document analyzes options for implementing an AI chatbot assistant that:
 
 | Aspect | Details |
 |--------|---------|
-| **Free Tier** | ✅ **15 requests/minute, 1,500 requests/day** (Gemini 1.5 Flash) |
+| **Free Tier** | ✅ **15 requests/minute, 1,500 requests/day** (Gemini 2.5 Flash) |
 | **Pricing** | \$0.075 per 1M input tokens, \$0.30 per 1M output tokens (paid tier) |
-| **Models** | Gemini 2.0 Flash, Gemini 1.5 Flash, Gemini 1.5 Pro |
+| **Models** | Gemini 2.5 Flash, Gemini 2.5 Pro, Gemini 2.0 Flash |
 | **API** | REST API with official Node.js SDK (\`@google/generative-ai\`) |
-| **Context Window** | 1M tokens (Gemini 1.5 Flash) |
+| **Context Window** | 1M tokens (Gemini 2.5 Flash) |
 | **Speed** | Very fast responses (~1-2 seconds) |
 | **Rate Limits** | Generous for a community website |
 
@@ -209,7 +209,7 @@ function validateResponse(response: string): boolean {
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
 │              Google Gemini API (Free Tier)                  │
-│  - Model: gemini-1.5-flash                                  │
+│  - Model: gemini-2.5-flash                                  │
 │  - System prompt with topic restrictions                    │
 │  - Streaming responses for better UX                        │
 └─────────────────────────────────────────────────────────────┘
@@ -261,7 +261,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY!);
 
 export const geminiModel = genAI.getGenerativeModel({
-  model: 'gemini-1.5-flash',
+  model: 'gemini-2.5-flash',
   systemInstruction: SYSTEM_PROMPT,
   generationConfig: {
     temperature: 0.7,
@@ -610,7 +610,7 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = await streamText({
-    model: google('gemini-1.5-flash'),
+    model: google('gemini-2.5-flash'),
     system: SYSTEM_PROMPT,
     messages,
   });
