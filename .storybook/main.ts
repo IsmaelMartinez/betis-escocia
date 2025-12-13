@@ -1,4 +1,9 @@
 import type { StorybookConfig } from '@storybook/nextjs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const config: StorybookConfig = {
   "stories": [
@@ -26,8 +31,8 @@ const config: StorybookConfig = {
     
     config.resolve.alias = {
       ...config.resolve.alias,
-      "@clerk/nextjs": require.resolve("../__mocks__/@clerk/nextjs.ts"),
-      "next/image": require.resolve("../__mocks__/next/image.tsx"),
+      "@clerk/nextjs": path.resolve(__dirname, "../__mocks__/@clerk/nextjs.ts"),
+      "next/image": path.resolve(__dirname, "../__mocks__/next/image.tsx"),
     };
 
     // Add fallbacks for Node modules

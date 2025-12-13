@@ -3,27 +3,36 @@ import { NextRequest, NextResponse } from 'next/server';
 import middleware from '@/middleware';
 
 // Mock Next.js server
-vi.mock('next/server', () => ({
-  NextResponse: {
-    next: vi.fn(() => ({
-      headers: new Headers(),
-    })),
-    redirect: vi.fn((url: URL) => ({
-      headers: new Headers(),
-      url: url.toString(),
-      status: 307,
-    })),
-  },
-  NextRequest: vi.fn((input: string, init?: RequestInit) => {
-    const request = new Request(input, init);
-    return {
-      ...request,
-      nextUrl: new URL(input),
-      url: input,
-      headers: request.headers,
-    };
-  }) as unknown as typeof NextRequest,
-}));
+vi.mock('next/server', () => {
+  // Create a proper constructor class for NextRequest
+  class MockNextRequest {
+    nextUrl: URL;
+    url: string;
+    headers: Headers;
+    method: string;
+    
+    constructor(input: string, init?: RequestInit) {
+      this.url = input;
+      this.nextUrl = new URL(input);
+      this.headers = new Headers(init?.headers);
+      this.method = init?.method || 'GET';
+    }
+  }
+
+  return {
+    NextResponse: {
+      next: vi.fn(() => ({
+        headers: new Headers(),
+      })),
+      redirect: vi.fn((url: URL) => ({
+        headers: new Headers(),
+        url: url.toString(),
+        status: 307,
+      })),
+    },
+    NextRequest: MockNextRequest,
+  };
+});
 
 // Mock Clerk
 vi.mock('@clerk/nextjs/server', () => {
