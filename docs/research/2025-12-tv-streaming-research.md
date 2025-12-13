@@ -101,7 +101,7 @@ Add a "TV Channel" field to match database entries that admins can populate:
 
 ---
 
-## 🏴󠁧󠁢󠁳󠁣󠁴󠁿 Recommendations for Edinburgh Peña
+## 🏴 Recommendations for Edinburgh Peña
 
 ### Watching at Polwarth Tavern
 The pub likely has:
