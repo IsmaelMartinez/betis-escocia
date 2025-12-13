@@ -149,7 +149,7 @@ const ALLOWED_TOPICS = [
   'fichaje', 'transfer', 'estadio', 'stadium',
   // Players/coaches (current and historical)
   'joaquín', 'fekir', 'pellegrini', 'isco', 'william carvalho',
-  'lo celso', 'nabil', 'isco', 'juanmi', 'borja iglesias'
+  'lo celso', 'nabil', 'juanmi', 'borja iglesias'
 ];
 
 function isLikelyOnTopic(message: string): boolean {
