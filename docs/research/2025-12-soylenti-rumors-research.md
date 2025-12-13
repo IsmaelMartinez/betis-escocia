@@ -171,6 +171,20 @@ CREATE INDEX idx_rumors_created_at ON rumors(created_at DESC);
 CREATE INDEX idx_rumors_category ON rumors(category);
 CREATE INDEX idx_rumors_status ON rumors(status);
 CREATE INDEX idx_rumors_probability ON rumors(probability DESC);
+
+-- Automatically update updated_at on row update
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER update_rumors_updated_at
+BEFORE UPDATE ON rumors
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
 ```
 
 ---
