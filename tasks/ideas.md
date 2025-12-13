@@ -108,6 +108,7 @@ This document provides a list of ideas and features for the Peña Bética Escoce
 
 ### ✅ **Implemented Push Notifications**
 * Admin notifications for new RSVPs and contact submissions (✅ LIVE via OneSignal)
+  * ⚠️ **Blocker**: Requires custom domain for full functionality (same issue as email notifications)
 
 ### 🚧 **User Push Notifications To Be Developed**
 * Reminders for upcoming events and matches (for regular users)

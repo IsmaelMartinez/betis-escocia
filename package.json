@@ -20,7 +20,8 @@
     "lighthouse:accessibility": "npx lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-report.json --headless",
     "update-trivia": "tsx scripts/update-trivia-questions.ts",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "prepare": "lefthook install"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.36.2",
@@ -66,6 +67,7 @@
     "eslint-config-next": "^16.0.10",
     "eslint-plugin-storybook": "^10.1.8",
     "jsdom": "^27.3.0",
+    "lefthook": "^2.0.3",
     "lighthouse": "^13.0.1",
     "msw": "^2.12.4",
     "msw-storybook-addon": "^2.0.6",
