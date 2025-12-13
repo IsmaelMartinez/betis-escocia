@@ -13,7 +13,10 @@ This document analyzes the implementation of **Soylenti**, an automated rumors p
 3. **GitHub Actions** to run the agent on a schedule (free, unlimited)
 4. **Supabase** for storage and the public-facing page
 
-**Key Feature**: "Fran Mode" - AI-assigned probability percentages (0-100%) indicating the likelihood of each rumor being true.
+**Key Features**: 
+- "Fran Mode" - AI-assigned probability percentages (0-100%) indicating the likelihood of each rumor being true
+- Resolution tracking - Record whether rumors came true, enabling historical accuracy stats
+- Recurring rumor detection - Track when the same rumor reappears (e.g., "Ceballos to Betis" every window)
 
 ---
 
@@ -205,14 +208,32 @@ CREATE TABLE IF NOT EXISTS rumors (
       'pending', 'approved', 'rejected', 'confirmed', 'denied'
     )),
     
+    -- Resolution tracking (did the rumor come true?)
+    resolution VARCHAR(20) CHECK (resolution IN (
+      'unresolved',   -- Still pending (default)
+      'confirmed',    -- Rumor became reality ✅
+      'denied',       -- Officially denied or didn't happen ❌
+      'partial',      -- Partially true (e.g., transfer but different terms)
+      'expired'       -- Transfer window closed without resolution
+    )) DEFAULT 'unresolved',
+    resolved_at TIMESTAMPTZ,           -- When was it resolved?
+    resolution_notes TEXT,             -- Admin notes on resolution
+    resolution_source_url TEXT,        -- Link to official announcement
+    
+    -- Recurring rumor tracking
+    previous_rumor_id UUID REFERENCES rumors(id),  -- Link to earlier version
+    recurrence_count INTEGER DEFAULT 1,            -- How many times this rumor appeared
+    first_seen_at TIMESTAMPTZ DEFAULT NOW(),       -- Original appearance date
+    
     -- Timestamps
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
-    expires_at TIMESTAMPTZ DEFAULT (NOW() + INTERVAL '30 days'),
+    expires_at TIMESTAMPTZ DEFAULT (NOW() + INTERVAL '90 days'),  -- Extended for tracking
     
     -- Attribution
     submitted_by TEXT DEFAULT 'ai-agent',
     approved_by TEXT,
+    resolved_by TEXT,                  -- Admin who marked resolution
     
     -- Engagement (optional future feature)
     votes_up INTEGER DEFAULT 0,
@@ -224,6 +245,83 @@ CREATE INDEX idx_rumors_created_at ON rumors(created_at DESC);
 CREATE INDEX idx_rumors_category ON rumors(category);
 CREATE INDEX idx_rumors_status ON rumors(status);
 CREATE INDEX idx_rumors_probability ON rumors(probability DESC);
+CREATE INDEX idx_rumors_player ON rumors(player_name);
+CREATE INDEX idx_rumors_resolution ON rumors(resolution);
+CREATE INDEX idx_rumors_previous ON rumors(previous_rumor_id);
+
+-- View: Recurring rumors (same player, multiple appearances)
+CREATE VIEW recurring_rumors AS
+SELECT 
+    player_name,
+    category,
+    COUNT(*) as appearance_count,
+    MIN(first_seen_at) as first_appeared,
+    MAX(created_at) as last_appeared,
+    ARRAY_AGG(id ORDER BY created_at DESC) as rumor_ids,
+    MAX(CASE WHEN resolution = 'confirmed' THEN 1 ELSE 0 END) as ever_confirmed
+FROM rumors
+WHERE player_name IS NOT NULL
+GROUP BY player_name, category
+HAVING COUNT(*) > 1;
+
+-- View: Source accuracy stats
+CREATE VIEW source_accuracy AS
+SELECT 
+    source_name,
+    COUNT(*) as total_rumors,
+    COUNT(CASE WHEN resolution = 'confirmed' THEN 1 END) as confirmed_count,
+    COUNT(CASE WHEN resolution = 'denied' THEN 1 END) as denied_count,
+    ROUND(
+        COUNT(CASE WHEN resolution = 'confirmed' THEN 1 END)::NUMERIC / 
+        NULLIF(COUNT(CASE WHEN resolution IN ('confirmed', 'denied') THEN 1 END), 0) * 100,
+        1
+    ) as accuracy_percentage
+FROM rumors
+WHERE source_name IS NOT NULL
+GROUP BY source_name
+HAVING COUNT(*) >= 3;
+```
+
+### Resolution Workflow
+
+| Resolution | Meaning | When to Use |
+|------------|---------|-------------|
+| `unresolved` | Still pending | Default state |
+| `confirmed` | ✅ Happened | Official announcement, transfer completed |
+| `denied` | ❌ Didn't happen | Club denied, player stayed, window closed |
+| `partial` | ⚠️ Partially true | Different terms, loan instead of buy, etc. |
+| `expired` | ⏰ Window closed | Transfer window ended without resolution |
+
+### Recurring Rumor Detection
+
+The AI agent should detect when a rumor is recurring (e.g., "Ceballos to Betis" appears every window):
+
+```typescript
+// When processing a new rumor, check for similar past rumors
+async function findSimilarPastRumor(playerName: string, category: string) {
+  const { data } = await supabase
+    .from('rumors')
+    .select('id, title, probability, resolution, created_at')
+    .eq('player_name', playerName)
+    .eq('category', category)
+    .order('created_at', { ascending: false })
+    .limit(1);
+  
+  return data?.[0] || null;
+}
+
+// If found, link to previous and increment count
+if (previousRumor) {
+  newRumor.previous_rumor_id = previousRumor.id;
+  newRumor.recurrence_count = (previousRumor.recurrence_count || 1) + 1;
+  newRumor.first_seen_at = previousRumor.first_seen_at;
+  
+  // Adjust probability based on history
+  if (previousRumor.resolution === 'denied') {
+    newRumor.probability = Math.max(newRumor.probability - 15, 10);
+    newRumor.ai_reasoning += ` (Nota: Este rumor apareció antes y no se concretó)`;
+  }
+}
 ```
 
 ---
@@ -470,8 +568,8 @@ Add these to your GitHub repository secrets:
 - User voting on rumors (community input to probability)
 - Manual admin rumor submission
 - Push notifications for high-probability rumors
-- Rumor resolution tracking (confirmed/denied)
-- Historical accuracy statistics per source
+- Admin dashboard for resolution management
+- Leaderboard of most accurate sources
 
 ### Phase 3 Features
 - Web scraping for non-RSS sources
