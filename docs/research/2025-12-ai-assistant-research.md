@@ -332,7 +332,7 @@ export const POST = createApiHandler({
       return { response, filtered: false };
     } catch (error) {
       console.error('Gemini API error:', error);
-      throw new Error('Error al procesar tu mensaje. Inténtalo de nuevo.');
+      throw new BusinessLogicError('Error al procesar tu mensaje. Inténtalo de nuevo.', 500);
     }
   },
 });
