@@ -15,7 +15,7 @@ This document provides a list of ideas and features for the Peña Bética Escoce
 ## 🎯 **Core Feature Ideas**
 
 ### TV & Streaming Integration
-* Find where it is shown on TV in the UK and Spain, maybe provide some links to the channels or streaming services.
+* Find where Betis matches are shown on TV in the UK, with links to channels and streaming services.
 * 📋 **Research Complete**: See [docs/research/2025-12-tv-streaming-research.md](../docs/research/2025-12-tv-streaming-research.md) for full analysis
 
 ### La Porra Enhancement

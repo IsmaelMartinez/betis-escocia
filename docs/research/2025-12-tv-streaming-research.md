@@ -1,16 +1,16 @@
-# TV & Streaming Research: Where to Watch Real Betis Matches
+# TV & Streaming Research: Where to Watch Real Betis Matches in the UK
 
 **Date**: December 2025  
 **Status**: Research Complete  
-**Related Feature**: TV & Streaming Integration (ideas.md lines 7-8)
+**Related Feature**: TV & Streaming Integration (ideas.md)
 
 ## Executive Summary
 
-This document provides comprehensive research on where Real Betis matches are broadcast in the **United Kingdom** and **Spain**, including TV channels, streaming services, and implementation recommendations for the Peña Bética Escocesa website.
+This document provides research on where Real Betis matches are broadcast in the **United Kingdom**, including TV channels, streaming services, and implementation recommendations for the Peña Bética Escocesa website.
 
 ---
 
-## 🇬🇧 United Kingdom Broadcasting Options
+## 🇬🇧 UK Broadcasting Options
 
 ### 1. Premier Sports / LaLiga TV ⭐ **PRIMARY OPTION**
 
@@ -61,73 +61,12 @@ This document provides comprehensive research on where Real Betis matches are br
 
 ---
 
-## 🇪🇸 Spain Broadcasting Options
-
-### 1. DAZN ⭐ **PRIMARY OPTION**
-
-**Overview**: Primary La Liga broadcaster in Spain since 2022.
-
-| Feature | Details |
-|---------|---------|
-| **Coverage** | All La Liga matches, Copa del Rey |
-| **Price** | €18.99/month (standard), €34.99/month (total) |
-| **Platforms** | Web, iOS, Android, Smart TV, Fire TV, Chromecast |
-| **Website** | [dazn.com/es-ES](https://www.dazn.com/es-ES) |
-
-**Key Points**:
-- Primary way to watch La Liga in Spain
-- All Real Betis matches available live and on-demand
-- Multi-device streaming
-- Some matches available in 4K
-
-### 2. Movistar+ 
-
-**Overview**: Major Spanish telecommunications provider with premium sports.
-
-| Feature | Details |
-|---------|---------|
-| **Coverage** | Champions League, Europa League, select La Liga |
-| **Availability** | Movistar broadband customers |
-| **Price** | Varies with TV packages |
-| **Website** | [movistarplus.es](https://www.movistarplus.es) |
-
-### 3. Orange TV / Jazztel
-
-**Overview**: Telecom providers offering sports packages including La Liga via DAZN.
-
-### 4. Free-to-Air Spain
-
-| Channel | Coverage |
-|---------|----------|
-| **RTVE (TVE La 1)** | Selected Copa del Rey matches, national team |
-| **Telecinco/Cuatro** | Occasional special matches |
-| **Gol TV** | Some sports content, secondary broadcasting |
-
----
-
-## 🌐 International Streaming (Geo-restrictions Apply)
-
-### ESPN+ (United States)
-- La Liga rights in the USA
-- All Real Betis matches
-- $10.99/month or $109.99/year
-
-### beIN SPORTS (Middle East, North Africa, Asia)
-- Comprehensive La Liga coverage
-- Available in multiple regions
-
-### Star+ / ESPN (Latin America)
-- La Liga broadcasting rights
-- Regional pricing varies
-
----
-
 ## 💡 Implementation Recommendations
 
 ### Option A: Static Information Page (Recommended - Low Effort)
 
 Create a dedicated "Where to Watch" section on the matches page with:
-- UK and Spain broadcasting info
+- UK broadcasting info
 - Direct links to streaming services
 - Pricing overview
 - Tips for Scottish Betis fans
@@ -162,7 +101,7 @@ Add a "TV Channel" field to match database entries that admins can populate:
 
 ---
 
-## 🏴󠁧󠁢󠁳󠁣󠁴󠁿 Specific Recommendations for Edinburgh Peña
+## 🏴󠁧󠁢󠁳󠁣󠁴󠁿 Recommendations for Edinburgh Peña
 
 ### Watching at Polwarth Tavern
 The pub likely has:
@@ -175,38 +114,25 @@ The pub likely has:
 2. **Amazon Prime + Premier Sports add-on** - Combined flexibility
 3. **Sky Sports** - If already a Sky customer, add LaLiga TV
 
-### For Members Traveling to Spain
-- DAZN subscription (~€19/month) covers all matches
-- Many bars/restaurants show matches (ask for "¿Ponen el fútbol?")
-
 ---
 
-## 📊 Comparison Summary
+## 📊 UK Services Summary
 
-| Service | UK | Spain | La Liga | European | Price Range |
-|---------|:--:|:-----:|:-------:|:--------:|-------------|
-| Premier Sports/LaLiga TV | ✅ | ❌ | ✅ | ❌ | £14.99/mo |
-| DAZN | ❌ | ✅ | ✅ | ❌ | €18.99/mo |
-| TNT Sports | ✅ | ❌ | ❌ | ✅ | ~£25/mo+ |
-| Movistar+ | ❌ | ✅ | ⚠️ | ✅ | Varies |
+| Service | La Liga | European | Price Range |
+|---------|:-------:|:--------:|-------------|
+| Premier Sports/LaLiga TV | ✅ | ❌ | £14.99/mo |
+| TNT Sports | ❌ | ✅ | ~£25/mo+ |
+| Viaplay | ⚠️ (selected) | ❌ | £6.99/mo |
 
 ---
 
 ## 🔗 Quick Links
 
-### UK
 - Premier Sports: https://www.premiersports.com
 - LaLiga TV Schedule: https://www.laliga.com/laliga-easports/calendario
 - TNT Sports: https://www.tntsports.co.uk
-
-### Spain  
-- DAZN Spain: https://www.dazn.com/es-ES
 - La Liga Official: https://www.laliga.com
 - Real Betis Official: https://www.realbetisbalompie.es
-
-### Match Schedules
-- La Liga Official Calendar: https://www.laliga.com/laliga-easports/calendario
-- Real Betis Fixtures: https://www.realbetisbalompie.es/club/partidos
 
 ---
 
@@ -233,5 +159,4 @@ The pub likely has:
 
 - La Liga Broadcasting Partners: https://www.laliga.com/en-GB/broadcasters
 - Premier Sports UK: https://www.premiersports.com
-- DAZN Spain: https://www.dazn.com/es-ES
 - UK TV Rights Analysis (2024-2027 cycle)
