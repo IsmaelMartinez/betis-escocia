@@ -10,7 +10,7 @@ This document analyzes the implementation of **Soylenti**, an automated rumors p
 
 1. **External news sources** (RSS feeds, news APIs) for raw content
 2. **Google Gemini AI** to analyze, extract, and score rumors
-3. **Vercel Cron Jobs** to run the agent on a schedule
+3. **GitHub Actions** to run the agent on a schedule (free, unlimited)
 4. **Supabase** for storage and the public-facing page
 
 **Key Feature**: "Fran Mode" - AI-assigned probability percentages (0-100%) indicating the likelihood of each rumor being true.
@@ -39,8 +39,8 @@ This document analyzes the implementation of **Soylenti**, an automated rumors p
 │         │                   │                       │               │
 │         ▼                   ▼                       ▼               │
 │  ┌──────────────────────────────────────────────────────────────┐  │
-│  │                    Vercel Cron Job                            │  │
-│  │                 (Runs every 6-12 hours)                       │  │
+│  │                    GitHub Actions                             │  │
+│  │                 (Runs every 6 hours)                         │  │
 │  └──────────────────────────────────────────────────────────────┘  │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
@@ -57,7 +57,7 @@ This document analyzes the implementation of **Soylenti**, an automated rumors p
 
 ### Data Flow
 
-1. **Cron Job Trigger**: Vercel triggers `/api/cron/soylenti-agent` every 6 hours
+1. **GitHub Actions Trigger**: Workflow triggers the agent every 6 hours via API call
 2. **News Fetching**: Agent fetches headlines from multiple RSS feeds
 3. **AI Analysis**: Gemini analyzes content, extracts Betis-related rumors
 4. **Probability Scoring**: AI assigns 0-100% probability based on source credibility
@@ -228,29 +228,36 @@ CREATE INDEX idx_rumors_probability ON rumors(probability DESC);
 
 ---
 
-## 5. Vercel Cron Configuration
+## 5. GitHub Actions Configuration
 
-### `vercel.json` Addition
+### `.github/workflows/soylenti-agent.yml`
 
-```json
-{
-  "crons": [
-    {
-      "path": "/api/cron/soylenti-agent",
-      "schedule": "0 */6 * * *"
-    }
-  ]
-}
+```yaml
+name: Soylenti AI Agent
+
+on:
+  schedule:
+    # Run every 6 hours: 00:00, 06:00, 12:00, 18:00 UTC
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  fetch-rumors:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Soylenti Agent
+        run: |
+          curl -X POST "${{ secrets.SITE_URL }}/api/soylenti/process" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json"
 ```
 
-**Schedule**: Runs at minute 0 every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
+### API Endpoint Security
 
-### Security
-
-The cron endpoint must verify requests using `CRON_SECRET`:
+The agent endpoint must verify requests using `CRON_SECRET`:
 
 ```typescript
-export async function GET(request: Request) {
+export async function POST(request: Request) {
   const authHeader = request.headers.get('authorization');
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -267,10 +274,9 @@ export async function GET(request: Request) {
 src/
 ├── app/
 │   ├── api/
-│   │   ├── cron/
-│   │   │   └── soylenti-agent/
-│   │   │       └── route.ts          # Cron job handler
-│   │   └── rumors/
+│   │   └── soylenti/
+│   │       ├── process/
+│   │       │   └── route.ts          # Agent trigger endpoint
 │   │       └── route.ts              # Public API (GET rumors)
 │   └── soylenti/
 │       └── page.tsx                  # Public rumors page
@@ -284,6 +290,10 @@ src/
         ├── prompts.ts                # Gemini system prompts
         ├── geminiAgent.ts            # AI agent logic
         └── types.ts                  # TypeScript types
+
+.github/
+└── workflows/
+    └── soylenti-agent.yml            # Scheduled workflow
 
 sql/
 └── 0002_rumors_schema.sql            # Database migration
@@ -306,14 +316,12 @@ sql/
 | **Free tier limit** | 1,500 requests/day, 1M+ tokens |
 | **Status** | ✅ **Comfortably within free tier** |
 
-### Vercel Cron Pricing
+### GitHub Actions (Free)
 
-| Plan | Cron Jobs | Invocations/month | Our Usage |
-|------|-----------|-------------------|-----------|
-| Hobby (Free) | 2 | 60 | ❌ Not enough |
-| Pro ($20/mo) | 40 | Unlimited | ✅ Sufficient |
-
-**Note**: The Pro plan may be required for cron jobs, or use an alternative scheduler.
+| Plan | Minutes/month | Our Usage |
+|------|---------------|-----------|
+| Free | 2,000 | ~1-2 min × 120 runs = ~200 min/month |
+| **Status** | ✅ **Completely free** |
 
 ---
 
@@ -351,23 +359,7 @@ sql/
 
 ---
 
-### Spike 3: Vercel Cron Jobs Setup (Priority: Medium)
-**Duration**: 2-3 hours
-
-**Objective**: Confirm Vercel cron job configuration and limitations.
-
-**Tasks**:
-- [ ] Test cron job creation in Vercel dashboard
-- [ ] Verify `CRON_SECRET` authentication
-- [ ] Measure execution time limits (10s on Hobby, 60s on Pro)
-- [ ] Test error handling and retry behavior
-- [ ] Evaluate alternatives (GitHub Actions, Supabase Edge Functions)
-
-**Success Criteria**: Working cron job that executes reliably every 6 hours.
-
----
-
-### Spike 4: Deduplication Algorithm (Priority: Medium)
+### Spike 3: Deduplication Algorithm (Priority: Medium)
 **Duration**: 2-3 hours
 
 **Objective**: Design an effective deduplication strategy to avoid duplicate rumors.
@@ -383,21 +375,6 @@ sql/
 
 ---
 
-### Spike 5: Alternative Schedulers (Priority: Low)
-**Duration**: 2 hours
-
-**Objective**: Identify alternatives to Vercel cron if cost or limitations are prohibitive.
-
-**Options to evaluate**:
-- [ ] GitHub Actions scheduled workflows (free)
-- [ ] Supabase Edge Functions with pg_cron
-- [ ] Cloudflare Workers with Cron Triggers
-- [ ] External cron services (cron-job.org, EasyCron)
-
-**Success Criteria**: Documented backup scheduling option.
-
----
-
 ## 9. Implementation Phases
 
 ### Phase 1: Foundation (3-4 hours)
@@ -409,22 +386,28 @@ sql/
 ### Phase 2: AI Agent (4-5 hours)
 - [ ] Implement news fetcher with RSS parsing
 - [ ] Create Gemini agent with structured output
-- [ ] Build cron job endpoint with authentication
+- [ ] Build API endpoint with authentication
 - [ ] Add deduplication logic
 
-### Phase 3: Frontend (3-4 hours)
+### Phase 3: Scheduler (1 hour)
+- [ ] Create GitHub Actions workflow
+- [ ] Add CRON_SECRET to GitHub secrets
+- [ ] Test manual trigger
+- [ ] Verify scheduled runs
+
+### Phase 4: Frontend (3-4 hours)
 - [ ] Create `/soylenti` page
 - [ ] Build `ProbabilityMeter` component (Fran Mode)
 - [ ] Build `RumorCard` component
 - [ ] Add category filters
 
-### Phase 4: Testing & Polish (2-3 hours)
+### Phase 5: Testing & Polish (2-3 hours)
 - [ ] Write unit tests for agent logic
 - [ ] Add E2E tests for page
-- [ ] Monitor first few cron runs
+- [ ] Monitor first few scheduled runs
 - [ ] Tune prompt based on results
 
-**Total Estimated Time**: 12-16 hours (2-3 days)
+**Total Estimated Time**: 13-17 hours (2-3 days)
 
 ---
 
@@ -434,12 +417,18 @@ sql/
 # Required for Soylenti AI Agent
 GOOGLE_GEMINI_API_KEY=your_gemini_api_key
 
-# Vercel Cron secret (generate random string)
+# Secret for GitHub Actions authentication (generate random string)
 CRON_SECRET=your_random_secret_here
 
 # Feature flag (disabled by default)
 NEXT_PUBLIC_FEATURE_SOYLENTI=false
 ```
+
+### GitHub Secrets Required
+
+Add these to your GitHub repository secrets:
+- `SITE_URL` - Your production URL (e.g., https://betis-escocia.vercel.app)
+- `CRON_SECRET` - Same value as env var above
 
 ---
 
@@ -470,8 +459,8 @@ NEXT_PUBLIC_FEATURE_SOYLENTI=false
 | RSS feeds change/break | High | Medium | Monitor feeds, have backup sources |
 | Gemini rate limits | Medium | Low | Batch requests, implement caching |
 | Poor AI accuracy | Medium | Medium | Tune prompt, add human review option |
-| Vercel cron costs | Low | Medium | Use GitHub Actions as free alternative |
 | Duplicate rumors | Low | Medium | Implement fuzzy matching deduplication |
+| GitHub Actions outage | Low | Low | Can manually trigger, or retry next cycle |
 
 ---
 
@@ -494,11 +483,11 @@ NEXT_PUBLIC_FEATURE_SOYLENTI=false
 
 ## 14. Decision
 
-**Recommended approach:**
+**Confirmed approach:**
 
 1. **News Sources**: Start with 3 RSS feeds (Google News, Marca, AS)
 2. **AI Provider**: Google Gemini 1.5 Flash (free tier)
-3. **Scheduler**: Vercel Cron (or GitHub Actions if cost prohibitive)
+3. **Scheduler**: GitHub Actions (free, unlimited)
 4. **Update Frequency**: Every 6 hours (4 times daily)
 5. **Probability System**: AI-assigned with transparency (show reasoning)
 
@@ -513,8 +502,6 @@ NEXT_PUBLIC_FEATURE_SOYLENTI=false
 
 - [Google Gemini API Documentation](https://ai.google.dev/docs)
 - [Vercel AI SDK](https://sdk.vercel.ai/docs)
-- [Vercel Cron Jobs](https://vercel.com/docs/cron-jobs)
+- [GitHub Actions Scheduled Events](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule)
 - [rss-parser NPM Package](https://www.npmjs.com/package/rss-parser)
 - [Existing AI Assistant Research](./2025-12-ai-assistant-research.md)
-- [Feature Flags Documentation](../adr/004-flagsmith-feature-flags.md)
-
