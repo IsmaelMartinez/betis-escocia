@@ -114,13 +114,15 @@ const RSS_FEEDS = [
 
 ## 3. AI Agent Design
 
-### Gemini Model Selection
+### Gemini Model Selection (December 2025)
 
 | Model | Cost | Speed | Quality | Recommendation |
 |-------|------|-------|---------|----------------|
 | Gemini 2.5 Flash | Free tier | Very Fast | Excellent | ✅ **Recommended** |
 | Gemini 2.5 Pro | Free tier (limited) | Fast | Excellent | For complex analysis |
-| Gemini 2.0 Flash | Free tier | Very Fast | Good | Fallback option |
+| Gemini 3 | Paid (AI Ultra) | Fast | Superior | Overkill for this use case |
+
+**Note**: Gemini 3 with "Deep Think" (Nov 2025) offers advanced reasoning but requires Google AI Ultra subscription. Gemini 2.5 Flash is more than sufficient for rumor extraction and scoring.
 
 ### System Prompt (Fran Mode)
 

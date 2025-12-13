@@ -23,17 +23,19 @@ This document analyzes options for implementing an AI chatbot assistant that:
 |--------|---------|
 | **Free Tier** | ✅ **15 requests/minute, 1,500 requests/day** (Gemini 2.5 Flash) |
 | **Pricing** | \$0.075 per 1M input tokens, \$0.30 per 1M output tokens (paid tier) |
-| **Models** | Gemini 2.5 Flash, Gemini 2.5 Pro, Gemini 2.0 Flash |
+| **Models** | Gemini 3 (subscribers), Gemini 2.5 Flash, Gemini 2.5 Pro |
 | **API** | REST API with official Node.js SDK (\`@google/generative-ai\`) |
 | **Context Window** | 1M tokens (Gemini 2.5 Flash) |
 | **Speed** | Very fast responses (~1-2 seconds) |
 | **Rate Limits** | Generous for a community website |
+| **Latest** | Gemini 3 with "Deep Think" (Nov 2025) - paid only |
 
 **Why Gemini is Best for This Project:**
 - **Completely free** for low-to-moderate traffic (1,500 requests/day = ~50 users × 30 messages)
 - Simple SDK integration with Next.js
 - Excellent for conversational AI with topic restriction
 - No credit card required for free tier
+- Gemini 2.5 Flash offers excellent quality for chatbot use cases
 
 ### Alternative Options
 
@@ -42,53 +44,57 @@ This document analyzes options for implementing an AI chatbot assistant that:
 | Aspect | Details |
 |--------|---------|
 | **Free Tier** | ✅ 14,400 requests/day (varies by model) |
-| **Models** | Llama 3.1, Mistral, Mixtral |
+| **Models** | Llama 4 Scout/Maverick, Llama 3.3, Mistral Large 3, Mixtral |
 | **Speed** | **Extremely fast** (fastest inference available) |
 | **Context Window** | 8K-128K depending on model |
 | **SDK** | Node.js SDK available |
 
-**Pros**: Fastest responses, generous free tier  
-**Cons**: Hosted models only (no Gemini/GPT), less refined conversation quality
+**Pros**: Fastest responses, generous free tier, access to latest Llama 4 models  
+**Cons**: Open-source models only (no Gemini/GPT/Claude), quality varies by model
 
-#### OpenAI (GPT-3.5/GPT-4)
+#### OpenAI (GPT-5.2 / GPT-4o)
 
 | Aspect | Details |
 |--------|---------|
 | **Free Tier** | ❌ No free tier (pay-per-use only) |
-| **Pricing** | GPT-3.5: \$0.50/1M tokens, GPT-4: \$30/1M tokens |
-| **Quality** | Highest conversation quality |
+| **Pricing** | GPT-4o: \$2.50/1M input, \$10/1M output; GPT-5.2: varies by variant |
+| **Models** | GPT-5.2 (Instant/Thinking/Pro), GPT-5.1, GPT-4o, GPT-4o-mini |
+| **Quality** | Excellent conversation quality |
+| **Latest** | GPT-5.2 released Dec 11, 2025 |
 
-**Not recommended** - No free tier, higher cost.
+**Not recommended** - No free tier, costs add up quickly for chatbots.
 
 #### Anthropic Claude
 
 | Aspect | Details |
 |--------|---------|
 | **Free Tier** | ❌ No free API tier |
-| **Pricing** | Claude 3 Haiku: \$0.25/1M input, \$1.25/1M output |
-| **Quality** | Excellent conversation quality |
+| **Pricing** | Claude Opus 4.5: \$5/1M input, \$25/1M output; Claude 3.5 Haiku: \$0.80/1M input |
+| **Models** | Claude Opus 4.5, Claude 3.5 Sonnet, Claude 3.5 Haiku |
+| **Quality** | Excellent conversation quality, best for coding |
+| **Latest** | Claude Opus 4.5 released Nov 24, 2025 |
 
-**Not recommended** - No free API tier.
+**Not recommended** - No free API tier, though pricing has improved.
 
 #### Cloudflare Workers AI
 
 | Aspect | Details |
 |--------|---------|
 | **Free Tier** | ✅ 10,000 neurons/day (roughly 100-500 requests) |
-| **Models** | Llama 3, Mistral, Phi-2 |
+| **Models** | Llama 4 Scout, Llama 3.3, Mistral Small 3, Qwen 3 |
 | **Integration** | Works great with Vercel/Cloudflare |
 
-**Backup option** - Good if already using Cloudflare, limited free tier.
+**Backup option** - Good if already using Cloudflare, limited free tier but solid models.
 
 #### Ollama (Self-hosted)
 
 | Aspect | Details |
 |--------|---------|
 | **Cost** | Free (requires server) |
-| **Models** | Any open-source model (Llama, Mistral, etc.) |
+| **Models** | Any open-source model (Llama 4, Mistral Large 3, Qwen 3, etc.) |
 | **Hosting** | Requires VPS (\$5-20/month) |
 
-**Not recommended** - Requires infrastructure management.
+**Not recommended** - Requires infrastructure management, though models are excellent.
 
 ---
 
