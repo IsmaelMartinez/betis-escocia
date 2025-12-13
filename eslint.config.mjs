@@ -38,9 +38,10 @@ try {
       },
     },
   ];
-} catch {
+} catch (err) {
   // Fallback if plugins aren't available
-  console.warn("Some ESLint plugins could not be loaded");
+  console.warn("One or more ESLint plugins could not be loaded. Linting may be incomplete.");
+  console.error("Plugin loading error details:", err && err.stack ? err.stack : err);
 }
 
 const eslintConfig = [
