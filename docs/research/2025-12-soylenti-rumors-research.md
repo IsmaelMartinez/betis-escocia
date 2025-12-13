@@ -129,60 +129,7 @@ TAREAS:
 1. Analiza el siguiente contenido de noticias
 2. Extrae SOLO rumores relacionados con Real Betis (fichajes, salidas, renovaciones, lesiones)
 3. Para cada rumor, proporciona:
-   - título: Un titular breve y claro (máx 100 caracteres)
-   - resumen: Descripción del rumor (máx 300 caracteres)
-   - jugador: Nombre del jugador involucrado (si aplica)
-   - categoria: "transfer_in" | "transfer_out" | "contract" | "injury" | "management" | "general"
-   - probabilidad: Un número del 0-100 basado en:
-     * Credibilidad de la fuente (Marca, AS = 60-80, rumores = 20-40)
-     * Múltiples fuentes reportando lo mismo (+20)
-     * Historial de precisión de la fuente
-     * Lógica del movimiento (sentido deportivo y económico)
-   - razonamiento: Breve explicación de por qué asignaste esa probabilidad
-
-FORMATO DE RESPUESTA (JSON):
-{
-  "rumors": [
-    {
-      "titulo": "Ceballos podría volver al Betis en verano",
-      "resumen": "Según fuentes cercanas al jugador, Dani Ceballos estaría interesado en regresar...",
-      "jugador": "Dani Ceballos",
-      "categoria": "transfer_in",
-      "probabilidad": 45,
-      "razonamiento": "Fuente de credibilidad media. El jugador ha expresado cariño al club pero su ficha es alta."
-    }
-  ],
-  "noRumors": false
-}
-
-REGLAS:
-- Solo rumores sobre Real Betis Balompié
-- No incluyas noticias confirmadas (solo rumores/especulaciones)
-- Sé conservador con las probabilidades (raramente > 80%)
-- Si la noticia es de una fuente poco fiable, probabilidad < 40%`;
-```
-
-### Probability Scoring Guidelines (Fran Mode)
-
-| Probability Range | Label | Visual | Criteria |
-|-------------------|-------|--------|----------|
-| 0-25% | Muy Improbable | 🔴 Red | Tabloid source, no corroboration |
-| 26-50% | Poco Probable | 🟠 Orange | Single source, unverified |
-| 51-75% | Posible | 🟡 Yellow | Multiple sources, some evidence |
-| 76-100% | Muy Probable | 🟢 Green | Tier 1 sources, strong signals |
-
----
-
-## 4. Database Schema
-
-### Rumors Table
-
-```sql
-CREATE TABLE IF NOT EXISTS rumors (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    
-    -- Core content
-    title VARCHAR(200) NOT NULL,
+    title VARCHAR(100) NOT NULL,
     content TEXT NOT NULL,
     player_name VARCHAR(100),
     
