@@ -402,6 +402,13 @@ export function ChatWidget() {
           content: data.data.response,
           timestamp: new Date(),
         }]);
+      } else {
+        // Handle API errors reported by the backend
+        setMessages(prev => [...prev, {
+          role: 'model',
+          content: data.error || 'Lo siento, ha ocurrido un error. Inténtalo de nuevo.',
+          timestamp: new Date(),
+        }]);
       }
     } catch (error) {
       setMessages(prev => [...prev, {
