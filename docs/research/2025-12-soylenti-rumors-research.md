@@ -399,7 +399,7 @@ GOOGLE_GEMINI_API_KEY=your_gemini_api_key
 CRON_SECRET=your_random_secret_here
 
 # Feature flag (disabled by default)
-NEXT_PUBLIC_FEATURE_SOYLENTI=false
+FEATURE_SOYLENTI=false
 ```
 
 ---
