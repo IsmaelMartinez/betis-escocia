@@ -2,7 +2,7 @@
 
 This document provides a list of ideas and features for the Peña Bética Escocesa website. It serves as a brainstorming space for future enhancements and functionalities.
 
-## 📋 **Quick Status Overview** (Last updated: December 2024)
+## 📋 **Quick Status Overview** (Last updated: December 2025)
 
 | Category | Implemented | In Progress | Pending |
 |----------|-------------|-------------|---------|
