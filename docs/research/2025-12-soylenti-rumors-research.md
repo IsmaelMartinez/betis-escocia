@@ -197,6 +197,11 @@ CREATE TABLE IF NOT EXISTS rumors (
       'injury', 'management', 'general'
     )),
     
+    -- Transfer window tracking
+    transfer_window VARCHAR(20) NOT NULL,  -- e.g., '2025-summer', '2025-winter'
+    transfer_window_type VARCHAR(10) CHECK (transfer_window_type IN ('summer', 'winter')),
+    transfer_window_year INTEGER,
+    
     -- Source tracking
     source_url TEXT,
     source_name VARCHAR(100),
@@ -250,13 +255,55 @@ CREATE INDEX idx_rumors_probability ON rumors(probability DESC);
 CREATE INDEX idx_rumors_player ON rumors(player_name);
 CREATE INDEX idx_rumors_resolution ON rumors(resolution);
 CREATE INDEX idx_rumors_previous ON rumors(previous_rumor_id);
+CREATE INDEX idx_rumors_transfer_window ON rumors(transfer_window);
+CREATE INDEX idx_rumors_window_year ON rumors(transfer_window_year);
 
--- View: Recurring rumors (same player, multiple appearances)
+-- Function: Get current transfer window
+CREATE OR REPLACE FUNCTION get_current_transfer_window()
+RETURNS VARCHAR(20) AS $$
+DECLARE
+    current_month INTEGER := EXTRACT(MONTH FROM NOW());
+    current_year INTEGER := EXTRACT(YEAR FROM NOW());
+BEGIN
+    -- Summer window: June 1 - August 31
+    -- Winter window: January 1 - January 31
+    -- Outside windows: use the next upcoming window
+    IF current_month >= 6 AND current_month <= 8 THEN
+        RETURN current_year || '-summer';
+    ELSIF current_month = 1 THEN
+        RETURN current_year || '-winter';
+    ELSIF current_month >= 2 AND current_month <= 5 THEN
+        RETURN current_year || '-summer';  -- Pre-summer, target summer
+    ELSE
+        RETURN (current_year + 1) || '-winter';  -- Post-summer, target winter
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+-- View: Rumors by transfer window
+CREATE VIEW rumors_by_window AS
+SELECT 
+    transfer_window,
+    transfer_window_type,
+    transfer_window_year,
+    COUNT(*) as total_rumors,
+    COUNT(CASE WHEN resolution = 'confirmed' THEN 1 END) as confirmed,
+    COUNT(CASE WHEN resolution = 'denied' THEN 1 END) as denied,
+    COUNT(CASE WHEN resolution = 'unresolved' THEN 1 END) as pending,
+    ROUND(AVG(probability), 1) as avg_probability
+FROM rumors
+GROUP BY transfer_window, transfer_window_type, transfer_window_year
+ORDER BY transfer_window_year DESC, 
+         CASE transfer_window_type WHEN 'summer' THEN 1 ELSE 2 END;
+
+-- View: Recurring rumors (same player, multiple windows)
 CREATE VIEW recurring_rumors AS
 SELECT 
     player_name,
     category,
     COUNT(*) as appearance_count,
+    COUNT(DISTINCT transfer_window) as windows_appeared,
+    ARRAY_AGG(DISTINCT transfer_window ORDER BY transfer_window DESC) as windows,
     MIN(first_seen_at) as first_appeared,
     MAX(created_at) as last_appeared,
     ARRAY_AGG(id ORDER BY created_at DESC) as rumor_ids,
@@ -282,6 +329,55 @@ FROM rumors
 WHERE source_name IS NOT NULL
 GROUP BY source_name
 HAVING COUNT(*) >= 3;
+
+-- View: Player rumor history across windows
+CREATE VIEW player_rumor_history AS
+SELECT 
+    player_name,
+    transfer_window,
+    category,
+    COUNT(*) as mentions,
+    MAX(probability) as peak_probability,
+    STRING_AGG(DISTINCT source_name, ', ') as sources,
+    MAX(resolution) as final_resolution
+FROM rumors
+WHERE player_name IS NOT NULL
+GROUP BY player_name, transfer_window, category
+ORDER BY player_name, transfer_window DESC;
+```
+
+### Transfer Window Logic
+
+| Window | Period | Derived From |
+|--------|--------|--------------|
+| `2025-summer` | Jun 1 - Aug 31, 2025 | Month 6-8 |
+| `2025-winter` | Jan 1 - Jan 31, 2025 | Month 1 |
+| `2026-winter` | Jan 1 - Jan 31, 2026 | After Aug, target next winter |
+
+```typescript
+// Helper function to determine transfer window
+function getTransferWindow(date: Date = new Date()): string {
+  const month = date.getMonth() + 1; // JavaScript months are 0-indexed
+  const year = date.getFullYear();
+  
+  if (month >= 6 && month <= 8) {
+    return `${year}-summer`;
+  } else if (month === 1) {
+    return `${year}-winter`;
+  } else if (month >= 2 && month <= 5) {
+    return `${year}-summer`; // Pre-summer window
+  } else {
+    return `${year + 1}-winter`; // Sept-Dec → next year's winter
+  }
+}
+
+// When inserting a rumor
+const newRumor = {
+  // ... other fields
+  transfer_window: getTransferWindow(),
+  transfer_window_type: getTransferWindow().includes('summer') ? 'summer' : 'winter',
+  transfer_window_year: parseInt(getTransferWindow().split('-')[0]),
+};
 ```
 
 ### Resolution Workflow
