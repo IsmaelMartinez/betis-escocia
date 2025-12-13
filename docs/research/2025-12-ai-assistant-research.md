@@ -148,9 +148,14 @@ const ALLOWED_TOPICS = [
 
 function isLikelyOnTopic(message: string): boolean {
   const normalized = message.toLowerCase();
-  // Allow greetings and basic questions
-  if (normalized.length < 20) return true;
-  // Check for topic keywords
+  const GREETINGS = ['hola', 'hello', 'hi', 'hey', 'buenas'];
+
+  // Allow short greetings to pass
+  if (normalized.length < 20 && GREETINGS.some(g => normalized.startsWith(g))) {
+    return true;
+  }
+
+  // All other messages must contain a topic keyword
   return ALLOWED_TOPICS.some(topic => normalized.includes(topic));
 }
 \`\`\`
