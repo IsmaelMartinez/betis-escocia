@@ -15,6 +15,9 @@ This document provides a list of ideas and features for the Peña Bética Escoce
 
 ### Rumors Page (Soylenti)
 * Add a soylenti (rumors in Turkish) page where rumors spread. Ceballos, again, is coming back to Betis, etc. It can be a fun page where people can share their opinions and rumors about the team. Fran mode to provide % values to the rumors.
+* 📋 **Research Complete**: See [docs/research/2025-12-soylenti-rumors-research.md](../docs/research/2025-12-soylenti-rumors-research.md) for full analysis
+* **Recommended approach**: Automated AI agent using Google Gemini (free tier) to fetch/analyze news from RSS feeds on a schedule (every 6 hours via Vercel Cron)
+* **Technical Spikes Required**: RSS feed reliability, Gemini structured output, Vercel cron setup, deduplication algorithm
 
 ### E-commerce Integration
 * Implement merchandise management system to allow users to buy Peña merchandise directly from the website. (low priority at the moment)
