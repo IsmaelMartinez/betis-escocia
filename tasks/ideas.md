@@ -10,7 +10,7 @@ This document provides a list of ideas and features for the Peña Bética Escoce
 | User Features | ✅ Dashboard, ✅ RSVP, ✅ Contact, ✅ GDPR | 🔄 GDPR Dashboard Integration | Enhanced Profiles, GitHub Issues |
 | Games | ✅ Daily Trivia | - | Lineup, Score, Crossword, Penalty |
 | Push Notifications | ✅ Admin | - | User reminders |
-| Other | 📋 TV/AI Research | - | La Porra, Soylenti, E-commerce, Voting, i18n |
+| Other | ✅ TV Research, ✅ AI Research, ✅ Soylenti Research | - | La Porra, E-commerce, Voting, i18n |
 
 ## 🎯 **Core Feature Ideas**
 
@@ -23,7 +23,7 @@ This document provides a list of ideas and features for the Peña Bética Escoce
 
 ### AI Assistant
 * Provide a cheap AI assistant for the users that access the website. It can guide them through the website, help them with the porra, and answer questions about Real Betis.
-* **Research completed**: See `docs/research/2025-12-ai-assistant-research.md`
+* 📋 **Research Complete**: See [docs/research/2025-12-ai-assistant-research.md](../docs/research/2025-12-ai-assistant-research.md) for full analysis
 * **Recommended solution**: Google Gemini API (free tier: 1,500 requests/day) with topic-restricted system prompt
 
 ### Rumors Page (Soylenti)
