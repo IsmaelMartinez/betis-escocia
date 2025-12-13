@@ -263,7 +263,11 @@ GOOGLE_GEMINI_API_KEY=your_api_key_here
 // src/lib/chat/geminiClient.ts
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY!);
+const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
+if (!apiKey) {
+  throw new Error('GOOGLE_GEMINI_API_KEY environment variable is not set');
+}
+const genAI = new GoogleGenerativeAI(apiKey);
 
 export const geminiModel = genAI.getGenerativeModel({
   model: 'gemini-1.5-flash',
