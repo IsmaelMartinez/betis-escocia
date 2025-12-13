@@ -524,14 +524,14 @@ Add feature flag for gradual rollout:
 \`\`\`typescript
 // src/lib/featureFlags.ts
 export type FeatureName = 
-  | 'chat-assistant'  // New flag
+  | 'show-chat-assistant'  // New flag
   | 'show-trivia-game'
   // ... existing flags
 \`\`\`
 
 \`\`\`env
 # .env.local - disabled by default
-NEXT_PUBLIC_FEATURE_CHAT_ASSISTANT=false
+NEXT_PUBLIC_FEATURE_SHOW_CHAT_ASSISTANT=false
 \`\`\`
 
 ---
