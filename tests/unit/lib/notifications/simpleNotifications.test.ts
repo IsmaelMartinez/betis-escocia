@@ -13,23 +13,39 @@ import {
   clearNotificationPreferenceCache
 } from '@/lib/notifications/simpleNotifications';
 
-// Mock Notification API
-const mockNotification = {
+// Mock Notification API state
+const mockNotificationState = {
   permission: 'default' as NotificationPermission,
   requestPermission: vi.fn(),
+  constructorCalls: [] as Array<{ title: string; options?: NotificationOptions }>,
+  lastInstance: null as MockNotificationInstance | null,
 };
 
-const mockNotificationInstance = {
-  close: vi.fn(),
-  onclick: null,
-};
+// Mock notification instance type
+interface MockNotificationInstance {
+  close: ReturnType<typeof vi.fn>;
+  onclick: ((this: Notification, ev: Event) => unknown) | null;
+}
 
-const mockNotificationConstructor = vi.fn(() => mockNotificationInstance) as any;
-Object.defineProperty(mockNotificationConstructor, 'permission', {
-  get: () => mockNotification.permission,
-  configurable: true
-});
-mockNotificationConstructor.requestPermission = mockNotification.requestPermission;
+// Create a proper class for the Notification constructor
+class MockNotificationClass {
+  static get permission() {
+    return mockNotificationState.permission;
+  }
+  static requestPermission = mockNotificationState.requestPermission;
+  
+  close = vi.fn();
+  onclick: ((this: Notification, ev: Event) => unknown) | null = null;
+  
+  constructor(title: string, options?: NotificationOptions) {
+    mockNotificationState.constructorCalls.push({ title, options });
+    mockNotificationState.lastInstance = this;
+  }
+}
+
+// Alias for backward compatibility in tests
+const mockNotification = mockNotificationState;
+const mockNotificationConstructor = MockNotificationClass;
 
 describe('simpleNotifications', () => {
   beforeEach(() => {
@@ -37,6 +53,10 @@ describe('simpleNotifications', () => {
     
     // Clear notification preference cache before each test
     clearNotificationPreferenceCache();
+    
+    // Reset constructor calls tracking
+    mockNotificationState.constructorCalls = [];
+    mockNotificationState.lastInstance = null;
 
     // Mock window and Notification API
     Object.defineProperty(globalThis, 'window', {
@@ -126,13 +146,17 @@ describe('simpleNotifications', () => {
         tag: 'test'
       });
 
-      expect(mockNotificationConstructor).toHaveBeenCalledWith('Test Title', {
-        body: 'Test Body',
-        icon: '/images/logo_no_texto.jpg',
-        tag: 'test',
-        requireInteraction: true,
+      expect(mockNotificationState.constructorCalls).toHaveLength(1);
+      expect(mockNotificationState.constructorCalls[0]).toEqual({
+        title: 'Test Title',
+        options: {
+          body: 'Test Body',
+          icon: '/images/logo_no_texto.jpg',
+          tag: 'test',
+          requireInteraction: true,
+        }
       });
-      expect(notification).toBe(mockNotificationInstance);
+      expect(notification).toBe(mockNotificationState.lastInstance);
     });
 
     it('should return null when permission not granted', () => {
@@ -143,7 +167,7 @@ describe('simpleNotifications', () => {
         body: 'Test Body'
       });
 
-      expect(mockNotificationConstructor).not.toHaveBeenCalled();
+      expect(mockNotificationState.constructorCalls).toHaveLength(0);
       expect(notification).toBeNull();
     });
 
@@ -151,13 +175,13 @@ describe('simpleNotifications', () => {
       mockNotification.permission = 'granted';
       const onClick = vi.fn();
       
-      showNotification({
+      const notification = showNotification({
         title: 'Test Title',
         body: 'Test Body',
         onClick
       });
 
-      expect(mockNotificationInstance.onclick).toBe(onClick);
+      expect(notification?.onclick).toBe(onClick);
     });
   });
 
@@ -167,13 +191,10 @@ describe('simpleNotifications', () => {
       
       showRSVPNotification('John Doe', '2024-01-15');
 
-      expect(mockNotificationConstructor).toHaveBeenCalledWith(
-        '🎉 Nuevo RSVP - Peña Bética',
-        expect.objectContaining({
-          body: expect.stringContaining('John Doe confirmó asistencia'),
-          tag: 'rsvp'
-        })
-      );
+      expect(mockNotificationState.constructorCalls).toHaveLength(1);
+      expect(mockNotificationState.constructorCalls[0].title).toBe('🎉 Nuevo RSVP - Peña Bética');
+      expect(mockNotificationState.constructorCalls[0].options?.body).toContain('John Doe confirmó asistencia');
+      expect(mockNotificationState.constructorCalls[0].options?.tag).toBe('rsvp');
     });
 
     it('should handle missing date', () => {
@@ -181,12 +202,9 @@ describe('simpleNotifications', () => {
       
       showRSVPNotification('John Doe');
 
-      expect(mockNotificationConstructor).toHaveBeenCalledWith(
-        '🎉 Nuevo RSVP - Peña Bética',
-        expect.objectContaining({
-          body: expect.stringContaining('fecha pendiente')
-        })
-      );
+      expect(mockNotificationState.constructorCalls).toHaveLength(1);
+      expect(mockNotificationState.constructorCalls[0].title).toBe('🎉 Nuevo RSVP - Peña Bética');
+      expect(mockNotificationState.constructorCalls[0].options?.body).toContain('fecha pendiente');
     });
   });
 
@@ -196,13 +214,10 @@ describe('simpleNotifications', () => {
       
       showContactNotification('Jane Doe', 'general');
 
-      expect(mockNotificationConstructor).toHaveBeenCalledWith(
-        '📬 Nuevo Mensaje - Peña Bética',
-        expect.objectContaining({
-          body: 'Jane Doe envió un mensaje (general)',
-          tag: 'contact'
-        })
-      );
+      expect(mockNotificationState.constructorCalls).toHaveLength(1);
+      expect(mockNotificationState.constructorCalls[0].title).toBe('📬 Nuevo Mensaje - Peña Bética');
+      expect(mockNotificationState.constructorCalls[0].options?.body).toBe('Jane Doe envió un mensaje (general)');
+      expect(mockNotificationState.constructorCalls[0].options?.tag).toBe('contact');
     });
   });
 
@@ -255,12 +270,9 @@ describe('simpleNotifications', () => {
         matchDate: '2024-01-15'
       });
 
-      expect(mockNotificationConstructor).toHaveBeenCalledWith(
-        '🎉 Nuevo RSVP - Peña Bética',
-        expect.objectContaining({
-          body: expect.stringContaining('Test User confirmó asistencia')
-        })
-      );
+      expect(mockNotificationState.constructorCalls).toHaveLength(1);
+      expect(mockNotificationState.constructorCalls[0].title).toBe('🎉 Nuevo RSVP - Peña Bética');
+      expect(mockNotificationState.constructorCalls[0].options?.body).toContain('Test User confirmó asistencia');
     });
 
     it('should trigger contact notification when conditions are met', async () => {
@@ -276,12 +288,9 @@ describe('simpleNotifications', () => {
         contactType: 'general'
       });
 
-      expect(mockNotificationConstructor).toHaveBeenCalledWith(
-        '📬 Nuevo Mensaje - Peña Bética',
-        expect.objectContaining({
-          body: 'Test User envió un mensaje (general)'
-        })
-      );
+      expect(mockNotificationState.constructorCalls).toHaveLength(1);
+      expect(mockNotificationState.constructorCalls[0].title).toBe('📬 Nuevo Mensaje - Peña Bética');
+      expect(mockNotificationState.constructorCalls[0].options?.body).toBe('Test User envió un mensaje (general)');
     });
 
     it('should not trigger notification when permission denied', async () => {
@@ -291,7 +300,7 @@ describe('simpleNotifications', () => {
         userName: 'Test User'
       });
 
-      expect(mockNotificationConstructor).not.toHaveBeenCalled();
+      expect(mockNotificationState.constructorCalls).toHaveLength(0);
     });
 
     it('should not trigger notification when user preferences disabled', async () => {
@@ -306,7 +315,7 @@ describe('simpleNotifications', () => {
         userName: 'Test User'
       });
 
-      expect(mockNotificationConstructor).not.toHaveBeenCalled();
+      expect(mockNotificationState.constructorCalls).toHaveLength(0);
     });
   });
 });

@@ -94,7 +94,6 @@ export default defineConfig({
       include: [
         'src/**/*.{js,jsx,ts,tsx}',
       ],
-      all: true,
       // Coverage thresholds matching existing Jest setup
       thresholds: {
         global: {
@@ -106,22 +105,10 @@ export default defineConfig({
       },
       // Additional coverage options
       clean: true,
-      cleanOnRerun: true,
     },
     // Test execution settings
     testTimeout: 10000, // 10 seconds timeout for tests
     hookTimeout: 10000, // 10 seconds timeout for hooks
-    // Parallel execution configuration
-    pool: 'threads',
-    poolOptions: {
-      threads: {
-        singleThread: false,
-        isolate: true,
-        useAtomics: true,
-        minThreads: 1,
-        maxThreads: 10, // Use up to 10 threads for faster execution
-      },
-    },
     // Reporter configuration  
     reporters: [
   ['default', { summary: false }], // Use default reporter (supersedes old 'basic')

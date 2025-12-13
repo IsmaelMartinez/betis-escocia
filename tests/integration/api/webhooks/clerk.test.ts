@@ -1,57 +1,61 @@
 // Mock external dependencies first
-vi.mock('svix', () => ({
-  Webhook: vi.fn(),
-}));
+const mockVerifyFn = vi.fn();
+vi.mock('svix', () => {
+  return {
+    Webhook: class MockWebhook {
+      verify = mockVerifyFn;
+    },
+  };
+});
 
 vi.mock('next/headers', () => ({
   headers: vi.fn(),
 }));
 
-vi.mock('next/server', () => ({
-  NextRequest: vi.fn((input, init) => {
-    const request = new Request(input, init);
-    return {
-      ...request,
-      json: vi.fn(() => request.json()),
-      url: request.url,
-    };
-  }),
-  NextResponse: {
-    json: vi.fn((data, init) => ({
-      json: () => Promise.resolve(data),
-      status: init?.status || 200,
-    })),
-  },
-}));
+vi.mock('next/server', () => {
+  class MockNextRequest {
+    _request: Request;
+    url: string;
+    
+    constructor(input: string | URL, init?: RequestInit) {
+      this._request = new Request(input, init);
+      this.url = this._request.url;
+    }
+    
+    json() {
+      return this._request.json();
+    }
+  }
+  
+  return {
+    NextRequest: MockNextRequest,
+    NextResponse: {
+      json: vi.fn((data, init) => ({
+        json: () => Promise.resolve(data),
+        status: init?.status || 200,
+      })),
+    },
+  };
+});
 
 vi.mock('@/lib/supabase', () => ({
   linkExistingSubmissionsToUser: vi.fn(),
   unlinkUserSubmissions: vi.fn(),
 }));
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { POST } from '@/app/api/webhooks/clerk/route';
 import { linkExistingSubmissionsToUser, unlinkUserSubmissions } from '@/lib/supabase';
 import { headers } from 'next/headers';
-import { Webhook } from 'svix';
 
 const mockLinkExistingSubmissionsToUser = vi.mocked(linkExistingSubmissionsToUser);
 const mockUnlinkUserSubmissions = vi.mocked(unlinkUserSubmissions);
 const mockHeaders = vi.mocked(headers);
-const MockWebhook = vi.mocked(Webhook);
 
 describe('Clerk Webhook API', () => {
-  let mockVerify: any;
-  
   beforeEach(() => {
     vi.clearAllMocks();
     process.env.CLERK_WEBHOOK_SECRET = 'test-webhook-secret';
-    
-    // Mock svix Webhook instance
-    mockVerify = vi.fn();
-    MockWebhook.mockImplementation(() => ({
-      verify: mockVerify,
-    } as unknown as typeof MockWebhook.prototype));
     
     // Default successful header mock
     mockHeaders.mockResolvedValue({
@@ -103,7 +107,7 @@ describe('Clerk Webhook API', () => {
         }
       };
 
-      mockVerify.mockReturnValue(webhookData);
+      mockVerifyFn.mockReturnValue(webhookData);
 
       const request = new Request('http://localhost/api/webhooks/clerk', {
         method: 'POST',
@@ -141,7 +145,7 @@ describe('Clerk Webhook API', () => {
         }
       };
 
-      mockVerify.mockReturnValue(webhookData);
+      mockVerifyFn.mockReturnValue(webhookData);
 
       const request = new Request('http://localhost/api/webhooks/clerk', {
         method: 'POST',
@@ -175,7 +179,7 @@ describe('Clerk Webhook API', () => {
         }
       };
 
-      mockVerify.mockReturnValue(webhookData);
+      mockVerifyFn.mockReturnValue(webhookData);
 
       const request = new Request('http://localhost/api/webhooks/clerk', {
         method: 'POST',
@@ -207,7 +211,7 @@ describe('Clerk Webhook API', () => {
         }
       };
 
-      mockVerify.mockReturnValue(webhookData);
+      mockVerifyFn.mockReturnValue(webhookData);
 
       const request = new Request('http://localhost/api/webhooks/clerk', {
         method: 'POST',
@@ -235,7 +239,7 @@ describe('Clerk Webhook API', () => {
         data: {}
       };
 
-      mockVerify.mockReturnValue(webhookData);
+      mockVerifyFn.mockReturnValue(webhookData);
 
       const request = new Request('http://localhost/api/webhooks/clerk', {
         method: 'POST',
@@ -267,7 +271,7 @@ describe('Clerk Webhook API', () => {
         }
       };
 
-      mockVerify.mockReturnValue(webhookData);
+      mockVerifyFn.mockReturnValue(webhookData);
 
       const request = new Request('http://localhost/api/webhooks/clerk', {
         method: 'POST',
@@ -337,7 +341,7 @@ describe('Clerk Webhook API', () => {
     });
 
     it('should return 400 if webhook verification fails', async () => {
-      mockVerify.mockImplementation(() => {
+      mockVerifyFn.mockImplementation(() => {
         throw new Error('Invalid signature');
       });
 
@@ -377,7 +381,7 @@ describe('Clerk Webhook API', () => {
         }
       };
 
-      mockVerify.mockReturnValue(webhookData);
+      mockVerifyFn.mockReturnValue(webhookData);
 
       const request = new Request('http://localhost/api/webhooks/clerk', {
         method: 'POST',
@@ -415,7 +419,7 @@ describe('Clerk Webhook API', () => {
         }
       };
 
-      mockVerify.mockReturnValue(webhookData);
+      mockVerifyFn.mockReturnValue(webhookData);
 
       const request = new Request('http://localhost/api/webhooks/clerk', {
         method: 'POST',

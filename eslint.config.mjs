@@ -1,16 +1,47 @@
 // For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
 import storybook from "eslint-plugin-storybook";
+import { createRequire } from "module";
 
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+// Next.js 16 uses a different ESLint config structure
+const require = createRequire(import.meta.url);
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+// Import Next.js ESLint config
+let nextConfig = [];
+try {
+  const nextPlugin = require("@next/eslint-plugin-next");
+  const tsPlugin = require("@typescript-eslint/eslint-plugin");
+  const tsParser = require("@typescript-eslint/parser");
+  const reactPlugin = require("eslint-plugin-react");
+  const reactHooksPlugin = require("eslint-plugin-react-hooks");
+  
+  nextConfig = [
+    {
+      plugins: {
+        "@next/next": nextPlugin,
+        "@typescript-eslint": tsPlugin,
+        "react": reactPlugin,
+        "react-hooks": reactHooksPlugin,
+      },
+      languageOptions: {
+        parser: tsParser,
+        parserOptions: {
+          ecmaFeatures: {
+            jsx: true,
+          },
+        },
+      },
+      rules: {
+        ...nextPlugin.configs.recommended.rules,
+        ...nextPlugin.configs["core-web-vitals"].rules,
+        ...tsPlugin.configs.recommended.rules,
+        ...reactHooksPlugin.configs.recommended.rules,
+      },
+    },
+  ];
+} catch {
+  // Fallback if plugins aren't available
+  console.warn("Some ESLint plugins could not be loaded");
+}
 
 const eslintConfig = [
   {
@@ -27,7 +58,7 @@ const eslintConfig = [
       "public/mockServiceWorker.js"
     ]
   },
-  ...compat.extends("next/core-web-vitals", "next/typescript"), 
+  ...nextConfig,
   ...storybook.configs["flat/recommended"],
   {
     files: ["tests/**/*", "**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"],
@@ -35,7 +66,8 @@ const eslintConfig = [
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unused-vars": "off",
       "@next/next/no-assign-module-variable": "off",
-      "@next/next/no-img-element": "off"
+      "@next/next/no-img-element": "off",
+      "react-hooks/refs": "off"
     }
   },
   {
