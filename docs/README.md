@@ -16,7 +16,7 @@ Welcome to the Peña Bética Escocesa website documentation.
 
 - **[API Documentation](api/)** - API integration patterns and limitations
 - **[Development](development/)** - Development-specific documentation
-- **[Historical](historical/)** - Completed tasks and legacy documentation
+- **[Research](research/)** - Research notes and analysis
 
 ## External Resources
 

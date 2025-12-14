@@ -158,8 +158,6 @@ CREATE TABLE notification_preferences (
 - [Notification API](https://developer.mozilla.org/en-US/docs/Web/API/Notification)
 - [ADR-001: Clerk Authentication](./001-clerk-authentication.md)
 - [ADR-003: Supabase Database](./003-supabase-database.md)
-- [PRD: Admin Push Notifications](../historical/prd-admin-push-notifications.md)
-- [Task List: Push Notifications Implementation](../historical/tasks-prd-admin-push-notifications.md)
 
 ## Implementation Results
 
