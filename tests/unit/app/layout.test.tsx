@@ -67,8 +67,10 @@ describe('RootLayout', () => {
     expect(screen.getByTestId('mock-facebook-sdk')).toBeInTheDocument();
     expect(screen.getByTestId('mock-offline-detector')).toBeInTheDocument();
     expect(screen.getByTestId('mock-sentry-user-context')).toBeInTheDocument();
-    expect(screen.getByTestId('mock-analytics')).toBeInTheDocument();
-    expect(screen.getByTestId('mock-speed-insights')).toBeInTheDocument();
+    // Analytics and SpeedInsights are only rendered on Vercel (when VERCEL=1)
+    // They are conditionally rendered, so we check they're NOT present in test env
+    expect(screen.queryByTestId('mock-analytics')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('mock-speed-insights')).not.toBeInTheDocument();
   });
 
   it('renders without errors', () => {

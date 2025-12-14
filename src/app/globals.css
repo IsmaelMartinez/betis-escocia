@@ -6,7 +6,9 @@
   
   /* Real Betis brand colors */
   --betis-green: #00A651;
-  --betis-green-dark: #008542;
+  --betis-green-dark: #006633;
+  --betis-green-accessible: #006633; /* WCAG AA compliant on white (4.5:1+) */
+  --betis-green-light: #e6f4ed; /* Light green for backgrounds */
   --betis-white: #FFFFFF;
   --betis-dark: #0f1419;
   --betis-black: #000000;
@@ -59,7 +61,8 @@ form {
 /* Custom utility classes for Real Betis branding */
 .bg-betis-green { background-color: var(--betis-green); }
 .bg-betis-green-dark { background-color: var(--betis-green-dark); }
-.text-betis-green { color: var(--betis-green); }
+.text-betis-green { color: var(--betis-green-accessible); } /* Use accessible green for text */
+.text-betis-green-light { color: var(--betis-green-light); }
 .border-betis-green { border-color: var(--betis-green); }
 .bg-betis-gold { background-color: var(--betis-gold); }
 .bg-betis-gold-dark { background-color: var(--betis-gold-dark); }

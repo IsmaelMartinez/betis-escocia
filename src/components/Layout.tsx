@@ -42,15 +42,15 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-betis-green shadow-lg">
+      <header className="bg-betis-green-dark shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-2">
               <BetisLogo width={32} height={32} className="bg-white rounded-full p-1" priority={true} />
               <div className="text-white">
-                <h1 className="font-bold text-base sm:text-lg lg:text-lg">No busques más</h1>
-                <p className="text-xs opacity-90 xs:block">que no hay</p>
+                <p className="font-bold text-base sm:text-lg lg:text-lg">No busques más</p>
+                <p className="text-xs text-white xs:block">que no hay</p>
               </div>
             </Link>
 
@@ -242,7 +242,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* About */}
             <div className="sm:col-span-2 lg:col-span-1">
-              <h3 className="font-bold text-lg mb-4 text-betis-green">No busques más que no hay</h3>
+              <h3 className="font-bold text-lg mb-4 text-green-400">No busques más que no hay</h3>
               <p className="text-gray-100 text-sm leading-relaxed">
                 La peña del Real Betis en Edimburgo. Nos vemos en The Polwarth Tavern para cada partido.
               </p>
@@ -250,7 +250,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
 
             {/* Contact */}
             <div>
-              <h3 className="font-bold text-lg mb-4 text-betis-green">Dónde nos encontramos</h3>
+              <h3 className="font-bold text-lg mb-4 text-green-400">Dónde nos encontramos</h3>
               <div className="space-y-2 text-sm text-gray-300">
                 <div className="flex items-center space-x-2">
                   <MapPin size={16} />
@@ -262,7 +262,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
 
             {/* External Links */}
             <div>
-              <h3 className="font-bold text-lg mb-4 text-betis-green">Enlaces útiles</h3>
+              <h3 className="font-bold text-lg mb-4 text-green-400">Enlaces útiles</h3>
               <div className="space-y-2 text-sm">
                 <a
                   href="https://www.betisweb.com/foro/principal/betis-fan-s-of-the-universe/6621126-pena-betica-escocesa-no-busques-mas-que-no-hay"
@@ -301,7 +301,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
 
             {/* Social */}
             <div>
-              <h3 className="font-bold text-lg mb-4 text-betis-green">Síguenos</h3>
+              <h3 className="font-bold text-lg mb-4 text-green-400">Síguenos</h3>
               <div className="flex flex-wrap gap-4">
                 <a
                   href="https://www.facebook.com/groups/beticosenescocia/"

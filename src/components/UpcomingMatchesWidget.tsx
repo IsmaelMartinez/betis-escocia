@@ -109,7 +109,7 @@ export default function UpcomingMatchesWidget({
           <h2 className="text-xl font-bold text-gray-900">Próximos Partidos</h2>
           <Link
             href="/partidos"
-            className="text-betis-green hover:text-green-700 font-medium text-sm"
+            className="text-betis-green hover:text-green-900 font-semibold text-sm underline underline-offset-2"
           >
             Ver todos →
           </Link>
@@ -123,7 +123,7 @@ export default function UpcomingMatchesWidget({
           </p>
           <Link
             href="/partidos"
-            className="text-betis-green hover:text-green-700 font-medium text-sm"
+            className="text-betis-green hover:text-green-900 font-semibold text-sm underline underline-offset-2"
           >
             Ver historial →
           </Link>
@@ -139,7 +139,7 @@ export default function UpcomingMatchesWidget({
         <h2 className="text-xl font-bold text-gray-900">Próximos Partidos</h2>
         <Link
           href="/partidos"
-          className="text-betis-green hover:text-green-700 font-medium text-sm flex items-center"
+          className="text-betis-green hover:text-green-900 font-semibold text-sm flex items-center underline underline-offset-2"
         >
           Ver todos →
         </Link>
@@ -229,7 +229,7 @@ export default function UpcomingMatchesWidget({
       <div className="mt-6 text-center">
         <Link
           href="/partidos"
-          className="text-betis-green hover:text-green-700 font-medium text-sm"
+          className="text-betis-green hover:text-green-900 font-semibold text-sm underline underline-offset-2"
         >
           Ver todos los partidos →
         </Link>
