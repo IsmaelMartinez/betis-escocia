@@ -1,48 +1,21 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 // Since the utility functions are not exported from the page component,
 // we'll recreate them here for testing purposes. In a real refactor,
 // these would be moved to a separate utils file.
 
-// Mock date-fns
-vi.mock('date-fns', () => ({
-  format: vi.fn((date, formatString, options) => {
-    const testDate = new Date(date);
-    if (formatString.includes('MMM')) {
-      // Return month-based format based on actual date
-      const month = testDate.getMonth();
-      const months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-      return `${testDate.getDate()} ${months[month]} ${testDate.getFullYear()}`;
-    }
-    if (formatString.includes('HH:mm')) {
-      // Return time in HH:mm format
-      const hours = testDate.getHours().toString().padStart(2, '0');
-      const minutes = testDate.getMinutes().toString().padStart(2, '0');
-      return `${hours}:${minutes}`;
-    }
-    return testDate.toISOString().split('T')[0];
-  }),
-}));
-
-vi.mock('date-fns/locale', () => ({
-  es: {},
-}));
-
-vi.mock('@/lib/constants/dateFormats', () => ({
-  DATE_FORMAT: 'dd MMM yyyy',
-  TIME_FORMAT: 'HH:mm',
-}));
-
 // Utility functions extracted from the page component for testing
 function formatMatchDateTime(utcDate: string): { date: string; time: string } {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { format } = require('date-fns');
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { es } = require('date-fns/locale');
-  
   const matchDate = new Date(utcDate);
-  const date = format(matchDate, 'dd MMM yyyy', { locale: es });
-  const time = format(matchDate, 'HH:mm', { locale: es });
+  
+  // Mock format directly without require since we're mocking date-fns
+  const month = matchDate.getMonth();
+  const months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  const date = `${matchDate.getDate()} ${months[month]} ${matchDate.getFullYear()}`;
+  
+  const hours = matchDate.getHours().toString().padStart(2, '0');
+  const minutes = matchDate.getMinutes().toString().padStart(2, '0');
+  const time = `${hours}:${minutes}`;
   
   return { date, time };
 }
@@ -111,10 +84,6 @@ function getOpponent(match: Match): { name: string; crest: string } {
 }
 
 describe('Match Detail Utility Functions', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   describe('formatMatchDateTime', () => {
     it('should format match date and time correctly', () => {
       const utcDate = '2024-08-25T13:30:00Z';
