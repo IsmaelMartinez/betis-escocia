@@ -1,4 +1,4 @@
-# ADR-0022: Deprecate Clerk Webhooks for Data Synchronization
+# ADR-023: Deprecate Clerk Webhooks for Data Synchronization
 
 ## Status
 - **Status**: Accepted
@@ -104,7 +104,7 @@ We will **deprecate the Clerk webhook functionality** and remove it from the cod
 2. **Mark ADR-007 as superseded**:
    ```markdown
    ## Status
-   Superseded by [ADR-0022: Deprecate Clerk Webhooks](./0022-deprecate-clerk-webhooks.md)
+   Superseded by [ADR-023: Deprecate Clerk Webhooks](./023-deprecate-clerk-webhooks.md)
    ```
 
 3. **Update architectural diagrams** and data flow descriptions

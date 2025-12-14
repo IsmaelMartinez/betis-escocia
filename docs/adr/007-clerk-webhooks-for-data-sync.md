@@ -1,7 +1,7 @@
 # 007-Clerk-Webhooks-for-Data-Synchronization
 
 ## Status
-**Superseded** by [ADR-0022: Deprecate Clerk Webhooks](./0022-deprecate-clerk-webhooks.md)
+**Superseded** by [ADR-023: Deprecate Clerk Webhooks](./023-deprecate-clerk-webhooks.md)
 
 **Historical Status**: Implemented → Deprecated (2025-09-08)
 

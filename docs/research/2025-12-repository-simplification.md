@@ -133,7 +133,7 @@ Create a single `docs/ARCHIVE.md` with a brief summary and git commit references
 | ADR | Reason |
 |-----|--------|
 | `004-flagsmith-feature-flags.md` | Replaced by env-based flags |
-| `007-clerk-webhooks-for-data-sync.md` | Deprecated per ADR-0022 |
+| `007-clerk-webhooks-for-data-sync.md` | Deprecated per ADR-023 |
 | `010-storybook-v9-migration.md` | No longer relevant if removing Storybook |
 | `019-simplified-admin-notifications.md` | Superseded by ADR-020 |
 

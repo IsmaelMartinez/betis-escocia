@@ -1,4 +1,4 @@
-# 017-trivia-system-simplification
+# ADR-021: Trivia System Simplification
 
 ## Title
 Trivia System Architectural Simplification
