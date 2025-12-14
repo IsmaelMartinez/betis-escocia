@@ -145,8 +145,8 @@ npm run update-trivia   # Update trivia questions
 ## 📚 Documentation
 
 ### Developer Resources
-- [Developer Guide](docs/DEVELOPER_GUIDE.md) - Complete development guide
-- [Testing Guide](docs/TESTING_GUIDE.md) - Testing strategies and patterns
+- [Developer Guide](docs/developer-guide.md) - Complete development guide
+- [Testing Guide](docs/testing-guide.md) - Testing strategies and patterns
 - [Architecture Decisions](docs/adr/) - Technical decisions and rationale
 - [Security Documentation](docs/security/)
 

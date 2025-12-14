@@ -277,7 +277,7 @@ git commit -m "chore: simplify CI/CD pipeline"
 These provide real value and should be kept:
 
 - ✅ **Vitest + Playwright testing** - Core quality assurance
-- ✅ **Core documentation** - `CLAUDE.md`, `README.md`, `DEVELOPER_GUIDE.md`
+- ✅ **Core documentation** - `CLAUDE.md`, `README.md`, `developer-guide.md`
 - ✅ **Feature flag system** - Already simplified to env vars
 - ✅ **Active ADRs** - Architectural memory for active features
 - ✅ **TypeScript strict mode** - Catches bugs early
