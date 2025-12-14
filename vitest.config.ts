@@ -47,7 +47,7 @@ export default defineConfig({
     setupFiles: ['tests/setup.ts'], // Use main test setup instead of Storybook-specific
     // Coverage configuration
     coverage: {
-      provider: 'v8', // Use built-in v8 coverage (faster than c8)
+      provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
       reportsDirectory: './coverage',
       exclude: [
@@ -114,15 +114,18 @@ export default defineConfig({
     // Test execution settings
     testTimeout: 10000, // 10 seconds timeout for tests
     hookTimeout: 10000, // 10 seconds timeout for hooks
+    // Ignore unhandled errors from Vitest 4.x/Vite 7.x coverage module loading
+    // The 'deno' undefined error doesn't affect test results
+    // See: https://github.com/vitest-dev/vitest/issues/9092
+    dangerouslyIgnoreUnhandledErrors: true,
     // Parallel execution configuration
-    // Using forks instead of threads for better compatibility with v8 coverage
     pool: 'forks',
     poolOptions: {
       forks: {
         singleFork: false,
         isolate: true,
         minForks: 1,
-        maxForks: 10, // Use up to 10 forks for faster execution
+        maxForks: 10,
       },
     },
     // Reporter configuration  
