@@ -45,6 +45,40 @@ After conducting 5 technical spikes, the Soylenti feature plan needs several ada
 | Official Betis | `realbetisbalompie.es/rss/` | ❌ 404 | - | No RSS available |
 | La Liga | `laliga.com/rss/real-betis` | ❌ 404 | - | No RSS available |
 
+### Tested Feeds - Round 3 (Specialized Transfer Sources)
+
+**Key Finding**: The best transfer rumor sources do NOT have public RSS feeds. They require RSS generation tools.
+
+| Source | Web URL | RSS Status | Solution |
+|--------|---------|------------|----------|
+| **TransferFeed** | `transferfeed.com/es/clubes/real-betis/403` | ❌ No RSS | Use RSS.app to generate |
+| **Fichajes.net** | `fichajes.net/equipos/real-betis-balompie` | ❌ 404 | Use RSS.app to generate |
+| **Fichajes.com** | `fichajes.com/equipo/real-betis-balompie` | ❌ 404 | Use RSS.app to generate |
+| **Transfermarkt** | `transfermarkt.es/real-betis-sevilla/geruechte/verein/150` | ❌ Blocked | Use RSS.app to generate |
+| **NewsNow** | `newsnow.co.uk/h/Sport/Football/La+Liga/Real+Betis` | ❌ 404 | Aggregator page only |
+
+**RSS Generation Tools**:
+- [RSS.app](https://rss.app) - Convert any webpage to RSS
+- [Feed43](https://feed43.com) - Free RSS generator
+- [FetchRSS](https://fetchrss.com) - Web to RSS converter
+
+### Recommended Approach: Hybrid Strategy
+
+**Option A: Native RSS Only (Simpler)**
+- Use Google News + Marca + BetisWeb
+- Heavy AI filtering to remove stale/confirmed content
+- Lower accuracy but simpler implementation
+
+**Option B: RSS Generation (Better Quality)**
+- Generate RSS feeds from TransferFeed/Fichajes using RSS.app
+- Higher quality rumor-focused content
+- Requires RSS.app subscription or self-hosted solution
+
+**Option C: Web Scraping (Most Control)**
+- Direct scraping of TransferFeed, Fichajes pages
+- Most accurate and current data
+- More complex implementation, maintenance required
+
 ### Key Finding: Google News Aggregation
 
 The Google News transfer-focused feed (`fichajes rumores` query) provides excellent coverage because it **aggregates content from multiple Spanish sources** including:
