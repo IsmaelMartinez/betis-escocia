@@ -100,6 +100,20 @@ const RSS_FEEDS = [
 
 **Total daily items**: ~105 (50 + 50 + 5), with significant overlap filtered by deduplication
 
+### Important: AI Must Filter Confirmed vs Active Rumors
+
+The RSS feeds contain a mix of:
+- **Active rumors** - Speculation about future transfers (e.g., Ceballos)
+- **Confirmed transfers** - Already completed (e.g., Valentín Gómez joined Dec 2025, Antony signed)
+- **Stale articles** - Old news still appearing in feed results
+
+**AI Agent requirement**: The Gemini prompt must instruct the AI to:
+1. Only extract **unconfirmed rumors/speculation**
+2. Skip news about transfers that have already been completed
+3. Check article dates and ignore content older than 7 days
+4. Look for keywords indicating speculation: "podría", "interesa", "objetivo", "en la órbita"
+5. Exclude keywords indicating completion: "oficial", "fichaje cerrado", "ya es jugador"
+
 ---
 
 ## Spike 2: AI Integration Patterns
