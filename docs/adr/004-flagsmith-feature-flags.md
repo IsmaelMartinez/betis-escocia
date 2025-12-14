@@ -199,8 +199,8 @@ NEXT_PUBLIC_FEATURE_ADMIN_PUSH_NOTIFICATIONS=false
 ## References
 
 - **Original Flagsmith Documentation**: [docs.flagsmith.com](https://docs.flagsmith.com/) (no longer used)
-- **Migration PRD**: `tasks/prd-remove-flagsmith-simplify-feature-flags.md`
 - **New Implementation**: `src/lib/featureConfig.ts`
+- **Deployment Guide**: `docs/feature-flags-deployment.md`
 
  
 ## Final Status

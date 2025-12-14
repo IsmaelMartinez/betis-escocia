@@ -10,7 +10,7 @@ const cspDirectives = {
   "img-src": "'self' data: https: blob:",
   "font-src": "'self' data: https://www.gstatic.com https://fonts.gstatic.com",
   "connect-src":
-    "'self' https://*.supabase.co https://api.supabase.io https://vercel.live https://vercel.app https://*.clerk.accounts.dev https://*.clerk.dev https://api.clerk.com https://www.google.com https://www.recaptcha.net https://recaptcha.net https://hcaptcha.com https://api.hcaptcha.com https://challenges.cloudflare.com https://clerk.com https://onesignal.com https://*.onesignal.com https://api.onesignal.com",
+    "'self' https://*.supabase.co https://api.supabase.io https://vercel.live https://vercel.app https://*.clerk.accounts.dev https://*.clerk.dev https://api.clerk.com https://www.google.com https://www.recaptcha.net https://recaptcha.net https://hcaptcha.com https://api.hcaptcha.com https://challenges.cloudflare.com https://clerk.com https://clerk-telemetry.com https://onesignal.com https://*.onesignal.com https://api.onesignal.com",
   "frame-src":
     "'self' https://www.facebook.com https://*.clerk.accounts.dev https://*.clerk.dev https://www.google.com https://www.recaptcha.net https://recaptcha.net https://hcaptcha.com https://newassets.hcaptcha.com https://challenges.cloudflare.com https://vercel.live https://*.vercel.live",
   "worker-src": "'self' blob:",
@@ -34,7 +34,18 @@ const nextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "crests.football-data.org",
+        port: "",
+        pathname: "/**",
+      },
     ],
+    // Enable image optimization
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
   },
   async headers() {
     return [
@@ -71,24 +82,53 @@ const nextConfig = {
           },
         ],
       },
+      // Static assets caching
+      {
+        source: "/images/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/_next/static/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/fonts/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
     ];
   },
   // Security improvements
   poweredByHeader: false,
   reactStrictMode: true,
-  // Disable Vercel Analytics and Speed Insights for local production builds
-  // These are typically enabled for Vercel deployments and might not be necessary or correctly configured for local builds.
-  // To enable them, remove these lines and ensure your Vercel project is configured correctly.
+  // Performance optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },
-  productionBrowserSourceMaps: true,
+  // Only enable source maps in production if needed for debugging
+  productionBrowserSourceMaps: false,
   experimental: {
     optimizePackageImports: [
       "lucide-react",
       "date-fns",
       "@clerk/nextjs",
       "@supabase/supabase-js",
+      "@sentry/nextjs",
+      "zod",
     ],
   },
 };

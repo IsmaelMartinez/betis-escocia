@@ -1,10 +1,7 @@
 import React from 'react';
-import { render, screen, within } from '@testing-library/react'; // Added within
+import { render, screen, within, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import Home from '../../../src/app/page';
-import HeroCommunity from '@/components/HeroCommunity';
-import UpcomingMatchesWidget from '@/components/UpcomingMatchesWidget';
-import ClassificationWidget from '@/components/ClassificationWidget';
 import { FeatureWrapper } from '@/lib/featureProtection';
 
 // Mock components and modules
@@ -27,10 +24,15 @@ describe('Home page', () => {
     expect(screen.getByTestId('mock-hero-community')).toBeInTheDocument();
   });
 
-  it('renders UpcomingMatchesWidget and ClassificationWidget within FeatureWrapper', () => {
+  it('renders UpcomingMatchesWidget and ClassificationWidget within FeatureWrapper', async () => {
     render(<Home />);
-    expect(screen.getByTestId('mock-upcoming-matches-widget')).toBeInTheDocument();
-    expect(screen.getByTestId('mock-classification-widget')).toBeInTheDocument();
+    // Wait for dynamic imports to load
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-upcoming-matches-widget')).toBeInTheDocument();
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('mock-classification-widget')).toBeInTheDocument();
+    });
     // Verify that FeatureWrapper was called for these components
     // The second argument is undefined because no additional props are passed to FeatureWrapper
     expect(FeatureWrapper).toHaveBeenCalledWith(expect.objectContaining({ feature: 'show-partidos' }), undefined);

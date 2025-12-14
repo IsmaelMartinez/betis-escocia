@@ -1,4 +1,4 @@
-# 017-trivia-system-simplification
+# ADR-021: Trivia System Simplification
 
 ## Title
 Trivia System Architectural Simplification
@@ -258,7 +258,7 @@ This architectural decision represents a significant step toward sustainable, ma
 - **Response Time**: Average 172ms (target: ≤500ms) - 65% faster than target
 - **Error Handling**: Comprehensive TriviaError class with performance tracking
 - **Database Optimization**: SQL aggregation, reduced field selection, proper indexing
-- **Files Created**: `src/lib/trivia/utils.ts`, `scripts/trivia-performance-test.js`, `docs/trivia-performance-report.md`
+- **Files Created**: `src/lib/trivia/utils.ts`, `scripts/trivia-performance-test.js`
 - **Files Removed**: `src/app/api/trivia/total-score/route.ts`, `src/app/api/trivia/total-score-dashboard/route.ts`
 
 **2.0 Frontend State Management (10/10 tasks) - COMPLETED**  

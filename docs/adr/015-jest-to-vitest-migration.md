@@ -89,7 +89,7 @@ This minimizes risk and maintains development velocity throughout the transition
 
 ## Implementation
 
-The migration will follow the phases outlined in `prd-jest-to-vitest-migration.md`:
+The migration followed a phased approach:
 
 1. **Week 1**: Unit tests migration and basic Vitest configuration
 2. **Week 2**: Integration tests with complex mocking scenarios
@@ -106,7 +106,6 @@ The migration will follow the phases outlined in `prd-jest-to-vitest-migration.m
 
 ## Links
 
-- [PRD: Jest to Vitest Migration](../historical/prd-jest-to-vitest-migration.md)
 - [Vitest Documentation](https://vitest.dev/)
 - [Jest to Vitest Migration Guide](https://vitest.dev/guide/migration.html)
 - [Current Vitest Configuration](../../vitest.config.ts)

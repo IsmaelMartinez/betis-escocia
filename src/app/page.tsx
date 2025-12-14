@@ -1,8 +1,42 @@
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import HeroCommunity from '@/components/HeroCommunity';
-import UpcomingMatchesWidget from '@/components/UpcomingMatchesWidget';
-import ClassificationWidget from '@/components/ClassificationWidget';
 import { FeatureWrapper } from '@/lib/featureProtection';
+
+// Lazy load widgets that are below the fold for better LCP
+const UpcomingMatchesWidget = dynamic(() => import('@/components/UpcomingMatchesWidget'), {
+  loading: () => (
+    <div className="bg-white rounded-lg shadow-lg p-6 animate-pulse">
+      <div className="h-6 bg-gray-200 rounded w-48 mb-6"></div>
+      <div className="space-y-4">
+        <div className="border border-gray-200 rounded-lg p-4">
+          <div className="h-4 bg-gray-200 rounded w-24 mb-3"></div>
+          <div className="flex items-center justify-center space-x-4">
+            <div className="h-6 bg-gray-200 rounded flex-1"></div>
+            <div className="h-6 w-12 bg-gray-200 rounded"></div>
+            <div className="h-6 bg-gray-200 rounded flex-1"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  ),
+});
+
+const ClassificationWidget = dynamic(() => import('@/components/ClassificationWidget'), {
+  loading: () => (
+    <div className="bg-white rounded-lg shadow-lg p-6 animate-pulse">
+      <div className="h-6 bg-gray-200 rounded w-32 mb-6"></div>
+      <div className="space-y-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="flex items-center space-x-3">
+            <div className="h-4 w-6 bg-gray-200 rounded"></div>
+            <div className="h-4 flex-1 bg-gray-200 rounded"></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ),
+});
 
 export default function Home() {
   

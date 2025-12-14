@@ -4,8 +4,8 @@ Welcome to the Peña Bética Escocesa website documentation.
 
 ## Quick Start
 
-- **[Developer Guide](DEVELOPER_GUIDE.md)** - Complete development guide with setup, architecture, and workflows
-- **[Testing Guide](TESTING_GUIDE.md)** - Testing strategies, patterns, and best practices
+- **[Developer Guide](developer-guide.md)** - Complete development guide with setup, architecture, and workflows
+- **[Testing Guide](testing-guide.md)** - Testing strategies, patterns, and best practices
 
 ## Architecture & Decisions
 
@@ -16,7 +16,7 @@ Welcome to the Peña Bética Escocesa website documentation.
 
 - **[API Documentation](api/)** - API integration patterns and limitations
 - **[Development](development/)** - Development-specific documentation
-- **[Historical](historical/)** - Completed tasks and legacy documentation
+- **[Research](research/)** - Research notes and analysis
 
 ## External Resources
 

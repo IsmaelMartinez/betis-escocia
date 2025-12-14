@@ -428,8 +428,8 @@ const handleAnswerClick = () => {
 
 For comprehensive details, always check:
 
-- **Developer Guide**: `docs/DEVELOPER_GUIDE.md` for complete development guide
-- **Testing Guide**: `docs/TESTING_GUIDE.md` for testing strategies and patterns
+- **Developer Guide**: `docs/developer-guide.md` for complete development guide
+- **Testing Guide**: `docs/testing-guide.md` for testing strategies and patterns
 - **ADRs**: `docs/adr/` for architectural decisions
 - **Security**: `docs/security/` for security implementation details
 

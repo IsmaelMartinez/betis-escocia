@@ -1,4 +1,4 @@
-# ADR-0021: Database Migration Script Naming Convention
+# ADR-022: Database Migration Script Naming Convention
 
 ## Status
 - **Status**: Accepted

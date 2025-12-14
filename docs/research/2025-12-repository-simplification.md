@@ -133,7 +133,7 @@ Create a single `docs/ARCHIVE.md` with a brief summary and git commit references
 | ADR | Reason |
 |-----|--------|
 | `004-flagsmith-feature-flags.md` | Replaced by env-based flags |
-| `007-clerk-webhooks-for-data-sync.md` | Deprecated per ADR-0022 |
+| `007-clerk-webhooks-for-data-sync.md` | Deprecated per ADR-023 |
 | `010-storybook-v9-migration.md` | No longer relevant if removing Storybook |
 | `019-simplified-admin-notifications.md` | Superseded by ADR-020 |
 
@@ -277,7 +277,7 @@ git commit -m "chore: simplify CI/CD pipeline"
 These provide real value and should be kept:
 
 - ✅ **Vitest + Playwright testing** - Core quality assurance
-- ✅ **Core documentation** - `CLAUDE.md`, `README.md`, `DEVELOPER_GUIDE.md`
+- ✅ **Core documentation** - `CLAUDE.md`, `README.md`, `developer-guide.md`
 - ✅ **Feature flag system** - Already simplified to env vars
 - ✅ **Active ADRs** - Architectural memory for active features
 - ✅ **TypeScript strict mode** - Catches bugs early

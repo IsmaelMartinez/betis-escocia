@@ -75,5 +75,5 @@ Adopt OneSignal now for speed + reduced custom maintenance. Reconsider if:
 - Add review reminder: 6 months or threshold trigger.
 
 ## References
-- Raw research notes: `docs/Evaluation-notification-SaaS.md`
 - Previous implementation ADR: `docs/adr/016-admin-push-notifications.md`
+- OneSignal adoption: `docs/adr/020-adopt-onesignal-admin-notifications.md`

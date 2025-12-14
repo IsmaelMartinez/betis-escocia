@@ -59,9 +59,6 @@ We chose **Clerk.com** as our authentication provider for admin functionality.
 - Error handling and user feedback implemented
 
 ## References
-- [Clerk Evaluation Results](../../historical/clerk-evaluation-results.md)
-- [Clerk Final Decision](../../historical/clerk-final-decision.md)
-- [Auth Requirements](../../historical/auth-requirements.md)
 - [Clerk Documentation](https://clerk.com/docs)
 
 ## Review

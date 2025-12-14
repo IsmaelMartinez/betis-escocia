@@ -200,8 +200,8 @@ describe('ClassificationWidget Component', () => {
       render(<ClassificationWidget initialStandings={mockStandings} />);
       
       const betisHighlight = screen.getByText('2º posición').closest('div');
-      // The parent div of Betis position should have bg-betis-green class
-      const betisContainer = betisHighlight?.closest('div.bg-betis-green');
+      // The parent div of Betis position should have bg-betis-green-dark class (darker for better contrast)
+      const betisContainer = betisHighlight?.closest('div.bg-betis-green-dark');
       expect(betisContainer).toBeTruthy();
     });
 

@@ -6,7 +6,7 @@ Trivia Game Implementation
 ## Status
 Superseded
 
-**Superseded by**: [ADR 017 - Trivia System Architectural Simplification](017-trivia-system-simplification.md)
+**Superseded by**: [ADR 021 - Trivia System Architectural Simplification](021-trivia-system-simplification.md)
 
 *Note: The trivia system described in this ADR has been identified as over-engineered and is being simplified through a comprehensive architectural refactoring documented in ADR 017. While the original implementation successfully delivered all planned functionality, the complexity has grown beyond what is needed for a daily quiz feature, necessitating significant simplification for better maintainability and performance.*
 

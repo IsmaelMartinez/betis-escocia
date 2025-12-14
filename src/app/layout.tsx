@@ -3,24 +3,29 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Layout from "@/components/Layout";
 import OfflineDetector from "@/components/OfflineDetector";
-import { Analytics } from "@vercel/analytics/next";
 import * as Sentry from "@sentry/nextjs";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import SentryUserContext from "@/components/SentryUserContext";
 
 import { ClerkProvider } from '@clerk/nextjs';
 import FacebookSDK from "@/components/FacebookSDK";
 
-export const dynamic = 'force-dynamic';
+// Conditionally import Vercel Analytics/SpeedInsights only in production on Vercel
+const isVercel = process.env.VERCEL === '1';
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
+  preload: true,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -124,6 +129,13 @@ export default function RootLayout({
 
   return (
     <html lang="es">
+      <head>
+        {/* Preconnect to third-party domains for faster loading */}
+        <link rel="preconnect" href="https://clerk.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://clerk.com" />
+        <link rel="preconnect" href="https://connect.facebook.net" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://connect.facebook.net" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -143,8 +155,8 @@ export default function RootLayout({
             </Layout>
           </Sentry.ErrorBoundary>
         </ClerkProvider>
-        <Analytics />
-        <SpeedInsights />
+        {isVercel && <Analytics />}
+        {isVercel && <SpeedInsights />}
       </body>
     </html>
   );

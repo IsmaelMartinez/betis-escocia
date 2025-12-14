@@ -3,10 +3,19 @@
 import Link from 'next/link';
 import { MapPin, Heart, Coffee, Smile, ChevronDown, ChevronUp } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import RSVPWidget from './RSVPWidget';
-import { useState } from 'react';
+import { useState, memo } from 'react';
 
-// Lazy load components that are below the fold
+// Lazy load RSVPWidget since it's only shown when expanded
+const RSVPWidget = dynamic(() => import('./RSVPWidget'), {
+  loading: () => (
+    <div className="animate-pulse">
+      <div className="h-32 bg-gray-200 rounded"></div>
+    </div>
+  ),
+  ssr: false,
+});
+
+// Lazy load CommunityStats - not critical for initial render
 const CommunityStats = dynamic(() => import('./CommunityStats'), {
   loading: () => (
     <div className="bg-gray-50 rounded-lg p-6 text-center border border-gray-200 animate-pulse">
@@ -29,7 +38,7 @@ const CommunityStats = dynamic(() => import('./CommunityStats'), {
   ),
 });
 
-export default function HeroCommunity() {
+function HeroCommunity() {
   const [isRSVPExpanded, setIsRSVPExpanded] = useState(false);
   return (
     <section className="relative min-h-screen bg-white overflow-hidden">
@@ -70,6 +79,7 @@ export default function HeroCommunity() {
             </div>
 
             {/* Key features - official card style */}
+            <h2 className="sr-only">Características de la peña</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-6 lg:mb-8">
               <div className="group bg-white rounded-lg p-6 border border-gray-200 hover:border-betis-green hover:shadow-lg transition-all duration-300 shadow-sm transform hover:-translate-y-1 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
                 <Coffee className="h-8 w-8 text-betis-green mb-4 group-hover:scale-110 transition-transform duration-300" />
@@ -168,3 +178,5 @@ export default function HeroCommunity() {
     </section>
   );
 }
+
+export default memo(HeroCommunity);

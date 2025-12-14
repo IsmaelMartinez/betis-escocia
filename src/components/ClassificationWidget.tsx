@@ -162,7 +162,7 @@ export default function ClassificationWidget({ className = '', initialStandings 
       </div>
 
       {/* Betis highlight */}
-      <div className="bg-betis-green rounded-lg p-4 text-white mb-6">
+      <div className="bg-betis-green-dark rounded-lg p-4 text-white mb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Image
@@ -175,12 +175,12 @@ export default function ClassificationWidget({ className = '', initialStandings 
             />
             <div>
               <div className="font-bold text-lg">{betisEntry.position}º posición</div>
-              <div className="text-green-100 text-sm">{betisEntry.points} puntos</div>
+              <div className="text-white text-sm">{betisEntry.points} puntos</div>
             </div>
           </div>
           {positionBadge && (
-            <div className="bg-white/20 px-3 py-1 rounded-full">
-              <span className="text-xs font-medium">{positionBadge.text}</span>
+            <div className="bg-white px-3 py-1 rounded-full">
+              <span className="text-xs font-bold text-green-800">{positionBadge.text}</span>
             </div>
           )}
         </div>
@@ -224,12 +224,12 @@ export default function ClassificationWidget({ className = '', initialStandings 
                 {/* Goal difference indicator */}
                 <div className="flex items-center">
                   {entry.goalDifference > 0 ? (
-                    <TrendingUp className="h-3 w-3 text-green-500" />
+                    <TrendingUp className="h-3 w-3 text-green-700" />
                   ) : entry.goalDifference < 0 ? (
-                    <TrendingDown className="h-3 w-3 text-red-500" />
+                    <TrendingDown className="h-3 w-3 text-red-700" />
                   ) : null}
-                  <span className={`text-xs ml-1 ${
-                    entry.goalDifference >= 0 ? 'text-green-600' : 'text-red-600'
+                  <span className={`text-xs ml-1 font-medium ${
+                    entry.goalDifference >= 0 ? 'text-green-800' : 'text-red-700'
                   }`}>
                     {entry.goalDifference > 0 ? '+' : ''}{entry.goalDifference}
                   </span>
@@ -244,7 +244,7 @@ export default function ClassificationWidget({ className = '', initialStandings 
       <div className="mt-6 text-center">
         <Link
           href="/clasificacion"
-          className="text-betis-green hover:text-green-700 font-medium text-sm"
+          className="text-betis-green hover:text-green-900 font-semibold text-sm underline underline-offset-2"
         >
           Ver tabla completa →
         </Link>

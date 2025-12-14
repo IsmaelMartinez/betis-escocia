@@ -122,13 +122,12 @@ npm run lighthouse:accessibility
 
 ## Getting Help
 
-- **Documentation:** See `docs/DEVELOPER_GUIDE.md` for comprehensive docs
-- **Testing Guide:** See `docs/TESTING_GUIDE.md` for testing patterns
-- **Investigation Report:** See `INVESTIGATION_REPORT.md` for recent improvements
+- **Documentation:** See `docs/developer-guide.md` for comprehensive docs
+- **Testing Guide:** See `docs/testing-guide.md` for testing patterns
 
 ## Next Steps
 
-1. Review the [Developer Guide](./DEVELOPER_GUIDE.md) for architecture details
-2. Check [Testing Guide](./TESTING_GUIDE.md) for testing patterns
+1. Review the [Developer Guide](./developer-guide.md) for architecture details
+2. Check [Testing Guide](./testing-guide.md) for testing patterns
 3. Review [ADRs](./adr/) for architectural decisions
 4. Read [CLAUDE.md](../CLAUDE.md) for AI assistant context
