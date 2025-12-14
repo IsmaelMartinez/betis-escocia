@@ -12,7 +12,7 @@ After conducting 5 technical spikes, the Soylenti feature plan needs several ada
 
 | Area | Original Plan | Spike Finding | Action Required |
 |------|---------------|---------------|-----------------|
-| RSS Feeds | 3 feeds (Google, Marca, AS) | AS feed blocked | **Reduce to 2 reliable feeds** |
+| RSS Feeds | 3 feeds (Google, Marca, AS) | Better Betis-specific feeds found | **Use 3 optimized feeds** |
 | AI SDK | Fresh integration | No existing patterns | **Straightforward - proceed as planned** |
 | Deduplication | Fuzzy matching | Use Fuzzball library | **Add npm dependency** |
 | Feature Flag | `show-soylenti` | Compatible with existing system | **Add to FeatureName type** |
@@ -22,44 +22,83 @@ After conducting 5 technical spikes, the Soylenti feature plan needs several ada
 
 ## Spike 1: RSS Feed Reliability
 
-### Tested Feeds
+### Tested Feeds - Round 1 (Generic Sources)
 
 | Feed | URL | Status | Items | Notes |
 |------|-----|--------|-------|-------|
-| Google News RSS | `news.google.com/rss/search?q=Real+Betis+fichaje` | ✅ Working | 50 | Excellent, transfer-focused |
-| Marca RSS | `e00-marca.uecdn.es/rss/futbol/betis.xml` | ✅ Working | 50 | Good, Spanish content |
+| Google News (fichaje) | `news.google.com/rss/search?q=Real+Betis+fichaje` | ✅ Working | 50 | Transfer-focused |
+| Marca RSS | `e00-marca.uecdn.es/rss/futbol/betis.xml` | ✅ Working | 50 | General Betis news |
 | AS RSS | `as.com/rss/tags/topics/real_betis.xml` | ❌ Blocked | - | Not accessible |
-| Football Espana | `football-espana.net/feed` | ⚠️ Works | 10 | General La Liga only |
-| LaLigaNews | `laliganews.net/feed` | ⚠️ Outdated | 10 | Last update Aug 2025 |
+| Football Espana | `football-espana.net/feed` | ⚠️ Works | 10 | General La Liga only, not Betis-specific |
 | FootballCritic | `footballcritic.com/rss/news/betis` | ❌ 403 | - | Access denied |
 | Estadio Deportivo | `estadiodeportivo.com/rss` | ❌ Blocked | - | Not accessible |
-| ABC Sevilla | `sevilla.abc.es/rss/feeds/Real-Betis.xml` | ❌ Blocked | - | Not accessible |
-| Mundo Deportivo | `mundodeportivo.com/feed/rss/betis` | ❌ Blocked | - | Not accessible |
 
-### Recommendation
+### Tested Feeds - Round 2 (Betis-Specific Sources)
 
-**Adapt plan to use 2 reliable feeds instead of 3:**
+| Feed | URL | Status | Items | Notes |
+|------|-----|--------|-------|-------|
+| **BetisWeb** | `betisweb.com/feed/` | ✅ Working | 5 | 100% Betis-focused, covers B team & women's |
+| **Google News (fichajes rumores)** | `news.google.com/rss/search?q=Real+Betis+fichajes+rumores` | ✅ Working | 50 | **60-70% transfer/rumor focused** |
+| **Google News (Real Betis)** | `news.google.com/rss/search?q=Real+Betis` | ✅ Working | 50 | Comprehensive coverage |
+| ElDesmarque | `eldesmarque.com/futbol/real-betis/feed/` | ❌ 404 | - | No RSS available |
+| MuchoDeporte | `muchodeporte.com/rss/real-betis` | ❌ 404 | - | No RSS available |
+| Official Betis | `realbetisbalompie.es/rss/` | ❌ 404 | - | No RSS available |
+| La Liga | `laliga.com/rss/real-betis` | ❌ 404 | - | No RSS available |
+
+### Key Finding: Google News Aggregation
+
+The Google News transfer-focused feed (`fichajes rumores` query) provides excellent coverage because it **aggregates content from multiple Spanish sources** including:
+- Marca, AS (when available)
+- Estadio Deportivo articles
+- ABC Sevilla content
+- Local Seville newspapers
+- National sports media
+
+**Content breakdown from Google News (fichajes rumores):**
+- 60-70% transfer rumors and signings (Antony, Ceballos, Chimy Ávila, Lo Celso)
+- 20% match reports and results
+- 10% club administration/other news
+
+### Recommendation: 3 Optimized RSS Feeds
 
 ```typescript
 const RSS_FEEDS = [
   {
-    name: 'Google News - Real Betis',
-    url: 'https://news.google.com/rss/search?q=Real+Betis+fichaje&hl=es&gl=ES&ceid=ES:es',
-    reliability: 0.7,
+    name: 'Google News - Betis Transfers',
+    url: 'https://news.google.com/rss/search?q=Real+Betis+fichajes+rumores&hl=es&gl=ES&ceid=ES:es',
+    reliability: 0.75,
     language: 'es',
     itemsPerFetch: 50,
+    focus: 'transfers',  // Primary source for Soylenti rumors
   },
   {
-    name: 'Marca - Betis',
-    url: 'https://e00-marca.uecdn.es/rss/futbol/betis.xml',
-    reliability: 0.65,
+    name: 'Google News - Real Betis',
+    url: 'https://news.google.com/rss/search?q=Real+Betis&hl=es&gl=ES&ceid=ES:es',
+    reliability: 0.70,
     language: 'es',
     itemsPerFetch: 50,
+    focus: 'general',  // Comprehensive coverage, catches non-transfer rumors
+  },
+  {
+    name: 'BetisWeb',
+    url: 'https://betisweb.com/feed/',
+    reliability: 0.85,  // Higher reliability - dedicated Betis source
+    language: 'es',
+    itemsPerFetch: 5,
+    focus: 'club',  // Official club news, B team, women's team
   },
 ];
 ```
 
-**Impact**: Reduced source diversity but still viable. Google News aggregates multiple sources which compensates.
+### Why This Combination Works
+
+| Feed | Purpose | Strength |
+|------|---------|----------|
+| **Google News (fichajes)** | Transfer rumors | Aggregates multiple sources, high volume, transfer-focused queries |
+| **Google News (general)** | Comprehensive | Catches contract/injury/management news missed by transfer query |
+| **BetisWeb** | Club insider | Dedicated Betis source, covers all team sections, high credibility |
+
+**Total daily items**: ~105 (50 + 50 + 5), with significant overlap filtered by deduplication
 
 ---
 
@@ -333,19 +372,22 @@ const ENV_VAR_MAP: Record<FeatureName, string> = {
 
 | Risk | Original | Updated Status |
 |------|----------|----------------|
-| RSS feeds break | Medium | **Higher** - Only 2 feeds now |
+| RSS feeds break | Medium | **Lower** - 3 feeds with Google News aggregation |
 | Gemini rate limits | Low | Unchanged |
 | Poor AI accuracy | Medium | Unchanged |
 | Duplicate rumors | Medium | **Lower** - Multi-layer strategy |
 | GitHub Actions outage | Low | Unchanged |
 
-### New Risk: Single Point of Failure
+### Risk Mitigation: Source Redundancy
 
-With only 2 RSS feeds (Google News + Marca), if both fail we have no sources.
+With 3 RSS feeds (2 Google News queries + BetisWeb):
+- Google News aggregates multiple Spanish sources (Marca, AS, Estadio Deportivo, etc.)
+- BetisWeb provides dedicated Betis coverage as backup
+- If one feed fails, others provide sufficient coverage
 
-**Mitigation**:
+**Additional mitigations**:
 - Add health check in agent
-- Alert admin if fetch fails
+- Alert admin if all fetches fail
 - Implement fallback to cached content
 
 ---
@@ -384,9 +426,12 @@ NEXT_PUBLIC_FEATURE_SOYLENTI=false
 
 ## Conclusion
 
-The Soylenti feature plan is **viable with adaptations**:
+The Soylenti feature plan is **viable with optimized RSS strategy**:
 
-1. ✅ **RSS feeds** - Reduced to 2 reliable sources (Google News + Marca)
+1. ✅ **RSS feeds** - 3 optimized sources:
+   - Google News (fichajes rumores) - Transfer-focused, 60-70% relevant
+   - Google News (Real Betis) - Comprehensive coverage
+   - BetisWeb - Dedicated Betis source, high credibility
 2. ✅ **AI integration** - Straightforward, no conflicts
 3. ✅ **Deduplication** - Multi-layer approach with Fuzzball
 4. ✅ **Database** - Compatible with existing patterns
