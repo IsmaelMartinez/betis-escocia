@@ -124,7 +124,6 @@ npm run lighthouse:accessibility
 
 - **Documentation:** See `docs/developer-guide.md` for comprehensive docs
 - **Testing Guide:** See `docs/testing-guide.md` for testing patterns
-- **Investigation Report:** See `INVESTIGATION_REPORT.md` for recent improvements
 
 ## Next Steps
 
