@@ -8,7 +8,7 @@ import { describe, it, expect } from 'vitest';
 function formatMatchDateTime(utcDate: string): { date: string; time: string } {
   const matchDate = new Date(utcDate);
   
-  // Mock format directly without require since we're mocking date-fns
+  // Simplified date formatting for this test, mimicking date-fns's output.
   const month = matchDate.getMonth();
   const months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
   const date = `${matchDate.getDate()} ${months[month]} ${matchDate.getFullYear()}`;
