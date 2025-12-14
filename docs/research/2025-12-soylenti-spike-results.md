@@ -26,7 +26,7 @@ After conducting 5 technical spikes, the Soylenti feature plan needs several ada
 
 | Feed | URL | Status | Items | Notes |
 |------|-----|--------|-------|-------|
-| Google News (fichaje) | `news.google.com/rss/search?q=Real+Betis+fichaje` | ✅ Working | 50 | Transfer-focused |
+| Google News (transfers) | `news.google.com/rss/search?q=Real+Betis+fichaje` | ✅ Working | 50 | Transfer-focused (fichaje = signing) |
 | Marca RSS | `e00-marca.uecdn.es/rss/futbol/betis.xml` | ✅ Working | 50 | General Betis news |
 | AS RSS | `as.com/rss/tags/topics/real_betis.xml` | ❌ Blocked | - | Not accessible |
 | Football Espana | `football-espana.net/feed` | ⚠️ Works | 10 | General La Liga only, not Betis-specific |
@@ -38,7 +38,7 @@ After conducting 5 technical spikes, the Soylenti feature plan needs several ada
 | Feed | URL | Status | Items | Notes |
 |------|-----|--------|-------|-------|
 | **BetisWeb** | `betisweb.com/feed/` | ✅ Working | 5 | 100% Betis-focused, covers B team & women's |
-| **Google News (fichajes rumores)** | `news.google.com/rss/search?q=Real+Betis+fichajes+rumores` | ✅ Working | 50 | **60-70% transfer/rumor focused** |
+| **Google News (transfer rumors)** | `news.google.com/rss/search?q=Real+Betis+fichajes+rumores` | ✅ Working | 50 | **60-70% transfer/rumor focused** (fichajes rumores = transfer rumors) |
 | **Google News (Real Betis)** | `news.google.com/rss/search?q=Real+Betis` | ✅ Working | 50 | Comprehensive coverage |
 | ElDesmarque | `eldesmarque.com/futbol/real-betis/feed/` | ❌ 404 | - | No RSS available |
 | MuchoDeporte | `muchodeporte.com/rss/real-betis` | ❌ 404 | - | No RSS available |
@@ -81,15 +81,15 @@ After conducting 5 technical spikes, the Soylenti feature plan needs several ada
 
 ### Key Finding: Google News Aggregation
 
-The Google News transfer-focused feed (`fichajes rumores` query) provides excellent coverage because it **aggregates content from multiple Spanish sources** including:
+The Google News transfer-focused feed (using Spanish query `fichajes rumores` = "transfer rumors") provides excellent coverage because it **aggregates content from multiple Spanish sources** including:
 - Marca, AS (when available)
 - Estadio Deportivo articles
 - ABC Sevilla content
 - Local Seville newspapers
 - National sports media
 
-**Content breakdown from Google News (fichajes rumores):**
-- 60-70% transfer rumors and signings (Antony, Ceballos, Chimy Ávila, Lo Celso)
+**Content breakdown from Google News (transfer rumors query):**
+- 60-70% transfer rumors and signings
 - 20% match reports and results
 - 10% club administration/other news
 
@@ -128,7 +128,7 @@ const RSS_FEEDS = [
 
 | Feed | Purpose | Strength |
 |------|---------|----------|
-| **Google News (fichajes)** | Transfer rumors | Aggregates multiple sources, high volume, transfer-focused queries |
+| **Google News (transfers)** | Transfer rumors | Aggregates multiple sources, high volume, transfer-focused queries |
 | **Google News (general)** | Comprehensive | Catches contract/injury/management news missed by transfer query |
 | **BetisWeb** | Club insider | Dedicated Betis source, covers all team sections, high credibility |
 
@@ -145,8 +145,10 @@ The RSS feeds contain a mix of:
 1. Only extract **unconfirmed rumors/speculation**
 2. Skip news about transfers that have already been completed
 3. Check article dates and ignore content older than 7 days
-4. Look for keywords indicating speculation: "podría", "interesa", "objetivo", "en la órbita"
-5. Exclude keywords indicating completion: "oficial", "fichaje cerrado", "ya es jugador"
+4. Look for Spanish keywords indicating speculation:
+   - "podría" (could), "interesa" (interested in), "objetivo" (target), "en la órbita" (in the orbit/on the radar)
+5. Exclude Spanish keywords indicating completion:
+   - "oficial" (official), "fichaje cerrado" (deal closed), "ya es jugador" (already a player)
 
 ---
 
@@ -477,7 +479,7 @@ NEXT_PUBLIC_FEATURE_SOYLENTI=false
 The Soylenti feature plan is **viable with optimized RSS strategy**:
 
 1. ✅ **RSS feeds** - 3 optimized sources:
-   - Google News (fichajes rumores) - Transfer-focused, 60-70% relevant
+   - Google News (transfer rumors query) - Transfer-focused, 60-70% relevant
    - Google News (Real Betis) - Comprehensive coverage
    - BetisWeb - Dedicated Betis source, high credibility
 2. ✅ **AI integration** - Straightforward, no conflicts
