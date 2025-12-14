@@ -94,7 +94,7 @@ sql/                    # Database migrations & scripts
 - **Location**: `src/lib/featureConfig.ts`
 - **Always-on features**: RSVP, Únete (Join), Contacto (Contact) - no flags needed
 - **Production-ready features**: Clasificación, Partidos, Nosotros, Clerk Auth - enabled by default
-- **Documentation**: See `docs/adr/004-flagsmith-feature-flags.md`
+- **Documentation**: See `docs/adr/004-feature-flags.md`
 
 ### Authentication Flow (Clerk + Supabase)
 
@@ -124,7 +124,7 @@ sql/                    # Database migrations & scripts
 - **Non-blocking**: Notification failures don't impact core RSVP/contact functionality
 - **Auto-cleanup**: Server removes old notifications after 10 minutes, client after 1 hour
 - **Location**: `src/lib/notifications/` for utilities, `public/sw.js` for Service Worker
-- **Documentation**: See `docs/adr/016-admin-push-notifications.md`
+- **Documentation**: See `docs/adr/011-admin-notifications.md`
 
 ## Component Development
 
