@@ -106,7 +106,10 @@ export default function BetisPositionWidget() {
     return { text: 'Zona media', color: 'text-gray-600' };
   };
 
-  const formResults = betisData.form.split('').slice(-5);
+  // Form can be "W,D,L,W,D" or "WDLWD" - handle both formats
+  const formResults = betisData.form.includes(',') 
+    ? betisData.form.split(',').filter(r => r.trim()).slice(-5)
+    : betisData.form.split('').slice(-5);
   const positionContext = getPositionContext(betisData.position);
 
   return (
