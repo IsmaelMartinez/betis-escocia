@@ -217,7 +217,7 @@ betis-rss-feeds/
 ```python
 # src/scrapers/base.py
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 import httpx
 from bs4 import BeautifulSoup
@@ -233,12 +233,8 @@ class RumorItem:
     current_club: str | None = None
     category: str | None = None
     summary: str | None = None
-    scraped_at: datetime = None
+    scraped_at: datetime = field(default_factory=datetime.utcnow)
     language: str = "es"
-
-    def __post_init__(self):
-        if self.scraped_at is None:
-            self.scraped_at = datetime.utcnow()
 
 class BaseScraper(ABC):
     """Base class for all scrapers"""
