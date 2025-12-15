@@ -307,9 +307,13 @@ The proposed schema is **compatible** with existing patterns. Key alignments:
 ```sql
 -- Rumors should be publicly readable, admin-only write
 CREATE POLICY "Allow public read on rumors" ON rumors FOR SELECT USING (true);
-CREATE POLICY "Allow admin insert on rumors" ON rumors FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow admin update on rumors" ON rumors FOR UPDATE USING (true);
-CREATE POLICY "Allow admin delete on rumors" ON rumors FOR DELETE USING (true);
+-- Only allow users with 'role' claim set to 'admin' in their JWT to write
+CREATE POLICY "Allow admin insert on rumors" ON rumors
+  FOR INSERT WITH CHECK (auth.jwt() ->> 'role' = 'admin');
+CREATE POLICY "Allow admin update on rumors" ON rumors
+  FOR UPDATE USING (auth.jwt() ->> 'role' = 'admin');
+CREATE POLICY "Allow admin delete on rumors" ON rumors
+  FOR DELETE USING (auth.jwt() ->> 'role' = 'admin');
 ```
 
 ### Recommendation
