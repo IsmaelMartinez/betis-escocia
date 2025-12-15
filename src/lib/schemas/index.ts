@@ -1,8 +1,9 @@
 // Main exports for all schemas
+export * from './admin';
+export * from './chat';
 export * from './contact';
 export * from './rsvp';
 export * from './trivia';
-export * from './admin';
 
 // Common validation utilities
 import { z } from 'zod';

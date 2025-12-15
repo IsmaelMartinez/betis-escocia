@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash, User, LogIn, LogOut, UserPlus } from 'lucide-react';
 import BetisLogo from '@/components/BetisLogo';
+import ChatWidget from '@/components/ChatWidget';
 import { getEnabledNavigationItems } from '@/lib/featureFlags';
 import { useUser, useClerk } from '@clerk/nextjs';
 
@@ -365,9 +366,12 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
         </div>
       </footer>
 
+      {/* Chat Widget - AI Assistant */}
+      <ChatWidget />
+
       {/* Debug Info (Development Only) */}
       {debugInfo && (
-        <div className="fixed bottom-4 right-4 bg-gray-900 text-white p-3 rounded text-xs max-w-xs z-50">
+        <div className="fixed bottom-20 right-4 bg-gray-900 text-white p-3 rounded text-xs max-w-xs z-40">
           <div className="font-bold">Feature Flags Debug</div>
           <div>Environment: {debugInfo.environment}</div>
           <div>Enabled: {debugInfo.enabledFeatures.join(', ')}</div>

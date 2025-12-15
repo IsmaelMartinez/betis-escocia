@@ -17,7 +17,8 @@ export type FeatureName =
   | 'show-debug-info'
   | 'show-rsvp'
   | 'show-unete'
-  | 'show-contacto';
+  | 'show-contacto'
+  | 'show-chat-assistant';
 
 // Navigation item interface
 export interface NavigationItem {
@@ -40,6 +41,7 @@ const DEFAULT_FEATURES: Record<FeatureName, boolean> = {
   'show-rsvp': false,  // Disabled - RSVP functionality moved to inline widgets
   'show-unete': true,
   'show-contacto': true,
+  'show-chat-assistant': false,  // AI chat assistant - disabled by default
 };
 
 // Environment variable mapping
@@ -55,6 +57,7 @@ const ENV_VAR_MAP: Record<FeatureName, string> = {
   'show-rsvp': 'NEXT_PUBLIC_FEATURE_RSVP',
   'show-unete': 'NEXT_PUBLIC_FEATURE_UNETE',
   'show-contacto': 'NEXT_PUBLIC_FEATURE_CONTACTO',
+  'show-chat-assistant': 'NEXT_PUBLIC_FEATURE_CHAT_ASSISTANT',
 };
 
 // Cache for resolved features
