@@ -21,7 +21,7 @@ function StandingRow({ entry, isBetis }: { entry: StandingEntry; isBetis: boolea
   const formResults = formatForm(entry.form);
 
   return (
-    <tr className={`${isBetis ? 'bg-green-50 border-green-200' : 'hover:bg-gray-50'} transition-colors`}>
+    <tr className={`${isBetis ? 'bg-betis-verde-pale border-betis-verde/20' : 'hover:bg-gray-50'} transition-colors`}>
       {/* Position */}
       <td className="px-3 py-4 text-sm">
         <div className="flex items-center space-x-2">
@@ -48,7 +48,7 @@ function StandingRow({ entry, isBetis }: { entry: StandingEntry; isBetis: boolea
             unoptimized
           />
           <div className="flex flex-col">
-            <span className={`font-medium text-sm ${isBetis ? 'text-green-700' : 'text-gray-900'}`}>
+            <span className={`font-medium text-sm ${isBetis ? 'text-betis-verde-dark' : 'text-gray-900'}`}>
               {entry.team.shortName || entry.team.name}
             </span>
             <span className="text-xs text-gray-500 sm:hidden">
@@ -60,7 +60,7 @@ function StandingRow({ entry, isBetis }: { entry: StandingEntry; isBetis: boolea
 
       {/* Points */}
       <td className="px-3 py-4 text-sm font-bold text-center">
-        <span className={isBetis ? 'text-green-700' : 'text-gray-900'}>
+        <span className={isBetis ? 'text-betis-verde-dark' : 'text-gray-900'}>
           {entry.points}
         </span>
       </td>
@@ -87,7 +87,7 @@ function StandingRow({ entry, isBetis }: { entry: StandingEntry; isBetis: boolea
 
       {/* Goal Difference */}
       <td className="px-3 py-4 text-sm text-center text-gray-600 hidden lg:table-cell">
-        <span className={entry.goalDifference >= 0 ? 'text-green-600' : 'text-red-600'}>
+        <span className={entry.goalDifference >= 0 ? 'text-betis-verde' : 'text-red-600'}>
           {entry.goalDifference > 0 ? '+' : ''}{entry.goalDifference}
         </span>
       </td>
@@ -121,7 +121,7 @@ async function StandingsContent() {
   const betisEntry = standings.table.find(entry => entry.team.id === 90);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-betis-verde-pale to-white">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -137,12 +137,12 @@ async function StandingsContent() {
             </div>
             
             {betisEntry && (
-              <div className="mt-4 md:mt-0 bg-green-100 border border-green-200 rounded-lg p-4">
+              <div className="mt-4 md:mt-0 bg-betis-verde-light border border-betis-verde/20 rounded-lg p-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-700">
+                  <div className="text-2xl font-bold text-betis-verde-dark">
                     {betisEntry.position}º
                   </div>
-                  <div className="text-sm text-green-600">
+                  <div className="text-sm text-betis-verde">
                     {betisEntry.points} puntos
                   </div>
                 </div>
@@ -156,11 +156,11 @@ async function StandingsContent() {
           <h3 className="font-semibold text-gray-900 mb-3">Leyenda de Competiciones</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 bg-green-500 rounded-full"></span>
+              <span className="w-3 h-3 bg-betis-verde rounded-full"></span>
               <span className="text-gray-700">Champions League (1-4)</span>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="w-3 h-3 bg-blue-500 rounded-full"></span>
+              <span className="w-3 h-3 bg-scotland-blue rounded-full"></span>
               <span className="text-gray-700">Europa League (5-6)</span>
             </div>
             <div className="flex items-center space-x-2">
@@ -227,7 +227,7 @@ async function StandingsContent() {
           <FeatureWrapper feature="show-partidos">
             <Link
               href="/partidos"
-              className="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors shadow-md"
+              className="inline-flex items-center justify-center px-6 py-3 bg-betis-verde text-white font-medium rounded-lg hover:bg-betis-verde-dark transition-colors shadow-md"
             >
               Ver Partidos del Betis
             </Link>
@@ -243,7 +243,7 @@ async function StandingsPage() {
   return (
     <ErrorBoundary>
       <Suspense fallback={
-        <div className="min-h-screen bg-gradient-to-b from-green-50 to-white flex items-center justify-center">
+        <div className="min-h-screen bg-gradient-to-b from-betis-verde-pale to-white flex items-center justify-center">
           <LoadingSpinner />
         </div>
       }>

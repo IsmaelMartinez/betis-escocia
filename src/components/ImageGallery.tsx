@@ -101,7 +101,7 @@ export default function ImageGallery({ images, productName, onClose }: ImageGall
                 }}
                 className={`relative w-16 h-16 rounded-md overflow-hidden border-2 transition-all ${
                   index === currentIndex
-                    ? 'border-green-400 scale-110'
+                    ? 'border-betis-oro scale-110'
                     : 'border-transparent hover:border-white/50'
                 }`}
               >

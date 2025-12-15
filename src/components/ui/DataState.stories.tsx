@@ -50,8 +50,8 @@ export const WithData: Story = {
     data: [{ id: 1 }, { id: 2 }],
     children: (
       <div className="space-y-2">
-        <div className="p-4 bg-green-100 rounded">Item 1</div>
-        <div className="p-4 bg-green-100 rounded">Item 2</div>
+        <div className="p-4 bg-betis-verde-light rounded">Item 1</div>
+        <div className="p-4 bg-betis-verde-light rounded">Item 2</div>
       </div>
     ),
   },

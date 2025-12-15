@@ -158,7 +158,7 @@ const MatchCard: React.FC<MatchCardProps> = (props) => {
       case 'SCHEDULED':
       case 'TIMED':
       default:
-        return { text: 'PRÓXIMO', color: 'bg-green-500 text-white' };
+        return { text: 'PRÓXIMO', color: 'bg-betis-verde text-white' };
     }
   };
 
@@ -302,7 +302,7 @@ const MatchCard: React.FC<MatchCardProps> = (props) => {
             
             <Link 
               href={`/rsvp?match=${id}`}
-              className="block w-full bg-betis-green hover:bg-green-700 text-white text-center py-2 px-4 rounded-md font-medium transition-colors text-sm"
+              className="block w-full bg-betis-verde hover:bg-betis-verde-dark text-white text-center py-2 px-4 rounded-md font-medium transition-colors text-sm"
             >
               📝 Confirmar Asistencia{rsvpInfo && rsvpInfo.totalAttendees > 0 ? ` (${rsvpInfo.totalAttendees})` : ''}
             </Link>

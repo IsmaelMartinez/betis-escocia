@@ -279,7 +279,7 @@ export default function MatchForm({
             <button
               type="submit"
               disabled={isSubmitting || isDeleting || isLoading}
-              className="bg-betis-green hover:bg-green-700 text-white px-6 py-2 rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="bg-betis-green hover:bg-betis-verde-dark text-white px-6 py-2 rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isSubmitting 
                 ? (isEditing ? 'Guardando...' : 'Creando...') 

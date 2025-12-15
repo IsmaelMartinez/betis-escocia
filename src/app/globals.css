@@ -4,25 +4,59 @@
   --background: #ffffff;
   --foreground: #171717;
   
-  /* Real Betis brand colors */
-  --betis-green: #00A651;
-  --betis-green-dark: #006633;
-  --betis-green-accessible: #006633; /* WCAG AA compliant on white (4.5:1+) */
-  --betis-green-light: #e6f4ed; /* Light green for backgrounds */
-  --betis-white: #FFFFFF;
-  --betis-dark: #0f1419;
-  --betis-black: #000000;
-  --betis-gold: #FFD700;
-  --betis-gold-dark: #e6c200;
+  /* ===========================================
+   * PEÑA BÉTICA ESCOCESA - BRAND COLORS
+   * See docs/design-system.md for full guidelines
+   * =========================================== */
   
-  /* Scottish accent colors */
-  --scotland-blue: #005EB8;
+  /* Primary: Betis Verde (Authentic Real Betis Green) */
+  --betis-verde: #048D47;
+  --betis-verde-dark: #036B38;
+  --betis-verde-light: #E8F5ED;
+  --betis-verde-pale: #F0F9F4;
+  --betis-verde-accessible: #036B38; /* WCAG AA compliant on white */
+  
+  /* Secondary: Scottish Colors (from logo) */
   --scotland-navy: #0B1426;
+  --scotland-blue: #005EB8;
   
-  /* Enhanced contrast colors */
-  --gray-50: #f9fafb;
-  --gray-100: #f3f4f6;
+  /* Accent: Betis Gold */
+  --betis-oro: #D4AF37;
+  --betis-oro-dark: #B8960F;
+  --betis-oro-light: #F5E6B3;
+  
+  /* Neutrals */
+  --betis-blanco: #FFFFFF;
+  --betis-negro: #000000;
+  --betis-dark: #0f1419;
+  
+  /* Gray Scale */
+  --gray-50: #F9FAFB;
+  --gray-100: #F3F4F6;
+  --gray-200: #E5E7EB;
+  --gray-300: #D1D5DB;
+  --gray-400: #9CA3AF;
+  --gray-500: #6B7280;
+  --gray-600: #4B5563;
+  --gray-700: #374151;
+  --gray-800: #1F2937;
   --gray-900: #111827;
+  
+  /* Status Colors */
+  --status-success: #059669;
+  --status-warning: #D97706;
+  --status-error: #DC2626;
+  --status-info: #2563EB;
+  
+  /* Legacy aliases (for backwards compatibility during migration) */
+  --betis-green: var(--betis-verde);
+  --betis-green-dark: var(--betis-verde-dark);
+  --betis-green-light: var(--betis-verde-light);
+  --betis-green-accessible: var(--betis-verde-accessible);
+  --betis-white: var(--betis-blanco);
+  --betis-black: var(--betis-negro);
+  --betis-gold: var(--betis-oro);
+  --betis-gold-dark: var(--betis-oro-dark);
 }
 
 body {
@@ -31,7 +65,9 @@ body {
   font-family: var(--font-geist-sans, ui-sans-serif, system-ui);
 }
 
-
+/* ===========================================
+ * FORM ELEMENT STYLES
+ * =========================================== */
 
 /* Force light mode for form elements to ensure readability */
 input, select, textarea {
@@ -58,50 +94,134 @@ form {
   color: #1f2937;
 }
 
-/* Custom utility classes for Real Betis branding */
-.bg-betis-green { background-color: var(--betis-green); }
-.bg-betis-green-dark { background-color: var(--betis-green-dark); }
-.text-betis-green { color: var(--betis-green-accessible); } /* Use accessible green for text */
-.text-betis-green-light { color: var(--betis-green-light); }
-.border-betis-green { border-color: var(--betis-green); }
-.bg-betis-gold { background-color: var(--betis-gold); }
-.bg-betis-gold-dark { background-color: var(--betis-gold-dark); }
-.text-betis-gold { color: var(--betis-gold); }
-.bg-betis-dark { background-color: var(--betis-dark); }
-.text-betis-dark { color: var(--betis-dark); }
-.bg-betis-black { background-color: var(--betis-black); }
-.text-betis-black { color: var(--betis-black); }
+/* ===========================================
+ * BRAND COLOR UTILITY CLASSES
+ * Use these instead of generic Tailwind colors
+ * =========================================== */
+
+/* Background Colors - Primary */
+.bg-betis-verde { background-color: var(--betis-verde); }
+.bg-betis-verde-dark { background-color: var(--betis-verde-dark); }
+.bg-betis-verde-light { background-color: var(--betis-verde-light); }
+.bg-betis-verde-pale { background-color: var(--betis-verde-pale); }
+
+/* Background Colors - Secondary */
+.bg-scotland-navy { background-color: var(--scotland-navy); }
 .bg-scotland-blue { background-color: var(--scotland-blue); }
+
+/* Background Colors - Accent */
+.bg-betis-oro { background-color: var(--betis-oro); }
+.bg-betis-oro-dark { background-color: var(--betis-oro-dark); }
+.bg-betis-oro-light { background-color: var(--betis-oro-light); }
+
+/* Background Colors - Neutrals */
+.bg-betis-blanco { background-color: var(--betis-blanco); }
+.bg-betis-negro { background-color: var(--betis-negro); }
+.bg-betis-dark { background-color: var(--betis-dark); }
+
+/* Text Colors - Primary */
+.text-betis-verde { color: var(--betis-verde-accessible); }
+.text-betis-verde-dark { color: var(--betis-verde-dark); }
+.text-betis-verde-light { color: var(--betis-verde-light); }
+
+/* Text Colors - Secondary */
+.text-scotland-navy { color: var(--scotland-navy); }
 .text-scotland-blue { color: var(--scotland-blue); }
 
-/* Simple utility classes that work with existing Tailwind */
+/* Text Colors - Accent */
+.text-betis-oro { color: var(--betis-oro); }
+.text-betis-oro-dark { color: var(--betis-oro-dark); }
 
-/* Enhanced contrast utilities */
-.text-shadow-lg { text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); }
-.text-shadow-xl { text-shadow: 0 6px 12px rgba(0, 0, 0, 0.7); }
-.drop-shadow-2xl { filter: drop-shadow(0 25px 25px rgba(0, 0, 0, 0.5)); }
+/* Text Colors - Neutrals */
+.text-betis-blanco { color: var(--betis-blanco); }
+.text-betis-negro { color: var(--betis-negro); }
+.text-betis-dark { color: var(--betis-dark); }
+
+/* Border Colors */
+.border-betis-verde { border-color: var(--betis-verde); }
+.border-betis-verde-dark { border-color: var(--betis-verde-dark); }
+.border-betis-oro { border-color: var(--betis-oro); }
+.border-scotland-navy { border-color: var(--scotland-navy); }
+
+/* Legacy class aliases (for backwards compatibility) */
+.bg-betis-green { background-color: var(--betis-verde); }
+.bg-betis-green-dark { background-color: var(--betis-verde-dark); }
+.text-betis-green { color: var(--betis-verde-accessible); }
+.text-betis-green-light { color: var(--betis-verde-light); }
+.border-betis-green { border-color: var(--betis-verde); }
+.bg-betis-gold { background-color: var(--betis-oro); }
+.bg-betis-gold-dark { background-color: var(--betis-oro-dark); }
+.text-betis-gold { color: var(--betis-oro); }
+.text-betis-black { color: var(--betis-negro); }
+.bg-betis-black { background-color: var(--betis-negro); }
+
+/* ===========================================
+ * GRADIENT UTILITIES
+ * =========================================== */
+
 .bg-gradient-betis { 
-  background: linear-gradient(135deg, var(--betis-green) 0%, var(--betis-green-dark) 100%); 
+  background: linear-gradient(135deg, var(--betis-verde) 0%, var(--betis-verde-dark) 100%); 
 }
+
+.bg-gradient-betis-horizontal {
+  background: linear-gradient(90deg, var(--betis-verde) 0%, var(--betis-verde-dark) 100%);
+}
+
+.bg-gradient-scotland {
+  background: linear-gradient(135deg, var(--scotland-navy) 0%, #1a2744 100%);
+}
+
+.bg-gradient-hero {
+  background: linear-gradient(to bottom right, var(--betis-verde), var(--betis-verde-dark), var(--scotland-navy));
+}
+
 .bg-gradient-dark-overlay {
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%);
 }
+
 .bg-gradient-radial {
   background: radial-gradient(circle, var(--tw-gradient-stops));
 }
 
-/* Border width utilities */
+/* ===========================================
+ * SHADOW UTILITIES
+ * =========================================== */
+
+.shadow-betis {
+  box-shadow: 0 4px 14px 0 rgba(4, 141, 71, 0.25);
+}
+
+.shadow-betis-lg {
+  box-shadow: 0 10px 25px -5px rgba(4, 141, 71, 0.3);
+}
+
+/* ===========================================
+ * TEXT EFFECTS
+ * =========================================== */
+
+.text-shadow-sm { text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); }
+.text-shadow { text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); }
+.text-shadow-lg { text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); }
+.text-shadow-xl { text-shadow: 0 6px 12px rgba(0, 0, 0, 0.7); }
+.drop-shadow-2xl { filter: drop-shadow(0 25px 25px rgba(0, 0, 0, 0.5)); }
+
+/* ===========================================
+ * BORDER UTILITIES
+ * =========================================== */
+
 .border-3 { border-width: 3px; }
 .border-4 { border-width: 4px; }
 
-/* Animation utilities */
+/* ===========================================
+ * ANIMATION KEYFRAMES
+ * =========================================== */
+
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.7; }
 }
 .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
 
-/* Custom smooth animations */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -162,7 +282,10 @@ form {
   100% { transform: translateX(100%); }
 }
 
-/* Animation classes */
+/* ===========================================
+ * ANIMATION CLASSES
+ * =========================================== */
+
 .animate-fade-in-up {
   animation: fadeInUp 0.8s ease-out forwards;
   opacity: 0;
@@ -192,7 +315,10 @@ form {
   animation: shimmer 2s infinite;
 }
 
-/* Hover effect utilities */
+/* ===========================================
+ * HOVER EFFECT UTILITIES
+ * =========================================== */
+
 .hover-lift {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -203,5 +329,27 @@ form {
 }
 
 .hover-glow:hover {
-  box-shadow: 0 0 20px rgba(0, 166, 81, 0.3);
+  box-shadow: 0 0 20px rgba(4, 141, 71, 0.3);
+}
+
+.hover-scale {
+  transition: transform 0.2s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+/* ===========================================
+ * FOCUS RING UTILITIES
+ * =========================================== */
+
+.focus-ring-betis:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(4, 141, 71, 0.4);
+}
+
+.focus-ring-betis:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(4, 141, 71, 0.4);
 }

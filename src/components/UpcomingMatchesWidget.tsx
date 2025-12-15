@@ -109,7 +109,7 @@ export default function UpcomingMatchesWidget({
           <h2 className="text-xl font-bold text-gray-900">Próximos Partidos</h2>
           <Link
             href="/partidos"
-            className="text-betis-green hover:text-green-900 font-semibold text-sm underline underline-offset-2"
+            className="text-betis-verde hover:text-betis-verde-dark font-semibold text-sm underline underline-offset-2"
           >
             Ver todos →
           </Link>
@@ -123,7 +123,7 @@ export default function UpcomingMatchesWidget({
           </p>
           <Link
             href="/partidos"
-            className="text-betis-green hover:text-green-900 font-semibold text-sm underline underline-offset-2"
+            className="text-betis-verde hover:text-betis-verde-dark font-semibold text-sm underline underline-offset-2"
           >
             Ver historial →
           </Link>
@@ -139,7 +139,7 @@ export default function UpcomingMatchesWidget({
         <h2 className="text-xl font-bold text-gray-900">Próximos Partidos</h2>
         <Link
           href="/partidos"
-          className="text-betis-green hover:text-green-900 font-semibold text-sm flex items-center underline underline-offset-2"
+          className="text-betis-verde hover:text-betis-verde-dark font-semibold text-sm flex items-center underline underline-offset-2"
         >
           Ver todos →
         </Link>
@@ -154,7 +154,7 @@ export default function UpcomingMatchesWidget({
           return (
             <div 
               key={match.id} 
-              className="border border-gray-200 rounded-lg p-4 hover:border-betis-green transition-colors"
+              className="border border-gray-200 rounded-lg p-4 hover:border-betis-verde transition-colors"
             >
               {/* Competition and date */}
               <div className="flex items-center justify-between mb-3">
@@ -170,7 +170,7 @@ export default function UpcomingMatchesWidget({
               <div className="flex items-center justify-center space-x-4 mb-3">
                 <div className="text-right flex-1">
                   <p className={`font-semibold text-sm ${
-                    match.home_away === 'home' ? 'text-betis-green' : 'text-gray-900'
+                    match.home_away === 'home' ? 'text-betis-verde' : 'text-gray-900'
                   }`}>
                     {match.home_away === 'home' ? 'Real Betis' : match.opponent}
                   </p>
@@ -185,7 +185,7 @@ export default function UpcomingMatchesWidget({
                 
                 <div className="text-left flex-1">
                   <p className={`font-semibold text-sm ${
-                    match.home_away === 'away' ? 'text-betis-green' : 'text-gray-900'
+                    match.home_away === 'away' ? 'text-betis-verde' : 'text-gray-900'
                   }`}>
                     {match.home_away === 'away' ? 'Real Betis' : match.opponent}
                   </p>
@@ -202,10 +202,10 @@ export default function UpcomingMatchesWidget({
                   {match.rsvp_count > 0 && (
                     <div className="text-center mb-2">
                       <span className="text-xs text-gray-600">
-                        <span className="font-medium text-betis-green">{match.rsvp_count}</span> confirmaciones
+                        <span className="font-medium text-betis-verde">{match.rsvp_count}</span> confirmaciones
                         {match.total_attendees > 0 && (
                           <span className="ml-2">
-                            • <span className="font-medium text-betis-green">{match.total_attendees}</span> asistentes
+                            • <span className="font-medium text-betis-verde">{match.total_attendees}</span> asistentes
                           </span>
                         )}
                       </span>
@@ -214,7 +214,7 @@ export default function UpcomingMatchesWidget({
                   
                   <Link
                     href={`/rsvp?match=${match.id}`}
-                    className="block w-full bg-betis-green hover:bg-green-700 text-white text-center py-2 px-3 rounded text-xs font-medium transition-colors"
+                    className="block w-full bg-betis-verde hover:bg-betis-verde-dark text-white text-center py-2 px-3 rounded text-xs font-medium transition-colors"
                   >
                     📝 Confirmar Asistencia
                   </Link>
@@ -229,7 +229,7 @@ export default function UpcomingMatchesWidget({
       <div className="mt-6 text-center">
         <Link
           href="/partidos"
-          className="text-betis-green hover:text-green-900 font-semibold text-sm underline underline-offset-2"
+          className="text-betis-verde hover:text-betis-verde-dark font-semibold text-sm underline underline-offset-2"
         >
           Ver todos los partidos →
         </Link>

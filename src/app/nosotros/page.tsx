@@ -48,12 +48,12 @@ export default function Nosotros() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="bg-betis-green text-white py-12 px-4">
+      <div className="bg-betis-verde text-white py-12 px-4">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Nosotros
           </h1>
-          <p className="text-xl sm:text-2xl mb-6 font-bold text-betis-gold drop-shadow-lg">
+          <p className="text-xl sm:text-2xl mb-6 font-bold text-betis-oro drop-shadow-lg">
             Más que una peña, somos familia
           </p>
           <p className="text-lg max-w-3xl mx-auto text-white leading-relaxed font-medium drop-shadow-xl">
@@ -67,7 +67,7 @@ export default function Nosotros() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <div className="inline-block bg-betis-green text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
+            <div className="inline-block bg-betis-verde text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
               📖 NUESTRA HISTORIA
             </div>
             <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
@@ -78,7 +78,7 @@ export default function Nosotros() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
               <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                <Heart className="h-6 w-6 text-betis-green mr-3" />
+                <Heart className="h-6 w-6 text-betis-verde mr-3" />
                 El Comienzo
               </h3>
               <p className="text-gray-800 leading-relaxed mb-6 text-base">
@@ -91,8 +91,8 @@ export default function Nosotros() {
                 primera peña oficial del Real Betis en el Reino Unido. Desde entonces, hemos 
                 pasado por diferentes sedes hasta encontrar nuestro hogar actual en Polwarth Tavern.
               </p>
-              <div className="bg-betis-green/10 rounded-lg p-4 border-l-4 border-betis-green">
-                <p className="text-betis-green font-semibold">
+              <div className="bg-betis-verde-light rounded-lg p-4 border-l-4 border-betis-verde">
+                <p className="text-betis-verde-dark font-semibold">
                   &ldquo;La idea de crear el club de fans vino tomando algo en un pub. 
                   Simplemente lo decidieron así. ¡Literalmente!&rdquo;
                 </p>
@@ -102,7 +102,7 @@ export default function Nosotros() {
 
             <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
               <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                <Users className="h-6 w-6 text-betis-green mr-3" />
+                <Users className="h-6 w-6 text-betis-verde mr-3" />
                 La Comunidad
               </h3>
               <p className="text-gray-800 leading-relaxed mb-6 text-base">
@@ -116,12 +116,12 @@ export default function Nosotros() {
                 cerveza y la certeza de que &ldquo;el año que viene será el nuestro&rdquo;.
               </p>
               <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-4 bg-betis-green/5 rounded-lg">
-                  <div className="text-2xl font-black text-betis-green">25+</div>
+                <div className="text-center p-4 bg-betis-verde-pale rounded-lg">
+                  <div className="text-2xl font-black text-betis-verde">25+</div>
                   <div className="text-sm text-gray-700 font-medium">Miembros activos</div>
                 </div>
-                <div className="text-center p-4 bg-betis-green/5 rounded-lg">
-                  <div className="text-2xl font-black text-betis-green">14</div>
+                <div className="text-center p-4 bg-betis-verde-pale rounded-lg">
+                  <div className="text-2xl font-black text-betis-verde">14</div>
                   <div className="text-sm text-gray-700 font-medium">Años de historia</div>
                 </div>
               </div>
@@ -134,7 +134,7 @@ export default function Nosotros() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <div className="inline-block bg-betis-green text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
+            <div className="inline-block bg-betis-verde text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
               ⏰ CRONOLOGÍA
             </div>
             <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
@@ -146,7 +146,7 @@ export default function Nosotros() {
             {milestones.map((milestone) => (
               <div key={milestone.year} className="flex items-start">
                 <div className="flex-shrink-0 w-24 text-right mr-8">
-                  <span className="inline-block bg-betis-green text-white px-3 py-1 rounded-full font-bold text-sm">
+                  <span className="inline-block bg-betis-verde text-white px-3 py-1 rounded-full font-bold text-sm">
                     {milestone.year}
                   </span>
                 </div>
@@ -168,7 +168,7 @@ export default function Nosotros() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <div className="inline-block bg-betis-green text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
+            <div className="inline-block bg-betis-verde text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
               👥 EL EQUIPO
             </div>
             <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
@@ -184,7 +184,7 @@ export default function Nosotros() {
               <div key={member.name} className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 text-center transform hover:scale-105 transition-all duration-300">
                 <div className="text-4xl mb-4">{member.emoji}</div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">{member.name}</h3>
-                <p className="text-betis-green font-semibold mb-3 text-sm uppercase tracking-wide">
+                <p className="text-betis-verde font-semibold mb-3 text-sm uppercase tracking-wide">
                   {member.role}
                 </p>
                 <p className="text-gray-700 text-sm leading-relaxed font-medium">
@@ -197,7 +197,7 @@ export default function Nosotros() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-20 bg-betis-green text-white relative">
+      <section className="py-20 bg-betis-verde text-white relative">
         {/* Background overlay for better text readability */}
         <div className="absolute inset-0 bg-black/20"></div>
         
@@ -212,13 +212,13 @@ export default function Nosotros() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/unete"
-              className="bg-betis-gold hover:bg-betis-gold-dark text-gray-900 px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+              className="bg-betis-oro hover:bg-betis-oro-dark text-gray-900 px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
               💬 Únete a nosotros
             </Link>
             <Link
               href="/rsvp"
-              className="text-white hover:bg-green-700 bg-green-600 hover:text-betis-green px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+              className="text-white hover:bg-betis-verde-dark bg-betis-verde hover:text-betis-oro px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg border border-white/20"
             >
               📅 Próximos eventos
             </Link>

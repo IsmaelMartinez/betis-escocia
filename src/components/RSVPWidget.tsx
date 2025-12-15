@@ -299,8 +299,8 @@ export default function RSVPWidget({
 
       {/* Event Details */}
       {showEventDetails && (
-        <div className="mb-6 p-4 bg-betis-green/10 border border-betis-green/20 rounded-lg">
-          <h4 className="font-bold text-betis-black mb-2 flex items-center">
+        <div className="mb-6 p-4 bg-betis-verde-light border border-betis-verde/20 rounded-lg">
+          <h4 className="font-bold text-betis-dark mb-2 flex items-center">
             <Calendar className="h-4 w-4 mr-2" />
             {event.title}
           </h4>
@@ -318,8 +318,8 @@ export default function RSVPWidget({
             <p className="text-sm text-gray-600 mt-2">{event.description}</p>
           )}
           {showAttendeeCount && (
-            <div className="mt-3 pt-3 border-t border-betis-green/20">
-              <p className="text-sm font-medium text-betis-green">
+            <div className="mt-3 pt-3 border-t border-betis-verde/20">
+              <p className="text-sm font-medium text-betis-verde">
                 <Users className="h-4 w-4 inline mr-1" />
                 {attendeeCount} personas confirmadas
               </p>
@@ -330,8 +330,8 @@ export default function RSVPWidget({
 
       {/* Current RSVP Status */}
       {currentRSVP && (
-        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-          <p className="text-sm text-green-800">
+        <div className="mb-4 p-3 bg-betis-verde-light border border-betis-verde/20 rounded-lg">
+          <p className="text-sm text-betis-verde-dark">
             <strong>Estado actual:</strong> {getStatusText()} 
             {currentRSVP.attendees > 1 && ` (${currentRSVP.attendees} personas)`}
           </p>
@@ -340,8 +340,8 @@ export default function RSVPWidget({
 
       {/* Auth Status */}
       {isAuthEnabled && user && (
-        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-          <p className="text-sm text-green-800">
+        <div className="mb-4 p-3 bg-betis-verde-light border border-betis-verde/20 rounded-lg">
+          <p className="text-sm text-betis-verde-dark">
             ✓ Conectado como {user.firstName} {user.lastName}
           </p>
         </div>
@@ -352,7 +352,7 @@ export default function RSVPWidget({
         <div className="text-center">
           <button
             onClick={() => setIsExpanded(true)}
-            className="w-full bg-betis-green hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200"
+            className="w-full bg-betis-verde hover:bg-betis-verde-dark text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200"
           >
             {currentRSVP ? 'Actualizar RSVP' : 'Confirmar Asistencia'}
           </button>
@@ -467,7 +467,7 @@ export default function RSVPWidget({
               name="whatsappInterest"
               checked={formData.whatsappInterest as boolean}
               onChange={(e) => handleInputChange('whatsappInterest', e.target.checked)}
-              className="mt-1 h-4 w-4 text-betis-green border-gray-300 rounded focus:ring-betis-green"
+              className="mt-1 h-4 w-4 text-betis-verde border-gray-300 rounded focus:ring-betis-verde"
             />
             <label htmlFor="whatsappInterest" className="text-sm text-gray-700">
               <strong>¿Te interesa unirte al grupo de WhatsApp?</strong>
@@ -499,7 +499,7 @@ export default function RSVPWidget({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 bg-betis-green hover:bg-green-700 disabled:bg-gray-400 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 disabled:cursor-not-allowed"
+              className="flex-1 bg-betis-verde hover:bg-betis-verde-dark disabled:bg-gray-400 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200 disabled:cursor-not-allowed"
               data-testid="submit-rsvp"
             >
               {isSubmitting ? (

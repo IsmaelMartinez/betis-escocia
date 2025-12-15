@@ -131,7 +131,7 @@ function RSVPPage() {
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             ¿Vienes al Polwarth?
           </h1>
-          <p className="text-xl md:text-2xl text-green-100 mb-6">
+          <p className="text-xl md:text-2xl text-betis-verde-light mb-6">
             Confirma tu asistencia para el próximo partido
           </p>
         </div>
@@ -140,7 +140,7 @@ function RSVPPage() {
       {/* Next Match Info */}
       <section className="py-12 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-green-600 rounded-3xl p-8 text-white text-center mb-8">
+          <div className="bg-betis-verde rounded-3xl p-8 text-white text-center mb-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold">Próximo Partido</h2>
               {availableMatches.length > 1 && (
@@ -204,7 +204,7 @@ function RSVPPage() {
 
           {/* RSVP Status */}
           <div className="text-center mb-12">
-            <div className="inline-flex items-center bg-green-100 text-betis-green px-6 py-3 rounded-full font-bold text-lg mb-4">
+            <div className="inline-flex items-center bg-betis-verde-light text-betis-green px-6 py-3 rounded-full font-bold text-lg mb-4">
               <Users className="h-5 w-5 mr-2" />
               {rsvpData?.totalAttendees ?? 0} béticos confirmados
             </div>
@@ -212,7 +212,7 @@ function RSVPPage() {
             {!showForm ? (
               <button
                 onClick={() => setShowForm(true)}
-                className="bg-betis-green hover:bg-green-700 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+                className="bg-betis-green hover:bg-betis-verde-dark text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
                 ✋ ¡Confirmar Asistencia! ({rsvpData?.totalAttendees ?? 0})
               </button>

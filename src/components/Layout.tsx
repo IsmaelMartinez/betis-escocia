@@ -42,7 +42,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-betis-green-dark shadow-lg">
+      <header className="bg-betis-verde-dark shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             {/* Logo */}
@@ -60,7 +60,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-white hover:text-betis-gold transition-colors duration-200 font-medium"
+                  className="text-white hover:text-betis-oro transition-colors duration-200 font-medium"
                 >
                   {item.name}
                 </Link>
@@ -73,7 +73,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                     <div className="relative">
                       <button
                         onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                        className="flex items-center space-x-2 text-white hover:text-betis-gold transition-colors duration-200"
+                        className="flex items-center space-x-2 text-white hover:text-betis-oro transition-colors duration-200"
                       >
                         <User size={20} />
                         <span className="font-medium">{user.firstName || 'Usuario'}</span>
@@ -118,14 +118,14 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                     <div className="flex items-center space-x-4">
                       <Link
                         href="/sign-in"
-                        className="flex items-center space-x-1 text-white hover:text-betis-gold transition-colors duration-200 font-medium"
+                        className="flex items-center space-x-1 text-white hover:text-betis-oro transition-colors duration-200 font-medium"
                       >
                         <LogIn size={18} />
                         <span>Iniciar Sesión</span>
                       </Link>
                       <Link
                         href="/sign-up"
-                        className="flex items-center space-x-1 bg-betis-gold text-betis-green px-3 py-1 rounded-md hover:bg-betis-gold/90 transition-colors duration-200 font-medium"
+                        className="flex items-center space-x-1 bg-betis-oro text-betis-dark px-3 py-1 rounded-md hover:bg-betis-oro-dark transition-colors duration-200 font-medium"
                       >
                         <UserPlus size={18} />
                         <span>Registro</span>
@@ -148,13 +148,13 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden bg-betis-green-dark border-t border-white/20">
+          <div className="md:hidden bg-betis-verde-dark border-t border-white/20">
             <div className="px-4 py-4 space-y-2">
               {enabledNavigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="block px-4 py-3 text-white hover:text-betis-gold hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
+                  className="block px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
@@ -169,7 +169,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                       {user.publicMetadata.role === 'admin' && (
                         <Link
                           href="/admin"
-                          className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-gold hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
+                          className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
                           onClick={() => setIsMenuOpen(false)}
                         >
                           <User size={20} />
@@ -178,7 +178,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                       )}
                       <Link
                         href="/dashboard"
-                        className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-gold hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
+                        className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         <User size={20} />
@@ -187,7 +187,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                       
                         <Link
                           href="/trivia"
-                          className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-gold hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
+                          className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
                           onClick={() => setIsMenuOpen(false)}
                         >
                           <User size={20} />
@@ -198,7 +198,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                           handleSignOut();
                           setIsMenuOpen(false);
                         }}
-                        className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-gold hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg w-full text-left"
+                        className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg w-full text-left"
                       >
                         <LogOut size={20} />
                         <span>Cerrar Sesión</span>
@@ -208,7 +208,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                     <div className="space-y-2">
                       <Link
                         href="/sign-in"
-                        className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-gold hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
+                        className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         <LogIn size={20} />
@@ -216,7 +216,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                       </Link>
                       <Link
                         href="/sign-up"
-                        className="flex items-center space-x-3 px-4 py-3 bg-betis-gold text-betis-green hover:bg-betis-gold/90 rounded-lg transition-all duration-200 font-medium text-lg"
+                        className="flex items-center space-x-3 px-4 py-3 bg-betis-oro text-betis-dark hover:bg-betis-oro-dark rounded-lg transition-all duration-200 font-medium text-lg"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         <UserPlus size={20} />
@@ -236,21 +236,21 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
         {children}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white">
+      {/* Footer - Using Scotland Navy for dark section */}
+      <footer className="bg-scotland-navy text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* About */}
             <div className="sm:col-span-2 lg:col-span-1">
-              <h3 className="font-bold text-lg mb-4 text-green-400">No busques más que no hay</h3>
-              <p className="text-gray-100 text-sm leading-relaxed">
+              <h3 className="font-bold text-lg mb-4 text-betis-oro">No busques más que no hay</h3>
+              <p className="text-gray-300 text-sm leading-relaxed">
                 La peña del Real Betis en Edimburgo. Nos vemos en The Polwarth Tavern para cada partido.
               </p>
             </div>
 
             {/* Contact */}
             <div>
-              <h3 className="font-bold text-lg mb-4 text-green-400">Dónde nos encontramos</h3>
+              <h3 className="font-bold text-lg mb-4 text-betis-oro">Dónde nos encontramos</h3>
               <div className="space-y-2 text-sm text-gray-300">
                 <div className="flex items-center space-x-2">
                   <MapPin size={16} />
@@ -262,13 +262,13 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
 
             {/* External Links */}
             <div>
-              <h3 className="font-bold text-lg mb-4 text-green-400">Enlaces útiles</h3>
+              <h3 className="font-bold text-lg mb-4 text-betis-oro">Enlaces útiles</h3>
               <div className="space-y-2 text-sm">
                 <a
                   href="https://www.betisweb.com/foro/principal/betis-fan-s-of-the-universe/6621126-pena-betica-escocesa-no-busques-mas-que-no-hay"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-gray-100 hover:text-betis-green transition-colors"
+                  className="block text-gray-300 hover:text-betis-verde transition-colors"
                 >
                   BetisWeb Forum
                 </a>
@@ -276,7 +276,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                   href="https://beticosenescocia.blogspot.com/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-gray-100 hover:text-betis-green transition-colors"
+                  className="block text-gray-300 hover:text-betis-verde transition-colors"
                 >
                   Béticos en Escocia Blog
                 </a>
@@ -284,7 +284,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                   href="https://www.laliga.com/noticias/conoce-a-la-pena-betica-de-escocia-no-busques-mas-que-no-hay"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-gray-100 hover:text-betis-green transition-colors"
+                  className="block text-gray-300 hover:text-betis-verde transition-colors"
                 >
                   LaLiga Reconocimiento
                 </a>
@@ -292,7 +292,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                   href="https://www.abc.es/deportes/alfinaldelapalmera/noticias-betis/sevi-pena-betica-no-busques-mas-no-embajada-recibe-suyos-escocia-202112091615_noticia.html"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-gray-100 hover:text-betis-green transition-colors"
+                  className="block text-gray-300 hover:text-betis-verde transition-colors"
                 >
                   ABC Sevilla
                 </a>
@@ -301,13 +301,13 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
 
             {/* Social */}
             <div>
-              <h3 className="font-bold text-lg mb-4 text-green-400">Síguenos</h3>
+              <h3 className="font-bold text-lg mb-4 text-betis-oro">Síguenos</h3>
               <div className="flex flex-wrap gap-4">
                 <a
                   href="https://www.facebook.com/groups/beticosenescocia/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-100 hover:text-betis-green transition-colors"
+                  className="text-gray-300 hover:text-betis-verde transition-colors"
                   title="Facebook"
                 >
                   <MessageCircle size={24} />
@@ -316,7 +316,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                   href="https://www.instagram.com/rbetisescocia/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-100 hover:text-betis-green transition-colors"
+                  className="text-gray-300 hover:text-betis-verde transition-colors"
                   title="Instagram"
                 >
                   <Camera size={24} />
@@ -325,7 +325,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                   href="https://x.com/rbetisescocia"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-100 hover:text-betis-green transition-colors"
+                  className="text-gray-300 hover:text-betis-verde transition-colors"
                   title="X (Twitter)"
                 >
                   <Hash size={24} />
@@ -334,7 +334,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                   href="https://www.youtube.com/beticosenescocia"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-100 hover:text-betis-green transition-colors"
+                  className="text-gray-300 hover:text-betis-verde transition-colors"
                   title="YouTube"
                 >
                   <Video size={24} />
@@ -347,13 +347,13 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
             <div className="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-6 mb-4">
               <a 
                 href="/gdpr" 
-                className="text-gray-400 hover:text-betis-green text-sm transition-colors"
+                className="text-gray-400 hover:text-betis-verde text-sm transition-colors"
               >
                 Protección de Datos
               </a>
               <a 
                 href="mailto:admin@betis-escocia.com" 
-                className="text-gray-400 hover:text-betis-green text-sm transition-colors"
+                className="text-gray-400 hover:text-betis-verde text-sm transition-colors"
               >
                 Contacto Admin
               </a>

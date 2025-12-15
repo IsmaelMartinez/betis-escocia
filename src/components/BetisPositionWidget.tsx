@@ -58,11 +58,11 @@ export default function BetisPositionWidget() {
 
   if (isLoading) {
     return (
-      <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+      <div className="bg-betis-verde-pale border border-betis-verde/20 rounded-lg p-6">
         <div className="animate-pulse">
-          <div className="h-4 bg-green-200 rounded w-32 mb-3"></div>
-          <div className="h-8 bg-green-200 rounded w-16 mb-2"></div>
-          <div className="h-4 bg-green-200 rounded w-24"></div>
+          <div className="h-4 bg-betis-verde-light rounded w-32 mb-3"></div>
+          <div className="h-8 bg-betis-verde-light rounded w-16 mb-2"></div>
+          <div className="h-4 bg-betis-verde-light rounded w-24"></div>
         </div>
       </div>
     );
@@ -75,7 +75,7 @@ export default function BetisPositionWidget() {
         <p className="text-sm text-gray-600">No se pudo cargar la información</p>
         <Link 
           href="/clasificacion"
-          className="text-green-600 hover:text-green-700 text-sm font-medium"
+          className="text-betis-verde hover:text-betis-verde-dark text-sm font-medium"
         >
           Ver clasificación completa →
         </Link>
@@ -90,8 +90,8 @@ export default function BetisPositionWidget() {
   // Helper function to get form result style
   const getFormResultStyle = (result: string): string => {
     switch (result) {
-      case 'W': return 'bg-green-500 text-white';
-      case 'D': return 'bg-yellow-500 text-white';
+      case 'W': return 'bg-betis-verde text-white';
+      case 'D': return 'bg-betis-oro text-white';
       case 'L': return 'bg-red-500 text-white';
       default: return 'bg-gray-300 text-gray-700';
     }
@@ -99,8 +99,8 @@ export default function BetisPositionWidget() {
 
   // Helper function to get position context
   const getPositionContext = (position: number): { text: string; color: string } => {
-    if (position <= 4) return { text: 'Champions League', color: 'text-green-600' };
-    if (position <= 6) return { text: 'Europa League', color: 'text-blue-600' };
+    if (position <= 4) return { text: 'Champions League', color: 'text-betis-verde' };
+    if (position <= 6) return { text: 'Europa League', color: 'text-scotland-blue' };
     if (position <= 7) return { text: 'Conference League', color: 'text-orange-600' };
     if (position >= 18) return { text: 'Zona de descenso', color: 'text-red-600' };
     return { text: 'Zona media', color: 'text-gray-600' };
@@ -113,12 +113,12 @@ export default function BetisPositionWidget() {
   const positionContext = getPositionContext(betisData.position);
 
   return (
-    <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+    <div className="bg-betis-verde-pale border border-betis-verde/20 rounded-lg p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-gray-900">Posición en La Liga</h3>
         <Link 
           href="/clasificacion"
-          className="text-green-600 hover:text-green-700 text-sm font-medium"
+          className="text-betis-verde hover:text-betis-verde-dark text-sm font-medium"
         >
           Ver tabla completa →
         </Link>
@@ -126,7 +126,7 @@ export default function BetisPositionWidget() {
       
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div className="text-center">
-          <div className="text-3xl font-bold text-green-700">
+          <div className="text-3xl font-bold text-betis-verde-dark">
             {betisData.position}º
           </div>
           <div className="text-sm text-gray-600">Posición</div>
@@ -136,7 +136,7 @@ export default function BetisPositionWidget() {
         </div>
         
         <div className="text-center">
-          <div className="text-3xl font-bold text-green-700">
+          <div className="text-3xl font-bold text-betis-verde-dark">
             {betisData.points}
           </div>
           <div className="text-sm text-gray-600">Puntos</div>
@@ -148,11 +148,11 @@ export default function BetisPositionWidget() {
 
       <div className="grid grid-cols-3 gap-2 mb-4 text-xs">
         <div className="text-center bg-white rounded p-2">
-          <div className="font-bold text-green-600">{betisData.won}</div>
+          <div className="font-bold text-betis-verde">{betisData.won}</div>
           <div className="text-gray-600">G</div>
         </div>
         <div className="text-center bg-white rounded p-2">
-          <div className="font-bold text-yellow-600">{betisData.draw}</div>
+          <div className="font-bold text-betis-oro-dark">{betisData.draw}</div>
           <div className="text-gray-600">E</div>
         </div>
         <div className="text-center bg-white rounded p-2">

@@ -132,11 +132,11 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
           Rellena el formulario para que sepamos que vienes
         </p>
         {isAuthEnabled && user && (
-          <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-            <p className="text-sm text-green-800">
+          <div className="mt-4 p-3 bg-betis-verde-light border border-betis-verde/20 rounded-lg">
+            <p className="text-sm text-betis-verde-dark">
               ✓ Conectado como {user.firstName} {user.lastName}
             </p>
-            <p className="text-xs text-green-600 mt-1">
+            <p className="text-xs text-betis-verde mt-1">
               Tus datos se han rellenado automáticamente
             </p>
           </div>
@@ -274,7 +274,7 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-betis-green hover:bg-green-700 disabled:bg-gray-400 text-white py-4 px-6 rounded-lg font-bold text-lg transition-colors duration-200 disabled:cursor-not-allowed"
+          className="w-full bg-betis-verde hover:bg-betis-verde-dark disabled:bg-gray-400 text-white py-4 px-6 rounded-lg font-bold text-lg transition-colors duration-200 disabled:cursor-not-allowed"
           data-testid="submit-rsvp"
         >
           {isSubmitting ? (

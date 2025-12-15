@@ -59,12 +59,12 @@ export default function Unete() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="bg-betis-green text-white py-12 px-4">
+      <div className="bg-betis-verde text-white py-12 px-4">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Únete
           </h1>
-          <p className="text-xl sm:text-2xl mb-6 font-bold text-betis-gold drop-shadow-lg">
+          <p className="text-xl sm:text-2xl mb-6 font-bold text-betis-oro drop-shadow-lg">
             Ser bético en Escocia nunca fue tan fácil
           </p>
           <p className="text-lg max-w-3xl mx-auto text-white leading-relaxed font-medium drop-shadow-xl">
@@ -78,7 +78,7 @@ export default function Unete() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <div className="inline-block bg-betis-green text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
+            <div className="inline-block bg-betis-verde text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
               🚀 PROCESO FÁCIL
             </div>
             <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
@@ -100,7 +100,7 @@ export default function Unete() {
                 <div className="flex-1 max-w-lg">
                   <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
                     <div className="flex items-center mb-6">
-                      <div className="w-12 h-12 bg-betis-green text-white rounded-full flex items-center justify-center font-bold text-xl mr-4">
+                      <div className="w-12 h-12 bg-betis-verde text-white rounded-full flex items-center justify-center font-bold text-xl mr-4">
                         {step.number}
                       </div>
                       <span className="text-4xl">{step.icon}</span>
@@ -111,7 +111,7 @@ export default function Unete() {
                     <p className="text-gray-800 mb-4 leading-relaxed text-base">
                       {step.description}
                     </p>
-                    <div className="bg-betis-green/10 rounded-lg p-4 border-l-4 border-betis-green">
+                    <div className="bg-betis-verde-light rounded-lg p-4 border-l-4 border-betis-verde">
                       <p className="text-sm text-gray-700 font-medium">
                         💡 {step.details}
                       </p>
@@ -120,7 +120,7 @@ export default function Unete() {
                 </div>
                 
                 <div className="flex-1 max-w-lg">
-                  <div className="bg-gradient-to-br from-betis-green/10 to-betis-gold/10 rounded-2xl p-8 border border-betis-green/20">
+                  <div className="bg-gradient-to-br from-betis-verde-light to-betis-oro-light rounded-2xl p-8 border border-betis-verde/20">
                     <div className="text-center">
                       <div className="text-6xl mb-4">{step.icon}</div>
                       <h4 className="text-xl font-bold text-gray-900 mb-2">
@@ -142,7 +142,7 @@ export default function Unete() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <div className="inline-block bg-betis-green text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
+            <div className="inline-block bg-betis-verde text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
               📍 INFORMACIÓN PRÁCTICA
             </div>
             <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
@@ -152,7 +152,7 @@ export default function Unete() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
             <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center">
-              <MapPin className="h-12 w-12 text-betis-green mx-auto mb-6" />
+              <MapPin className="h-12 w-12 text-betis-verde mx-auto mb-6" />
               <h3 className="text-xl font-bold text-gray-900 mb-4">Ubicación</h3>
               <p className="text-gray-800 mb-4 leading-relaxed">
                 <strong className="text-gray-900">Polwarth Tavern</strong><br />
@@ -163,7 +163,7 @@ export default function Unete() {
                 href="https://maps.google.com/maps?q=Polwarth+Tavern+Edinburgh"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center bg-betis-green hover:bg-betis-green-dark text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300"
+                className="inline-flex items-center bg-betis-verde hover:bg-betis-verde-dark text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300"
               >
                 <MapPin className="h-4 w-4 mr-2" />
                 Ver en Maps
@@ -171,7 +171,7 @@ export default function Unete() {
             </div>
 
             <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center">
-              <Users className="h-12 w-12 text-betis-green mx-auto mb-6" />
+              <Users className="h-12 w-12 text-betis-verde mx-auto mb-6" />
               <h3 className="text-xl font-bold text-gray-900 mb-4">Contacto</h3>
               <p className="text-gray-800 mb-4 leading-relaxed">
                 <strong className="text-gray-900">¿Dudas?</strong><br />
@@ -182,7 +182,7 @@ export default function Unete() {
                 href="https://www.facebook.com/groups/beticosenescocia/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center bg-betis-green hover:bg-betis-green-dark text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300"
+                className="inline-flex items-center bg-betis-verde hover:bg-betis-verde-dark text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300"
               >
                 <MessageCircle className="h-4 w-4 mr-2" />
                 Contactar
@@ -191,10 +191,10 @@ export default function Unete() {
           </div>
 
           {/* Special Welcome for Tourists */}
-          <div className="bg-gradient-to-r from-betis-green/10 to-betis-gold/10 rounded-2xl p-8 border border-betis-green/20">
+          <div className="bg-gradient-to-r from-betis-verde-light to-betis-oro-light rounded-2xl p-8 border border-betis-verde/20">
             <div className="text-center">
               <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center justify-center">
-                <Heart className="h-6 w-6 text-betis-green mr-3" />
+                <Heart className="h-6 w-6 text-betis-verde mr-3" />
                 🏴󠁧󠁢󠁳󠁣󠁴󠁿 ¿Estás de visita en Escocia?
               </h3>
               <p className="text-lg text-gray-800 mb-6 leading-relaxed max-w-3xl mx-auto">
@@ -239,7 +239,7 @@ export default function Unete() {
             {faqs.map((faq) => (
               <div key={faq.question} className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
                 <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
-                  <span className="w-6 h-6 bg-betis-green text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">
+                  <span className="w-6 h-6 bg-betis-verde text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">
                     ?
                   </span>
                   {faq.question}
@@ -254,7 +254,7 @@ export default function Unete() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 bg-gradient-to-r from-betis-green to-betis-green-dark text-white relative">
+      <section className="py-20 bg-gradient-to-r from-betis-verde to-betis-verde-dark text-white relative">
         {/* Background overlay for better text readability */}
         <div className="absolute inset-0 bg-black/20"></div>
         
@@ -269,7 +269,7 @@ export default function Unete() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/partidos"
-              className="bg-betis-gold hover:bg-betis-gold-dark text-betis-black px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
+              className="bg-betis-oro hover:bg-betis-oro-dark text-betis-dark px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
             >
               📅 Ver próximo partido
             </Link>
@@ -277,7 +277,7 @@ export default function Unete() {
               href="https://www.facebook.com/groups/beticosenescocia/"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-blue-600 text-white hover:bg-blue-700 hover:text-betis-green px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
+              className="bg-blue-600 text-white hover:bg-blue-700 hover:text-betis-verde px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
             >
               💬 Contactar por Facebook
             </a>

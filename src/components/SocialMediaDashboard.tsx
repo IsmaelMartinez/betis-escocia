@@ -102,7 +102,7 @@ export default function SocialMediaDashboard({
             {hashtags.map((tag) => (
               <button
                 key={tag}
-                className="inline-block bg-betis-green text-white px-3 py-1 rounded-full text-sm font-medium hover:bg-green-700 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                className="inline-block bg-betis-green text-white px-3 py-1 rounded-full text-sm font-medium hover:bg-betis-verde-dark transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                 onClick={() => handleHashtagClick(tag)}
                 onKeyDown={(e) => handleHashtagKeyDown(e, tag)}
                 title="Click to copy"
