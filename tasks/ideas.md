@@ -10,13 +10,14 @@ This document provides a list of ideas and features for the Peña Bética Escoce
 | User Features | ✅ Dashboard, ✅ RSVP, ✅ Contact, ✅ GDPR | 🔄 GDPR Dashboard Integration | Enhanced Profiles, GitHub Issues |
 | Games | ✅ Daily Trivia | - | Lineup, Score, Crossword, Penalty |
 | Push Notifications | ✅ Admin | - | User reminders |
-| Other | ✅ TV Research, ✅ AI Research, ✅ Soylenti Research | - | La Porra, E-commerce, Voting, i18n |
+| Other | ❌ TV (rejected), ✅ AI Research, ✅ Soylenti Research | - | La Porra, E-commerce, Voting, i18n |
 
 ## 🎯 **Core Feature Ideas**
 
-### TV & Streaming Integration
-* Find where Betis matches are shown on TV in the UK, with links to channels and streaming services.
-* 📋 **Research Complete**: See [docs/research/2025-12-tv-streaming-research.md](../docs/research/2025-12-tv-streaming-research.md) for full analysis
+### ~~TV & Streaming Integration~~ ❌ **Not Implementing**
+* ~~Find where Betis matches are shown on TV in the UK, with links to channels and streaming services.~~
+* 📋 **Research Complete**: See [docs/research/2025-12-tv-streaming-research.md](../docs/research/2025-12-tv-streaming-research.md)
+* **Decision**: Not implementing - all UK options are paid services (Premier Sports ~£15/month), adds noise without real value. Polwarth Tavern is where we watch together! 🍺
 
 ### La Porra Enhancement
 * Make the porra private only for Peña members, so that we don't get in a legal trouble with the gambling commission. Also it is a skill based game, not gambling. 50/50 split of the prize pool, 50% to the winner, 50% to the Peña (donation for the yearly celebration).

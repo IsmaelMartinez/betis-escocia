@@ -34,14 +34,14 @@ export default function GlobalError({
             <div className="space-y-4">
               <button
                 onClick={() => reset()}
-                className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors mr-4"
+                className="inline-block bg-betis-verde text-white px-6 py-3 rounded-lg font-semibold hover:bg-betis-verde-dark transition-colors mr-4"
               >
                 Intentar de nuevo
               </button>
               
               <Link
                 href="/"
-                className="inline-block bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                className="inline-block bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-betis-verde-dark transition-colors"
               >
                 Volver al inicio
               </Link>

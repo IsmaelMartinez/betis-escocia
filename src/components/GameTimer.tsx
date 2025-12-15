@@ -27,7 +27,7 @@ const GameTimer: React.FC<GameTimerProps> = ({ duration, onTimeUp, resetTrigger 
   }, [timeLeft, onTimeUp]);
 
   const progress = (timeLeft / duration) * 100;
-  const timerColor = timeLeft <= 5 ? 'bg-red-500' : timeLeft <= 10 ? 'bg-yellow-500' : 'bg-green-500';
+  const timerColor = timeLeft <= 5 ? 'bg-red-500' : timeLeft <= 10 ? 'bg-yellow-500' : 'bg-betis-verde-pale0';
 
   return (
     <div className="w-full bg-gray-200 rounded-full h-4 mb-4">

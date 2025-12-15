@@ -238,10 +238,10 @@ export default function TriviaPage() {
 
     if (percentage === 100) {
       resultMessage = '¡Perfecto! ¡Conoces tu Betis y Escocia! ¡Vuelve mañana para otro desafío!';
-      resultColor = 'text-green-600';
+      resultColor = 'text-betis-verde';
     } else if (percentage >= 67) {
       resultMessage = '¡Muy bien! ¡Gran conocimiento de Betis y Escocia! ¡Inténtalo de nuevo mañana!';
-      resultColor = 'text-green-500';
+      resultColor = 'text-betis-verde';
     } else if (percentage >= 33) {
       resultMessage = '¡No está mal! ¡Estudia y vuelve mañana para otro intento!';
       resultColor = 'text-yellow-600';
@@ -253,10 +253,10 @@ export default function TriviaPage() {
     return (
       <div className="container mx-auto p-4">
         <div className="bg-white shadow-md rounded-lg p-8 text-center">
-          <h1 className="text-3xl font-bold text-green-600 mb-6">¡Trivia Diaria Completada!</h1>
+          <h1 className="text-3xl font-bold text-betis-verde mb-6">¡Trivia Diaria Completada!</h1>
           
           <div className="text-center mb-6">
-            <div className="text-6xl font-bold text-green-600 mb-2">
+            <div className="text-6xl font-bold text-betis-verde mb-2">
               {currentData.score}/{totalQuestions}
             </div>
             <div className="text-2xl text-gray-600 mb-4">
@@ -273,7 +273,7 @@ export default function TriviaPage() {
           <div className="space-y-4">
             <Link
               href="/"
-              className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg inline-block"
+              className="bg-betis-verde hover:bg-betis-verde-dark text-white font-bold py-3 px-6 rounded-lg inline-block"
             >
               Volver al Inicio
             </Link>
@@ -287,7 +287,7 @@ export default function TriviaPage() {
     return (
       <div className="container mx-auto p-4">
         <div className="bg-white shadow-md rounded-lg p-8 text-center">
-          <h1 className="text-3xl font-bold text-green-600 mb-6">Betis & Scotland Trivia Challenge</h1>
+          <h1 className="text-3xl font-bold text-betis-verde mb-6">Betis & Scotland Trivia Challenge</h1>
           {error && (
             <div className="mb-4 text-red-500 font-medium">
               <ErrorMessage message={error} />
@@ -297,7 +297,7 @@ export default function TriviaPage() {
           <p className="text-lg text-gray-700 mb-6">¡Pon a prueba tus conocimientos sobre el Real Betis y Escocia!</p>
           <button
             onClick={handleStartGame}
-            className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg inline-block"
+            className="bg-betis-verde hover:bg-betis-verde-dark text-white font-bold py-3 px-6 rounded-lg inline-block"
             disabled={false}
           >
             Comenzar Trivia
@@ -320,7 +320,7 @@ export default function TriviaPage() {
       <div className="bg-white shadow-md rounded-lg p-6 mb-6">
         <p className="text-lg font-semibold mb-4">Pregunta {currentData.questionIndex + 1} of {currentData.questions.length}</p>
         <div className="text-center mb-4" data-testid="game-timer">
-          <div className={`text-2xl font-bold ${currentData.timeLeft <= 5 ? 'text-red-500' : currentData.timeLeft <= 10 ? 'text-yellow-500' : 'text-green-500'}`}>
+          <div className={`text-2xl font-bold ${currentData.timeLeft <= 5 ? 'text-red-500' : currentData.timeLeft <= 10 ? 'text-yellow-500' : 'text-betis-verde'}`}>
             {currentData.timeLeft}s
           </div>
         </div>
@@ -332,9 +332,9 @@ export default function TriviaPage() {
             let buttonClass = "w-full py-3 px-4 rounded-lg text-left transition-colors duration-300";
 
             if (gameState === 'feedback' && isSelected) {
-              buttonClass += isCorrect ? " bg-green-500 text-white" : " bg-red-500 text-white";
+              buttonClass += isCorrect ? " bg-betis-verde text-white" : " bg-red-500 text-white";
             } else if (gameState === 'feedback' && isCorrect) {
-              buttonClass += " bg-green-300"; // Highlight correct answer even if not selected
+              buttonClass += " bg-betis-verde-light"; // Highlight correct answer even if not selected
             } else {
               buttonClass += " bg-gray-200 hover:bg-gray-300";
             }

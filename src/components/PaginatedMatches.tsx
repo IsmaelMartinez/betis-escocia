@@ -165,7 +165,7 @@ export default function PaginatedMatches({
           {!error && !loading && hasMore && (
             <button
               onClick={loadMoreMatches}
-              className="bg-betis-green hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
+              className="bg-betis-green hover:bg-betis-verde-dark text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
             >
               Ver más eventos
             </button>

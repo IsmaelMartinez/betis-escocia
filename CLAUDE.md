@@ -94,7 +94,7 @@ sql/                    # Database migrations & scripts
 - **Location**: `src/lib/featureConfig.ts`
 - **Always-on features**: RSVP, Únete (Join), Contacto (Contact) - no flags needed
 - **Production-ready features**: Clasificación, Partidos, Nosotros, Clerk Auth - enabled by default
-- **Documentation**: See `docs/adr/004-flagsmith-feature-flags.md`
+- **Documentation**: See `docs/adr/004-feature-flags.md`
 
 ### Authentication Flow (Clerk + Supabase)
 
@@ -124,7 +124,7 @@ sql/                    # Database migrations & scripts
 - **Non-blocking**: Notification failures don't impact core RSVP/contact functionality
 - **Auto-cleanup**: Server removes old notifications after 10 minutes, client after 1 hour
 - **Location**: `src/lib/notifications/` for utilities, `public/sw.js` for Service Worker
-- **Documentation**: See `docs/adr/016-admin-push-notifications.md`
+- **Documentation**: See `docs/adr/011-admin-notifications.md`
 
 ## Component Development
 
@@ -137,9 +137,62 @@ sql/                    # Database migrations & scripts
 
 ### Mobile-First Design
 
-- **Betis branding**: `bg-gradient-to-r from-green-600 to-green-700` (#00A651)
-- **Gold accents**: `text-yellow-400` for highlights
 - **Always start mobile**, scale up with responsive breakpoints
+- **Follow the Design System**: See `docs/design-system.md` for complete guidelines
+
+### Design System (CRITICAL FOR AI AGENTS)
+
+**⚠️ NEVER use generic Tailwind greens.** Always use branded color classes.
+
+#### Brand Colors
+- **Primary Green**: `bg-betis-verde` (not `bg-green-600`)
+- **Dark Green**: `bg-betis-verde-dark` (not `bg-green-700`)  
+- **Light Green**: `bg-betis-verde-light` (not `bg-green-100`)
+- **Pale Green**: `bg-betis-verde-pale` (not `bg-green-50`)
+- **Gold Accent**: `bg-betis-oro` (not `bg-yellow-400`)
+- **Scottish Navy**: `bg-scotland-navy` (for footer/dark sections)
+
+#### Color Migration Reference
+| DON'T USE ❌ | USE INSTEAD ✅ |
+|-------------|---------------|
+| `bg-green-50/100` | `bg-betis-verde-pale/light` |
+| `bg-green-500/600` | `bg-betis-verde` |
+| `bg-green-700` | `bg-betis-verde-dark` |
+| `text-green-*` | `text-betis-verde` or `text-betis-verde-dark` |
+| `text-green-400` (on dark bg) | `text-betis-oro` |
+| `hover:bg-green-700` | `hover:bg-betis-verde-dark` |
+| `border-green-*` | `border-betis-verde` or `border-betis-verde/20` |
+
+#### CSS Variables (defined in `globals.css`)
+```css
+--betis-verde: #048D47      /* Authentic Betis green */
+--betis-verde-dark: #036B38 /* Hover states, headers */
+--betis-verde-light: #E8F5ED /* Light backgrounds */
+--betis-oro: #D4AF37         /* Gold highlights, CTAs */
+--scotland-navy: #0B1426     /* Footer, dark sections */
+```
+
+#### Component Patterns
+```jsx
+// ✅ Correct - uses branded classes
+<button className="bg-betis-verde hover:bg-betis-verde-dark text-white">
+
+// ❌ Wrong - generic Tailwind
+<button className="bg-green-600 hover:bg-green-700 text-white">
+
+// ✅ Footer (Scottish Navy)
+<footer className="bg-scotland-navy text-white">
+  <h3 className="text-betis-oro">Heading</h3>
+</footer>
+```
+
+#### Full Documentation
+See `docs/design-system.md` for:
+- Complete color palette with hex values
+- Typography guidelines
+- Component examples
+- Accessibility requirements
+- Migration reference table
 
 ### Secure Component Pattern
 

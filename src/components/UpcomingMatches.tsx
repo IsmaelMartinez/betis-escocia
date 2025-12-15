@@ -136,7 +136,7 @@ export default function UpcomingMatches({
           {showViewAllLink && (
             <Link
               href="/partidos"
-              className="inline-flex items-center text-betis-green hover:text-green-700 font-medium"
+              className="inline-flex items-center text-betis-green hover:text-betis-verde-dark font-medium"
             >
               Ver historial de partidos →
             </Link>
@@ -155,7 +155,7 @@ export default function UpcomingMatches({
           {showViewAllLink && matches.length > 0 && (
             <Link
               href="/partidos"
-              className="text-betis-green hover:text-green-700 font-medium flex items-center"
+              className="text-betis-green hover:text-betis-verde-dark font-medium flex items-center"
             >
               Ver todos →
             </Link>
@@ -189,7 +189,7 @@ export default function UpcomingMatches({
         <div className="mt-6 text-center md:hidden">
           <Link
             href="/partidos"
-            className="inline-flex items-center bg-betis-green hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+            className="inline-flex items-center bg-betis-green hover:bg-betis-verde-dark text-white px-6 py-3 rounded-lg font-medium transition-colors"
           >
             Ver todos los partidos
           </Link>

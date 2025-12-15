@@ -23,9 +23,9 @@ export default function MessageComponent({
     switch (type) {
       case 'success':
         return {
-          container: 'bg-green-50 border-green-200 text-green-800',
+          container: 'bg-betis-verde-light border-betis-verde/20 text-betis-verde-dark',
           icon: CheckCircle,
-          iconColor: 'text-green-600'
+          iconColor: 'text-betis-verde'
         };
       case 'error':
         return {

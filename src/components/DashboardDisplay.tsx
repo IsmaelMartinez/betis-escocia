@@ -173,7 +173,7 @@ export default function DashboardDisplay({
                           <span className={`text-xs px-2 py-1 rounded-full ${
                             submission.status === 'new' ? 'bg-blue-100 text-blue-800' :
                             submission.status === 'in progress' ? 'bg-yellow-100 text-yellow-800' :
-                            submission.status === 'resolved' ? 'bg-green-100 text-green-800' :
+                            submission.status === 'resolved' ? 'bg-betis-verde-light text-betis-verde-dark' :
                             'bg-gray-100 text-gray-800'
                           }`}>
                             {submission.status}
