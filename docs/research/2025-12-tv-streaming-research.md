@@ -1,12 +1,27 @@
 # TV & Streaming Research: Where to Watch Real Betis Matches in the UK
 
 **Date**: December 2025  
-**Status**: Research Complete  
+**Status**: ❌ Not Implementing  
 **Related Feature**: TV & Streaming Integration (ideas.md)
 
-## Executive Summary
+## Decision: Not Implementing
 
-This document provides research on where Real Betis matches are broadcast in the **United Kingdom**, including TV channels, streaming services, and implementation recommendations for the Peña Bética Escocesa website.
+After prototyping this feature, we decided **not to implement** a "Where to Watch" section on the website.
+
+### Reasons:
+1. **All services are paid** - There are no free options to watch La Liga in the UK
+2. **Adds noise** - This information doesn't add real value to our users; everyone knows they need Premier Sports
+3. **Polwarth Tavern is the answer** - Our members watch matches together at the pub, not at home
+4. **Maintenance burden** - Keeping pricing and service info up to date isn't worth the effort
+
+### What we'd tell users:
+> "Come watch at Polwarth Tavern! If you must watch at home, you'll need Premier Sports (~£15/month)."
+
+---
+
+## Original Research (Archived)
+
+This document originally provided research on where Real Betis matches are broadcast in the **United Kingdom**, including TV channels, streaming services, and implementation recommendations. Keeping for reference.
 
 ---
 
@@ -138,11 +153,13 @@ The pub likely has:
 
 ## 📋 Next Steps
 
-1. **Decision Required**: Choose implementation approach (A, B, or C)
-2. **Content Creation**: Write user-friendly "Where to Watch" content
-3. **Design**: Create TV/streaming info component matching site aesthetic
-4. **Integration**: Add to matches page or create dedicated section
-5. **Testing**: Verify all links work and info is accurate
+~~1. **Decision Required**: Choose implementation approach (A, B, or C)~~  
+~~2. **Content Creation**: Write user-friendly "Where to Watch" content~~  
+~~3. **Design**: Create TV/streaming info component matching site aesthetic~~  
+~~4. **Integration**: Add to matches page or create dedicated section~~  
+~~5. **Testing**: Verify all links work and info is accurate~~
+
+**Decision**: None - feature rejected. Polwarth Tavern is the place to watch!
 
 ---
 
