@@ -296,7 +296,7 @@ export default function MatchesList({
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                       match.home_away === 'home' 
-                        ? 'bg-green-100 text-green-800' 
+                        ? 'bg-betis-verde-light text-betis-verde-dark' 
                         : 'bg-orange-100 text-orange-800'
                     }`}>
                       {match.home_away === 'home' ? 'Local' : 'Visitante'}
@@ -307,7 +307,7 @@ export default function MatchesList({
                       <button
                         onClick={() => onEdit(match)}
                         disabled={isDeleting || isSyncing || isLoading}
-                        className="text-betis-green hover:text-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="text-betis-green hover:text-betis-verde-dark disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         ✏️ Editar
                       </button>

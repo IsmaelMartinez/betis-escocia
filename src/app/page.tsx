@@ -66,7 +66,7 @@ export default function Home() {
       </section>
 
       {/* Join Us CTA */}
-      <section className="py-20 bg-gradient-to-br from-betis-green via-betis-green-dark to-betis-black text-white relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-br from-betis-verde via-betis-verde-dark to-scotland-navy text-white relative overflow-hidden">
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
@@ -78,7 +78,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/20"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-600 backdrop-blur-sm mb-8">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-betis-verde backdrop-blur-sm mb-8">
             <span className="text-white font-medium text-sm">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Bienvenidos a Escocia</span>
           </div>
           
@@ -86,7 +86,7 @@ export default function Home() {
             ¿Estás de visita en Escocia?
           </h2>
           
-          <p className="text-lg sm:text-xl lg:text-2xl mb-3 lg:mb-4 font-semibold text-betis-gold drop-shadow-xl">
+          <p className="text-lg sm:text-xl lg:text-2xl mb-3 lg:mb-4 font-semibold text-betis-oro drop-shadow-xl">
             ¡Únete a nosotros en The Polwarth Tavern!
           </p>
           
@@ -98,7 +98,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
             <Link
               href="/unete"
-              className="bg-betis-gold hover:bg-betis-gold-dark text-betis-black px-10 py-5 rounded-2xl font-black text-xl shadow-2xl hover:shadow-betis-gold/25 transition-all duration-300 transform hover:scale-105 group"
+              className="bg-betis-oro hover:bg-betis-oro-dark text-betis-dark px-10 py-5 rounded-2xl font-black text-xl shadow-2xl transition-all duration-300 transform hover:scale-105 group"
             >
               <span className="flex items-center">
                 💬 Únete
@@ -110,7 +110,7 @@ export default function Home() {
                 href="https://www.facebook.com/groups/beticosenescocia/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group bg-blue-500 backdrop-blur-sm hover:bg-blue-600 px-10 py-5 rounded-2xl font-bold text-xl text-white hover:text-betis-gold transition-all duration-300 transform hover:scale-105"
+                className="group bg-blue-600 backdrop-blur-sm hover:bg-blue-700 px-10 py-5 rounded-2xl font-bold text-xl text-white hover:text-betis-oro transition-all duration-300 transform hover:scale-105"
               >
                 <span className="flex items-center">
                   📘 Facebook
@@ -121,7 +121,7 @@ export default function Home() {
                 href="https://www.youtube.com/beticosenescocia"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group bg-red-500 backdrop-blur-sm hover:bg-red-600 px-10 py-5 rounded-2xl font-bold text-xl text-white hover:text-betis-gold transition-all duration-300 transform hover:scale-105"
+                className="group bg-red-600 backdrop-blur-sm hover:bg-red-700 px-10 py-5 rounded-2xl font-bold text-xl text-white hover:text-betis-oro transition-all duration-300 transform hover:scale-105"
               >
                 <span className="flex items-center">
                   📺 YouTube
@@ -132,8 +132,8 @@ export default function Home() {
           
           {/* Contact info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              <div className="bg-green-600 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-                <h3 className="text-lg font-bold mb-3 text-betis-gold">📍 Ubicación</h3>
+              <div className="bg-betis-verde backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+                <h3 className="text-lg font-bold mb-3 text-betis-oro">📍 Ubicación</h3>
                 <p className="text-sm text-gray-200">
                   The Polwarth Tavern<br />
                   35 Polwarth Cres<br />
@@ -141,8 +141,8 @@ export default function Home() {
                 </p>
               </div>
               
-              <div className="bg-green-600 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-                <h3 className="text-lg font-bold mb-3 text-betis-gold">⏰ Horarios</h3>
+              <div className="bg-betis-verde backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+                <h3 className="text-lg font-bold mb-3 text-betis-oro">⏰ Horarios</h3>
                 <p className="text-sm text-gray-200">
                   15 min antes del evento<br />
                   Todos los eventos<br />
@@ -150,8 +150,8 @@ export default function Home() {
                 </p>
               </div>
               
-              <div className="bg-green-600 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-                <h3 className="text-lg font-bold mb-3 text-betis-gold">💚 Ambiente</h3>
+              <div className="bg-betis-verde backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+                <h3 className="text-lg font-bold mb-3 text-betis-oro">💚 Ambiente</h3>
                 <p className="text-sm text-gray-200">
                   100% bético<br />
                   Familiar y acogedor<br />

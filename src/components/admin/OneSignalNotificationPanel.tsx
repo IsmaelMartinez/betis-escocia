@@ -587,7 +587,7 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
               ) : (
                 <div className={`w-3 h-3 rounded-full ${
                   state.enabled && state.permissionGranted 
-                    ? 'bg-green-500' 
+                    ? 'bg-betis-verde-pale0' 
                     : 'bg-gray-300'
                 }`} />
               )}
@@ -624,7 +624,7 @@ const OneSignalNotificationPanel: React.FC<OneSignalNotificationPanelProps> = ({
             {state.loading ? (
               <span className="text-gray-500">Cargando...</span>
             ) : state.enabled && state.permissionGranted ? (
-              <span className="text-green-600 flex items-center">
+              <span className="text-betis-verde flex items-center">
                 <Check className="h-4 w-4 mr-1" />
                 Activo
               </span>

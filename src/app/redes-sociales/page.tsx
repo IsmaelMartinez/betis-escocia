@@ -108,7 +108,7 @@ function SocialTaggingGuide() {
             
             <button
               onClick={() => copyToClipboard('#PenaBetiscaEscocesa #BetisEdinburgh #RealBetis', 'quick-hashtags')}
-              className="bg-betis-green text-white p-4 rounded-xl hover:bg-green-700 transition-all duration-300 transform hover:scale-105"
+              className="bg-betis-green text-white p-4 rounded-xl hover:bg-betis-verde-dark transition-all duration-300 transform hover:scale-105"
             >
               <Tag className="w-6 h-6 mx-auto mb-2" />
               <div className="text-sm font-semibold">Essential Tags</div>
@@ -128,7 +128,7 @@ function SocialTaggingGuide() {
           
           {copiedText.startsWith('quick-') && (
             <div className="mt-4 text-center">
-              <div className="inline-flex items-center bg-green-100 text-green-800 px-4 py-2 rounded-lg">
+              <div className="inline-flex items-center bg-betis-verde-light text-betis-verde-dark px-4 py-2 rounded-lg">
                 <Check className="w-4 h-4 mr-2" />
                 ¡Copiado al portapapeles!
               </div>
@@ -253,7 +253,7 @@ function SocialTaggingGuide() {
               </div>
               <button
                 onClick={() => copyToClipboard(hashtags.matches, 'hashtags-matches')}
-                className="bg-betis-green text-white px-3 py-2 rounded font-medium hover:bg-green-700 transition-colors flex items-center text-sm"
+                className="bg-betis-green text-white px-3 py-2 rounded font-medium hover:bg-betis-verde-dark transition-colors flex items-center text-sm"
               >
                 {copiedText === 'hashtags-matches' ? (
                   <>
@@ -276,7 +276,7 @@ function SocialTaggingGuide() {
               </div>
               <button
                 onClick={() => copyToClipboard(hashtags.spanish, 'hashtags-spanish')}
-                className="bg-betis-green text-white px-3 py-2 rounded font-medium hover:bg-green-700 transition-colors flex items-center text-sm"
+                className="bg-betis-green text-white px-3 py-2 rounded font-medium hover:bg-betis-verde-dark transition-colors flex items-center text-sm"
               >
                 {copiedText === 'hashtags-spanish' ? (
                   <>
@@ -346,7 +346,7 @@ function SocialTaggingGuide() {
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               📱 Follow Us & Stay Connected
             </h2>
-            <p className="text-xl text-green-100 max-w-3xl mx-auto">
+            <p className="text-xl text-betis-verde-light max-w-3xl mx-auto">
               Join our community on social media! Get the latest updates, share your match day moments, and connect with béticos across Scotland.
             </p>
           </div>

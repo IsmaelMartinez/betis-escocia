@@ -140,13 +140,13 @@ async function MatchDetailContent({ matchId }: { matchId: number }) {
         <nav className="mb-8" aria-label="Navegación de migas de pan">
           <ol className="flex items-center space-x-2 text-sm text-gray-600">
             <li>
-              <Link href="/" className="hover:text-green-600 transition-colors">
+              <Link href="/" className="hover:text-betis-verde transition-colors">
                 Inicio
               </Link>
             </li>
             <li className="text-gray-400">/</li>
             <li>
-              <Link href="/partidos" className="hover:text-green-600 transition-colors">
+              <Link href="/partidos" className="hover:text-betis-verde transition-colors">
                 Partidos
               </Link>
             </li>
@@ -207,7 +207,7 @@ async function MatchDetailContent({ matchId }: { matchId: number }) {
                   />
                 )}
                 <div>
-                  <h1 className={`text-xl md:text-2xl font-bold ${betisHome ? 'text-green-700' : 'text-gray-900'}`}>
+                  <h1 className={`text-xl md:text-2xl font-bold ${betisHome ? 'text-betis-verde-dark' : 'text-gray-900'}`}>
                     {betisHome ? 'Real Betis' : opponent.name}
                   </h1>
                   <p className="text-sm text-gray-600">
@@ -249,7 +249,7 @@ async function MatchDetailContent({ matchId }: { matchId: number }) {
                   <BetisLogo width={80} height={80} />
                 )}
                 <div>
-                  <h1 className={`text-xl md:text-2xl font-bold ${!betisHome ? 'text-green-700' : 'text-gray-900'}`}>
+                  <h1 className={`text-xl md:text-2xl font-bold ${!betisHome ? 'text-betis-verde-dark' : 'text-gray-900'}`}>
                     {betisHome ? opponent.name : 'Real Betis'}
                   </h1>
                   <p className="text-sm text-gray-600">
@@ -390,7 +390,7 @@ async function MatchDetailContent({ matchId }: { matchId: number }) {
           {/* Back to Matches Link */}
           <Link
             href="/partidos"
-            className="inline-flex items-center justify-center px-6 py-3 border border-green-600 text-green-600 font-medium rounded-lg hover:bg-green-50 transition-colors shadow-md"
+            className="inline-flex items-center justify-center px-6 py-3 border border-betis-verde text-betis-verde font-medium rounded-lg hover:bg-betis-verde-pale transition-colors shadow-md"
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />

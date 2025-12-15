@@ -16,8 +16,8 @@ interface ClassificationWidgetProps {
 
 // Helper function to get position styling
 function getPositionStyle(position: number): string {
-  if (position <= 4) return 'text-green-600 font-bold'; // Champions League
-  if (position <= 6) return 'text-blue-600 font-bold'; // Europa League
+  if (position <= 4) return 'text-betis-verde font-bold'; // Champions League
+  if (position <= 6) return 'text-scotland-blue font-bold'; // Europa League
   if (position <= 7) return 'text-orange-600 font-bold'; // Conference League
   if (position >= 18) return 'text-red-600 font-bold'; // Relegation
   return 'text-gray-900';
@@ -25,8 +25,8 @@ function getPositionStyle(position: number): string {
 
 // Helper function to get position badge
 function getPositionBadge(position: number): { text: string; color: string } | null {
-  if (position <= 4) return { text: 'UCL', color: 'bg-green-100 text-green-800' };
-  if (position <= 6) return { text: 'UEL', color: 'bg-blue-100 text-blue-800' };
+  if (position <= 4) return { text: 'UCL', color: 'bg-betis-verde-light text-betis-verde-dark' };
+  if (position <= 6) return { text: 'UEL', color: 'bg-blue-100 text-scotland-blue' };
   if (position <= 7) return { text: 'UECL', color: 'bg-orange-100 text-orange-800' };
   if (position >= 18) return { text: 'DESC', color: 'bg-red-100 text-red-800' };
   return null;
@@ -156,13 +156,13 @@ export default function ClassificationWidget({ className = '', initialStandings 
     <div className={`bg-white rounded-lg shadow-lg p-6 ${className}`}>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-gray-900 flex items-center">
-          <Trophy className="h-5 w-5 mr-2 text-yellow-500" />
+          <Trophy className="h-5 w-5 mr-2 text-betis-oro" />
           Clasificación
         </h2>
       </div>
 
       {/* Betis highlight */}
-      <div className="bg-betis-green-dark rounded-lg p-4 text-white mb-6">
+      <div className="bg-betis-verde-dark rounded-lg p-4 text-white mb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Image
@@ -180,7 +180,7 @@ export default function ClassificationWidget({ className = '', initialStandings 
           </div>
           {positionBadge && (
             <div className="bg-white px-3 py-1 rounded-full">
-              <span className="text-xs font-bold text-green-800">{positionBadge.text}</span>
+              <span className="text-xs font-bold text-betis-verde-dark">{positionBadge.text}</span>
             </div>
           )}
         </div>
@@ -196,7 +196,7 @@ export default function ClassificationWidget({ className = '', initialStandings 
             <div
               key={entry.team.id}
               className={`flex items-center justify-between p-2 rounded ${
-                isBetis ? 'bg-green-50 border border-green-200' : 'hover:bg-gray-50'
+                isBetis ? 'bg-betis-verde-pale border border-betis-verde/20' : 'hover:bg-gray-50'
               }`}
             >
               <div className="flex items-center space-x-3 flex-1">
@@ -211,25 +211,25 @@ export default function ClassificationWidget({ className = '', initialStandings 
                   className="rounded"
                   unoptimized
                 />
-                <span className={`text-sm font-medium truncate ${isBetis ? 'text-green-700' : 'text-gray-900'}`}>
+                <span className={`text-sm font-medium truncate ${isBetis ? 'text-betis-verde-dark' : 'text-gray-900'}`}>
                   {entry.team.shortName || entry.team.name}
                 </span>
               </div>
               
               <div className="flex items-center space-x-4">
-                <span className={`text-sm font-bold ${isBetis ? 'text-green-700' : 'text-gray-900'}`}>
+                <span className={`text-sm font-bold ${isBetis ? 'text-betis-verde-dark' : 'text-gray-900'}`}>
                   {entry.points}
                 </span>
                 
                 {/* Goal difference indicator */}
                 <div className="flex items-center">
                   {entry.goalDifference > 0 ? (
-                    <TrendingUp className="h-3 w-3 text-green-700" />
+                    <TrendingUp className="h-3 w-3 text-betis-verde-dark" />
                   ) : entry.goalDifference < 0 ? (
                     <TrendingDown className="h-3 w-3 text-red-700" />
                   ) : null}
                   <span className={`text-xs ml-1 font-medium ${
-                    entry.goalDifference >= 0 ? 'text-green-800' : 'text-red-700'
+                    entry.goalDifference >= 0 ? 'text-betis-verde-dark' : 'text-red-700'
                   }`}>
                     {entry.goalDifference > 0 ? '+' : ''}{entry.goalDifference}
                   </span>
@@ -244,7 +244,7 @@ export default function ClassificationWidget({ className = '', initialStandings 
       <div className="mt-6 text-center">
         <Link
           href="/clasificacion"
-          className="text-betis-green hover:text-green-900 font-semibold text-sm underline underline-offset-2"
+          className="text-betis-verde hover:text-betis-verde-dark font-semibold text-sm underline underline-offset-2"
         >
           Ver tabla completa →
         </Link>

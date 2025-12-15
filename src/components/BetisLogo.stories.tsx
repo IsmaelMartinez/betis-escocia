@@ -53,7 +53,7 @@ export const WithCustomBackground: Story = {
   args: {
     width: 100,
     height: 100,
-    className: 'bg-green-500 p-4 rounded-lg', // Example of custom background
+    className: 'bg-betis-verde-pale0 p-4 rounded-lg', // Example of custom background
   },
   parameters: {
     backgrounds: {

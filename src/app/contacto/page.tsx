@@ -31,7 +31,7 @@ const formTypes = [
     name: 'Consulta General',
     description: 'Preguntas generales sobre la peña',
     icon: MessageSquare,
-    color: 'bg-blue-500',
+    color: 'bg-scotland-blue',
     feature: null // Always enabled
   },
   {
@@ -39,7 +39,7 @@ const formTypes = [
     name: 'Eventos y RSVP',
     description: 'Dudas sobre eventos y confirmaciones',
     icon: UserPlus,
-    color: 'bg-green-500',
+    color: 'bg-betis-verde',
     feature: null // Always enabled
   },
   {
@@ -55,7 +55,7 @@ const formTypes = [
     name: 'Unirse a WhatsApp',
     description: 'Solicitar invitación al grupo de WhatsApp',
     icon: MessageCircle,
-    color: 'bg-green-600',
+    color: 'bg-betis-verde-dark',
     feature: null // Always enabled for now
   },
   {
@@ -63,7 +63,7 @@ const formTypes = [
     name: 'Sugerencias Web',
     description: 'Mejoras y feedback sobre la web',
     icon: HelpCircle,
-    color: 'bg-orange-500',
+    color: 'bg-betis-oro',
     feature: null // Always enabled for now
   }
 ];
@@ -208,7 +208,7 @@ export default function ContactPage() {
             </p>
             <Link 
               href="/"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-betis-green hover:bg-betis-green/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-betis-green"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-betis-verde hover:bg-betis-verde-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-betis-verde"
             >
               Volver al Inicio
             </Link>
@@ -221,7 +221,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-betis-green text-white py-16">
+      <section className="bg-betis-verde text-white py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Send className="h-16 w-16 mx-auto mb-4" />
           <h1 className="text-4xl sm:text-5xl font-black mb-4">
@@ -253,8 +253,8 @@ export default function ContactPage() {
                   onClick={() => handleTypeChange(type.id)}
                   className={`p-6 rounded-2xl border-2 transition-all duration-300 text-left ${
                     formData.type === type.id
-                      ? 'border-betis-green bg-betis-green/5 shadow-lg'
-                      : 'border-gray-200 hover:border-betis-green/50 hover:shadow-md'
+                      ? 'border-betis-verde bg-betis-verde-pale shadow-lg'
+                      : 'border-gray-200 hover:border-betis-verde/50 hover:shadow-md'
                   }`}
                 >
                   <div className={`${type.color} w-12 h-12 rounded-full flex items-center justify-center mb-4`}>
@@ -306,11 +306,11 @@ export default function ContactPage() {
               {/* Personal Info */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {user && (
-                  <div className="text-center mt-4 p-3 bg-green-50 border border-green-200 rounded-lg col-span-full">
-                    <p className="text-sm text-green-800">
+                  <div className="text-center mt-4 p-3 bg-betis-verde-light border border-betis-verde/20 rounded-lg col-span-full">
+                    <p className="text-sm text-betis-verde-dark">
                       ✓ Conectado como {user.firstName} {user.lastName}
                     </p>
-                    <p className="text-xs text-green-600 mt-1">
+                    <p className="text-xs text-betis-verde mt-1">
                       Tus datos se han rellenado automáticamente
                     </p>
                   </div>
@@ -326,7 +326,7 @@ export default function ContactPage() {
                     required
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-green focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-verde focus:border-transparent"
                     placeholder="Tu nombre y apellido"
                     data-testid="contact-name"
                   />
@@ -343,7 +343,7 @@ export default function ContactPage() {
                     required
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-green focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-verde focus:border-transparent"
                     placeholder="tu@email.com"
                     data-testid="contact-email"
                   />
@@ -361,7 +361,7 @@ export default function ContactPage() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-green focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-verde focus:border-transparent"
                   placeholder="+44 o +34 número"
                 />
               </div>
@@ -378,7 +378,7 @@ export default function ContactPage() {
                   required
                   value={formData.subject}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-green focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-verde focus:border-transparent"
                   placeholder="Breve resumen de tu consulta"
                   data-testid="contact-subject"
                 />
@@ -396,7 +396,7 @@ export default function ContactPage() {
                   rows={6}
                   value={formData.message}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-green focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-verde focus:border-transparent"
                   placeholder="Cuéntanos en detalle lo que necesitas..."
                   data-testid="contact-message"
                 />
@@ -404,8 +404,8 @@ export default function ContactPage() {
 
               {/* Special instructions based on type */}
               {formData.type === 'whatsapp' && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <p className="text-green-800 text-sm">
+                <div className="bg-betis-verde-light border border-betis-verde/20 rounded-lg p-4">
+                  <p className="text-betis-verde-dark text-sm">
                     📱 <strong>Solicitud de WhatsApp:</strong> Incluye tu número de móvil en el mensaje 
                     para poder añadirte al grupo. El grupo se usa para avisar de cambios de horario 
                     y eventos especiales.
@@ -426,7 +426,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-betis-green hover:bg-green-700 disabled:bg-gray-400 text-white py-4 px-6 rounded-lg font-bold text-lg transition-colors duration-200 disabled:cursor-not-allowed"
+                className="w-full bg-betis-verde hover:bg-betis-verde-dark disabled:bg-gray-400 text-white py-4 px-6 rounded-lg font-bold text-lg transition-colors duration-200 disabled:cursor-not-allowed"
                 data-testid="submit-contact"
               >
                 {isSubmitting ? (
@@ -452,19 +452,19 @@ export default function ContactPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <h3 className="text-lg font-bold mb-3 text-betis-green">¿Cómo puedo unirme a la peña?</h3>
+              <h3 className="text-lg font-bold mb-3 text-betis-verde">¿Cómo puedo unirme a la peña?</h3>
               <p className="text-gray-700 mb-6">
                 Simplemente ven a The Polwarth Tavern cualquier día que juegue el Betis. 
                 No hace falta ser socio, solo ganas de pasarlo bien.
               </p>
 
-              <h3 className="text-lg font-bold mb-3 text-betis-green">¿Tengo que confirmar asistencia?</h3>
+              <h3 className="text-lg font-bold mb-3 text-betis-verde">¿Tengo que confirmar asistencia?</h3>
               <p className="text-gray-700 mb-6">
                 No es obligatorio, pero nos ayuda a reservar mesa. Usa el formulario RSVP 
                 si sabes que vas a venir.
               </p>
 
-              <h3 className="text-lg font-bold mb-3 text-betis-green">¿Puedo traer amigos?</h3>
+              <h3 className="text-lg font-bold mb-3 text-betis-verde">¿Puedo traer amigos?</h3>
               <p className="text-gray-700">
                 ¡Por supuesto! Cuantos más seamos, mejor ambiente. Solo menciona 
                 cuántos sois en el RSVP.
@@ -473,13 +473,13 @@ export default function ContactPage() {
 
             <div>
 
-              <h3 className="text-lg font-bold mb-3 text-betis-green">¿Puedo enviar fotos?</h3>
+              <h3 className="text-lg font-bold mb-3 text-betis-verde">¿Puedo enviar fotos?</h3>
               <p className="text-gray-700 mb-6">
                 Sí, usa la galería online o escríbenos. Nos encanta ver fotos de 
                 béticos animando al Betis.
               </p>
 
-              <h3 className="text-lg font-bold mb-3 text-betis-green">¿Hay grupo de WhatsApp?</h3>
+              <h3 className="text-lg font-bold mb-3 text-betis-verde">¿Hay grupo de WhatsApp?</h3>
               <p className="text-gray-700">
                 Sí, úsalo para solicitar invitación. Te añadimos para avisos importantes 
                 y coordinación de eventos.
@@ -490,7 +490,7 @@ export default function ContactPage() {
       </section>
 
       {/* Alternative Contact Methods */}
-      <section className="py-16 bg-betis-green text-white">
+      <section className="py-16 bg-betis-verde text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-8">📱 Otras formas de contacto</h2>
           
@@ -503,7 +503,7 @@ export default function ContactPage() {
                 href="https://www.facebook.com/groups/beticosenescocia/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white text-betis-green px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition-colors"
+                className="bg-white text-betis-verde px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition-colors"
               >
                 Ir al grupo
               </a>
@@ -517,7 +517,7 @@ export default function ContactPage() {
                 href="https://www.instagram.com/rbetisescocia/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white text-betis-green px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition-colors"
+                className="bg-white text-betis-verde px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition-colors"
               >
                 Seguir
               </a>
@@ -531,7 +531,7 @@ export default function ContactPage() {
                 href="https://maps.google.com/maps?q=The+Polwarth+Tavern+Edinburgh"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white text-betis-green px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition-colors"
+                className="bg-white text-betis-verde px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition-colors"
               >
                 Ver mapa
               </a>

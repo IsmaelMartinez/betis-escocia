@@ -32,7 +32,7 @@ export default function CompetitionFilter({
       {/* Filter Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+        className="inline-flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-betis-verde focus:border-betis-verde"
       >
         <div className="flex items-center space-x-2">
           {selectedComp?.emblem && (
@@ -74,7 +74,7 @@ export default function CompetitionFilter({
                 setIsOpen(false);
               }}
               className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center justify-between ${
-                !selectedCompetition ? 'bg-green-50 text-green-700' : 'text-gray-700'
+                !selectedCompetition ? 'bg-betis-verde-pale text-betis-verde-dark' : 'text-gray-700'
               }`}
             >
               <span>Todas las competiciones</span>
@@ -94,7 +94,7 @@ export default function CompetitionFilter({
                   setIsOpen(false);
                 }}
                 className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center justify-between ${
-                  selectedCompetition === competition.id ? 'bg-green-50 text-green-700' : 'text-gray-700'
+                  selectedCompetition === competition.id ? 'bg-betis-verde-pale text-betis-verde-dark' : 'text-gray-700'
                 }`}
               >
                 <div className="flex items-center space-x-2">
