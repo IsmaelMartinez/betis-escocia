@@ -248,7 +248,7 @@ async function isDuplicateRumor(newRumor: Rumor, existingRumors: Rumor[]): Promi
 
   // Check fuzzy title match
   for (const existing of existingRumors) {
-    const similarity = fuzz.ratio(newRumor.title, existing.title);
+    const similarity = fuzz.ratio(newRumor.title.toLowerCase(), existing.title.toLowerCase());
     if (similarity >= 85) {
       return { isDuplicate: true, existingRumorId: existing.id, reason: 'similar_title' };
     }
