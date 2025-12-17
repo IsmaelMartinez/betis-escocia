@@ -315,7 +315,7 @@ class TransferFeedScraper(BaseScraper):
                 item_id = hashlib.md5(f"{url}{title}".encode()).hexdigest()[:12]
 
                 # Parse date
-                published = datetime.utcnow()  # Default to now
+                published = datetime.now(timezone.utc)  # Default to now
                 if date_elem:
                     # Parse date string (implement date parsing logic)
                     pass
