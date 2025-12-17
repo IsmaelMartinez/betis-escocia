@@ -381,7 +381,7 @@ class RSSGenerator:
         fg.link(href=f"{self.base_url}/feeds/{self.club}-rumors.xml", rel="self")
         fg.description(f"Aggregated transfer rumors for {self.club.title()} from multiple sources")
         fg.language("es")
-        fg.lastBuildDate(datetime.utcnow())
+        fg.lastBuildDate(datetime.now(timezone.utc))
 
         # Add generator info
         fg.generator("betis-rss-feeds")
