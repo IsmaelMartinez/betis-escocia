@@ -177,12 +177,12 @@ describe('Redes Sociales Page', () => {
   describe('Button Interactions', () => {
     it('should have hover effects on buttons', () => {
       render(<SocialPage />);
-      
+
       const quickActionButtons = screen.getByText('Instagram Handle').closest('button');
       expect(quickActionButtons).toHaveClass('hover:from-purple-600');
-      
+
       const hashtagButton = screen.getByText('Essential Tags').closest('button');
-      expect(hashtagButton).toHaveClass('hover:bg-green-700');
+      expect(hashtagButton).toHaveClass('hover:bg-betis-verde-dark');
     });
 
     it('should have transform effects on quick action buttons', () => {

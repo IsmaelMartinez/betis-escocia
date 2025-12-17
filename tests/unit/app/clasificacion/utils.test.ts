@@ -9,15 +9,15 @@ import {
 describe('Clasificacion Utils', () => {
   describe('getPositionStyle', () => {
     it('should return Champions League style for positions 1-4', () => {
-      expect(getPositionStyle(1)).toBe('text-green-600 font-bold');
-      expect(getPositionStyle(2)).toBe('text-green-600 font-bold');
-      expect(getPositionStyle(3)).toBe('text-green-600 font-bold');
-      expect(getPositionStyle(4)).toBe('text-green-600 font-bold');
+      expect(getPositionStyle(1)).toBe('text-betis-verde font-bold');
+      expect(getPositionStyle(2)).toBe('text-betis-verde font-bold');
+      expect(getPositionStyle(3)).toBe('text-betis-verde font-bold');
+      expect(getPositionStyle(4)).toBe('text-betis-verde font-bold');
     });
 
     it('should return Europa League style for positions 5-6', () => {
-      expect(getPositionStyle(5)).toBe('text-blue-600 font-bold');
-      expect(getPositionStyle(6)).toBe('text-blue-600 font-bold');
+      expect(getPositionStyle(5)).toBe('text-scotland-blue font-bold');
+      expect(getPositionStyle(6)).toBe('text-scotland-blue font-bold');
     });
 
     it('should return Conference League style for position 7', () => {
@@ -38,7 +38,7 @@ describe('Clasificacion Utils', () => {
     });
 
     it('should handle edge cases', () => {
-      expect(getPositionStyle(0)).toBe('text-green-600 font-bold'); // Position 0 is <= 4, so Champions League
+      expect(getPositionStyle(0)).toBe('text-betis-verde font-bold'); // Position 0 is <= 4, so Champions League
       expect(getPositionStyle(21)).toBe('text-red-600 font-bold'); // Position 21 is >= 18, so relegation
     });
   });
@@ -48,13 +48,13 @@ describe('Clasificacion Utils', () => {
       const badge1 = getPositionBadge(1);
       expect(badge1).toEqual({
         text: 'UCL',
-        color: 'bg-green-100 text-green-800',
+        color: 'bg-betis-verde-light text-betis-verde-dark',
       });
 
       const badge4 = getPositionBadge(4);
       expect(badge4).toEqual({
         text: 'UCL',
-        color: 'bg-green-100 text-green-800',
+        color: 'bg-betis-verde-light text-betis-verde-dark',
       });
     });
 
@@ -62,13 +62,13 @@ describe('Clasificacion Utils', () => {
       const badge5 = getPositionBadge(5);
       expect(badge5).toEqual({
         text: 'UEL',
-        color: 'bg-blue-100 text-blue-800',
+        color: 'bg-blue-100 text-scotland-blue',
       });
 
       const badge6 = getPositionBadge(6);
       expect(badge6).toEqual({
         text: 'UEL',
-        color: 'bg-blue-100 text-blue-800',
+        color: 'bg-blue-100 text-scotland-blue',
       });
     });
 
@@ -104,7 +104,7 @@ describe('Clasificacion Utils', () => {
     it('should handle edge cases', () => {
       expect(getPositionBadge(0)).toEqual({
         text: 'UCL',
-        color: 'bg-green-100 text-green-800',
+        color: 'bg-betis-verde-light text-betis-verde-dark',
       }); // Position 0 is <= 4, so Champions League
       expect(getPositionBadge(21)).toEqual({
         text: 'DESC',
@@ -154,11 +154,11 @@ describe('Clasificacion Utils', () => {
 
   describe('getFormResultStyle', () => {
     it('should return win style for W', () => {
-      expect(getFormResultStyle('W')).toBe('bg-green-500 text-white');
+      expect(getFormResultStyle('W')).toBe('bg-betis-verde text-white');
     });
 
     it('should return draw style for D', () => {
-      expect(getFormResultStyle('D')).toBe('bg-yellow-500 text-white');
+      expect(getFormResultStyle('D')).toBe('bg-betis-oro text-white');
     });
 
     it('should return loss style for L', () => {
@@ -187,31 +187,31 @@ describe('Clasificacion Utils', () => {
   describe('Integration Tests', () => {
     it('should work together for a typical team position', () => {
       const position = 5; // Europa League position
-      
+
       const style = getPositionStyle(position);
       const badge = getPositionBadge(position);
       const form = formatForm('WDLWW');
-      
-      expect(style).toBe('text-blue-600 font-bold');
+
+      expect(style).toBe('text-scotland-blue font-bold');
       expect(badge).toEqual({
         text: 'UEL',
-        color: 'bg-blue-100 text-blue-800',
+        color: 'bg-blue-100 text-scotland-blue',
       });
       expect(form).toEqual(['W', 'D', 'L', 'W', 'W']);
-      
+
       // Check form result styles
-      expect(getFormResultStyle(form[0])).toBe('bg-green-500 text-white'); // W
-      expect(getFormResultStyle(form[1])).toBe('bg-yellow-500 text-white'); // D
+      expect(getFormResultStyle(form[0])).toBe('bg-betis-verde text-white'); // W
+      expect(getFormResultStyle(form[1])).toBe('bg-betis-oro text-white'); // D
       expect(getFormResultStyle(form[2])).toBe('bg-red-500 text-white'); // L
     });
 
     it('should work for Champions League position', () => {
       const position = 1;
-      
-      expect(getPositionStyle(position)).toBe('text-green-600 font-bold');
+
+      expect(getPositionStyle(position)).toBe('text-betis-verde font-bold');
       expect(getPositionBadge(position)).toEqual({
         text: 'UCL',
-        color: 'bg-green-100 text-green-800',
+        color: 'bg-betis-verde-light text-betis-verde-dark',
       });
     });
 

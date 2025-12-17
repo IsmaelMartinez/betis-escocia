@@ -108,7 +108,7 @@ export default function ShareMatch({ match, opponent }: ShareMatchProps) {
       {/* WhatsApp Share */}
       <button
         onClick={handleWhatsAppShare}
-        className="inline-flex items-center justify-center px-4 py-3 bg-betis-verde-pale0 text-white font-medium rounded-lg hover:bg-betis-verde transition-colors shadow-md"
+        className="inline-flex items-center justify-center px-4 py-3 bg-betis-verde text-white font-medium rounded-lg hover:bg-betis-verde-dark transition-colors shadow-md"
         title="Compartir en WhatsApp"
       >
         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

@@ -299,7 +299,7 @@ describe('ShareMatch', () => {
   describe('Button styling and accessibility', () => {
     it('applies correct styling to primary share button', () => {
       render(<ShareMatch match={mockFinishedMatch} opponent={mockOpponent} />);
-      
+
       const shareButton = screen.getByText('Compartir');
       expect(shareButton).toHaveClass(
         'inline-flex',
@@ -307,11 +307,11 @@ describe('ShareMatch', () => {
         'justify-center',
         'px-6',
         'py-3',
-        'bg-green-600',
+        'bg-betis-verde',
         'text-white',
         'font-medium',
         'rounded-lg',
-        'hover:bg-green-700',
+        'hover:bg-betis-verde-dark',
         'transition-colors',
         'shadow-md'
       );
@@ -319,7 +319,7 @@ describe('ShareMatch', () => {
 
     it('applies correct styling to WhatsApp button', () => {
       render(<ShareMatch match={mockFinishedMatch} opponent={mockOpponent} />);
-      
+
       const whatsappButton = screen.getByTitle('Compartir en WhatsApp');
       expect(whatsappButton).toHaveClass(
         'inline-flex',
@@ -327,11 +327,11 @@ describe('ShareMatch', () => {
         'justify-center',
         'px-4',
         'py-3',
-        'bg-green-500',
+        'bg-betis-verde',
         'text-white',
         'font-medium',
         'rounded-lg',
-        'hover:bg-green-600',
+        'hover:bg-betis-verde-dark',
         'transition-colors',
         'shadow-md'
       );

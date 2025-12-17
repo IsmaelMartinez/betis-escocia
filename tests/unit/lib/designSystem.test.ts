@@ -19,23 +19,21 @@ import {
 describe('designSystem', () => {
   describe('brandColors', () => {
     it('should have correct primary green colors', () => {
-      expect(brandColors.primary.green).toBe('#00A651');
-      expect(brandColors.primary.greenDark).toBe('#008542');
-      expect(brandColors.primary.greenLight).toBe('#4EB475');
-      expect(brandColors.primary.greenPale).toBe('#E8F5E8');
+      expect(brandColors.primary.green).toBe('#048D47');
+      expect(brandColors.primary.greenDark).toBe('#036B38');
+      expect(brandColors.primary.greenLight).toBe('#E8F5ED');
+      expect(brandColors.primary.greenPale).toBe('#F0F9F4');
     });
 
     it('should have correct secondary gold colors', () => {
-      expect(brandColors.secondary.gold).toBe('#FFD700');
-      expect(brandColors.secondary.goldDark).toBe('#e6c200');
-      expect(brandColors.secondary.goldLight).toBe('#FFF176');
-      expect(brandColors.secondary.goldPale).toBe('#FFFACD');
+      expect(brandColors.secondary.gold).toBe('#D4AF37');
+      expect(brandColors.secondary.goldDark).toBe('#B8960F');
+      expect(brandColors.secondary.goldLight).toBe('#F5E6B3');
     });
 
     it('should have correct accent colors', () => {
       expect(brandColors.accent.blue).toBe('#005EB8');
       expect(brandColors.accent.navy).toBe('#0B1426');
-      expect(brandColors.accent.tartan).toBe('#2E7D32');
     });
 
     it('should have correct neutral colors', () => {
@@ -45,16 +43,16 @@ describe('designSystem', () => {
     });
 
     it('should have complete gray color scale', () => {
-      expect(brandColors.neutral.gray[50]).toBe('#f9fafb');
-      expect(brandColors.neutral.gray[100]).toBe('#f3f4f6');
+      expect(brandColors.neutral.gray[50]).toBe('#F9FAFB');
+      expect(brandColors.neutral.gray[100]).toBe('#F3F4F6');
       expect(brandColors.neutral.gray[900]).toBe('#111827');
     });
 
     it('should have correct status colors', () => {
-      expect(brandColors.status.success).toBe('#10b981');
-      expect(brandColors.status.warning).toBe('#f59e0b');
-      expect(brandColors.status.error).toBe('#ef4444');
-      expect(brandColors.status.info).toBe('#3b82f6');
+      expect(brandColors.status.success).toBe('#059669');
+      expect(brandColors.status.warning).toBe('#D97706');
+      expect(brandColors.status.error).toBe('#DC2626');
+      expect(brandColors.status.info).toBe('#2563EB');
     });
   });
 
@@ -112,7 +110,7 @@ describe('designSystem', () => {
     });
 
     it('should have betis branded shadow', () => {
-      expect(shadows.betis).toBe('0 4px 14px 0 rgb(0 166 81 / 0.39)');
+      expect(shadows.betis).toBe('0 4px 14px 0 rgba(4, 141, 71, 0.25)');
     });
   });
 
@@ -124,10 +122,10 @@ describe('designSystem', () => {
     });
 
     it('should have button variant styles', () => {
-      expect(buttonStyles.variants.primary).toContain('bg-betis-green');
-      expect(buttonStyles.variants.secondary).toContain('bg-betis-gold');
+      expect(buttonStyles.variants.primary).toContain('bg-betis-verde');
+      expect(buttonStyles.variants.secondary).toContain('bg-betis-oro');
       expect(buttonStyles.variants.outline).toContain('border');
-      expect(buttonStyles.variants.ghost).toContain('text-betis-green');
+      expect(buttonStyles.variants.ghost).toContain('text-betis-verde');
       expect(buttonStyles.variants.danger).toContain('bg-red-600');
     });
 
@@ -141,7 +139,7 @@ describe('designSystem', () => {
       expect(cardStyles.base).toContain('bg-white');
       expect(cardStyles.interactive).toContain('hover:shadow-xl');
       expect(cardStyles.elevated).toContain('shadow-xl');
-      expect(cardStyles.betis).toContain('border-betis-green');
+      expect(cardStyles.betis).toContain('border-betis-verde');
     });
 
     it('should have input styles', () => {
@@ -149,7 +147,7 @@ describe('designSystem', () => {
       expect(inputStyles.base).toContain('focus:ring-2');
       expect(inputStyles.states.default).toContain('border-gray-300');
       expect(inputStyles.states.error).toContain('border-red-500');
-      expect(inputStyles.states.success).toContain('border-green-500');
+      expect(inputStyles.states.success).toContain('border-betis-verde');
     });
   });
 
@@ -216,14 +214,14 @@ describe('designSystem', () => {
       it('should return combined button classes with default size', () => {
         const result = getButtonClass('primary');
         expect(result).toContain('inline-flex'); // base
-        expect(result).toContain('bg-betis-green'); // variant
+        expect(result).toContain('bg-betis-verde'); // variant
         expect(result).toContain('px-4 py-2'); // default md size
       });
 
       it('should return combined button classes with custom size', () => {
         const result = getButtonClass('secondary', 'lg');
         expect(result).toContain('inline-flex'); // base
-        expect(result).toContain('bg-betis-gold'); // variant
+        expect(result).toContain('bg-betis-oro'); // variant
         expect(result).toContain('px-6 py-3'); // lg size
       });
 
@@ -234,10 +232,10 @@ describe('designSystem', () => {
         const ghostResult = getButtonClass('ghost');
         const dangerResult = getButtonClass('danger');
 
-        expect(primaryResult).toContain('bg-betis-green');
-        expect(secondaryResult).toContain('bg-betis-gold');
+        expect(primaryResult).toContain('bg-betis-verde');
+        expect(secondaryResult).toContain('bg-betis-oro');
         expect(outlineResult).toContain('border');
-        expect(ghostResult).toContain('text-betis-green');
+        expect(ghostResult).toContain('text-betis-verde');
         expect(dangerResult).toContain('bg-red-600');
       });
 
@@ -281,12 +279,12 @@ describe('designSystem', () => {
       it('should return combined input classes with custom state', () => {
         const errorResult = getInputClass('error');
         const successResult = getInputClass('success');
-        
+
         expect(errorResult).toContain('w-full'); // base
         expect(errorResult).toContain('border-red-500'); // error state
-        
-        expect(successResult).toContain('w-full'); // base  
-        expect(successResult).toContain('border-green-500'); // success state
+
+        expect(successResult).toContain('w-full'); // base
+        expect(successResult).toContain('border-betis-verde'); // success state
       });
 
       it('should work with all input states', () => {
@@ -296,7 +294,7 @@ describe('designSystem', () => {
 
         expect(defaultResult).toContain('border-gray-300');
         expect(errorResult).toContain('border-red-500');
-        expect(successResult).toContain('border-green-500');
+        expect(successResult).toContain('border-betis-verde');
       });
     });
   });

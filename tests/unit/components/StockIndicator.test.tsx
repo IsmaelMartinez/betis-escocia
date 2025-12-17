@@ -149,9 +149,9 @@ describe('StockIndicator', () => {
 
     it('applies green colors for high stock', () => {
       render(<StockIndicator stock={40} maxStock={50} />);
-      
+
       const container = screen.getByText('Disponible').closest('div');
-      expect(container).toHaveClass('text-green-600', 'bg-green-50', 'border-green-200');
+      expect(container).toHaveClass('text-betis-verde', 'bg-betis-verde-pale', 'border-betis-verde/20');
     });
   });
 

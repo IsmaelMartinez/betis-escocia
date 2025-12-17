@@ -112,9 +112,9 @@ describe('GameTimer', () => {
   describe('Progress bar color changes', () => {
     it('shows green color when time is above 10 seconds', () => {
       render(<GameTimer {...defaultProps} duration={15} />);
-      
+
       const progressBar = getProgressBar();
-      expect(progressBar).toHaveClass('bg-green-500');
+      expect(progressBar).toHaveClass('bg-betis-verde');
     });
 
     it('shows yellow color when time is 10 seconds or less but more than 5', () => {

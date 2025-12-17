@@ -53,13 +53,13 @@ describe('BetisPositionWidget Component', () => {
 
     it('shows skeleton with proper styling', () => {
       mockFetch.mockImplementation(() => new Promise(() => {})); // Never resolves
-      
+
       render(<BetisPositionWidget />);
-      
+
       const skeletonItems = document.querySelectorAll('.animate-pulse');
       expect(skeletonItems.length).toBeGreaterThan(0);
-      
-      const container = document.querySelector('.bg-green-50');
+
+      const container = document.querySelector('.bg-betis-verde-pale');
       expect(container).toBeTruthy();
     });
   });

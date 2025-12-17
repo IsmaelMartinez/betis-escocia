@@ -198,10 +198,10 @@ describe('ClassificationWidget Component', () => {
 
     it('highlights Betis position correctly', () => {
       render(<ClassificationWidget initialStandings={mockStandings} />);
-      
+
       const betisHighlight = screen.getByText('2º posición').closest('div');
-      // The parent div of Betis position should have bg-betis-green-dark class (darker for better contrast)
-      const betisContainer = betisHighlight?.closest('div.bg-betis-green-dark');
+      // The parent div of Betis position should have bg-betis-verde-dark class (darker for better contrast)
+      const betisContainer = betisHighlight?.closest('div.bg-betis-verde-dark');
       expect(betisContainer).toBeTruthy();
     });
 
@@ -235,10 +235,10 @@ describe('ClassificationWidget Component', () => {
 
     it('applies correct position styling', () => {
       render(<ClassificationWidget initialStandings={mockStandings} />);
-      
+
       // Position 1 should have green color (Champions League)
       const position1 = screen.getByText('1');
-      expect(position1).toHaveClass('text-green-600', 'font-bold');
+      expect(position1).toHaveClass('text-betis-verde', 'font-bold');
     });
 
     it('renders "Ver tabla completa" link', () => {

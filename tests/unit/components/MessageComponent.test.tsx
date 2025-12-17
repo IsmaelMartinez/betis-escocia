@@ -7,9 +7,9 @@ describe('MessageComponent', () => {
     const { container } = render(<MessageComponent type="success" message="Operation completed successfully" />);
 
     expect(screen.getByText('Operation completed successfully')).toBeInTheDocument();
-    
+
     const messageContainer = container.firstChild as HTMLElement;
-    expect(messageContainer).toHaveClass('bg-green-50', 'border-green-200', 'text-green-800');
+    expect(messageContainer).toHaveClass('bg-betis-verde-light', 'border-betis-verde/20', 'text-betis-verde-dark');
   });
 
   it('should render error message with correct styling', () => {

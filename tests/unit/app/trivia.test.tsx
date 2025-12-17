@@ -242,7 +242,7 @@ describe('TriviaPage', () => {
       // Should show feedback immediately
       await waitFor(() => {
         const correctButton = screen.getByText('1907');
-        expect(correctButton.className).toContain('bg-green-500');
+        expect(correctButton.className).toContain('bg-betis-verde');
       });
     });
 
@@ -265,7 +265,7 @@ describe('TriviaPage', () => {
         const incorrectButton = screen.getByText('1905');
         const correctButton = screen.getByText('1907');
         expect(incorrectButton.className).toContain('bg-red-500');
-        expect(correctButton.className).toContain('bg-green-300');
+        expect(correctButton.className).toContain('bg-betis-verde-light');
       });
     });
 

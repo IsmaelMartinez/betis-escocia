@@ -206,13 +206,13 @@ describe('Clasificacion Page Helper Functions', () => {
 
   describe('getPositionStyle function', () => {
     it('returns correct styles for Champions League positions (1-4)', () => {
-      expect(getPositionStyle(1)).toBe('text-green-600 font-bold');
-      expect(getPositionStyle(4)).toBe('text-green-600 font-bold');
+      expect(getPositionStyle(1)).toBe('text-betis-verde font-bold');
+      expect(getPositionStyle(4)).toBe('text-betis-verde font-bold');
     });
 
     it('returns correct styles for Europa League positions (5-6)', () => {
-      expect(getPositionStyle(5)).toBe('text-blue-600 font-bold');
-      expect(getPositionStyle(6)).toBe('text-blue-600 font-bold');
+      expect(getPositionStyle(5)).toBe('text-scotland-blue font-bold');
+      expect(getPositionStyle(6)).toBe('text-scotland-blue font-bold');
     });
 
     it('returns correct styles for Conference League position (7)', () => {
@@ -235,7 +235,7 @@ describe('Clasificacion Page Helper Functions', () => {
       const badge = getPositionBadge(1);
       expect(badge).toEqual({
         text: 'UCL',
-        color: 'bg-green-100 text-green-800'
+        color: 'bg-betis-verde-light text-betis-verde-dark'
       });
     });
 
@@ -243,7 +243,7 @@ describe('Clasificacion Page Helper Functions', () => {
       const badge = getPositionBadge(5);
       expect(badge).toEqual({
         text: 'UEL',
-        color: 'bg-blue-100 text-blue-800'
+        color: 'bg-blue-100 text-scotland-blue'
       });
     });
 
@@ -294,11 +294,11 @@ describe('Clasificacion Page Helper Functions', () => {
 
   describe('getFormResultStyle function', () => {
     it('returns correct styles for wins', () => {
-      expect(getFormResultStyle('W')).toBe('bg-green-500 text-white');
+      expect(getFormResultStyle('W')).toBe('bg-betis-verde text-white');
     });
 
     it('returns correct styles for draws', () => {
-      expect(getFormResultStyle('D')).toBe('bg-yellow-500 text-white');
+      expect(getFormResultStyle('D')).toBe('bg-betis-oro text-white');
     });
 
     it('returns correct styles for losses', () => {

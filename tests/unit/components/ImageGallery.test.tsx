@@ -179,9 +179,9 @@ describe('ImageGallery', () => {
 
     it('highlights current thumbnail with correct styling', () => {
       render(<ImageGallery {...defaultProps} />);
-      
+
       const firstThumbnail = screen.getByAltText('Test Product - Miniatura 1').closest('button');
-      expect(firstThumbnail).toHaveClass('border-green-400', 'scale-110');
+      expect(firstThumbnail).toHaveClass('border-betis-oro', 'scale-110');
     });
 
     it('navigates to clicked thumbnail', () => {
@@ -195,13 +195,13 @@ describe('ImageGallery', () => {
 
     it('updates thumbnail highlighting when navigating', () => {
       render(<ImageGallery {...defaultProps} />);
-      
+
       // Navigate to second image
       const nextButton = screen.getByTitle('Siguiente imagen');
       fireEvent.click(nextButton);
-      
+
       const secondThumbnail = screen.getByAltText('Test Product - Miniatura 2').closest('button');
-      expect(secondThumbnail).toHaveClass('border-green-400', 'scale-110');
+      expect(secondThumbnail).toHaveClass('border-betis-oro', 'scale-110');
     });
 
     it('generates unique keys for thumbnails', () => {

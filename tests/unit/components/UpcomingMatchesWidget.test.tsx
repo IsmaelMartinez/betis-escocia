@@ -177,13 +177,13 @@ describe('UpcomingMatchesWidget Component', () => {
 
     it('highlights Betis team name correctly', async () => {
       vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(mockMatches);
-      
+
       render(<UpcomingMatchesWidget />);
-      
+
       await waitFor(() => {
         const betisElements = screen.getAllByText('Real Betis');
         betisElements.forEach(element => {
-          expect(element).toHaveClass('text-betis-green');
+          expect(element).toHaveClass('text-betis-verde');
         });
       });
     });
@@ -383,13 +383,13 @@ describe('UpcomingMatchesWidget Component', () => {
 
     it('has accessible button styling', async () => {
       vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(mockMatches);
-      
+
       render(<UpcomingMatchesWidget />);
-      
+
       await waitFor(() => {
         const rsvpButtons = screen.getAllByText('📝 Confirmar Asistencia');
         rsvpButtons.forEach(button => {
-          expect(button).toHaveClass('bg-betis-green', 'text-white');
+          expect(button).toHaveClass('bg-betis-verde', 'text-white');
         });
       });
     });

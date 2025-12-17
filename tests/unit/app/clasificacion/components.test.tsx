@@ -259,7 +259,7 @@ describe('Clasificacion Components', () => {
       );
 
       const position = screen.getByText('1');
-      expect(position).toHaveClass('text-green-600', 'font-bold');
+      expect(position).toHaveClass('text-betis-verde', 'font-bold');
     });
 
     it('should display team crest', () => {
@@ -286,13 +286,13 @@ describe('Clasificacion Components', () => {
       // Check that form letters are displayed
       const formW = screen.getAllByText('W');
       const formD = screen.getByText('D');
-      
+
       expect(formW.length).toBeGreaterThan(0);
       expect(formD).toBeInTheDocument();
 
       // Check styling classes
-      expect(formW[0]).toHaveClass('bg-green-500', 'text-white');
-      expect(formD).toHaveClass('bg-yellow-500', 'text-white');
+      expect(formW[0]).toHaveClass('bg-betis-verde', 'text-white');
+      expect(formD).toHaveClass('bg-betis-oro', 'text-white');
     });
 
     it('should handle positive goal difference styling', () => {

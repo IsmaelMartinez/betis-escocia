@@ -100,8 +100,8 @@ describe('HeroCommunity', () => {
       const ambienteCard = screen.getByText('AMBIENTE FAMILIAR').closest('div');
       const humorCard = screen.getByText('SIEMPRE CON HUMOR').closest('div');
 
-      expect(ambienteCard).toHaveClass('group', 'hover:border-betis-green', 'transition-all');
-      expect(humorCard).toHaveClass('group', 'hover:border-betis-green', 'transition-all');
+      expect(ambienteCard).toHaveClass('group', 'hover:border-betis-verde', 'transition-all');
+      expect(humorCard).toHaveClass('group', 'hover:border-betis-verde', 'transition-all');
     });
   });
 
@@ -190,8 +190,8 @@ describe('HeroCommunity', () => {
     it('uses official Betis styling colors', () => {
       render(<HeroCommunity />);
 
-      const bottomSection = screen.getByText(/POLWARTH TAVERN/).closest('.bg-betis-green');
-      expect(bottomSection).toHaveClass('bg-betis-green', 'text-white');
+      const bottomSection = screen.getByText(/POLWARTH TAVERN/).closest('.bg-betis-verde');
+      expect(bottomSection).toHaveClass('bg-betis-verde', 'text-white');
     });
   });
 
@@ -200,7 +200,7 @@ describe('HeroCommunity', () => {
       const { container } = render(<HeroCommunity />);
       const section = container.querySelector('section');
       const backgroundDiv = section?.querySelector('.bg-gradient-to-b');
-      expect(backgroundDiv).toHaveClass('from-white', 'via-gray-50', 'to-betis-green/5');
+      expect(backgroundDiv).toHaveClass('from-white', 'via-gray-50', 'to-betis-verde-pale');
     });
 
     it('includes subtle pattern overlay', () => {
@@ -242,7 +242,7 @@ describe('HeroCommunity', () => {
       const { container } = render(<HeroCommunity />);
       const floatingElement = container.querySelector('.absolute.-top-4.-right-4');
       expect(floatingElement).toBeInTheDocument();
-      expect(floatingElement).toHaveClass('bg-betis-green', 'rounded-full');
+      expect(floatingElement).toHaveClass('bg-betis-verde', 'rounded-full');
     });
   });
 
