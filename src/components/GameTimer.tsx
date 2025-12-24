@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 interface GameTimerProps {
   duration: number; // in seconds
@@ -6,7 +6,11 @@ interface GameTimerProps {
   resetTrigger: number; // Dependency to trigger reset
 }
 
-const GameTimer: React.FC<GameTimerProps> = ({ duration, onTimeUp, resetTrigger }) => {
+const GameTimer: React.FC<GameTimerProps> = ({
+  duration,
+  onTimeUp,
+  resetTrigger,
+}) => {
   const [timeLeft, setTimeLeft] = useState(duration);
 
   useEffect(() => {
@@ -20,14 +24,19 @@ const GameTimer: React.FC<GameTimerProps> = ({ duration, onTimeUp, resetTrigger 
     }
 
     const timerId = setInterval(() => {
-      setTimeLeft(prevTime => prevTime - 1);
+      setTimeLeft((prevTime) => prevTime - 1);
     }, 1000);
 
     return () => clearInterval(timerId);
   }, [timeLeft, onTimeUp]);
 
   const progress = (timeLeft / duration) * 100;
-  const timerColor = timeLeft <= 5 ? 'bg-red-500' : timeLeft <= 10 ? 'bg-yellow-500' : 'bg-betis-verde';
+  const timerColor =
+    timeLeft <= 5
+      ? "bg-red-500"
+      : timeLeft <= 10
+        ? "bg-yellow-500"
+        : "bg-betis-verde";
 
   return (
     <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
