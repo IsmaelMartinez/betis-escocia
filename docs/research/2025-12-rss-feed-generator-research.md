@@ -216,11 +216,14 @@ betis-rss-feeds/
 
 ```python
 # src/scrapers/base.py
+import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime
 import httpx
 from bs4 import BeautifulSoup
+
+logger = logging.getLogger(__name__)
 
 @dataclass
 class RumorItem:
@@ -228,6 +231,7 @@ class RumorItem:
     title: str
     url: str
     source: str
+    source_url: str               # Homepage URL of the source
     published: datetime
     player_name: str | None = None
     current_club: str | None = None
@@ -243,6 +247,12 @@ class BaseScraper(ABC):
         self.club = club
         self.client = http_client
         self.source_name = self.__class__.__name__.replace("Scraper", "")
+
+    @property
+    @abstractmethod
+    def base_url(self) -> str:
+        """Base URL of the source (homepage)"""
+        pass
 
     @property
     @abstractmethod
@@ -284,9 +294,13 @@ class TransferFeedScraper(BaseScraper):
     }
 
     @property
+    def base_url(self) -> str:
+        return "https://www.transferfeed.com"
+
+    @property
     def url(self) -> str:
         club_id = self.CLUB_IDS.get(self.club, self.club)
-        return f"https://www.transferfeed.com/es/clubes/{self.club}/{club_id}"
+        return f"{self.base_url}/es/clubes/{self.club}/{club_id}"
 
     def parse(self, soup: BeautifulSoup) -> list[RumorItem]:
         rumors = []
@@ -309,7 +323,7 @@ class TransferFeedScraper(BaseScraper):
 
                 # Make URL absolute if relative
                 if url.startswith("/"):
-                    url = f"https://www.transferfeed.com{url}"
+                    url = f"{self.base_url}{url}"
 
                 # Generate unique ID
                 item_id = hashlib.md5(f"{url}{title}".encode()).hexdigest()[:12]
@@ -330,13 +344,14 @@ class TransferFeedScraper(BaseScraper):
                     title=title,
                     url=url,
                     source="TransferFeed",
+                    source_url=self.base_url,
                     published=published,
                     player_name=player_name,
                     category=self._detect_category(title),
                 ))
 
             except Exception as e:
-                print(f"Error parsing article: {e}")
+                logger.warning("Error parsing article: %s", e)
                 continue
 
         return rumors
@@ -361,9 +376,12 @@ class TransferFeedScraper(BaseScraper):
 
 ```python
 # src/generators/rss.py
+import logging
 from datetime import datetime
 from feedgen.feed import FeedGenerator
 from ..models.rumor import RumorItem
+
+logger = logging.getLogger(__name__)
 
 class RSSGenerator:
     """Generate RSS feeds from rumor items"""
@@ -394,7 +412,7 @@ class RSSGenerator:
             fe.link(href=rumor.url)
             fe.published(rumor.published)
             fe.updated(rumor.scraped_at)
-            fe.source(title=rumor.source, url=rumor.url)
+            fe.source(title=rumor.source, url=rumor.source_url)
 
             if rumor.summary:
                 fe.description(rumor.summary)
@@ -407,7 +425,7 @@ class RSSGenerator:
 
         # Write to file
         fg.rss_file(output_path, pretty=True)
-        print(f"Generated RSS feed: {output_path} ({len(rumors)} items)")
+        logger.info("Generated RSS feed: %s (%d items)", output_path, len(rumors))
 ```
 
 #### 4. Deduplication
@@ -462,11 +480,19 @@ def deduplicate_rumors(rumors: list[RumorItem], threshold: int = 85) -> list[Rum
 
 ```python
 # src/main.py
+import logging
 import httpx
 from pathlib import Path
 from .scrapers import TransferFeedScraper, FichajesScraper, TransfermarktScraper
 from .generators.rss import RSSGenerator
 from .utils.deduplication import deduplicate_rumors
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 def main():
     """Main entry point for RSS feed generation"""
@@ -495,17 +521,17 @@ def main():
 
         for scraper in scrapers:
             try:
-                print(f"Scraping {scraper.source_name}...")
+                logger.info("Scraping %s...", scraper.source_name)
                 rumors = scraper.scrape()
-                print(f"  Found {len(rumors)} rumors")
+                logger.info("Found %d rumors from %s", len(rumors), scraper.source_name)
                 all_rumors.extend(rumors)
             except Exception as e:
-                print(f"  Error scraping {scraper.source_name}: {e}")
+                logger.error("Error scraping %s: %s", scraper.source_name, e)
 
     # Deduplicate
-    print(f"\nTotal rumors before deduplication: {len(all_rumors)}")
+    logger.info("Total rumors before deduplication: %d", len(all_rumors))
     unique_rumors = deduplicate_rumors(all_rumors)
-    print(f"Total rumors after deduplication: {len(unique_rumors)}")
+    logger.info("Total rumors after deduplication: %d", len(unique_rumors))
 
     # Sort by date (newest first)
     unique_rumors.sort(key=lambda r: r.published, reverse=True)
@@ -514,7 +540,7 @@ def main():
     generator = RSSGenerator(club, base_url)
     generator.generate(unique_rumors, output_dir / f"{club}-rumors.xml")
 
-    print("\nDone!")
+    logger.info("RSS feed generation complete")
 
 if __name__ == "__main__":
     main()
