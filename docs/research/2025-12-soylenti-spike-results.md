@@ -235,6 +235,16 @@ UNIQUE (external_id, external_source);
 ```typescript
 import fuzz from 'fuzzball';
 
+/**
+ * Check if a date is within the last 48 hours
+ */
+function isWithin48Hours(date: Date | string): boolean {
+  const timestamp = typeof date === 'string' ? new Date(date).getTime() : date.getTime();
+  const now = Date.now();
+  const hours48 = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
+  return now - timestamp <= hours48;
+}
+
 async function isDuplicateRumor(newRumor: Rumor, existingRumors: Rumor[]): Promise<{
   isDuplicate: boolean;
   existingRumorId?: string;
