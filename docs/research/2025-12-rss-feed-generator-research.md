@@ -12,12 +12,12 @@ The best football transfer rumor sources (TransferFeed, Fichajes, Transfermarkt)
 
 ### Why Build This?
 
-| Problem | Solution |
-|---------|----------|
-| Best sources have no RSS | Scrape and generate our own |
-| Third-party RSS generators cost money | Use free GitHub infrastructure |
-| Need control over data quality | Custom filtering and deduplication |
-| Want reliable, consistent feeds | Scheduled automation |
+| Problem                               | Solution                           |
+| ------------------------------------- | ---------------------------------- |
+| Best sources have no RSS              | Scrape and generate our own        |
+| Third-party RSS generators cost money | Use free GitHub infrastructure     |
+| Need control over data quality        | Custom filtering and deduplication |
+| Want reliable, consistent feeds       | Scheduled automation               |
 
 ---
 
@@ -72,24 +72,24 @@ The best football transfer rumor sources (TransferFeed, Fichajes, Transfermarkt)
 
 ### Chosen: Python + BeautifulSoup
 
-| Component | Technology | Reason |
-|-----------|------------|--------|
-| **Language** | Python 3.11+ | Best scraping ecosystem, clean syntax |
-| **HTTP Client** | `requests` / `httpx` | Simple, reliable, async support |
-| **HTML Parser** | `BeautifulSoup4` | Industry standard, handles malformed HTML |
-| **RSS Generator** | `feedgen` | Full RSS 2.0/Atom support, well-maintained |
-| **Scheduler** | GitHub Actions | Free, reliable, no infrastructure |
-| **Hosting** | GitHub Pages | Free static hosting |
+| Component         | Technology           | Reason                                     |
+| ----------------- | -------------------- | ------------------------------------------ |
+| **Language**      | Python 3.11+         | Best scraping ecosystem, clean syntax      |
+| **HTTP Client**   | `requests` / `httpx` | Simple, reliable, async support            |
+| **HTML Parser**   | `BeautifulSoup4`     | Industry standard, handles malformed HTML  |
+| **RSS Generator** | `feedgen`            | Full RSS 2.0/Atom support, well-maintained |
+| **Scheduler**     | GitHub Actions       | Free, reliable, no infrastructure          |
+| **Hosting**       | GitHub Pages         | Free static hosting                        |
 
 ### Why Python over JavaScript?
 
-| Factor | Python | JavaScript |
-|--------|--------|------------|
-| Scraping libraries | ⭐⭐⭐⭐⭐ BeautifulSoup, Scrapy | ⭐⭐⭐ Cheerio, Puppeteer |
-| RSS generation | ⭐⭐⭐⭐⭐ feedgen, rfeed | ⭐⭐⭐ rss, feed |
-| Learning curve | ⭐⭐⭐⭐⭐ Very readable | ⭐⭐⭐⭐ Familiar to web devs |
-| GitHub Actions | ⭐⭐⭐⭐⭐ Native support | ⭐⭐⭐⭐ Needs Node setup |
-| Async support | ⭐⭐⭐⭐ asyncio/httpx | ⭐⭐⭐⭐⭐ Native |
+| Factor             | Python                           | JavaScript                    |
+| ------------------ | -------------------------------- | ----------------------------- |
+| Scraping libraries | ⭐⭐⭐⭐⭐ BeautifulSoup, Scrapy | ⭐⭐⭐ Cheerio, Puppeteer     |
+| RSS generation     | ⭐⭐⭐⭐⭐ feedgen, rfeed        | ⭐⭐⭐ rss, feed              |
+| Learning curve     | ⭐⭐⭐⭐⭐ Very readable         | ⭐⭐⭐⭐ Familiar to web devs |
+| GitHub Actions     | ⭐⭐⭐⭐⭐ Native support        | ⭐⭐⭐⭐ Needs Node setup     |
+| Async support      | ⭐⭐⭐⭐ asyncio/httpx           | ⭐⭐⭐⭐⭐ Native             |
 
 **Verdict**: Python wins for scraping tasks due to mature ecosystem and cleaner code.
 
@@ -99,19 +99,19 @@ The best football transfer rumor sources (TransferFeed, Fichajes, Transfermarkt)
 
 ### Primary Sources (Transfer Rumors)
 
-| Source | URL | Content Type | Update Frequency |
-|--------|-----|--------------|------------------|
-| **TransferFeed** | `transferfeed.com/es/clubes/real-betis/403` | Live rumors | Real-time |
-| **Fichajes.net** | `fichajes.net/equipos/real-betis-balompie` | Rumors + news | Daily |
-| **Fichajes.com** | `fichajes.com/equipo/real-betis-balompie/noticias` | Market news | Daily |
-| **Transfermarkt** | `transfermarkt.es/real-betis-sevilla/geruechte/verein/150` | Verified rumors | Daily |
+| Source            | URL                                                        | Content Type    | Update Frequency |
+| ----------------- | ---------------------------------------------------------- | --------------- | ---------------- |
+| **TransferFeed**  | `transferfeed.com/es/clubes/real-betis/403`                | Live rumors     | Real-time        |
+| **Fichajes.net**  | `fichajes.net/equipos/real-betis-balompie`                 | Rumors + news   | Daily            |
+| **Fichajes.com**  | `fichajes.com/equipo/real-betis-balompie/noticias`         | Market news     | Daily            |
+| **Transfermarkt** | `transfermarkt.es/real-betis-sevilla/geruechte/verein/150` | Verified rumors | Daily            |
 
 ### Secondary Sources (General News)
 
-| Source | URL | Content Type |
-|--------|-----|--------------|
-| **NewsNow** | `newsnow.co.uk/h/Sport/Football/La+Liga/Real+Betis` | Aggregated news |
-| **OneFootball** | `onefootball.com/es/equipo/real-betis-691/transfers` | Transfers page |
+| Source          | URL                                                  | Content Type    |
+| --------------- | ---------------------------------------------------- | --------------- |
+| **NewsNow**     | `newsnow.co.uk/h/Sport/Football/La+Liga/Real+Betis`  | Aggregated news |
+| **OneFootball** | `onefootball.com/es/equipo/real-betis-691/transfers` | Transfers page  |
 
 ---
 
@@ -557,8 +557,8 @@ name: Generate RSS Feeds
 on:
   schedule:
     # Run every 6 hours
-    - cron: '0 */6 * * *'
-  workflow_dispatch:  # Allow manual trigger
+    - cron: "0 */6 * * *"
+  workflow_dispatch: # Allow manual trigger
 
 permissions:
   contents: write
@@ -576,8 +576,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          cache: 'pip'
+          python-version: "3.11"
+          cache: "pip"
 
       - name: Install dependencies
         run: |
@@ -601,7 +601,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'feeds'
+          path: "feeds"
 
       - name: Deploy to GitHub Pages
         id: deployment
@@ -669,7 +669,7 @@ sources:
   transferfeed:
     enabled: true
     base_url: "https://www.transferfeed.com"
-    rate_limit: 2  # seconds between requests
+    rate_limit: 2 # seconds between requests
 
   fichajes:
     enabled: true
@@ -679,18 +679,18 @@ sources:
   transfermarkt:
     enabled: true
     base_url: "https://www.transfermarkt.es"
-    rate_limit: 3  # Be more conservative with Transfermarkt
+    rate_limit: 3 # Be more conservative with Transfermarkt
 
 # Output configuration
 output:
   directory: "feeds"
-  format: "rss"  # or "atom"
-  max_items: 50  # Maximum items per feed
+  format: "rss" # or "atom"
+  max_items: 50 # Maximum items per feed
 
 # Deduplication
 deduplication:
   enabled: true
-  threshold: 85  # Fuzzy match threshold (0-100)
+  threshold: 85 # Fuzzy match threshold (0-100)
 ```
 
 ---
@@ -761,12 +761,12 @@ MIT
 
 ## 10. Cost Analysis
 
-| Component | Cost | Notes |
-|-----------|------|-------|
-| GitHub Actions | **Free** | 2,000 minutes/month free tier |
-| GitHub Pages | **Free** | 1GB storage, 100GB bandwidth |
-| Domain (optional) | ~$10/year | Custom domain if desired |
-| **Total** | **$0** | Completely free! |
+| Component         | Cost      | Notes                         |
+| ----------------- | --------- | ----------------------------- |
+| GitHub Actions    | **Free**  | 2,000 minutes/month free tier |
+| GitHub Pages      | **Free**  | 1GB storage, 100GB bandwidth  |
+| Domain (optional) | ~$10/year | Custom domain if desired      |
+| **Total**         | **$0**    | Completely free!              |
 
 ### Usage Estimates
 
@@ -779,11 +779,13 @@ MIT
 ## 11. Next Steps
 
 ### Phase 1: Proof of Concept (2-3 hours)
+
 - [ ] Create basic TransferFeed scraper
 - [ ] Test locally with Real Betis
 - [ ] Generate sample RSS output
 
 ### Phase 2: Full Implementation (4-6 hours)
+
 - [ ] Add Fichajes scraper
 - [ ] Add Transfermarkt scraper
 - [ ] Implement deduplication
@@ -791,6 +793,7 @@ MIT
 - [ ] Configure GitHub Pages
 
 ### Phase 3: Polish & Open Source (2-3 hours)
+
 - [ ] Add configuration system
 - [ ] Write documentation
 - [ ] Add tests
