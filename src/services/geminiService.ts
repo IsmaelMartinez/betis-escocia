@@ -73,14 +73,14 @@ Responde SOLO en este formato JSON:
         errorMessage.includes("rate limit");
 
       if (isQuotaError) {
-        log.error("Gemini quota exceeded - skipping item", error, {
+        log.error("Gemini quota exceeded - storing without analysis", error, {
           title,
           source,
-          note: "Free tier limit reached - item not inserted",
+          note: "Free tier limit reached - storing with null probability",
         });
         return {
-          isTransferRumor: false, // Skip items we can't analyze
-          probability: 0,
+          isTransferRumor: null as any, // null = couldn't analyze
+          probability: null as any, // null = not analyzed yet
           reasoning: "No se pudo analizar este rumor automáticamente.",
           confidence: "low",
         };
@@ -89,7 +89,7 @@ Responde SOLO en este formato JSON:
       if (attempt === 2) {
         // Last attempt failed
         log.error(
-          "Gemini analysis failed after retries - skipping item",
+          "Gemini analysis failed after retries - storing without analysis",
           error,
           {
             title,
@@ -97,8 +97,8 @@ Responde SOLO en este formato JSON:
           },
         );
         return {
-          isTransferRumor: false, // Skip items we can't analyze
-          probability: 0,
+          isTransferRumor: null as any, // null = couldn't analyze
+          probability: null as any, // null = not analyzed yet
           reasoning: "No se pudo analizar este rumor automáticamente.",
           confidence: "low",
         };

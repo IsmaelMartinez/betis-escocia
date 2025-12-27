@@ -18,7 +18,11 @@ import {
   Trophy,
 } from "lucide-react";
 import BetisLogo from "@/components/BetisLogo";
-import { getEnabledNavigationItems, hasFeature } from "@/lib/featureFlags";
+import {
+  getEnabledNavigationItems,
+  hasFeature,
+} from "@/lib/featureFlags";
+import { FeatureWrapper } from "@/lib/featureProtection";
 import { useUser, useClerk } from "@clerk/nextjs";
 
 interface DebugInfo {
@@ -67,10 +71,6 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                 Polwarth Tavern, Edinburgh
               </span>
               <span className="font-mono sm:hidden">Edinburgh</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-betis-oro" />
-              <span className="font-mono">Próximo partido disponible</span>
             </div>
           </div>
         </div>
@@ -435,12 +435,14 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                 >
                   Protección de Datos
                 </Link>
-                <Link
-                  href="/contacto"
-                  className="text-gray-400 hover:text-betis-verde transition-colors font-body"
-                >
-                  Contacto
-                </Link>
+                <FeatureWrapper feature="show-contacto">
+                  <Link
+                    href="/contacto"
+                    className="text-gray-400 hover:text-betis-verde transition-colors font-body"
+                  >
+                    Contacto
+                  </Link>
+                </FeatureWrapper>
               </div>
               <p className="text-gray-400 text-sm font-body text-center">
                 © 2025 Peña Bética Escocesa.{" "}

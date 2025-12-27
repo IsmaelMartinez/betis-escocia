@@ -67,7 +67,7 @@ export default function Unete() {
     {
       question: "¿Puedo venir con amigos no béticos?",
       answer:
-        "¡Por supuesto! Siempre que respeten nuestros colores y no celebren goles en contra, todos son bienvenidos.",
+        "¡Por supuesto! Todos son bienvenidos mientras haya buen rollo y respeto mutuo.",
     },
     {
       question: "¿Qué pasa si el Betis pierde?",
@@ -197,7 +197,7 @@ export default function Unete() {
               <p className="text-gray-800 mb-4 leading-relaxed">
                 <strong className="text-gray-900">Polwarth Tavern</strong>
                 <br />
-                35 Polwarth Cresace
+                35 Polwarth Crescent
                 <br />
                 Edinburgh EH11 1HR
               </p>
@@ -218,9 +218,8 @@ export default function Unete() {
               <p className="text-gray-800 mb-4 leading-relaxed">
                 <strong className="text-gray-900">¿Dudas?</strong>
                 <br />
-                Escríbenos por Facebook,
-                <br />
-                Instagram o YouTube
+                Escríbenos por Facebook
+                <br />o Instagram
               </p>
               <a
                 href="https://www.facebook.com/groups/beticosenescocia/"

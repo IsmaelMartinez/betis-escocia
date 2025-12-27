@@ -10,6 +10,7 @@ export interface SyncResult {
   duplicates: number;
   transferRumors: number; // Items identified as transfer rumors (ai_probability > 0)
   regularNews: number; // Regular news items (ai_probability = 0)
+  notAnalyzed: number; // Items that couldn't be analyzed (ai_probability = null)
   analyzed: number;
   inserted: number;
   errors: number;
@@ -22,6 +23,7 @@ export async function syncRumors(): Promise<SyncResult> {
     duplicates: 0,
     transferRumors: 0,
     regularNews: 0,
+    notAnalyzed: 0,
     analyzed: 0,
     inserted: 0,
     errors: 0,
@@ -82,17 +84,29 @@ export async function syncRumors(): Promise<SyncResult> {
         );
         result.analyzed++;
 
-        // Determine if transfer rumor or regular news
+        // Determine if transfer rumor, regular news, or not analyzed
         const isTransferRumor = analysis.isTransferRumor;
-        const aiProbability = isTransferRumor ? analysis.probability : 0;
+        let aiProbability: number | null;
 
-        if (isTransferRumor) {
+        if (isTransferRumor === null) {
+          // Couldn't analyze (quota exceeded or error)
+          aiProbability = null;
+          result.notAnalyzed++;
+          log.business("news_not_analyzed", {
+            title: rumor.title,
+            reasoning: analysis.reasoning,
+          });
+        } else if (isTransferRumor) {
+          // Confirmed transfer rumor
+          aiProbability = analysis.probability;
           result.transferRumors++;
           log.business("transfer_rumor_found", {
             title: rumor.title,
             probability: analysis.probability,
           });
         } else {
+          // Confirmed regular news (not a transfer)
+          aiProbability = 0;
           result.regularNews++;
           log.business("regular_news_found", {
             title: rumor.title,
@@ -113,7 +127,9 @@ export async function syncRumors(): Promise<SyncResult> {
           is_duplicate: false,
         };
 
-        const { error } = await supabase.from("betis_news").insert([newsInsert]);
+        const { error } = await supabase
+          .from("betis_news")
+          .insert([newsInsert]);
 
         if (error) {
           // Check if it's a unique constraint violation (duplicate link)

@@ -247,7 +247,7 @@ function HeroCommunity() {
               <p className="font-accent text-betis-oro text-xl md:text-2xl mb-4 italic">
                 Nuestro hogar en Edimburgo
               </p>
-              <p className="font-body text-betis-verde-light mb-6 text-lg">
+              <p className="font-body text-white/90 mb-6 text-lg">
                 Cada partido es una excusa perfecta para juntarnos, reír y
                 disfrutar del Betis en buena compañía.
               </p>

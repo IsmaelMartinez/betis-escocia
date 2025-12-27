@@ -40,23 +40,15 @@ describe('GDPR Page', () => {
     expect(screen.getByText('Cargando...')).toBeInTheDocument();
   });
 
-  it('should redirect authenticated users to user dashboard', async () => {
+  it('should render GDPR content for authenticated users', async () => {
     mockUseAuth.mockReturnValue({ isSignedIn: true });
 
     const GDPRPage = (await import('@/app/gdpr/page')).default;
     render(<GDPRPage />);
 
-    expect(mockPush).toHaveBeenCalledWith('/dashboard');
-  });
-
-  it('should return null for authenticated users (fallback)', async () => {
-    mockUseAuth.mockReturnValue({ isSignedIn: true });
-
-    const GDPRPage = (await import('@/app/gdpr/page')).default;
-    const { container } = render(<GDPRPage />);
-
-    // Should render nothing as fallback
-    expect(container.firstChild).toBeNull();
+    // Signed-in users should see GDPR content (no redirect)
+    expect(mockPush).not.toHaveBeenCalled();
+    expect(screen.getByText('Protección de Datos Personales')).toBeInTheDocument();
   });
 
   it('should render GDPR content for unauthenticated users', async () => {

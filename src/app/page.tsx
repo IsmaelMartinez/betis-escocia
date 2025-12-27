@@ -58,18 +58,17 @@ export default function Home() {
         <div className="absolute left-0 top-0 bottom-0 w-4 pattern-verdiblanco-whisper" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Section header with display typography */}
-          <div className="mb-12 text-center">
-            <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-black text-scotland-navy mb-3 uppercase tracking-tight">
-              Próximos Partidos
-            </h2>
-            <div className="h-1 w-32 bg-gradient-to-r from-betis-verde via-betis-oro to-scotland-navy mx-auto rounded-full" />
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Upcoming Matches */}
             <div className="lg:col-span-3">
               <FeatureWrapper feature="show-partidos">
+                {/* Section header with display typography */}
+                <div className="mb-8 text-center lg:text-left">
+                  <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-black text-scotland-navy mb-3 uppercase tracking-tight">
+                    Próximos Partidos
+                  </h2>
+                  <div className="h-1 w-32 bg-gradient-to-r from-betis-verde via-betis-oro to-scotland-navy mx-auto lg:mx-0 rounded-full" />
+                </div>
                 <UpcomingMatchesWidget className="" />
               </FeatureWrapper>
             </div>
