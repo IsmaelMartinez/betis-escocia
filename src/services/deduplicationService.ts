@@ -41,9 +41,7 @@ export function checkDuplicate(
   const newContent = `${newTitle} ${newDescription || ""}`.toLowerCase();
 
   // Check exact hash match first (fastest)
-  const exactMatch = existingRumors.find(
-    (r) => r.content_hash === contentHash,
-  );
+  const exactMatch = existingRumors.find((r) => r.content_hash === contentHash);
   if (exactMatch) {
     log.business("rumor_duplicate_exact", { duplicateOfId: exactMatch.id });
     return {

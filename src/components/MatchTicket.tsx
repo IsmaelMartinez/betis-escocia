@@ -417,3 +417,4 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
 };
 
 export default MatchTicket;
+

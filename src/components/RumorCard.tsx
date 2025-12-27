@@ -60,8 +60,8 @@ export default function RumorCard({
                   aiProbability >= 70
                     ? "bg-betis-verde text-white"
                     : aiProbability >= 40
-                    ? "bg-betis-oro text-betis-verde-dark"
-                    : "bg-gray-200 text-gray-700"
+                      ? "bg-betis-oro text-betis-verde-dark"
+                      : "bg-gray-200 text-gray-700"
                 }`}
                 title={aiAnalysis || undefined}
               >

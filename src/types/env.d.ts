@@ -3,13 +3,16 @@
 
 declare namespace NodeJS {
   interface ProcessEnv {
+    // Supabase Service Role Key (for server-side operations that bypass RLS)
+    SUPABASE_SERVICE_ROLE_KEY: string;
+
     // Football Data API Configuration
     FOOTBALL_DATA_API_KEY: string;
     FOOTBALL_DATA_API_URL: string;
-    
+
     // API-Football Configuration (Alternative comprehensive API)
     API_FOOTBALL_KEY: string;
-    
+
     // API Configuration
     API_RATE_LIMIT_PER_MINUTE: string;
     API_CACHE_TTL_HOURS: string;
@@ -22,7 +25,7 @@ declare namespace NodeJS {
     GEMINI_TIMEOUT_MS: string;
 
     // Next.js Built-in Environment Variables
-    NODE_ENV: 'development' | 'production' | 'test';
+    NODE_ENV: "development" | "production" | "test";
     NEXT_PUBLIC_VERCEL_URL?: string;
     VERCEL_URL?: string;
   }
