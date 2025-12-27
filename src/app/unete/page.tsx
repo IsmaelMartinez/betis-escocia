@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MapPin, Users, MessageCircle, Heart } from "lucide-react";
+import { FeatureWrapper } from "@/lib/featureProtection";
 
 export default function Unete() {
   const steps = [

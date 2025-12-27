@@ -17,7 +17,7 @@ async function fetchRumors() {
   const { supabase } = await import("@/lib/supabase");
 
   const { data, error } = await supabase
-    .from("rumors")
+    .from("betis_news")
     .select("*")
     .eq("is_duplicate", false)
     .order("pub_date", { ascending: false })
