@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { log } from "@/lib/logger";
 
 export interface RumorAnalysis {
@@ -8,18 +8,17 @@ export interface RumorAnalysis {
   confidence: "low" | "medium" | "high";
 }
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-if (!GEMINI_API_KEY) {
-  throw new Error("GEMINI_API_KEY environment variable is required");
-}
-
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-
 export async function analyzeRumorCredibility(
   title: string,
   description: string,
   source: string,
 ): Promise<RumorAnalysis> {
+  const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+  if (!GEMINI_API_KEY) {
+    throw new Error("GEMINI_API_KEY environment variable is required");
+  }
+
+  const genAI = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
   const prompt = `Analiza esta noticia del Real Betis en DOS PASOS:
 
 PASO 1: ¿Es esto un rumor de FICHAJE (transferencia de jugadores)?
@@ -46,11 +45,14 @@ Responde SOLO en este formato JSON:
   // Simple retry with backoff (3 attempts, 1 second delay)
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      const model = genAI.getGenerativeModel({
-        model: "gemini-3-flash-preview",
+      const response = await genAI.models.generateContent({
+        model: "gemini-2.0-flash-exp",
+        contents: prompt,
       });
-      const response = await model.generateContent(prompt);
-      const text = response.response.text();
+      const text = response.text;
+      if (!text) {
+        throw new Error("No text in response");
+      }
       const cleanText = text.replace(/```json\n?|\n?```/g, "").trim();
       const result = JSON.parse(cleanText);
 
@@ -61,18 +63,20 @@ Responde SOLO en este formato JSON:
 
       return result;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
 
       // Check if this is a quota/rate limit error (429) - don't retry these
-      const isQuotaError = errorMessage.includes("429") ||
-                          errorMessage.includes("quota") ||
-                          errorMessage.includes("rate limit");
+      const isQuotaError =
+        errorMessage.includes("429") ||
+        errorMessage.includes("quota") ||
+        errorMessage.includes("rate limit");
 
       if (isQuotaError) {
         log.error("Gemini quota exceeded - using fallback", error, {
           title,
           source,
-          note: "Free tier: 20 requests/day limit reached"
+          note: "Free tier: 20 requests/day limit reached",
         });
         return {
           isTransferRumor: true, // Assume yes to avoid filtering out potential transfers
@@ -84,7 +88,10 @@ Responde SOLO en este formato JSON:
 
       if (attempt === 2) {
         // Last attempt failed
-        log.error("Gemini analysis failed after retries", error, { title, source });
+        log.error("Gemini analysis failed after retries", error, {
+          title,
+          source,
+        });
         return {
           isTransferRumor: true, // Assume yes to avoid filtering out potential transfers
           probability: 50,
