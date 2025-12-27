@@ -1,11 +1,25 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash, User, LogIn, LogOut, UserPlus, Calendar, Trophy } from 'lucide-react';
-import BetisLogo from '@/components/BetisLogo';
-import { getEnabledNavigationItems, hasFeature } from '@/lib/featureFlags';
-import { useUser, useClerk } from '@clerk/nextjs';
+import { useState } from "react";
+import Link from "next/link";
+import {
+  Menu,
+  X,
+  MapPin,
+  Video,
+  MessageCircle,
+  Camera,
+  Hash,
+  User,
+  LogIn,
+  LogOut,
+  UserPlus,
+  Calendar,
+  Trophy,
+} from "lucide-react";
+import BetisLogo from "@/components/BetisLogo";
+import { getEnabledNavigationItems, hasFeature } from "@/lib/featureFlags";
+import { useUser, useClerk } from "@clerk/nextjs";
 
 interface DebugInfo {
   flags: Record<string, boolean>;
@@ -27,11 +41,11 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
   const enabledNavigation = getEnabledNavigationItems();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  
+
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
-  const isAuthEnabled = hasFeature('show-clerk-auth');
-  
+  const isAuthEnabled = hasFeature("show-clerk-auth");
+
   const handleSignOut = async () => {
     await signOut();
     setIsUserMenuOpen(false);
@@ -49,7 +63,9 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
           <div className="max-w-7xl mx-auto flex items-center justify-between text-white text-xs sm:text-sm">
             <div className="flex items-center gap-2">
               <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-betis-oro" />
-              <span className="font-mono hidden sm:inline">Polwarth Tavern, Edinburgh</span>
+              <span className="font-mono hidden sm:inline">
+                Polwarth Tavern, Edinburgh
+              </span>
               <span className="font-mono sm:hidden">Edinburgh</span>
             </div>
             <div className="flex items-center gap-2">
@@ -58,19 +74,24 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
             </div>
           </div>
         </div>
-        
+
         {/* Main navigation bar */}
         <nav className="bg-scotland-navy border-b-4 border-betis-oro relative">
           {/* Subtle verdiblanco texture */}
           <div className="absolute inset-0 pattern-verdiblanco-whisper opacity-10 pointer-events-none" />
-          
+
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-3">
               {/* Logo with verdiblanco accent */}
               <Link href="/" className="flex items-center gap-3 group">
                 <div className="relative">
                   <div className="absolute inset-0 pattern-verdiblanco-subtle rounded-full scale-125 opacity-0 group-hover:opacity-30 transition-opacity" />
-                  <BetisLogo width={40} height={40} className="bg-white rounded-full p-1 relative" priority={true} />
+                  <BetisLogo
+                    width={40}
+                    height={40}
+                    className="bg-white rounded-full p-1 relative"
+                    priority={true}
+                  />
                 </div>
                 <div>
                   <p className="font-display text-lg sm:text-xl font-black text-white tracking-tight leading-none">
@@ -98,7 +119,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                     )}
                   </Link>
                 ))}
-                
+
                 {/* Auth section */}
                 {isAuthEnabled && isLoaded && (
                   <div className="flex items-center ml-4 pl-4 border-l border-white/20">
@@ -109,12 +130,14 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                           className="flex items-center gap-2 px-3 py-2 text-white hover:text-betis-oro transition-colors rounded-lg hover:bg-white/10"
                         >
                           <User size={18} />
-                          <span className="font-heading font-medium text-sm">{user.firstName || 'Usuario'}</span>
+                          <span className="font-heading font-medium text-sm">
+                            {user.firstName || "Usuario"}
+                          </span>
                         </button>
-                        
+
                         {isUserMenuOpen && (
                           <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl py-2 z-50 border border-gray-100">
-                            {user.publicMetadata.role === 'admin' && (
+                            {user.publicMetadata.role === "admin" && (
                               <Link
                                 href="/admin"
                                 className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-betis-verde-pale hover:text-betis-verde transition-colors"
@@ -199,12 +222,12 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                   {item.name}
                 </Link>
               ))}
-              
+
               {isAuthEnabled && isLoaded && (
                 <div className="border-t border-white/10 pt-4 mt-4">
                   {user ? (
                     <div className="space-y-1">
-                      {user.publicMetadata.role === 'admin' && (
+                      {user.publicMetadata.role === "admin" && (
                         <Link
                           href="/admin"
                           className="flex items-center gap-3 px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-xl transition-all font-heading font-semibold"
@@ -231,7 +254,10 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
                         Trivia
                       </Link>
                       <button
-                        onClick={() => { handleSignOut(); setIsMenuOpen(false); }}
+                        onClick={() => {
+                          handleSignOut();
+                          setIsMenuOpen(false);
+                        }}
                         className="flex items-center gap-3 w-full px-4 py-3 text-white hover:text-red-400 hover:bg-white/10 rounded-xl transition-all font-heading font-semibold"
                       >
                         <LogOut size={20} />
@@ -266,9 +292,7 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1">
-        {children}
-      </main>
+      <main className="flex-1">{children}</main>
 
       {/* ============================================
        * FOOTER - Design System v2
@@ -277,23 +301,30 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
       <footer className="bg-navy-depth relative overflow-hidden">
         {/* Pattern overlay */}
         <div className="absolute inset-0 pattern-tartan-navy opacity-30 pointer-events-none" />
-        
+
         {/* Verdiblanco top edge */}
         <div className="h-1 bg-gradient-to-r from-betis-verde via-betis-oro to-betis-verde" />
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* About */}
             <div className="sm:col-span-2 lg:col-span-1">
               <div className="flex items-center gap-3 mb-4">
-                <BetisLogo width={32} height={32} className="bg-white rounded-full p-0.5" />
+                <BetisLogo
+                  width={32}
+                  height={32}
+                  className="bg-white rounded-full p-0.5"
+                />
                 <h3 className="font-display text-xl font-black text-betis-oro">
                   No busques más
                 </h3>
               </div>
-              <p className="font-accent text-betis-oro/80 italic mb-3">que no hay</p>
+              <p className="font-accent text-betis-oro/80 italic mb-3">
+                que no hay
+              </p>
               <p className="font-body text-gray-300 text-sm leading-relaxed">
-                La peña del Real Betis en Edimburgo. Más de 15 años compartiendo la pasión bética en Escocia.
+                La peña del Real Betis en Edimburgo. Más de 15 años compartiendo
+                la pasión bética en Escocia.
               </p>
             </div>
 
@@ -304,9 +335,14 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
               </h3>
               <div className="space-y-3 text-sm text-gray-300">
                 <div className="flex items-start gap-2">
-                  <MapPin size={16} className="text-betis-oro mt-0.5 flex-shrink-0" />
+                  <MapPin
+                    size={16}
+                    className="text-betis-oro mt-0.5 flex-shrink-0"
+                  />
                   <div>
-                    <p className="font-heading font-semibold text-white">The Polwarth Tavern</p>
+                    <p className="font-heading font-semibold text-white">
+                      The Polwarth Tavern
+                    </p>
                     <p>35 Polwarth Cres</p>
                     <p>Edinburgh EH11 1HR</p>
                   </div>
@@ -321,9 +357,18 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
               </h3>
               <div className="space-y-2 text-sm">
                 {[
-                  { href: 'https://www.betisweb.com/foro/principal/betis-fan-s-of-the-universe/6621126-pena-betica-escocesa-no-busques-mas-que-no-hay', label: 'BetisWeb Forum' },
-                  { href: 'https://beticosenescocia.blogspot.com/', label: 'Béticos en Escocia' },
-                  { href: 'https://www.laliga.com/noticias/conoce-a-la-pena-betica-de-escocia-no-busques-mas-que-no-hay', label: 'LaLiga' },
+                  {
+                    href: "https://www.betisweb.com/foro/principal/betis-fan-s-of-the-universe/6621126-pena-betica-escocesa-no-busques-mas-que-no-hay",
+                    label: "BetisWeb Forum",
+                  },
+                  {
+                    href: "https://beticosenescocia.blogspot.com/",
+                    label: "Béticos en Escocia",
+                  },
+                  {
+                    href: "https://www.laliga.com/noticias/conoce-a-la-pena-betica-de-escocia-no-busques-mas-que-no-hay",
+                    label: "LaLiga",
+                  },
                 ].map((link) => (
                   <a
                     key={link.href}
@@ -345,10 +390,26 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
               </h3>
               <div className="flex flex-wrap gap-3">
                 {[
-                  { href: 'https://www.facebook.com/groups/beticosenescocia/', icon: MessageCircle, label: 'Facebook' },
-                  { href: 'https://www.instagram.com/rbetisescocia/', icon: Camera, label: 'Instagram' },
-                  { href: 'https://x.com/rbetisescocia', icon: Hash, label: 'X' },
-                  { href: 'https://www.youtube.com/beticosenescocia', icon: Video, label: 'YouTube' },
+                  {
+                    href: "https://www.facebook.com/groups/beticosenescocia/",
+                    icon: MessageCircle,
+                    label: "Facebook",
+                  },
+                  {
+                    href: "https://www.instagram.com/rbetisescocia/",
+                    icon: Camera,
+                    label: "Instagram",
+                  },
+                  {
+                    href: "https://x.com/rbetisescocia",
+                    icon: Hash,
+                    label: "X",
+                  },
+                  {
+                    href: "https://www.youtube.com/beticosenescocia",
+                    icon: Video,
+                    label: "YouTube",
+                  },
                 ].map((social) => (
                   <a
                     key={social.href}
@@ -368,15 +429,24 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
           <div className="border-t border-white/10 mt-10 pt-8">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
               <div className="flex flex-wrap justify-center gap-4 text-sm">
-                <Link href="/gdpr" className="text-gray-400 hover:text-betis-verde transition-colors font-body">
+                <Link
+                  href="/gdpr"
+                  className="text-gray-400 hover:text-betis-verde transition-colors font-body"
+                >
                   Protección de Datos
                 </Link>
-                <Link href="/contacto" className="text-gray-400 hover:text-betis-verde transition-colors font-body">
+                <Link
+                  href="/contacto"
+                  className="text-gray-400 hover:text-betis-verde transition-colors font-body"
+                >
                   Contacto
                 </Link>
               </div>
               <p className="text-gray-400 text-sm font-body text-center">
-                © 2025 Peña Bética Escocesa. <span className="text-betis-oro">¡Viva er Betis manque pierda!</span>
+                © 2025 Peña Bética Escocesa.{" "}
+                <span className="text-betis-oro">
+                  ¡Viva er Betis manque pierda!
+                </span>
               </p>
             </div>
           </div>
@@ -388,9 +458,13 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
         <div className="fixed bottom-4 right-4 bg-gray-900 text-white p-3 rounded-lg text-xs max-w-xs z-50 shadow-lg">
           <div className="font-bold text-betis-oro mb-1">Feature Flags</div>
           <div className="text-gray-300">Env: {debugInfo.environment}</div>
-          <div className="text-green-400">On: {debugInfo.enabledFeatures.join(', ')}</div>
+          <div className="text-green-400">
+            On: {debugInfo.enabledFeatures.join(", ")}
+          </div>
           {debugInfo.disabledFeatures.length > 0 && (
-            <div className="text-red-400">Off: {debugInfo.disabledFeatures.join(', ')}</div>
+            <div className="text-red-400">
+              Off: {debugInfo.disabledFeatures.join(", ")}
+            </div>
           )}
         </div>
       )}

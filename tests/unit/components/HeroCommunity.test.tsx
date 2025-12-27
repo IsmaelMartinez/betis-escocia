@@ -210,9 +210,7 @@ describe("HeroCommunity", () => {
     it("renders Polwarth Tavern information", () => {
       render(<HeroCommunity />);
 
-      expect(
-        screen.getByText(/Polwarth Tavern/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Polwarth Tavern/i)).toBeInTheDocument();
       expect(
         screen.getByText(/Cada partido es una excusa perfecta/),
       ).toBeInTheDocument();

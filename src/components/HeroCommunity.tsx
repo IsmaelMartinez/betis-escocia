@@ -1,13 +1,22 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { MapPin, Heart, Coffee, Smile, ChevronDown, ChevronUp, Users, Calendar } from 'lucide-react';
-import dynamic from 'next/dynamic';
-import { useState, memo } from 'react';
-import { FeatureWrapper } from '@/lib/featureProtection';
+import Link from "next/link";
+import {
+  MapPin,
+  Heart,
+  Coffee,
+  Smile,
+  ChevronDown,
+  ChevronUp,
+  Users,
+  Calendar,
+} from "lucide-react";
+import dynamic from "next/dynamic";
+import { useState, memo } from "react";
+import { FeatureWrapper } from "@/lib/featureProtection";
 
 // Lazy load RSVPWidget since it's only shown when expanded
-const RSVPWidget = dynamic(() => import('./RSVPWidget'), {
+const RSVPWidget = dynamic(() => import("./RSVPWidget"), {
   loading: () => (
     <div className="animate-pulse">
       <div className="h-32 bg-gray-200 rounded"></div>
@@ -17,7 +26,7 @@ const RSVPWidget = dynamic(() => import('./RSVPWidget'), {
 });
 
 // Lazy load CommunityStats - not critical for initial render
-const CommunityStats = dynamic(() => import('./CommunityStats'), {
+const CommunityStats = dynamic(() => import("./CommunityStats"), {
   loading: () => (
     <div className="bg-gray-50 rounded-lg p-6 text-center border border-gray-200 animate-pulse">
       <div className="grid grid-cols-3 gap-4 mb-4">
@@ -41,7 +50,7 @@ const CommunityStats = dynamic(() => import('./CommunityStats'), {
 
 function HeroCommunity() {
   const [isRSVPExpanded, setIsRSVPExpanded] = useState(false);
-  
+
   return (
     <section className="relative min-h-screen overflow-hidden">
       {/* ============================================
@@ -51,18 +60,18 @@ function HeroCommunity() {
       <div className="absolute inset-0">
         {/* Layer 1: Edinburgh mist gradient */}
         <div className="absolute inset-0 bg-edinburgh-mist" />
-        
+
         {/* Layer 2: Subtle tartan texture */}
         <div className="absolute inset-0 pattern-tartan-subtle" />
-        
+
         {/* Layer 3: Verdiblanco whisper on edges */}
         <div className="absolute left-0 top-0 bottom-0 w-8 md:w-16 pattern-verdiblanco-subtle opacity-50" />
         <div className="absolute right-0 top-0 bottom-0 w-8 md:w-16 pattern-verdiblanco-subtle opacity-50" />
-        
+
         {/* Layer 4: Gold accent glow */}
         <div className="absolute top-1/4 right-1/4 w-64 md:w-96 h-64 md:h-96 rounded-full blur-3xl bg-oro-glow pointer-events-none" />
       </div>
-      
+
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* ============================================
@@ -72,9 +81,11 @@ function HeroCommunity() {
           <div className="animate-fade-in-up">
             {/* Tagline badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-betis-verde-light border border-betis-verde/20 mb-6">
-              <span className="text-sm font-medium text-betis-verde-dark">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Desde Sevilla a Edimburgo</span>
+              <span className="text-sm font-medium text-betis-verde-dark">
+                🏴󠁧󠁢󠁳󠁣󠁴󠁿 Desde Sevilla a Edimburgo
+              </span>
             </div>
-            
+
             {/* Main headline - using display font */}
             <h1 className="mb-6 lg:mb-8 leading-none">
               <span className="block font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-scotland-navy tracking-tight">
@@ -87,17 +98,28 @@ function HeroCommunity() {
                 Una Familia
               </span>
             </h1>
-            
+
             {/* Description card with verdiblanco edge */}
             <div className="relative bg-canvas-warm rounded-xl p-6 lg:p-8 mb-8 shadow-lg border border-gray-100 pattern-verdiblanco-edge-left">
               <p className="font-body text-lg lg:text-xl leading-relaxed text-gray-700 mb-4">
-                <strong className="text-betis-verde font-heading">Más de 15 años</strong> compartiendo la pasión por el Betis desde Edimburgo. 
-                Aquí encontrarás <strong className="text-betis-verde font-heading">amigos de verdad</strong>, momentos únicos 
-                y el cariño de una comunidad que te acoge como en casa.
+                <strong className="text-betis-verde font-heading">
+                  Más de 15 años
+                </strong>{" "}
+                compartiendo la pasión por el Betis desde Edimburgo. Aquí
+                encontrarás{" "}
+                <strong className="text-betis-verde font-heading">
+                  amigos de verdad
+                </strong>
+                , momentos únicos y el cariño de una comunidad que te acoge como
+                en casa.
               </p>
               <p className="font-body text-base lg:text-lg text-gray-600">
-                Ya seas de Sevilla, de cualquier parte de España, o incluso escocés... 
-                si llevas el Betis en el corazón, <strong className="text-betis-verde">ya eres de los nuestros</strong>.
+                Ya seas de Sevilla, de cualquier parte de España, o incluso
+                escocés... si llevas el Betis en el corazón,{" "}
+                <strong className="text-betis-verde">
+                  ya eres de los nuestros
+                </strong>
+                .
               </p>
             </div>
 
@@ -106,13 +128,21 @@ function HeroCommunity() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-8">
               <div className="group pattern-card-cultural rounded-xl p-6 border border-gray-100 hover:border-betis-verde hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 <Coffee className="h-8 w-8 text-betis-verde mb-4 group-hover:scale-110 transition-transform duration-300" />
-                <h3 className="font-heading font-bold text-scotland-navy mb-2 text-lg uppercase tracking-wide">Ambiente Familiar</h3>
-                <p className="font-body text-sm text-gray-600">Niños bienvenidos, ambiente relajado y acogedor</p>
+                <h3 className="font-heading font-bold text-scotland-navy mb-2 text-lg uppercase tracking-wide">
+                  Ambiente Familiar
+                </h3>
+                <p className="font-body text-sm text-gray-600">
+                  Niños bienvenidos, ambiente relajado y acogedor
+                </p>
               </div>
               <div className="group pattern-card-cultural rounded-xl p-6 border border-gray-100 hover:border-betis-verde hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 <Smile className="h-8 w-8 text-betis-verde mb-4 group-hover:scale-110 transition-transform duration-300" />
-                <h3 className="font-heading font-bold text-scotland-navy mb-2 text-lg uppercase tracking-wide">Siempre con Humor</h3>
-                <p className="font-body text-sm text-gray-600">Ganemos o perdamos, aquí se ríe y se disfruta</p>
+                <h3 className="font-heading font-bold text-scotland-navy mb-2 text-lg uppercase tracking-wide">
+                  Siempre con Humor
+                </h3>
+                <p className="font-body text-sm text-gray-600">
+                  Ganemos o perdamos, aquí se ríe y se disfruta
+                </p>
               </div>
             </div>
 
@@ -139,12 +169,15 @@ function HeroCommunity() {
            * RIGHT SIDE - Community Showcase
            * Card with cultural styling
            * ============================================ */}
-          <div className="relative animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          <div
+            className="relative animate-fade-in-up"
+            style={{ animationDelay: "0.2s" }}
+          >
             {/* Main community card */}
             <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 relative overflow-hidden">
               {/* Decorative corner pattern */}
               <div className="absolute top-0 right-0 w-24 h-24 pattern-verdiblanco-diagonal opacity-10" />
-              
+
               {/* Stats section */}
               <div className="mb-8 relative">
                 <CommunityStats />
@@ -167,7 +200,7 @@ function HeroCommunity() {
                       <ChevronDown className="h-5 w-5 text-gray-400 group-hover:text-betis-verde transition-colors" />
                     )}
                   </button>
-                  
+
                   {isRSVPExpanded && (
                     <div className="transition-all duration-300 ease-in-out">
                       <RSVPWidget
@@ -176,7 +209,8 @@ function HeroCommunity() {
                           title: "Real Betis - Próximo Partido",
                           date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
                           location: "Polwarth Tavern, Edinburgh",
-                          description: "Únete a la peña para el próximo partido del Betis"
+                          description:
+                            "Únete a la peña para el próximo partido del Betis",
                         }}
                         displayMode="inline"
                         className="border-none shadow-none"
@@ -205,7 +239,7 @@ function HeroCommunity() {
           <div className="relative bg-gradient-to-r from-betis-verde via-betis-verde-dark to-scotland-navy rounded-2xl p-8 text-white text-center overflow-hidden">
             {/* Pattern overlay */}
             <div className="absolute inset-0 pattern-tartan-navy opacity-30" />
-            
+
             <div className="relative max-w-4xl mx-auto">
               <h3 className="font-display text-2xl md:text-3xl font-black mb-4 uppercase tracking-wide">
                 📍 Polwarth Tavern
@@ -214,11 +248,14 @@ function HeroCommunity() {
                 Nuestro hogar en Edimburgo
               </p>
               <p className="font-body text-betis-verde-light mb-6 text-lg">
-                Cada partido es una excusa perfecta para juntarnos, reír y disfrutar del Betis en buena compañía.
+                Cada partido es una excusa perfecta para juntarnos, reír y
+                disfrutar del Betis en buena compañía.
               </p>
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full backdrop-blur-sm">
                 <MapPin className="h-4 w-4 text-betis-oro" />
-                <span className="font-body text-sm">35 Polwarth Crescent, Edinburgh EH11 1HR</span>
+                <span className="font-body text-sm">
+                  35 Polwarth Crescent, Edinburgh EH11 1HR
+                </span>
               </div>
             </div>
           </div>

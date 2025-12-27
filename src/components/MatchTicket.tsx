@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Calendar, Clock, Users, MapPin, Trophy } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import type { MatchCardProps } from '@/types/match';
-import type { Match as DatabaseMatch } from '@/lib/supabase';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
-import { DATETIME_FORMAT } from '@/lib/constants/dateFormats';
+import React from "react";
+import { Calendar, Clock, Users, MapPin, Trophy } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import type { MatchCardProps } from "@/types/match";
+import type { Match as DatabaseMatch } from "@/lib/supabase";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { DATETIME_FORMAT } from "@/lib/constants/dateFormats";
 
 /**
  * Variant types for the MatchTicket component
  */
-export type MatchTicketVariant = 'upcoming' | 'live' | 'finished';
-export type MatchTicketPriority = 'normal' | 'featured' | 'derby';
+export type MatchTicketVariant = "upcoming" | "live" | "finished";
+export type MatchTicketPriority = "normal" | "featured" | "derby";
 
 export interface MatchTicketProps extends MatchCardProps {
   variant?: MatchTicketVariant;
@@ -28,42 +28,68 @@ export function convertDatabaseMatchToTicketProps(
   dbMatch: DatabaseMatch,
   rsvpCount?: number,
   totalAttendees?: number,
-  showRSVP: boolean = true
+  showRSVP: boolean = true,
 ): MatchTicketProps {
   const isUpcoming = new Date(dbMatch.date_time) > new Date();
-  const isDerby = dbMatch.opponent.toLowerCase().includes('sevilla');
-  
+  const isDerby = dbMatch.opponent.toLowerCase().includes("sevilla");
+
   return {
     id: dbMatch.id,
     opponent: dbMatch.opponent,
     date: dbMatch.date_time,
     competition: dbMatch.competition,
-    isHome: dbMatch.home_away === 'home',
-    status: (dbMatch.status as 'SCHEDULED' | 'FINISHED' | 'IN_PLAY' | 'PAUSED' | 'POSTPONED' | 'SUSPENDED' | 'CANCELLED' | 'AWARDED' | 'TIMED') || (isUpcoming ? 'SCHEDULED' : 'FINISHED'),
-    result: dbMatch.result || (isUpcoming ? undefined : 'FINALIZADO'),
+    isHome: dbMatch.home_away === "home",
+    status:
+      (dbMatch.status as
+        | "SCHEDULED"
+        | "FINISHED"
+        | "IN_PLAY"
+        | "PAUSED"
+        | "POSTPONED"
+        | "SUSPENDED"
+        | "CANCELLED"
+        | "AWARDED"
+        | "TIMED") || (isUpcoming ? "SCHEDULED" : "FINISHED"),
+    result: dbMatch.result || (isUpcoming ? undefined : "FINALIZADO"),
     matchday: dbMatch.matchday,
-    score: (dbMatch.home_score !== null && dbMatch.away_score !== null && dbMatch.home_score !== undefined && dbMatch.away_score !== undefined) ? {
-      home: dbMatch.home_score,
-      away: dbMatch.away_score
-    } : undefined,
-    watchParty: isUpcoming ? {
-      location: 'Polwarth Tavern',
-      address: '35 Polwarth Cres, Edinburgh EH11 1HR',
-      time: format(new Date(dbMatch.date_time), 'HH:mm', { locale: es })
-    } : undefined,
-    rsvpInfo: (rsvpCount !== undefined && totalAttendees !== undefined) ? {
-      rsvpCount,
-      totalAttendees
-    } : undefined,
+    score:
+      dbMatch.home_score !== null &&
+      dbMatch.away_score !== null &&
+      dbMatch.home_score !== undefined &&
+      dbMatch.away_score !== undefined
+        ? {
+            home: dbMatch.home_score,
+            away: dbMatch.away_score,
+          }
+        : undefined,
+    watchParty: isUpcoming
+      ? {
+          location: "Polwarth Tavern",
+          address: "35 Polwarth Cres, Edinburgh EH11 1HR",
+          time: format(new Date(dbMatch.date_time), "HH:mm", { locale: es }),
+        }
+      : undefined,
+    rsvpInfo:
+      rsvpCount !== undefined && totalAttendees !== undefined
+        ? {
+            rsvpCount,
+            totalAttendees,
+          }
+        : undefined,
     showRSVP,
-    variant: dbMatch.status === 'IN_PLAY' || dbMatch.status === 'PAUSED' ? 'live' : (isUpcoming ? 'upcoming' : 'finished'),
-    priority: isDerby ? 'derby' : 'normal',
+    variant:
+      dbMatch.status === "IN_PLAY" || dbMatch.status === "PAUSED"
+        ? "live"
+        : isUpcoming
+          ? "upcoming"
+          : "finished",
+    priority: isDerby ? "derby" : "normal",
   };
 }
 
 /**
  * MatchTicket - A distinctive match card with ticket-stub aesthetic
- * 
+ *
  * Design System v2 component that replaces the generic MatchCard with
  * a culturally distinctive ticket-inspired design featuring:
  * - Verdiblanco stripe edge
@@ -87,12 +113,13 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
     watchParty,
     rsvpInfo,
     showRSVP,
-    variant = 'upcoming',
-    priority = 'normal',
+    variant = "upcoming",
+    priority = "normal",
   } = props;
 
-  const isUpcoming = status === 'SCHEDULED' || status === 'TIMED' || new Date(date) > new Date();
-  const isLive = status === 'IN_PLAY' || status === 'PAUSED';
+  const isUpcoming =
+    status === "SCHEDULED" || status === "TIMED" || new Date(date) > new Date();
+  const isLive = status === "IN_PLAY" || status === "PAUSED";
 
   // Format date
   const formatDate = (dateString: string): string => {
@@ -100,12 +127,14 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
     return format(matchDate, DATETIME_FORMAT, { locale: es });
   };
 
-  const formatShortDate = (dateString: string): { day: string; month: string; time: string } => {
+  const formatShortDate = (
+    dateString: string,
+  ): { day: string; month: string; time: string } => {
     const matchDate = new Date(dateString);
     return {
-      day: format(matchDate, 'd', { locale: es }),
-      month: format(matchDate, 'MMM', { locale: es }).toUpperCase(),
-      time: format(matchDate, 'HH:mm', { locale: es }),
+      day: format(matchDate, "d", { locale: es }),
+      month: format(matchDate, "MMM", { locale: es }).toUpperCase(),
+      time: format(matchDate, "HH:mm", { locale: es }),
     };
   };
 
@@ -114,19 +143,34 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
   // Competition ribbon colors
   const getCompetitionRibbon = (comp: string): { bg: string; text: string } => {
     const compLower = comp.toLowerCase();
-    if (compLower.includes('liga') || compLower.includes('primera')) {
-      return { bg: 'bg-gradient-to-r from-red-600 to-red-700', text: 'text-white' };
+    if (compLower.includes("liga") || compLower.includes("primera")) {
+      return {
+        bg: "bg-gradient-to-r from-red-600 to-red-700",
+        text: "text-white",
+      };
     }
-    if (compLower.includes('champions')) {
-      return { bg: 'bg-gradient-to-r from-blue-600 to-blue-800', text: 'text-white' };
+    if (compLower.includes("champions")) {
+      return {
+        bg: "bg-gradient-to-r from-blue-600 to-blue-800",
+        text: "text-white",
+      };
     }
-    if (compLower.includes('europa') && !compLower.includes('conference')) {
-      return { bg: 'bg-gradient-to-r from-orange-500 to-orange-600', text: 'text-white' };
+    if (compLower.includes("europa") && !compLower.includes("conference")) {
+      return {
+        bg: "bg-gradient-to-r from-orange-500 to-orange-600",
+        text: "text-white",
+      };
     }
-    if (compLower.includes('copa')) {
-      return { bg: 'bg-gradient-to-r from-betis-oro to-oro-antique', text: 'text-scotland-navy' };
+    if (compLower.includes("copa")) {
+      return {
+        bg: "bg-gradient-to-r from-betis-oro to-oro-antique",
+        text: "text-scotland-navy",
+      };
     }
-    return { bg: 'bg-gradient-to-r from-betis-verde to-betis-verde-dark', text: 'text-white' };
+    return {
+      bg: "bg-gradient-to-r from-betis-verde to-betis-verde-dark",
+      text: "text-white",
+    };
   };
 
   const ribbon = getCompetitionRibbon(competition);
@@ -134,11 +178,17 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
   // Get competition display name
   const getCompetitionDisplayName = (comp: string): string => {
     const compLower = comp.toLowerCase();
-    if (compLower.includes('primera') || compLower === 'laliga santander' || compLower === 'la liga') return 'LaLiga';
-    if (compLower.includes('champions')) return 'UCL';
-    if (compLower.includes('europa') && !compLower.includes('conference')) return 'UEL';
-    if (compLower.includes('conference')) return 'UECL';
-    if (compLower.includes('copa del rey')) return 'Copa';
+    if (
+      compLower.includes("primera") ||
+      compLower === "laliga santander" ||
+      compLower === "la liga"
+    )
+      return "LaLiga";
+    if (compLower.includes("champions")) return "UCL";
+    if (compLower.includes("europa") && !compLower.includes("conference"))
+      return "UEL";
+    if (compLower.includes("conference")) return "UECL";
+    if (compLower.includes("copa del rey")) return "Copa";
     return comp.substring(0, 8);
   };
 
@@ -152,11 +202,19 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
         </span>
       );
     }
-    if (status === 'POSTPONED') {
-      return <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-match-postponed text-white">APLAZADO</span>;
+    if (status === "POSTPONED") {
+      return (
+        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-match-postponed text-white">
+          APLAZADO
+        </span>
+      );
     }
-    if (status === 'FINISHED') {
-      return <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-match-finished text-white">FINAL</span>;
+    if (status === "FINISHED") {
+      return (
+        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-match-finished text-white">
+          FINAL
+        </span>
+      );
     }
     return null;
   };
@@ -166,47 +224,53 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
     if (score && score.home !== null && score.away !== null) {
       return `${score.home} - ${score.away}`;
     }
-    return result ?? 'VS';
+    return result ?? "VS";
   };
 
   // Team info
-  const localTeam = isHome 
-    ? { name: 'Real Betis', crest: '/images/logo_no_texto.jpg', isBetis: true }
+  const localTeam = isHome
+    ? { name: "Real Betis", crest: "/images/logo_no_texto.jpg", isBetis: true }
     : { name: opponent, crest: opponentCrest, isBetis: false };
 
-  const visitorTeam = isHome 
+  const visitorTeam = isHome
     ? { name: opponent, crest: opponentCrest, isBetis: false }
-    : { name: 'Real Betis', crest: '/images/logo_no_texto.jpg', isBetis: true };
+    : { name: "Real Betis", crest: "/images/logo_no_texto.jpg", isBetis: true };
 
   // Priority styling
   const priorityClasses = {
-    normal: 'border-gray-200',
-    featured: 'border-betis-verde border-2',
-    derby: 'border-betis-oro border-2 shadow-lg',
+    normal: "border-gray-200",
+    featured: "border-betis-verde border-2",
+    derby: "border-betis-oro border-2 shadow-lg",
   };
 
   return (
-    <div className={`
+    <div
+      className={`
       relative bg-white rounded-xl overflow-hidden 
       transition-all duration-300 hover:shadow-xl hover:-translate-y-1
       ${priorityClasses[priority]}
-    `}>
+    `}
+    >
       {/* Verdiblanco edge - ticket stub effect */}
-      <div 
+      <div
         className="absolute left-0 top-0 bottom-0 w-1 bg-betis-verde"
         style={{
-          maskImage: 'repeating-linear-gradient(180deg, transparent 0px, transparent 3px, black 3px, black 12px)',
-          WebkitMaskImage: 'repeating-linear-gradient(180deg, transparent 0px, transparent 3px, black 3px, black 12px)',
+          maskImage:
+            "repeating-linear-gradient(180deg, transparent 0px, transparent 3px, black 3px, black 12px)",
+          WebkitMaskImage:
+            "repeating-linear-gradient(180deg, transparent 0px, transparent 3px, black 3px, black 12px)",
         }}
       />
 
       {/* Competition ribbon - diagonal */}
-      <div className={`
+      <div
+        className={`
         absolute top-0 right-0 ${ribbon.bg} ${ribbon.text}
         px-8 py-1 text-xs font-bold tracking-wider
         transform translate-x-6 -translate-y-0 rotate-0
         rounded-bl-lg
-      `}>
+      `}
+      >
         {competitionEmblem && (
           <Image
             src={competitionEmblem}
@@ -220,7 +284,7 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
       </div>
 
       {/* Derby badge */}
-      {priority === 'derby' && (
+      {priority === "derby" && (
         <div className="absolute top-2 left-6 flex items-center gap-1 bg-betis-oro text-scotland-navy px-2 py-0.5 rounded-full text-xs font-bold">
           <Trophy className="w-3 h-3" />
           DERBI
@@ -254,23 +318,29 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
 
             {/* Team names */}
             <div className="space-y-1">
-              <div className={`font-heading font-bold text-lg truncate ${localTeam.isBetis ? 'text-betis-verde' : 'text-gray-900'}`}>
+              <div
+                className={`font-heading font-bold text-lg truncate ${localTeam.isBetis ? "text-betis-verde" : "text-gray-900"}`}
+              >
                 {localTeam.name}
               </div>
               <div className="text-gray-400 text-sm font-mono">vs</div>
-              <div className={`font-heading font-bold text-lg truncate ${visitorTeam.isBetis ? 'text-betis-verde' : 'text-gray-900'}`}>
+              <div
+                className={`font-heading font-bold text-lg truncate ${visitorTeam.isBetis ? "text-betis-verde" : "text-gray-900"}`}
+              >
                 {visitorTeam.name}
               </div>
             </div>
           </div>
 
           {/* Score (for finished/live matches) */}
-          {(isLive || status === 'FINISHED') && score && (
+          {(isLive || status === "FINISHED") && score && (
             <div className="flex-shrink-0 text-center">
-              <div className={`
+              <div
+                className={`
                 font-display text-4xl font-black
-                ${isLive ? 'text-match-live' : 'text-gray-600'}
-              `}>
+                ${isLive ? "text-match-live" : "text-gray-600"}
+              `}
+              >
                 {getMatchResult()}
               </div>
               {getStatusBadge()}
@@ -299,11 +369,18 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Users className="w-4 h-4 text-betis-verde" />
                   <span>
-                    <span className="font-bold text-betis-verde">{rsvpInfo.rsvpCount}</span> confirmaciones
+                    <span className="font-bold text-betis-verde">
+                      {rsvpInfo.rsvpCount}
+                    </span>{" "}
+                    confirmaciones
                   </span>
                   {rsvpInfo.totalAttendees > 0 && (
                     <span className="text-gray-400">
-                      • <span className="font-bold text-betis-verde">{rsvpInfo.totalAttendees}</span> asistentes
+                      •{" "}
+                      <span className="font-bold text-betis-verde">
+                        {rsvpInfo.totalAttendees}
+                      </span>{" "}
+                      asistentes
                     </span>
                   )}
                 </div>
@@ -322,7 +399,9 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
             >
               📝 Confirmar Asistencia
               {rsvpInfo && rsvpInfo.totalAttendees > 0 && (
-                <span className="ml-1 opacity-80">({rsvpInfo.totalAttendees})</span>
+                <span className="ml-1 opacity-80">
+                  ({rsvpInfo.totalAttendees})
+                </span>
               )}
             </Link>
           </div>
@@ -338,4 +417,3 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
 };
 
 export default MatchTicket;
-

@@ -1,45 +1,50 @@
-import Link from 'next/link';
-import dynamic from 'next/dynamic';
-import HeroCommunity from '@/components/HeroCommunity';
-import { FeatureWrapper } from '@/lib/featureProtection';
+import Link from "next/link";
+import dynamic from "next/dynamic";
+import HeroCommunity from "@/components/HeroCommunity";
+import { FeatureWrapper } from "@/lib/featureProtection";
 
 // Lazy load widgets that are below the fold for better LCP
-const UpcomingMatchesWidget = dynamic(() => import('@/components/UpcomingMatchesWidget'), {
-  loading: () => (
-    <div className="bg-white rounded-lg shadow-lg p-6 animate-pulse">
-      <div className="h-6 bg-gray-200 rounded w-48 mb-6"></div>
-      <div className="space-y-4">
-        <div className="border border-gray-200 rounded-lg p-4">
-          <div className="h-4 bg-gray-200 rounded w-24 mb-3"></div>
-          <div className="flex items-center justify-center space-x-4">
-            <div className="h-6 bg-gray-200 rounded flex-1"></div>
-            <div className="h-6 w-12 bg-gray-200 rounded"></div>
-            <div className="h-6 bg-gray-200 rounded flex-1"></div>
+const UpcomingMatchesWidget = dynamic(
+  () => import("@/components/UpcomingMatchesWidget"),
+  {
+    loading: () => (
+      <div className="bg-white rounded-lg shadow-lg p-6 animate-pulse">
+        <div className="h-6 bg-gray-200 rounded w-48 mb-6"></div>
+        <div className="space-y-4">
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="h-4 bg-gray-200 rounded w-24 mb-3"></div>
+            <div className="flex items-center justify-center space-x-4">
+              <div className="h-6 bg-gray-200 rounded flex-1"></div>
+              <div className="h-6 w-12 bg-gray-200 rounded"></div>
+              <div className="h-6 bg-gray-200 rounded flex-1"></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  ),
-});
+    ),
+  },
+);
 
-const ClassificationWidget = dynamic(() => import('@/components/ClassificationWidget'), {
-  loading: () => (
-    <div className="bg-white rounded-lg shadow-lg p-6 animate-pulse">
-      <div className="h-6 bg-gray-200 rounded w-32 mb-6"></div>
-      <div className="space-y-3">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="flex items-center space-x-3">
-            <div className="h-4 w-6 bg-gray-200 rounded"></div>
-            <div className="h-4 flex-1 bg-gray-200 rounded"></div>
-          </div>
-        ))}
+const ClassificationWidget = dynamic(
+  () => import("@/components/ClassificationWidget"),
+  {
+    loading: () => (
+      <div className="bg-white rounded-lg shadow-lg p-6 animate-pulse">
+        <div className="h-6 bg-gray-200 rounded w-32 mb-6"></div>
+        <div className="space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="flex items-center space-x-3">
+              <div className="h-4 w-6 bg-gray-200 rounded"></div>
+              <div className="h-4 flex-1 bg-gray-200 rounded"></div>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  ),
-});
+    ),
+  },
+);
 
 export default function Home() {
-
   return (
     <>
       <HeroCommunity />
@@ -95,12 +100,16 @@ export default function Home() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8">
-            <span className="text-white font-heading font-medium text-sm tracking-wide">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Bienvenidos a Escocia</span>
+            <span className="text-white font-heading font-medium text-sm tracking-wide">
+              🏴󠁧󠁢󠁳󠁣󠁴󠁿 Bienvenidos a Escocia
+            </span>
           </div>
 
           {/* Display typography - massive impact */}
           <h2 className="font-display text-4xl sm:text-5xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight leading-none">
-            ¿Estás de visita<br />en Escocia?
+            ¿Estás de visita
+            <br />
+            en Escocia?
           </h2>
 
           <p className="font-accent text-2xl sm:text-3xl lg:text-4xl mb-6 text-oro-bright text-shadow-lg italic">
@@ -108,8 +117,8 @@ export default function Home() {
           </p>
 
           <p className="font-body text-lg sm:text-xl lg:text-2xl mb-12 max-w-3xl mx-auto text-white/95 leading-relaxed text-shadow-lg">
-            Todos los béticos son bienvenidos. No importa de dónde vengas,
-            aquí tienes una familia que comparte tu pasión por el Betis.
+            Todos los béticos son bienvenidos. No importa de dónde vengas, aquí
+            tienes una familia que comparte tu pasión por el Betis.
           </p>
 
           {/* CTA Buttons - enhanced with new styling */}
@@ -130,9 +139,7 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="group bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white hover:border-white px-10 py-5 rounded-2xl font-heading font-bold text-lg text-white hover:text-betis-verde transition-all duration-300 transform hover:scale-105"
               >
-                <span className="flex items-center gap-2">
-                  📘 Facebook
-                </span>
+                <span className="flex items-center gap-2">📘 Facebook</span>
               </a>
 
               <a
@@ -141,13 +148,11 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="group bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white hover:border-white px-10 py-5 rounded-2xl font-heading font-bold text-lg text-white hover:text-red-600 transition-all duration-300 transform hover:scale-105"
               >
-                <span className="flex items-center gap-2">
-                  📺 YouTube
-                </span>
+                <span className="flex items-center gap-2">📺 YouTube</span>
               </a>
             </FeatureWrapper>
           </div>
-          
+
           {/* Contact info cards - with cultural patterns */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {/* Location Card */}
@@ -157,8 +162,10 @@ export default function Home() {
                 📍 Ubicación
               </h3>
               <p className="font-body text-base text-white/90 leading-relaxed">
-                The Polwarth Tavern<br />
-                35 Polwarth Crescent<br />
+                The Polwarth Tavern
+                <br />
+                35 Polwarth Crescent
+                <br />
                 Edinburgh EH11 1HR
               </p>
             </div>
@@ -170,8 +177,10 @@ export default function Home() {
                 ⏰ Horarios
               </h3>
               <p className="font-body text-base text-white/90 leading-relaxed">
-                15 min antes del partido<br />
-                Todos los eventos<br />
+                15 min antes del partido
+                <br />
+                Todos los eventos
+                <br />
                 Fútbol · Reuniones · Celebraciones
               </p>
             </div>
@@ -183,8 +192,10 @@ export default function Home() {
                 💚 Ambiente
               </h3>
               <p className="font-body text-base text-white/90 leading-relaxed">
-                100% bético<br />
-                Familiar y acogedor<br />
+                100% bético
+                <br />
+                Familiar y acogedor
+                <br />
                 Cervezas frías garantizadas
               </p>
             </div>

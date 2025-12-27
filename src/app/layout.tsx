@@ -1,16 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Oswald, Source_Sans_3, Playfair_Display } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Oswald,
+  Source_Sans_3,
+  Playfair_Display,
+} from "next/font/google";
 import "./globals.css";
 import Layout from "@/components/Layout";
 import OfflineDetector from "@/components/OfflineDetector";
 import * as Sentry from "@sentry/nextjs";
 import SentryUserContext from "@/components/SentryUserContext";
 
-import { ClerkProvider } from '@clerk/nextjs';
+import { ClerkProvider } from "@clerk/nextjs";
 import FacebookSDK from "@/components/FacebookSDK";
 
 // Conditionally import Vercel Analytics/SpeedInsights only in production on Vercel
-const isVercel = process.env.VERCEL === '1';
+const isVercel = process.env.VERCEL === "1";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -56,15 +62,18 @@ const accentFont = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://betis-escocia.vercel.app'),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://betis-escocia.vercel.app",
+  ),
   title: {
     default: "No busques más que no hay - Peña Bética Escocesa",
-    template: "%s | Peña Bética Escocesa"
+    template: "%s | Peña Bética Escocesa",
   },
-  description: "La peña del Real Betis en Edimburgo, Escocia. Más de 15 años compartiendo la pasión bética en el Polwarth Tavern. Eventos, RSVP, galería y comunidad familiar.",
+  description:
+    "La peña del Real Betis en Edimburgo, Escocia. Más de 15 años compartiendo la pasión bética en el Polwarth Tavern. Eventos, RSVP, galería y comunidad familiar.",
   keywords: [
     "Real Betis",
-    "Edinburgh", 
+    "Edinburgh",
     "Scotland",
     "Escocia",
     "peña bética",
@@ -76,7 +85,7 @@ export const metadata: Metadata = {
     "comunidad española",
     "béticos en Escocia",
     "Sevilla FC",
-    "Villamarín"
+    "Villamarín",
   ],
   authors: [{ name: "Peña Bética Escocesa" }],
   creator: "Peña Bética Escocesa",
@@ -87,18 +96,26 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   icons: {
     icon: [
       { url: "/images/logo_no_texto.jpg", sizes: "32x32", type: "image/jpeg" },
-      { url: "/images/logo_no_texto.jpg", sizes: "192x192", type: "image/jpeg" },
+      {
+        url: "/images/logo_no_texto.jpg",
+        sizes: "192x192",
+        type: "image/jpeg",
+      },
     ],
     apple: [
-      { url: "/images/logo_no_texto.jpg", sizes: "180x180", type: "image/jpeg" },
+      {
+        url: "/images/logo_no_texto.jpg",
+        sizes: "180x180",
+        type: "image/jpeg",
+      },
     ],
     shortcut: "/images/logo_no_texto.jpg",
   },
@@ -108,7 +125,8 @@ export const metadata: Metadata = {
     locale: "es_ES",
     alternateLocale: "en_GB",
     title: "No busques más que no hay - Peña Bética Escocesa",
-    description: "La peña del Real Betis en Edimburgo, Escocia. Más de 15 años compartiendo la pasión bética en el Polwarth Tavern.",
+    description:
+      "La peña del Real Betis en Edimburgo, Escocia. Más de 15 años compartiendo la pasión bética en el Polwarth Tavern.",
     siteName: "Peña Bética Escocesa",
     url: "https://betis-escocia.vercel.app",
     images: [
@@ -125,7 +143,8 @@ export const metadata: Metadata = {
     site: "@rbetisescocia",
     creator: "@rbetisescocia",
     title: "No busques más que no hay - Peña Bética Escocesa",
-    description: "La peña del Real Betis en Edimburgo, Escocia. Más de 15 años compartiendo la pasión bética.",
+    description:
+      "La peña del Real Betis en Edimburgo, Escocia. Más de 15 años compartiendo la pasión bética.",
     images: ["/images/logo_no_texto.jpg"],
   },
   verification: {
@@ -135,8 +154,8 @@ export const metadata: Metadata = {
   classification: "Community Organization",
   referrer: "origin-when-cross-origin",
   other: {
-    'preconnect': 'https://connect.facebook.net',
-    'dns-prefetch': 'https://www.facebook.com',
+    preconnect: "https://connect.facebook.net",
+    "dns-prefetch": "https://www.facebook.com",
   },
 };
 
@@ -158,16 +177,24 @@ export default function RootLayout({
     <html lang="es">
       <head>
         {/* Preconnect to third-party domains for faster loading */}
-        <link rel="preconnect" href="https://clerk.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://clerk.com"
+          crossOrigin="anonymous"
+        />
         <link rel="dns-prefetch" href="https://clerk.com" />
-        <link rel="preconnect" href="https://connect.facebook.net" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://connect.facebook.net"
+          crossOrigin="anonymous"
+        />
         <link rel="dns-prefetch" href="https://connect.facebook.net" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${displayFont.variable} ${bodyFont.variable} ${accentFont.variable} antialiased`}
       >
         <FacebookSDK />
-        
+
         <OfflineDetector />
         <ClerkProvider
           signInUrl="/sign-in"
@@ -177,9 +204,7 @@ export default function RootLayout({
         >
           <SentryUserContext />
           <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
-            <Layout debugInfo={debugInfo}>
-              {children}
-            </Layout>
+            <Layout debugInfo={debugInfo}>{children}</Layout>
           </Sentry.ErrorBoundary>
         </ClerkProvider>
         {isVercel && <Analytics />}
