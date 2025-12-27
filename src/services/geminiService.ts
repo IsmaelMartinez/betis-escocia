@@ -73,14 +73,14 @@ Responde SOLO en este formato JSON:
         errorMessage.includes("rate limit");
 
       if (isQuotaError) {
-        log.error("Gemini quota exceeded - using fallback", error, {
+        log.error("Gemini quota exceeded - skipping item", error, {
           title,
           source,
-          note: "Free tier: 20 requests/day limit reached",
+          note: "Free tier limit reached - item not inserted",
         });
         return {
-          isTransferRumor: true, // Assume yes to avoid filtering out potential transfers
-          probability: 50,
+          isTransferRumor: false, // Skip items we can't analyze
+          probability: 0,
           reasoning: "No se pudo analizar este rumor automáticamente.",
           confidence: "low",
         };
@@ -88,13 +88,13 @@ Responde SOLO en este formato JSON:
 
       if (attempt === 2) {
         // Last attempt failed
-        log.error("Gemini analysis failed after retries", error, {
+        log.error("Gemini analysis failed after retries - skipping item", error, {
           title,
           source,
         });
         return {
-          isTransferRumor: true, // Assume yes to avoid filtering out potential transfers
-          probability: 50,
+          isTransferRumor: false, // Skip items we can't analyze
+          probability: 0,
           reasoning: "No se pudo analizar este rumor automáticamente.",
           confidence: "low",
         };
