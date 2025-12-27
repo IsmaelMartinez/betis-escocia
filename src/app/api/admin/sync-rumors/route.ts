@@ -1,14 +1,13 @@
-import { createApiHandler } from '@/lib/apiUtils';
-import { RumorSyncService } from '@/services/rumorSyncService';
+import { createApiHandler } from "@/lib/apiUtils";
+import { syncRumors } from "@/services/rumorSyncService";
 
 export const POST = createApiHandler({
-  auth: 'admin',
+  auth: "admin",
   handler: async () => {
-    const syncService = new RumorSyncService();
-    const result = await syncService.syncRumors();
+    const result = await syncRumors();
 
     return {
-      message: 'Rumor sync completed',
+      message: "Rumor sync completed",
       ...result,
     };
   },

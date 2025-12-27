@@ -1,4 +1,4 @@
-import { RumorSyncService } from "../src/services/rumorSyncService";
+import { syncRumors } from "../src/services/rumorSyncService";
 import * as dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local" });
@@ -6,8 +6,7 @@ dotenv.config({ path: ".env.local" });
 async function main() {
   console.log("Starting rumor sync...");
 
-  const syncService = new RumorSyncService();
-  const result = await syncService.syncRumors();
+  const result = await syncRumors();
 
   console.log("\nSync Results:");
   console.log(`- Fetched: ${result.fetched}`);
