@@ -1,11 +1,15 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Response schema for rumors API
 export const rumorItemSchema = z.object({
   title: z.string(),
   link: z.string().url(),
   pubDate: z.string().datetime(),
-  source: z.enum(['Google News (Fichajes)', 'Google News (General)', 'BetisWeb']),
+  source: z.enum([
+    "Google News (Fichajes)",
+    "Google News (General)",
+    "BetisWeb",
+  ]),
   description: z.string().optional(),
 });
 

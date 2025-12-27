@@ -1,25 +1,26 @@
-import { Metadata } from 'next';
-import { Suspense } from 'react';
-import { ErrorBoundary } from '@/components/ErrorBoundary';
-import Spinner from '@/components/ui/Spinner';
-import RumorCard from '@/components/RumorCard';
-import { withFeatureFlag } from '@/lib/featureProtection';
-import { Newspaper, RefreshCw } from 'lucide-react';
+import { Metadata } from "next";
+import { Suspense } from "react";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import Spinner from "@/components/ui/Spinner";
+import RumorCard from "@/components/RumorCard";
+import { withFeatureFlag } from "@/lib/featureProtection";
+import { Newspaper, RefreshCw } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: 'Soylenti - Rumores de Fichajes | Peña Bética Escocesa',
-  description: 'Últimos rumores de fichajes y noticias del Real Betis desde múltiples fuentes.',
+  title: "Soylenti - Rumores de Fichajes | Peña Bética Escocesa",
+  description:
+    "Últimos rumores de fichajes y noticias del Real Betis desde múltiples fuentes.",
 };
 
 // Fetch rumors server-side (directly from service, no HTTP call needed)
 async function fetchRumors() {
-  const { RSSFetcherService } = await import('@/services/rssFetcherService');
+  const { RSSFetcherService } = await import("@/services/rssFetcherService");
   const service = new RSSFetcherService();
   const rumors = await service.fetchAllRumors();
 
   return {
     data: {
-      rumors: rumors.map(rumor => ({
+      rumors: rumors.map((rumor) => ({
         title: rumor.title,
         link: rumor.link,
         pubDate: rumor.pubDate.toISOString(),
@@ -28,7 +29,7 @@ async function fetchRumors() {
       })),
       totalCount: rumors.length,
       lastUpdated: new Date().toISOString(),
-    }
+    },
   };
 }
 
@@ -46,9 +47,12 @@ async function SoylentiContent() {
           <div className="flex items-center justify-center mb-4">
             <Newspaper size={48} />
           </div>
-          <h1 className="text-4xl font-bold mb-2">Soylenti - Rumores de Fichajes</h1>
+          <h1 className="text-4xl font-bold mb-2">
+            Soylenti - Rumores de Fichajes
+          </h1>
           <p className="text-xl opacity-90 max-w-2xl mx-auto">
-            Las últimas noticias y rumores del Real Betis desde múltiples fuentes
+            Las últimas noticias y rumores del Real Betis desde múltiples
+            fuentes
           </p>
         </div>
       </section>
@@ -65,9 +69,10 @@ async function SoylentiContent() {
               </p>
             </div>
             <p className="text-xs text-gray-500">
-              Última actualización: {new Intl.DateTimeFormat('es-ES', {
-                hour: '2-digit',
-                minute: '2-digit',
+              Última actualización:{" "}
+              {new Intl.DateTimeFormat("es-ES", {
+                hour: "2-digit",
+                minute: "2-digit",
               }).format(new Date())}
             </p>
           </div>
@@ -100,8 +105,9 @@ async function SoylentiContent() {
       <section className="bg-gray-50 py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-sm text-gray-600">
-            Los rumores mostrados provienen de fuentes externas y no representan información oficial del Real Betis.
-            Esta sección es solo para entretenimiento de la comunidad bética.
+            Los rumores mostrados provienen de fuentes externas y no representan
+            información oficial del Real Betis. Esta sección es solo para
+            entretenimiento de la comunidad bética.
           </p>
         </div>
       </section>
@@ -113,14 +119,16 @@ async function SoylentiContent() {
 async function SoylentiPage() {
   return (
     <ErrorBoundary>
-      <Suspense fallback={
-        <div className="min-h-screen bg-gradient-to-b from-betis-verde-pale to-white flex items-center justify-center">
-          <div className="text-center">
-            <Spinner size="lg" />
-            <p className="mt-4 text-gray-600">Cargando rumores...</p>
+      <Suspense
+        fallback={
+          <div className="min-h-screen bg-gradient-to-b from-betis-verde-pale to-white flex items-center justify-center">
+            <div className="text-center">
+              <Spinner size="lg" />
+              <p className="mt-4 text-gray-600">Cargando rumores...</p>
+            </div>
           </div>
-        </div>
-      }>
+        }
+      >
         <SoylentiContent />
       </Suspense>
     </ErrorBoundary>
@@ -128,4 +136,4 @@ async function SoylentiPage() {
 }
 
 // Export protected component
-export default withFeatureFlag(SoylentiPage, 'show-soylenti');
+export default withFeatureFlag(SoylentiPage, "show-soylenti");

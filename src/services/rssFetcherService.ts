@@ -1,17 +1,19 @@
-import Parser from 'rss-parser';
+import Parser from "rss-parser";
 
 export interface RumorItem {
   title: string;
   link: string;
   pubDate: Date;
-  source: 'Google News (Fichajes)' | 'Google News (General)' | 'BetisWeb';
+  source: "Google News (Fichajes)" | "Google News (General)" | "BetisWeb";
   description?: string;
 }
 
 const RSS_FEEDS = {
-  googleNewsFichajes: 'https://news.google.com/rss/search?q=Real+Betis+fichajes+rumores&hl=es&gl=ES&ceid=ES:es',
-  googleNewsGeneral: 'https://news.google.com/rss/search?q=Real+Betis&hl=es&gl=ES&ceid=ES:es',
-  betisWeb: 'https://betisweb.com/feed/',
+  googleNewsFichajes:
+    "https://news.google.com/rss/search?q=Real+Betis+fichajes+rumores&hl=es&gl=ES&ceid=ES:es",
+  googleNewsGeneral:
+    "https://news.google.com/rss/search?q=Real+Betis&hl=es&gl=ES&ceid=ES:es",
+  betisWeb: "https://betisweb.com/feed/",
 } as const;
 
 export class RSSFetcherService {
@@ -21,7 +23,7 @@ export class RSSFetcherService {
     this.parser = new Parser({
       timeout: 10000, // 10 second timeout
       headers: {
-        'User-Agent': 'Pena-Betica-Escocesa/1.0',
+        "User-Agent": "Pena-Betica-Escocesa/1.0",
       },
     });
   }
@@ -29,15 +31,15 @@ export class RSSFetcherService {
   async fetchGoogleNewsFichajes(): Promise<RumorItem[]> {
     try {
       const feed = await this.parser.parseURL(RSS_FEEDS.googleNewsFichajes);
-      return feed.items.map(item => ({
-        title: item.title || 'Sin título',
-        link: item.link || '#',
+      return feed.items.map((item) => ({
+        title: item.title || "Sin título",
+        link: item.link || "#",
         pubDate: item.pubDate ? new Date(item.pubDate) : new Date(),
-        source: 'Google News (Fichajes)',
+        source: "Google News (Fichajes)",
         description: item.contentSnippet || item.content,
       }));
     } catch (error) {
-      console.error('Error fetching Google News Fichajes feed:', error);
+      console.error("Error fetching Google News Fichajes feed:", error);
       return [];
     }
   }
@@ -45,15 +47,15 @@ export class RSSFetcherService {
   async fetchGoogleNewsGeneral(): Promise<RumorItem[]> {
     try {
       const feed = await this.parser.parseURL(RSS_FEEDS.googleNewsGeneral);
-      return feed.items.map(item => ({
-        title: item.title || 'Sin título',
-        link: item.link || '#',
+      return feed.items.map((item) => ({
+        title: item.title || "Sin título",
+        link: item.link || "#",
         pubDate: item.pubDate ? new Date(item.pubDate) : new Date(),
-        source: 'Google News (General)',
+        source: "Google News (General)",
         description: item.contentSnippet || item.content,
       }));
     } catch (error) {
-      console.error('Error fetching Google News General feed:', error);
+      console.error("Error fetching Google News General feed:", error);
       return [];
     }
   }
@@ -61,15 +63,15 @@ export class RSSFetcherService {
   async fetchBetisWeb(): Promise<RumorItem[]> {
     try {
       const feed = await this.parser.parseURL(RSS_FEEDS.betisWeb);
-      return feed.items.map(item => ({
-        title: item.title || 'Sin título',
-        link: item.link || '#',
+      return feed.items.map((item) => ({
+        title: item.title || "Sin título",
+        link: item.link || "#",
         pubDate: item.pubDate ? new Date(item.pubDate) : new Date(),
-        source: 'BetisWeb',
+        source: "BetisWeb",
         description: item.contentSnippet || item.content,
       }));
     } catch (error) {
-      console.error('Error fetching BetisWeb feed:', error);
+      console.error("Error fetching BetisWeb feed:", error);
       return [];
     }
   }
