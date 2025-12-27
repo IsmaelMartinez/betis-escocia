@@ -761,3 +761,46 @@ export interface NotificationPreferenceUpdate {
   updated_at?: string
 }
 
+// Type definitions for rumors table (Phase 2 Soylenti)
+export interface Rumor {
+  id: number
+  title: string
+  link: string
+  pub_date: string
+  source: string
+  description?: string | null
+  ai_probability?: number | null
+  ai_analysis?: string | null
+  ai_analyzed_at?: string | null
+  content_hash: string
+  is_duplicate: boolean
+  duplicate_of_id?: number | null
+  similarity_score?: number | null
+  created_at: string
+  updated_at: string
+}
+
+export interface RumorInsert {
+  title: string
+  link: string
+  pub_date: string
+  source: string
+  description?: string | null
+  ai_probability?: number | null
+  ai_analysis?: string | null
+  ai_analyzed_at?: string | null
+  content_hash: string
+  is_duplicate?: boolean
+  duplicate_of_id?: number | null
+  similarity_score?: number | null
+}
+
+export interface RumorUpdate {
+  ai_probability?: number | null
+  ai_analysis?: string | null
+  ai_analyzed_at?: string | null
+  is_duplicate?: boolean
+  duplicate_of_id?: number | null
+  similarity_score?: number | null
+}
+

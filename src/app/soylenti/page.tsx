@@ -12,23 +12,35 @@ export const metadata: Metadata = {
     "Últimos rumores de fichajes y noticias del Real Betis desde múltiples fuentes.",
 };
 
-// Fetch rumors server-side (directly from service, no HTTP call needed)
+// Fetch rumors from database (Phase 2: persisted with AI analysis)
 async function fetchRumors() {
-  const { RSSFetcherService } = await import("@/services/rssFetcherService");
-  const service = new RSSFetcherService();
-  const rumors = await service.fetchAllRumors();
+  const { supabase } = await import("@/lib/supabase");
+
+  const { data, error } = await supabase
+    .from("rumors")
+    .select("*")
+    .eq("is_duplicate", false)
+    .order("pub_date", { ascending: false })
+    .limit(50);
+
+  if (error) {
+    throw new Error("Error al cargar rumores");
+  }
 
   return {
     data: {
-      rumors: rumors.map((rumor) => ({
-        title: rumor.title,
-        link: rumor.link,
-        pubDate: rumor.pubDate.toISOString(),
-        source: rumor.source,
-        description: rumor.description,
-      })),
-      totalCount: rumors.length,
-      lastUpdated: new Date().toISOString(),
+      rumors:
+        data?.map((rumor) => ({
+          title: rumor.title,
+          link: rumor.link,
+          pubDate: rumor.pub_date,
+          source: rumor.source,
+          description: rumor.description,
+          aiProbability: rumor.ai_probability,
+          aiAnalysis: rumor.ai_analysis,
+        })) || [],
+      totalCount: data?.length || 0,
+      lastUpdated: data?.[0]?.created_at || new Date().toISOString(),
     },
   };
 }
@@ -65,15 +77,18 @@ async function SoylentiContent() {
             <div className="flex items-center space-x-2 mb-4 sm:mb-0">
               <RefreshCw size={20} className="text-betis-verde" />
               <p className="text-sm text-gray-600">
-                Actualizado en tiempo real - {rumors.length} rumores encontrados
+                {rumors.length} rumores analizados con IA
               </p>
             </div>
             <p className="text-xs text-gray-500">
               Última actualización:{" "}
               {new Intl.DateTimeFormat("es-ES", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
                 hour: "2-digit",
                 minute: "2-digit",
-              }).format(new Date())}
+              }).format(new Date(data.lastUpdated))}
             </p>
           </div>
 
@@ -88,6 +103,8 @@ async function SoylentiContent() {
                   pubDate={rumor.pubDate}
                   source={rumor.source}
                   description={rumor.description}
+                  aiProbability={rumor.aiProbability}
+                  aiAnalysis={rumor.aiAnalysis}
                 />
               ))}
             </div>

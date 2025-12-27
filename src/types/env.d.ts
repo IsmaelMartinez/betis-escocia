@@ -14,7 +14,13 @@ declare namespace NodeJS {
     API_RATE_LIMIT_PER_MINUTE: string;
     API_CACHE_TTL_HOURS: string;
     API_CACHE_TTL_LIVE_HOURS: string;
-    
+
+    // Gemini AI Configuration
+    GEMINI_API_KEY: string;
+    GEMINI_MODEL: string;
+    GEMINI_MAX_RETRIES: string;
+    GEMINI_TIMEOUT_MS: string;
+
     // Next.js Built-in Environment Variables
     NODE_ENV: 'development' | 'production' | 'test';
     NEXT_PUBLIC_VERCEL_URL?: string;
