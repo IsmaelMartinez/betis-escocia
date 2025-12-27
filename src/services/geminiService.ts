@@ -61,9 +61,30 @@ Responde SOLO en este formato JSON:
 
       return result;
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+
+      // Check if this is a quota/rate limit error (429) - don't retry these
+      const isQuotaError = errorMessage.includes("429") ||
+                          errorMessage.includes("quota") ||
+                          errorMessage.includes("rate limit");
+
+      if (isQuotaError) {
+        log.error("Gemini quota exceeded - using fallback", error, {
+          title,
+          source,
+          note: "Free tier: 20 requests/day limit reached"
+        });
+        return {
+          isTransferRumor: true, // Assume yes to avoid filtering out potential transfers
+          probability: 50,
+          reasoning: "No se pudo analizar este rumor automáticamente.",
+          confidence: "low",
+        };
+      }
+
       if (attempt === 2) {
         // Last attempt failed
-        log.error("Gemini analysis failed", error, { title, source });
+        log.error("Gemini analysis failed after retries", error, { title, source });
         return {
           isTransferRumor: true, // Assume yes to avoid filtering out potential transfers
           probability: 50,
