@@ -38,6 +38,7 @@
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-onesignal": "^3.4.0",
+    "rss-parser": "^3.13.0",
     "svix": "^1.82.0",
     "web-push": "^3.6.7",
     "zod": "^4.1.13"

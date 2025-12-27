@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash, User, LogIn, LogOut, UserPlus } from 'lucide-react';
+import { Menu, X, MapPin, Video, MessageCircle, Camera, Hash, User, LogIn, LogOut, UserPlus, Calendar, Trophy } from 'lucide-react';
 import BetisLogo from '@/components/BetisLogo';
-import { getEnabledNavigationItems } from '@/lib/featureFlags';
+import { getEnabledNavigationItems, hasFeature } from '@/lib/featureFlags';
 import { useUser, useClerk } from '@clerk/nextjs';
 
 interface DebugInfo {
@@ -24,15 +24,13 @@ interface LayoutProps {
 }
 
 export default function Layout({ children, debugInfo }: LayoutProps) {
-  // Navigation is now synchronous - no need for state or useEffect
   const enabledNavigation = getEnabledNavigationItems();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   
-  // Authentication state
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
-  const isAuthEnabled = true;
+  const isAuthEnabled = hasFeature('show-clerk-auth');
   
   const handleSignOut = async () => {
     await signOut();
@@ -40,187 +38,223 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="bg-betis-verde-dark shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            {/* Logo */}
-            <Link href="/" className="flex items-center space-x-2">
-              <BetisLogo width={32} height={32} className="bg-white rounded-full p-1" priority={true} />
-              <div className="text-white">
-                <p className="font-bold text-base sm:text-lg lg:text-lg">No busques más</p>
-                <p className="text-xs text-white xs:block">que no hay</p>
-              </div>
-            </Link>
-
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-6">
-              {enabledNavigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="text-white hover:text-betis-oro transition-colors duration-200 font-medium"
-                >
-                  {item.name}
-                </Link>
-              ))}
-              
-              {/* Authentication Links */}
-              {isAuthEnabled && isLoaded && (
-                <div className="flex items-center space-x-4">
-                  {user ? (
-                    <div className="relative">
-                      <button
-                        onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                        className="flex items-center space-x-2 text-white hover:text-betis-oro transition-colors duration-200"
-                      >
-                        <User size={20} />
-                        <span className="font-medium">{user.firstName || 'Usuario'}</span>
-                      </button>
-                      
-                      {isUserMenuOpen && (
-                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                          {user.publicMetadata.role === 'admin' && (
-                            <Link
-                              href="/admin"
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                              onClick={() => setIsUserMenuOpen(false)}
-                            >
-                              Admin
-                            </Link>
-                          )}
-                          <Link
-                            href="/dashboard"
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={() => setIsUserMenuOpen(false)}
-                          >
-                            Dashboard
-                          </Link>
-                          
-                            <Link
-                              href="/trivia"
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                              onClick={() => setIsUserMenuOpen(false)}
-                            >
-                              Trivia
-                            </Link>
-                          <button
-                            onClick={handleSignOut}
-                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >
-                            Cerrar Sesión
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="flex items-center space-x-4">
-                      <Link
-                        href="/sign-in"
-                        className="flex items-center space-x-1 text-white hover:text-betis-oro transition-colors duration-200 font-medium"
-                      >
-                        <LogIn size={18} />
-                        <span>Iniciar Sesión</span>
-                      </Link>
-                      <Link
-                        href="/sign-up"
-                        className="flex items-center space-x-1 bg-betis-oro text-betis-dark px-3 py-1 rounded-md hover:bg-betis-oro-dark transition-colors duration-200 font-medium"
-                      >
-                        <UserPlus size={18} />
-                        <span>Registro</span>
-                      </Link>
-                    </div>
-                  )}
-                </div>
-              )}
-            </nav>
-
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden text-white p-2" aria-label="Toggle mobile menu"
-            >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+    <div className="min-h-screen bg-canvas-warm flex flex-col">
+      {/* ============================================
+       * SCOREBOARD-INSPIRED HEADER - Design System v2
+       * Top ribbon + main nav with cultural patterns
+       * ============================================ */}
+      <header className="sticky top-0 z-50">
+        {/* Top ribbon - stadium LED display style */}
+        <div className="bg-betis-verde-dark py-1.5 px-4">
+          <div className="max-w-7xl mx-auto flex items-center justify-between text-white text-xs sm:text-sm">
+            <div className="flex items-center gap-2">
+              <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-betis-oro" />
+              <span className="font-mono hidden sm:inline">Polwarth Tavern, Edinburgh</span>
+              <span className="font-mono sm:hidden">Edinburgh</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-betis-oro" />
+              <span className="font-mono">Próximo partido disponible</span>
+            </div>
           </div>
         </div>
+        
+        {/* Main navigation bar */}
+        <nav className="bg-scotland-navy border-b-4 border-betis-oro relative">
+          {/* Subtle verdiblanco texture */}
+          <div className="absolute inset-0 pattern-verdiblanco-whisper opacity-10 pointer-events-none" />
+          
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center py-3">
+              {/* Logo with verdiblanco accent */}
+              <Link href="/" className="flex items-center gap-3 group">
+                <div className="relative">
+                  <div className="absolute inset-0 pattern-verdiblanco-subtle rounded-full scale-125 opacity-0 group-hover:opacity-30 transition-opacity" />
+                  <BetisLogo width={40} height={40} className="bg-white rounded-full p-1 relative" priority={true} />
+                </div>
+                <div>
+                  <p className="font-display text-lg sm:text-xl font-black text-white tracking-tight leading-none">
+                    NO BUSQUES MÁS
+                  </p>
+                  <p className="font-accent text-betis-oro text-xs sm:text-sm italic">
+                    que no hay
+                  </p>
+                </div>
+              </Link>
+
+              {/* Desktop Navigation - scoreboard style */}
+              <div className="hidden md:flex items-center gap-1">
+                {enabledNavigation.map((item, index) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="relative px-4 py-2 text-white hover:text-betis-oro transition-colors duration-200 font-heading font-semibold uppercase tracking-wide text-sm group"
+                  >
+                    <span className="relative z-10">{item.name}</span>
+                    <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors rounded" />
+                    {/* Separator dot */}
+                    {index < enabledNavigation.length - 1 && (
+                      <span className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-1 bg-betis-oro/50 rounded-full" />
+                    )}
+                  </Link>
+                ))}
+                
+                {/* Auth section */}
+                {isAuthEnabled && isLoaded && (
+                  <div className="flex items-center ml-4 pl-4 border-l border-white/20">
+                    {user ? (
+                      <div className="relative">
+                        <button
+                          onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                          className="flex items-center gap-2 px-3 py-2 text-white hover:text-betis-oro transition-colors rounded-lg hover:bg-white/10"
+                        >
+                          <User size={18} />
+                          <span className="font-heading font-medium text-sm">{user.firstName || 'Usuario'}</span>
+                        </button>
+                        
+                        {isUserMenuOpen && (
+                          <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl py-2 z-50 border border-gray-100">
+                            {user.publicMetadata.role === 'admin' && (
+                              <Link
+                                href="/admin"
+                                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-betis-verde-pale hover:text-betis-verde transition-colors"
+                                onClick={() => setIsUserMenuOpen(false)}
+                              >
+                                <Trophy size={16} />
+                                Admin
+                              </Link>
+                            )}
+                            <Link
+                              href="/dashboard"
+                              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-betis-verde-pale hover:text-betis-verde transition-colors"
+                              onClick={() => setIsUserMenuOpen(false)}
+                            >
+                              <User size={16} />
+                              Dashboard
+                            </Link>
+                            <Link
+                              href="/trivia"
+                              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-betis-verde-pale hover:text-betis-verde transition-colors"
+                              onClick={() => setIsUserMenuOpen(false)}
+                            >
+                              <Calendar size={16} />
+                              Trivia
+                            </Link>
+                            <div className="border-t border-gray-100 my-1" />
+                            <button
+                              onClick={handleSignOut}
+                              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
+                            >
+                              <LogOut size={16} />
+                              Cerrar Sesión
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Link
+                          href="/sign-in"
+                          className="flex items-center gap-1 px-3 py-2 text-white hover:text-betis-oro transition-colors font-heading font-medium text-sm"
+                        >
+                          <LogIn size={16} />
+                          <span className="hidden lg:inline">Iniciar</span>
+                        </Link>
+                        <Link
+                          href="/sign-up"
+                          className="flex items-center gap-1 bg-betis-oro text-scotland-navy px-4 py-2 rounded-lg hover:bg-oro-antique transition-colors font-heading font-bold text-sm"
+                        >
+                          <UserPlus size={16} />
+                          <span>Registro</span>
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Mobile menu button */}
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="md:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
+                aria-label="Toggle mobile menu"
+              >
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
+          </div>
+        </nav>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden bg-betis-verde-dark border-t border-white/20">
-            <div className="px-4 py-4 space-y-2">
+          <div className="md:hidden bg-scotland-navy border-t border-white/10">
+            <div className="px-4 py-4 space-y-1">
               {enabledNavigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="block px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
+                  className="block px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-xl transition-all duration-200 font-heading font-semibold text-lg uppercase tracking-wide"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
                 </Link>
               ))}
               
-              {/* Authentication Links - Mobile */}
               {isAuthEnabled && isLoaded && (
-                <div className="border-t border-white/20 pt-4 mt-4">
+                <div className="border-t border-white/10 pt-4 mt-4">
                   {user ? (
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       {user.publicMetadata.role === 'admin' && (
                         <Link
                           href="/admin"
-                          className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
+                          className="flex items-center gap-3 px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-xl transition-all font-heading font-semibold"
                           onClick={() => setIsMenuOpen(false)}
                         >
-                          <User size={20} />
-                          <span>Admin</span>
+                          <Trophy size={20} />
+                          Admin
                         </Link>
                       )}
                       <Link
                         href="/dashboard"
-                        className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
+                        className="flex items-center gap-3 px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-xl transition-all font-heading font-semibold"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         <User size={20} />
-                        <span>Dashboard</span>
+                        Dashboard
                       </Link>
-                      
-                        <Link
-                          href="/trivia"
-                          className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          <User size={20} />
-                          <span>Trivia</span>
-                        </Link>
+                      <Link
+                        href="/trivia"
+                        className="flex items-center gap-3 px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-xl transition-all font-heading font-semibold"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <Calendar size={20} />
+                        Trivia
+                      </Link>
                       <button
-                        onClick={() => {
-                          handleSignOut();
-                          setIsMenuOpen(false);
-                        }}
-                        className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg w-full text-left"
+                        onClick={() => { handleSignOut(); setIsMenuOpen(false); }}
+                        className="flex items-center gap-3 w-full px-4 py-3 text-white hover:text-red-400 hover:bg-white/10 rounded-xl transition-all font-heading font-semibold"
                       >
                         <LogOut size={20} />
-                        <span>Cerrar Sesión</span>
+                        Cerrar Sesión
                       </button>
                     </div>
                   ) : (
                     <div className="space-y-2">
                       <Link
                         href="/sign-in"
-                        className="flex items-center space-x-3 px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-lg transition-all duration-200 font-medium text-lg"
+                        className="flex items-center gap-3 px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-xl transition-all font-heading font-semibold"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         <LogIn size={20} />
-                        <span>Iniciar Sesión</span>
+                        Iniciar Sesión
                       </Link>
                       <Link
                         href="/sign-up"
-                        className="flex items-center space-x-3 px-4 py-3 bg-betis-oro text-betis-dark hover:bg-betis-oro-dark rounded-lg transition-all duration-200 font-medium text-lg"
+                        className="flex items-center gap-3 px-4 py-3 bg-betis-oro text-scotland-navy hover:bg-oro-antique rounded-xl transition-all font-heading font-bold"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         <UserPlus size={20} />
-                        <span>Registro</span>
+                        Registro
                       </Link>
                     </div>
                   )}
@@ -236,143 +270,127 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
         {children}
       </main>
 
-      {/* Footer - Using Scotland Navy for dark section */}
-      <footer className="bg-scotland-navy text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* ============================================
+       * FOOTER - Design System v2
+       * Navy depth gradient with tartan texture
+       * ============================================ */}
+      <footer className="bg-navy-depth relative overflow-hidden">
+        {/* Pattern overlay */}
+        <div className="absolute inset-0 pattern-tartan-navy opacity-30 pointer-events-none" />
+        
+        {/* Verdiblanco top edge */}
+        <div className="h-1 bg-gradient-to-r from-betis-verde via-betis-oro to-betis-verde" />
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* About */}
             <div className="sm:col-span-2 lg:col-span-1">
-              <h3 className="font-bold text-lg mb-4 text-betis-oro">No busques más que no hay</h3>
-              <p className="text-gray-300 text-sm leading-relaxed">
-                La peña del Real Betis en Edimburgo. Nos vemos en The Polwarth Tavern para cada partido.
+              <div className="flex items-center gap-3 mb-4">
+                <BetisLogo width={32} height={32} className="bg-white rounded-full p-0.5" />
+                <h3 className="font-display text-xl font-black text-betis-oro">
+                  No busques más
+                </h3>
+              </div>
+              <p className="font-accent text-betis-oro/80 italic mb-3">que no hay</p>
+              <p className="font-body text-gray-300 text-sm leading-relaxed">
+                La peña del Real Betis en Edimburgo. Más de 15 años compartiendo la pasión bética en Escocia.
               </p>
             </div>
 
-            {/* Contact */}
+            {/* Location */}
             <div>
-              <h3 className="font-bold text-lg mb-4 text-betis-oro">Dónde nos encontramos</h3>
-              <div className="space-y-2 text-sm text-gray-300">
-                <div className="flex items-center space-x-2">
-                  <MapPin size={16} />
-                  <span>The Polwarth Tavern</span>
+              <h3 className="font-heading font-bold text-lg mb-4 text-betis-oro uppercase tracking-wide">
+                Dónde estamos
+              </h3>
+              <div className="space-y-3 text-sm text-gray-300">
+                <div className="flex items-start gap-2">
+                  <MapPin size={16} className="text-betis-oro mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-heading font-semibold text-white">The Polwarth Tavern</p>
+                    <p>35 Polwarth Cres</p>
+                    <p>Edinburgh EH11 1HR</p>
+                  </div>
                 </div>
-                <p>35 Polwarth Cres, Edinburgh EH11 1HR</p>
               </div>
             </div>
 
-            {/* External Links */}
+            {/* Links */}
             <div>
-              <h3 className="font-bold text-lg mb-4 text-betis-oro">Enlaces útiles</h3>
+              <h3 className="font-heading font-bold text-lg mb-4 text-betis-oro uppercase tracking-wide">
+                Enlaces
+              </h3>
               <div className="space-y-2 text-sm">
-                <a
-                  href="https://www.betisweb.com/foro/principal/betis-fan-s-of-the-universe/6621126-pena-betica-escocesa-no-busques-mas-que-no-hay"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-gray-300 hover:text-betis-verde transition-colors"
-                >
-                  BetisWeb Forum
-                </a>
-                <a
-                  href="https://beticosenescocia.blogspot.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-gray-300 hover:text-betis-verde transition-colors"
-                >
-                  Béticos en Escocia Blog
-                </a>
-                <a
-                  href="https://www.laliga.com/noticias/conoce-a-la-pena-betica-de-escocia-no-busques-mas-que-no-hay"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-gray-300 hover:text-betis-verde transition-colors"
-                >
-                  LaLiga Reconocimiento
-                </a>
-                <a
-                  href="https://www.abc.es/deportes/alfinaldelapalmera/noticias-betis/sevi-pena-betica-no-busques-mas-no-embajada-recibe-suyos-escocia-202112091615_noticia.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-gray-300 hover:text-betis-verde transition-colors"
-                >
-                  ABC Sevilla
-                </a>
+                {[
+                  { href: 'https://www.betisweb.com/foro/principal/betis-fan-s-of-the-universe/6621126-pena-betica-escocesa-no-busques-mas-que-no-hay', label: 'BetisWeb Forum' },
+                  { href: 'https://beticosenescocia.blogspot.com/', label: 'Béticos en Escocia' },
+                  { href: 'https://www.laliga.com/noticias/conoce-a-la-pena-betica-de-escocia-no-busques-mas-que-no-hay', label: 'LaLiga' },
+                ].map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-gray-300 hover:text-betis-verde transition-colors font-body"
+                  >
+                    {link.label}
+                  </a>
+                ))}
               </div>
             </div>
 
             {/* Social */}
             <div>
-              <h3 className="font-bold text-lg mb-4 text-betis-oro">Síguenos</h3>
-              <div className="flex flex-wrap gap-4">
-                <a
-                  href="https://www.facebook.com/groups/beticosenescocia/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-betis-verde transition-colors"
-                  title="Facebook"
-                >
-                  <MessageCircle size={24} />
-                </a>
-                <a
-                  href="https://www.instagram.com/rbetisescocia/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-betis-verde transition-colors"
-                  title="Instagram"
-                >
-                  <Camera size={24} />
-                </a>
-                <a
-                  href="https://x.com/rbetisescocia"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-betis-verde transition-colors"
-                  title="X (Twitter)"
-                >
-                  <Hash size={24} />
-                </a>
-                <a
-                  href="https://www.youtube.com/beticosenescocia"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-betis-verde transition-colors"
-                  title="YouTube"
-                >
-                  <Video size={24} />
-                </a>
+              <h3 className="font-heading font-bold text-lg mb-4 text-betis-oro uppercase tracking-wide">
+                Síguenos
+              </h3>
+              <div className="flex flex-wrap gap-3">
+                {[
+                  { href: 'https://www.facebook.com/groups/beticosenescocia/', icon: MessageCircle, label: 'Facebook' },
+                  { href: 'https://www.instagram.com/rbetisescocia/', icon: Camera, label: 'Instagram' },
+                  { href: 'https://x.com/rbetisescocia', icon: Hash, label: 'X' },
+                  { href: 'https://www.youtube.com/beticosenescocia', icon: Video, label: 'YouTube' },
+                ].map((social) => (
+                  <a
+                    key={social.href}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 bg-white/5 hover:bg-betis-verde/20 text-gray-300 hover:text-betis-verde rounded-lg transition-all"
+                    title={social.label}
+                  >
+                    <social.icon size={20} />
+                  </a>
+                ))}
               </div>
             </div>
           </div>
 
-          <div className="border-t border-gray-700 mt-8 pt-8 text-center">
-            <div className="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-6 mb-4">
-              <a 
-                href="/gdpr" 
-                className="text-gray-400 hover:text-betis-verde text-sm transition-colors"
-              >
-                Protección de Datos
-              </a>
-              <a 
-                href="mailto:admin@betis-escocia.com" 
-                className="text-gray-400 hover:text-betis-verde text-sm transition-colors"
-              >
-                Contacto Admin
-              </a>
+          <div className="border-t border-white/10 mt-10 pt-8">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="flex flex-wrap justify-center gap-4 text-sm">
+                <Link href="/gdpr" className="text-gray-400 hover:text-betis-verde transition-colors font-body">
+                  Protección de Datos
+                </Link>
+                <Link href="/contacto" className="text-gray-400 hover:text-betis-verde transition-colors font-body">
+                  Contacto
+                </Link>
+              </div>
+              <p className="text-gray-400 text-sm font-body text-center">
+                © 2025 Peña Bética Escocesa. <span className="text-betis-oro">¡Viva er Betis manque pierda!</span>
+              </p>
             </div>
-            <p className="text-gray-400 text-sm">
-              © 2025 Peña Bética Escocesa. ¡Viva er Betis manque pierda!
-            </p>
           </div>
         </div>
       </footer>
 
-      {/* Debug Info (Development Only) */}
+      {/* Debug Info */}
       {debugInfo && (
-        <div className="fixed bottom-4 right-4 bg-gray-900 text-white p-3 rounded text-xs max-w-xs z-50">
-          <div className="font-bold">Feature Flags Debug</div>
-          <div>Environment: {debugInfo.environment}</div>
-          <div>Enabled: {debugInfo.enabledFeatures.join(', ')}</div>
+        <div className="fixed bottom-4 right-4 bg-gray-900 text-white p-3 rounded-lg text-xs max-w-xs z-50 shadow-lg">
+          <div className="font-bold text-betis-oro mb-1">Feature Flags</div>
+          <div className="text-gray-300">Env: {debugInfo.environment}</div>
+          <div className="text-green-400">On: {debugInfo.enabledFeatures.join(', ')}</div>
           {debugInfo.disabledFeatures.length > 0 && (
-            <div>Disabled: {debugInfo.disabledFeatures.join(', ')}</div>
+            <div className="text-red-400">Off: {debugInfo.disabledFeatures.join(', ')}</div>
           )}
         </div>
       )}

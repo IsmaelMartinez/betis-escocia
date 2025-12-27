@@ -11,7 +11,9 @@
       "Bash(npm run build:*)",
       "Bash(npm run test:e2e:*)",
       "Bash(npm outdated)",
-      "Bash(npm audit:*)"
+      "Bash(npm audit:*)",
+      "Skill(local-brain:local-brain)",
+      "Bash(local-brain:*)"
     ],
     "deny": [],
     "ask": []

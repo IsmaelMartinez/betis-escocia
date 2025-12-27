@@ -3,55 +3,103 @@ import {ColorPalette, ColorItem} from '@storybook/blocks';
 
 <Meta title="Design Tokens/Colors" />
 
-# Betis Color Palette
+# Peña Bética Escocesa - Design Tokens
 
-This document outlines the primary and accent colors used in the Betis application, reflecting the club's branding.
+This document outlines the brand colors used in the application, reflecting the fusion of Real Betis and Scottish identity.
+
+> **Important**: These values must match `src/app/globals.css` and `docs/design-system.md`
 
 <ColorPalette>
   <ColorItem
-    title="Primary Green"
-    subtitle="Betis Green"
-    colors={{ Green: '#00A651' }}
+    title="Betis Verde (Primary)"
+    subtitle="Authentic Real Betis green - buttons, links, primary actions"
+    colors={{ 
+      'Verde': '#048D47',
+      'Verde Dark': '#036B38',
+      'Verde Light': '#E8F5ED',
+      'Verde Pale': '#F0F9F4'
+    }}
   />
   <ColorItem
-    title="Accent Gold"
-    subtitle="Gold Accent"
-    colors={{ Gold: '#FFD700' }}
+    title="Betis Oro (Accent)"
+    subtitle="Gold accent - CTAs, highlights, special elements"
+    colors={{ 
+      'Oro': '#D4AF37',
+      'Oro Dark': '#B8960F',
+      'Oro Light': '#F5E6B3'
+    }}
+  />
+  <ColorItem
+    title="Scotland Colors (Secondary)"
+    subtitle="Scottish identity - footer, dark sections, contrast"
+    colors={{ 
+      'Navy': '#0B1426',
+      'Blue': '#005EB8',
+      'Slate': '#1E2A3A',
+      'Mist': '#E8ECF0',
+      'Stone': '#9CA3AF'
+    }}
   />
   <ColorItem
     title="Neutral Grays"
     subtitle="Used for text, backgrounds, and borders"
     colors={{
-      'Gray 100': '#F7FAFC',
-      'Gray 200': '#EDF2F7',
-      'Gray 300': '#E2E8F0',
-      'Gray 400': '#CBD5E0',
-      'Gray 500': '#A0AEC0',
-      'Gray 600': '#718096',
-      'Gray 700': '#4A5568',
-      'Gray 800': '#2D3748',
-      'Gray 900': '#1A202C',
+      'Gray 50': '#F9FAFB',
+      'Gray 100': '#F3F4F6',
+      'Gray 200': '#E5E7EB',
+      'Gray 300': '#D1D5DB',
+      'Gray 500': '#6B7280',
+      'Gray 700': '#374151',
+      'Gray 900': '#111827',
     }}
   />
   <ColorItem
-    title="Utility Colors"
-    subtitle="For success, warning, and error states"
+    title="Status Colors"
+    subtitle="For success, warning, error, and info states"
     colors={{
-      Success: '#48BB78',
-      Warning: '#ECC94B',
-      Error: '#F56565',
+      Success: '#059669',
+      Warning: '#D97706',
+      Error: '#DC2626',
+      Info: '#2563EB',
+    }}
+  />
+  <ColorItem
+    title="Canvas Colors"
+    subtitle="Warm backgrounds instead of pure white"
+    colors={{
+      'Warm': '#FDFBF7',
+      'Cream': '#FAF8F5',
     }}
   />
 </ColorPalette>
 
 ## Typography
 
-**Font Family:** "Open Sans", sans-serif (as defined in `.storybook/theme.ts`)
+| Family | CSS Variable | Usage |
+|--------|--------------|-------|
+| **Display** | `--font-display` | Heroes, impact headlines |
+| **Heading** | `--font-heading` | Section headers |
+| **Body** | `--font-body` | Body text, paragraphs |
+| **Mono** | `--font-mono` | Scores, data, code |
+
+## Pattern Library
+
+| Pattern | Class | Usage |
+|---------|-------|-------|
+| Verdiblanco | `.pattern-verdiblanco` | Full stripe pattern |
+| Verdiblanco Subtle | `.pattern-verdiblanco-subtle` | Light texture |
+| Tartan Subtle | `.pattern-tartan-subtle` | Scottish texture |
+| Edinburgh Mist | `.bg-edinburgh-mist` | Atmospheric gradient |
 
 ## Spacing
 
-(To be defined based on Tailwind CSS spacing scale or custom values)
+Based on Tailwind CSS 4px spacing scale: `1=4px`, `2=8px`, `4=16px`, `6=24px`, `8=32px`
 
 ## Border Radius
 
-(To be defined based on Tailwind CSS border-radius scale or custom values)
+| Token | Value | Usage |
+|-------|-------|-------|
+| `rounded-lg` | 8px | Buttons, inputs |
+| `rounded-xl` | 12px | Small cards |
+| `rounded-2xl` | 16px | Cards, containers |
+| `rounded-3xl` | 24px | Hero elements |

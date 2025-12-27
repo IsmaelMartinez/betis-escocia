@@ -2,21 +2,6 @@ import Link from 'next/link';
 import { Users, Heart } from 'lucide-react';
 
 export default function Nosotros() {
-  const foundingMembers = [
-    {
-      name: "José María Conde (José Mari)",
-      role: "Co-fundador y Presidente",
-      description: "Co-fundador de la peña en 2010 junto con Juan. Presidente desde 2013 y líder de la comunidad bética en Escocia.",
-      emoji: "👑"
-    },
-    {
-      name: "Juan Morata",
-      role: "Co-fundador",
-      description: "Co-fundador de la peña en 2010. Regresó a España por motivos profesionales. Asiduo del Benito Villamarín en Sevilla.",
-      emoji: "⚽"
-    },
-  ];
-
   const milestones = [
     {
       year: "2010",
@@ -158,38 +143,6 @@ export default function Nosotros() {
                     {milestone.description}
                   </p>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Team */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <div className="inline-block bg-betis-verde text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
-              👥 EL EQUIPO
-            </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
-              NUESTROS PILARES
-            </h2>
-            <p className="text-xl text-gray-800 max-w-3xl mx-auto">
-              Las personas que hacen que todo funcione y que cada partido sea especial
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {foundingMembers.map((member) => (
-              <div key={member.name} className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 text-center transform hover:scale-105 transition-all duration-300">
-                <div className="text-4xl mb-4">{member.emoji}</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{member.name}</h3>
-                <p className="text-betis-verde font-semibold mb-3 text-sm uppercase tracking-wide">
-                  {member.role}
-                </p>
-                <p className="text-gray-700 text-sm leading-relaxed font-medium">
-                  {member.description}
-                </p>
               </div>
             ))}
           </div>

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Oswald, Source_Sans_3, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Layout from "@/components/Layout";
 import OfflineDetector from "@/components/OfflineDetector";
@@ -14,6 +14,7 @@ const isVercel = process.env.VERCEL === '1';
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
+// Core system fonts (fallbacks)
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -28,13 +29,39 @@ const geistMono = Geist_Mono({
   preload: true,
 });
 
+// Design System v2 fonts
+// Display font: Oswald - bold, condensed, perfect for sports/impact headlines
+const displayFont = Oswald({
+  variable: "--font-display",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
+
+// Body/Heading font: Source Sans 3 - professional, readable, Spanish heritage
+const bodyFont = Source_Sans_3({
+  variable: "--font-body",
+  subsets: ["latin", "latin-ext"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
+
+// Accent font: Playfair Display - elegant, for taglines and ceremonial text
+const accentFont = Playfair_Display({
+  variable: "--font-accent",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://betis-escocia.vercel.app'),
   title: {
     default: "No busques más que no hay - Peña Bética Escocesa",
     template: "%s | Peña Bética Escocesa"
   },
-  description: "La peña del Real Betis en Edimburgo, Escocia. Más de 14 años compartiendo la pasión bética en el Polwarth Tavern. Eventos, RSVP, galería y comunidad familiar.",
+  description: "La peña del Real Betis en Edimburgo, Escocia. Más de 15 años compartiendo la pasión bética en el Polwarth Tavern. Eventos, RSVP, galería y comunidad familiar.",
   keywords: [
     "Real Betis",
     "Edinburgh", 
@@ -81,7 +108,7 @@ export const metadata: Metadata = {
     locale: "es_ES",
     alternateLocale: "en_GB",
     title: "No busques más que no hay - Peña Bética Escocesa",
-    description: "La peña del Real Betis en Edimburgo, Escocia. Más de 14 años compartiendo la pasión bética en el Polwarth Tavern.",
+    description: "La peña del Real Betis en Edimburgo, Escocia. Más de 15 años compartiendo la pasión bética en el Polwarth Tavern.",
     siteName: "Peña Bética Escocesa",
     url: "https://betis-escocia.vercel.app",
     images: [
@@ -98,7 +125,7 @@ export const metadata: Metadata = {
     site: "@rbetisescocia",
     creator: "@rbetisescocia",
     title: "No busques más que no hay - Peña Bética Escocesa",
-    description: "La peña del Real Betis en Edimburgo, Escocia. Más de 14 años compartiendo la pasión bética.",
+    description: "La peña del Real Betis en Edimburgo, Escocia. Más de 15 años compartiendo la pasión bética.",
     images: ["/images/logo_no_texto.jpg"],
   },
   verification: {
@@ -137,7 +164,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://connect.facebook.net" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${displayFont.variable} ${bodyFont.variable} ${accentFont.variable} antialiased`}
       >
         <FacebookSDK />
         

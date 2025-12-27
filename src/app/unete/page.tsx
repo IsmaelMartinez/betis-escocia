@@ -29,7 +29,11 @@ export default function Unete() {
       title: "Únete digitalmente",
       description: "Si te gusta el ambiente, únete a nuestro grupo de Facebook e Instagram para estar al día.",
       icon: "📱",
-      details: "Así podrás seguir todas las novedades, fotos y planes entre partidos."
+      details: "Así podrás seguir todas las novedades, fotos y planes entre partidos.",
+      links: [
+        { label: "Facebook", href: "https://www.facebook.com/groups/beticosenescocia/", icon: "📘" },
+        { label: "Instagram", href: "https://www.instagram.com/rbetisescocia/", icon: "📷" }
+      ]
     }
   ];
 
@@ -116,6 +120,22 @@ export default function Unete() {
                         💡 {step.details}
                       </p>
                     </div>
+                    {step.links && (
+                      <div className="flex flex-wrap gap-3 mt-4">
+                        {step.links.map((link) => (
+                          <a
+                            key={link.href}
+                            href={link.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 bg-betis-verde hover:bg-betis-verde-dark text-white px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-300"
+                          >
+                            <span>{link.icon}</span>
+                            {link.label}
+                          </a>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
                 
