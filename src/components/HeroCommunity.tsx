@@ -238,11 +238,12 @@ function HeroCommunity() {
         <div className="mt-20">
           <div className="relative bg-betis-verde-dark rounded-2xl p-8 text-white text-center overflow-hidden">
             {/* Gradient overlay using CSS variables */}
-            <div 
-              className="absolute inset-0" 
-              style={{ 
-                background: 'linear-gradient(to right, var(--betis-verde), var(--betis-verde-dark), var(--scotland-navy))' 
-              }} 
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to right, var(--betis-verde), var(--betis-verde-dark), var(--scotland-navy))",
+              }}
             />
             {/* Pattern overlay */}
             <div className="absolute inset-0 pattern-tartan-navy opacity-30" />

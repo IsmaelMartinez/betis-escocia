@@ -425,22 +425,14 @@ export default function Layout({ children, debugInfo }: LayoutProps) {
 
           <div className="border-t border-white/10 mt-10 pt-8">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-              <div className="flex flex-wrap justify-center gap-4 text-sm">
+              <FeatureWrapper feature="show-contacto">
                 <Link
-                  href="/gdpr"
-                  className="text-gray-400 hover:text-betis-verde transition-colors font-body"
+                  href="/contacto"
+                  className="text-gray-400 hover:text-betis-verde transition-colors font-body text-sm"
                 >
-                  Protección de Datos
+                  Contacto
                 </Link>
-                <FeatureWrapper feature="show-contacto">
-                  <Link
-                    href="/contacto"
-                    className="text-gray-400 hover:text-betis-verde transition-colors font-body"
-                  >
-                    Contacto
-                  </Link>
-                </FeatureWrapper>
-              </div>
+              </FeatureWrapper>
               <p className="text-gray-400 text-sm font-body text-center">
                 © 2025 Peña Bética Escocesa.{" "}
                 <span className="text-betis-oro">
