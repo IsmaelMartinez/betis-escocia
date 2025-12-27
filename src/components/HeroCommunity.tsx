@@ -253,7 +253,7 @@ function HeroCommunity() {
               </p>
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full backdrop-blur-sm">
                 <MapPin className="h-4 w-4 text-betis-oro" />
-                <span className="font-body text-sm">
+                <span className="font-body text-sm text-white font-medium">
                   35 Polwarth Crescent, Edinburgh EH11 1HR
                 </span>
               </div>
