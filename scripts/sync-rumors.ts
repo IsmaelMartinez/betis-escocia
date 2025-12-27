@@ -11,7 +11,8 @@ async function main() {
   console.log("\nSync Results:");
   console.log(`- Fetched: ${result.fetched}`);
   console.log(`- Duplicates: ${result.duplicates}`);
-  console.log(`- Filtered out (not transfers): ${result.filteredOut}`);
+  console.log(`- Transfer Rumors: ${result.transferRumors} (ai_probability > 0)`);
+  console.log(`- Regular News: ${result.regularNews} (ai_probability = 0)`);
   console.log(`- Analyzed: ${result.analyzed}`);
   console.log(`- Inserted: ${result.inserted}`);
   console.log(`- Errors: ${result.errors}`);

@@ -88,10 +88,14 @@ Responde SOLO en este formato JSON:
 
       if (attempt === 2) {
         // Last attempt failed
-        log.error("Gemini analysis failed after retries - skipping item", error, {
-          title,
-          source,
-        });
+        log.error(
+          "Gemini analysis failed after retries - skipping item",
+          error,
+          {
+            title,
+            source,
+          },
+        );
         return {
           isTransferRumor: false, // Skip items we can't analyze
           probability: 0,

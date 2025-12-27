@@ -17,4 +17,3 @@ export {
 } from "./PatternBackground";
 
 export type { PatternType, PatternBackgroundProps } from "./PatternBackground";
-

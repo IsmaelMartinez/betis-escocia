@@ -3,12 +3,13 @@ import { checkDuplicate } from "./deduplicationService";
 import { analyzeRumorCredibility } from "./geminiService";
 import { createClient } from "@supabase/supabase-js";
 import { log } from "@/lib/logger";
-import type { RumorInsert } from "@/lib/supabase";
+import type { BetisNewsInsert } from "@/lib/supabase";
 
 export interface SyncResult {
   fetched: number;
   duplicates: number;
-  filteredOut: number; // Non-transfer news filtered out
+  transferRumors: number; // Items identified as transfer rumors (ai_probability > 0)
+  regularNews: number; // Regular news items (ai_probability = 0)
   analyzed: number;
   inserted: number;
   errors: number;
@@ -19,7 +20,8 @@ export async function syncRumors(): Promise<SyncResult> {
   const result: SyncResult = {
     fetched: 0,
     duplicates: 0,
-    filteredOut: 0,
+    transferRumors: 0,
+    regularNews: 0,
     analyzed: 0,
     inserted: 0,
     errors: 0,
@@ -48,12 +50,12 @@ export async function syncRumors(): Promise<SyncResult> {
     result.fetched = rumors.length;
     log.business("rumors_fetched", { count: rumors.length });
 
-    // 2. Get existing rumors for deduplication (last 30 days)
+    // 2. Get existing news for deduplication (last 30 days)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     const { data: existingRumors } = await supabase
-      .from("rumors")
+      .from("betis_news")
       .select("id, title, description, content_hash")
       .gte("pub_date", thirtyDaysAgo.toISOString());
 
@@ -80,31 +82,38 @@ export async function syncRumors(): Promise<SyncResult> {
         );
         result.analyzed++;
 
-        // Skip if not a transfer rumor
-        if (!analysis.isTransferRumor) {
-          result.filteredOut++;
-          log.business("rumor_filtered_not_transfer", {
+        // Determine if transfer rumor or regular news
+        const isTransferRumor = analysis.isTransferRumor;
+        const aiProbability = isTransferRumor ? analysis.probability : 0;
+
+        if (isTransferRumor) {
+          result.transferRumors++;
+          log.business("transfer_rumor_found", {
             title: rumor.title,
-            reasoning: analysis.reasoning,
+            probability: analysis.probability,
           });
-          continue;
+        } else {
+          result.regularNews++;
+          log.business("regular_news_found", {
+            title: rumor.title,
+          });
         }
 
-        // Insert into database
-        const rumorInsert: RumorInsert = {
+        // Insert into database (all items: transfer rumors AND regular news)
+        const newsInsert: BetisNewsInsert = {
           title: rumor.title,
           link: rumor.link,
           pub_date: rumor.pubDate.toISOString(),
           source: rumor.source,
           description: rumor.description,
           content_hash: dedupeResult.contentHash,
-          ai_probability: analysis.probability,
+          ai_probability: aiProbability,
           ai_analysis: analysis.reasoning,
           ai_analyzed_at: new Date().toISOString(),
           is_duplicate: false,
         };
 
-        const { error } = await supabase.from("rumors").insert([rumorInsert]);
+        const { error } = await supabase.from("betis_news").insert([newsInsert]);
 
         if (error) {
           // Check if it's a unique constraint violation (duplicate link)
@@ -112,7 +121,7 @@ export async function syncRumors(): Promise<SyncResult> {
             result.duplicates++;
           } else {
             // Improved error logging with full error details
-            log.error("Failed to insert rumor", new Error(error.message), {
+            log.error("Failed to insert news item", new Error(error.message), {
               title: rumor.title,
               errorCode: error.code,
               errorDetails: error.details,
@@ -124,15 +133,15 @@ export async function syncRumors(): Promise<SyncResult> {
           result.inserted++;
         }
       } catch (error) {
-        log.error("Error processing rumor", error, { title: rumor.title });
+        log.error("Error processing news item", error, { title: rumor.title });
         result.errors++;
       }
     }
 
-    log.business("rumors_sync_completed", result);
+    log.business("betis_news_sync_completed", result);
     return result;
   } catch (error) {
-    log.error("Rumor sync failed", error);
+    log.error("Betis news sync failed", error);
     throw error;
   }
 }

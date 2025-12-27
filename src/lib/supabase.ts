@@ -811,8 +811,11 @@ export interface NotificationPreferenceUpdate {
   updated_at?: string;
 }
 
-// Type definitions for rumors table (Phase 2 Soylenti)
-export interface Rumor {
+// Type definitions for betis_news table (Phase 2 Soylenti)
+// Contains all Betis news from RSS feeds
+// Transfer rumors: ai_probability > 0 (1-100 credibility score)
+// Regular news: ai_probability = 0
+export interface BetisNews {
   id: number;
   title: string;
   link: string;
@@ -830,7 +833,7 @@ export interface Rumor {
   updated_at: string;
 }
 
-export interface RumorInsert {
+export interface BetisNewsInsert {
   title: string;
   link: string;
   pub_date: string;
@@ -845,7 +848,7 @@ export interface RumorInsert {
   similarity_score?: number | null;
 }
 
-export interface RumorUpdate {
+export interface BetisNewsUpdate {
   ai_probability?: number | null;
   ai_analysis?: string | null;
   ai_analyzed_at?: string | null;
