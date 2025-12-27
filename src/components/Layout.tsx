@@ -18,10 +18,7 @@ import {
   Trophy,
 } from "lucide-react";
 import BetisLogo from "@/components/BetisLogo";
-import {
-  getEnabledNavigationItems,
-  hasFeature,
-} from "@/lib/featureFlags";
+import { getEnabledNavigationItems, hasFeature } from "@/lib/featureFlags";
 import { FeatureWrapper } from "@/lib/featureProtection";
 import { useUser, useClerk } from "@clerk/nextjs";
 
