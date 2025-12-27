@@ -248,10 +248,10 @@ describe("HeroCommunity", () => {
     it("uses official Betis styling colors in bottom section", () => {
       render(<HeroCommunity />);
 
-      // The bottom section uses gradient from betis-verde to scotland-navy
+      // The bottom section uses betis-verde-dark with gradient overlay
       const bottomSection = screen
         .getByText(/Polwarth Tavern/i)
-        .closest(".bg-gradient-to-r");
+        .closest(".bg-betis-verde-dark");
       expect(bottomSection).toBeInTheDocument();
     });
   });
