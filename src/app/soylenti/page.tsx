@@ -2,9 +2,9 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Spinner from "@/components/ui/Spinner";
-import RumorCard from "@/components/RumorCard";
 import { withFeatureFlag } from "@/lib/featureProtection";
-import { Newspaper, RefreshCw } from "lucide-react";
+import { Newspaper } from "lucide-react";
+import SoylentiClient from "./SoylentiClient";
 
 export const metadata: Metadata = {
   title: "Soylenti - Rumores de Fichajes | Peña Bética Escocesa",
@@ -72,49 +72,10 @@ async function SoylentiContent() {
       {/* Rumors Grid */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Info Bar */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-8 flex flex-col sm:flex-row justify-between items-center">
-            <div className="flex items-center space-x-2 mb-4 sm:mb-0">
-              <RefreshCw size={20} className="text-betis-verde" />
-              <p className="text-sm text-gray-600">
-                {rumors.length} rumores analizados con IA
-              </p>
-            </div>
-            <p className="text-xs text-gray-500">
-              Última actualización:{" "}
-              {new Intl.DateTimeFormat("es-ES", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              }).format(new Date(data.lastUpdated))}
-            </p>
-          </div>
-
-          {/* Rumors Grid */}
-          {rumors.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {rumors.map((rumor: any, index: number) => (
-                <RumorCard
-                  key={`${rumor.link}-${index}`}
-                  title={rumor.title}
-                  link={rumor.link}
-                  pubDate={rumor.pubDate}
-                  source={rumor.source}
-                  description={rumor.description}
-                  aiProbability={rumor.aiProbability}
-                  aiAnalysis={rumor.aiAnalysis}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-16">
-              <p className="text-gray-600 text-lg">
-                No hay rumores disponibles en este momento
-              </p>
-            </div>
-          )}
+          <SoylentiClient
+            initialRumors={rumors}
+            lastUpdated={data.lastUpdated}
+          />
         </div>
       </section>
 

@@ -11,6 +11,7 @@ interface RumorCardProps {
   description?: string;
   aiProbability?: number | null;
   aiAnalysis?: string | null;
+  showCredibility?: boolean;
 }
 
 export default function RumorCard({
@@ -21,6 +22,7 @@ export default function RumorCard({
   description,
   aiProbability,
   aiAnalysis,
+  showCredibility = true,
 }: RumorCardProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -54,20 +56,23 @@ export default function RumorCard({
             >
               {source}
             </span>
-            {aiProbability !== null && aiProbability !== undefined && (
-              <span
-                className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                  aiProbability >= 70
-                    ? "bg-betis-verde text-white"
-                    : aiProbability >= 40
-                      ? "bg-betis-oro text-betis-verde-dark"
-                      : "bg-gray-200 text-gray-700"
-                }`}
-                title={aiAnalysis || undefined}
-              >
-                {aiProbability}% credibilidad
-              </span>
-            )}
+            {showCredibility &&
+              aiProbability !== null &&
+              aiProbability !== undefined &&
+              aiProbability > 0 && (
+                <span
+                  className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                    aiProbability >= 70
+                      ? "bg-betis-verde text-white"
+                      : aiProbability >= 40
+                        ? "bg-betis-oro text-betis-verde-dark"
+                        : "bg-gray-200 text-gray-700"
+                  }`}
+                  title={aiAnalysis || undefined}
+                >
+                  {aiProbability}% credibilidad
+                </span>
+              )}
           </div>
           <span className="text-sm text-gray-500">{formatDate(pubDate)}</span>
         </div>
