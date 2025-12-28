@@ -53,16 +53,23 @@ export default function SoylentiClient({
     [rumors],
   );
 
+  const [error, setError] = useState<string | null>(null);
+
   const handleLoadMore = () => {
     if (!hasMore || isPending) return;
 
     const lastRumor = rumors[rumors.length - 1];
     if (!lastRumor) return;
 
+    setError(null);
     startTransition(async () => {
-      const result = await fetchMoreRumors(lastRumor.pubDate);
-      setRumors((prev) => [...prev, ...result.rumors]);
-      setHasMore(result.hasMore);
+      try {
+        const result = await fetchMoreRumors(lastRumor.pubDate);
+        setRumors((prev) => [...prev, ...result.rumors]);
+        setHasMore(result.hasMore);
+      } catch {
+        setError("Error al cargar más noticias. Inténtalo de nuevo.");
+      }
     });
   };
 
@@ -156,6 +163,9 @@ export default function SoylentiClient({
                   "Cargar más noticias"
                 )}
               </button>
+              {error && (
+                <p className="mt-4 text-red-600 text-sm">{error}</p>
+              )}
             </div>
           )}
         </>
