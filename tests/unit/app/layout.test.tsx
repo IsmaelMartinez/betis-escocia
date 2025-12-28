@@ -15,6 +15,9 @@ import FacebookSDK from '@/components/FacebookSDK';
 vi.mock('next/font/google', () => ({
   Geist: vi.fn(() => ({ variable: 'var(--font-geist-sans)' })),
   Geist_Mono: vi.fn(() => ({ variable: 'var(--font-geist-mono)' })),
+  Oswald: vi.fn(() => ({ variable: 'var(--font-oswald)' })),
+  Source_Sans_3: vi.fn(() => ({ variable: 'var(--font-source-sans)' })),
+  Playfair_Display: vi.fn(() => ({ variable: 'var(--font-playfair)' })),
 }));
 vi.mock('@/components/Layout', () => ({
   default: vi.fn(({ children }) => <div data-testid="mock-layout">{children}</div>),

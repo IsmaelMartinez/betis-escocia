@@ -1,12 +1,22 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { MapPin, Heart, Coffee, Smile, ChevronDown, ChevronUp } from 'lucide-react';
-import dynamic from 'next/dynamic';
-import { useState, memo } from 'react';
+import Link from "next/link";
+import {
+  MapPin,
+  Heart,
+  Coffee,
+  Smile,
+  ChevronDown,
+  ChevronUp,
+  Users,
+  Calendar,
+} from "lucide-react";
+import dynamic from "next/dynamic";
+import { useState, memo } from "react";
+import { FeatureWrapper } from "@/lib/featureProtection";
 
 // Lazy load RSVPWidget since it's only shown when expanded
-const RSVPWidget = dynamic(() => import('./RSVPWidget'), {
+const RSVPWidget = dynamic(() => import("./RSVPWidget"), {
   loading: () => (
     <div className="animate-pulse">
       <div className="h-32 bg-gray-200 rounded"></div>
@@ -16,7 +26,7 @@ const RSVPWidget = dynamic(() => import('./RSVPWidget'), {
 });
 
 // Lazy load CommunityStats - not critical for initial render
-const CommunityStats = dynamic(() => import('./CommunityStats'), {
+const CommunityStats = dynamic(() => import("./CommunityStats"), {
   loading: () => (
     <div className="bg-gray-50 rounded-lg p-6 text-center border border-gray-200 animate-pulse">
       <div className="grid grid-cols-3 gap-4 mb-4">
@@ -40,136 +50,220 @@ const CommunityStats = dynamic(() => import('./CommunityStats'), {
 
 function HeroCommunity() {
   const [isRSVPExpanded, setIsRSVPExpanded] = useState(false);
+
   return (
-    <section className="relative min-h-screen bg-white overflow-hidden">
-      {/* Clean, professional background inspired by official site */}
+    <section className="relative min-h-screen overflow-hidden">
+      {/* ============================================
+       * LAYERED BACKGROUND - Design System v2
+       * Edinburgh mist + tartan texture + verdiblanco edges
+       * ============================================ */}
       <div className="absolute inset-0">
-        {/* Main green section - inspired by Betis official */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white via-gray-50 to-betis-verde-pale"></div>
-        
-        {/* Subtle pattern */}
-        <div className="absolute inset-0 opacity-5" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23048D47'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3C/g%3E%3C/svg%3E")`,
-        }}></div>
+        {/* Layer 1: Edinburgh mist gradient */}
+        <div className="absolute inset-0 bg-edinburgh-mist" />
+
+        {/* Layer 2: Subtle tartan texture */}
+        <div className="absolute inset-0 pattern-tartan-subtle" />
+
+        {/* Layer 3: Verdiblanco whisper on edges */}
+        <div className="absolute left-0 top-0 bottom-0 w-8 md:w-16 pattern-verdiblanco-subtle opacity-50" />
+        <div className="absolute right-0 top-0 bottom-0 w-8 md:w-16 pattern-verdiblanco-subtle opacity-50" />
+
+        {/* Layer 4: Gold accent glow */}
+        <div className="absolute top-1/4 right-1/4 w-64 md:w-96 h-64 md:h-96 rounded-full blur-3xl bg-oro-glow pointer-events-none" />
       </div>
-      
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Header section - inspired by Betis official layout */}
 
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Left side - Main message in official style */}
-          <div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 lg:mb-8 leading-tight text-betis-negro">
-              <span className="block">MÁS QUE</span>
-              <span className="block text-betis-verde">UNA PEÑA</span>
-              <span className="block text-gray-600 text-2xl sm:text-3xl md:text-4xl lg:text-5xl mt-2 lg:mt-4">UNA FAMILIA</span>
+          {/* ============================================
+           * LEFT SIDE - Main Message
+           * Uses new typography system
+           * ============================================ */}
+          <div className="animate-fade-in-up">
+            {/* Tagline badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-betis-verde-light border border-betis-verde/20 mb-6">
+              <span className="text-sm font-medium text-betis-verde-dark">
+                🏴󠁧󠁢󠁳󠁣󠁴󠁿 Desde Sevilla a Edimburgo
+              </span>
+            </div>
+
+            {/* Main headline - using display font */}
+            <h1 className="mb-6 lg:mb-8 leading-none">
+              <span className="block font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-scotland-navy tracking-tight">
+                MÁS QUE
+              </span>
+              <span className="block font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-betis-verde tracking-tight">
+                UNA PEÑA
+              </span>
+              <span className="block font-accent text-2xl sm:text-3xl md:text-4xl text-oro-antique mt-4 italic">
+                Una Familia
+              </span>
             </h1>
-            
-            {/* Official-style description box */}
-            <div className="bg-white rounded-lg p-6 lg:p-8 mb-6 lg:mb-8 border-l-4 border-betis-verde shadow-lg">
-              <p className="text-lg lg:text-xl leading-relaxed text-gray-700 mb-4 lg:mb-6">
-                <strong className="text-betis-verde">Más de 14 años</strong> compartiendo la pasión por el Betis desde Edimburgo. 
-                Aquí encontrarás <strong className="text-betis-verde">amigos de verdad</strong>, momentos únicos 
-                y el cariño de una comunidad que te acoge como en casa.
+
+            {/* Description card with verdiblanco edge */}
+            <div className="relative bg-canvas-warm rounded-xl p-6 lg:p-8 mb-8 shadow-lg border border-gray-100 pattern-verdiblanco-edge-left">
+              <p className="font-body text-lg lg:text-xl leading-relaxed text-gray-700 mb-4">
+                <strong className="text-betis-verde font-heading">
+                  Más de 15 años
+                </strong>{" "}
+                compartiendo la pasión por el Betis desde Edimburgo. Aquí
+                encontrarás{" "}
+                <strong className="text-betis-verde font-heading">
+                  amigos de verdad
+                </strong>
+                , momentos únicos y el cariño de una comunidad que te acoge como
+                en casa.
               </p>
-              <p className="text-base lg:text-lg text-gray-600">
-                Ya seas de Sevilla, de cualquier parte de España, o incluso escocés... 
-                si llevas el Betis en el corazón, <strong className="text-betis-verde">ya eres de los nuestros</strong>.
+              <p className="font-body text-base lg:text-lg text-gray-600">
+                Ya seas de Sevilla, de cualquier parte de España, o incluso
+                escocés... si llevas el Betis en el corazón,{" "}
+                <strong className="text-betis-verde">
+                  ya eres de los nuestros
+                </strong>
+                .
               </p>
             </div>
 
-            {/* Key features - official card style */}
+            {/* Feature cards with cultural pattern */}
             <h2 className="sr-only">Características de la peña</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-6 lg:mb-8">
-              <div className="group bg-white rounded-lg p-6 border border-gray-200 hover:border-betis-verde hover:shadow-lg transition-all duration-300 shadow-sm transform hover:-translate-y-1 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-8">
+              <div className="group pattern-card-cultural rounded-xl p-6 border border-gray-100 hover:border-betis-verde hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 <Coffee className="h-8 w-8 text-betis-verde mb-4 group-hover:scale-110 transition-transform duration-300" />
-                <h3 className="font-bold text-betis-negro mb-2 text-lg">AMBIENTE FAMILIAR</h3>
-                <p className="text-sm text-gray-600">Niños bienvenidos, ambiente relajado y acogedor</p>
+                <h3 className="font-heading font-bold text-scotland-navy mb-2 text-lg uppercase tracking-wide">
+                  Ambiente Familiar
+                </h3>
+                <p className="font-body text-sm text-gray-600">
+                  Niños bienvenidos, ambiente relajado y acogedor
+                </p>
               </div>
-              <div className="group bg-white rounded-lg p-6 border border-gray-200 hover:border-betis-verde hover:shadow-lg transition-all duration-300 shadow-sm transform hover:-translate-y-1 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
+              <div className="group pattern-card-cultural rounded-xl p-6 border border-gray-100 hover:border-betis-verde hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 <Smile className="h-8 w-8 text-betis-verde mb-4 group-hover:scale-110 transition-transform duration-300" />
-                <h3 className="font-bold text-betis-negro mb-2 text-lg">SIEMPRE CON HUMOR</h3>
-                <p className="text-sm text-gray-600">Ganemos o perdamos, aquí se ríe y se disfruta</p>
+                <h3 className="font-heading font-bold text-scotland-navy mb-2 text-lg uppercase tracking-wide">
+                  Siempre con Humor
+                </h3>
+                <p className="font-body text-sm text-gray-600">
+                  Ganemos o perdamos, aquí se ríe y se disfruta
+                </p>
               </div>
             </div>
 
-{/* CTA buttons - official style */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link 
+            {/* CTA buttons - centered 2-column grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+              <Link
                 href="/unete"
-                className="group bg-betis-verde hover:bg-betis-verde-dark text-white px-8 py-4 rounded-lg font-bold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-betis flex items-center justify-center shadow-lg"
+                className="group bg-betis-verde-dark hover:bg-betis-verde text-white px-8 py-4 rounded-xl font-heading font-bold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-betis flex items-center justify-center"
               >
                 <Heart className="mr-3 h-5 w-5 group-hover:animate-pulse" />
-                <span className="relative overflow-hidden">
-                  ÚNETE A LA FAMILIA
-                </span>
+                ÚNETE A LA FAMILIA
+              </Link>
+              <Link
+                href="/partidos"
+                className="group bg-white hover:bg-betis-verde-pale text-betis-verde-dark border-2 border-betis-verde-dark px-8 py-4 rounded-xl font-heading font-bold text-lg transition-all duration-300 flex items-center justify-center"
+              >
+                <Calendar className="mr-3 h-5 w-5" />
+                VER PARTIDOS
               </Link>
             </div>
           </div>
 
-          {/* Right side - Community showcase in official style */}
-          <div className="relative">
+          {/* ============================================
+           * RIGHT SIDE - Community Showcase
+           * Card with cultural styling
+           * ============================================ */}
+          <div
+            className="relative animate-fade-in-up"
+            style={{ animationDelay: "0.2s" }}
+          >
             {/* Main community card */}
-            <div className="bg-white rounded-lg p-8 shadow-xl border border-gray-200">
-              {/* Stats section - official style */}
-              <div className="mb-8">
+            <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100 relative overflow-hidden">
+              {/* Decorative corner pattern */}
+              <div className="absolute top-0 right-0 w-24 h-24 pattern-verdiblanco-diagonal opacity-10" />
+
+              {/* Stats section */}
+              <div className="mb-8 relative">
                 <CommunityStats />
               </div>
 
-              {/* Expandable RSVP Section */}
-              <div className="border-t border-gray-200 pt-6">
-                <button
-                  onClick={() => setIsRSVPExpanded(!isRSVPExpanded)}
-                  className="w-full flex items-center justify-between text-left mb-4 hover:text-betis-verde transition-colors duration-200"
-                >
-                  <h3 className="text-lg font-bold text-betis-negro uppercase tracking-wide">
-                    🍺 Confirmar Asistencia
-                  </h3>
-                  {isRSVPExpanded ? (
-                    <ChevronUp className="h-5 w-5 text-betis-verde" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-gray-400" />
+              {/* Expandable RSVP Section - controlled by feature flag */}
+              <FeatureWrapper feature="show-rsvp">
+                <div className="border-t border-gray-100 pt-6">
+                  <button
+                    onClick={() => setIsRSVPExpanded(!isRSVPExpanded)}
+                    className="w-full flex items-center justify-between text-left mb-4 hover:text-betis-verde transition-colors duration-200 group"
+                  >
+                    <h3 className="font-heading text-lg font-bold text-scotland-navy uppercase tracking-wide flex items-center gap-2">
+                      <Users className="h-5 w-5 text-betis-verde" />
+                      Confirmar Asistencia
+                    </h3>
+                    {isRSVPExpanded ? (
+                      <ChevronUp className="h-5 w-5 text-betis-verde" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-gray-400 group-hover:text-betis-verde transition-colors" />
+                    )}
+                  </button>
+
+                  {isRSVPExpanded && (
+                    <div className="transition-all duration-300 ease-in-out">
+                      <RSVPWidget
+                        event={{
+                          id: undefined,
+                          title: "Real Betis - Próximo Partido",
+                          date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                          location: "Polwarth Tavern, Edinburgh",
+                          description:
+                            "Únete a la peña para el próximo partido del Betis",
+                        }}
+                        displayMode="inline"
+                        className="border-none shadow-none"
+                      />
+                    </div>
                   )}
-                </button>
-                
-                {isRSVPExpanded && (
-                  <div className="transition-all duration-300 ease-in-out">
-                    <RSVPWidget
-                      event={{
-                        id: undefined, // General RSVP for next match
-                        title: "Real Betis - Próximo Partido",
-                        date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Next week as default
-                        location: "Polwarth Tavern, Edinburgh",
-                        description: "Únete a la peña para el próximo partido del Betis"
-                      }}
-                      displayMode="inline"
-                      className="border-none shadow-none"
-                    />
-                  </div>
-                )}
-              </div>
+                </div>
+              </FeatureWrapper>
             </div>
 
-            {/* Floating Betis element */}
-            <div className="absolute -top-4 -right-4 bg-betis-verde rounded-full p-4 shadow-lg">
+            {/* Floating accent elements */}
+            <div className="absolute -top-4 -right-4 bg-gradient-to-br from-betis-verde to-betis-verde-dark rounded-full p-4 shadow-lg">
               <Heart className="h-6 w-6 text-white" />
+            </div>
+            <div className="absolute -bottom-3 -left-3 bg-gradient-to-br from-betis-oro to-oro-antique rounded-full p-3 shadow-lg">
+              <span className="text-scotland-navy text-lg">🏴󠁧󠁢󠁳󠁣󠁴󠁿</span>
             </div>
           </div>
         </div>
 
-        {/* Bottom section - official style info bar */}
+        {/* ============================================
+         * BOTTOM SECTION - Location Bar
+         * Cultural gradient with pattern overlay
+         * ============================================ */}
         <div className="mt-20">
-          <div className="bg-betis-verde rounded-lg p-8 text-white text-center">
-            <div className="max-w-4xl mx-auto">
-              <h3 className="text-xl font-bold mb-4 uppercase tracking-wide">
-                📍 POLWARTH TAVERN - NUESTRO HOGAR EN EDIMBURGO
+          <div className="relative bg-betis-verde-dark rounded-2xl p-8 text-white text-center overflow-hidden">
+            {/* Gradient overlay using CSS variables */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to right, var(--betis-verde), var(--betis-verde-dark), var(--scotland-navy))",
+              }}
+            />
+            {/* Pattern overlay */}
+            <div className="absolute inset-0 pattern-tartan-navy opacity-30" />
+
+            <div className="relative max-w-4xl mx-auto">
+              <h3 className="font-display text-2xl md:text-3xl font-black mb-4 uppercase tracking-wide">
+                📍 Polwarth Tavern
               </h3>
-              <p className="text-betis-verde-light mb-4 text-lg">
-                Cada partido es una excusa perfecta para juntarnos, reír y disfrutar del Betis en buena compañía.
+              <p className="font-accent text-betis-oro text-xl md:text-2xl mb-4 italic">
+                Nuestro hogar en Edimburgo
               </p>
-              <div className="text-sm opacity-90">
-                <MapPin className="inline h-4 w-4 mr-2" />
-                35 Polwarth Cresace, Edinburgh EH11 1HR
+              <p className="font-body text-white/90 mb-6 text-lg">
+                Cada partido es una excusa perfecta para juntarnos, reír y
+                disfrutar del Betis en buena compañía.
+              </p>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full backdrop-blur-sm">
+                <MapPin className="h-4 w-4 text-betis-oro" />
+                <span className="font-body text-sm text-white font-medium">
+                  35 Polwarth Crescent, Edinburgh EH11 1HR
+                </span>
               </div>
             </div>
           </div>

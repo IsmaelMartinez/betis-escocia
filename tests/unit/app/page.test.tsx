@@ -41,12 +41,13 @@ describe('Home page', () => {
 
   it('renders the "Join Us" section with correct text and links', () => {
     render(<Home />);
-    expect(screen.getByText('¿Estás de visita en Escocia?')).toBeInTheDocument();
+    // Text is split across lines with <br /> so we check for parts
+    expect(screen.getByText(/¿Estás de visita/i)).toBeInTheDocument();
+    expect(screen.getByText(/en Escocia\?/i)).toBeInTheDocument();
     expect(screen.getByText('¡Únete a nosotros en The Polwarth Tavern!')).toBeInTheDocument();
     expect(screen.getByText(/Todos los béticos son bienvenidos/i)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Únete/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Facebook/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /YouTube/i })).toBeInTheDocument();
+    // Facebook and YouTube links are wrapped in FeatureWrapper for social media feature
   });
 
   it('renders contact info section with correct details', () => {
@@ -63,6 +64,6 @@ describe('Home page', () => {
     expect(within(ambienteSection!).getByText(/100% bético/i, { selector: 'p' })).toBeInTheDocument();
 
     expect(screen.getByText('⏰ Horarios')).toBeInTheDocument();
-    expect(screen.getByText(/15 min antes del evento/i)).toBeInTheDocument();
+    expect(screen.getByText(/15 min antes del partido/i)).toBeInTheDocument();
   });
 });

@@ -2,8 +2,6 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@clerk/nextjs';
 import { Shield, Mail } from 'lucide-react';
 import Card, { CardBody } from '@/components/ui/Card';
@@ -11,14 +9,6 @@ import Card, { CardBody } from '@/components/ui/Card';
 
 export default function GDPRPage() {
   const { isSignedIn } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (isSignedIn) {
-      // Redirect authenticated users to their profile dashboard
-      router.push('/dashboard');
-    }
-  }, [isSignedIn, router]);
 
   if (isSignedIn === undefined) {
     // Render a loading state while Clerk is initializing
@@ -29,13 +19,7 @@ export default function GDPRPage() {
     );
   }
 
-  if (isSignedIn) {
-    // This part should ideally not be reached due to the redirect in useEffect
-    // but as a fallback, we can render nothing or a redirect message
-    return null;
-  }
-
-  // Content for unauthenticated users
+  // Show GDPR content for both authenticated and unauthenticated users
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

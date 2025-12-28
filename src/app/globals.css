@@ -9,6 +9,10 @@
    * See docs/design-system.md for full guidelines
    * =========================================== */
   
+  /* ===========================================
+   * TIER 1: CORE BRAND COLORS
+   * =========================================== */
+  
   /* Primary: Betis Verde (Authentic Real Betis Green) */
   --betis-verde: #048D47;
   --betis-verde-dark: #036B38;
@@ -30,6 +34,42 @@
   --betis-negro: #000000;
   --betis-dark: #0f1419;
   
+  /* ===========================================
+   * TIER 2: EXTENDED PALETTE (Design System v2)
+   * =========================================== */
+  
+  /* Verdiblanco System - for stripe patterns */
+  --verdiblanco-stripe: #048D47;
+  --verdiblanco-white: #FFFFFF;
+  
+  /* Rich Gold Spectrum */
+  --oro-bright: #FFD700;
+  --oro-antique: #C9A227;
+  --oro-shadow: #8B6914;
+  
+  /* Scottish Atmosphere */
+  --scotland-slate: #1E2A3A;
+  --scotland-mist: #E8ECF0;
+  --scotland-stone: #9CA3AF;
+  
+  /* Warm Canvas (not pure white) */
+  --canvas-warm: #FDFBF7;
+  --canvas-cream: #FAF8F5;
+  
+  /* ===========================================
+   * TIER 3: SEMANTIC TOKENS
+   * =========================================== */
+  
+  /* Match States */
+  --match-live: #EF4444;
+  --match-upcoming: var(--betis-verde);
+  --match-finished: #6B7280;
+  --match-postponed: #F59E0B;
+  
+  /* Interactive States */
+  --focus-ring: var(--betis-verde);
+  --hover-overlay: rgba(4, 141, 71, 0.1);
+  
   /* Gray Scale */
   --gray-50: #F9FAFB;
   --gray-100: #F3F4F6;
@@ -47,6 +87,30 @@
   --status-warning: #D97706;
   --status-error: #DC2626;
   --status-info: #2563EB;
+  
+  /* ===========================================
+   * TYPOGRAPHY SYSTEM
+   * =========================================== */
+  
+  /* Font Families - uses CSS variables from next/font/google */
+  --font-display-stack: var(--font-display), 'Oswald', var(--font-geist-sans), sans-serif;
+  --font-heading: var(--font-body), var(--font-geist-sans), sans-serif;
+  --font-body-stack: var(--font-body), var(--font-geist-sans), sans-serif;
+  --font-mono: var(--font-geist-mono), 'JetBrains Mono', monospace;
+  --font-accent-stack: var(--font-accent), 'Playfair Display', serif;
+  
+  /* Type Scale (modular scale 1.25) */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --text-6xl: 3.75rem;
+  --text-7xl: 4.5rem;
   
   /* Legacy aliases (for backwards compatibility during migration) */
   --betis-green: var(--betis-verde);
@@ -154,6 +218,46 @@ form {
 .text-betis-gold { color: var(--betis-oro); }
 .text-betis-black { color: var(--betis-negro); }
 .bg-betis-black { background-color: var(--betis-negro); }
+
+/* ===========================================
+ * EXTENDED PALETTE UTILITIES (Design System v2)
+ * =========================================== */
+
+/* Scottish Atmosphere */
+.bg-scotland-slate { background-color: var(--scotland-slate); }
+.bg-scotland-mist { background-color: var(--scotland-mist); }
+.bg-scotland-stone { background-color: var(--scotland-stone); }
+.text-scotland-slate { color: var(--scotland-slate); }
+.text-scotland-mist { color: var(--scotland-mist); }
+.text-scotland-stone { color: var(--scotland-stone); }
+
+/* Warm Canvas */
+.bg-canvas-warm { background-color: var(--canvas-warm); }
+.bg-canvas-cream { background-color: var(--canvas-cream); }
+
+/* Rich Gold Spectrum */
+.bg-oro-bright { background-color: var(--oro-bright); }
+.bg-oro-antique { background-color: var(--oro-antique); }
+.bg-oro-shadow { background-color: var(--oro-shadow); }
+.text-oro-bright { color: var(--oro-bright); }
+.text-oro-antique { color: var(--oro-antique); }
+.text-oro-shadow { color: var(--oro-shadow); }
+
+/* Match State Colors */
+.bg-match-live { background-color: var(--match-live); }
+.bg-match-upcoming { background-color: var(--match-upcoming); }
+.bg-match-finished { background-color: var(--match-finished); }
+.bg-match-postponed { background-color: var(--match-postponed); }
+.text-match-live { color: var(--match-live); }
+.text-match-upcoming { color: var(--match-upcoming); }
+.text-match-finished { color: var(--match-finished); }
+.text-match-postponed { color: var(--match-postponed); }
+
+/* Typography Utilities */
+.font-display { font-family: var(--font-display-stack); }
+.font-heading { font-family: var(--font-heading); }
+.font-body { font-family: var(--font-body-stack); }
+.font-accent { font-family: var(--font-accent-stack); }
 
 /* ===========================================
  * GRADIENT UTILITIES
@@ -352,4 +456,281 @@ form {
 .focus-ring-betis:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px rgba(4, 141, 71, 0.4);
+}
+
+/* ===========================================
+ * PATTERN LIBRARY - VERDIBLANCO
+ * The iconic Betis green and white stripes
+ * =========================================== */
+
+/* Full verdiblanco stripe pattern */
+.pattern-verdiblanco {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--betis-verde) 0px,
+    var(--betis-verde) 20px,
+    var(--betis-blanco) 20px,
+    var(--betis-blanco) 40px
+  );
+}
+
+/* Narrow verdiblanco stripes */
+.pattern-verdiblanco-narrow {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--betis-verde) 0px,
+    var(--betis-verde) 10px,
+    var(--betis-blanco) 10px,
+    var(--betis-blanco) 20px
+  );
+}
+
+/* Subtle verdiblanco texture - for backgrounds */
+.pattern-verdiblanco-subtle {
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(4, 141, 71, 0.08) 0px,
+    rgba(4, 141, 71, 0.08) 3px,
+    transparent 3px,
+    transparent 6px
+  );
+}
+
+/* Very subtle verdiblanco - barely visible */
+.pattern-verdiblanco-whisper {
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(4, 141, 71, 0.03) 0px,
+    rgba(4, 141, 71, 0.03) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+}
+
+/* Diagonal verdiblanco */
+.pattern-verdiblanco-diagonal {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--betis-verde) 0px,
+    var(--betis-verde) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+}
+
+/* Diagonal verdiblanco subtle */
+.pattern-verdiblanco-diagonal-subtle {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(4, 141, 71, 0.05) 0px,
+    rgba(4, 141, 71, 0.05) 5px,
+    transparent 5px,
+    transparent 10px
+  );
+}
+
+/* Left edge accent - for cards/containers */
+.pattern-verdiblanco-edge-left {
+  position: relative;
+}
+.pattern-verdiblanco-edge-left::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: repeating-linear-gradient(
+    180deg,
+    var(--betis-verde) 0px,
+    var(--betis-verde) 8px,
+    var(--betis-blanco) 8px,
+    var(--betis-blanco) 16px
+  );
+}
+
+/* ===========================================
+ * PATTERN LIBRARY - SCOTTISH/TARTAN
+ * Subtle Scottish tartan-inspired patterns
+ * =========================================== */
+
+/* Subtle tartan crosshatch */
+.pattern-tartan-subtle {
+  background-image: 
+    linear-gradient(90deg, transparent 50%, rgba(11, 20, 38, 0.03) 50%),
+    linear-gradient(0deg, transparent 50%, rgba(212, 175, 55, 0.02) 50%);
+  background-size: 24px 24px;
+}
+
+/* Medium tartan crosshatch */
+.pattern-tartan-medium {
+  background-image: 
+    linear-gradient(90deg, transparent 50%, rgba(11, 20, 38, 0.06) 50%),
+    linear-gradient(0deg, transparent 50%, rgba(212, 175, 55, 0.04) 50%);
+  background-size: 20px 20px;
+}
+
+/* Navy tartan - for dark sections */
+.pattern-tartan-navy {
+  background-image: 
+    linear-gradient(90deg, transparent 50%, rgba(255, 255, 255, 0.03) 50%),
+    linear-gradient(0deg, transparent 50%, rgba(212, 175, 55, 0.05) 50%);
+  background-size: 24px 24px;
+}
+
+/* Celtic-inspired grid */
+.pattern-celtic-grid {
+  background-image: 
+    linear-gradient(rgba(11, 20, 38, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11, 20, 38, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* ===========================================
+ * PATTERN LIBRARY - ATMOSPHERIC BACKGROUNDS
+ * Layered gradients for depth and mood
+ * =========================================== */
+
+/* Edinburgh mist - light atmospheric gradient */
+.bg-edinburgh-mist {
+  background: linear-gradient(
+    180deg,
+    var(--scotland-mist) 0%,
+    var(--canvas-warm) 50%,
+    var(--betis-verde-pale) 100%
+  );
+}
+
+/* Stadium atmosphere - radial glow effect */
+.bg-stadium-atmosphere {
+  background: 
+    radial-gradient(
+      ellipse at top,
+      rgba(4, 141, 71, 0.1) 0%,
+      transparent 60%
+    ),
+    linear-gradient(
+      180deg,
+      var(--canvas-warm) 0%,
+      white 100%
+    );
+}
+
+/* Gold glow - for special sections */
+.bg-oro-glow {
+  background: 
+    radial-gradient(
+      ellipse at center,
+      rgba(212, 175, 55, 0.15) 0%,
+      transparent 70%
+    );
+}
+
+/* Navy depth - for footer/dark sections */
+.bg-navy-depth {
+  background: linear-gradient(
+    180deg,
+    var(--scotland-navy) 0%,
+    var(--scotland-slate) 100%
+  );
+}
+
+/* Hero gradient with cultural fusion */
+.bg-hero-fusion {
+  background: linear-gradient(
+    135deg,
+    var(--betis-verde) 0%,
+    var(--betis-verde-dark) 40%,
+    var(--scotland-navy) 100%
+  );
+}
+
+/* Warm canvas gradient */
+.bg-warm-canvas {
+  background: linear-gradient(
+    180deg,
+    var(--canvas-warm) 0%,
+    var(--canvas-cream) 100%
+  );
+}
+
+/* ===========================================
+ * PATTERN LIBRARY - COMBINED EFFECTS
+ * Layered patterns for rich textures
+ * =========================================== */
+
+/* Hero with verdiblanco edges and tartan overlay */
+.pattern-hero-layered {
+  position: relative;
+}
+.pattern-hero-layered::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(90deg, transparent 50%, rgba(11, 20, 38, 0.02) 50%),
+    linear-gradient(0deg, transparent 50%, rgba(212, 175, 55, 0.015) 50%);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+.pattern-hero-layered::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 16px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(4, 141, 71, 0.15) 0px,
+    rgba(4, 141, 71, 0.15) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+  pointer-events: none;
+}
+
+/* Card with subtle cultural texture */
+.pattern-card-cultural {
+  background: 
+    repeating-linear-gradient(
+      90deg,
+      rgba(4, 141, 71, 0.02) 0px,
+      rgba(4, 141, 71, 0.02) 2px,
+      transparent 2px,
+      transparent 4px
+    ),
+    linear-gradient(
+      180deg,
+      white 0%,
+      var(--canvas-warm) 100%
+    );
+}
+
+/* Ticket stub perforated edge effect */
+.pattern-ticket-edge {
+  position: relative;
+}
+.pattern-ticket-edge::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--betis-verde);
+  mask-image: repeating-linear-gradient(
+    180deg,
+    transparent 0px,
+    transparent 3px,
+    black 3px,
+    black 10px
+  );
+  -webkit-mask-image: repeating-linear-gradient(
+    180deg,
+    transparent 0px,
+    transparent 3px,
+    black 3px,
+    black 10px
+  );
 }
