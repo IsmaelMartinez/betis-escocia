@@ -163,9 +163,7 @@ export default function SoylentiClient({
                   "Cargar más noticias"
                 )}
               </button>
-              {error && (
-                <p className="mt-4 text-red-600 text-sm">{error}</p>
-              )}
+              {error && <p className="mt-4 text-red-600 text-sm">{error}</p>}
             </div>
           )}
         </>
