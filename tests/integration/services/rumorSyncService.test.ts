@@ -417,7 +417,7 @@ describe('rumorSyncService - Integration Tests', () => {
       delete process.env.NEXT_PUBLIC_SUPABASE_URL;
 
       await expect(syncRumors()).rejects.toThrow(
-        'NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables are required'
+        'Supabase URL and service role key environment variables are required'
       );
     });
 
