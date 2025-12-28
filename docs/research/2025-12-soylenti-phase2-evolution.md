@@ -49,7 +49,7 @@ CREATE TABLE betis_news (
 - No source credibility tracking over time
 - No rumor evolution/lifecycle tracking
 - No trend analysis for emerging transfer targets
-- 50-item query limit without pagination for historical access
+- ~~50-item query limit without pagination for historical access~~ (DONE - PR #209)
 - Unanalyzed items (ai_probability = null) have no re-analysis mechanism
 
 ## Gemini API Free Tier Constraints (December 2025)
