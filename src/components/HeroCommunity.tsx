@@ -222,10 +222,10 @@ function HeroCommunity() {
             </div>
 
             {/* Floating accent elements */}
-            <div className="absolute -top-4 -right-4 bg-gradient-to-br from-betis-verde to-betis-verde-dark rounded-full p-4 shadow-lg ring-2 ring-white/50">
-              <Heart className="h-6 w-6 text-white drop-shadow-md" />
+            <div className="absolute -top-4 -right-4 bg-white rounded-full p-4 shadow-lg">
+              <Heart className="h-6 w-6 text-betis-verde" />
             </div>
-            <div className="absolute -bottom-3 -left-3 bg-white rounded-full p-3 shadow-lg ring-2 ring-betis-oro/50">
+            <div className="absolute -bottom-3 -left-3 bg-white rounded-full p-3 shadow-lg">
               <span className="text-2xl leading-none">🏴󠁧󠁢󠁳󠁣󠁴󠁿</span>
             </div>
           </div>
