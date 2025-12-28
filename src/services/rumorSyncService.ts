@@ -140,6 +140,7 @@ export async function syncRumors(): Promise<SyncResult> {
           ai_analysis: analysis.reasoning,
           ai_analyzed_at: new Date().toISOString(),
           is_duplicate: false,
+          transfer_direction: isTransferRumor ? analysis.transferDirection : null,
         };
 
         const { error } = await supabase

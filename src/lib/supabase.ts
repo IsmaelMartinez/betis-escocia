@@ -829,6 +829,9 @@ export interface BetisNews {
   is_duplicate: boolean;
   duplicate_of_id?: number | null;
   similarity_score?: number | null;
+  // Phase 2: Transfer direction tracking
+  transfer_direction?: "in" | "out" | "unknown" | null;
+  transfer_status?: "rumor" | "confirmed" | "denied" | null;
   created_at: string;
   updated_at: string;
 }
@@ -846,6 +849,9 @@ export interface BetisNewsInsert {
   is_duplicate?: boolean;
   duplicate_of_id?: number | null;
   similarity_score?: number | null;
+  // Phase 2: Transfer direction tracking
+  transfer_direction?: "in" | "out" | "unknown" | null;
+  transfer_status?: "rumor" | "confirmed" | "denied" | null;
 }
 
 export interface BetisNewsUpdate {
@@ -855,4 +861,7 @@ export interface BetisNewsUpdate {
   is_duplicate?: boolean;
   duplicate_of_id?: number | null;
   similarity_score?: number | null;
+  // Phase 2: Transfer direction tracking
+  transfer_direction?: "in" | "out" | "unknown" | null;
+  transfer_status?: "rumor" | "confirmed" | "denied" | null;
 }

@@ -10,6 +10,7 @@ interface Rumor {
   description?: string;
   aiProbability?: number | null;
   aiAnalysis?: string | null;
+  transferDirection?: "in" | "out" | "unknown" | null;
 }
 
 interface PaginatedResult {
@@ -47,6 +48,7 @@ export async function fetchMoreRumors(
         description: rumor.description,
         aiProbability: rumor.ai_probability,
         aiAnalysis: rumor.ai_analysis,
+        transferDirection: rumor.transfer_direction,
       })) || [],
     hasMore,
   };

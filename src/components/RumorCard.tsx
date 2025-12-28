@@ -11,6 +11,7 @@ interface RumorCardProps {
   description?: string;
   aiProbability?: number | null;
   aiAnalysis?: string | null;
+  transferDirection?: "in" | "out" | "unknown" | null;
   showCredibility?: boolean;
 }
 
@@ -22,6 +23,7 @@ export default function RumorCard({
   description,
   aiProbability,
   aiAnalysis,
+  transferDirection,
   showCredibility = true,
 }: RumorCardProps) {
   const formatDate = (dateString: string) => {
@@ -50,12 +52,22 @@ export default function RumorCard({
       <div className="p-6">
         {/* Source Badge & AI Probability */}
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center flex-wrap gap-2">
             <span
               className={`px-3 py-1 rounded-full text-xs font-bold ${getSourceColor(source)}`}
             >
               {source}
             </span>
+            {transferDirection === "in" && (
+              <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-betis-verde text-white flex items-center gap-1">
+                ↓ Entrada
+              </span>
+            )}
+            {transferDirection === "out" && (
+              <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-betis-oro text-betis-verde-dark flex items-center gap-1">
+                ↑ Salida
+              </span>
+            )}
             {showCredibility &&
               aiProbability !== null &&
               aiProbability !== undefined &&
@@ -70,7 +82,7 @@ export default function RumorCard({
                   }`}
                   title={aiAnalysis || undefined}
                 >
-                  {aiProbability}% credibilidad
+                  {aiProbability}%
                 </span>
               )}
           </div>

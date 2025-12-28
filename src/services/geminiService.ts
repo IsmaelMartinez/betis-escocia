@@ -6,6 +6,7 @@ export interface RumorAnalysis {
   probability: number | null; // 0-100 (only if isTransferRumor=true), null = not analyzed
   reasoning: string;
   confidence: "low" | "medium" | "high";
+  transferDirection: "in" | "out" | "unknown" | null; // in=arriving, out=leaving
 }
 
 export async function analyzeRumorCredibility(
@@ -19,28 +20,16 @@ export async function analyzeRumorCredibility(
   }
 
   const genAI = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
-  const prompt = `Analiza esta noticia del Real Betis en DOS PASOS:
-
-PASO 1: ¿Es esto un rumor de FICHAJE (transferencia de jugadores)?
-- Debe mencionar específicamente llegadas o salidas de jugadores al/del Real Betis
-- NO son fichajes: noticias de partidos, lesiones, declaraciones generales, análisis tácticos
-
-PASO 2 (solo si es fichaje): Evalúa la credibilidad
-- Probabilidad (0-100) de que el rumor sea creíble o se haga realidad
-- Razonamiento breve (2-3 frases en español)
-- Nivel de confianza (low/medium/high)
+  const prompt = `Analiza si esta noticia del Real Betis es un rumor de fichaje:
 
 Título: ${title}
 Descripción: ${description || "Sin descripción"}
 Fuente: ${source}
 
-Responde SOLO en este formato JSON:
-{
-  "isTransferRumor": <true|false>,
-  "probability": <número 0-100, o 0 si no es fichaje>,
-  "reasoning": "<texto en español explicando por qué es/no es fichaje y su credibilidad>",
-  "confidence": "<low|medium|high>"
-}`;
+Evalúa: ¿Es fichaje? (no: partidos, lesiones, declaraciones). Si es fichaje: credibilidad 0-100, dirección ("in"=llega, "out"=sale, "unknown").
+
+JSON:
+{"isTransferRumor":<bool>,"probability":<0-100>,"reasoning":"<breve>","confidence":"<low|medium|high>","transferDirection":"<in|out|unknown|null>"}`;
 
   // Simple retry with backoff (3 attempts, 1 second delay)
   for (let attempt = 0; attempt < 3; attempt++) {
@@ -79,28 +68,26 @@ Responde SOLO en este formato JSON:
           note: "Free tier limit reached - storing with null probability",
         });
         return {
-          isTransferRumor: null, // null = couldn't analyze
-          probability: null, // null = not analyzed yet
+          isTransferRumor: null,
+          probability: null,
           reasoning: "No se pudo analizar este rumor automáticamente.",
           confidence: "low",
+          transferDirection: null,
         };
       }
 
       if (attempt === 2) {
-        // Last attempt failed
         log.error(
           "Gemini analysis failed after retries - storing without analysis",
           error,
-          {
-            title,
-            source,
-          },
+          { title, source },
         );
         return {
-          isTransferRumor: null, // null = couldn't analyze
-          probability: null, // null = not analyzed yet
+          isTransferRumor: null,
+          probability: null,
           reasoning: "No se pudo analizar este rumor automáticamente.",
           confidence: "low",
+          transferDirection: null,
         };
       }
       // Wait before retry

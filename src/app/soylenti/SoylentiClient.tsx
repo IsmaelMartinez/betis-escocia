@@ -13,6 +13,7 @@ interface Rumor {
   description?: string;
   aiProbability?: number | null;
   aiAnalysis?: string | null;
+  transferDirection?: "in" | "out" | "unknown" | null;
 }
 
 interface SoylentiClientProps {
@@ -38,8 +39,8 @@ export default function SoylentiClient({
     () =>
       rumors.filter((rumor) => {
         const prob = rumor.aiProbability;
-        if (prob !== null && prob !== undefined && prob > 0) return true;
-        return showAllNews;
+        const isTransfer = prob !== null && prob !== undefined && prob > 0;
+        return isTransfer || showAllNews;
       }),
     [rumors, showAllNews],
   );
@@ -87,7 +88,6 @@ export default function SoylentiClient({
           </div>
 
           <div className="flex flex-wrap gap-4">
-            {/* Fran Mode Toggle */}
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -99,8 +99,6 @@ export default function SoylentiClient({
                 Fran Mode
               </span>
             </label>
-
-            {/* Show News Toggle */}
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -141,6 +139,7 @@ export default function SoylentiClient({
                 description={rumor.description}
                 aiProbability={rumor.aiProbability}
                 aiAnalysis={rumor.aiAnalysis}
+                transferDirection={rumor.transferDirection}
                 showCredibility={franMode}
               />
             ))}

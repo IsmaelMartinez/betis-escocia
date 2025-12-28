@@ -109,6 +109,8 @@ describe("rumorSyncService - Integration Tests", () => {
         probability: 85,
         reasoning: "Fichaje confirmado por fuentes confiables",
         confidence: "high",
+        transferDirection: "in",
+        transferStatus: "rumor",
       });
 
       const result = await syncRumors();
@@ -144,6 +146,8 @@ describe("rumorSyncService - Integration Tests", () => {
         probability: 0,
         reasoning: "Es una noticia de partido, no de fichaje",
         confidence: "high",
+        transferDirection: null,
+        transferStatus: null,
       });
 
       const result = await syncRumors();
@@ -175,6 +179,8 @@ describe("rumorSyncService - Integration Tests", () => {
         probability: null,
         reasoning: "No se pudo analizar este rumor automáticamente.",
         confidence: "low",
+        transferDirection: null,
+        transferStatus: null,
       });
 
       const result = await syncRumors();
@@ -251,18 +257,24 @@ describe("rumorSyncService - Integration Tests", () => {
           probability: 70,
           reasoning: "Transfer",
           confidence: "high",
+          transferDirection: "in",
+          transferStatus: "rumor",
         })
         .mockResolvedValueOnce({
           isTransferRumor: false,
           probability: 0,
           reasoning: "Not transfer",
           confidence: "high",
+          transferDirection: null,
+          transferStatus: null,
         })
         .mockResolvedValueOnce({
           isTransferRumor: null,
           probability: null,
           reasoning: "Quota exceeded",
           confidence: "low",
+          transferDirection: null,
+          transferStatus: null,
         });
 
       const result = await syncRumors();
@@ -296,6 +308,8 @@ describe("rumorSyncService - Integration Tests", () => {
         probability: 50,
         reasoning: "Test",
         confidence: "medium",
+        transferDirection: "in",
+        transferStatus: "rumor",
       });
 
       mockSupabaseInsert.mockResolvedValue({
@@ -330,6 +344,8 @@ describe("rumorSyncService - Integration Tests", () => {
         probability: 50,
         reasoning: "Test",
         confidence: "medium",
+        transferDirection: "out",
+        transferStatus: "rumor",
       });
 
       mockSupabaseInsert.mockResolvedValue({
@@ -396,6 +412,8 @@ describe("rumorSyncService - Integration Tests", () => {
           probability: 60,
           reasoning: "OK",
           confidence: "medium",
+          transferDirection: "in",
+          transferStatus: "rumor",
         })
         .mockRejectedValueOnce(new Error("AI service error"));
 
@@ -462,6 +480,8 @@ describe("rumorSyncService - Integration Tests", () => {
           probability: 50,
           reasoning: "OK",
           confidence: "medium",
+          transferDirection: "in",
+          transferStatus: "rumor",
         })
         .mockRejectedValueOnce(new Error("Failed"))
         .mockResolvedValueOnce({
@@ -469,6 +489,8 @@ describe("rumorSyncService - Integration Tests", () => {
           probability: 0,
           reasoning: "OK",
           confidence: "high",
+          transferDirection: null,
+          transferStatus: null,
         });
 
       const result = await syncRumors();
@@ -500,6 +522,8 @@ describe("rumorSyncService - Integration Tests", () => {
         probability: 75,
         reasoning: "Transfer rumor",
         confidence: "high",
+        transferDirection: "in",
+        transferStatus: "rumor",
       });
 
       await syncRumors();
@@ -549,12 +573,16 @@ describe("rumorSyncService - Integration Tests", () => {
           probability: 80,
           reasoning: "Transfer",
           confidence: "high",
+          transferDirection: "in",
+          transferStatus: "rumor",
         })
         .mockResolvedValueOnce({
           isTransferRumor: false,
           probability: 0,
           reasoning: "Regular",
           confidence: "high",
+          transferDirection: null,
+          transferStatus: null,
         });
 
       await syncRumors();

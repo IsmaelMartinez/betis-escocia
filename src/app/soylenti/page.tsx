@@ -51,6 +51,7 @@ async function fetchRumors() {
           description: rumor.description,
           aiProbability: rumor.ai_probability,
           aiAnalysis: rumor.ai_analysis,
+          transferDirection: rumor.transfer_direction,
         })) || [],
       totalCount: countResult.count || 0,
       lastUpdated: items?.[0]?.created_at || new Date().toISOString(),
