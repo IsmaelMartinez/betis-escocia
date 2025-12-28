@@ -520,6 +520,5 @@ All color combinations meet WCAG AA standards (4.5:1 for normal text, 3:1 for la
 
 ## Related Documentation
 
-- [Research: Design System Revolution](research/2025-12-design-system-revolution-research.md)
 - [Storybook: Design Tokens](storybook/design-tokens.mdx)
 - [Storybook: Patterns](storybook/patterns.mdx)
