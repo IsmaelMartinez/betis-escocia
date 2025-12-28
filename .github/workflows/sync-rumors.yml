@@ -29,9 +29,9 @@ jobs:
 
       - name: Run rumor sync
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # Production database for sync script
+          SUPABASE_SYNC_URL: ${{ secrets.SUPABASE_PRODUCTION_URL }}
+          SUPABASE_SYNC_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_PRODUCTION_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: 'gemini-3-flash-preview'
         run: npm run sync-rumors
