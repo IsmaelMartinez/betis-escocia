@@ -14,7 +14,8 @@
       "Bash(npm audit:*)",
       "Skill(local-brain:local-brain)",
       "Bash(local-brain:*)",
-      "Skill(local-brain)"
+      "Skill(local-brain)",
+      "Bash(gh api:*)"
     ],
     "deny": [],
     "ask": []

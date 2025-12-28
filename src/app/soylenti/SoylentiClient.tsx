@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition, useMemo } from "react";
 import RumorCard from "@/components/RumorCard";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Loader2 } from "lucide-react";
+import { fetchMoreRumors } from "./actions";
 
 interface Rumor {
   title: string;
@@ -17,28 +18,60 @@ interface Rumor {
 interface SoylentiClientProps {
   initialRumors: Rumor[];
   lastUpdated: string;
+  initialHasMore: boolean;
+  totalCount: number;
 }
 
 export default function SoylentiClient({
   initialRumors,
   lastUpdated,
+  initialHasMore,
+  totalCount,
 }: SoylentiClientProps) {
+  const [rumors, setRumors] = useState(initialRumors);
+  const [hasMore, setHasMore] = useState(initialHasMore);
   const [showAllNews, setShowAllNews] = useState(false);
   const [franMode, setFranMode] = useState(true);
+  const [isPending, startTransition] = useTransition();
 
-  const displayedRumors = initialRumors.filter((rumor) => {
-    // Always show transfer rumors (aiProbability > 0)
-    const prob = rumor.aiProbability;
-    if (prob !== null && prob !== undefined && prob > 0) return true;
+  const displayedRumors = useMemo(
+    () =>
+      rumors.filter((rumor) => {
+        const prob = rumor.aiProbability;
+        if (prob !== null && prob !== undefined && prob > 0) return true;
+        return showAllNews;
+      }),
+    [rumors, showAllNews],
+  );
 
-    // Show news and unanalyzed only if toggle is ON
-    return showAllNews;
-  });
+  const rumorCount = useMemo(
+    () =>
+      rumors.filter((r) => {
+        const prob = r.aiProbability;
+        return prob !== null && prob !== undefined && prob > 0;
+      }).length,
+    [rumors],
+  );
 
-  const rumorCount = initialRumors.filter((r) => {
-    const prob = r.aiProbability;
-    return prob !== null && prob !== undefined && prob > 0;
-  }).length;
+  const [error, setError] = useState<string | null>(null);
+
+  const handleLoadMore = () => {
+    if (!hasMore || isPending) return;
+
+    const lastRumor = rumors[rumors.length - 1];
+    if (!lastRumor) return;
+
+    setError(null);
+    startTransition(async () => {
+      try {
+        const result = await fetchMoreRumors(lastRumor.pubDate);
+        setRumors((prev) => [...prev, ...result.rumors]);
+        setHasMore(result.hasMore);
+      } catch {
+        setError("Error al cargar más noticias. Inténtalo de nuevo.");
+      }
+    });
+  };
 
   return (
     <>
@@ -48,7 +81,7 @@ export default function SoylentiClient({
           <div className="flex items-center space-x-2">
             <RefreshCw size={20} className="text-betis-verde" />
             <p className="text-sm text-gray-600">
-              {displayedRumors.length} de {initialRumors.length} noticias
+              {displayedRumors.length} de {totalCount} noticias
               {rumorCount > 0 && ` (${rumorCount} rumores)`}
             </p>
           </div>
@@ -96,21 +129,46 @@ export default function SoylentiClient({
 
       {/* Rumors Grid */}
       {displayedRumors.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayedRumors.map((rumor, index) => (
-            <RumorCard
-              key={`${rumor.link}-${index}`}
-              title={rumor.title}
-              link={rumor.link}
-              pubDate={rumor.pubDate}
-              source={rumor.source}
-              description={rumor.description}
-              aiProbability={rumor.aiProbability}
-              aiAnalysis={rumor.aiAnalysis}
-              showCredibility={franMode}
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {displayedRumors.map((rumor) => (
+              <RumorCard
+                key={rumor.link}
+                title={rumor.title}
+                link={rumor.link}
+                pubDate={rumor.pubDate}
+                source={rumor.source}
+                description={rumor.description}
+                aiProbability={rumor.aiProbability}
+                aiAnalysis={rumor.aiAnalysis}
+                showCredibility={franMode}
+              />
+            ))}
+          </div>
+
+          {/* Load More Button */}
+          {hasMore && (
+            <div className="mt-8 text-center">
+              <button
+                onClick={handleLoadMore}
+                disabled={isPending}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-betis-verde text-white rounded-lg hover:bg-betis-verde-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 size={20} className="animate-spin" />
+                    Cargando...
+                  </>
+                ) : (
+                  "Cargar más noticias"
+                )}
+              </button>
+              {error && (
+                <p className="mt-4 text-red-600 text-sm">{error}</p>
+              )}
+            </div>
+          )}
+        </>
       ) : (
         <div className="text-center py-16">
           <p className="text-gray-600 text-lg">

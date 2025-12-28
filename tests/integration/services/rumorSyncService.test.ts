@@ -213,6 +213,7 @@ describe("rumorSyncService - Integration Tests", () => {
       expect(mockAnalyzeRumorCredibility).not.toHaveBeenCalled();
     });
 
+    // Increased timeout due to rate limiting delays (4s per API call)
     it("should handle multiple rumors with different classifications", async () => {
       const mockRumors: RumorItem[] = [
         {
@@ -272,7 +273,7 @@ describe("rumorSyncService - Integration Tests", () => {
       expect(result.notAnalyzed).toBe(1);
       expect(result.analyzed).toBe(3);
       expect(result.inserted).toBe(3);
-    });
+    }, 20000);
 
     it("should handle database insertion errors", async () => {
       const mockRumors: RumorItem[] = [
@@ -423,6 +424,7 @@ describe("rumorSyncService - Integration Tests", () => {
       );
     });
 
+    // Increased timeout due to rate limiting delays (4s per API call)
     it("should continue processing after individual item errors", async () => {
       const mockRumors: RumorItem[] = [
         {
@@ -475,7 +477,7 @@ describe("rumorSyncService - Integration Tests", () => {
       expect(result.analyzed).toBe(2);
       expect(result.errors).toBe(1);
       expect(result.inserted).toBe(2);
-    });
+    }, 20000);
 
     it("should log business events during sync", async () => {
       const mockRumors: RumorItem[] = [
@@ -516,6 +518,7 @@ describe("rumorSyncService - Integration Tests", () => {
       );
     });
 
+    // Increased timeout due to rate limiting delays (4s per API call)
     it("should insert all news types into betis_news table", async () => {
       const mockRumors: RumorItem[] = [
         {
@@ -558,6 +561,6 @@ describe("rumorSyncService - Integration Tests", () => {
 
       expect(mockSupabaseFrom).toHaveBeenCalledWith("betis_news");
       expect(mockSupabaseInsert).toHaveBeenCalledTimes(2);
-    });
+    }, 15000);
   });
 });
