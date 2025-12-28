@@ -11,6 +11,11 @@ vi.mock('next/link', () => ({
   ))
 }));
 
+// Mock FeatureWrapper to always render children (feature enabled)
+vi.mock('@/lib/featureProtection', () => ({
+  FeatureWrapper: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 // Mock Lucide React icons
 vi.mock('lucide-react', () => ({
   MapPin: vi.fn(({ className }) => <div data-testid="map-pin-icon" className={className} />),
@@ -114,20 +119,17 @@ describe('Hero', () => {
       const allLinks = screen.getAllByRole('link');
       const facebookLink = allLinks.find(link => link.getAttribute('href')?.includes('facebook'));
       const instagramLink = allLinks.find(link => link.getAttribute('href')?.includes('instagram'));
-      const youtubeLink = allLinks.find(link => link.getAttribute('href')?.includes('youtube'));
 
       expect(facebookLink).toHaveAttribute('href', 'https://www.facebook.com/groups/beticosenescocia/');
       expect(instagramLink).toHaveAttribute('href', 'https://www.instagram.com/rbetisescocia/');
-      expect(youtubeLink).toHaveAttribute('href', 'https://www.youtube.com/beticosenescocia');
     });
 
     it('renders social media links with correct attributes', () => {
       render(<Hero />);
 
-      const socialLinks = screen.getAllByRole('link').filter(link => 
+      const socialLinks = screen.getAllByRole('link').filter(link =>
         link.getAttribute('href')?.includes('facebook') ||
-        link.getAttribute('href')?.includes('instagram') ||
-        link.getAttribute('href')?.includes('youtube')
+        link.getAttribute('href')?.includes('instagram')
       );
 
       socialLinks.forEach(link => {

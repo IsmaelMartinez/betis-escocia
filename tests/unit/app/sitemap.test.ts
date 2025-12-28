@@ -1,10 +1,11 @@
 import sitemap from '../../../src/app/sitemap';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { getEnabledNavigationItems } from '@/lib/featureFlags';
+import { getEnabledNavigationItems, hasFeature } from '@/lib/featureFlags';
 
 // Mock the featureFlags module
 vi.mock('@/lib/featureFlags', () => ({
   getEnabledNavigationItems: vi.fn(),
+  hasFeature: vi.fn(),
 }));
 
 describe('sitemap', () => {
@@ -16,6 +17,8 @@ describe('sitemap', () => {
     // Mock Date to ensure consistent lastModified values
     vi.useFakeTimers();
     vi.setSystemTime(mockDate);
+    // Default: show-partidos is enabled
+    vi.mocked(hasFeature).mockReturnValue(true);
   });
 
   afterEach(() => {
@@ -101,5 +104,22 @@ describe('sitemap', () => {
 
     expect(unetePage?.priority).toBe(0.9);
     expect(galeriaPage?.priority).toBe(0.8);
+  });
+
+  it('should exclude /partidos from sitemap when show-partidos feature is disabled', () => {
+    vi.mocked(getEnabledNavigationItems).mockReturnValue([]);
+    vi.mocked(hasFeature).mockReturnValue(false);
+
+    const result = sitemap();
+
+    expect(result).toEqual([
+      {
+        url: baseUrl,
+        lastModified: mockDate,
+        changeFrequency: 'weekly',
+        priority: 1,
+      },
+    ]);
+    expect(result.find(page => page.url.includes('/partidos'))).toBeUndefined();
   });
 });
