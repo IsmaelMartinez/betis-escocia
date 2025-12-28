@@ -293,6 +293,7 @@ describe("geminiService", () => {
       expect(mockBusinessLog).toHaveBeenCalledWith("rumor_analyzed", {
         probability: 80,
         confidence: "high",
+        playerCount: 0,
       });
     });
 

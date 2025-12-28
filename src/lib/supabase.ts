@@ -865,3 +865,51 @@ export interface BetisNewsUpdate {
   transfer_direction?: "in" | "out" | "unknown" | null;
   transfer_status?: "rumor" | "confirmed" | "denied" | null;
 }
+
+// Phase 2A: Player tracking types
+export interface Player {
+  id: number;
+  name: string;
+  normalized_name: string;
+  known_club?: string | null;
+  known_position?: string | null;
+  first_seen_at: string;
+  last_seen_at: string;
+  rumor_count: number;
+  created_at: string;
+}
+
+export interface PlayerInsert {
+  name: string;
+  normalized_name: string;
+  known_club?: string | null;
+  known_position?: string | null;
+}
+
+export interface PlayerUpdate {
+  name?: string;
+  known_club?: string | null;
+  known_position?: string | null;
+  last_seen_at?: string;
+  rumor_count?: number;
+}
+
+export interface NewsPlayer {
+  id: number;
+  news_id: number;
+  player_id: number;
+  role: "target" | "departing" | "mentioned";
+  created_at: string;
+}
+
+export interface NewsPlayerInsert {
+  news_id: number;
+  player_id: number;
+  role: "target" | "departing" | "mentioned";
+}
+
+// Extracted player from AI analysis
+export interface ExtractedPlayer {
+  name: string;
+  role: "target" | "departing" | "mentioned";
+}

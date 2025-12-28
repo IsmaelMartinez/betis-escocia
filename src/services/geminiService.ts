@@ -1,12 +1,19 @@
 import { GoogleGenAI } from "@google/genai";
 import { log } from "@/lib/logger";
 
+// Extracted player from AI analysis
+export interface ExtractedPlayer {
+  name: string;
+  role: "target" | "departing" | "mentioned";
+}
+
 export interface RumorAnalysis {
   isTransferRumor: boolean | null; // Is this actually a transfer rumor? null = couldn't analyze
   probability: number | null; // 0-100 (only if isTransferRumor=true), null = not analyzed
   reasoning: string;
   confidence: "low" | "medium" | "high";
   transferDirection: "in" | "out" | "unknown" | null; // in=arriving, out=leaving
+  players: ExtractedPlayer[]; // Phase 2A: Extracted player names
 }
 
 export async function analyzeRumorCredibility(
@@ -20,16 +27,16 @@ export async function analyzeRumorCredibility(
   }
 
   const genAI = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
-  const prompt = `Analiza si esta noticia del Real Betis es un rumor de fichaje:
+  const prompt = `Analiza esta noticia del Real Betis:
 
 Título: ${title}
 Descripción: ${description || "Sin descripción"}
 Fuente: ${source}
 
-Evalúa: ¿Es fichaje? (no: partidos, lesiones, declaraciones). Si es fichaje: credibilidad 0-100, dirección ("in"=llega, "out"=sale, "unknown").
+Evalúa: ¿Es fichaje? (no: partidos, lesiones, declaraciones). Si es fichaje: credibilidad 0-100, dirección ("in"=llega, "out"=sale), y extrae jugadores mencionados.
 
 JSON:
-{"isTransferRumor":<bool>,"probability":<0-100>,"reasoning":"<breve>","confidence":"<low|medium|high>","transferDirection":"<in|out|unknown|null>"}`;
+{"isTransferRumor":<bool>,"probability":<0-100>,"reasoning":"<breve>","confidence":"<low|medium|high>","transferDirection":"<in|out|unknown|null>","players":[{"name":"<nombre completo>","role":"<target|departing|mentioned>"}]}`;
 
   // Simple retry with backoff (3 attempts, 1 second delay)
   for (let attempt = 0; attempt < 3; attempt++) {
@@ -48,9 +55,14 @@ JSON:
       log.business("rumor_analyzed", {
         probability: result.probability,
         confidence: result.confidence,
+        playerCount: result.players?.length || 0,
       });
 
-      return result;
+      // Ensure players array exists (fallback for older responses)
+      return {
+        ...result,
+        players: result.players || [],
+      };
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -73,6 +85,7 @@ JSON:
           reasoning: "No se pudo analizar este rumor automáticamente.",
           confidence: "low",
           transferDirection: null,
+          players: [],
         };
       }
 
@@ -88,6 +101,7 @@ JSON:
           reasoning: "No se pudo analizar este rumor automáticamente.",
           confidence: "low",
           transferDirection: null,
+          players: [],
         };
       }
       // Wait before retry

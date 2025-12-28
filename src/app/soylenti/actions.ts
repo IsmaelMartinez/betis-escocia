@@ -2,6 +2,11 @@
 
 import { supabase } from "@/lib/supabase";
 
+interface PlayerInfo {
+  name: string;
+  role: "target" | "departing" | "mentioned";
+}
+
 interface Rumor {
   title: string;
   link: string;
@@ -11,6 +16,7 @@ interface Rumor {
   aiProbability?: number | null;
   aiAnalysis?: string | null;
   transferDirection?: "in" | "out" | "unknown" | null;
+  players?: PlayerInfo[];
 }
 
 interface PaginatedResult {
@@ -24,7 +30,17 @@ export async function fetchMoreRumors(
 ): Promise<PaginatedResult> {
   const { data, error } = await supabase
     .from("betis_news")
-    .select("*")
+    .select(
+      `
+      *,
+      news_players (
+        role,
+        players (
+          name
+        )
+      )
+    `,
+    )
     .eq("is_duplicate", false)
     .lt("pub_date", cursor)
     .order("pub_date", { ascending: false })
@@ -49,6 +65,13 @@ export async function fetchMoreRumors(
         aiProbability: rumor.ai_probability,
         aiAnalysis: rumor.ai_analysis,
         transferDirection: rumor.transfer_direction,
+        players:
+          rumor.news_players?.map(
+            (np: { role: string; players: { name: string } }) => ({
+              name: np.players?.name || "",
+              role: np.role as "target" | "departing" | "mentioned",
+            }),
+          ) || [],
       })) || [],
     hasMore,
   };

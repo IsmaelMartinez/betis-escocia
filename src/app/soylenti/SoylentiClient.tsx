@@ -5,6 +5,11 @@ import RumorCard from "@/components/RumorCard";
 import { RefreshCw, Loader2 } from "lucide-react";
 import { fetchMoreRumors } from "./actions";
 
+interface PlayerInfo {
+  name: string;
+  role: "target" | "departing" | "mentioned";
+}
+
 interface Rumor {
   title: string;
   link: string;
@@ -14,6 +19,7 @@ interface Rumor {
   aiProbability?: number | null;
   aiAnalysis?: string | null;
   transferDirection?: "in" | "out" | "unknown" | null;
+  players?: PlayerInfo[];
 }
 
 interface SoylentiClientProps {
@@ -141,6 +147,7 @@ export default function SoylentiClient({
                 aiAnalysis={rumor.aiAnalysis}
                 transferDirection={rumor.transferDirection}
                 showCredibility={franMode}
+                players={rumor.players}
               />
             ))}
           </div>
@@ -162,9 +169,7 @@ export default function SoylentiClient({
                   "Cargar más noticias"
                 )}
               </button>
-              {error && (
-                <p className="mt-4 text-red-600 text-sm">{error}</p>
-              )}
+              {error && <p className="mt-4 text-red-600 text-sm">{error}</p>}
             </div>
           )}
         </>

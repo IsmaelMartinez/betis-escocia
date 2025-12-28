@@ -3,6 +3,11 @@
 import Card from "@/components/ui/Card";
 import { ExternalLink } from "lucide-react";
 
+interface PlayerInfo {
+  name: string;
+  role: "target" | "departing" | "mentioned";
+}
+
 interface RumorCardProps {
   title: string;
   link: string;
@@ -13,6 +18,7 @@ interface RumorCardProps {
   aiAnalysis?: string | null;
   transferDirection?: "in" | "out" | "unknown" | null;
   showCredibility?: boolean;
+  players?: PlayerInfo[];
 }
 
 export default function RumorCard({
@@ -25,6 +31,7 @@ export default function RumorCard({
   aiAnalysis,
   transferDirection,
   showCredibility = true,
+  players = [],
 }: RumorCardProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -88,6 +95,26 @@ export default function RumorCard({
           </div>
           <span className="text-sm text-gray-500">{formatDate(pubDate)}</span>
         </div>
+
+        {/* Players (if available) */}
+        {players.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-3">
+            {players.map((player, index) => (
+              <span
+                key={index}
+                className={`px-2 py-0.5 rounded text-xs ${
+                  player.role === "target"
+                    ? "bg-betis-verde-light text-betis-verde-dark"
+                    : player.role === "departing"
+                      ? "bg-amber-100 text-amber-800"
+                      : "bg-gray-100 text-gray-600"
+                }`}
+              >
+                {player.name}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Title */}
         <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2">

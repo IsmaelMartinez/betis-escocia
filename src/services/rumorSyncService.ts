@@ -1,6 +1,7 @@
 import { fetchAllRumors } from "./rssFetcherService";
 import { checkDuplicate } from "./deduplicationService";
 import { analyzeRumorCredibility } from "./geminiService";
+import { processExtractedPlayers } from "./playerNormalizationService";
 import { createClient } from "@supabase/supabase-js";
 import { log } from "@/lib/logger";
 import type { BetisNewsInsert } from "@/lib/supabase";
@@ -16,6 +17,7 @@ export interface SyncResult {
   notAnalyzed: number; // Items that couldn't be analyzed (ai_probability = null)
   analyzed: number;
   inserted: number;
+  playersProcessed: number; // Phase 2A: Players extracted and linked
   errors: number;
   [key: string]: unknown;
 }
@@ -29,6 +31,7 @@ export async function syncRumors(): Promise<SyncResult> {
     notAnalyzed: 0,
     analyzed: 0,
     inserted: 0,
+    playersProcessed: 0,
     errors: 0,
   };
 
@@ -140,12 +143,16 @@ export async function syncRumors(): Promise<SyncResult> {
           ai_analysis: analysis.reasoning,
           ai_analyzed_at: new Date().toISOString(),
           is_duplicate: false,
-          transfer_direction: isTransferRumor ? analysis.transferDirection : null,
+          transfer_direction: isTransferRumor
+            ? analysis.transferDirection
+            : null,
         };
 
-        const { error } = await supabase
+        const { data: insertedNews, error } = await supabase
           .from("betis_news")
-          .insert([newsInsert]);
+          .insert([newsInsert])
+          .select("id")
+          .single();
 
         if (error) {
           // Check if it's a unique constraint violation (duplicate link)
@@ -163,6 +170,17 @@ export async function syncRumors(): Promise<SyncResult> {
           }
         } else {
           result.inserted++;
+
+          // Phase 2A: Process extracted players
+          if (analysis.players && analysis.players.length > 0 && insertedNews) {
+            const playerResult = await processExtractedPlayers(
+              insertedNews.id,
+              analysis.players,
+              supabase,
+            );
+            result.playersProcessed += playerResult.playersProcessed;
+            result.errors += playerResult.errors;
+          }
         }
       } catch (error) {
         log.error("Error processing news item", error, { title: rumor.title });
