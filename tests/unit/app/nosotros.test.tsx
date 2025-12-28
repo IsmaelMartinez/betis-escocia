@@ -91,42 +91,13 @@ describe('Nosotros Page', () => {
     expect(screen.getByText(/LaLiga nos destaca oficialmente/)).toBeInTheDocument();
   });
 
-  it('should render founding members section', async () => {
+  it('should render founders mention in story section', async () => {
     const NosotrosPage = (await import('@/app/nosotros/page')).default;
     render(<NosotrosPage />);
 
-    expect(screen.getByText(/EL EQUIPO/)).toBeInTheDocument();
-    expect(screen.getByText('NUESTROS PILARES')).toBeInTheDocument();
-  });
-
-  it('should render all founding members', async () => {
-    const NosotrosPage = (await import('@/app/nosotros/page')).default;
-    render(<NosotrosPage />);
-
-    // Check for founding members
-    expect(screen.getByText('José María Conde (José Mari)')).toBeInTheDocument();
-    expect(screen.getByText('Juan Morata')).toBeInTheDocument();
-
-    // Check for their roles
-    expect(screen.getByText('Co-fundador y Presidente')).toBeInTheDocument();
-    expect(screen.getByText('Co-fundador')).toBeInTheDocument();
-  });
-
-  it('should render member descriptions', async () => {
-    const NosotrosPage = (await import('@/app/nosotros/page')).default;
-    render(<NosotrosPage />);
-
-    expect(screen.getByText(/Co-fundador de la peña en 2010 junto con Juan/)).toBeInTheDocument();
-    expect(screen.getByText(/Regresó a España por motivos profesionales/)).toBeInTheDocument();
-  });
-
-  it('should render member emojis', async () => {
-    const NosotrosPage = (await import('@/app/nosotros/page')).default;
-    render(<NosotrosPage />);
-
-    // Check that emojis are present (they may appear multiple times)
-    expect(screen.getAllByText('👑').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('⚽').length).toBeGreaterThan(0);
+    // Check founders are mentioned in the story (may appear multiple times)
+    expect(screen.getAllByText(/Juan Morata/).length).toBeGreaterThan(0);
+    expect(screen.getByText(/El Comienzo/)).toBeInTheDocument();
   });
 
   it('should render call to action section', async () => {

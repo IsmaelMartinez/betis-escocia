@@ -1,14 +1,13 @@
 "use client";
 
 import React from "react";
-import { Calendar, Clock, Users, MapPin, Trophy } from "lucide-react";
+import { Users, MapPin, Trophy } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { MatchCardProps } from "@/types/match";
 import type { Match as DatabaseMatch } from "@/lib/supabase";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { DATETIME_FORMAT } from "@/lib/constants/dateFormats";
 
 /**
  * Variant types for the MatchTicket component
@@ -113,19 +112,12 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
     watchParty,
     rsvpInfo,
     showRSVP,
-    variant = "upcoming",
     priority = "normal",
   } = props;
 
   const isUpcoming =
     status === "SCHEDULED" || status === "TIMED" || new Date(date) > new Date();
   const isLive = status === "IN_PLAY" || status === "PAUSED";
-
-  // Format date
-  const formatDate = (dateString: string): string => {
-    const matchDate = new Date(dateString);
-    return format(matchDate, DATETIME_FORMAT, { locale: es });
-  };
 
   const formatShortDate = (
     dateString: string,
