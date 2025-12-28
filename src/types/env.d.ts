@@ -20,9 +20,6 @@ declare namespace NodeJS {
 
     // Gemini AI Configuration
     GEMINI_API_KEY: string;
-    GEMINI_MODEL: string;
-    GEMINI_MAX_RETRIES: string;
-    GEMINI_TIMEOUT_MS: string;
 
     // Next.js Built-in Environment Variables
     NODE_ENV: "development" | "production" | "test";

@@ -1,42 +1,52 @@
-import React from 'react';
-import { render, screen, within, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
-import Home from '../../../src/app/page';
-import { FeatureWrapper } from '@/lib/featureProtection';
+import React from "react";
+import { render, screen, within, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
+import Home from "../../../src/app/page";
+import { FeatureWrapper } from "@/lib/featureProtection";
 
 // Mock components and modules
-vi.mock('@/components/HeroCommunity', () => ({
+vi.mock("@/components/HeroCommunity", () => ({
   default: vi.fn(() => <div data-testid="mock-hero-community" />),
 }));
-vi.mock('@/components/UpcomingMatchesWidget', () => ({
+vi.mock("@/components/UpcomingMatchesWidget", () => ({
   default: vi.fn(() => <div data-testid="mock-upcoming-matches-widget" />),
 }));
-vi.mock('@/components/ClassificationWidget', () => ({
+vi.mock("@/components/ClassificationWidget", () => ({
   default: vi.fn(() => <div data-testid="mock-classification-widget" />),
 }));
-vi.mock('@/lib/featureProtection', () => ({
+vi.mock("@/lib/featureProtection", () => ({
   FeatureWrapper: vi.fn((props) => props.children), // Modified to pass all props
 }));
 
-describe('Home page', () => {
-  it('renders HeroCommunity component', () => {
+describe("Home page", () => {
+  it("renders HeroCommunity component", () => {
     render(<Home />);
-    expect(screen.getByTestId('mock-hero-community')).toBeInTheDocument();
+    expect(screen.getByTestId("mock-hero-community")).toBeInTheDocument();
   });
 
-  it('renders UpcomingMatchesWidget and ClassificationWidget within FeatureWrapper', async () => {
+  it("renders UpcomingMatchesWidget and ClassificationWidget within FeatureWrapper", async () => {
     render(<Home />);
     // Wait for dynamic imports to load
     await waitFor(() => {
-      expect(screen.getByTestId('mock-upcoming-matches-widget')).toBeInTheDocument();
+      expect(
+        screen.getByTestId("mock-upcoming-matches-widget"),
+      ).toBeInTheDocument();
     });
     await waitFor(() => {
-      expect(screen.getByTestId('mock-classification-widget')).toBeInTheDocument();
+      expect(
+        screen.getByTestId("mock-classification-widget"),
+      ).toBeInTheDocument();
     });
     // Verify that FeatureWrapper was called for these components
     // The second argument is undefined because no additional props are passed to FeatureWrapper
-    expect(FeatureWrapper).toHaveBeenCalledWith(expect.objectContaining({ feature: 'show-partidos' }), undefined);
-    expect(FeatureWrapper).toHaveBeenCalledWith(expect.objectContaining({ feature: 'show-clasificacion' }), undefined);
+    expect(FeatureWrapper).toHaveBeenCalledWith(
+      expect.objectContaining({ feature: "show-partidos" }),
+      undefined,
+    );
+    expect(FeatureWrapper).toHaveBeenCalledWith(
+      expect.objectContaining({ feature: "show-clasificacion" }),
+      undefined,
+    );
   });
 
   it('renders the "Join Us" section with correct text and links', () => {
@@ -44,26 +54,34 @@ describe('Home page', () => {
     // Text is split across lines with <br /> so we check for parts
     expect(screen.getByText(/¿Estás de visita/i)).toBeInTheDocument();
     expect(screen.getByText(/en Escocia\?/i)).toBeInTheDocument();
-    expect(screen.getByText('¡Únete a nosotros en The Polwarth Tavern!')).toBeInTheDocument();
-    expect(screen.getByText(/Todos los béticos son bienvenidos/i)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Únete/i })).toBeInTheDocument();
+    expect(
+      screen.getByText("¡Únete a nosotros en The Polwarth Tavern!"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Todos los béticos son bienvenidos/i),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Únete/i })).toBeInTheDocument();
     // Facebook and YouTube links are wrapped in FeatureWrapper for social media feature
   });
 
-  it('renders contact info section with correct details', () => {
+  it("renders contact info section with correct details", () => {
     render(<Home />);
     // Find the "Ubicación" section and query within it
-    const locationSection = screen.getByText('📍 Ubicación').closest('div');
+    const locationSection = screen.getByText("📍 Ubicación").closest("div");
     expect(locationSection).toBeInTheDocument();
-    expect(within(locationSection!).getByText(/The Polwarth Tavern/i)).toBeInTheDocument();
+    expect(
+      within(locationSection!).getByText(/The Polwarth Tavern/i),
+    ).toBeInTheDocument();
 
     // Find the "Ambiente" section and query within it
-    const ambienteSection = screen.getByText('💚 Ambiente').closest('div');
+    const ambienteSection = screen.getByText("💚 Ambiente").closest("div");
     expect(ambienteSection).toBeInTheDocument();
     // Query for the paragraph element that contains the text "100% bético"
-    expect(within(ambienteSection!).getByText(/100% bético/i, { selector: 'p' })).toBeInTheDocument();
+    expect(
+      within(ambienteSection!).getByText(/100% bético/i, { selector: "p" }),
+    ).toBeInTheDocument();
 
-    expect(screen.getByText('⏰ Horarios')).toBeInTheDocument();
+    expect(screen.getByText("⏰ Horarios")).toBeInTheDocument();
     expect(screen.getByText(/15 min antes del partido/i)).toBeInTheDocument();
   });
 });
