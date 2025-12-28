@@ -12,7 +12,7 @@ permissions:
 jobs:
   sync-rumors:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Checkout code

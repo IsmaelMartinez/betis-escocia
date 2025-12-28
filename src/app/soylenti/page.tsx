@@ -12,25 +12,38 @@ export const metadata: Metadata = {
     "Últimos rumores de fichajes y noticias del Real Betis desde múltiples fuentes.",
 };
 
+const INITIAL_LIMIT = 50;
+
 // Fetch rumors from database (Phase 2: persisted with AI analysis)
 async function fetchRumors() {
   const { supabase } = await import("@/lib/supabase");
 
-  const { data, error } = await supabase
-    .from("betis_news")
-    .select("*")
-    .eq("is_duplicate", false)
-    .order("pub_date", { ascending: false })
-    .limit(50);
+  const [rumorsResult, countResult] = await Promise.all([
+    supabase
+      .from("betis_news")
+      .select("*")
+      .eq("is_duplicate", false)
+      .order("pub_date", { ascending: false })
+      .limit(INITIAL_LIMIT + 1),
+    supabase
+      .from("betis_news")
+      .select("*", { count: "exact", head: true })
+      .eq("is_duplicate", false),
+  ]);
 
-  if (error) {
+  if (rumorsResult.error) {
     throw new Error("Error al cargar rumores");
   }
+
+  const hasMore = (rumorsResult.data?.length || 0) > INITIAL_LIMIT;
+  const items = hasMore
+    ? rumorsResult.data?.slice(0, INITIAL_LIMIT)
+    : rumorsResult.data;
 
   return {
     data: {
       rumors:
-        data?.map((rumor) => ({
+        items?.map((rumor) => ({
           title: rumor.title,
           link: rumor.link,
           pubDate: rumor.pub_date,
@@ -39,8 +52,9 @@ async function fetchRumors() {
           aiProbability: rumor.ai_probability,
           aiAnalysis: rumor.ai_analysis,
         })) || [],
-      totalCount: data?.length || 0,
-      lastUpdated: data?.[0]?.created_at || new Date().toISOString(),
+      totalCount: countResult.count || 0,
+      lastUpdated: items?.[0]?.created_at || new Date().toISOString(),
+      hasMore,
     },
   };
 }
@@ -75,6 +89,8 @@ async function SoylentiContent() {
           <SoylentiClient
             initialRumors={rumors}
             lastUpdated={data.lastUpdated}
+            initialHasMore={data.hasMore}
+            totalCount={data.totalCount}
           />
         </div>
       </section>

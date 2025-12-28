@@ -213,66 +213,71 @@ describe("rumorSyncService - Integration Tests", () => {
       expect(mockAnalyzeRumorCredibility).not.toHaveBeenCalled();
     });
 
-    it("should handle multiple rumors with different classifications", async () => {
-      const mockRumors: RumorItem[] = [
-        {
-          title: "Transfer Rumor",
-          link: "https://example.com/1",
-          pubDate: new Date(),
-          source: "Google News (Fichajes)",
-          description: "Fichaje",
-        },
-        {
-          title: "Match News",
-          link: "https://example.com/2",
-          pubDate: new Date(),
-          source: "Google News (General)",
-          description: "Partido",
-        },
-        {
-          title: "Quota Exceeded",
-          link: "https://example.com/3",
-          pubDate: new Date(),
-          source: "BetisWeb",
-          description: "Test",
-        },
-      ];
+    // Increased timeout due to rate limiting delays (4s per API call)
+    it(
+      "should handle multiple rumors with different classifications",
+      async () => {
+        const mockRumors: RumorItem[] = [
+          {
+            title: "Transfer Rumor",
+            link: "https://example.com/1",
+            pubDate: new Date(),
+            source: "Google News (Fichajes)",
+            description: "Fichaje",
+          },
+          {
+            title: "Match News",
+            link: "https://example.com/2",
+            pubDate: new Date(),
+            source: "Google News (General)",
+            description: "Partido",
+          },
+          {
+            title: "Quota Exceeded",
+            link: "https://example.com/3",
+            pubDate: new Date(),
+            source: "BetisWeb",
+            description: "Test",
+          },
+        ];
 
-      mockFetchAllRumors.mockResolvedValue(mockRumors);
-      mockCheckDuplicate.mockReturnValue({
-        contentHash: "unique",
-        isDuplicate: false,
-      });
-
-      mockAnalyzeRumorCredibility
-        .mockResolvedValueOnce({
-          isTransferRumor: true,
-          probability: 70,
-          reasoning: "Transfer",
-          confidence: "high",
-        })
-        .mockResolvedValueOnce({
-          isTransferRumor: false,
-          probability: 0,
-          reasoning: "Not transfer",
-          confidence: "high",
-        })
-        .mockResolvedValueOnce({
-          isTransferRumor: null,
-          probability: null,
-          reasoning: "Quota exceeded",
-          confidence: "low",
+        mockFetchAllRumors.mockResolvedValue(mockRumors);
+        mockCheckDuplicate.mockReturnValue({
+          contentHash: "unique",
+          isDuplicate: false,
         });
 
-      const result = await syncRumors();
+        mockAnalyzeRumorCredibility
+          .mockResolvedValueOnce({
+            isTransferRumor: true,
+            probability: 70,
+            reasoning: "Transfer",
+            confidence: "high",
+          })
+          .mockResolvedValueOnce({
+            isTransferRumor: false,
+            probability: 0,
+            reasoning: "Not transfer",
+            confidence: "high",
+          })
+          .mockResolvedValueOnce({
+            isTransferRumor: null,
+            probability: null,
+            reasoning: "Quota exceeded",
+            confidence: "low",
+          });
 
-      expect(result.fetched).toBe(3);
-      expect(result.transferRumors).toBe(1);
-      expect(result.regularNews).toBe(1);
-      expect(result.notAnalyzed).toBe(1);
-      expect(result.analyzed).toBe(3);
-      expect(result.inserted).toBe(3);
-    });
+        const result = await syncRumors();
+
+        expect(result.fetched).toBe(3);
+        expect(result.transferRumors).toBe(1);
+        expect(result.regularNews).toBe(1);
+        expect(result.notAnalyzed).toBe(1);
+        expect(result.analyzed).toBe(3);
+        expect(result.inserted).toBe(3);
+      },
+      20000
+    );
 
     it("should handle database insertion errors", async () => {
       const mockRumors: RumorItem[] = [
@@ -423,59 +428,64 @@ describe("rumorSyncService - Integration Tests", () => {
       );
     });
 
-    it("should continue processing after individual item errors", async () => {
-      const mockRumors: RumorItem[] = [
-        {
-          title: "Item 1",
-          link: "https://example.com/1",
-          pubDate: new Date(),
-          source: "BetisWeb",
-          description: "Test",
-        },
-        {
-          title: "Item 2",
-          link: "https://example.com/2",
-          pubDate: new Date(),
-          source: "BetisWeb",
-          description: "Test",
-        },
-        {
-          title: "Item 3",
-          link: "https://example.com/3",
-          pubDate: new Date(),
-          source: "BetisWeb",
-          description: "Test",
-        },
-      ];
+    // Increased timeout due to rate limiting delays (4s per API call)
+    it(
+      "should continue processing after individual item errors",
+      async () => {
+        const mockRumors: RumorItem[] = [
+          {
+            title: "Item 1",
+            link: "https://example.com/1",
+            pubDate: new Date(),
+            source: "BetisWeb",
+            description: "Test",
+          },
+          {
+            title: "Item 2",
+            link: "https://example.com/2",
+            pubDate: new Date(),
+            source: "BetisWeb",
+            description: "Test",
+          },
+          {
+            title: "Item 3",
+            link: "https://example.com/3",
+            pubDate: new Date(),
+            source: "BetisWeb",
+            description: "Test",
+          },
+        ];
 
-      mockFetchAllRumors.mockResolvedValue(mockRumors);
-      mockCheckDuplicate.mockReturnValue({
-        contentHash: "unique",
-        isDuplicate: false,
-      });
-
-      mockAnalyzeRumorCredibility
-        .mockResolvedValueOnce({
-          isTransferRumor: true,
-          probability: 50,
-          reasoning: "OK",
-          confidence: "medium",
-        })
-        .mockRejectedValueOnce(new Error("Failed"))
-        .mockResolvedValueOnce({
-          isTransferRumor: false,
-          probability: 0,
-          reasoning: "OK",
-          confidence: "high",
+        mockFetchAllRumors.mockResolvedValue(mockRumors);
+        mockCheckDuplicate.mockReturnValue({
+          contentHash: "unique",
+          isDuplicate: false,
         });
 
-      const result = await syncRumors();
+        mockAnalyzeRumorCredibility
+          .mockResolvedValueOnce({
+            isTransferRumor: true,
+            probability: 50,
+            reasoning: "OK",
+            confidence: "medium",
+          })
+          .mockRejectedValueOnce(new Error("Failed"))
+          .mockResolvedValueOnce({
+            isTransferRumor: false,
+            probability: 0,
+            reasoning: "OK",
+            confidence: "high",
+          });
 
-      expect(result.fetched).toBe(3);
-      expect(result.analyzed).toBe(2);
-      expect(result.errors).toBe(1);
-      expect(result.inserted).toBe(2);
-    });
+        const result = await syncRumors();
+
+        expect(result.fetched).toBe(3);
+        expect(result.analyzed).toBe(2);
+        expect(result.errors).toBe(1);
+        expect(result.inserted).toBe(2);
+      },
+      20000
+    );
 
     it("should log business events during sync", async () => {
       const mockRumors: RumorItem[] = [
@@ -516,48 +526,53 @@ describe("rumorSyncService - Integration Tests", () => {
       );
     });
 
-    it("should insert all news types into betis_news table", async () => {
-      const mockRumors: RumorItem[] = [
-        {
-          title: "Transfer",
-          link: "https://example.com/transfer",
-          pubDate: new Date("2025-01-01T12:00:00Z"),
-          source: "Google News (Fichajes)",
-          description: "Fichaje confirmado",
-        },
-        {
-          title: "Regular",
-          link: "https://example.com/regular",
-          pubDate: new Date("2025-01-01T11:00:00Z"),
-          source: "Google News (General)",
-          description: "Noticia regular",
-        },
-      ];
+    // Increased timeout due to rate limiting delays (4s per API call)
+    it(
+      "should insert all news types into betis_news table",
+      async () => {
+        const mockRumors: RumorItem[] = [
+          {
+            title: "Transfer",
+            link: "https://example.com/transfer",
+            pubDate: new Date("2025-01-01T12:00:00Z"),
+            source: "Google News (Fichajes)",
+            description: "Fichaje confirmado",
+          },
+          {
+            title: "Regular",
+            link: "https://example.com/regular",
+            pubDate: new Date("2025-01-01T11:00:00Z"),
+            source: "Google News (General)",
+            description: "Noticia regular",
+          },
+        ];
 
-      mockFetchAllRumors.mockResolvedValue(mockRumors);
-      mockCheckDuplicate.mockReturnValue({
-        contentHash: "unique",
-        isDuplicate: false,
-      });
-
-      mockAnalyzeRumorCredibility
-        .mockResolvedValueOnce({
-          isTransferRumor: true,
-          probability: 80,
-          reasoning: "Transfer",
-          confidence: "high",
-        })
-        .mockResolvedValueOnce({
-          isTransferRumor: false,
-          probability: 0,
-          reasoning: "Regular",
-          confidence: "high",
+        mockFetchAllRumors.mockResolvedValue(mockRumors);
+        mockCheckDuplicate.mockReturnValue({
+          contentHash: "unique",
+          isDuplicate: false,
         });
 
-      await syncRumors();
+        mockAnalyzeRumorCredibility
+          .mockResolvedValueOnce({
+            isTransferRumor: true,
+            probability: 80,
+            reasoning: "Transfer",
+            confidence: "high",
+          })
+          .mockResolvedValueOnce({
+            isTransferRumor: false,
+            probability: 0,
+            reasoning: "Regular",
+            confidence: "high",
+          });
 
-      expect(mockSupabaseFrom).toHaveBeenCalledWith("betis_news");
-      expect(mockSupabaseInsert).toHaveBeenCalledTimes(2);
-    });
+        await syncRumors();
+
+        expect(mockSupabaseFrom).toHaveBeenCalledWith("betis_news");
+        expect(mockSupabaseInsert).toHaveBeenCalledTimes(2);
+      },
+      15000
+    );
   });
 });

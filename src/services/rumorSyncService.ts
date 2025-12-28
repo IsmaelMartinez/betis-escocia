@@ -5,6 +5,9 @@ import { createClient } from "@supabase/supabase-js";
 import { log } from "@/lib/logger";
 import type { BetisNewsInsert } from "@/lib/supabase";
 
+// Rate limiting: Gemini free tier allows 15 RPM, so ~4 seconds between calls
+const API_CALL_DELAY_MS = 4000;
+
 export interface SyncResult {
   fetched: number;
   duplicates: number;
@@ -88,6 +91,9 @@ export async function syncRumors(): Promise<SyncResult> {
           rumor.source,
         );
         result.analyzed++;
+
+        // Rate limiting: wait between API calls to respect 15 RPM limit
+        await new Promise((resolve) => setTimeout(resolve, API_CALL_DELAY_MS));
 
         // Determine if transfer rumor, regular news, or not analyzed
         const isTransferRumor = analysis.isTransferRumor;
