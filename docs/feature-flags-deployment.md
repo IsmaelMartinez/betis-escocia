@@ -25,7 +25,6 @@ The project uses environment variables for simple feature flag control. This doc
 
 #### Optional Features (Environment Variable Controlled)
 - `show-galeria` - Photo gallery
-- `show-social-media` - Social media integration
 - `show-redes-sociales` - Social networks
 - `show-debug-info` - Debug information
 - `admin-push-notifications` - Admin push notifications

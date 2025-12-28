@@ -155,13 +155,15 @@ function HeroCommunity() {
                 <Heart className="mr-3 h-5 w-5 group-hover:animate-pulse" />
                 ÚNETE A LA FAMILIA
               </Link>
-              <Link
-                href="/partidos"
-                className="group bg-white hover:bg-betis-verde-pale text-betis-verde-dark border-2 border-betis-verde-dark px-8 py-4 rounded-xl font-heading font-bold text-lg transition-all duration-300 flex items-center justify-center"
-              >
-                <Calendar className="mr-3 h-5 w-5" />
-                VER PARTIDOS
-              </Link>
+              <FeatureWrapper feature="show-partidos">
+                <Link
+                  href="/partidos"
+                  className="group bg-white hover:bg-betis-verde-pale text-betis-verde-dark border-2 border-betis-verde-dark px-8 py-4 rounded-xl font-heading font-bold text-lg transition-all duration-300 flex items-center justify-center"
+                >
+                  <Calendar className="mr-3 h-5 w-5" />
+                  VER PARTIDOS
+                </Link>
+              </FeatureWrapper>
             </div>
           </div>
 

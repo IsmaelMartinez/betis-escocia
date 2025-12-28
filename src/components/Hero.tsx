@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { MapPin, Calendar, Users, Heart } from 'lucide-react';
+import { FeatureWrapper } from '@/lib/featureProtection';
 
 export default function Hero() {
   return (
@@ -105,16 +106,18 @@ export default function Hero() {
               </span>
             </Link>
 
-            <Link 
-              href="/partidos"
-              className="group relative bg-gradient-to-r from-betis-green to-betis-green-dark hover:from-betis-green-dark hover:to-betis-green text-white px-12 py-6 rounded-3xl font-black text-2xl shadow-2xl hover:shadow-betis-green/40 transition-all duration-500 transform hover:scale-110 border-2 border-betis-green"
-            >
-              <span className="flex items-center relative z-10">
-                📅 Ver Partidos
-                <Calendar className="ml-3 h-6 w-6 group-hover:translate-x-2 transition-transform duration-300" />
-              </span>
-              <div className="absolute inset-0 bg-white/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </Link>
+            <FeatureWrapper feature="show-partidos">
+              <Link
+                href="/partidos"
+                className="group relative bg-gradient-to-r from-betis-green to-betis-green-dark hover:from-betis-green-dark hover:to-betis-green text-white px-12 py-6 rounded-3xl font-black text-2xl shadow-2xl hover:shadow-betis-green/40 transition-all duration-500 transform hover:scale-110 border-2 border-betis-green"
+              >
+                <span className="flex items-center relative z-10">
+                  📅 Ver Partidos
+                  <Calendar className="ml-3 h-6 w-6 group-hover:translate-x-2 transition-transform duration-300" />
+                </span>
+                <div className="absolute inset-0 bg-white/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </Link>
+            </FeatureWrapper>
           </div>
 
           {/* Social proof with enhanced styling */}

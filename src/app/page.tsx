@@ -131,25 +131,14 @@ export default function Home() {
               </span>
             </Link>
 
-            <FeatureWrapper feature="show-social-media">
-              <a
-                href="https://www.facebook.com/groups/beticosenescocia/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white hover:border-white px-10 py-5 rounded-2xl font-heading font-bold text-lg text-white hover:text-betis-verde transition-all duration-300 transform hover:scale-105"
-              >
-                <span className="flex items-center gap-2">📘 Facebook</span>
-              </a>
-
-              <a
-                href="https://www.youtube.com/beticosenescocia"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white hover:border-white px-10 py-5 rounded-2xl font-heading font-bold text-lg text-white hover:text-red-600 transition-all duration-300 transform hover:scale-105"
-              >
-                <span className="flex items-center gap-2">📺 YouTube</span>
-              </a>
-            </FeatureWrapper>
+            <a
+              href="https://www.facebook.com/groups/beticosenescocia/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white hover:border-white px-10 py-5 rounded-2xl font-heading font-bold text-lg text-white hover:text-betis-verde transition-all duration-300 transform hover:scale-105"
+            >
+              <span className="flex items-center gap-2">📘 Facebook</span>
+            </a>
           </div>
 
           {/* Contact info cards - with cultural patterns */}

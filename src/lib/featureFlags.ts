@@ -10,7 +10,6 @@ export type FeatureName =
   | "show-clasificacion"
   | "show-galeria"
   | "show-partidos"
-  | "show-social-media"
   | "show-nosotros"
   | "show-redes-sociales"
   | "show-clerk-auth"
@@ -34,7 +33,6 @@ const DEFAULT_FEATURES: Record<FeatureName, boolean> = {
   "show-clasificacion": false, // Phase 2: requires external API
   "show-galeria": false,
   "show-partidos": false, // Phase 2: requires match sync
-  "show-social-media": false,
   "show-nosotros": true, // Core: About page
   "show-redes-sociales": false,
   "show-clerk-auth": false, // Phase 2: user accounts
@@ -50,7 +48,6 @@ const ENV_VAR_MAP: Record<FeatureName, string> = {
   "show-clasificacion": "NEXT_PUBLIC_FEATURE_CLASIFICACION",
   "show-galeria": "NEXT_PUBLIC_FEATURE_GALERIA",
   "show-partidos": "NEXT_PUBLIC_FEATURE_PARTIDOS",
-  "show-social-media": "NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA",
   "show-nosotros": "NEXT_PUBLIC_FEATURE_NOSOTROS",
   "show-redes-sociales": "NEXT_PUBLIC_FEATURE_REDES_SOCIALES",
   "show-clerk-auth": "NEXT_PUBLIC_FEATURE_CLERK_AUTH",

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MapPin, Users, MessageCircle, Heart } from "lucide-react";
+import { FeatureWrapper } from "@/lib/featureProtection";
 
 export default function Unete() {
   const steps = [
@@ -315,12 +316,14 @@ export default function Unete() {
             conocernos. Te garantizamos que volverás.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/partidos"
-              className="bg-betis-oro hover:bg-betis-oro-dark text-betis-dark px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
-            >
-              📅 Ver próximo partido
-            </Link>
+            <FeatureWrapper feature="show-partidos">
+              <Link
+                href="/partidos"
+                className="bg-betis-oro hover:bg-betis-oro-dark text-betis-dark px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
+              >
+                📅 Ver próximo partido
+              </Link>
+            </FeatureWrapper>
             <a
               href="https://www.facebook.com/groups/beticosenescocia/"
               target="_blank"
