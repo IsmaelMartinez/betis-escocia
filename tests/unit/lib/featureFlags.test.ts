@@ -37,7 +37,6 @@ describe("Feature Flags - Simplified System", () => {
       expect(hasFeature("show-partidos")).toBe(false);
       expect(hasFeature("show-clerk-auth")).toBe(false);
       expect(hasFeature("show-galeria")).toBe(false);
-      expect(hasFeature("show-social-media")).toBe(false);
       expect(hasFeature("show-redes-sociales")).toBe(false);
       expect(hasFeature("show-debug-info")).toBe(false);
     });

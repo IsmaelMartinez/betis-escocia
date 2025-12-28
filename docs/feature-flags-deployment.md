@@ -7,6 +7,7 @@ The project uses environment variables for simple feature flag control. This doc
 ## Environment Variable System
 
 ### Key Principles
+
 - **Default behavior**: Most features are enabled by default
 - **Environment variables**: Only needed for disabled/experimental features
 - **Build-time resolution**: Feature flags are resolved at build time, not runtime
@@ -15,8 +16,9 @@ The project uses environment variables for simple feature flag control. This doc
 ### Available Feature Flags
 
 #### Always-On Features (No Environment Variable Needed)
+
 - `show-rsvp` - RSVP functionality
-- `show-unete` - Join functionality  
+- `show-unete` - Join functionality
 - `show-contacto` - Contact functionality
 - `show-clasificacion` - League standings
 - `show-partidos` - Match information
@@ -24,8 +26,8 @@ The project uses environment variables for simple feature flag control. This doc
 - `show-clerk-auth` - Authentication
 
 #### Optional Features (Environment Variable Controlled)
+
 - `show-galeria` - Photo gallery
-- `show-social-media` - Social media integration
 - `show-redes-sociales` - Social networks
 - `show-debug-info` - Debug information
 - `admin-push-notifications` - Admin push notifications
@@ -33,6 +35,7 @@ The project uses environment variables for simple feature flag control. This doc
 ## Configuration Examples
 
 ### Development Environment
+
 ```bash
 # Enable experimental features for testing
 NEXT_PUBLIC_FEATURE_GALERIA=true
@@ -40,6 +43,7 @@ NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
 ```
 
 ### Production Environment
+
 ```bash
 # Only set variables for features you want to enable
 # Omit variables for disabled features (they default to false)
@@ -47,6 +51,7 @@ NEXT_PUBLIC_FEATURE_GALERIA=true
 ```
 
 ### Staging Environment
+
 ```bash
 # Enable all features for testing
 NEXT_PUBLIC_FEATURE_GALERIA=true
@@ -59,10 +64,10 @@ NEXT_PUBLIC_FEATURE_ADMIN_PUSH_NOTIFICATIONS=true
 ## Usage in Code
 
 ```typescript
-import { hasFeature } from '@/lib/featureFlags';
+import { hasFeature } from "@/lib/featureFlags";
 
 // Synchronous feature check
-const isGalleryEnabled = hasFeature('show-galeria');
+const isGalleryEnabled = hasFeature("show-galeria");
 if (!isGalleryEnabled) return null;
 
 // Navigation filtering

@@ -31,6 +31,11 @@ vi.mock('lucide-react', () => ({
   Users: vi.fn(({ className }) => <div data-testid="users-icon" className={className} />)
 }));
 
+// Mock FeatureWrapper to always render children (feature enabled)
+vi.mock('@/lib/featureProtection', () => ({
+  FeatureWrapper: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 describe('MatchCard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
