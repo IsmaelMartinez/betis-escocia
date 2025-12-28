@@ -14,11 +14,7 @@
       "Bash(npm audit:*)",
       "Skill(local-brain:local-brain)",
       "Bash(local-brain:*)",
-      "Skill(local-brain)",
-      "Bash(gh run view:*)",
-      "Bash(gh pr checks:*)",
-      "WebSearch",
-      "Bash(GEMINI_MODEL=gemini-2.5-flash npm run sync-rumors:*)"
+      "Skill(local-brain)"
     ],
     "deny": [],
     "ask": []
