@@ -49,7 +49,7 @@ CREATE TABLE betis_news (
 - No source credibility tracking over time
 - No rumor evolution/lifecycle tracking
 - No trend analysis for emerging transfer targets
-- 50-item query limit without pagination for historical access
+- ~~50-item query limit without pagination for historical access~~ (DONE - PR #209)
 - Unanalyzed items (ai_probability = null) have no re-analysis mechanism
 
 ## Gemini API Free Tier Constraints (December 2025)
@@ -129,9 +129,7 @@ Enhanced prompt includes position detection:
 
 ```json
 {
-  "players": [
-    {"name": "Sergi Roberto", "role": "target", "position": "RB"}
-  ]
+  "players": [{ "name": "Sergi Roberto", "role": "target", "position": "RB" }]
 }
 ```
 
@@ -209,6 +207,7 @@ Lifecycle states: "emerging" (1-2 mentions), "active" (3+ mentions), "heating" (
 ### Phase 2F: Insights Dashboard
 
 Dashboard components:
+
 - Position Heatmap: which positions have most rumor activity
 - Trending Players: top 10 by trend score with sparklines
 - Source Reliability Matrix: credibility scores over time
@@ -216,6 +215,7 @@ Dashboard components:
 - Rumor Threads Panel: active sagas with probability evolution
 
 API endpoints:
+
 ```
 GET /api/soylenti/insights/positions
 GET /api/soylenti/insights/trending
@@ -267,36 +267,42 @@ Given free tier constraints:
 ## Implementation Phases
 
 ### Phase 2A (Sprint 1-2): Foundation
+
 - Extend Gemini prompt for player extraction
 - Create players and news_players tables
 - Implement player normalization service
 - Add basic player list to UI
 
 ### Phase 2B (Sprint 2-3): Position Intelligence
+
 - Add position fields to schema
 - Enhance prompt for position detection
 - Create position aggregation views
 - Add position filter to UI
 
 ### Phase 2C (Sprint 3-4): Source Tracking
+
 - Create source_credibility table
 - Add admin verification workflow
 - Implement credibility calculation job
 - Display source reliability in RumorCard
 
 ### Phase 2D (Sprint 4-5): Trend Analytics
+
 - Create player_trends materialized view
 - Implement trend calculation service
 - Add trending players component
 - Create insights API endpoints
 
 ### Phase 2E (Sprint 5-6): Lifecycle Management
+
 - Create rumor_threads table
 - Implement thread detection logic
 - Add thread visualization UI
 - Create resolution workflow
 
 ### Phase 2F (Sprint 6-7): Dashboard Polish
+
 - Build insights dashboard page
 - Add position heatmap visualization
 - Implement timeline chart
@@ -313,25 +319,27 @@ Given free tier constraints:
 ## Success Metrics
 
 **Quantitative**:
+
 - Player extraction accuracy: target 90%+ on known players
 - Position classification: target 85%+ correct
 - Source credibility correlation with outcomes: meaningful positive correlation
 - Trend detection lead time: identifying players before mainstream peak
 
 **Qualitative**:
+
 - User engagement with insights features
 - Admin feedback on verification workflow
 - Community sentiment about prediction accuracy
 
 ## Critical Files for Implementation
 
-| File | Purpose |
-|------|---------|
-| `src/services/geminiService.ts` | AI prompt enhancement for player/position extraction |
-| `src/services/rumorSyncService.ts` | Pipeline integration for player extraction and lifecycle |
-| `sql/0002_add_betis_news_table.sql` | Schema reference for new migrations |
-| `src/app/soylenti/SoylentiClient.tsx` | Frontend expansion for insights dashboard |
-| `src/lib/supabase.ts` | Type definitions for new entities |
+| File                                  | Purpose                                                  |
+| ------------------------------------- | -------------------------------------------------------- |
+| `src/services/geminiService.ts`       | AI prompt enhancement for player/position extraction     |
+| `src/services/rumorSyncService.ts`    | Pipeline integration for player extraction and lifecycle |
+| `sql/0002_add_betis_news_table.sql`   | Schema reference for new migrations                      |
+| `src/app/soylenti/SoylentiClient.tsx` | Frontend expansion for insights dashboard                |
+| `src/lib/supabase.ts`                 | Type definitions for new entities                        |
 
 ## Appendix: Local Brain Analysis
 
@@ -340,6 +348,7 @@ Analysis from local Ollama model on Betis transfer strategy:
 The Soylenti system could prioritize filtering rumors about Spanish players or young talents in target positions, highlighting source credibility for rumors involving loan targets, and flagging longstanding rumors about defensive midfielders or strikers as high-priority. This would help Soylenti evolve into a predictive tool combining real-time rumor tracking with strategic football intelligence.
 
 Betis's historical transfer patterns suggest focusing on:
+
 - Defensive reinforcements (CB, full-backs)
 - Versatile midfielders who can contribute defensively
 - Young talents in the 22-25 age range
