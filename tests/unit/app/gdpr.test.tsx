@@ -118,7 +118,7 @@ describe("GDPR Page", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        /Both RSVPs and contact information are automatically deleted after 3 months/,
+        /Tanto los RSVPs como la información de contacto se eliminan automáticamente después de 3 meses/,
       ),
     ).toBeInTheDocument();
   });

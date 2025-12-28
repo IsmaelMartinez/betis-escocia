@@ -31,12 +31,17 @@ export async function syncRumors(): Promise<SyncResult> {
 
   try {
     // Create Supabase client with service role key (bypasses RLS)
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    // SUPABASE_SYNC_* vars are used for production in GitHub Actions
+    // Falls back to NEXT_PUBLIC_* for local development
+    const supabaseUrl =
+      process.env.SUPABASE_SYNC_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey =
+      process.env.SUPABASE_SYNC_SERVICE_ROLE_KEY ||
+      process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
       throw new Error(
-        "NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables are required",
+        "Supabase URL and service role key environment variables are required",
       );
     }
 

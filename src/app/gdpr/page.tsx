@@ -1,11 +1,10 @@
-'use client';
+"use client";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-import { useAuth } from '@clerk/nextjs';
-import { Shield, Mail } from 'lucide-react';
-import Card, { CardBody } from '@/components/ui/Card';
-
+import { useAuth } from "@clerk/nextjs";
+import { Shield, Mail } from "lucide-react";
+import Card, { CardBody } from "@/components/ui/Card";
 
 export default function GDPRPage() {
   const { isSignedIn } = useAuth();
@@ -34,8 +33,9 @@ export default function GDPRPage() {
             Protección de Datos Personales
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            En cumplimiento del Reglamento General de Protección de Datos (GDPR),
-            puedes acceder a tus datos personales o solicitar su eliminación.
+            En cumplimiento del Reglamento General de Protección de Datos
+            (GDPR), puedes acceder a tus datos personales o solicitar su
+            eliminación.
           </p>
         </div>
 
@@ -46,14 +46,18 @@ export default function GDPRPage() {
               <div className="flex justify-center mb-4">
                 <Mail className="h-6 w-6 text-betis-green" />
               </div>
-              <h3 className="font-semibold text-betis-black mb-2">Acceso a tus Datos GDPR</h3>
+              <h3 className="font-semibold text-betis-black mb-2">
+                Acceso a tus Datos GDPR
+              </h3>
               <p className="text-sm text-gray-600 mb-4">
                 Para poder consultar y borrar tus datos necesitas estar logeado.
-                Ponte en contact con nosotros utilizando el formulario si no tienes sesión de usuario pero tienes datos en nuestro sistema.
+                Ponte en contacto con nosotros utilizando el formulario si no
+                tienes sesión de usuario pero tienes datos en nuestro sistema.
               </p>
               <p className="text-xs text-gray-500 mb-4">
-                **Información sobre retención de datos:**
-                Both RSVPs and contact information are automatically deleted after 3 months for GDPR compliance.
+                Información sobre retención de datos: Tanto los RSVPs como la
+                información de contacto se eliminan automáticamente después de 3
+                meses para cumplir con el GDPR.
               </p>
               <a
                 href="/contacto" // Assuming /contacto is the path to the contact form

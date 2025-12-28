@@ -6,6 +6,10 @@ declare namespace NodeJS {
     // Supabase Service Role Key (for server-side operations that bypass RLS)
     SUPABASE_SERVICE_ROLE_KEY: string;
 
+    // Supabase Sync (Production) - Used by sync-rumors script in GitHub Actions
+    SUPABASE_SYNC_URL?: string;
+    SUPABASE_SYNC_SERVICE_ROLE_KEY?: string;
+
     // Football Data API Configuration
     FOOTBALL_DATA_API_KEY: string;
     FOOTBALL_DATA_API_URL: string;
@@ -20,9 +24,6 @@ declare namespace NodeJS {
 
     // Gemini AI Configuration
     GEMINI_API_KEY: string;
-    GEMINI_MODEL: string;
-    GEMINI_MAX_RETRIES: string;
-    GEMINI_TIMEOUT_MS: string;
 
     // Next.js Built-in Environment Variables
     NODE_ENV: "development" | "production" | "test";
