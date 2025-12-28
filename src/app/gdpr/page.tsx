@@ -51,13 +51,13 @@ export default function GDPRPage() {
               </h3>
               <p className="text-sm text-gray-600 mb-4">
                 Para poder consultar y borrar tus datos necesitas estar logeado.
-                Ponte en contact con nosotros utilizando el formulario si no
+                Ponte en contacto con nosotros utilizando el formulario si no
                 tienes sesión de usuario pero tienes datos en nuestro sistema.
               </p>
               <p className="text-xs text-gray-500 mb-4">
-                **Información sobre retención de datos:** Both RSVPs and contact
-                information are automatically deleted after 3 months for GDPR
-                compliance.
+                Información sobre retención de datos: Tanto los RSVPs como la
+                información de contacto se eliminan automáticamente después de 3
+                meses para cumplir con el GDPR.
               </p>
               <a
                 href="/contacto" // Assuming /contacto is the path to the contact form

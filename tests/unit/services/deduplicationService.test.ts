@@ -56,7 +56,7 @@ describe('deduplicationService', () => {
 
       expect(hash1).toBe(hash2);
 
-      // But NOT internal whitespace
+      // Internal whitespace is preserved (different spacing = different hash)
       const hash3 = generateContentHash('  Title  ', '  Description  ');
       const hash4 = generateContentHash('Title', 'Description');
       expect(hash3).not.toBe(hash4);

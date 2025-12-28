@@ -3,13 +3,8 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import RootLayout from "../../../src/app/layout";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import * as Sentry from "@sentry/nextjs";
 import Layout from "@/components/Layout";
-import OfflineDetector from "@/components/OfflineDetector";
-import SentryUserContext from "@/components/SentryUserContext";
-import FacebookSDK from "@/components/FacebookSDK";
 
 // Mock external modules and components
 vi.mock("next/font/google", () => ({

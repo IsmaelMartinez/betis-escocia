@@ -2,8 +2,8 @@ import { GoogleGenAI } from "@google/genai";
 import { log } from "@/lib/logger";
 
 export interface RumorAnalysis {
-  isTransferRumor: boolean; // Is this actually a transfer rumor?
-  probability: number; // 0-100 (only if isTransferRumor=true)
+  isTransferRumor: boolean | null; // Is this actually a transfer rumor? null = couldn't analyze
+  probability: number | null; // 0-100 (only if isTransferRumor=true), null = not analyzed
   reasoning: string;
   confidence: "low" | "medium" | "high";
 }
@@ -79,8 +79,8 @@ Responde SOLO en este formato JSON:
           note: "Free tier limit reached - storing with null probability",
         });
         return {
-          isTransferRumor: null as any, // null = couldn't analyze
-          probability: null as any, // null = not analyzed yet
+          isTransferRumor: null, // null = couldn't analyze
+          probability: null, // null = not analyzed yet
           reasoning: "No se pudo analizar este rumor automáticamente.",
           confidence: "low",
         };
@@ -97,8 +97,8 @@ Responde SOLO en este formato JSON:
           },
         );
         return {
-          isTransferRumor: null as any, // null = couldn't analyze
-          probability: null as any, // null = not analyzed yet
+          isTransferRumor: null, // null = couldn't analyze
+          probability: null, // null = not analyzed yet
           reasoning: "No se pudo analizar este rumor automáticamente.",
           confidence: "low",
         };
