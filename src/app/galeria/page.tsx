@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 import { Camera, Hash, ExternalLink } from 'lucide-react';
 import InstagramEmbed from '@/components/InstagramEmbed';
 import FacebookPagePlugin from '@/components/FacebookPagePlugin';
-import { withFeatureFlag } from '@/lib/featureProtection';
+import { withFeatureFlag, FeatureWrapper } from '@/lib/featureProtection';
 
 function GalleryPage() {
   return (
@@ -102,12 +102,14 @@ function GalleryPage() {
             Join hundreds of béticos sharing their match day experiences and memories from Polwarth Tavern.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="/rsvp"
-              className="inline-flex items-center gap-2 bg-gray-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-700 transition-colors"
-            >
-              Join Us at Polwarth
-            </a>
+            <FeatureWrapper feature="show-rsvp">
+              <a
+                href="/rsvp"
+                className="inline-flex items-center gap-2 bg-gray-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-700 transition-colors"
+              >
+                Join Us at Polwarth
+              </a>
+            </FeatureWrapper>
             <a
               href="/redes-sociales"
               className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"

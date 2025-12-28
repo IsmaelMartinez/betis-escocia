@@ -10,6 +10,11 @@ vi.mock("next/link", () => ({
   ),
 }));
 
+// Mock FeatureWrapper to always render children (feature enabled)
+vi.mock("@/lib/featureProtection", () => ({
+  FeatureWrapper: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 describe("Nosotros Page", () => {
   it("should render the main heading", async () => {
     const NosotrosPage = (await import("@/app/nosotros/page")).default;

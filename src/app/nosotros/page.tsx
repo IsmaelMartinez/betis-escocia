@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Users, Heart } from "lucide-react";
+import { FeatureWrapper } from "@/lib/featureProtection";
 
 export default function Nosotros() {
   const milestones = [
@@ -184,12 +185,14 @@ export default function Nosotros() {
             >
               💬 Únete a nosotros
             </Link>
-            <Link
-              href="/rsvp"
-              className="text-white hover:bg-betis-verde-dark bg-betis-verde hover:text-betis-oro px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg border border-white/20"
-            >
-              📅 Próximos eventos
-            </Link>
+            <FeatureWrapper feature="show-rsvp">
+              <Link
+                href="/rsvp"
+                className="text-white hover:bg-betis-verde-dark bg-betis-verde hover:text-betis-oro px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg border border-white/20"
+              >
+                📅 Próximos eventos
+              </Link>
+            </FeatureWrapper>
           </div>
         </div>
       </section>

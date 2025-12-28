@@ -13,7 +13,9 @@ vi.mock("next/link", () => ({
 
 // Mock FeatureWrapper to always render children (feature enabled)
 vi.mock("@/lib/featureProtection", () => ({
-  FeatureWrapper: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  FeatureWrapper: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
 }));
 
 // Mock Lucide React icons

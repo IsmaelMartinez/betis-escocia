@@ -3,7 +3,8 @@ import { render, screen } from '@testing-library/react';
 
 // Mock feature flags
 vi.mock('@/lib/featureProtection', () => ({
-  withFeatureFlag: (Component: any) => Component
+  withFeatureFlag: (Component: any) => Component,
+  FeatureWrapper: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
 // Mock components

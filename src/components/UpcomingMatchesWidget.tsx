@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { getUpcomingMatchesWithRSVPCounts, Match } from '@/lib/supabase';
 import Link from 'next/link';
+import { FeatureWrapper } from '@/lib/featureProtection';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { DATETIME_FORMAT } from '@/lib/constants/dateFormats';
@@ -198,27 +199,29 @@ export default function UpcomingMatchesWidget({
 
               {/* RSVP info and action for upcoming matches */}
               {isUpcoming && (
-                <div className="border-t border-gray-100 pt-3">
-                  {match.rsvp_count > 0 && (
-                    <div className="text-center mb-2">
-                      <span className="text-xs text-gray-600">
-                        <span className="font-medium text-betis-verde">{match.rsvp_count}</span> confirmaciones
-                        {match.total_attendees > 0 && (
-                          <span className="ml-2">
-                            • <span className="font-medium text-betis-verde">{match.total_attendees}</span> asistentes
-                          </span>
-                        )}
-                      </span>
-                    </div>
-                  )}
-                  
-                  <Link
-                    href={`/rsvp?match=${match.id}`}
-                    className="block w-full bg-betis-verde hover:bg-betis-verde-dark text-white text-center py-2 px-3 rounded text-xs font-medium transition-colors"
-                  >
-                    📝 Confirmar Asistencia
-                  </Link>
-                </div>
+                <FeatureWrapper feature="show-rsvp">
+                  <div className="border-t border-gray-100 pt-3">
+                    {match.rsvp_count > 0 && (
+                      <div className="text-center mb-2">
+                        <span className="text-xs text-gray-600">
+                          <span className="font-medium text-betis-verde">{match.rsvp_count}</span> confirmaciones
+                          {match.total_attendees > 0 && (
+                            <span className="ml-2">
+                              • <span className="font-medium text-betis-verde">{match.total_attendees}</span> asistentes
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    )}
+
+                    <Link
+                      href={`/rsvp?match=${match.id}`}
+                      className="block w-full bg-betis-verde hover:bg-betis-verde-dark text-white text-center py-2 px-3 rounded text-xs font-medium transition-colors"
+                    >
+                      📝 Confirmar Asistencia
+                    </Link>
+                  </div>
+                </FeatureWrapper>
               )}
             </div>
           );

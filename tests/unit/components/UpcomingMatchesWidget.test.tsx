@@ -17,6 +17,11 @@ vi.mock("@/lib/supabase", () => ({
   getUpcomingMatchesWithRSVPCounts: vi.fn(),
 }));
 
+// Mock FeatureWrapper to always render children (feature enabled)
+vi.mock("@/lib/featureProtection", () => ({
+  FeatureWrapper: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 // Import the mocked function
 import { getUpcomingMatchesWithRSVPCounts } from "@/lib/supabase";
 

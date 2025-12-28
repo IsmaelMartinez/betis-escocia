@@ -4,6 +4,7 @@ import React from 'react';
 import { Calendar, Clock, Users } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { FeatureWrapper } from '@/lib/featureProtection';
 import type { MatchCardProps } from '@/types/match';
 import type { Match as DatabaseMatch } from '@/lib/supabase';
 import { format } from 'date-fns';
@@ -286,27 +287,29 @@ const MatchCard: React.FC<MatchCardProps> = (props) => {
 
         {/* RSVP section for upcoming matches */}
         {isUpcoming && showRSVP && (
-          <div className="border-t border-gray-200 pt-4">
-            {rsvpInfo && (
-              <div className="flex items-center justify-between mb-3">
-                <div className="text-sm text-gray-600">
-                  <span className="font-medium text-betis-green">{rsvpInfo.rsvpCount}</span> confirmaciones
-                  {rsvpInfo.totalAttendees > 0 && (
-                    <span className="ml-2">
-                      • <span className="font-medium text-betis-green">{rsvpInfo.totalAttendees}</span> asistentes
-                    </span>
-                  )}
+          <FeatureWrapper feature="show-rsvp">
+            <div className="border-t border-gray-200 pt-4">
+              {rsvpInfo && (
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-sm text-gray-600">
+                    <span className="font-medium text-betis-green">{rsvpInfo.rsvpCount}</span> confirmaciones
+                    {rsvpInfo.totalAttendees > 0 && (
+                      <span className="ml-2">
+                        • <span className="font-medium text-betis-green">{rsvpInfo.totalAttendees}</span> asistentes
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
-            
-            <Link 
-              href={`/rsvp?match=${id}`}
-              className="block w-full bg-betis-verde hover:bg-betis-verde-dark text-white text-center py-2 px-4 rounded-md font-medium transition-colors text-sm"
-            >
-              📝 Confirmar Asistencia{rsvpInfo && rsvpInfo.totalAttendees > 0 ? ` (${rsvpInfo.totalAttendees})` : ''}
-            </Link>
-          </div>
+              )}
+
+              <Link
+                href={`/rsvp?match=${id}`}
+                className="block w-full bg-betis-verde hover:bg-betis-verde-dark text-white text-center py-2 px-4 rounded-md font-medium transition-colors text-sm"
+              >
+                📝 Confirmar Asistencia{rsvpInfo && rsvpInfo.totalAttendees > 0 ? ` (${rsvpInfo.totalAttendees})` : ''}
+              </Link>
+            </div>
+          </FeatureWrapper>
         )}
       </div>
     </div>
