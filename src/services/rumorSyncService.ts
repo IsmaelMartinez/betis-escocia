@@ -84,6 +84,13 @@ export async function syncRumors(): Promise<SyncResult> {
           continue; // Skip duplicates
         }
 
+        // Rate limiting: wait before API call (except first) to respect 15 RPM limit
+        if (result.analyzed > 0) {
+          await new Promise((resolve) =>
+            setTimeout(resolve, API_CALL_DELAY_MS),
+          );
+        }
+
         // Analyze with Gemini AI
         const analysis = await analyzeRumorCredibility(
           rumor.title,
@@ -91,9 +98,6 @@ export async function syncRumors(): Promise<SyncResult> {
           rumor.source,
         );
         result.analyzed++;
-
-        // Rate limiting: wait between API calls to respect 15 RPM limit
-        await new Promise((resolve) => setTimeout(resolve, API_CALL_DELAY_MS));
 
         // Determine if transfer rumor, regular news, or not analyzed
         const isTransferRumor = analysis.isTransferRumor;

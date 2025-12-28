@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useMemo } from "react";
 import RumorCard from "@/components/RumorCard";
 import { RefreshCw, Loader2 } from "lucide-react";
 import { fetchMoreRumors } from "./actions";
@@ -34,16 +34,24 @@ export default function SoylentiClient({
   const [franMode, setFranMode] = useState(true);
   const [isPending, startTransition] = useTransition();
 
-  const displayedRumors = rumors.filter((rumor) => {
-    const prob = rumor.aiProbability;
-    if (prob !== null && prob !== undefined && prob > 0) return true;
-    return showAllNews;
-  });
+  const displayedRumors = useMemo(
+    () =>
+      rumors.filter((rumor) => {
+        const prob = rumor.aiProbability;
+        if (prob !== null && prob !== undefined && prob > 0) return true;
+        return showAllNews;
+      }),
+    [rumors, showAllNews],
+  );
 
-  const rumorCount = rumors.filter((r) => {
-    const prob = r.aiProbability;
-    return prob !== null && prob !== undefined && prob > 0;
-  }).length;
+  const rumorCount = useMemo(
+    () =>
+      rumors.filter((r) => {
+        const prob = r.aiProbability;
+        return prob !== null && prob !== undefined && prob > 0;
+      }).length,
+    [rumors],
+  );
 
   const handleLoadMore = () => {
     if (!hasMore || isPending) return;
@@ -116,9 +124,9 @@ export default function SoylentiClient({
       {displayedRumors.length > 0 ? (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {displayedRumors.map((rumor, index) => (
+            {displayedRumors.map((rumor) => (
               <RumorCard
-                key={`${rumor.link}-${index}`}
+                key={rumor.link}
                 title={rumor.title}
                 link={rumor.link}
                 pubDate={rumor.pubDate}

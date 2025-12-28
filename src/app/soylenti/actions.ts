@@ -19,7 +19,7 @@ interface PaginatedResult {
 
 export async function fetchMoreRumors(
   cursor: string,
-  limit: number = 50
+  limit: number = 50,
 ): Promise<PaginatedResult> {
   const { data, error } = await supabase
     .from("betis_news")
@@ -30,7 +30,8 @@ export async function fetchMoreRumors(
     .limit(limit + 1);
 
   if (error) {
-    throw new Error("Error al cargar más rumores");
+    console.error("Error fetching more rumors:", error);
+    throw error;
   }
 
   const hasMore = (data?.length || 0) > limit;
@@ -49,17 +50,4 @@ export async function fetchMoreRumors(
       })) || [],
     hasMore,
   };
-}
-
-export async function getTotalCount(): Promise<number> {
-  const { count, error } = await supabase
-    .from("betis_news")
-    .select("*", { count: "exact", head: true })
-    .eq("is_duplicate", false);
-
-  if (error) {
-    return 0;
-  }
-
-  return count || 0;
 }

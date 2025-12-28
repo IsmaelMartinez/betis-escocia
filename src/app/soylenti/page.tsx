@@ -31,7 +31,7 @@ async function fetchRumors() {
       .eq("is_duplicate", false),
   ]);
 
-  if (rumorsResult.error) {
+  if (rumorsResult.error || countResult.error) {
     throw new Error("Error al cargar rumores");
   }
 
