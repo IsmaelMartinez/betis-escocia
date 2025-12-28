@@ -20,6 +20,7 @@ Concise documentation of key architectural decisions.
 | [012](./012-libraries.md) | Core Libraries | ✅ Accepted |
 | [013](./013-security.md) | Security Architecture | ✅ Accepted |
 | [014](./014-database-migrations.md) | Database Migration Naming | ✅ Accepted |
+| [015](./015-ai-rumor-scoring.md) | AI Rumor Scoring (Soylenti) | ✅ Accepted |
 
 ## Creating New ADRs
 

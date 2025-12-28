@@ -1,171 +1,173 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   hasFeature,
   getEnabledNavigationItems,
   getFeatureFlagsStatus,
   clearFeatureCache,
-} from '../../../src/lib/featureFlags';
+} from "../../../src/lib/featureFlags";
 
 // Mock environment variables
 const mockEnv: Record<string, string | undefined> = {};
 
 // Mock process.env properly
-vi.stubGlobal('process', {
+vi.stubGlobal("process", {
   env: mockEnv,
 });
 
-describe('Feature Flags - Simplified System', () => {
+describe("Feature Flags - Simplified System", () => {
   beforeEach(() => {
     // Reset environment variables
-    Object.keys(mockEnv).forEach(key => delete mockEnv[key]);
-    
+    Object.keys(mockEnv).forEach((key) => delete mockEnv[key]);
+
     // Clear feature cache
     clearFeatureCache();
   });
 
-  describe('Default Feature Values', () => {
-    it('should return default values when no environment variables are set', () => {
+  describe("Default Feature Values", () => {
+    it("should return default values when no environment variables are set", () => {
       // Enabled by default (core features)
-      expect(hasFeature('show-nosotros')).toBe(true);
-      expect(hasFeature('show-unete')).toBe(true);
-      expect(hasFeature('show-soylenti')).toBe(true);
+      expect(hasFeature("show-nosotros")).toBe(true);
+      expect(hasFeature("show-unete")).toBe(true);
+      expect(hasFeature("show-soylenti")).toBe(true);
 
       // Disabled by default (Phase 2 or optional features)
-      expect(hasFeature('show-rsvp')).toBe(false);
-      expect(hasFeature('show-contacto')).toBe(false);
-      expect(hasFeature('show-clasificacion')).toBe(false);
-      expect(hasFeature('show-partidos')).toBe(false);
-      expect(hasFeature('show-clerk-auth')).toBe(false);
-      expect(hasFeature('show-galeria')).toBe(false);
-      expect(hasFeature('show-social-media')).toBe(false);
-      expect(hasFeature('show-redes-sociales')).toBe(false);
-      expect(hasFeature('show-debug-info')).toBe(false);
+      expect(hasFeature("show-rsvp")).toBe(false);
+      expect(hasFeature("show-contacto")).toBe(false);
+      expect(hasFeature("show-clasificacion")).toBe(false);
+      expect(hasFeature("show-partidos")).toBe(false);
+      expect(hasFeature("show-clerk-auth")).toBe(false);
+      expect(hasFeature("show-galeria")).toBe(false);
+      expect(hasFeature("show-social-media")).toBe(false);
+      expect(hasFeature("show-redes-sociales")).toBe(false);
+      expect(hasFeature("show-debug-info")).toBe(false);
     });
   });
 
-  describe('Environment Variable Overrides', () => {
+  describe("Environment Variable Overrides", () => {
     it('should override defaults when environment variables are set to "true"', () => {
-      mockEnv.NEXT_PUBLIC_FEATURE_GALERIA = 'true';
-      mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = 'true';
+      mockEnv.NEXT_PUBLIC_FEATURE_GALERIA = "true";
+      mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = "true";
       clearFeatureCache();
-      
-      expect(hasFeature('show-galeria')).toBe(true);
-      expect(hasFeature('show-debug-info')).toBe(true);
+
+      expect(hasFeature("show-galeria")).toBe(true);
+      expect(hasFeature("show-debug-info")).toBe(true);
     });
 
     it('should override defaults when environment variables are set to "false"', () => {
-      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = 'false';
-      mockEnv.NEXT_PUBLIC_FEATURE_CLASIFICACION = 'false';
+      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = "false";
+      mockEnv.NEXT_PUBLIC_FEATURE_CLASIFICACION = "false";
       clearFeatureCache();
-      
-      expect(hasFeature('show-rsvp')).toBe(false);
-      expect(hasFeature('show-clasificacion')).toBe(false);
+
+      expect(hasFeature("show-rsvp")).toBe(false);
+      expect(hasFeature("show-clasificacion")).toBe(false);
     });
 
-    it('should be case insensitive for environment variables', () => {
-      mockEnv.NEXT_PUBLIC_FEATURE_GALERIA = 'TRUE';
-      mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = 'True';
+    it("should be case insensitive for environment variables", () => {
+      mockEnv.NEXT_PUBLIC_FEATURE_GALERIA = "TRUE";
+      mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = "True";
       clearFeatureCache();
-      
-      expect(hasFeature('show-galeria')).toBe(true);
-      expect(hasFeature('show-debug-info')).toBe(true);
+
+      expect(hasFeature("show-galeria")).toBe(true);
+      expect(hasFeature("show-debug-info")).toBe(true);
     });
 
     it('should default to false for any non-"true" value', () => {
-      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = 'yes';
-      mockEnv.NEXT_PUBLIC_FEATURE_CLASIFICACION = '1';
-      mockEnv.NEXT_PUBLIC_FEATURE_PARTIDOS = 'enabled';
+      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = "yes";
+      mockEnv.NEXT_PUBLIC_FEATURE_CLASIFICACION = "1";
+      mockEnv.NEXT_PUBLIC_FEATURE_PARTIDOS = "enabled";
       clearFeatureCache();
-      
-      expect(hasFeature('show-rsvp')).toBe(false);
-      expect(hasFeature('show-clasificacion')).toBe(false);
-      expect(hasFeature('show-partidos')).toBe(false);
+
+      expect(hasFeature("show-rsvp")).toBe(false);
+      expect(hasFeature("show-clasificacion")).toBe(false);
+      expect(hasFeature("show-partidos")).toBe(false);
     });
   });
 
-  describe('Navigation Items', () => {
-    it('should return only enabled navigation items', () => {
+  describe("Navigation Items", () => {
+    it("should return only enabled navigation items", () => {
       const enabledItems = getEnabledNavigationItems();
 
       // Should include items that are enabled by default
-      expect(enabledItems.some(item => item.name === 'Nosotros')).toBe(true);
-      expect(enabledItems.some(item => item.name === 'Únete')).toBe(true);
-      expect(enabledItems.some(item => item.name === 'Soylenti')).toBe(true);
+      expect(enabledItems.some((item) => item.name === "Nosotros")).toBe(true);
+      expect(enabledItems.some((item) => item.name === "Únete")).toBe(true);
+      expect(enabledItems.some((item) => item.name === "Soylenti")).toBe(true);
 
       // Should NOT include Phase 2 items (disabled by default)
-      expect(enabledItems.some(item => item.name === 'RSVP')).toBe(false);
-      expect(enabledItems.some(item => item.name === 'Partidos')).toBe(false);
-      expect(enabledItems.some(item => item.name === 'Clasificación')).toBe(false);
-      expect(enabledItems.some(item => item.name === 'Contacto')).toBe(false);
-      expect(enabledItems.some(item => item.name === 'Galería')).toBe(false);
+      expect(enabledItems.some((item) => item.name === "RSVP")).toBe(false);
+      expect(enabledItems.some((item) => item.name === "Partidos")).toBe(false);
+      expect(enabledItems.some((item) => item.name === "Clasificación")).toBe(
+        false,
+      );
+      expect(enabledItems.some((item) => item.name === "Contacto")).toBe(false);
+      expect(enabledItems.some((item) => item.name === "Galería")).toBe(false);
     });
 
-    it('should include items when enabled via environment variables', () => {
-      mockEnv.NEXT_PUBLIC_FEATURE_GALERIA = 'true';
+    it("should include items when enabled via environment variables", () => {
+      mockEnv.NEXT_PUBLIC_FEATURE_GALERIA = "true";
       clearFeatureCache();
-      
+
       const enabledItems = getEnabledNavigationItems();
-      
-      expect(enabledItems.some(item => item.name === 'Galería')).toBe(true);
+
+      expect(enabledItems.some((item) => item.name === "Galería")).toBe(true);
     });
 
-    it('should exclude items when disabled via environment variables', () => {
-      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = 'false';
-      mockEnv.NEXT_PUBLIC_FEATURE_PARTIDOS = 'false';
+    it("should exclude items when disabled via environment variables", () => {
+      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = "false";
+      mockEnv.NEXT_PUBLIC_FEATURE_PARTIDOS = "false";
       clearFeatureCache();
-      
+
       const enabledItems = getEnabledNavigationItems();
-      
-      expect(enabledItems.some(item => item.name === 'RSVP')).toBe(false);
-      expect(enabledItems.some(item => item.name === 'Partidos')).toBe(false);
+
+      expect(enabledItems.some((item) => item.name === "RSVP")).toBe(false);
+      expect(enabledItems.some((item) => item.name === "Partidos")).toBe(false);
     });
   });
 
-  describe('Feature Flags Status Debug', () => {
-    it('should return null when debug mode is disabled', () => {
-      mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = 'false';
+  describe("Feature Flags Status Debug", () => {
+    it("should return null when debug mode is disabled", () => {
+      mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = "false";
       clearFeatureCache();
       const status = getFeatureFlagsStatus();
       expect(status).toBeNull();
     });
 
-    it('should return debug info when debug mode is enabled', () => {
-      mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = 'true';
+    it("should return debug info when debug mode is enabled", () => {
+      mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = "true";
       clearFeatureCache();
-      
+
       const status = getFeatureFlagsStatus();
-      
+
       expect(status).not.toBeNull();
-      expect(status).toHaveProperty('features');
-      expect(status).toHaveProperty('environment');
-      expect(status).toHaveProperty('enabledFeatures');
-      expect(status).toHaveProperty('disabledFeatures');
-      
+      expect(status).toHaveProperty("features");
+      expect(status).toHaveProperty("environment");
+      expect(status).toHaveProperty("enabledFeatures");
+      expect(status).toHaveProperty("disabledFeatures");
+
       expect(Array.isArray(status!.enabledFeatures)).toBe(true);
       expect(Array.isArray(status!.disabledFeatures)).toBe(true);
-      expect(status!.enabledFeatures.includes('show-debug-info')).toBe(true);
+      expect(status!.enabledFeatures.includes("show-debug-info")).toBe(true);
     });
   });
 
-  describe('Cache Management', () => {
-    it('should cache feature flag results', () => {
+  describe("Cache Management", () => {
+    it("should cache feature flag results", () => {
       // First call resolves and caches (RSVP is now false by default)
-      expect(hasFeature('show-rsvp')).toBe(false);
-      
+      expect(hasFeature("show-rsvp")).toBe(false);
+
       // Change environment variable after first call
-      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = 'true';
-      
+      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = "true";
+
       // Should still return cached result
-      expect(hasFeature('show-rsvp')).toBe(false);
+      expect(hasFeature("show-rsvp")).toBe(false);
     });
 
-    it('should clear cache and re-evaluate after clearFeatureCache', () => {
-      expect(hasFeature('show-rsvp')).toBe(false);
-      
-      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = 'true'; // Set to true to test cache clearing
+    it("should clear cache and re-evaluate after clearFeatureCache", () => {
+      expect(hasFeature("show-rsvp")).toBe(false);
+
+      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = "true"; // Set to true to test cache clearing
       clearFeatureCache();
-      
-      expect(hasFeature('show-rsvp')).toBe(true); // Should now be true after cache clear
+
+      expect(hasFeature("show-rsvp")).toBe(true); // Should now be true after cache clear
     });
   });
 });
