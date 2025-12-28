@@ -335,7 +335,7 @@ describe("geminiService", () => {
       await analyzeRumorCredibility("Title", "Description", "Source");
 
       expect(mockGenerateContent).toHaveBeenCalledWith({
-        model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
+        model: process.env.GEMINI_MODEL || "gemini-3-flash-preview",
         contents: expect.any(String),
       });
     });

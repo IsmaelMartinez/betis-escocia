@@ -46,7 +46,7 @@ Responde SOLO en este formato JSON:
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
       const response = await genAI.models.generateContent({
-        model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
+        model: process.env.GEMINI_MODEL || "gemini-3-flash-preview",
         contents: prompt,
       });
       const text = response.text;
