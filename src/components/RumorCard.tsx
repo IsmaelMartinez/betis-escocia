@@ -99,9 +99,9 @@ export default function RumorCard({
         {/* Players (if available) */}
         {players.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-3">
-            {players.map((player, index) => (
+            {players.map((player) => (
               <span
-                key={index}
+                key={`${player.name}-${player.role}`}
                 className={`px-2 py-0.5 rounded text-xs ${
                   player.role === "target"
                     ? "bg-betis-verde-light text-betis-verde-dark"

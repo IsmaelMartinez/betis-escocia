@@ -7,8 +7,8 @@ import type { ExtractedPlayer } from "./geminiService";
  * Normalizes a player name for deduplication.
  * - Converts to lowercase
  * - Removes accents/diacritics
- * - Trims whitespace
- * - Removes common prefixes (e.g., "el", "la")
+ * - Removes special characters
+ * - Trims and normalizes whitespace
  */
 export function normalizePlayerName(name: string): string {
   return name
@@ -48,7 +48,7 @@ export async function findOrCreatePlayer(
       .from("players")
       .update({
         last_seen_at: new Date().toISOString(),
-        rumor_count: (existingPlayer.rumor_count || 1) + 1,
+        rumor_count: (existingPlayer.rumor_count ?? 0) + 1,
       })
       .eq("id", existingPlayer.id)
       .select()
