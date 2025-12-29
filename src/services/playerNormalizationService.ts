@@ -55,7 +55,9 @@ export async function findOrCreatePlayer(
       .single();
 
     if (updateError) {
-      log.error("Error updating player", updateError, { id: existingPlayer.id });
+      log.error("Error updating player", updateError, {
+        id: existingPlayer.id,
+      });
       return existingPlayer; // Return original if update fails
     }
 
