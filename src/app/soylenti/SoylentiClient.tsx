@@ -3,7 +3,7 @@
 import { useState, useTransition, useMemo } from "react";
 import RumorCard from "@/components/RumorCard";
 import TrendingPlayers from "@/components/TrendingPlayers";
-import { RefreshCw, Loader2, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { RefreshCw, Loader2, X, ChevronUp, ChevronDown } from "lucide-react";
 import { fetchMoreRumors, fetchRumorsByPlayer } from "./actions";
 import type { TrendingPlayer } from "@/lib/supabase";
 
@@ -129,59 +129,32 @@ export default function SoylentiClient({
       <div className="lg:flex lg:gap-8">
         {/* Trending Players - collapsible sidebar */}
         {trendingPlayers.length > 0 && (
-          <div
-            className={`transition-all duration-300 ease-in-out ${
-              sidebarCollapsed ? "lg:w-12" : "lg:w-72"
-            } mb-8 lg:mb-0 flex-shrink-0`}
-          >
-            {/* Collapse toggle button - mobile version */}
+          <div className="lg:w-72 mb-8 lg:mb-0 flex-shrink-0">
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="lg:hidden flex items-center justify-between w-full mb-2 py-2 px-3 bg-white rounded-lg shadow-sm border border-gray-200 hover:bg-betis-verde-pale transition-colors"
+              className="flex items-center gap-2 w-full mb-2 py-2 px-3 bg-white rounded-lg shadow-sm border border-gray-200 hover:bg-betis-verde-pale transition-colors"
               aria-label={
                 sidebarCollapsed ? "Mostrar jugadores" : "Ocultar jugadores"
               }
               aria-expanded={!sidebarCollapsed}
             >
-              <span className="text-sm font-medium text-betis-verde-dark">
+              <span className="text-sm font-medium text-betis-verde-dark flex-1 text-left">
                 Jugadores en tendencia
               </span>
               {sidebarCollapsed ? (
-                <ChevronRight size={20} className="text-betis-verde" />
+                <ChevronDown size={20} className="text-betis-verde" />
               ) : (
-                <ChevronLeft size={20} className="text-betis-verde rotate-90" />
+                <ChevronUp size={20} className="text-betis-verde" />
               )}
             </button>
 
-            {/* Collapse toggle button - desktop version */}
-            <button
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="hidden lg:flex items-center justify-center w-full mb-2 py-2 bg-white rounded-lg shadow-sm border border-gray-200 hover:bg-betis-verde-pale transition-colors"
-              aria-label={
-                sidebarCollapsed ? "Expandir panel" : "Colapsar panel"
-              }
-              aria-expanded={!sidebarCollapsed}
-            >
-              {sidebarCollapsed ? (
-                <ChevronRight size={20} className="text-betis-verde" />
-              ) : (
-                <>
-                  <ChevronLeft size={16} className="text-betis-verde" />
-                  <span className="text-sm text-gray-600 ml-1">Ocultar</span>
-                </>
-              )}
-            </button>
-
-            {/* Sidebar content - collapsible on both mobile and desktop */}
-            <div
-              className={`${sidebarCollapsed ? "hidden" : "block"} transition-all duration-300`}
-            >
+            {!sidebarCollapsed && (
               <TrendingPlayers
                 players={trendingPlayers}
                 onPlayerClick={handlePlayerClick}
                 selectedPlayer={selectedPlayer}
               />
-            </div>
+            )}
           </div>
         )}
 
