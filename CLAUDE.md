@@ -63,7 +63,7 @@ Hooks are configured in `lefthook.yml` and install automatically via the `prepar
 - **Database**: Supabase (PostgreSQL) with Row Level Security
 - **Authentication**: Clerk with role-based permissions
 - **Feature Flags**: Environment variables for feature rollouts
-- **Testing**: Vitest + Playwright + Storybook v9
+- **Testing**: Vitest + Playwright + Storybook v10
 
 ### Key Directories
 
@@ -145,34 +145,37 @@ sql/                    # Database migrations & scripts
 **⚠️ NEVER use generic Tailwind greens.** Always use branded color classes.
 
 #### Brand Colors
+
 - **Primary Green**: `bg-betis-verde` (not `bg-green-600`)
-- **Dark Green**: `bg-betis-verde-dark` (not `bg-green-700`)  
+- **Dark Green**: `bg-betis-verde-dark` (not `bg-green-700`)
 - **Light Green**: `bg-betis-verde-light` (not `bg-green-100`)
 - **Pale Green**: `bg-betis-verde-pale` (not `bg-green-50`)
 - **Gold Accent**: `bg-betis-oro` (not `bg-yellow-400`)
 - **Scottish Navy**: `bg-scotland-navy` (for footer/dark sections)
 
 #### Color Migration Reference
-| DON'T USE ❌ | USE INSTEAD ✅ |
-|-------------|---------------|
-| `bg-green-50/100` | `bg-betis-verde-pale/light` |
-| `bg-green-500/600` | `bg-betis-verde` |
-| `bg-green-700` | `bg-betis-verde-dark` |
-| `text-green-*` | `text-betis-verde` or `text-betis-verde-dark` |
-| `text-green-400` (on dark bg) | `text-betis-oro` |
-| `hover:bg-green-700` | `hover:bg-betis-verde-dark` |
-| `border-green-*` | `border-betis-verde` or `border-betis-verde/20` |
+
+| DON'T USE ❌                  | USE INSTEAD ✅                                  |
+| ----------------------------- | ----------------------------------------------- |
+| `bg-green-50/100`             | `bg-betis-verde-pale/light`                     |
+| `bg-green-500/600`            | `bg-betis-verde`                                |
+| `bg-green-700`                | `bg-betis-verde-dark`                           |
+| `text-green-*`                | `text-betis-verde` or `text-betis-verde-dark`   |
+| `text-green-400` (on dark bg) | `text-betis-oro`                                |
+| `hover:bg-green-700`          | `hover:bg-betis-verde-dark`                     |
+| `border-green-*`              | `border-betis-verde` or `border-betis-verde/20` |
 
 #### CSS Variables (defined in `globals.css`)
+
 ```css
---betis-verde: #048D47      /* Authentic Betis green */
---betis-verde-dark: #036B38 /* Hover states, headers */
---betis-verde-light: #E8F5ED /* Light backgrounds */
---betis-oro: #D4AF37         /* Gold highlights, CTAs */
---scotland-navy: #0B1426     /* Footer, dark sections */
+--betis-verde: #048d47 /* Authentic Betis green */ --betis-verde-dark: #036b38
+  /* Hover states, headers */ --betis-verde-light: #e8f5ed
+  /* Light backgrounds */ --betis-oro: #d4af37 /* Gold highlights, CTAs */
+  --scotland-navy: #0b1426 /* Footer, dark sections */;
 ```
 
 #### Component Patterns
+
 ```jsx
 // ✅ Correct - uses branded classes
 <button className="bg-betis-verde hover:bg-betis-verde-dark text-white">
@@ -187,7 +190,9 @@ sql/                    # Database migrations & scripts
 ```
 
 #### Full Documentation
+
 See `docs/design-system.md` for:
+
 - Complete color palette with hex values
 - Typography guidelines
 - Component examples
