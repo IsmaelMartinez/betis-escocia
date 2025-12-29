@@ -57,7 +57,13 @@ export async function fetchAllRumors(): Promise<RumorItem[]> {
     fetchFeed(RSS_FEEDS.betisWeb, "BetisWeb"),
   ]);
 
-  // Merge and sort by date (newest first)
+  // Filter out news older than 6 months
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+  // Merge, filter by date, and sort by date (newest first)
   const allRumors = [...googleFichajes, ...googleGeneral, ...betisWeb];
-  return allRumors.sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
+  return allRumors
+    .filter((rumor) => rumor.pubDate >= sixMonthsAgo)
+    .sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
 }

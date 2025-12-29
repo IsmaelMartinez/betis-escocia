@@ -48,7 +48,7 @@ describe('rssFetcherService', () => {
           mockFeedItem(
             'Betis interesado en Fichaje 1',
             'https://example.com/1',
-            '2025-01-01T12:00:00Z',
+            '2025-12-01T12:00:00Z',
             'Descripción del fichaje 1'
           ),
         ],
@@ -59,7 +59,7 @@ describe('rssFetcherService', () => {
           mockFeedItem(
             'Betis gana partido',
             'https://example.com/2',
-            '2025-01-01T11:00:00Z',
+            '2025-12-01T11:00:00Z',
             'Resumen del partido'
           ),
         ],
@@ -70,7 +70,7 @@ describe('rssFetcherService', () => {
           mockFeedItem(
             'Análisis táctico Betis',
             'https://example.com/3',
-            '2025-01-01T13:00:00Z',
+            '2025-12-01T13:00:00Z',
             'Análisis completo'
           ),
         ],
@@ -93,7 +93,7 @@ describe('rssFetcherService', () => {
     });
 
     it('should assign correct source to each feed', async () => {
-      const feed = { items: [mockFeedItem('Test', 'https://test.com', '2025-01-01T12:00:00Z')] };
+      const feed = { items: [mockFeedItem('Test', 'https://test.com', '2025-12-01T12:00:00Z')] };
 
       mockParseURL
         .mockResolvedValueOnce(feed)
@@ -113,7 +113,7 @@ describe('rssFetcherService', () => {
         items: [
           {
             link: 'https://example.com/1',
-            pubDate: '2025-01-01T12:00:00Z',
+            pubDate: '2025-12-01T12:00:00Z',
             contentSnippet: 'Description',
           },
         ],
@@ -134,7 +134,7 @@ describe('rssFetcherService', () => {
         items: [
           {
             title: 'Test Title',
-            pubDate: '2025-01-01T12:00:00Z',
+            pubDate: '2025-12-01T12:00:00Z',
             contentSnippet: 'Description',
           },
         ],
@@ -181,7 +181,7 @@ describe('rssFetcherService', () => {
           {
             title: 'Test',
             link: 'https://example.com/1',
-            pubDate: '2025-01-01T12:00:00Z',
+            pubDate: '2025-12-01T12:00:00Z',
             contentSnippet: 'Snippet',
             content: 'Full content',
           },
@@ -204,7 +204,7 @@ describe('rssFetcherService', () => {
           {
             title: 'Test',
             link: 'https://example.com/1',
-            pubDate: '2025-01-01T12:00:00Z',
+            pubDate: '2025-12-01T12:00:00Z',
             content: 'Full content',
           },
         ],
@@ -233,7 +233,7 @@ describe('rssFetcherService', () => {
 
     it('should handle RSS feed errors gracefully', async () => {
       const validFeed = {
-        items: [mockFeedItem('Valid item', 'https://example.com/1', '2025-01-01T12:00:00Z')],
+        items: [mockFeedItem('Valid item', 'https://example.com/1', '2025-12-01T12:00:00Z')],
       };
 
       mockParseURL
@@ -250,10 +250,10 @@ describe('rssFetcherService', () => {
 
     it('should continue fetching even if one feed fails', async () => {
       const feed1 = {
-        items: [mockFeedItem('Item 1', 'https://example.com/1', '2025-01-01T12:00:00Z')],
+        items: [mockFeedItem('Item 1', 'https://example.com/1', '2025-12-01T12:00:00Z')],
       };
       const feed2 = {
-        items: [mockFeedItem('Item 2', 'https://example.com/2', '2025-01-01T11:00:00Z')],
+        items: [mockFeedItem('Item 2', 'https://example.com/2', '2025-12-01T11:00:00Z')],
       };
 
       mockParseURL
@@ -284,7 +284,7 @@ describe('rssFetcherService', () => {
           setTimeout(
             () =>
               resolve({
-                items: [mockFeedItem('Item', 'https://example.com/1', '2025-01-01T12:00:00Z')],
+                items: [mockFeedItem('Item', 'https://example.com/1', '2025-12-01T12:00:00Z')],
               }),
             delay
           )
@@ -306,9 +306,9 @@ describe('rssFetcherService', () => {
     it('should sort rumors by pubDate in descending order', async () => {
       const feed = {
         items: [
-          mockFeedItem('Oldest', 'https://example.com/1', '2025-01-01T10:00:00Z'),
-          mockFeedItem('Middle', 'https://example.com/2', '2025-01-01T11:00:00Z'),
-          mockFeedItem('Newest', 'https://example.com/3', '2025-01-01T12:00:00Z'),
+          mockFeedItem('Oldest', 'https://example.com/1', '2025-12-01T10:00:00Z'),
+          mockFeedItem('Middle', 'https://example.com/2', '2025-12-01T11:00:00Z'),
+          mockFeedItem('Newest', 'https://example.com/3', '2025-12-01T12:00:00Z'),
         ],
       };
 
@@ -326,7 +326,7 @@ describe('rssFetcherService', () => {
 
     it('should convert pubDate strings to Date objects', async () => {
       const feed = {
-        items: [mockFeedItem('Test', 'https://example.com/1', '2025-01-01T12:00:00Z')],
+        items: [mockFeedItem('Test', 'https://example.com/1', '2025-12-01T12:00:00Z')],
       };
 
       mockParseURL
@@ -337,7 +337,7 @@ describe('rssFetcherService', () => {
       const rumors = await fetchAllRumors();
 
       expect(rumors[0].pubDate).toBeInstanceOf(Date);
-      expect(rumors[0].pubDate.toISOString()).toBe('2025-01-01T12:00:00.000Z');
+      expect(rumors[0].pubDate.toISOString()).toBe('2025-12-01T12:00:00.000Z');
     });
   });
 });
