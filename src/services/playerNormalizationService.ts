@@ -112,11 +112,12 @@ export async function processExtractedPlayers(
       continue;
     }
 
-    // Create news_players junction record
+    // Create news_players junction record - always use "mentioned" role
+    // (we no longer distinguish target/departing as it can be inferred from squad)
     const newsPlayerInsert: NewsPlayerInsert = {
       news_id: newsId,
       player_id: player.id,
-      role: extracted.role || "mentioned",
+      role: "mentioned",
     };
 
     const { error: junctionError } = await supabase

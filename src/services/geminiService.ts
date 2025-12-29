@@ -4,7 +4,6 @@ import { log } from "@/lib/logger";
 // Extracted player from AI analysis
 export interface ExtractedPlayer {
   name: string;
-  role: "target" | "departing" | "mentioned";
 }
 
 export interface RumorAnalysis {
@@ -12,8 +11,7 @@ export interface RumorAnalysis {
   probability: number | null; // 0-100 (only if isTransferRumor=true), null = not analyzed
   reasoning: string;
   confidence: "low" | "medium" | "high";
-  transferDirection: "in" | "out" | "unknown" | null; // in=arriving, out=leaving
-  players: ExtractedPlayer[]; // Phase 2A: Extracted player names
+  players: ExtractedPlayer[]; // Extracted player names mentioned in the article
 }
 
 export async function analyzeRumorCredibility(
@@ -41,18 +39,27 @@ ${contentSection}
 Fuente: ${source}
 
 INSTRUCCIONES:
-1. Determina si es un RUMOR DE FICHAJE (transferencia de jugador). NO es fichaje: partidos, lesiones, declaraciones, premios, inocentadas/bromas.
-2. Si es fichaje: evalúa credibilidad 0-100 y dirección ("in"=jugador llega al Betis, "out"=jugador sale del Betis).
-3. EXTRACCIÓN DE JUGADORES:
-   - SOLO extrae jugadores cuyo NOMBRE APARECE EXPLÍCITAMENTE en el texto
-   - NO inventes ni supongas nombres de jugadores
-   - "target": jugador que el Betis quiere fichar o está interesado
-   - "departing": jugador que podría salir del Betis
-   - Si el artículo no menciona nombres específicos, devuelve array vacío
-   - Usa el nombre completo tal como aparece en el texto
+1. Determina si es un RUMOR DE FICHAJE (transferencia de jugador). NO es fichaje: partidos, lesiones, declaraciones, premios, inocentadas/bromas del 28 de diciembre.
+2. Si es fichaje: evalúa credibilidad 0-100 basándote en la fuente y el lenguaje usado.
+
+3. EXTRACCIÓN DE JUGADORES (MUY IMPORTANTE - sigue estas reglas estrictamente):
+   - Extrae SOLO nombres de futbolistas profesionales que aparecen EXPLÍCITAMENTE en el texto
+   - Busca el nombre MÁS COMPLETO disponible en el artículo (nombre + apellido si está)
+   - Si solo aparece un apodo o nombre corto, úsalo (ej: "Isco", "Lo Celso", "Fekir")
+   - NO incluyas: entrenadores, directivos, agentes, presidentes, periodistas
+   - NO incluyas: nombres de equipos, ciudades o competiciones
+   - NO inventes nombres que no aparecen literalmente en el texto
+   - Si no hay futbolistas mencionados, devuelve array vacío []
+
+EJEMPLOS de extracción correcta:
+- "El Betis ficha a Giovani Lo Celso" → [{"name":"Giovani Lo Celso"}]
+- "Isco podría salir del club" → [{"name":"Isco"}]
+- "Marc Roca y William Carvalho..." → [{"name":"Marc Roca"},{"name":"William Carvalho"}]
+- "El club negocia con el Liverpool" → [] (no hay jugador nombrado)
+- "Pellegrini habló sobre el mercado" → [] (entrenador, no jugador)
 
 JSON (solo el JSON, sin markdown):
-{"isTransferRumor":<bool>,"probability":<0-100|null>,"reasoning":"<explicación breve>","confidence":"<low|medium|high>","transferDirection":"<in|out|unknown|null>","players":[{"name":"<nombre completo>","role":"<target|departing>"}]}`;
+{"isTransferRumor":<bool>,"probability":<0-100|null>,"reasoning":"<explicación breve>","confidence":"<low|medium|high>","players":[{"name":"<nombre>"}]}`;
 
   // Simple retry with backoff (3 attempts, 1 second delay)
   for (let attempt = 0; attempt < 3; attempt++) {
@@ -100,7 +107,6 @@ JSON (solo el JSON, sin markdown):
           probability: null,
           reasoning: "No se pudo analizar este rumor automáticamente.",
           confidence: "low",
-          transferDirection: null,
           players: [],
         };
       }
@@ -116,7 +122,6 @@ JSON (solo el JSON, sin markdown):
           probability: null,
           reasoning: "No se pudo analizar este rumor automáticamente.",
           confidence: "low",
-          transferDirection: null,
           players: [],
         };
       }

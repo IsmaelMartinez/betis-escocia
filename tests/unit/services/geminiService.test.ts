@@ -52,7 +52,6 @@ describe("geminiService", () => {
           reasoning:
             "El rumor menciona un fichaje específico con fuentes confiables",
           confidence: "high",
-          transferDirection: "in",
         }),
       };
 
@@ -70,7 +69,6 @@ describe("geminiService", () => {
         "El rumor menciona un fichaje específico con fuentes confiables",
       );
       expect(result.confidence).toBe("high");
-      expect(result.transferDirection).toBe("in");
     });
 
     it("should identify regular news (not transfer rumor)", async () => {
@@ -80,7 +78,6 @@ describe("geminiService", () => {
           probability: 0,
           reasoning: "Esta es una noticia sobre un partido, no sobre fichajes",
           confidence: "high",
-          transferDirection: null,
         }),
       };
 
@@ -98,7 +95,7 @@ describe("geminiService", () => {
 
     it("should handle JSON response wrapped in markdown code blocks", async () => {
       const mockResponse = {
-        text: '```json\n{"isTransferRumor": true, "probability": 60, "reasoning": "Test", "confidence": "medium", "transferDirection": "in"}\n```',
+        text: '```json\n{"isTransferRumor": true, "probability": 60, "reasoning": "Test", "confidence": "medium"}\n```',
       };
 
       mockGenerateContent.mockResolvedValueOnce(mockResponse);
@@ -115,7 +112,7 @@ describe("geminiService", () => {
 
     it("should handle JSON response without markdown code blocks", async () => {
       const mockResponse = {
-        text: '{"isTransferRumor": false, "probability": 0, "reasoning": "Not a transfer", "confidence": "high", "transferDirection": null}',
+        text: '{"isTransferRumor": false, "probability": 0, "reasoning": "Not a transfer", "confidence": "high"}',
       };
 
       mockGenerateContent.mockResolvedValueOnce(mockResponse);
@@ -146,7 +143,6 @@ describe("geminiService", () => {
         "No se pudo analizar este rumor automáticamente.",
       );
       expect(result.confidence).toBe("low");
-      expect(result.transferDirection).toBeNull();
       expect(mockErrorLog).toHaveBeenCalledWith(
         "Gemini quota exceeded - storing without analysis",
         quotaError,
@@ -188,7 +184,7 @@ describe("geminiService", () => {
     it("should retry on non-quota errors (attempt 1 of 3)", async () => {
       const tempError = new Error("Temporary network error");
       const successResponse = {
-        text: '{"isTransferRumor": true, "probability": 50, "reasoning": "Test", "confidence": "medium", "transferDirection": "in"}',
+        text: '{"isTransferRumor": true, "probability": 50, "reasoning": "Test", "confidence": "medium"}',
       };
 
       mockGenerateContent
@@ -209,7 +205,7 @@ describe("geminiService", () => {
     it("should retry up to 3 times on non-quota errors", async () => {
       const tempError = new Error("Network error");
       const successResponse = {
-        text: '{"isTransferRumor": true, "probability": 50, "reasoning": "Test", "confidence": "medium", "transferDirection": "out"}',
+        text: '{"isTransferRumor": true, "probability": 50, "reasoning": "Test", "confidence": "medium"}',
       };
 
       mockGenerateContent
@@ -270,7 +266,7 @@ describe("geminiService", () => {
 
     it("should handle empty description", async () => {
       const mockResponse = {
-        text: '{"isTransferRumor": false, "probability": 0, "reasoning": "Test", "confidence": "low", "transferDirection": null}',
+        text: '{"isTransferRumor": false, "probability": 0, "reasoning": "Test", "confidence": "low"}',
       };
 
       mockGenerateContent.mockResolvedValueOnce(mockResponse);
@@ -283,7 +279,7 @@ describe("geminiService", () => {
 
     it("should log business metrics on successful analysis", async () => {
       const mockResponse = {
-        text: '{"isTransferRumor": true, "probability": 80, "reasoning": "Test", "confidence": "high", "transferDirection": "in"}',
+        text: '{"isTransferRumor": true, "probability": 80, "reasoning": "Test", "confidence": "high"}',
       };
 
       mockGenerateContent.mockResolvedValueOnce(mockResponse);
@@ -332,7 +328,7 @@ describe("geminiService", () => {
 
     it("should use correct Gemini model", async () => {
       const mockResponse = {
-        text: '{"isTransferRumor": false, "probability": 0, "reasoning": "Test", "confidence": "low", "transferDirection": null}',
+        text: '{"isTransferRumor": false, "probability": 0, "reasoning": "Test", "confidence": "low"}',
       };
 
       mockGenerateContent.mockResolvedValueOnce(mockResponse);
@@ -347,7 +343,7 @@ describe("geminiService", () => {
 
     it("should include title, description, and source in prompt", async () => {
       const mockResponse = {
-        text: '{"isTransferRumor": false, "probability": 0, "reasoning": "Test", "confidence": "low", "transferDirection": null}',
+        text: '{"isTransferRumor": false, "probability": 0, "reasoning": "Test", "confidence": "low"}',
       };
 
       mockGenerateContent.mockResolvedValueOnce(mockResponse);
@@ -375,7 +371,7 @@ describe("geminiService", () => {
     it("should wait 1 second between retry attempts", async () => {
       const tempError = new Error("Temporary error");
       const successResponse = {
-        text: '{"isTransferRumor": true, "probability": 50, "reasoning": "Test", "confidence": "medium", "transferDirection": "in"}',
+        text: '{"isTransferRumor": true, "probability": 50, "reasoning": "Test", "confidence": "medium"}',
       };
 
       mockGenerateContent
@@ -395,7 +391,7 @@ describe("geminiService", () => {
 
       for (const confidence of testCases) {
         const mockResponse = {
-          text: `{"isTransferRumor": true, "probability": 50, "reasoning": "Test", "confidence": "${confidence}", "transferDirection": "in"}`,
+          text: `{"isTransferRumor": true, "probability": 50, "reasoning": "Test", "confidence": "${confidence}"}`,
         };
 
         mockGenerateContent.mockResolvedValueOnce(mockResponse);
@@ -415,7 +411,7 @@ describe("geminiService", () => {
 
       for (const prob of probabilities) {
         const mockResponse = {
-          text: `{"isTransferRumor": true, "probability": ${prob}, "reasoning": "Test", "confidence": "medium", "transferDirection": "in"}`,
+          text: `{"isTransferRumor": true, "probability": ${prob}, "reasoning": "Test", "confidence": "medium"}`,
         };
 
         mockGenerateContent.mockResolvedValueOnce(mockResponse);
@@ -430,70 +426,5 @@ describe("geminiService", () => {
       }
     });
 
-    it("should handle transfer direction 'out' for departing players", async () => {
-      const mockResponse = {
-        text: JSON.stringify({
-          isTransferRumor: true,
-          probability: 60,
-          reasoning: "El jugador podría salir del club",
-          confidence: "medium",
-          transferDirection: "out",
-        }),
-      };
-
-      mockGenerateContent.mockResolvedValueOnce(mockResponse);
-
-      const result = await analyzeRumorCredibility(
-        "Jugador del Betis en la mira del Barcelona",
-        "El Barcelona está interesado en fichar al jugador",
-        "Google News (Fichajes)",
-      );
-
-      expect(result.transferDirection).toBe("out");
-    });
-
-    it("should handle confirmed transfers", async () => {
-      const mockResponse = {
-        text: JSON.stringify({
-          isTransferRumor: true,
-          probability: 95,
-          reasoning: "El fichaje ha sido anunciado oficialmente",
-          confidence: "high",
-          transferDirection: "in",
-        }),
-      };
-
-      mockGenerateContent.mockResolvedValueOnce(mockResponse);
-
-      const result = await analyzeRumorCredibility(
-        "OFICIAL: Betis ficha a nuevo jugador",
-        "El club ha anunciado el fichaje",
-        "BetisWeb",
-      );
-
-      expect(result.transferDirection).toBe("in");
-    });
-
-    it("should handle denied transfers", async () => {
-      const mockResponse = {
-        text: JSON.stringify({
-          isTransferRumor: true,
-          probability: 10,
-          reasoning: "El fichaje se ha caído según fuentes oficiales",
-          confidence: "high",
-          transferDirection: "in",
-        }),
-      };
-
-      mockGenerateContent.mockResolvedValueOnce(mockResponse);
-
-      const result = await analyzeRumorCredibility(
-        "Betis descarta fichaje de jugador por lesión",
-        "El club ha confirmado que no se realizará el fichaje",
-        "BetisWeb",
-      );
-
-      expect(result.transferDirection).toBe("in");
-    });
   });
 });

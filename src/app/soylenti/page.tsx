@@ -61,12 +61,10 @@ async function fetchRumors() {
           description: rumor.description,
           aiProbability: rumor.ai_probability,
           aiAnalysis: rumor.ai_analysis,
-          transferDirection: rumor.transfer_direction,
           players:
             rumor.news_players?.map(
               (np: { role: string; players: { name: string } }) => ({
                 name: np.players?.name || "",
-                role: np.role as "target" | "departing" | "mentioned",
               }),
             ) || [],
         })) || [],
