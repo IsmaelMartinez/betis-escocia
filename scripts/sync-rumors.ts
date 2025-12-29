@@ -20,6 +20,7 @@ async function main() {
   );
   console.log(`- Analyzed: ${result.analyzed}`);
   console.log(`- Inserted: ${result.inserted}`);
+  console.log(`- Players Processed: ${result.playersProcessed}`);
   console.log(`- Errors: ${result.errors}`);
 
   process.exit(result.errors > 0 ? 1 : 0);

@@ -5,6 +5,11 @@ import RumorCard from "@/components/RumorCard";
 import { RefreshCw, Loader2 } from "lucide-react";
 import { fetchMoreRumors } from "./actions";
 
+interface PlayerInfo {
+  name: string;
+  role: "target" | "departing" | "mentioned";
+}
+
 interface Rumor {
   title: string;
   link: string;
@@ -13,6 +18,8 @@ interface Rumor {
   description?: string;
   aiProbability?: number | null;
   aiAnalysis?: string | null;
+  transferDirection?: "in" | "out" | "unknown" | null;
+  players?: PlayerInfo[];
 }
 
 interface SoylentiClientProps {
@@ -38,8 +45,8 @@ export default function SoylentiClient({
     () =>
       rumors.filter((rumor) => {
         const prob = rumor.aiProbability;
-        if (prob !== null && prob !== undefined && prob > 0) return true;
-        return showAllNews;
+        const isTransfer = prob !== null && prob !== undefined && prob > 0;
+        return isTransfer || showAllNews;
       }),
     [rumors, showAllNews],
   );
@@ -87,7 +94,6 @@ export default function SoylentiClient({
           </div>
 
           <div className="flex flex-wrap gap-4">
-            {/* Fran Mode Toggle */}
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -99,8 +105,6 @@ export default function SoylentiClient({
                 Fran Mode
               </span>
             </label>
-
-            {/* Show News Toggle */}
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -141,7 +145,9 @@ export default function SoylentiClient({
                 description={rumor.description}
                 aiProbability={rumor.aiProbability}
                 aiAnalysis={rumor.aiAnalysis}
+                transferDirection={rumor.transferDirection}
                 showCredibility={franMode}
+                players={rumor.players}
               />
             ))}
           </div>
@@ -163,9 +169,7 @@ export default function SoylentiClient({
                   "Cargar más noticias"
                 )}
               </button>
-              {error && (
-                <p className="mt-4 text-red-600 text-sm">{error}</p>
-              )}
+              {error && <p className="mt-4 text-red-600 text-sm">{error}</p>}
             </div>
           )}
         </>

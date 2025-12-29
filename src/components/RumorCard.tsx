@@ -3,6 +3,11 @@
 import Card from "@/components/ui/Card";
 import { ExternalLink } from "lucide-react";
 
+interface PlayerInfo {
+  name: string;
+  role: "target" | "departing" | "mentioned";
+}
+
 interface RumorCardProps {
   title: string;
   link: string;
@@ -11,7 +16,9 @@ interface RumorCardProps {
   description?: string;
   aiProbability?: number | null;
   aiAnalysis?: string | null;
+  transferDirection?: "in" | "out" | "unknown" | null;
   showCredibility?: boolean;
+  players?: PlayerInfo[];
 }
 
 export default function RumorCard({
@@ -22,7 +29,9 @@ export default function RumorCard({
   description,
   aiProbability,
   aiAnalysis,
+  transferDirection,
   showCredibility = true,
+  players = [],
 }: RumorCardProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -50,12 +59,22 @@ export default function RumorCard({
       <div className="p-6">
         {/* Source Badge & AI Probability */}
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center flex-wrap gap-2">
             <span
               className={`px-3 py-1 rounded-full text-xs font-bold ${getSourceColor(source)}`}
             >
               {source}
             </span>
+            {transferDirection === "in" && (
+              <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-betis-verde text-white flex items-center gap-1">
+                ↓ Entrada
+              </span>
+            )}
+            {transferDirection === "out" && (
+              <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-betis-oro text-betis-verde-dark flex items-center gap-1">
+                ↑ Salida
+              </span>
+            )}
             {showCredibility &&
               aiProbability !== null &&
               aiProbability !== undefined &&
@@ -70,12 +89,32 @@ export default function RumorCard({
                   }`}
                   title={aiAnalysis || undefined}
                 >
-                  {aiProbability}% credibilidad
+                  {aiProbability}%
                 </span>
               )}
           </div>
           <span className="text-sm text-gray-500">{formatDate(pubDate)}</span>
         </div>
+
+        {/* Players (if available) */}
+        {players.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-3">
+            {players.map((player) => (
+              <span
+                key={`${player.name}-${player.role}`}
+                className={`px-2 py-0.5 rounded text-xs ${
+                  player.role === "target"
+                    ? "bg-betis-verde-light text-betis-verde-dark"
+                    : player.role === "departing"
+                      ? "bg-amber-100 text-amber-800"
+                      : "bg-gray-100 text-gray-600"
+                }`}
+              >
+                {player.name}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Title */}
         <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2">

@@ -21,7 +21,17 @@ async function fetchRumors() {
   const [rumorsResult, countResult] = await Promise.all([
     supabase
       .from("betis_news")
-      .select("*")
+      .select(
+        `
+        *,
+        news_players (
+          role,
+          players (
+            name
+          )
+        )
+      `,
+      )
       .eq("is_duplicate", false)
       .order("pub_date", { ascending: false })
       .limit(INITIAL_LIMIT + 1),
@@ -51,6 +61,14 @@ async function fetchRumors() {
           description: rumor.description,
           aiProbability: rumor.ai_probability,
           aiAnalysis: rumor.ai_analysis,
+          transferDirection: rumor.transfer_direction,
+          players:
+            rumor.news_players?.map(
+              (np: { role: string; players: { name: string } }) => ({
+                name: np.players?.name || "",
+                role: np.role as "target" | "departing" | "mentioned",
+              }),
+            ) || [],
         })) || [],
       totalCount: countResult.count || 0,
       lastUpdated: items?.[0]?.created_at || new Date().toISOString(),

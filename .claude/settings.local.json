@@ -15,7 +15,9 @@
       "Skill(local-brain:local-brain)",
       "Bash(local-brain:*)",
       "Skill(local-brain)",
-      "Bash(gh api:*)"
+      "Bash(gh api:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []
