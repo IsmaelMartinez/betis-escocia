@@ -4,6 +4,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Spinner from "@/components/ui/Spinner";
 import { withFeatureFlag } from "@/lib/featureProtection";
 import { Newspaper } from "lucide-react";
+import { fetchTrendingPlayers } from "@/lib/data/players";
 import SoylentiClient from "./SoylentiClient";
 
 export const metadata: Metadata = {
@@ -26,7 +27,8 @@ async function fetchRumors() {
         *,
         news_players (
           players (
-            name
+            name,
+            normalized_name
           )
         )
       `,
@@ -61,9 +63,16 @@ async function fetchRumors() {
           aiProbability: rumor.ai_probability,
           aiAnalysis: rumor.ai_analysis,
           players:
-            rumor.news_players?.map((np: { players: { name: string } }) => ({
-              name: np.players?.name || "",
-            })) || [],
+            rumor.news_players?.map(
+              (np: {
+                role: string;
+                players: { name: string; normalized_name: string };
+              }) => ({
+                name: np.players?.name || "",
+                normalizedName: np.players?.normalized_name || "",
+                role: np.role as "target" | "departing" | "mentioned",
+              }),
+            ) || [],
         })) || [],
       totalCount: countResult.count || 0,
       lastUpdated: items?.[0]?.created_at || new Date().toISOString(),
@@ -74,7 +83,10 @@ async function fetchRumors() {
 
 // Content component with data fetching
 async function SoylentiContent() {
-  const response = await fetchRumors();
+  const [response, trendingPlayers] = await Promise.all([
+    fetchRumors(),
+    fetchTrendingPlayers(),
+  ]);
   const data = response.data || {};
   const rumors = data.rumors || [];
 
@@ -104,6 +116,7 @@ async function SoylentiContent() {
             lastUpdated={data.lastUpdated}
             initialHasMore={data.hasMore}
             totalCount={data.totalCount}
+            trendingPlayers={trendingPlayers}
           />
         </div>
       </section>

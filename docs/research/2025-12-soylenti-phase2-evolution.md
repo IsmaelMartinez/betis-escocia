@@ -1,6 +1,55 @@
 # Soylenti Phase 2: Advanced Rumor Analytics System
 
 Research Date: December 28, 2025
+Last Updated: December 29, 2025
+
+## Implementation Status
+
+| Phase | Description                              | Status     | Completed  |
+| ----- | ---------------------------------------- | ---------- | ---------- |
+| 2A    | Player Name Extraction (NER)             | ✅ DONE    | 2025-12-28 |
+| 2B    | Trend Analysis (Player Momentum)         | ✅ DONE    | 2025-12-29 |
+| 2C    | Source Credibility Tracking              | 🔜 NEXT    | -          |
+| 2D    | Rumor Lifecycle Tracking                 | ⏳ Planned | -          |
+| 2E    | Insights Dashboard                       | ⏳ Planned | -          |
+| 3.0   | External API Integration (Transfermarkt) | 🔮 Future  | -          |
+
+### Phase 2A Completion Summary (December 28, 2025)
+
+Implemented features:
+
+- Enhanced Gemini prompt with player extraction (confidence-gated)
+- `players` and `news_players` tables with RLS policies (migration `0004`)
+- `playerNormalizationService.ts` for name normalization and deduplication
+- `rumorSyncService.ts` integration with player processing
+- `RumorCard.tsx` displays players with role-based styling (target/departing/mentioned)
+- Pagination implemented for historical access (PR #209)
+- News filtering: items older than 6 months excluded
+
+Key files:
+
+- `src/services/geminiService.ts` - Enhanced prompt with player extraction
+- `src/services/playerNormalizationService.ts` - Name normalization logic
+- `src/services/rumorSyncService.ts` - Pipeline integration
+- `sql/0004_add_players_tables.sql` - Database schema
+- `src/components/RumorCard.tsx` - Player display UI
+
+### Phase 2B Completion Summary (December 29, 2025)
+
+Implemented features:
+
+- Trending players API endpoint (`/api/soylenti/trending`)
+- `TrendingPlayers` component with active/cooling status indicators
+- Click-to-filter functionality in SoylentiClient
+- Sidebar layout for trending players on desktop
+- Player filter chip with clear button
+
+Key files:
+
+- `src/app/api/soylenti/trending/route.ts` - Trending API endpoint
+- `src/components/TrendingPlayers.tsx` - Trending players UI component
+- `src/app/soylenti/SoylentiClient.tsx` - Player filter integration
+- `src/lib/supabase.ts` - TrendingPlayer type definition
 
 ## Executive Summary
 
@@ -44,8 +93,7 @@ CREATE TABLE betis_news (
 
 ### Current Limitations
 
-- No player name extraction from rumors
-- No position classification for transfer targets
+- ~~No player name extraction from rumors~~ (DONE - Phase 2A)
 - No source credibility tracking over time
 - No rumor evolution/lifecycle tracking
 - No trend analysis for emerging transfer targets
@@ -115,23 +163,21 @@ CREATE TABLE news_players (
 );
 ```
 
-### Phase 2B: Position Classification
+### Phase 2B: Trend Analysis (Player Momentum)
 
-Position taxonomy covering 10 main positions: GK, CB, LB, RB, DM, CM, AM, LW, RW, ST.
+Surface which players are gaining traction using existing data (`rumor_count`, `last_seen_at`):
 
 ```sql
-ALTER TABLE players ADD COLUMN primary_position VARCHAR(10);
-ALTER TABLE players ADD COLUMN secondary_position VARCHAR(10);
-CREATE INDEX idx_players_primary_position ON players(primary_position);
+-- Trending players query (no new schema needed)
+SELECT name, rumor_count, first_seen_at, last_seen_at,
+       (last_seen_at > NOW() - INTERVAL '7 days') as is_active
+FROM players
+WHERE rumor_count >= 1
+ORDER BY last_seen_at DESC, rumor_count DESC
+LIMIT 10;
 ```
 
-Enhanced prompt includes position detection:
-
-```json
-{
-  "players": [{ "name": "Sergi Roberto", "role": "target", "position": "RB" }]
-}
-```
+API endpoint: `GET /api/soylenti/trending` returns top players by recent activity.
 
 ### Phase 2C: Source Credibility Tracking
 
@@ -155,32 +201,7 @@ ALTER TABLE betis_news ADD COLUMN outcome_verified_at TIMESTAMPTZ;
 
 Verification workflow: admins mark rumors as "confirmed", "denied", or "pending". Credibility score recalculated: `(verified_correct / (verified_correct + verified_incorrect)) * 100`.
 
-### Phase 2D: Trend Analysis
-
-Identify players with increasing rumor frequency:
-
-```sql
-CREATE MATERIALIZED VIEW player_trends AS
-SELECT
-    p.id,
-    p.name,
-    p.primary_position,
-    COUNT(*) FILTER (WHERE bn.pub_date > NOW() - INTERVAL '7 days') as mentions_7d,
-    COUNT(*) FILTER (WHERE bn.pub_date > NOW() - INTERVAL '30 days') as mentions_30d,
-    COUNT(*) as total_mentions,
-    AVG(bn.ai_probability) as avg_credibility,
-    MIN(bn.pub_date) as first_seen,
-    MAX(bn.pub_date) as last_seen
-FROM players p
-JOIN news_players np ON p.id = np.player_id
-JOIN betis_news bn ON np.news_id = bn.id
-WHERE bn.ai_probability > 0
-GROUP BY p.id, p.name, p.primary_position;
-
-CREATE INDEX idx_player_trends_mentions ON player_trends(mentions_7d DESC);
-```
-
-### Phase 2E: Rumor Lifecycle Tracking
+### Phase 2D: Rumor Lifecycle Tracking
 
 Monitor how rumors evolve from first mention to resolution:
 
@@ -204,12 +225,11 @@ CREATE TABLE rumor_threads (
 
 Lifecycle states: "emerging" (1-2 mentions), "active" (3+ mentions), "heating" (5+ in 7 days), "cooling" (no mentions in 14 days), "resolved".
 
-### Phase 2F: Insights Dashboard
+### Phase 2E: Insights Dashboard
 
 Dashboard components:
 
-- Position Heatmap: which positions have most rumor activity
-- Trending Players: top 10 by trend score with sparklines
+- Trending Players: top 10 by activity with rumor counts
 - Source Reliability Matrix: credibility scores over time
 - Transfer Window Timeline: rumor intensity across season
 - Rumor Threads Panel: active sagas with probability evolution
@@ -217,7 +237,6 @@ Dashboard components:
 API endpoints:
 
 ```
-GET /api/soylenti/insights/positions
 GET /api/soylenti/insights/trending
 GET /api/soylenti/insights/sources
 GET /api/soylenti/insights/threads
@@ -273,12 +292,12 @@ Given free tier constraints:
 - Implement player normalization service
 - Add basic player list to UI
 
-### Phase 2B (Sprint 2-3): Position Intelligence
+### Phase 2B (Sprint 2-3): Trend Analysis
 
-- Add position fields to schema
-- Enhance prompt for position detection
-- Create position aggregation views
-- Add position filter to UI
+- Create trending players API endpoint
+- Add "Jugadores en Tendencia" UI component
+- Implement player click-to-filter functionality
+- Show active/cooling status indicators
 
 ### Phase 2C (Sprint 3-4): Source Tracking
 
@@ -287,25 +306,18 @@ Given free tier constraints:
 - Implement credibility calculation job
 - Display source reliability in RumorCard
 
-### Phase 2D (Sprint 4-5): Trend Analytics
-
-- Create player_trends materialized view
-- Implement trend calculation service
-- Add trending players component
-- Create insights API endpoints
-
-### Phase 2E (Sprint 5-6): Lifecycle Management
+### Phase 2D (Sprint 4-5): Lifecycle Management
 
 - Create rumor_threads table
 - Implement thread detection logic
 - Add thread visualization UI
 - Create resolution workflow
 
-### Phase 2F (Sprint 6-7): Dashboard Polish
+### Phase 2E (Sprint 5-6): Dashboard Polish
 
 - Build insights dashboard page
-- Add position heatmap visualization
-- Implement timeline chart
+- Implement transfer window timeline chart
+- Add source reliability matrix
 - Add export functionality
 
 ## Historical Data Retention Strategy
@@ -321,7 +333,6 @@ Given free tier constraints:
 **Quantitative**:
 
 - Player extraction accuracy: target 90%+ on known players
-- Position classification: target 85%+ correct
 - Source credibility correlation with outcomes: meaningful positive correlation
 - Trend detection lead time: identifying players before mainstream peak
 
@@ -335,7 +346,7 @@ Given free tier constraints:
 
 | File                                  | Purpose                                                  |
 | ------------------------------------- | -------------------------------------------------------- |
-| `src/services/geminiService.ts`       | AI prompt enhancement for player/position extraction     |
+| `src/services/geminiService.ts`       | AI prompt enhancement for player extraction              |
 | `src/services/rumorSyncService.ts`    | Pipeline integration for player extraction and lifecycle |
 | `sql/0002_add_betis_news_table.sql`   | Schema reference for new migrations                      |
 | `src/app/soylenti/SoylentiClient.tsx` | Frontend expansion for insights dashboard                |
@@ -354,3 +365,89 @@ Betis's historical transfer patterns suggest focusing on:
 - Young talents in the 22-25 age range
 - Market values of 10-30M
 - Mix of loans and permanent deals based on position criticality
+
+## Next Steps: Phase 2B Trend Analysis (Player Momentum)
+
+### Overview
+
+Phase 2B surfaces which players are "heating up" in rumor activity. Using the existing `players` table data (`rumor_count`, `first_seen_at`, `last_seen_at`), we can identify trending transfer targets without additional AI calls.
+
+### Incremental Implementation Tasks
+
+#### Step 1: Trending Players Query
+
+Create a simple query leveraging existing data:
+
+```sql
+-- Players with most recent activity and high mention counts
+SELECT
+  p.name,
+  p.rumor_count,
+  p.first_seen_at,
+  p.last_seen_at,
+  (p.last_seen_at > NOW() - INTERVAL '7 days') as is_active
+FROM players p
+WHERE p.rumor_count >= 2
+ORDER BY p.last_seen_at DESC, p.rumor_count DESC
+LIMIT 10;
+```
+
+#### Step 2: API Endpoint
+
+Create `/api/soylenti/trending`:
+
+```typescript
+// GET /api/soylenti/trending
+interface TrendingPlayer {
+  name: string;
+  rumorCount: number;
+  firstSeen: string;
+  lastSeen: string;
+  isActive: boolean; // mentioned in last 7 days
+}
+```
+
+#### Step 3: Trending Players UI Component
+
+Add a "Jugadores en Tendencia" section to Soylenti page:
+
+- List top 10 players by recent activity
+- Show rumor count badge
+- Indicate "active" vs "cooling" status
+- Link to filter rumors by that player
+
+#### Step 4: Player Filter
+
+Allow clicking a player name to filter rumors mentioning them:
+
+- Add `?player=normalized_name` URL param
+- Filter `news_players` junction to show related news
+
+### Estimated Effort
+
+- Step 1-2: Low complexity, uses existing data
+- Step 3-4: Medium complexity, UI work
+
+### Success Criteria
+
+- Trending players displayed on Soylenti page
+- Click-to-filter works for player names
+- Active/cooling status visible
+
+---
+
+## Future: Version 3.0 External API Integration
+
+For a future major version, integrating with external APIs would enrich player data:
+
+- **Transfermarkt API**: Player valuations, contract info, transfer history
+- **Football-Data.org**: Team rosters, player stats
+- **SofaScore/FotMob**: Performance metrics
+
+This would enable:
+
+- Automatic player profile enrichment (position, age, value)
+- Transfer fee estimations
+- Historical transfer success correlation
+
+Deferred to v3.0 due to API cost/complexity considerations.
