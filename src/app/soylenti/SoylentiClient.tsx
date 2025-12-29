@@ -204,6 +204,7 @@ export default function SoylentiClient({
                 </span>
                 <button
                   onClick={clearPlayerFilter}
+                  aria-label="Quitar filtro de jugador"
                   className="inline-flex items-center gap-1 px-3 py-1 bg-betis-verde-light text-betis-verde-dark rounded-full text-sm font-medium hover:bg-betis-verde hover:text-white transition-colors"
                 >
                   {selectedPlayerName}
@@ -278,6 +279,7 @@ export default function SoylentiClient({
               {selectedPlayer && (
                 <button
                   onClick={clearPlayerFilter}
+                  aria-label="Quitar filtro de jugador"
                   className="mt-4 text-betis-verde hover:text-betis-verde-dark underline"
                 >
                   Quitar filtro
