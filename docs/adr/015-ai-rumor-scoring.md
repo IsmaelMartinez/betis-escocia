@@ -2,11 +2,15 @@
 
 ## Status
 
-Accepted
+Accepted (Updated December 29, 2025 - Phase 2A Complete)
 
 ## Decision
 
-**Google Gemini 3.0 Flash** for automated analysis and probability scoring of Real Betis transfer rumors ("Fran Mode"). The AI evaluates news items in two steps: (1) determine if it's a transfer rumor, (2) assign a credibility probability (0-100%).
+**Google Gemini 3.0 Flash** for automated analysis and probability scoring of Real Betis transfer rumors ("Fran Mode"). The AI evaluates news items and extracts structured data:
+1. Determine if it's a transfer rumor
+2. Assign a credibility probability (0-100%)
+3. Classify transfer direction (in/out)
+4. Extract player names with roles (Phase 2A)
 
 ## Context
 
@@ -15,12 +19,18 @@ The Soylenti feature aggregates Real Betis news from RSS feeds and needs intelli
 ## Architecture
 
 ```
-RSS Feeds → Deduplication → Gemini AI Analysis → Supabase Storage
-                                    ↓
-                           isTransferRumor: boolean
-                           probability: 0-100
-                           reasoning: string
-                           confidence: low|medium|high
+RSS Feeds → Deduplication → Article Fetch → Gemini AI Analysis → Supabase Storage
+                                                    ↓
+                                           isTransferRumor: boolean
+                                           probability: 0-100
+                                           reasoning: string
+                                           confidence: low|medium|high
+                                           transferDirection: in|out|unknown
+                                           players: [{name, role}]  ← Phase 2A
+                                                    ↓
+                                           Player Normalization → players table
+                                                    ↓
+                                           News-Player Linking → news_players table
 ```
 
 ## Implementation
@@ -28,12 +38,34 @@ RSS Feeds → Deduplication → Gemini AI Analysis → Supabase Storage
 ### AI Service (`src/services/geminiService.ts`)
 
 ```typescript
+interface ExtractedPlayer {
+  name: string;
+  role: "target" | "departing" | "mentioned";
+}
+
+interface RumorAnalysis {
+  isTransferRumor: boolean | null;
+  probability: number | null;
+  reasoning: string;
+  confidence: "low" | "medium" | "high";
+  transferDirection: "in" | "out" | "unknown" | null;
+  players: ExtractedPlayer[];  // Phase 2A
+}
+
 export async function analyzeRumorCredibility(
   title: string,
   description: string,
   source: string,
+  articleContent?: string | null,  // Full article for better analysis
 ): Promise<RumorAnalysis>;
 ```
+
+### Player Normalization (`src/services/playerNormalizationService.ts`)
+
+Phase 2A introduces player tracking with deduplication:
+- Names normalized (lowercase, no diacritics, trimmed)
+- `players` table stores unique players with rumor counts
+- `news_players` junction links news to players with roles
 
 ### Probability Scoring (Fran Mode)
 
@@ -46,9 +78,22 @@ export async function analyzeRumorCredibility(
 
 ### Database Schema
 
+**betis_news table:**
 - `ai_probability`: Numeric (0-100), nullable for unanalyzed items
 - `ai_analysis`: AI reasoning in Spanish
 - `ai_analyzed_at`: Timestamp of analysis
+- `transfer_direction`: "in", "out", "unknown", or null
+
+**players table (Phase 2A):**
+- `name`: Original player name
+- `normalized_name`: Deduplicated key (unique index)
+- `rumor_count`: Number of mentions
+- `first_seen_at`, `last_seen_at`: Tracking timeline
+
+**news_players junction (Phase 2A):**
+- `news_id`: FK to betis_news
+- `player_id`: FK to players
+- `role`: "target", "departing", or "mentioned"
 
 ### Error Handling
 
@@ -89,5 +134,7 @@ Three optimized feeds provide rumor content:
 
 ## References
 
-- [Database Migration](../../sql/0002_add_rumors_table.sql)
+- [betis_news Migration](../../sql/0002_add_betis_news_table.sql)
+- [players Migration (Phase 2A)](../../sql/0004_add_players_tables.sql)
+- [Research: Phase 2 Evolution](../research/2025-12-soylenti-phase2-evolution.md)
 - [ADR-003: Supabase Database](./003-supabase-database.md)

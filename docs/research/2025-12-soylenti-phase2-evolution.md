@@ -1,6 +1,36 @@
 # Soylenti Phase 2: Advanced Rumor Analytics System
 
 Research Date: December 28, 2025
+Last Updated: December 29, 2025
+
+## Implementation Status
+
+| Phase | Description | Status | Completed |
+|-------|-------------|--------|-----------|
+| 2A | Player Name Extraction (NER) | ✅ DONE | 2025-12-28 |
+| 2B | Position Classification | 🔜 NEXT | - |
+| 2C | Source Credibility Tracking | ⏳ Planned | - |
+| 2D | Trend Analysis | ⏳ Planned | - |
+| 2E | Rumor Lifecycle Tracking | ⏳ Planned | - |
+| 2F | Insights Dashboard | ⏳ Planned | - |
+
+### Phase 2A Completion Summary (December 28, 2025)
+
+Implemented features:
+- Enhanced Gemini prompt with player extraction (confidence-gated)
+- `players` and `news_players` tables with RLS policies (migration `0004`)
+- `playerNormalizationService.ts` for name normalization and deduplication
+- `rumorSyncService.ts` integration with player processing
+- `RumorCard.tsx` displays players with role-based styling (target/departing/mentioned)
+- Pagination implemented for historical access (PR #209)
+- News filtering: items older than 6 months excluded
+
+Key files:
+- `src/services/geminiService.ts` - Enhanced prompt with player extraction
+- `src/services/playerNormalizationService.ts` - Name normalization logic
+- `src/services/rumorSyncService.ts` - Pipeline integration
+- `sql/0004_add_players_tables.sql` - Database schema
+- `src/components/RumorCard.tsx` - Player display UI
 
 ## Executive Summary
 
@@ -354,3 +384,79 @@ Betis's historical transfer patterns suggest focusing on:
 - Young talents in the 22-25 age range
 - Market values of 10-30M
 - Mix of loans and permanent deals based on position criticality
+
+## Next Steps: Phase 2B Position Classification
+
+### Overview
+
+Phase 2B adds position intelligence to player data, enabling filtering by position and understanding which positions Betis is actively pursuing in the transfer market.
+
+### Incremental Implementation Tasks
+
+#### Step 1: Schema Extension (Database)
+Add position fields to the existing `players` table:
+
+```sql
+-- Migration: 0005_add_player_positions.sql
+ALTER TABLE players ADD COLUMN IF NOT EXISTS primary_position VARCHAR(10);
+ALTER TABLE players ADD COLUMN IF NOT EXISTS secondary_position VARCHAR(10);
+CREATE INDEX IF NOT EXISTS idx_players_primary_position ON players(primary_position);
+```
+
+Position taxonomy (10 values): `GK`, `CB`, `LB`, `RB`, `DM`, `CM`, `AM`, `LW`, `RW`, `ST`
+
+#### Step 2: Prompt Enhancement (AI)
+Update `src/services/geminiService.ts` to extract position:
+
+```typescript
+// Enhanced ExtractedPlayer interface
+export interface ExtractedPlayer {
+  name: string;
+  role: "target" | "departing" | "mentioned";
+  position?: "GK" | "CB" | "LB" | "RB" | "DM" | "CM" | "AM" | "LW" | "RW" | "ST" | null;
+}
+```
+
+Updated prompt instruction:
+```
+4. POSICIÓN DEL JUGADOR (si se menciona o es conocido):
+   - Usa: GK, CB, LB, RB, DM, CM, AM, LW, RW, ST
+   - Si no se conoce la posición, omite el campo
+```
+
+#### Step 3: Service Integration (Backend)
+Update `playerNormalizationService.ts` to handle position:
+
+```typescript
+// Update player with position if not already set
+if (extracted.position && !existingPlayer.known_position) {
+  await supabase
+    .from("players")
+    .update({ known_position: extracted.position })
+    .eq("id", existingPlayer.id);
+}
+```
+
+#### Step 4: Position Filter UI (Frontend)
+Add position filter dropdown to `SoylentiClient.tsx`:
+- Multi-select filter for positions
+- Display position badge on RumorCard
+- Filter rumor list by selected positions
+
+#### Step 5: Position Aggregation View
+Create API endpoint for position statistics:
+
+```
+GET /api/soylenti/positions
+Response: { position: string, count: number, recentPlayers: string[] }[]
+```
+
+### Estimated Effort
+- Step 1-2: Low complexity, can be done together
+- Step 3: Low complexity, straightforward update
+- Step 4-5: Medium complexity, UI and API work
+
+### Success Criteria
+- 85%+ position classification accuracy on known players
+- Position filter working in UI
+- Position badges displayed on RumorCard
