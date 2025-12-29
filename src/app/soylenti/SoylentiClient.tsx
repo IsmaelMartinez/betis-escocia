@@ -127,20 +127,40 @@ export default function SoylentiClient({
     <>
       {/* Trending Players Sidebar (on larger screens) */}
       <div className="lg:flex lg:gap-8">
-        {/* Trending Players - collapsible sidebar on desktop */}
+        {/* Trending Players - collapsible sidebar */}
         {trendingPlayers.length > 0 && (
           <div
             className={`transition-all duration-300 ease-in-out ${
               sidebarCollapsed ? "lg:w-12" : "lg:w-72"
             } mb-8 lg:mb-0 flex-shrink-0`}
           >
-            {/* Collapse toggle button - only visible on lg screens */}
+            {/* Collapse toggle button - mobile version */}
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="lg:hidden flex items-center justify-between w-full mb-2 py-2 px-3 bg-white rounded-lg shadow-sm border border-gray-200 hover:bg-betis-verde-pale transition-colors"
+              aria-label={
+                sidebarCollapsed ? "Mostrar jugadores" : "Ocultar jugadores"
+              }
+              aria-expanded={!sidebarCollapsed}
+            >
+              <span className="text-sm font-medium text-betis-verde-dark">
+                Jugadores en tendencia
+              </span>
+              {sidebarCollapsed ? (
+                <ChevronRight size={20} className="text-betis-verde" />
+              ) : (
+                <ChevronLeft size={20} className="text-betis-verde rotate-90" />
+              )}
+            </button>
+
+            {/* Collapse toggle button - desktop version */}
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
               className="hidden lg:flex items-center justify-center w-full mb-2 py-2 bg-white rounded-lg shadow-sm border border-gray-200 hover:bg-betis-verde-pale transition-colors"
               aria-label={
                 sidebarCollapsed ? "Expandir panel" : "Colapsar panel"
               }
+              aria-expanded={!sidebarCollapsed}
             >
               {sidebarCollapsed ? (
                 <ChevronRight size={20} className="text-betis-verde" />
@@ -152,9 +172,9 @@ export default function SoylentiClient({
               )}
             </button>
 
-            {/* Sidebar content - hidden when collapsed on desktop */}
+            {/* Sidebar content - collapsible on both mobile and desktop */}
             <div
-              className={`${sidebarCollapsed ? "lg:hidden" : "lg:block"} block`}
+              className={`${sidebarCollapsed ? "hidden" : "block"} transition-all duration-300`}
             >
               <TrendingPlayers
                 players={trendingPlayers}
@@ -245,7 +265,10 @@ export default function SoylentiClient({
           {/* Rumors Grid */}
           {isPending && selectedPlayer ? (
             <div className="text-center py-16">
-              <Loader2 size={32} className="animate-spin text-betis-verde mx-auto" />
+              <Loader2
+                size={32}
+                className="animate-spin text-betis-verde mx-auto"
+              />
               <p className="mt-4 text-gray-600">
                 Cargando noticias de {selectedPlayerName}...
               </p>
