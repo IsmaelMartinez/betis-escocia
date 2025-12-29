@@ -3,7 +3,7 @@
 import { useState, useTransition, useMemo } from "react";
 import RumorCard from "@/components/RumorCard";
 import TrendingPlayers from "@/components/TrendingPlayers";
-import { RefreshCw, Loader2, X } from "lucide-react";
+import { RefreshCw, Loader2, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { fetchMoreRumors } from "./actions";
 import type { TrendingPlayer } from "@/lib/supabase";
 
@@ -45,6 +45,7 @@ export default function SoylentiClient({
   const [showAllNews, setShowAllNews] = useState(false);
   const [franMode, setFranMode] = useState(true);
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -117,24 +118,45 @@ export default function SoylentiClient({
   return (
     <>
       {/* Trending Players Sidebar (on larger screens) */}
-      <div className="lg:grid lg:grid-cols-4 lg:gap-8">
-        {/* Trending Players - shows on left on desktop */}
+      <div className="lg:flex lg:gap-8">
+        {/* Trending Players - collapsible sidebar on desktop */}
         {trendingPlayers.length > 0 && (
-          <div className="lg:col-span-1 mb-8 lg:mb-0">
-            <TrendingPlayers
-              players={trendingPlayers}
-              onPlayerClick={handlePlayerClick}
-              selectedPlayer={selectedPlayer}
-            />
+          <div
+            className={`transition-all duration-300 ease-in-out ${
+              sidebarCollapsed ? "lg:w-12" : "lg:w-72"
+            } mb-8 lg:mb-0 flex-shrink-0`}
+          >
+            {/* Collapse toggle button - only visible on lg screens */}
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="hidden lg:flex items-center justify-center w-full mb-2 py-2 bg-white rounded-lg shadow-sm border border-gray-200 hover:bg-betis-verde-pale transition-colors"
+              aria-label={sidebarCollapsed ? "Expandir panel" : "Colapsar panel"}
+            >
+              {sidebarCollapsed ? (
+                <ChevronRight size={20} className="text-betis-verde" />
+              ) : (
+                <>
+                  <ChevronLeft size={16} className="text-betis-verde" />
+                  <span className="text-sm text-gray-600 ml-1">Ocultar</span>
+                </>
+              )}
+            </button>
+
+            {/* Sidebar content - hidden when collapsed on desktop */}
+            <div
+              className={`${sidebarCollapsed ? "lg:hidden" : "lg:block"} block`}
+            >
+              <TrendingPlayers
+                players={trendingPlayers}
+                onPlayerClick={handlePlayerClick}
+                selectedPlayer={selectedPlayer}
+              />
+            </div>
           </div>
         )}
 
         {/* Main Content */}
-        <div
-          className={
-            trendingPlayers.length > 0 ? "lg:col-span-3" : "col-span-4"
-          }
-        >
+        <div className="flex-1 min-w-0">
           {/* Info Bar */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-8">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
