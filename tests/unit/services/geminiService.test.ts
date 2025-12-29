@@ -425,6 +425,5 @@ describe("geminiService", () => {
         expect(result.probability).toBe(prob);
       }
     });
-
   });
 });
