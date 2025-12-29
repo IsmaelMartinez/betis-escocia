@@ -16,7 +16,6 @@ interface Rumor {
   description?: string;
   aiProbability?: number | null;
   aiAnalysis?: string | null;
-  transferDirection?: "in" | "out" | "unknown" | null;
   players?: PlayerInfo[];
 }
 
@@ -35,7 +34,6 @@ export async function fetchMoreRumors(
       `
       *,
       news_players (
-        role,
         players (
           name,
           normalized_name
@@ -66,7 +64,6 @@ export async function fetchMoreRumors(
         description: rumor.description,
         aiProbability: rumor.ai_probability,
         aiAnalysis: rumor.ai_analysis,
-        transferDirection: rumor.transfer_direction,
         players:
           rumor.news_players?.map(
             (np: {

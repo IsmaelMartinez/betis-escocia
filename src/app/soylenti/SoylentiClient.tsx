@@ -21,7 +21,6 @@ interface Rumor {
   description?: string;
   aiProbability?: number | null;
   aiAnalysis?: string | null;
-  transferDirection?: "in" | "out" | "unknown" | null;
   players?: PlayerInfo[];
 }
 

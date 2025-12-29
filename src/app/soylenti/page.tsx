@@ -26,7 +26,6 @@ async function fetchRumors() {
         `
         *,
         news_players (
-          role,
           players (
             name,
             normalized_name
@@ -63,7 +62,6 @@ async function fetchRumors() {
           description: rumor.description,
           aiProbability: rumor.ai_probability,
           aiAnalysis: rumor.ai_analysis,
-          transferDirection: rumor.transfer_direction,
           players:
             rumor.news_players?.map(
               (np: {

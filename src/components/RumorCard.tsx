@@ -5,7 +5,6 @@ import { ExternalLink } from "lucide-react";
 
 interface PlayerInfo {
   name: string;
-  role: "target" | "departing" | "mentioned";
 }
 
 interface RumorCardProps {
@@ -16,7 +15,6 @@ interface RumorCardProps {
   description?: string;
   aiProbability?: number | null;
   aiAnalysis?: string | null;
-  transferDirection?: "in" | "out" | "unknown" | null;
   showCredibility?: boolean;
   players?: PlayerInfo[];
 }
@@ -29,7 +27,6 @@ export default function RumorCard({
   description,
   aiProbability,
   aiAnalysis,
-  transferDirection,
   showCredibility = true,
   players = [],
 }: RumorCardProps) {
@@ -65,16 +62,6 @@ export default function RumorCard({
             >
               {source}
             </span>
-            {transferDirection === "in" && (
-              <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-betis-verde text-white flex items-center gap-1">
-                ↓ Entrada
-              </span>
-            )}
-            {transferDirection === "out" && (
-              <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-betis-oro text-betis-verde-dark flex items-center gap-1">
-                ↑ Salida
-              </span>
-            )}
             {showCredibility &&
               aiProbability !== null &&
               aiProbability !== undefined &&
@@ -101,14 +88,8 @@ export default function RumorCard({
           <div className="flex flex-wrap gap-1 mb-3">
             {players.map((player) => (
               <span
-                key={`${player.name}-${player.role}`}
-                className={`px-2 py-0.5 rounded text-xs ${
-                  player.role === "target"
-                    ? "bg-betis-verde-light text-betis-verde-dark"
-                    : player.role === "departing"
-                      ? "bg-amber-100 text-amber-800"
-                      : "bg-gray-100 text-gray-600"
-                }`}
+                key={player.name}
+                className="px-2 py-0.5 rounded text-xs bg-betis-verde-light text-betis-verde-dark"
               >
                 {player.name}
               </span>
