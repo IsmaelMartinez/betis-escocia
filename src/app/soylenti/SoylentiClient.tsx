@@ -238,7 +238,6 @@ export default function SoylentiClient({
                     description={rumor.description}
                     aiProbability={rumor.aiProbability}
                     aiAnalysis={rumor.aiAnalysis}
-                    transferDirection={rumor.transferDirection}
                     showCredibility={franMode}
                     players={rumor.players}
                   />
