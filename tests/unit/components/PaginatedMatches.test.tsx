@@ -201,7 +201,7 @@ describe('PaginatedMatches', () => {
 
   it('should show loading state when loading more matches', async () => {
     const user = userEvent.setup();
-    
+
     const initialMatches = Array.from({ length: 10 }, (_, i) => ({
       id: i + 1,
       homeTeam: { id: 90, name: 'Real Betis', shortName: 'Betis', tla: 'BET', crest: 'betis.png' },
@@ -213,16 +213,16 @@ describe('PaginatedMatches', () => {
       stage: 'REGULAR_SEASON',
       lastUpdated: `2024-01-0${i + 1}T15:00:00Z`,
       season: { id: 2024, startDate: '2024-08-01', endDate: '2025-05-31', currentMatchday: 10 },
-      score: { 
-        duration: 'REGULAR' as const, 
-        fullTime: { home: 2, away: 1 }, 
-        halfTime: { home: 1, away: 0 } 
+      score: {
+        duration: 'REGULAR' as const,
+        fullTime: { home: 2, away: 1 },
+        halfTime: { home: 1, away: 0 }
       }
     }));
-    
+
     // Mock a delayed response
-    mockFetch.mockImplementationOnce(() => 
-      new Promise(resolve => 
+    mockFetch.mockImplementationOnce(() =>
+      new Promise(resolve =>
         setTimeout(() => {
           const mockResponse = new Response(JSON.stringify({ matches: [] }), {
             status: 200,
@@ -233,13 +233,18 @@ describe('PaginatedMatches', () => {
         }, 100)
       )
     );
-    
+
     render(<PaginatedMatches initialMatches={initialMatches} matchType="recent" />);
 
     const loadMoreButton = screen.getByRole('button', { name: /ver más eventos/i });
     await user.click(loadMoreButton);
 
     expect(screen.getByText(/cargando más eventos/i)).toBeInTheDocument();
+
+    // Wait for async operation to complete before test cleanup to prevent unhandled rejection
+    await waitFor(() => {
+      expect(screen.queryByText(/cargando más eventos/i)).not.toBeInTheDocument();
+    });
   });
 
   it('should hide load more button when there are no more matches', () => {
