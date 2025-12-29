@@ -27,7 +27,8 @@ async function fetchRumors() {
         news_players (
           role,
           players (
-            name
+            name,
+            normalized_name
           )
         )
       `,
@@ -64,8 +65,12 @@ async function fetchRumors() {
           transferDirection: rumor.transfer_direction,
           players:
             rumor.news_players?.map(
-              (np: { role: string; players: { name: string } }) => ({
+              (np: {
+                role: string;
+                players: { name: string; normalized_name: string };
+              }) => ({
                 name: np.players?.name || "",
+                normalizedName: np.players?.normalized_name || "",
                 role: np.role as "target" | "departing" | "mentioned",
               }),
             ) || [],
@@ -77,9 +82,42 @@ async function fetchRumors() {
   };
 }
 
+// Fetch trending players (Phase 2B)
+async function fetchTrendingPlayers() {
+  const { supabase } = await import("@/lib/supabase");
+
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const { data, error } = await supabase
+    .from("players")
+    .select("name, normalized_name, rumor_count, first_seen_at, last_seen_at")
+    .gte("rumor_count", 2)
+    .order("last_seen_at", { ascending: false })
+    .order("rumor_count", { ascending: false })
+    .limit(10);
+
+  if (error) {
+    console.error("Error fetching trending players:", error);
+    return [];
+  }
+
+  return (data || []).map((player) => ({
+    name: player.name,
+    normalizedName: player.normalized_name,
+    rumorCount: player.rumor_count,
+    firstSeen: player.first_seen_at,
+    lastSeen: player.last_seen_at,
+    isActive: new Date(player.last_seen_at) > sevenDaysAgo,
+  }));
+}
+
 // Content component with data fetching
 async function SoylentiContent() {
-  const response = await fetchRumors();
+  const [response, trendingPlayers] = await Promise.all([
+    fetchRumors(),
+    fetchTrendingPlayers(),
+  ]);
   const data = response.data || {};
   const rumors = data.rumors || [];
 
@@ -109,6 +147,7 @@ async function SoylentiContent() {
             lastUpdated={data.lastUpdated}
             initialHasMore={data.hasMore}
             totalCount={data.totalCount}
+            trendingPlayers={trendingPlayers}
           />
         </div>
       </section>

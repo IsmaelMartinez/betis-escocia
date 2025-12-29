@@ -913,3 +913,13 @@ export interface ExtractedPlayer {
   name: string;
   role: "target" | "departing" | "mentioned";
 }
+
+// Phase 2B: Trending player for UI display
+export interface TrendingPlayer {
+  name: string;
+  normalizedName: string;
+  rumorCount: number;
+  firstSeen: string;
+  lastSeen: string;
+  isActive: boolean; // mentioned in last 7 days
+}

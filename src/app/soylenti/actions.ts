@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabase";
 
 interface PlayerInfo {
   name: string;
+  normalizedName?: string;
   role: "target" | "departing" | "mentioned";
 }
 
@@ -36,7 +37,8 @@ export async function fetchMoreRumors(
       news_players (
         role,
         players (
-          name
+          name,
+          normalized_name
         )
       )
     `,
@@ -67,8 +69,12 @@ export async function fetchMoreRumors(
         transferDirection: rumor.transfer_direction,
         players:
           rumor.news_players?.map(
-            (np: { role: string; players: { name: string } }) => ({
+            (np: {
+              role: string;
+              players: { name: string; normalized_name: string };
+            }) => ({
               name: np.players?.name || "",
+              normalizedName: np.players?.normalized_name || "",
               role: np.role as "target" | "departing" | "mentioned",
             }),
           ) || [],

@@ -2,11 +2,14 @@
 
 import { useState, useTransition, useMemo } from "react";
 import RumorCard from "@/components/RumorCard";
-import { RefreshCw, Loader2 } from "lucide-react";
+import TrendingPlayers from "@/components/TrendingPlayers";
+import { RefreshCw, Loader2, X } from "lucide-react";
 import { fetchMoreRumors } from "./actions";
+import type { TrendingPlayer } from "@/lib/supabase";
 
 interface PlayerInfo {
   name: string;
+  normalizedName?: string;
   role: "target" | "departing" | "mentioned";
 }
 
@@ -27,6 +30,7 @@ interface SoylentiClientProps {
   lastUpdated: string;
   initialHasMore: boolean;
   totalCount: number;
+  trendingPlayers?: TrendingPlayer[];
 }
 
 export default function SoylentiClient({
@@ -34,21 +38,43 @@ export default function SoylentiClient({
   lastUpdated,
   initialHasMore,
   totalCount,
+  trendingPlayers = [],
 }: SoylentiClientProps) {
   const [rumors, setRumors] = useState(initialRumors);
   const [hasMore, setHasMore] = useState(initialHasMore);
   const [showAllNews, setShowAllNews] = useState(false);
   const [franMode, setFranMode] = useState(true);
+  const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  // Get the display name of the selected player
+  const selectedPlayerName = useMemo(() => {
+    if (!selectedPlayer) return null;
+    const player = trendingPlayers.find(
+      (p) => p.normalizedName === selectedPlayer,
+    );
+    return player?.name || selectedPlayer;
+  }, [selectedPlayer, trendingPlayers]);
 
   const displayedRumors = useMemo(
     () =>
       rumors.filter((rumor) => {
         const prob = rumor.aiProbability;
         const isTransfer = prob !== null && prob !== undefined && prob > 0;
-        return isTransfer || showAllNews;
+        const passesNewsFilter = isTransfer || showAllNews;
+
+        // Player filter
+        if (selectedPlayer) {
+          const hasPlayer = rumor.players?.some(
+            (p) => p.normalizedName === selectedPlayer,
+          );
+          return passesNewsFilter && hasPlayer;
+        }
+
+        return passesNewsFilter;
       }),
-    [rumors, showAllNews],
+    [rumors, showAllNews, selectedPlayer],
   );
 
   const rumorCount = useMemo(
@@ -60,7 +86,15 @@ export default function SoylentiClient({
     [rumors],
   );
 
-  const [error, setError] = useState<string | null>(null);
+  const handlePlayerClick = (normalizedName: string) => {
+    setSelectedPlayer((prev) =>
+      prev === normalizedName ? null : normalizedName,
+    );
+  };
+
+  const clearPlayerFilter = () => {
+    setSelectedPlayer(null);
+  };
 
   const handleLoadMore = () => {
     if (!hasMore || isPending) return;
@@ -82,104 +116,149 @@ export default function SoylentiClient({
 
   return (
     <>
-      {/* Info Bar */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="flex items-center space-x-2">
-            <RefreshCw size={20} className="text-betis-verde" />
-            <p className="text-sm text-gray-600">
-              {displayedRumors.length} de {totalCount} noticias
-              {rumorCount > 0 && ` (${rumorCount} rumores)`}
+      {/* Trending Players Sidebar (on larger screens) */}
+      <div className="lg:grid lg:grid-cols-4 lg:gap-8">
+        {/* Trending Players - shows on left on desktop */}
+        {trendingPlayers.length > 0 && (
+          <div className="lg:col-span-1 mb-8 lg:mb-0">
+            <TrendingPlayers
+              players={trendingPlayers}
+              onPlayerClick={handlePlayerClick}
+              selectedPlayer={selectedPlayer}
+            />
+          </div>
+        )}
+
+        {/* Main Content */}
+        <div
+          className={trendingPlayers.length > 0 ? "lg:col-span-3" : "col-span-4"}
+        >
+          {/* Info Bar */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="flex items-center space-x-2">
+                <RefreshCw size={20} className="text-betis-verde" />
+                <p className="text-sm text-gray-600">
+                  {displayedRumors.length} de {totalCount} noticias
+                  {rumorCount > 0 && ` (${rumorCount} rumores)`}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={franMode}
+                    onChange={(e) => setFranMode(e.target.checked)}
+                    className="w-4 h-4 rounded border-betis-verde text-betis-verde focus:ring-betis-verde"
+                  />
+                  <span className="text-sm text-betis-verde-dark font-medium">
+                    Fran Mode
+                  </span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={showAllNews}
+                    onChange={(e) => setShowAllNews(e.target.checked)}
+                    className="w-4 h-4 rounded border-betis-verde text-betis-verde focus:ring-betis-verde"
+                  />
+                  <span className="text-sm text-betis-verde-dark">
+                    Mostrar noticias
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            {/* Player filter indicator */}
+            {selectedPlayer && (
+              <div className="mt-3 flex items-center gap-2">
+                <span className="text-sm text-gray-600">
+                  Filtrando por jugador:
+                </span>
+                <button
+                  onClick={clearPlayerFilter}
+                  className="inline-flex items-center gap-1 px-3 py-1 bg-betis-verde-light text-betis-verde-dark rounded-full text-sm font-medium hover:bg-betis-verde hover:text-white transition-colors"
+                >
+                  {selectedPlayerName}
+                  <X size={14} />
+                </button>
+              </div>
+            )}
+
+            <p className="text-xs text-gray-500 mt-2 sm:mt-0">
+              Última actualización:{" "}
+              {new Intl.DateTimeFormat("es-ES", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              }).format(new Date(lastUpdated))}
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-4">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={franMode}
-                onChange={(e) => setFranMode(e.target.checked)}
-                className="w-4 h-4 rounded border-betis-verde text-betis-verde focus:ring-betis-verde"
-              />
-              <span className="text-sm text-betis-verde-dark font-medium">
-                Fran Mode
-              </span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={showAllNews}
-                onChange={(e) => setShowAllNews(e.target.checked)}
-                className="w-4 h-4 rounded border-betis-verde text-betis-verde focus:ring-betis-verde"
-              />
-              <span className="text-sm text-betis-verde-dark">
-                Mostrar noticias
-              </span>
-            </label>
-          </div>
-        </div>
+          {/* Rumors Grid */}
+          {displayedRumors.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {displayedRumors.map((rumor) => (
+                  <RumorCard
+                    key={rumor.link}
+                    title={rumor.title}
+                    link={rumor.link}
+                    pubDate={rumor.pubDate}
+                    source={rumor.source}
+                    description={rumor.description}
+                    aiProbability={rumor.aiProbability}
+                    aiAnalysis={rumor.aiAnalysis}
+                    transferDirection={rumor.transferDirection}
+                    showCredibility={franMode}
+                    players={rumor.players}
+                  />
+                ))}
+              </div>
 
-        <p className="text-xs text-gray-500 mt-2 sm:mt-0">
-          Última actualización:{" "}
-          {new Intl.DateTimeFormat("es-ES", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          }).format(new Date(lastUpdated))}
-        </p>
-      </div>
-
-      {/* Rumors Grid */}
-      {displayedRumors.length > 0 ? (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {displayedRumors.map((rumor) => (
-              <RumorCard
-                key={rumor.link}
-                title={rumor.title}
-                link={rumor.link}
-                pubDate={rumor.pubDate}
-                source={rumor.source}
-                description={rumor.description}
-                aiProbability={rumor.aiProbability}
-                aiAnalysis={rumor.aiAnalysis}
-                transferDirection={rumor.transferDirection}
-                showCredibility={franMode}
-                players={rumor.players}
-              />
-            ))}
-          </div>
-
-          {/* Load More Button */}
-          {hasMore && (
-            <div className="mt-8 text-center">
-              <button
-                onClick={handleLoadMore}
-                disabled={isPending}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-betis-verde text-white rounded-lg hover:bg-betis-verde-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isPending ? (
-                  <>
-                    <Loader2 size={20} className="animate-spin" />
-                    Cargando...
-                  </>
-                ) : (
-                  "Cargar más noticias"
-                )}
-              </button>
-              {error && <p className="mt-4 text-red-600 text-sm">{error}</p>}
+              {/* Load More Button */}
+              {hasMore && !selectedPlayer && (
+                <div className="mt-8 text-center">
+                  <button
+                    onClick={handleLoadMore}
+                    disabled={isPending}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-betis-verde text-white rounded-lg hover:bg-betis-verde-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isPending ? (
+                      <>
+                        <Loader2 size={20} className="animate-spin" />
+                        Cargando...
+                      </>
+                    ) : (
+                      "Cargar más noticias"
+                    )}
+                  </button>
+                  {error && <p className="mt-4 text-red-600 text-sm">{error}</p>}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-center py-16">
+              <p className="text-gray-600 text-lg">
+                {selectedPlayer
+                  ? `No hay rumores de ${selectedPlayerName} en este momento`
+                  : "No hay rumores disponibles en este momento"}
+              </p>
+              {selectedPlayer && (
+                <button
+                  onClick={clearPlayerFilter}
+                  className="mt-4 text-betis-verde hover:text-betis-verde-dark underline"
+                >
+                  Quitar filtro
+                </button>
+              )}
             </div>
           )}
-        </>
-      ) : (
-        <div className="text-center py-16">
-          <p className="text-gray-600 text-lg">
-            No hay rumores disponibles en este momento
-          </p>
         </div>
-      )}
+      </div>
     </>
   );
 }
