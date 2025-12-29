@@ -8,11 +8,11 @@ Last Updated: December 29, 2025
 | Phase | Description | Status | Completed |
 |-------|-------------|--------|-----------|
 | 2A | Player Name Extraction (NER) | ✅ DONE | 2025-12-28 |
-| 2B | Position Classification | 🔜 NEXT | - |
+| 2B | Trend Analysis (Player Momentum) | 🔜 NEXT | - |
 | 2C | Source Credibility Tracking | ⏳ Planned | - |
-| 2D | Trend Analysis | ⏳ Planned | - |
-| 2E | Rumor Lifecycle Tracking | ⏳ Planned | - |
-| 2F | Insights Dashboard | ⏳ Planned | - |
+| 2D | Rumor Lifecycle Tracking | ⏳ Planned | - |
+| 2E | Insights Dashboard | ⏳ Planned | - |
+| 3.0 | External API Integration (Transfermarkt) | 🔮 Future | - |
 
 ### Phase 2A Completion Summary (December 28, 2025)
 
@@ -74,8 +74,7 @@ CREATE TABLE betis_news (
 
 ### Current Limitations
 
-- No player name extraction from rumors
-- No position classification for transfer targets
+- ~~No player name extraction from rumors~~ (DONE - Phase 2A)
 - No source credibility tracking over time
 - No rumor evolution/lifecycle tracking
 - No trend analysis for emerging transfer targets
@@ -145,23 +144,21 @@ CREATE TABLE news_players (
 );
 ```
 
-### Phase 2B: Position Classification
+### Phase 2B: Trend Analysis (Player Momentum)
 
-Position taxonomy covering 10 main positions: GK, CB, LB, RB, DM, CM, AM, LW, RW, ST.
+Surface which players are gaining traction using existing data (`rumor_count`, `last_seen_at`):
 
 ```sql
-ALTER TABLE players ADD COLUMN primary_position VARCHAR(10);
-ALTER TABLE players ADD COLUMN secondary_position VARCHAR(10);
-CREATE INDEX idx_players_primary_position ON players(primary_position);
+-- Trending players query (no new schema needed)
+SELECT name, rumor_count, first_seen_at, last_seen_at,
+       (last_seen_at > NOW() - INTERVAL '7 days') as is_active
+FROM players
+WHERE rumor_count >= 2
+ORDER BY last_seen_at DESC, rumor_count DESC
+LIMIT 10;
 ```
 
-Enhanced prompt includes position detection:
-
-```json
-{
-  "players": [{ "name": "Sergi Roberto", "role": "target", "position": "RB" }]
-}
-```
+API endpoint: `GET /api/soylenti/trending` returns top players by recent activity.
 
 ### Phase 2C: Source Credibility Tracking
 
@@ -185,32 +182,7 @@ ALTER TABLE betis_news ADD COLUMN outcome_verified_at TIMESTAMPTZ;
 
 Verification workflow: admins mark rumors as "confirmed", "denied", or "pending". Credibility score recalculated: `(verified_correct / (verified_correct + verified_incorrect)) * 100`.
 
-### Phase 2D: Trend Analysis
-
-Identify players with increasing rumor frequency:
-
-```sql
-CREATE MATERIALIZED VIEW player_trends AS
-SELECT
-    p.id,
-    p.name,
-    p.primary_position,
-    COUNT(*) FILTER (WHERE bn.pub_date > NOW() - INTERVAL '7 days') as mentions_7d,
-    COUNT(*) FILTER (WHERE bn.pub_date > NOW() - INTERVAL '30 days') as mentions_30d,
-    COUNT(*) as total_mentions,
-    AVG(bn.ai_probability) as avg_credibility,
-    MIN(bn.pub_date) as first_seen,
-    MAX(bn.pub_date) as last_seen
-FROM players p
-JOIN news_players np ON p.id = np.player_id
-JOIN betis_news bn ON np.news_id = bn.id
-WHERE bn.ai_probability > 0
-GROUP BY p.id, p.name, p.primary_position;
-
-CREATE INDEX idx_player_trends_mentions ON player_trends(mentions_7d DESC);
-```
-
-### Phase 2E: Rumor Lifecycle Tracking
+### Phase 2D: Rumor Lifecycle Tracking
 
 Monitor how rumors evolve from first mention to resolution:
 
@@ -234,12 +206,11 @@ CREATE TABLE rumor_threads (
 
 Lifecycle states: "emerging" (1-2 mentions), "active" (3+ mentions), "heating" (5+ in 7 days), "cooling" (no mentions in 14 days), "resolved".
 
-### Phase 2F: Insights Dashboard
+### Phase 2E: Insights Dashboard
 
 Dashboard components:
 
-- Position Heatmap: which positions have most rumor activity
-- Trending Players: top 10 by trend score with sparklines
+- Trending Players: top 10 by activity with rumor counts
 - Source Reliability Matrix: credibility scores over time
 - Transfer Window Timeline: rumor intensity across season
 - Rumor Threads Panel: active sagas with probability evolution
@@ -247,7 +218,6 @@ Dashboard components:
 API endpoints:
 
 ```
-GET /api/soylenti/insights/positions
 GET /api/soylenti/insights/trending
 GET /api/soylenti/insights/sources
 GET /api/soylenti/insights/threads
@@ -303,12 +273,12 @@ Given free tier constraints:
 - Implement player normalization service
 - Add basic player list to UI
 
-### Phase 2B (Sprint 2-3): Position Intelligence
+### Phase 2B (Sprint 2-3): Trend Analysis
 
-- Add position fields to schema
-- Enhance prompt for position detection
-- Create position aggregation views
-- Add position filter to UI
+- Create trending players API endpoint
+- Add "Jugadores en Tendencia" UI component
+- Implement player click-to-filter functionality
+- Show active/cooling status indicators
 
 ### Phase 2C (Sprint 3-4): Source Tracking
 
@@ -317,25 +287,18 @@ Given free tier constraints:
 - Implement credibility calculation job
 - Display source reliability in RumorCard
 
-### Phase 2D (Sprint 4-5): Trend Analytics
-
-- Create player_trends materialized view
-- Implement trend calculation service
-- Add trending players component
-- Create insights API endpoints
-
-### Phase 2E (Sprint 5-6): Lifecycle Management
+### Phase 2D (Sprint 4-5): Lifecycle Management
 
 - Create rumor_threads table
 - Implement thread detection logic
 - Add thread visualization UI
 - Create resolution workflow
 
-### Phase 2F (Sprint 6-7): Dashboard Polish
+### Phase 2E (Sprint 5-6): Dashboard Polish
 
 - Build insights dashboard page
-- Add position heatmap visualization
-- Implement timeline chart
+- Implement transfer window timeline chart
+- Add source reliability matrix
 - Add export functionality
 
 ## Historical Data Retention Strategy
@@ -351,7 +314,6 @@ Given free tier constraints:
 **Quantitative**:
 
 - Player extraction accuracy: target 90%+ on known players
-- Position classification: target 85%+ correct
 - Source credibility correlation with outcomes: meaningful positive correlation
 - Trend detection lead time: identifying players before mainstream peak
 
@@ -365,7 +327,7 @@ Given free tier constraints:
 
 | File                                  | Purpose                                                  |
 | ------------------------------------- | -------------------------------------------------------- |
-| `src/services/geminiService.ts`       | AI prompt enhancement for player/position extraction     |
+| `src/services/geminiService.ts`       | AI prompt enhancement for player extraction              |
 | `src/services/rumorSyncService.ts`    | Pipeline integration for player extraction and lifecycle |
 | `sql/0002_add_betis_news_table.sql`   | Schema reference for new migrations                      |
 | `src/app/soylenti/SoylentiClient.tsx` | Frontend expansion for insights dashboard                |
@@ -385,78 +347,79 @@ Betis's historical transfer patterns suggest focusing on:
 - Market values of 10-30M
 - Mix of loans and permanent deals based on position criticality
 
-## Next Steps: Phase 2B Position Classification
+## Next Steps: Phase 2B Trend Analysis (Player Momentum)
 
 ### Overview
 
-Phase 2B adds position intelligence to player data, enabling filtering by position and understanding which positions Betis is actively pursuing in the transfer market.
+Phase 2B surfaces which players are "heating up" in rumor activity. Using the existing `players` table data (`rumor_count`, `first_seen_at`, `last_seen_at`), we can identify trending transfer targets without additional AI calls.
 
 ### Incremental Implementation Tasks
 
-#### Step 1: Schema Extension (Database)
-Add position fields to the existing `players` table:
+#### Step 1: Trending Players Query
+Create a simple query leveraging existing data:
 
 ```sql
--- Migration: 0005_add_player_positions.sql
-ALTER TABLE players ADD COLUMN IF NOT EXISTS primary_position VARCHAR(10);
-ALTER TABLE players ADD COLUMN IF NOT EXISTS secondary_position VARCHAR(10);
-CREATE INDEX IF NOT EXISTS idx_players_primary_position ON players(primary_position);
+-- Players with most recent activity and high mention counts
+SELECT
+  p.name,
+  p.rumor_count,
+  p.first_seen_at,
+  p.last_seen_at,
+  (p.last_seen_at > NOW() - INTERVAL '7 days') as is_active
+FROM players p
+WHERE p.rumor_count >= 2
+ORDER BY p.last_seen_at DESC, p.rumor_count DESC
+LIMIT 10;
 ```
 
-Position taxonomy (10 values): `GK`, `CB`, `LB`, `RB`, `DM`, `CM`, `AM`, `LW`, `RW`, `ST`
-
-#### Step 2: Prompt Enhancement (AI)
-Update `src/services/geminiService.ts` to extract position:
+#### Step 2: API Endpoint
+Create `/api/soylenti/trending`:
 
 ```typescript
-// Enhanced ExtractedPlayer interface
-export interface ExtractedPlayer {
+// GET /api/soylenti/trending
+interface TrendingPlayer {
   name: string;
-  role: "target" | "departing" | "mentioned";
-  position?: "GK" | "CB" | "LB" | "RB" | "DM" | "CM" | "AM" | "LW" | "RW" | "ST" | null;
+  rumorCount: number;
+  firstSeen: string;
+  lastSeen: string;
+  isActive: boolean;  // mentioned in last 7 days
 }
 ```
 
-Updated prompt instruction:
-```
-4. POSICIÓN DEL JUGADOR (si se menciona o es conocido):
-   - Usa: GK, CB, LB, RB, DM, CM, AM, LW, RW, ST
-   - Si no se conoce la posición, omite el campo
-```
+#### Step 3: Trending Players UI Component
+Add a "Jugadores en Tendencia" section to Soylenti page:
+- List top 10 players by recent activity
+- Show rumor count badge
+- Indicate "active" vs "cooling" status
+- Link to filter rumors by that player
 
-#### Step 3: Service Integration (Backend)
-Update `playerNormalizationService.ts` to handle position:
-
-```typescript
-// Update player with position if not already set
-if (extracted.position && !existingPlayer.known_position) {
-  await supabase
-    .from("players")
-    .update({ known_position: extracted.position })
-    .eq("id", existingPlayer.id);
-}
-```
-
-#### Step 4: Position Filter UI (Frontend)
-Add position filter dropdown to `SoylentiClient.tsx`:
-- Multi-select filter for positions
-- Display position badge on RumorCard
-- Filter rumor list by selected positions
-
-#### Step 5: Position Aggregation View
-Create API endpoint for position statistics:
-
-```
-GET /api/soylenti/positions
-Response: { position: string, count: number, recentPlayers: string[] }[]
-```
+#### Step 4: Player Filter
+Allow clicking a player name to filter rumors mentioning them:
+- Add `?player=normalized_name` URL param
+- Filter `news_players` junction to show related news
 
 ### Estimated Effort
-- Step 1-2: Low complexity, can be done together
-- Step 3: Low complexity, straightforward update
-- Step 4-5: Medium complexity, UI and API work
+- Step 1-2: Low complexity, uses existing data
+- Step 3-4: Medium complexity, UI work
 
 ### Success Criteria
-- 85%+ position classification accuracy on known players
-- Position filter working in UI
-- Position badges displayed on RumorCard
+- Trending players displayed on Soylenti page
+- Click-to-filter works for player names
+- Active/cooling status visible
+
+---
+
+## Future: Version 3.0 External API Integration
+
+For a future major version, integrating with external APIs would enrich player data:
+
+- **Transfermarkt API**: Player valuations, contract info, transfer history
+- **Football-Data.org**: Team rosters, player stats
+- **SofaScore/FotMob**: Performance metrics
+
+This would enable:
+- Automatic player profile enrichment (position, age, value)
+- Transfer fee estimations
+- Historical transfer success correlation
+
+Deferred to v3.0 due to API cost/complexity considerations.
