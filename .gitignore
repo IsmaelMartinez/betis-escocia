@@ -67,3 +67,6 @@ data/trivia-questions.json
 # ignore generated html folder
 html/
 .env.local
+
+# claude settings
+.claude/settings.local.json
