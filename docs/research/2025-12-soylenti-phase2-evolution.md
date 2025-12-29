@@ -8,8 +8,8 @@ Last Updated: December 29, 2025
 | Phase | Description | Status | Completed |
 |-------|-------------|--------|-----------|
 | 2A | Player Name Extraction (NER) | ✅ DONE | 2025-12-28 |
-| 2B | Trend Analysis (Player Momentum) | 🔜 NEXT | - |
-| 2C | Source Credibility Tracking | ⏳ Planned | - |
+| 2B | Trend Analysis (Player Momentum) | ✅ DONE | 2025-12-29 |
+| 2C | Source Credibility Tracking | 🔜 NEXT | - |
 | 2D | Rumor Lifecycle Tracking | ⏳ Planned | - |
 | 2E | Insights Dashboard | ⏳ Planned | - |
 | 3.0 | External API Integration (Transfermarkt) | 🔮 Future | - |
@@ -31,6 +31,21 @@ Key files:
 - `src/services/rumorSyncService.ts` - Pipeline integration
 - `sql/0004_add_players_tables.sql` - Database schema
 - `src/components/RumorCard.tsx` - Player display UI
+
+### Phase 2B Completion Summary (December 29, 2025)
+
+Implemented features:
+- Trending players API endpoint (`/api/soylenti/trending`)
+- `TrendingPlayers` component with active/cooling status indicators
+- Click-to-filter functionality in SoylentiClient
+- Sidebar layout for trending players on desktop
+- Player filter chip with clear button
+
+Key files:
+- `src/app/api/soylenti/trending/route.ts` - Trending API endpoint
+- `src/components/TrendingPlayers.tsx` - Trending players UI component
+- `src/app/soylenti/SoylentiClient.tsx` - Player filter integration
+- `src/lib/supabase.ts` - TrendingPlayer type definition
 
 ## Executive Summary
 
