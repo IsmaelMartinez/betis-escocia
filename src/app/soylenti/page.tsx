@@ -92,7 +92,7 @@ async function fetchTrendingPlayers() {
   const { data, error } = await supabase
     .from("players")
     .select("name, normalized_name, rumor_count, first_seen_at, last_seen_at")
-    .gte("rumor_count", 2)
+    .gte("rumor_count", 1)
     .order("last_seen_at", { ascending: false })
     .order("rumor_count", { ascending: false })
     .limit(10);

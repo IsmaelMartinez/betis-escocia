@@ -172,7 +172,7 @@ Surface which players are gaining traction using existing data (`rumor_count`, `
 SELECT name, rumor_count, first_seen_at, last_seen_at,
        (last_seen_at > NOW() - INTERVAL '7 days') as is_active
 FROM players
-WHERE rumor_count >= 2
+WHERE rumor_count >= 1
 ORDER BY last_seen_at DESC, rumor_count DESC
 LIMIT 10;
 ```
