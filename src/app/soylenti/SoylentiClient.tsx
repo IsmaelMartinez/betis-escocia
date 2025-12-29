@@ -130,7 +130,9 @@ export default function SoylentiClient({
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
               className="hidden lg:flex items-center justify-center w-full mb-2 py-2 bg-white rounded-lg shadow-sm border border-gray-200 hover:bg-betis-verde-pale transition-colors"
-              aria-label={sidebarCollapsed ? "Expandir panel" : "Colapsar panel"}
+              aria-label={
+                sidebarCollapsed ? "Expandir panel" : "Colapsar panel"
+              }
             >
               {sidebarCollapsed ? (
                 <ChevronRight size={20} className="text-betis-verde" />
