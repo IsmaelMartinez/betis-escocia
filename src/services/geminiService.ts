@@ -20,6 +20,7 @@ export async function analyzeRumorCredibility(
   title: string,
   description: string,
   source: string,
+  articleContent?: string | null,
 ): Promise<RumorAnalysis> {
   const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
   if (!GEMINI_API_KEY) {
@@ -27,16 +28,31 @@ export async function analyzeRumorCredibility(
   }
 
   const genAI = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
-  const prompt = `Analiza esta noticia del Real Betis:
+
+  // Build content section - include article if available
+  const contentSection = articleContent
+    ? `Contenido del artículo:\n${articleContent}`
+    : `Descripción: ${description || "Sin descripción"}`;
+
+  const prompt = `Analiza esta noticia del Real Betis Balompié (equipo de fútbol de Sevilla, España):
 
 Título: ${title}
-Descripción: ${description || "Sin descripción"}
+${contentSection}
 Fuente: ${source}
 
-Evalúa: ¿Es fichaje? (no: partidos, lesiones, declaraciones). Si es fichaje: credibilidad 0-100, dirección ("in"=llega, "out"=sale), y extrae jugadores mencionados.
+INSTRUCCIONES:
+1. Determina si es un RUMOR DE FICHAJE (transferencia de jugador). NO es fichaje: partidos, lesiones, declaraciones, premios, inocentadas/bromas.
+2. Si es fichaje: evalúa credibilidad 0-100 y dirección ("in"=jugador llega al Betis, "out"=jugador sale del Betis).
+3. EXTRACCIÓN DE JUGADORES - SÉ MUY ESTRICTO:
+   - Solo extrae jugadores DIRECTAMENTE INVOLUCRADOS en el fichaje/transferencia
+   - "target": jugador que el Betis quiere fichar
+   - "departing": jugador que sale del Betis
+   - NO incluyas jugadores mencionados de pasada, comparaciones, o referencias históricas
+   - Si no hay jugador claramente identificado como objetivo de fichaje, devuelve array vacío
+   - Usa el nombre completo del jugador cuando sea posible
 
-JSON:
-{"isTransferRumor":<bool>,"probability":<0-100>,"reasoning":"<breve>","confidence":"<low|medium|high>","transferDirection":"<in|out|unknown|null>","players":[{"name":"<nombre completo>","role":"<target|departing|mentioned>"}]}`;
+JSON (solo el JSON, sin markdown):
+{"isTransferRumor":<bool>,"probability":<0-100|null>,"reasoning":"<explicación breve>","confidence":"<low|medium|high>","transferDirection":"<in|out|unknown|null>","players":[{"name":"<nombre completo>","role":"<target|departing>"}]}`;
 
   // Simple retry with backoff (3 attempts, 1 second delay)
   for (let attempt = 0; attempt < 3; attempt++) {

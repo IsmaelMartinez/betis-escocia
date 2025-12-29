@@ -2,6 +2,7 @@ import { fetchAllRumors } from "./rssFetcherService";
 import { checkDuplicate } from "./deduplicationService";
 import { analyzeRumorCredibility } from "./geminiService";
 import { processExtractedPlayers } from "./playerNormalizationService";
+import { fetchArticleContent } from "./articleFetcherService";
 import { createClient } from "@supabase/supabase-js";
 import { log } from "@/lib/logger";
 import type { BetisNewsInsert } from "@/lib/supabase";
@@ -94,11 +95,15 @@ export async function syncRumors(): Promise<SyncResult> {
           );
         }
 
-        // Analyze with Gemini AI
+        // Fetch full article content for better analysis
+        const articleContent = await fetchArticleContent(rumor.link);
+
+        // Analyze with Gemini AI (with full article content if available)
         const analysis = await analyzeRumorCredibility(
           rumor.title,
           rumor.description || "",
           rumor.source,
+          articleContent,
         );
         result.analyzed++;
 
@@ -171,8 +176,14 @@ export async function syncRumors(): Promise<SyncResult> {
         } else {
           result.inserted++;
 
-          // Phase 2A: Process extracted players
-          if (analysis.players && analysis.players.length > 0 && insertedNews) {
+          // Phase 2A: Process extracted players (only with high confidence)
+          const shouldProcessPlayers =
+            analysis.players &&
+            analysis.players.length > 0 &&
+            analysis.confidence === "high" &&
+            insertedNews;
+
+          if (shouldProcessPlayers) {
             const playerResult = await processExtractedPlayers(
               insertedNews.id,
               analysis.players,
