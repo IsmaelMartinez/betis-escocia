@@ -6,13 +6,13 @@ Real Betis supporters club website in Edinburgh with mobile-first design, servin
 
 **📖 For comprehensive project details, architecture decisions, and implementation guides, see [CLAUDE.md](../CLAUDE.md) - it contains up-to-date information about technologies, patterns, and development practices.**
 
-## Storybook 9 Integration Notes
+## Storybook 10 Integration Notes
 
-This project uses Storybook v9.0.18. Key changes and considerations for AI assistants:
+This project uses Storybook v10.1.11. Key changes and considerations for AI assistants:
 
 - **Package Consolidation**: Many Storybook packages (e.g., `@storybook/test`, `@storybook/addon-actions`, `@storybook/addon-controls`, `@storybook/addon-interactions`, `@storybook/addon-viewport`) are now consolidated into the main `storybook` package. When importing utilities like `within` and `userEvent` for `play` functions, use the `storybook/test` path (e.g., `import { within, userEvent } from 'storybook/test';`).
-- **Vitest Addon**: `@storybook/addon-vitest` v9.1.1 is integrated for component testing and is the recommended approach over the older test runner. This enables the full Storybook Test experience.
-- **Breaking Changes**: Be aware of other breaking changes in Storybook 9, such as Node.js 20+, Next.js 14+, and Vite 5+ requirements. Refer to the official Storybook migration guide for a complete list.
+- **Vitest Addon**: `@storybook/addon-vitest` is integrated for component testing and is the recommended approach over the older test runner. This enables the full Storybook Test experience.
+- **Breaking Changes**: Be aware of breaking changes from Storybook 9+, such as Node.js 20+, Next.js 14+, and Vite 5+ requirements. Refer to the official Storybook migration guide for a complete list.
 
 ## Workflow Routing
 
@@ -99,7 +99,7 @@ This workflow ensures completed work is properly archived while keeping active p
 ### Comprehensive Project Documentation
 
 - **[CLAUDE.md](../CLAUDE.md)**: Primary project reference with complete architecture, patterns, and development practices
-- **Database schema**: See `sql/` directory for migrations  
+- **Database schema**: See `sql/` directory for migrations
 - **Documentation**: Comprehensive ADRs in `docs/adr/`
 - **Environment variable feature flags**: Complete guide in ADR `docs/adr/004-flagsmith-feature-flags.md`
 
