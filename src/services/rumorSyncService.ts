@@ -176,11 +176,12 @@ export async function syncRumors(): Promise<SyncResult> {
         } else {
           result.inserted++;
 
-          // Phase 2A: Process extracted players (only with high confidence)
+          // Phase 2A: Process extracted players (medium or high confidence)
           const shouldProcessPlayers =
             analysis.players &&
             analysis.players.length > 0 &&
-            analysis.confidence === "high" &&
+            (analysis.confidence === "high" ||
+              analysis.confidence === "medium") &&
             insertedNews;
 
           if (shouldProcessPlayers) {
