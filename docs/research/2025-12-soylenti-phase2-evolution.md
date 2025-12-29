@@ -5,18 +5,19 @@ Last Updated: December 29, 2025
 
 ## Implementation Status
 
-| Phase | Description | Status | Completed |
-|-------|-------------|--------|-----------|
-| 2A | Player Name Extraction (NER) | ✅ DONE | 2025-12-28 |
-| 2B | Trend Analysis (Player Momentum) | ✅ DONE | 2025-12-29 |
-| 2C | Source Credibility Tracking | 🔜 NEXT | - |
-| 2D | Rumor Lifecycle Tracking | ⏳ Planned | - |
-| 2E | Insights Dashboard | ⏳ Planned | - |
-| 3.0 | External API Integration (Transfermarkt) | 🔮 Future | - |
+| Phase | Description                              | Status     | Completed  |
+| ----- | ---------------------------------------- | ---------- | ---------- |
+| 2A    | Player Name Extraction (NER)             | ✅ DONE    | 2025-12-28 |
+| 2B    | Trend Analysis (Player Momentum)         | ✅ DONE    | 2025-12-29 |
+| 2C    | Source Credibility Tracking              | 🔜 NEXT    | -          |
+| 2D    | Rumor Lifecycle Tracking                 | ⏳ Planned | -          |
+| 2E    | Insights Dashboard                       | ⏳ Planned | -          |
+| 3.0   | External API Integration (Transfermarkt) | 🔮 Future  | -          |
 
 ### Phase 2A Completion Summary (December 28, 2025)
 
 Implemented features:
+
 - Enhanced Gemini prompt with player extraction (confidence-gated)
 - `players` and `news_players` tables with RLS policies (migration `0004`)
 - `playerNormalizationService.ts` for name normalization and deduplication
@@ -26,6 +27,7 @@ Implemented features:
 - News filtering: items older than 6 months excluded
 
 Key files:
+
 - `src/services/geminiService.ts` - Enhanced prompt with player extraction
 - `src/services/playerNormalizationService.ts` - Name normalization logic
 - `src/services/rumorSyncService.ts` - Pipeline integration
@@ -35,6 +37,7 @@ Key files:
 ### Phase 2B Completion Summary (December 29, 2025)
 
 Implemented features:
+
 - Trending players API endpoint (`/api/soylenti/trending`)
 - `TrendingPlayers` component with active/cooling status indicators
 - Click-to-filter functionality in SoylentiClient
@@ -42,6 +45,7 @@ Implemented features:
 - Player filter chip with clear button
 
 Key files:
+
 - `src/app/api/soylenti/trending/route.ts` - Trending API endpoint
 - `src/components/TrendingPlayers.tsx` - Trending players UI component
 - `src/app/soylenti/SoylentiClient.tsx` - Player filter integration
@@ -371,6 +375,7 @@ Phase 2B surfaces which players are "heating up" in rumor activity. Using the ex
 ### Incremental Implementation Tasks
 
 #### Step 1: Trending Players Query
+
 Create a simple query leveraging existing data:
 
 ```sql
@@ -388,6 +393,7 @@ LIMIT 10;
 ```
 
 #### Step 2: API Endpoint
+
 Create `/api/soylenti/trending`:
 
 ```typescript
@@ -397,27 +403,33 @@ interface TrendingPlayer {
   rumorCount: number;
   firstSeen: string;
   lastSeen: string;
-  isActive: boolean;  // mentioned in last 7 days
+  isActive: boolean; // mentioned in last 7 days
 }
 ```
 
 #### Step 3: Trending Players UI Component
+
 Add a "Jugadores en Tendencia" section to Soylenti page:
+
 - List top 10 players by recent activity
 - Show rumor count badge
 - Indicate "active" vs "cooling" status
 - Link to filter rumors by that player
 
 #### Step 4: Player Filter
+
 Allow clicking a player name to filter rumors mentioning them:
+
 - Add `?player=normalized_name` URL param
 - Filter `news_players` junction to show related news
 
 ### Estimated Effort
+
 - Step 1-2: Low complexity, uses existing data
 - Step 3-4: Medium complexity, UI work
 
 ### Success Criteria
+
 - Trending players displayed on Soylenti page
 - Click-to-filter works for player names
 - Active/cooling status visible
@@ -433,6 +445,7 @@ For a future major version, integrating with external APIs would enrich player d
 - **SofaScore/FotMob**: Performance metrics
 
 This would enable:
+
 - Automatic player profile enrichment (position, age, value)
 - Transfer fee estimations
 - Historical transfer success correlation

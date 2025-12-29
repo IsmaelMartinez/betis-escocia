@@ -131,7 +131,9 @@ export default function SoylentiClient({
 
         {/* Main Content */}
         <div
-          className={trendingPlayers.length > 0 ? "lg:col-span-3" : "col-span-4"}
+          className={
+            trendingPlayers.length > 0 ? "lg:col-span-3" : "col-span-4"
+          }
         >
           {/* Info Bar */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-8">
@@ -236,7 +238,9 @@ export default function SoylentiClient({
                       "Cargar más noticias"
                     )}
                   </button>
-                  {error && <p className="mt-4 text-red-600 text-sm">{error}</p>}
+                  {error && (
+                    <p className="mt-4 text-red-600 text-sm">{error}</p>
+                  )}
                 </div>
               )}
             </>
