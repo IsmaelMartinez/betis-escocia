@@ -40,6 +40,8 @@ export default function TrendingPlayers({
             <button
               key={player.normalizedName}
               onClick={() => onPlayerClick?.(player.normalizedName)}
+              aria-label={`Filtrar rumores por ${player.name}`}
+              aria-pressed={selectedPlayer === player.normalizedName}
               className={`w-full px-4 py-3 flex items-center justify-between hover:bg-betis-verde-pale transition-colors text-left ${
                 selectedPlayer === player.normalizedName
                   ? "bg-betis-verde-light"
