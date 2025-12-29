@@ -4,13 +4,12 @@ import { useState, useTransition, useMemo } from "react";
 import RumorCard from "@/components/RumorCard";
 import TrendingPlayers from "@/components/TrendingPlayers";
 import { RefreshCw, Loader2, X, ChevronLeft, ChevronRight } from "lucide-react";
-import { fetchMoreRumors } from "./actions";
+import { fetchMoreRumors, fetchRumorsByPlayer } from "./actions";
 import type { TrendingPlayer } from "@/lib/supabase";
 
 interface PlayerInfo {
   name: string;
   normalizedName?: string;
-  role: "target" | "departing" | "mentioned";
 }
 
 interface Rumor {
@@ -44,6 +43,7 @@ export default function SoylentiClient({
   const [showAllNews, setShowAllNews] = useState(false);
   const [franMode, setFranMode] = useState(true);
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
+  const [playerRumors, setPlayerRumors] = useState<Rumor[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -57,43 +57,52 @@ export default function SoylentiClient({
     return player?.name || selectedPlayer;
   }, [selectedPlayer, trendingPlayers]);
 
+  // When a player is selected, show their rumors; otherwise show the main list
+  const rumorsToFilter = selectedPlayer ? playerRumors : rumors;
+
   const displayedRumors = useMemo(
     () =>
-      rumors.filter((rumor) => {
+      rumorsToFilter.filter((rumor) => {
         const prob = rumor.aiProbability;
         const isTransfer = prob !== null && prob !== undefined && prob > 0;
-        const passesNewsFilter = isTransfer || showAllNews;
-
-        // Player filter
-        if (selectedPlayer) {
-          const hasPlayer = rumor.players?.some(
-            (p) => p.normalizedName === selectedPlayer,
-          );
-          return passesNewsFilter && hasPlayer;
-        }
-
-        return passesNewsFilter;
+        return isTransfer || showAllNews;
       }),
-    [rumors, showAllNews, selectedPlayer],
+    [rumorsToFilter, showAllNews],
   );
 
   const rumorCount = useMemo(
     () =>
-      rumors.filter((r) => {
+      rumorsToFilter.filter((r) => {
         const prob = r.aiProbability;
         return prob !== null && prob !== undefined && prob > 0;
       }).length,
-    [rumors],
+    [rumorsToFilter],
   );
 
   const handlePlayerClick = (normalizedName: string) => {
-    setSelectedPlayer((prev) =>
-      prev === normalizedName ? null : normalizedName,
-    );
+    if (selectedPlayer === normalizedName) {
+      // Deselect - clear the filter
+      setSelectedPlayer(null);
+      setPlayerRumors([]);
+    } else {
+      // Select - fetch all rumors for this player from server
+      setSelectedPlayer(normalizedName);
+      setError(null);
+      startTransition(async () => {
+        try {
+          const rumors = await fetchRumorsByPlayer(normalizedName);
+          setPlayerRumors(rumors);
+        } catch {
+          setError("Error al cargar rumores del jugador.");
+          setPlayerRumors([]);
+        }
+      });
+    }
   };
 
   const clearPlayerFilter = () => {
     setSelectedPlayer(null);
+    setPlayerRumors([]);
   };
 
   const handleLoadMore = () => {
@@ -164,8 +173,17 @@ export default function SoylentiClient({
               <div className="flex items-center space-x-2">
                 <RefreshCw size={20} className="text-betis-verde" />
                 <p className="text-sm text-gray-600">
-                  {displayedRumors.length} de {totalCount} noticias
-                  {rumorCount > 0 && ` (${rumorCount} rumores)`}
+                  {selectedPlayer ? (
+                    <>
+                      {displayedRumors.length} noticias de {selectedPlayerName}
+                      {rumorCount > 0 && ` (${rumorCount} rumores)`}
+                    </>
+                  ) : (
+                    <>
+                      {displayedRumors.length} de {totalCount} noticias
+                      {rumorCount > 0 && ` (${rumorCount} rumores)`}
+                    </>
+                  )}
                 </p>
               </div>
 
@@ -225,7 +243,14 @@ export default function SoylentiClient({
           </div>
 
           {/* Rumors Grid */}
-          {displayedRumors.length > 0 ? (
+          {isPending && selectedPlayer ? (
+            <div className="text-center py-16">
+              <Loader2 size={32} className="animate-spin text-betis-verde mx-auto" />
+              <p className="mt-4 text-gray-600">
+                Cargando noticias de {selectedPlayerName}...
+              </p>
+            </div>
+          ) : displayedRumors.length > 0 ? (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {displayedRumors.map((rumor) => (
@@ -244,7 +269,7 @@ export default function SoylentiClient({
                 ))}
               </div>
 
-              {/* Load More Button */}
+              {/* Load More Button - only shown when not filtering by player */}
               {hasMore && !selectedPlayer && (
                 <div className="mt-8 text-center">
                   <button
