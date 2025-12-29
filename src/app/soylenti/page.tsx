@@ -61,11 +61,9 @@ async function fetchRumors() {
           aiProbability: rumor.ai_probability,
           aiAnalysis: rumor.ai_analysis,
           players:
-            rumor.news_players?.map(
-              (np: { players: { name: string } }) => ({
-                name: np.players?.name || "",
-              }),
-            ) || [],
+            rumor.news_players?.map((np: { players: { name: string } }) => ({
+              name: np.players?.name || "",
+            })) || [],
         })) || [],
       totalCount: countResult.count || 0,
       lastUpdated: items?.[0]?.created_at || new Date().toISOString(),

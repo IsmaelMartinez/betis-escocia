@@ -62,11 +62,9 @@ export async function fetchMoreRumors(
         aiProbability: rumor.ai_probability,
         aiAnalysis: rumor.ai_analysis,
         players:
-          rumor.news_players?.map(
-            (np: { players: { name: string } }) => ({
-              name: np.players?.name || "",
-            }),
-          ) || [],
+          rumor.news_players?.map((np: { players: { name: string } }) => ({
+            name: np.players?.name || "",
+          })) || [],
       })) || [],
     hasMore,
   };
