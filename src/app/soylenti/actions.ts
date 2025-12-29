@@ -32,7 +32,6 @@ export async function fetchMoreRumors(
       `
       *,
       news_players (
-        role,
         players (
           name
         )
@@ -64,7 +63,7 @@ export async function fetchMoreRumors(
         aiAnalysis: rumor.ai_analysis,
         players:
           rumor.news_players?.map(
-            (np: { role: string; players: { name: string } }) => ({
+            (np: { players: { name: string } }) => ({
               name: np.players?.name || "",
             }),
           ) || [],

@@ -25,7 +25,6 @@ async function fetchRumors() {
         `
         *,
         news_players (
-          role,
           players (
             name
           )
@@ -63,7 +62,7 @@ async function fetchRumors() {
           aiAnalysis: rumor.ai_analysis,
           players:
             rumor.news_players?.map(
-              (np: { role: string; players: { name: string } }) => ({
+              (np: { players: { name: string } }) => ({
                 name: np.players?.name || "",
               }),
             ) || [],
