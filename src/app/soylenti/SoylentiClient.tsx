@@ -7,7 +7,6 @@ import { fetchMoreRumors } from "./actions";
 
 interface PlayerInfo {
   name: string;
-  role: "target" | "departing" | "mentioned";
 }
 
 interface Rumor {
@@ -18,7 +17,6 @@ interface Rumor {
   description?: string;
   aiProbability?: number | null;
   aiAnalysis?: string | null;
-  transferDirection?: "in" | "out" | "unknown" | null;
   players?: PlayerInfo[];
 }
 
@@ -145,7 +143,6 @@ export default function SoylentiClient({
                 description={rumor.description}
                 aiProbability={rumor.aiProbability}
                 aiAnalysis={rumor.aiAnalysis}
-                transferDirection={rumor.transferDirection}
                 showCredibility={franMode}
                 players={rumor.players}
               />

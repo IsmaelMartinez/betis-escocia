@@ -137,6 +137,7 @@ export async function syncRumors(): Promise<SyncResult> {
         }
 
         // Insert into database (all items: transfer rumors AND regular news)
+        // Note: transfer_direction is no longer set by AI - can be inferred from squad
         const newsInsert: BetisNewsInsert = {
           title: rumor.title,
           link: rumor.link,
@@ -148,9 +149,6 @@ export async function syncRumors(): Promise<SyncResult> {
           ai_analysis: analysis.reasoning,
           ai_analyzed_at: new Date().toISOString(),
           is_duplicate: false,
-          transfer_direction: isTransferRumor
-            ? analysis.transferDirection
-            : null,
         };
 
         const { data: insertedNews, error } = await supabase

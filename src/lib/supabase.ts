@@ -909,7 +909,7 @@ export interface NewsPlayerInsert {
 }
 
 // Extracted player from AI analysis
+// Note: role is kept for DB compatibility but we now only use "mentioned"
 export interface ExtractedPlayer {
   name: string;
-  role: "target" | "departing" | "mentioned";
 }
