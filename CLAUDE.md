@@ -88,12 +88,13 @@ sql/                    # Database migrations & scripts
 
 ### Feature Flag System (Environment Variables)
 
-- **Simple approach**: Environment variable-based flags resolved at build time
-- **Usage**: `hasFeature('flag-name')` or `getValue('flag-name')` (synchronous)
-- **Configuration**: Only set environment variables for disabled/experimental features
-- **Location**: `src/lib/featureConfig.ts`
-- **Always-on features**: RSVP, Únete (Join), Contacto (Contact) - no flags needed
-- **Production-ready features**: Clasificación, Partidos, Nosotros, Clerk Auth - enabled by default
+- **Simple approach**: Environment variable-based flags, cached in production only
+- **Usage**: `hasFeature('flag-name')` (synchronous)
+- **Configuration**: Set `NEXT_PUBLIC_FEATURE_*=true` to enable disabled-by-default features
+- **Location**: `src/lib/featureFlags.ts`
+- **Enabled by default**: Nosotros, Únete (Join), Soylenti (rumors)
+- **Disabled by default**: RSVP, Contacto, Clasificación, Partidos, Galería, Clerk Auth, Debug Info
+- **Development mode**: No caching - changes to `.env.local` apply immediately
 - **Documentation**: See `docs/adr/004-feature-flags.md`
 
 ### Authentication Flow (Clerk + Supabase)
@@ -501,7 +502,6 @@ Required environment variables:
 Optional feature flags (only for disabled/experimental features):
 
 - `NEXT_PUBLIC_FEATURE_GALERIA=false`
-- `NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=false`
 - `NEXT_PUBLIC_FEATURE_REDES_SOCIALES=false`
 - `NEXT_PUBLIC_FEATURE_DEBUG_INFO=false`
 

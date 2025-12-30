@@ -8,57 +8,73 @@ The project uses environment variables for simple feature flag control. This doc
 
 ### Key Principles
 
-- **Default behavior**: Most features are enabled by default
-- **Environment variables**: Only needed for disabled/experimental features
-- **Build-time resolution**: Feature flags are resolved at build time, not runtime
+- **Default behavior**: Core features are enabled by default, advanced features are disabled
+- **Environment variables**: Set to `true` to enable features, or omit for defaults
+- **Development mode**: No caching - changes to `.env.local` take effect immediately
+- **Production mode**: Cached for performance after first read
 - **Type safety**: All feature names are strictly typed
 
 ### Available Feature Flags
 
-#### Always-On Features (No Environment Variable Needed)
+#### Enabled by Default (Core Features)
 
-- `show-rsvp` - RSVP functionality
-- `show-unete` - Join functionality
-- `show-contacto` - Contact functionality
-- `show-clasificacion` - League standings
-- `show-partidos` - Match information
+These features are enabled by default and don't require environment variables:
+
 - `show-nosotros` - About page
-- `show-clerk-auth` - Authentication
+- `show-unete` - Join functionality
+- `show-soylenti` - Transfer rumors/news feed
 
-#### Optional Features (Environment Variable Controlled)
+#### Disabled by Default (Require Environment Variable to Enable)
 
-- `show-galeria` - Photo gallery
-- `show-redes-sociales` - Social networks
-- `show-debug-info` - Debug information
-- `admin-push-notifications` - Admin push notifications
+These features are disabled by default and require `NEXT_PUBLIC_FEATURE_*=true` to enable:
+
+- `show-rsvp` - RSVP functionality (`NEXT_PUBLIC_FEATURE_RSVP=true`)
+- `show-contacto` - Contact form (`NEXT_PUBLIC_FEATURE_CONTACTO=true`)
+- `show-clasificacion` - League standings (`NEXT_PUBLIC_FEATURE_CLASIFICACION=true`)
+- `show-partidos` - Match information (`NEXT_PUBLIC_FEATURE_PARTIDOS=true`)
+- `show-galeria` - Photo gallery (`NEXT_PUBLIC_FEATURE_GALERIA=true`)
+- `show-redes-sociales` - Social networks page (`NEXT_PUBLIC_FEATURE_REDES_SOCIALES=true`)
+- `show-clerk-auth` - Authentication UI (`NEXT_PUBLIC_FEATURE_CLERK_AUTH=true`)
+- `show-debug-info` - Debug info panel (`NEXT_PUBLIC_FEATURE_DEBUG_INFO=true`)
 
 ## Configuration Examples
 
 ### Development Environment
 
 ```bash
-# Enable experimental features for testing
-NEXT_PUBLIC_FEATURE_GALERIA=true
+# Enable features you're working on + debug info
 NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
+NEXT_PUBLIC_FEATURE_CLERK_AUTH=true
+NEXT_PUBLIC_FEATURE_RSVP=true
+NEXT_PUBLIC_FEATURE_CONTACTO=true
 ```
 
-### Production Environment
+### Production Environment (Full Features)
 
 ```bash
-# Only set variables for features you want to enable
-# Omit variables for disabled features (they default to false)
+# Enable all Phase 2 features for production
+NEXT_PUBLIC_FEATURE_RSVP=true
+NEXT_PUBLIC_FEATURE_CONTACTO=true
+NEXT_PUBLIC_FEATURE_CLASIFICACION=true
+NEXT_PUBLIC_FEATURE_PARTIDOS=true
+NEXT_PUBLIC_FEATURE_CLERK_AUTH=true
 NEXT_PUBLIC_FEATURE_GALERIA=true
+NEXT_PUBLIC_FEATURE_REDES_SOCIALES=true
+# Note: Don't enable debug info in production
 ```
 
 ### Staging Environment
 
 ```bash
-# Enable all features for testing
+# Enable all features including debug for testing
+NEXT_PUBLIC_FEATURE_RSVP=true
+NEXT_PUBLIC_FEATURE_CONTACTO=true
+NEXT_PUBLIC_FEATURE_CLASIFICACION=true
+NEXT_PUBLIC_FEATURE_PARTIDOS=true
+NEXT_PUBLIC_FEATURE_CLERK_AUTH=true
 NEXT_PUBLIC_FEATURE_GALERIA=true
-NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=true
 NEXT_PUBLIC_FEATURE_REDES_SOCIALES=true
 NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
-NEXT_PUBLIC_FEATURE_ADMIN_PUSH_NOTIFICATIONS=true
 ```
 
 ## Usage in Code
@@ -77,13 +93,33 @@ const enabledItems = getEnabledNavigationItems();
 ## Deployment Checklist
 
 1. **Review feature status**: Determine which features should be enabled
-2. **Set environment variables**: Only for features you want to enable
+2. **Set environment variables**: Add `NEXT_PUBLIC_FEATURE_*=true` for features to enable
 3. **Test thoroughly**: Verify feature visibility in staging
 4. **Document changes**: Update this file if new flags are added
+
+## Development Notes
+
+### Hot Reload Support
+
+In development mode (`NODE_ENV=development`), feature flags are **not cached**. This means:
+
+- Changes to `.env.local` take effect on the next page load
+- No need to restart the dev server when changing feature flags
+- Useful for testing different feature combinations
+
+### Debug Info Panel
+
+Enable `NEXT_PUBLIC_FEATURE_DEBUG_INFO=true` to see a floating panel showing:
+
+- Current environment
+- List of enabled features
+- List of disabled features
+
+This is helpful for debugging feature flag issues in development and staging.
 
 ## Migration Notes
 
 - **From Flagsmith**: This system replaces the previous Flagsmith integration
 - **Simplified approach**: No external service dependencies
-- **Better performance**: No runtime API calls for feature resolution
+- **Better performance**: No runtime API calls for feature resolution (cached in production)
 - **Type safety**: Compile-time validation of feature names

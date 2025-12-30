@@ -58,8 +58,11 @@ const ENV_VAR_MAP: Record<FeatureName, string> = {
   "show-soylenti": "NEXT_PUBLIC_FEATURE_SOYLENTI",
 };
 
-// Cache for resolved features
+// Cache for resolved features (only used in production for performance)
 let featureCache: Record<FeatureName, boolean> | null = null;
+
+// Check if we're in development mode - skip caching for hot reload support
+const isDevelopment = process.env.NODE_ENV === "development";
 
 /**
  * Get feature value: Environment variable takes precedence, otherwise default
@@ -79,9 +82,12 @@ function getFeatureValue(featureName: FeatureName): boolean {
 
 /**
  * Get all feature flags resolved
+ * In development mode, always re-read from environment variables to support hot reload.
+ * In production, cache the results for performance.
  */
 function resolveFeatures(): Record<FeatureName, boolean> {
-  if (featureCache !== null) {
+  // In development, skip cache to allow hot reload of env vars
+  if (!isDevelopment && featureCache !== null) {
     return featureCache;
   }
 
@@ -94,7 +100,11 @@ function resolveFeatures(): Record<FeatureName, boolean> {
     resolvedFeatures[featureName] = getFeatureValue(featureName);
   }
 
-  featureCache = resolvedFeatures;
+  // Only cache in production
+  if (!isDevelopment) {
+    featureCache = resolvedFeatures;
+  }
+
   return resolvedFeatures;
 }
 

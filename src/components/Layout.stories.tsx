@@ -1,26 +1,36 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import Layout from './Layout';
-import { setMockUser } from '@/lib/clerk/__mocks__/storybook';
-import type { NavigationItem } from '@/lib/featureFlags';
+import type { Meta, StoryObj } from "@storybook/nextjs";
+import Layout from "./Layout";
+import { setMockUser } from "@/lib/clerk/__mocks__/storybook";
+import type { NavigationItem } from "@/lib/featureFlags";
 
 const mockNavigationItems: NavigationItem[] = [
-  { name: 'Partidos', href: '/partidos', nameEn: 'Matches', feature: 'show-partidos' },
-  { name: 'Nosotros', href: '/nosotros', nameEn: 'About', feature: 'show-nosotros' },
-  { name: 'Únete', href: '/unete', nameEn: 'Join', feature: 'show-unete' },
+  {
+    name: "Partidos",
+    href: "/partidos",
+    nameEn: "Matches",
+    feature: "show-partidos",
+  },
+  {
+    name: "Nosotros",
+    href: "/nosotros",
+    nameEn: "About",
+    feature: "show-nosotros",
+  },
+  { name: "Únete", href: "/unete", nameEn: "Join", feature: "show-unete" },
 ];
 
 const meta: Meta<typeof Layout> = {
-  title: 'Layout/Layout',
+  title: "Layout/Layout",
   component: Layout,
   parameters: {
-    layout: 'fullscreen',
+    layout: "fullscreen",
     clerk: { enabled: true }, // Enable Clerk for this component as it uses Clerk hooks
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     debugInfo: {
-      control: 'object',
-      description: 'Debug information for feature flags',
+      control: "object",
+      description: "Debug information for feature flags",
     },
   },
 };
@@ -31,9 +41,9 @@ type Story = StoryObj<typeof Layout>;
 export const Default: Story = {
   args: {
     debugInfo: {
-      features: { 'show-clerk-auth': true, 'show-partidos': true },
-      environment: 'development',
-      enabledFeatures: ['show-clerk-auth', 'show-partidos'],
+      features: { "show-clerk-auth": true, "show-partidos": true },
+      environment: "development",
+      enabledFeatures: ["show-clerk-auth", "show-partidos"],
       disabledFeatures: [],
     },
     navigationItems: mockNavigationItems,
@@ -47,23 +57,23 @@ export const Default: Story = {
 export const LoggedIn: Story = {
   args: {
     debugInfo: {
-      features: { 'show-clerk-auth': true, 'show-partidos': true },
-      environment: 'development',
-      enabledFeatures: ['show-clerk-auth', 'show-partidos'],
+      features: { "show-clerk-auth": true, "show-partidos": true },
+      environment: "development",
+      enabledFeatures: ["show-clerk-auth", "show-partidos"],
       disabledFeatures: [],
     },
     navigationItems: mockNavigationItems,
   },
   render: (args) => {
     setMockUser({
-      id: 'user_123',
-      firstName: 'John',
-      lastName: 'Doe',
-      emailAddresses: [{ emailAddress: 'john.doe@example.com' }],
-      publicMetadata: { role: 'member' },
+      id: "user_123",
+      firstName: "John",
+      lastName: "Doe",
+      emailAddresses: [{ emailAddress: "john.doe@example.com" }],
+      publicMetadata: { role: "member" },
       createdAt: new Date(),
       lastSignInAt: new Date(),
-      imageUrl: 'https://example.com/avatar.jpg',
+      imageUrl: "https://example.com/avatar.jpg",
     });
     return <Layout {...args} />;
   },
@@ -72,23 +82,23 @@ export const LoggedIn: Story = {
 export const LoggedInAdmin: Story = {
   args: {
     debugInfo: {
-      features: { 'show-clerk-auth': true, 'show-partidos': true },
-      environment: 'development',
-      enabledFeatures: ['show-clerk-auth', 'show-partidos'],
+      features: { "show-clerk-auth": true, "show-partidos": true },
+      environment: "development",
+      enabledFeatures: ["show-clerk-auth", "show-partidos"],
       disabledFeatures: [],
     },
     navigationItems: mockNavigationItems,
   },
   render: (args) => {
     setMockUser({
-      id: 'user_admin',
-      firstName: 'Admin',
-      lastName: 'User',
-      emailAddresses: [{ emailAddress: 'admin@example.com' }],
-      publicMetadata: { role: 'admin' },
+      id: "user_admin",
+      firstName: "Admin",
+      lastName: "User",
+      emailAddresses: [{ emailAddress: "admin@example.com" }],
+      publicMetadata: { role: "admin" },
       createdAt: new Date(),
       lastSignInAt: new Date(),
-      imageUrl: 'https://example.com/admin-avatar.jpg',
+      imageUrl: "https://example.com/admin-avatar.jpg",
     });
     return <Layout {...args} />;
   },
@@ -97,10 +107,10 @@ export const LoggedInAdmin: Story = {
 export const FeatureFlagsDisabled: Story = {
   args: {
     debugInfo: {
-      features: { 'show-clerk-auth': false, 'show-partidos': false },
-      environment: 'development',
+      features: { "show-clerk-auth": false, "show-partidos": false },
+      environment: "development",
       enabledFeatures: [],
-      disabledFeatures: ['show-clerk-auth', 'show-partidos'],
+      disabledFeatures: ["show-clerk-auth", "show-partidos"],
     },
     navigationItems: [],
   },
