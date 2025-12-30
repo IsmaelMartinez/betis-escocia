@@ -214,16 +214,14 @@ describe("HeroCommunity", () => {
   });
 
   describe("Bottom section", () => {
-    it("renders Polwarth Tavern information", () => {
+    it("renders pub meetup information", () => {
       render(<HeroCommunity {...defaultProps} />);
 
-      expect(screen.getByText(/Polwarth Tavern/i)).toBeInTheDocument();
+      expect(screen.getByText(/Nos Vemos en el Pub/i)).toBeInTheDocument();
       expect(
         screen.getByText(/Cada partido es una excusa perfecta/),
       ).toBeInTheDocument();
-      expect(
-        screen.getByText("35 Polwarth Crescent, Edinburgh EH11 1HR"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Edinburgh, Escocia")).toBeInTheDocument();
     });
 
     it("includes map pin icon in address", () => {
@@ -257,7 +255,7 @@ describe("HeroCommunity", () => {
 
       // The bottom section uses betis-verde-dark with gradient overlay
       const bottomSection = screen
-        .getByText(/Polwarth Tavern/i)
+        .getByText(/Nos Vemos en el Pub/i)
         .closest(".bg-betis-verde-dark");
       expect(bottomSection).toBeInTheDocument();
     });
