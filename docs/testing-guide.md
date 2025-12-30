@@ -312,7 +312,7 @@ export const Secondary: Story = {
 export const FeatureEnabled: Story = {
   parameters: {
     mockFeatureFlags: {
-      'show-galeria': true,
+      'show-rsvp': true,
     },
   },
   render: (args) => <MyComponent {...args} />,
@@ -321,7 +321,7 @@ export const FeatureEnabled: Story = {
 export const FeatureDisabled: Story = {
   parameters: {
     mockFeatureFlags: {
-      'show-galeria': false,
+      'show-rsvp': false,
     },
   },
   render: (args) => <MyComponent {...args} />,

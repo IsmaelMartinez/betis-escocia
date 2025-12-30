@@ -36,19 +36,17 @@ describe("Feature Flags - Simplified System", () => {
       expect(hasFeature("show-clasificacion")).toBe(false);
       expect(hasFeature("show-partidos")).toBe(false);
       expect(hasFeature("show-clerk-auth")).toBe(false);
-      expect(hasFeature("show-galeria")).toBe(false);
-      expect(hasFeature("show-redes-sociales")).toBe(false);
       expect(hasFeature("show-debug-info")).toBe(false);
     });
   });
 
   describe("Environment Variable Overrides", () => {
     it('should override defaults when environment variables are set to "true"', () => {
-      mockEnv.NEXT_PUBLIC_FEATURE_GALERIA = "true";
+      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = "true";
       mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = "true";
       clearFeatureCache();
 
-      expect(hasFeature("show-galeria")).toBe(true);
+      expect(hasFeature("show-rsvp")).toBe(true);
       expect(hasFeature("show-debug-info")).toBe(true);
     });
 
@@ -62,11 +60,11 @@ describe("Feature Flags - Simplified System", () => {
     });
 
     it("should be case insensitive for environment variables", () => {
-      mockEnv.NEXT_PUBLIC_FEATURE_GALERIA = "TRUE";
+      mockEnv.NEXT_PUBLIC_FEATURE_CONTACTO = "TRUE";
       mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = "True";
       clearFeatureCache();
 
-      expect(hasFeature("show-galeria")).toBe(true);
+      expect(hasFeature("show-contacto")).toBe(true);
       expect(hasFeature("show-debug-info")).toBe(true);
     });
 
@@ -98,16 +96,15 @@ describe("Feature Flags - Simplified System", () => {
         false,
       );
       expect(enabledItems.some((item) => item.name === "Contacto")).toBe(false);
-      expect(enabledItems.some((item) => item.name === "Galería")).toBe(false);
     });
 
     it("should include items when enabled via environment variables", () => {
-      mockEnv.NEXT_PUBLIC_FEATURE_GALERIA = "true";
+      mockEnv.NEXT_PUBLIC_FEATURE_CONTACTO = "true";
       clearFeatureCache();
 
       const enabledItems = getEnabledNavigationItems();
 
-      expect(enabledItems.some((item) => item.name === "Galería")).toBe(true);
+      expect(enabledItems.some((item) => item.name === "Contacto")).toBe(true);
     });
 
     it("should exclude items when disabled via environment variables", () => {

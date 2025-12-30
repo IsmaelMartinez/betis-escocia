@@ -31,7 +31,6 @@ NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
 CLERK_SECRET_KEY=your_clerk_secret
 
 # Feature Flags (optional - only for experimental features)
-# NEXT_PUBLIC_FEATURE_GALERIA=true  
 # NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
 ```
 
@@ -86,7 +85,7 @@ The project uses **environment variables** for simple, build-time feature contro
 import { hasFeature } from '@/lib/featureFlags';
 
 // Check if feature is enabled (synchronous)
-const isEnabled = hasFeature('show-galeria');
+const isEnabled = hasFeature('show-rsvp');
 if (!isEnabled) return null;
 ```
 
@@ -96,21 +95,21 @@ if (!isEnabled) return null;
 - **Build-time configuration**: Features resolved at build time for performance
 
 ### Key Flags
-- `show-galeria` - Photo gallery (default: disabled)
 - `show-debug-info` - Debug information (default: disabled)
-- `show-clerk-auth` - Authentication features (default: enabled)
+- `show-clerk-auth` - Authentication features (default: disabled)
+- `show-rsvp` - RSVP functionality (default: disabled)
+- `show-contacto` - Contact form (default: disabled)
 
 ### Always-On Features (No Flags Needed)
-- `rsvp` - Core RSVP functionality
+- `nosotros` - About page
 - `unete` - Join/membership functionality
-- `contacto` - Contact form functionality
+- `soylenti` - Transfer rumors/news
 
 ### Setup
 Add environment variables for experimental features only:
 
 ```bash
 # Only set these to override defaults for experimental features
-NEXT_PUBLIC_FEATURE_GALERIA=true
 NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
 ```
 
@@ -250,9 +249,9 @@ npm run update-trivia  # Updates all trivia questions safely
 import { hasFeature } from '@/lib/featureFlags';
 
 export default function FeatureComponent() {
-  const isEnabled = hasFeature('show-galeria');
+  const isEnabled = hasFeature('show-rsvp');
   if (!isEnabled) return null;
-  
+
   return <div>Feature content</div>;
 }
 ```

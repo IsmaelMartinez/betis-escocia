@@ -24,7 +24,7 @@ After evaluating Flagsmith (too complex for our needs), we settled on simple env
 import { hasFeature } from "@/lib/featureFlags";
 
 // Synchronous check
-if (hasFeature("show-galeria")) {
+if (hasFeature("show-rsvp")) {
   // Feature enabled
 }
 ```
@@ -43,8 +43,6 @@ if (hasFeature("show-galeria")) {
 - `show-contacto` - Contact form
 - `show-clasificacion` - League standings
 - `show-partidos` - Match information
-- `show-galeria` - Photo gallery
-- `show-redes-sociales` - Social networks
 - `show-clerk-auth` - Authentication UI
 - `show-debug-info` - Debug panel
 

@@ -36,7 +36,7 @@ describe('featureProtection', () => {
   describe('withFeatureFlag', () => {
     it('should render component when feature is enabled', () => {
       mockHasFeature.mockReturnValue(true);
-      const ProtectedComponent = withFeatureFlag(TestComponent, 'show-galeria');
+      const ProtectedComponent = withFeatureFlag(TestComponent, 'show-contacto');
 
       render(<ProtectedComponent title="Protected Component" />);
 
@@ -52,7 +52,7 @@ describe('featureProtection', () => {
         throw new Error('NEXT_NOT_FOUND');
       });
       
-      const ProtectedComponent = withFeatureFlag(TestComponent, 'show-galeria');
+      const ProtectedComponent = withFeatureFlag(TestComponent, 'show-contacto');
 
       expect(() => render(<ProtectedComponent />)).toThrow('NEXT_NOT_FOUND');
       expect(mockNotFound).toHaveBeenCalled();
@@ -69,7 +69,7 @@ describe('featureProtection', () => {
 
     it('should pass through all props to the wrapped component', () => {
       mockHasFeature.mockReturnValue(true);
-      const ProtectedComponent = withFeatureFlag(TestComponent, 'show-galeria');
+      const ProtectedComponent = withFeatureFlag(TestComponent, 'show-contacto');
 
       render(<ProtectedComponent title="Custom Title" />);
 
@@ -78,19 +78,19 @@ describe('featureProtection', () => {
 
     it('should maintain component display name', () => {
       mockHasFeature.mockReturnValue(true);
-      const ProtectedComponent = withFeatureFlag(TestComponent, 'show-galeria');
+      const ProtectedComponent = withFeatureFlag(TestComponent, 'show-contacto');
 
       expect((ProtectedComponent as any).displayName || ProtectedComponent.name).toBe('ProtectedComponent');
     });
 
     it('should handle multiple instances with different feature flags', () => {
-      mockHasFeature.mockImplementation((flag) => (flag as string) === 'show-galeria');
+      mockHasFeature.mockImplementation((flag) => (flag as string) === 'show-contacto');
       // Mock notFound to throw for disabled features
       mockNotFound.mockImplementation(() => {
         throw new Error('NEXT_NOT_FOUND');
       });
       
-      const TriviaProtected = withFeatureFlag(TestComponent, 'show-galeria');
+      const TriviaProtected = withFeatureFlag(TestComponent, 'show-contacto');
       const RSVPProtected = withFeatureFlag(TestComponent, 'show-rsvp');
 
       render(<TriviaProtected title="Trivia" />);
@@ -125,21 +125,21 @@ describe('featureProtection', () => {
       mockHasFeature.mockReturnValue(true);
       
       const TestHookComponent = () => {
-        const isEnabled = useFeatureFlag('show-galeria');
+        const isEnabled = useFeatureFlag('show-contacto');
         return <div>{isEnabled ? 'enabled' : 'disabled'}</div>;
       };
 
       render(<TestHookComponent />);
 
       expect(screen.getByText('enabled')).toBeInTheDocument();
-      expect(mockHasFeature).toHaveBeenCalledWith('show-galeria');
+      expect(mockHasFeature).toHaveBeenCalledWith('show-contacto');
     });
 
     it('should return false when feature is disabled', () => {
       mockHasFeature.mockReturnValue(false);
       
       const TestHookComponent = () => {
-        const isEnabled = useFeatureFlag('show-galeria');
+        const isEnabled = useFeatureFlag('show-contacto');
         return <div>{isEnabled ? 'enabled' : 'disabled'}</div>;
       };
 
@@ -152,7 +152,7 @@ describe('featureProtection', () => {
       mockHasFeature.mockReturnValue(false);
       
       const TestHookComponent = () => {
-        useFeatureFlag('show-galeria', '/dashboard');
+        useFeatureFlag('show-contacto', '/dashboard');
         return <div>content</div>;
       };
 
@@ -166,7 +166,7 @@ describe('featureProtection', () => {
       const originalHref = window.location.href;
       
       const TestHookComponent = () => {
-        useFeatureFlag('show-galeria', '/dashboard');
+        useFeatureFlag('show-contacto', '/dashboard');
         return <div>content</div>;
       };
 
@@ -180,7 +180,7 @@ describe('featureProtection', () => {
       const originalHref = window.location.href;
       
       const TestHookComponent = () => {
-        useFeatureFlag('show-galeria');
+        useFeatureFlag('show-contacto');
         return <div>content</div>;
       };
 
@@ -195,7 +195,7 @@ describe('featureProtection', () => {
       mockHasFeature.mockReturnValue(false);
       
       const TestHookComponent = () => {
-        const isEnabled = useFeatureFlag('show-galeria', '/dashboard');
+        const isEnabled = useFeatureFlag('show-contacto', '/dashboard');
         return <div>{isEnabled ? 'enabled' : 'disabled'}</div>;
       };
 
@@ -210,7 +210,7 @@ describe('featureProtection', () => {
       mockHasFeature.mockReturnValue(true);
 
       render(
-        <FeatureWrapper feature={'show-galeria'}>
+        <FeatureWrapper feature={'show-contacto'}>
           <div data-testid="feature-content">Feature Content</div>
         </FeatureWrapper>
       );
@@ -224,7 +224,7 @@ describe('featureProtection', () => {
 
       render(
         <FeatureWrapper 
-          feature={'show-galeria'} 
+          feature={'show-contacto'} 
           fallback={<div data-testid="fallback">Fallback Content</div>}
         >
           <div data-testid="feature-content">Feature Content</div>
@@ -240,7 +240,7 @@ describe('featureProtection', () => {
       mockHasFeature.mockReturnValue(false);
 
       const { container } = render(
-        <FeatureWrapper feature={'show-galeria'}>
+        <FeatureWrapper feature={'show-contacto'}>
           <div data-testid="feature-content">Feature Content</div>
         </FeatureWrapper>
       );
@@ -265,7 +265,7 @@ describe('featureProtection', () => {
       mockHasFeature.mockReturnValue(true);
 
       render(
-        <FeatureWrapper feature={'show-galeria'}>
+        <FeatureWrapper feature={'show-contacto'}>
           <div data-testid="child-1">Child 1</div>
           <div data-testid="child-2">Child 2</div>
           <span>Child 3</span>
@@ -282,7 +282,7 @@ describe('featureProtection', () => {
 
       render(
         <FeatureWrapper 
-          feature={'show-galeria'}
+          feature={'show-contacto'}
           fallback={
             <div data-testid="complex-fallback">
               <h2>Feature Disabled</h2>
@@ -305,7 +305,7 @@ describe('featureProtection', () => {
       mockHasFeature.mockReturnValue(false);
 
       const { rerender } = render(
-        <FeatureWrapper feature={'show-galeria'}>
+        <FeatureWrapper feature={'show-contacto'}>
           <div data-testid="feature-content">Feature Content</div>
         </FeatureWrapper>
       );
@@ -316,7 +316,7 @@ describe('featureProtection', () => {
       mockHasFeature.mockReturnValue(true);
 
       rerender(
-        <FeatureWrapper feature={'show-galeria'}>
+        <FeatureWrapper feature={'show-contacto'}>
           <div data-testid="feature-content">Feature Content</div>
         </FeatureWrapper>
       );
@@ -328,7 +328,7 @@ describe('featureProtection', () => {
       mockHasFeature.mockReturnValue(true);
 
       render(
-        <FeatureWrapper feature={'show-galeria'}>
+        <FeatureWrapper feature={'show-contacto'}>
           Simple string content
         </FeatureWrapper>
       );
@@ -337,10 +337,10 @@ describe('featureProtection', () => {
     });
 
     it('should handle nested FeatureWrapper components', () => {
-      mockHasFeature.mockImplementation((flag) => (flag as string) === 'show-galeria' || (flag as string) === 'show-rsvp');
+      mockHasFeature.mockImplementation((flag) => (flag as string) === 'show-contacto' || (flag as string) === 'show-rsvp');
 
       render(
-        <FeatureWrapper feature={'show-galeria'}>
+        <FeatureWrapper feature={'show-contacto'}>
           <div data-testid="outer-feature">
             <FeatureWrapper feature={'show-rsvp'}>
               <div data-testid="inner-feature">Nested Feature Content</div>
@@ -353,7 +353,7 @@ describe('featureProtection', () => {
       expect(screen.getByTestId('inner-feature')).toBeInTheDocument();
       expect(screen.getByText('Nested Feature Content')).toBeInTheDocument();
       
-      expect(mockHasFeature).toHaveBeenCalledWith('show-galeria');
+      expect(mockHasFeature).toHaveBeenCalledWith('show-contacto');
       expect(mockHasFeature).toHaveBeenCalledWith('show-rsvp');
     });
   });
@@ -378,7 +378,7 @@ describe('featureProtection', () => {
         <div data-testid="functional">{message}</div>
       );
 
-      const ProtectedFunctional = withFeatureFlag(FunctionalComponent, 'show-galeria');
+      const ProtectedFunctional = withFeatureFlag(FunctionalComponent, 'show-contacto');
 
       render(<ProtectedFunctional message="Functional works" />);
 
@@ -395,7 +395,7 @@ describe('featureProtection', () => {
         }
       }
 
-      const ProtectedClass = withFeatureFlag(ClassComponent, 'show-galeria');
+      const ProtectedClass = withFeatureFlag(ClassComponent, 'show-contacto');
 
       render(<ProtectedClass title="Class works" />);
 
@@ -411,7 +411,7 @@ describe('featureProtection', () => {
       });
 
       const TestComponent = () => {
-        const isEnabled = useFeatureFlag('show-galeria');
+        const isEnabled = useFeatureFlag('show-contacto');
         return <div>{isEnabled ? 'enabled' : 'disabled'}</div>;
       };
 

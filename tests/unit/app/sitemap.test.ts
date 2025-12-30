@@ -51,12 +51,6 @@ describe("sitemap", () => {
       { href: "/", name: "Home", nameEn: "Home", feature: null }, // Should be filtered out as it's a static page
       { href: "/unete", name: "Únete", nameEn: "Join Us", feature: null },
       { href: "/contacto", name: "Contacto", nameEn: "Contact", feature: null },
-      {
-        href: "/galeria",
-        name: "Galería",
-        nameEn: "Gallery",
-        feature: "show-galeria",
-      },
     ]);
 
     const result = sitemap();
@@ -87,37 +81,31 @@ describe("sitemap", () => {
           changeFrequency: "monthly",
           priority: 0.9,
         },
-        {
-          url: `${baseUrl}/galeria`,
-          lastModified: mockDate,
-          changeFrequency: "monthly",
-          priority: 0.8,
-        },
       ]),
     );
-    expect(result.length).toBe(5); // Static + partidos + 3 dynamic
+    expect(result.length).toBe(4); // Static + partidos + 2 dynamic
   });
 
   it("should handle different priorities for dynamic pages", () => {
     vi.mocked(getEnabledNavigationItems).mockReturnValue([
       { href: "/unete", name: "Únete", nameEn: "Join Us", feature: null },
       {
-        href: "/galeria",
-        name: "Galería",
-        nameEn: "Gallery",
-        feature: "show-galeria",
+        href: "/contacto",
+        name: "Contacto",
+        nameEn: "Contact",
+        feature: "show-contacto",
       },
     ]);
 
     const result = sitemap();
 
     const unetePage = result.find((page) => page.url === `${baseUrl}/unete`);
-    const galeriaPage = result.find(
-      (page) => page.url === `${baseUrl}/galeria`,
+    const contactoPage = result.find(
+      (page) => page.url === `${baseUrl}/contacto`,
     );
 
     expect(unetePage?.priority).toBe(0.9);
-    expect(galeriaPage?.priority).toBe(0.8);
+    expect(contactoPage?.priority).toBe(0.9);
   });
 
   it("should exclude /partidos from sitemap when show-partidos feature is disabled", () => {
