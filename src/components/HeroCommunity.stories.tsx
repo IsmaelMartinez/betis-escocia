@@ -10,7 +10,8 @@ const meta: Meta<typeof HeroCommunity> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    // HeroCommunity does not have any direct props
+    showPartidos: { control: 'boolean', description: 'Show Partidos link' },
+    showRsvp: { control: 'boolean', description: 'Show RSVP section' },
   },
 };
 
@@ -18,5 +19,22 @@ export default meta;
 type Story = StoryObj<typeof HeroCommunity>;
 
 export const Default: Story = {
-  args: {},
+  args: {
+    showPartidos: true,
+    showRsvp: true,
+  },
+};
+
+export const WithoutPartidos: Story = {
+  args: {
+    showPartidos: false,
+    showRsvp: true,
+  },
+};
+
+export const WithoutRsvp: Story = {
+  args: {
+    showPartidos: true,
+    showRsvp: false,
+  },
 };
