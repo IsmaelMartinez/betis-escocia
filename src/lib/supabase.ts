@@ -832,6 +832,11 @@ export interface BetisNews {
   // Phase 2: Transfer direction tracking
   transfer_direction?: "in" | "out" | "unknown" | null;
   transfer_status?: "rumor" | "confirmed" | "denied" | null;
+  // Admin reassessment fields
+  admin_context?: string | null;
+  needs_reassessment?: boolean;
+  reassessed_at?: string | null;
+  reassessed_by?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -864,6 +869,11 @@ export interface BetisNewsUpdate {
   // Phase 2: Transfer direction tracking
   transfer_direction?: "in" | "out" | "unknown" | null;
   transfer_status?: "rumor" | "confirmed" | "denied" | null;
+  // Admin reassessment fields
+  admin_context?: string | null;
+  needs_reassessment?: boolean;
+  reassessed_at?: string | null;
+  reassessed_by?: string | null;
 }
 
 // Phase 2A: Player tracking types

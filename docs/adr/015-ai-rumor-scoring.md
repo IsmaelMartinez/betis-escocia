@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted (Updated December 29, 2025 - Phase 2A Complete)
+Accepted (Updated December 29, 2025 - Phase 2B Complete, Admin Reassessment Added)
 
 ## Decision
 
@@ -101,6 +101,40 @@ Phase 2A introduces player tracking with deduplication:
 - Quota errors (429) store items with `null` probability for later analysis
 - Graceful degradation: news stored even if AI fails
 
+### Admin Reassessment Feature
+
+Admins can request AI re-analysis of news items with additional context to improve classification accuracy:
+
+**Use Cases:**
+- Wrong player extracted (e.g., coach instead of player)
+- Wrong team attribution
+- Item incorrectly classified as transfer rumor
+- Missing context that affects credibility
+
+**Architecture:**
+```
+Admin Panel → API (POST /api/admin/soylenti/reassess)
+                            ↓
+              Fetch article content → Gemini AI (with admin context)
+                            ↓
+              Update news item → Process extracted players
+```
+
+**Database Fields (betis_news):**
+- `admin_context`: Admin-provided feedback for AI ("wrong player", "not a transfer", etc.)
+- `needs_reassessment`: Boolean flag for items queued for re-analysis
+- `reassessed_at`: Timestamp of last reassessment
+- `reassessed_by`: Admin user ID who requested reassessment
+
+**Sync Integration:**
+The `rumorSyncService` processes items with `needs_reassessment=true` before fetching new RSS items, ensuring admin corrections are applied promptly.
+
+**Admin UI:**
+- Located in `/admin` panel under "Soylenti" tab
+- Predefined context options: "Wrong player", "Wrong team", "Not a transfer", "Duplicate", "Outdated"
+- Custom context input for specific corrections
+- Real-time feedback on reassessment results
+
 ### Deduplication Strategy
 
 Multi-layer approach to prevent duplicate rumors:
@@ -136,5 +170,6 @@ Three optimized feeds provide rumor content:
 
 - [betis_news Migration](../../sql/0002_add_betis_news_table.sql)
 - [players Migration (Phase 2A)](../../sql/0004_add_players_tables.sql)
+- [Admin Reassessment Migration](../../sql/0005_add_admin_reassessment.sql)
 - [Research: Phase 2 Evolution](../research/2025-12-soylenti-phase2-evolution.md)
 - [ADR-003: Supabase Database](./003-supabase-database.md)

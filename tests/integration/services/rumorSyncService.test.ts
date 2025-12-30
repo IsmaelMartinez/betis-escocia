@@ -70,11 +70,26 @@ describe("rumorSyncService - Integration Tests", () => {
       insert: mockSupabaseInsert,
     });
 
-    mockSupabaseSelect.mockReturnValue({
-      gte: vi.fn().mockResolvedValue({
-        data: [],
-        error: null,
-      }),
+    // Support both the reassessment query (select * with eq) and deduplication query (select with gte)
+    mockSupabaseSelect.mockImplementation((columns) => {
+      if (columns === "*") {
+        // Reassessment query: select(*).eq("needs_reassessment", true).limit(10)
+        return {
+          eq: vi.fn().mockReturnValue({
+            limit: vi.fn().mockResolvedValue({
+              data: [], // No items need reassessment by default
+              error: null,
+            }),
+          }),
+        };
+      }
+      // Deduplication query: select("id, title, description, content_hash").gte("pub_date", ...)
+      return {
+        gte: vi.fn().mockResolvedValue({
+          data: [],
+          error: null,
+        }),
+      };
     });
 
     mockSupabaseInsert.mockReturnValue({
@@ -377,9 +392,10 @@ describe("rumorSyncService - Integration Tests", () => {
 
       await syncRumors();
 
-      expect(mockSupabaseSelect).toHaveBeenCalled();
-      const gteCall = mockSupabaseSelect.mock.results[0].value.gte;
-      expect(gteCall).toBeDefined();
+      // First call is for reassessment (select *), second is for deduplication
+      expect(mockSupabaseSelect).toHaveBeenCalledTimes(2);
+      expect(mockSupabaseSelect).toHaveBeenCalledWith("*"); // Reassessment query
+      expect(mockSupabaseSelect).toHaveBeenCalledWith("id, title, description, content_hash"); // Deduplication query
     });
 
     it("should use service role key for database operations", async () => {

@@ -19,6 +19,7 @@ export interface SyncResult {
   analyzed: number;
   inserted: number;
   playersProcessed: number; // Phase 2A: Players extracted and linked
+  reassessed: number; // Items re-analyzed with admin context
   errors: number;
   [key: string]: unknown;
 }
@@ -33,6 +34,7 @@ export async function syncRumors(): Promise<SyncResult> {
     analyzed: 0,
     inserted: 0,
     playersProcessed: 0,
+    reassessed: 0,
     errors: 0,
   };
 
@@ -58,6 +60,89 @@ export async function syncRumors(): Promise<SyncResult> {
         persistSession: false,
       },
     });
+
+    // 0. Process items that need reassessment (admin-requested re-analysis)
+    const { data: itemsToReassess } = await supabase
+      .from("betis_news")
+      .select("*")
+      .eq("needs_reassessment", true)
+      .limit(10); // Limit to avoid API quota issues
+
+    if (itemsToReassess && itemsToReassess.length > 0) {
+      log.business("reassessment_items_found", {
+        count: itemsToReassess.length,
+      });
+
+      for (const item of itemsToReassess) {
+        try {
+          // Rate limiting
+          if (result.reassessed > 0) {
+            await new Promise((resolve) =>
+              setTimeout(resolve, API_CALL_DELAY_MS),
+            );
+          }
+
+          // Fetch article content for better analysis
+          const articleContent = await fetchArticleContent(item.link);
+
+          // Re-analyze with admin context
+          const analysis = await analyzeRumorCredibility(
+            item.title,
+            item.description || "",
+            item.source,
+            articleContent,
+            { adminContext: item.admin_context || undefined, isReassessment: true },
+          );
+
+          // Update the news item
+          const { error: updateError } = await supabase
+            .from("betis_news")
+            .update({
+              ai_probability: analysis.probability,
+              ai_analysis: analysis.reasoning,
+              ai_analyzed_at: new Date().toISOString(),
+              needs_reassessment: false,
+              reassessed_at: new Date().toISOString(),
+            })
+            .eq("id", item.id);
+
+          if (updateError) {
+            log.error("Failed to update reassessed item", new Error(updateError.message), {
+              newsId: item.id,
+            });
+            result.errors++;
+          } else {
+            result.reassessed++;
+
+            // Process extracted players if any
+            if (
+              analysis.players &&
+              analysis.players.length > 0 &&
+              (analysis.confidence === "high" || analysis.confidence === "medium")
+            ) {
+              const playerResult = await processExtractedPlayers(
+                item.id,
+                analysis.players,
+                supabase,
+              );
+              result.playersProcessed += playerResult.playersProcessed;
+              result.errors += playerResult.errors;
+            }
+
+            log.business("news_reassessed", {
+              newsId: item.id,
+              adminContext: item.admin_context,
+              newProbability: analysis.probability,
+            });
+          }
+        } catch (error) {
+          log.error("Error reassessing news item", error, {
+            newsId: item.id,
+          });
+          result.errors++;
+        }
+      }
+    }
 
     // 1. Fetch rumors from RSS feeds
     const rumors = await fetchAllRumors();
