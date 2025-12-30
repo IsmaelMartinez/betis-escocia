@@ -32,9 +32,24 @@ vi.mock("@/lib/featureFlags", () => ({
 
 // Default navigation items for tests
 const defaultNavigationItems = [
-  { name: "RSVP", href: "/rsvp", nameEn: "RSVP", feature: "show-rsvp" as const },
-  { name: "Únete", href: "/unete", nameEn: "Join", feature: "show-unete" as const },
-  { name: "Contacto", href: "/contacto", nameEn: "Contact", feature: "show-contacto" as const },
+  {
+    name: "RSVP",
+    href: "/rsvp",
+    nameEn: "RSVP",
+    feature: "show-rsvp" as const,
+  },
+  {
+    name: "Únete",
+    href: "/unete",
+    nameEn: "Join",
+    feature: "show-unete" as const,
+  },
+  {
+    name: "Contacto",
+    href: "/contacto",
+    nameEn: "Contact",
+    feature: "show-contacto" as const,
+  },
 ];
 
 describe("Layout Component", () => {
@@ -322,15 +337,17 @@ describe("Layout Component", () => {
   describe("Debug Information", () => {
     it("should handle debug info prop", () => {
       const mockDebugInfo = {
-        flags: {},
+        features: {},
         environment: "test",
         enabledFeatures: [],
         disabledFeatures: [],
-        cacheStatus: { cached: false, expires: "" },
       };
 
       render(
-        <Layout debugInfo={mockDebugInfo} navigationItems={defaultNavigationItems}>
+        <Layout
+          debugInfo={mockDebugInfo}
+          navigationItems={defaultNavigationItems}
+        >
           <div>Content</div>
         </Layout>,
       );

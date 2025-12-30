@@ -18,8 +18,7 @@ import {
   Trophy,
 } from "lucide-react";
 import BetisLogo from "@/components/BetisLogo";
-import { hasFeature, type NavigationItem } from "@/lib/featureFlags";
-import { FeatureWrapper } from "@/lib/featureProtection";
+import { type NavigationItem } from "@/lib/featureFlags";
 import { useUser, useClerk } from "@clerk/nextjs";
 
 interface DebugInfo {
@@ -35,14 +34,18 @@ interface LayoutProps {
   readonly navigationItems: NavigationItem[];
 }
 
-export default function Layout({ children, debugInfo, navigationItems }: LayoutProps) {
-  const enabledNavigation = navigationItems;
+export default function Layout({
+  children,
+  debugInfo,
+  navigationItems,
+}: LayoutProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
-  const isAuthEnabled = hasFeature("show-clerk-auth");
+  // Derive auth enabled from debugInfo features (passed from server) to avoid hydration mismatch
+  const isAuthEnabled = debugInfo?.features?.["show-clerk-auth"] ?? false;
 
   const handleSignOut = async () => {
     await signOut();
@@ -99,7 +102,7 @@ export default function Layout({ children, debugInfo, navigationItems }: LayoutP
 
               {/* Desktop Navigation - scoreboard style */}
               <div className="hidden md:flex items-center gap-1">
-                {enabledNavigation.map((item, index) => (
+                {navigationItems.map((item, index) => (
                   <Link
                     key={item.name}
                     href={item.href}
@@ -108,7 +111,7 @@ export default function Layout({ children, debugInfo, navigationItems }: LayoutP
                     <span className="relative z-10">{item.name}</span>
                     <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors rounded" />
                     {/* Separator dot */}
-                    {index < enabledNavigation.length - 1 && (
+                    {index < navigationItems.length - 1 && (
                       <span className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-1 bg-betis-oro/50 rounded-full" />
                     )}
                   </Link>
@@ -206,7 +209,7 @@ export default function Layout({ children, debugInfo, navigationItems }: LayoutP
         {isMenuOpen && (
           <div className="md:hidden bg-scotland-navy border-t border-white/10">
             <div className="px-4 py-4 space-y-1">
-              {enabledNavigation.map((item) => (
+              {navigationItems.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
@@ -422,14 +425,14 @@ export default function Layout({ children, debugInfo, navigationItems }: LayoutP
 
           <div className="border-t border-white/10 mt-10 pt-8">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-              <FeatureWrapper feature="show-contacto">
+              {navigationItems.some((item) => item.href === "/contacto") && (
                 <Link
                   href="/contacto"
                   className="text-gray-400 hover:text-betis-verde transition-colors font-body text-sm"
                 >
                   Contacto
                 </Link>
-              </FeatureWrapper>
+              )}
               <p className="text-gray-400 text-sm font-body text-center">
                 © 2025 Peña Bética Escocesa.{" "}
                 <span className="text-betis-oro">
