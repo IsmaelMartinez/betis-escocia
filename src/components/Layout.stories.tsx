@@ -1,6 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import Layout from './Layout';
 import { setMockUser } from '@/lib/clerk/__mocks__/storybook';
+import type { NavigationItem } from '@/lib/featureFlags';
+
+const mockNavigationItems: NavigationItem[] = [
+  { name: 'Partidos', href: '/partidos', nameEn: 'Matches', feature: 'show-partidos' },
+  { name: 'Nosotros', href: '/nosotros', nameEn: 'About', feature: 'show-nosotros' },
+  { name: 'Únete', href: '/unete', nameEn: 'Join', feature: 'show-unete' },
+];
 
 const meta: Meta<typeof Layout> = {
   title: 'Layout/Layout',
@@ -24,12 +31,12 @@ type Story = StoryObj<typeof Layout>;
 export const Default: Story = {
   args: {
     debugInfo: {
-      flags: { showClerkAuth: true, showPartidos: true },
+      features: { 'show-clerk-auth': true, 'show-partidos': true },
       environment: 'development',
-      enabledFeatures: ['show-clerk-auth', 'showPartidos'],
+      enabledFeatures: ['show-clerk-auth', 'show-partidos'],
       disabledFeatures: [],
-      cacheStatus: { cached: false, expires: 'N/A' },
     },
+    navigationItems: mockNavigationItems,
   },
   render: (args) => {
     setMockUser(null); // Ensure no user is logged in by default
@@ -40,12 +47,12 @@ export const Default: Story = {
 export const LoggedIn: Story = {
   args: {
     debugInfo: {
-      flags: { showClerkAuth: true, showPartidos: true },
+      features: { 'show-clerk-auth': true, 'show-partidos': true },
       environment: 'development',
-      enabledFeatures: ['show-clerk-auth', 'showPartidos'],
+      enabledFeatures: ['show-clerk-auth', 'show-partidos'],
       disabledFeatures: [],
-      cacheStatus: { cached: false, expires: 'N/A' },
     },
+    navigationItems: mockNavigationItems,
   },
   render: (args) => {
     setMockUser({
@@ -65,12 +72,12 @@ export const LoggedIn: Story = {
 export const LoggedInAdmin: Story = {
   args: {
     debugInfo: {
-      flags: { showClerkAuth: true, showPartidos: true },
+      features: { 'show-clerk-auth': true, 'show-partidos': true },
       environment: 'development',
-      enabledFeatures: ['show-clerk-auth', 'showPartidos'],
+      enabledFeatures: ['show-clerk-auth', 'show-partidos'],
       disabledFeatures: [],
-      cacheStatus: { cached: false, expires: 'N/A' },
     },
+    navigationItems: mockNavigationItems,
   },
   render: (args) => {
     setMockUser({
@@ -90,12 +97,12 @@ export const LoggedInAdmin: Story = {
 export const FeatureFlagsDisabled: Story = {
   args: {
     debugInfo: {
-      flags: { showClerkAuth: false, showPartidos: false },
+      features: { 'show-clerk-auth': false, 'show-partidos': false },
       environment: 'development',
       enabledFeatures: [],
-      disabledFeatures: ['show-clerk-auth', 'showPartidos'],
-      cacheStatus: { cached: false, expires: 'N/A' },
+      disabledFeatures: ['show-clerk-auth', 'show-partidos'],
     },
+    navigationItems: [],
   },
   render: (args) => {
     setMockUser(null); // Ensure no user is logged in by default

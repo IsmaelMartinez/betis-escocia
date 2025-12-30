@@ -18,28 +18,25 @@ import {
   Trophy,
 } from "lucide-react";
 import BetisLogo from "@/components/BetisLogo";
-import { getEnabledNavigationItems, hasFeature } from "@/lib/featureFlags";
+import { hasFeature, type NavigationItem } from "@/lib/featureFlags";
 import { FeatureWrapper } from "@/lib/featureProtection";
 import { useUser, useClerk } from "@clerk/nextjs";
 
 interface DebugInfo {
-  flags: Record<string, boolean>;
-  environment: string;
+  features: Record<string, boolean>;
+  environment: string | undefined;
   enabledFeatures: string[];
   disabledFeatures: string[];
-  cacheStatus: {
-    cached: boolean;
-    expires: string;
-  };
 }
 
 interface LayoutProps {
   readonly children: React.ReactNode;
   readonly debugInfo: DebugInfo | null;
+  readonly navigationItems: NavigationItem[];
 }
 
-export default function Layout({ children, debugInfo }: LayoutProps) {
-  const enabledNavigation = getEnabledNavigationItems();
+export default function Layout({ children, debugInfo, navigationItems }: LayoutProps) {
+  const enabledNavigation = navigationItems;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
