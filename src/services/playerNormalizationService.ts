@@ -175,6 +175,11 @@ export async function processExtractedPlayers(
  * - Aggregates rumor_count from both players
  * - Deletes the duplicate player
  *
+ * Note: Operations are not wrapped in a database transaction. This is acceptable
+ * for this admin-only feature because partial failures have recoverable states
+ * (orphaned links are cleaned up, merge can be retried). The complexity of
+ * plpgsql functions is not justified for this rarely-used admin operation.
+ *
  * @param primaryId - The player ID to keep
  * @param duplicateId - The player ID to merge and delete
  * @returns Object with success status and details

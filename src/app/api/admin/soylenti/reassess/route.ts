@@ -8,7 +8,16 @@ import { fetchArticleContent } from "@/services/articleFetcherService";
 import { processExtractedPlayers } from "@/services/playerNormalizationService";
 import { log } from "@/lib/logger";
 
-// POST - Request AI reassessment of a news item with admin context
+/**
+ * POST - Request AI reassessment of a news item with admin context
+ *
+ * Note: The news update and player processing operations are not wrapped in a
+ * database transaction. This is intentional for this admin-only feature:
+ * - If player processing fails after news update, the news still has valid AI analysis
+ * - Players can be re-processed on next reassessment
+ * - The failure is logged for debugging
+ * Using database transactions (plpgsql functions) would add complexity for minimal benefit.
+ */
 export const POST = createApiHandler({
   auth: "admin",
   schema: reassessmentSchema,

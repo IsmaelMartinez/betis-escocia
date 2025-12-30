@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BetisNews } from "@/lib/supabase";
 import Card, { CardBody } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
@@ -63,6 +63,20 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
   );
   const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Auto-clear success/error messages after 5 seconds
+  useEffect(() => {
+    if (!successMessage) return;
+    const timer = setTimeout(() => setSuccessMessage(null), 5000);
+    return () => clearTimeout(timer);
+  }, [successMessage]);
+
+  useEffect(() => {
+    if (!errorMessage) return;
+    const timer = setTimeout(() => setErrorMessage(null), 8000);
+    return () => clearTimeout(timer);
+  }, [errorMessage]);
 
   const toggleExpand = (id: number) => {
     setExpandedItems((prev) => {
@@ -97,6 +111,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
     if (!reassessmentState.newsId || !reassessmentState.context.trim()) return;
 
     setReassessmentState((prev) => ({ ...prev, isSubmitting: true }));
+    setErrorMessage(null);
 
     const result = await onReassess(
       reassessmentState.newsId,
@@ -106,8 +121,8 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
     if (result.success) {
       setSuccessMessage("Noticia re-analizada correctamente");
       closeReassessmentModal();
-      setTimeout(() => setSuccessMessage(null), 5000);
     } else {
+      setErrorMessage(result.error || "Error al re-analizar la noticia");
       setReassessmentState((prev) => ({ ...prev, isSubmitting: false }));
     }
   };
@@ -145,6 +160,10 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
     <div className="space-y-6">
       {successMessage && (
         <MessageComponent type="success" message={successMessage} />
+      )}
+
+      {errorMessage && (
+        <MessageComponent type="error" message={errorMessage} />
       )}
 
       {news.length === 0 ? (
