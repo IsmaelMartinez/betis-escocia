@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useState, memo } from "react";
-import { FeatureWrapper } from "@/lib/featureProtection";
 
 // Lazy load RSVPWidget since it's only shown when expanded
 const RSVPWidget = dynamic(() => import("./RSVPWidget"), {
@@ -48,7 +47,12 @@ const CommunityStats = dynamic(() => import("./CommunityStats"), {
   ),
 });
 
-function HeroCommunity() {
+interface HeroCommunityProps {
+  readonly showPartidos: boolean;
+  readonly showRsvp: boolean;
+}
+
+function HeroCommunity({ showPartidos, showRsvp }: HeroCommunityProps) {
   const [isRSVPExpanded, setIsRSVPExpanded] = useState(false);
 
   return (
@@ -155,7 +159,7 @@ function HeroCommunity() {
                 <Heart className="mr-3 h-5 w-5 group-hover:animate-pulse" />
                 ÚNETE A LA FAMILIA
               </Link>
-              <FeatureWrapper feature="show-partidos">
+              {showPartidos && (
                 <Link
                   href="/partidos"
                   className="group bg-white hover:bg-betis-verde-pale text-betis-verde-dark border-2 border-betis-verde-dark px-8 py-4 rounded-xl font-heading font-bold text-lg transition-all duration-300 flex items-center justify-center"
@@ -163,7 +167,7 @@ function HeroCommunity() {
                   <Calendar className="mr-3 h-5 w-5" />
                   VER PARTIDOS
                 </Link>
-              </FeatureWrapper>
+              )}
             </div>
           </div>
 
@@ -186,7 +190,7 @@ function HeroCommunity() {
               </div>
 
               {/* Expandable RSVP Section - controlled by feature flag */}
-              <FeatureWrapper feature="show-rsvp">
+              {showRsvp && (
                 <div className="border-t border-gray-100 pt-6">
                   <button
                     onClick={() => setIsRSVPExpanded(!isRSVPExpanded)}
@@ -220,7 +224,7 @@ function HeroCommunity() {
                     </div>
                   )}
                 </div>
-              </FeatureWrapper>
+              )}
             </div>
 
             {/* Floating accent elements */}

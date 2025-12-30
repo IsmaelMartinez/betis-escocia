@@ -2,7 +2,6 @@ import React from "react";
 import { render, screen, within, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import Home from "../../../src/app/page";
-import { FeatureWrapper } from "@/lib/featureProtection";
 
 // Mock components and modules
 vi.mock("@/components/HeroCommunity", () => ({
@@ -14,8 +13,9 @@ vi.mock("@/components/UpcomingMatchesWidget", () => ({
 vi.mock("@/components/ClassificationWidget", () => ({
   default: vi.fn(() => <div data-testid="mock-classification-widget" />),
 }));
-vi.mock("@/lib/featureProtection", () => ({
-  FeatureWrapper: vi.fn((props) => props.children), // Modified to pass all props
+// Mock feature flags to return true (features enabled)
+vi.mock("@/lib/featureFlags", () => ({
+  hasFeature: vi.fn(() => true),
 }));
 
 describe("Home page", () => {
@@ -24,7 +24,7 @@ describe("Home page", () => {
     expect(screen.getByTestId("mock-hero-community")).toBeInTheDocument();
   });
 
-  it("renders UpcomingMatchesWidget and ClassificationWidget within FeatureWrapper", async () => {
+  it("renders UpcomingMatchesWidget and ClassificationWidget when features are enabled", async () => {
     render(<Home />);
     // Wait for dynamic imports to load
     await waitFor(() => {
@@ -37,16 +37,6 @@ describe("Home page", () => {
         screen.getByTestId("mock-classification-widget"),
       ).toBeInTheDocument();
     });
-    // Verify that FeatureWrapper was called for these components
-    // The second argument is undefined because no additional props are passed to FeatureWrapper
-    expect(FeatureWrapper).toHaveBeenCalledWith(
-      expect.objectContaining({ feature: "show-partidos" }),
-      undefined,
-    );
-    expect(FeatureWrapper).toHaveBeenCalledWith(
-      expect.objectContaining({ feature: "show-clasificacion" }),
-      undefined,
-    );
   });
 
   it('renders the "Join Us" section with correct text and links', () => {
