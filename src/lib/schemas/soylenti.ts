@@ -19,5 +19,33 @@ export const rumorsResponseSchema = z.object({
   lastUpdated: z.string().datetime(),
 });
 
+// Admin reassessment schema
+export const reassessmentSchema = z.object({
+  newsId: z.number().int().positive("ID de noticia inválido"),
+  adminContext: z
+    .string()
+    .min(3, "El contexto debe tener al menos 3 caracteres")
+    .max(500, "El contexto no puede exceder 500 caracteres")
+    .trim(),
+});
+
+// Predefined context options for admin UI
+export const REASSESSMENT_CONTEXT_OPTIONS = [
+  { value: "wrong_player", label: "Jugador incorrecto" },
+  { value: "wrong_team", label: "Equipo incorrecto" },
+  { value: "not_transfer", label: "No es un fichaje/rumor" },
+  { value: "duplicate", label: "Es un duplicado" },
+  { value: "outdated", label: "Información desactualizada" },
+  { value: "custom", label: "Otro (especificar)" },
+] as const;
+
+// Player merge schema for deduplication
+export const playerMergeSchema = z.object({
+  primaryId: z.number().int().positive("ID de jugador primario inválido"),
+  duplicateId: z.number().int().positive("ID de jugador duplicado inválido"),
+});
+
 export type RumorItem = z.infer<typeof rumorItemSchema>;
 export type RumorsResponse = z.infer<typeof rumorsResponseSchema>;
+export type ReassessmentInput = z.infer<typeof reassessmentSchema>;
+export type PlayerMergeInput = z.infer<typeof playerMergeSchema>;

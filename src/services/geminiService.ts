@@ -14,11 +14,17 @@ export interface RumorAnalysis {
   players: ExtractedPlayer[]; // Extracted player names mentioned in the article
 }
 
+export interface ReassessmentOptions {
+  adminContext?: string; // e.g., "wrong player", "wrong team", "not a transfer rumor"
+  isReassessment?: boolean;
+}
+
 export async function analyzeRumorCredibility(
   title: string,
   description: string,
   source: string,
   articleContent?: string | null,
+  options?: ReassessmentOptions,
 ): Promise<RumorAnalysis> {
   const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
   if (!GEMINI_API_KEY) {
@@ -31,6 +37,14 @@ export async function analyzeRumorCredibility(
   const contentSection = articleContent
     ? `Contenido del artículo:\n${articleContent}`
     : `Descripción: ${description || "Sin descripción"}`;
+
+  // Build admin context section for reassessment
+  const adminContextSection = options?.adminContext
+    ? `\n\nCORRECCIÓN DEL ADMINISTRADOR (IMPORTANTE - ten esto en cuenta para tu análisis):
+${options.adminContext}
+
+Nota: Un administrador ha marcado esta noticia para re-evaluación con el contexto anterior. Por favor, ajusta tu análisis según esta información.`
+    : "";
 
   const prompt = `Analiza esta noticia del Real Betis Balompié (equipo de fútbol de Sevilla, España):
 
@@ -57,7 +71,7 @@ EJEMPLOS de extracción correcta:
 - "Marc Roca y William Carvalho..." → [{"name":"Marc Roca"},{"name":"William Carvalho"}]
 - "El club negocia con el Liverpool" → [] (no hay jugador nombrado)
 - "Pellegrini habló sobre el mercado" → [] (entrenador, no jugador)
-
+${adminContextSection}
 JSON (solo el JSON, sin markdown):
 {"isTransferRumor":<bool>,"probability":<0-100|null>,"reasoning":"<explicación breve>","confidence":"<low|medium|high>","players":[{"name":"<nombre>"}]}`;
 
