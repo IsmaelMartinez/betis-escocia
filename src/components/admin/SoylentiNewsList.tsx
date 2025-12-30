@@ -6,7 +6,6 @@ import Card, { CardBody } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import MessageComponent from "@/components/MessageComponent";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { REASSESSMENT_CONTEXT_OPTIONS } from "@/lib/schemas/soylenti";
 import {
   RefreshCw,
   ExternalLink,
@@ -14,11 +13,27 @@ import {
   CheckCircle,
   ChevronDown,
   ChevronUp,
+  User,
 } from "lucide-react";
 import clsx from "clsx";
 
+// Extended type to include player data from the joined query
+interface NewsPlayer {
+  player_id: number;
+  role: string;
+  players: {
+    id: number;
+    name: string;
+    normalized_name: string;
+  } | null;
+}
+
+interface BetisNewsWithPlayers extends BetisNews {
+  news_players?: NewsPlayer[];
+}
+
 interface SoylentiNewsListProps {
-  news: BetisNews[];
+  news: BetisNewsWithPlayers[];
   onReassess: (
     newsId: number,
     adminContext: string,
@@ -29,8 +44,7 @@ interface SoylentiNewsListProps {
 
 interface ReassessmentState {
   newsId: number | null;
-  contextType: string;
-  customContext: string;
+  context: string;
   isSubmitting: boolean;
 }
 
@@ -43,8 +57,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
   const [reassessmentState, setReassessmentState] = useState<ReassessmentState>(
     {
       newsId: null,
-      contextType: "",
-      customContext: "",
+      context: "",
       isSubmitting: false,
     },
   );
@@ -66,8 +79,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
   const openReassessmentModal = (newsId: number) => {
     setReassessmentState({
       newsId,
-      contextType: "",
-      customContext: "",
+      context: "",
       isSubmitting: false,
     });
     setSuccessMessage(null);
@@ -76,33 +88,20 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
   const closeReassessmentModal = () => {
     setReassessmentState({
       newsId: null,
-      contextType: "",
-      customContext: "",
+      context: "",
       isSubmitting: false,
     });
   };
 
   const handleReassess = async () => {
-    if (!reassessmentState.newsId) return;
-
-    const contextOption = REASSESSMENT_CONTEXT_OPTIONS.find(
-      (opt) => opt.value === reassessmentState.contextType,
-    );
-
-    let adminContext = "";
-    if (reassessmentState.contextType === "custom") {
-      adminContext = reassessmentState.customContext;
-    } else if (contextOption) {
-      adminContext = contextOption.label;
-    }
-
-    if (!adminContext.trim()) {
-      return;
-    }
+    if (!reassessmentState.newsId || !reassessmentState.context.trim()) return;
 
     setReassessmentState((prev) => ({ ...prev, isSubmitting: true }));
 
-    const result = await onReassess(reassessmentState.newsId, adminContext);
+    const result = await onReassess(
+      reassessmentState.newsId,
+      reassessmentState.context,
+    );
 
     if (result.success) {
       setSuccessMessage("Noticia re-analizada correctamente");
@@ -197,6 +196,24 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
                       <div className="text-xs text-gray-500 mt-1">
                         {formatDate(item.pub_date)}
                       </div>
+
+                      {/* Player Tags */}
+                      {item.news_players && item.news_players.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {item.news_players.map(
+                            (np) =>
+                              np.players && (
+                                <span
+                                  key={np.player_id}
+                                  className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs"
+                                >
+                                  <User size={10} />
+                                  {np.players.name}
+                                </span>
+                              ),
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     {/* Actions */}
@@ -260,90 +277,43 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
                       {isReassessing ? (
                         <div className="border-t border-gray-200 pt-3 mt-3">
                           <h4 className="text-sm font-semibold text-betis-black mb-2">
-                            Solicitar re-análisis con IA
+                            Re-análisis con IA
                           </h4>
 
-                          <div className="space-y-3">
-                            <div>
-                              <label
-                                htmlFor={`context-type-${item.id}`}
-                                className="block text-xs font-medium text-gray-700 mb-1"
-                              >
-                                Tipo de corrección:
-                              </label>
-                              <select
-                                id={`context-type-${item.id}`}
-                                value={reassessmentState.contextType}
-                                onChange={(e) =>
-                                  setReassessmentState((prev) => ({
-                                    ...prev,
-                                    contextType: e.target.value,
-                                  }))
-                                }
-                                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-betis-verde"
-                              >
-                                <option value="">Seleccionar...</option>
-                                {REASSESSMENT_CONTEXT_OPTIONS.map((opt) => (
-                                  <option key={opt.value} value={opt.value}>
-                                    {opt.label}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
+                          <textarea
+                            id={`context-${item.id}`}
+                            value={reassessmentState.context}
+                            onChange={(e) =>
+                              setReassessmentState((prev) => ({
+                                ...prev,
+                                context: e.target.value,
+                              }))
+                            }
+                            placeholder="Añade contexto para el re-análisis (ej: jugador incorrecto, no es un fichaje...)"
+                            rows={3}
+                            maxLength={500}
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-betis-verde resize-none mb-3"
+                          />
 
-                            {reassessmentState.contextType === "custom" && (
-                              <div>
-                                <label
-                                  htmlFor={`custom-context-${item.id}`}
-                                  className="block text-xs font-medium text-gray-700 mb-1"
-                                >
-                                  Especificar contexto:
-                                </label>
-                                <textarea
-                                  id={`custom-context-${item.id}`}
-                                  value={reassessmentState.customContext}
-                                  onChange={(e) =>
-                                    setReassessmentState((prev) => ({
-                                      ...prev,
-                                      customContext: e.target.value,
-                                    }))
-                                  }
-                                  placeholder="Describe el problema con el análisis..."
-                                  rows={3}
-                                  maxLength={500}
-                                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-betis-verde resize-none"
-                                />
-                                <div className="text-xs text-gray-500 mt-1">
-                                  {reassessmentState.customContext.length}/500
-                                  caracteres
-                                </div>
-                              </div>
-                            )}
-
-                            <div className="flex gap-2">
-                              <Button
-                                onClick={handleReassess}
-                                variant="primary"
-                                size="sm"
-                                isLoading={reassessmentState.isSubmitting}
-                                disabled={
-                                  !reassessmentState.contextType ||
-                                  (reassessmentState.contextType === "custom" &&
-                                    !reassessmentState.customContext.trim())
-                                }
-                                leftIcon={<RefreshCw size={14} />}
-                              >
-                                Re-analizar
-                              </Button>
-                              <Button
-                                onClick={closeReassessmentModal}
-                                variant="outline"
-                                size="sm"
-                                disabled={reassessmentState.isSubmitting}
-                              >
-                                Cancelar
-                              </Button>
-                            </div>
+                          <div className="flex gap-2">
+                            <Button
+                              onClick={handleReassess}
+                              variant="primary"
+                              size="sm"
+                              isLoading={reassessmentState.isSubmitting}
+                              disabled={!reassessmentState.context.trim()}
+                              leftIcon={<RefreshCw size={14} />}
+                            >
+                              Re-analizar
+                            </Button>
+                            <Button
+                              onClick={closeReassessmentModal}
+                              variant="outline"
+                              size="sm"
+                              disabled={reassessmentState.isSubmitting}
+                            >
+                              Cancelar
+                            </Button>
                           </div>
                         </div>
                       ) : (

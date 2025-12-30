@@ -165,13 +165,26 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
     );
   };
 
-  // Fetch Soylenti news for admin panel
+  // Fetch Soylenti news for admin panel (with player data)
   const fetchSoylentiNews = useCallback(async () => {
     try {
       setSoylentiError(null);
       const { data, error: fetchError } = await supabase
         .from("betis_news")
-        .select("*")
+        .select(
+          `
+          *,
+          news_players (
+            player_id,
+            role,
+            players (
+              id,
+              name,
+              normalized_name
+            )
+          )
+        `,
+        )
         .order("pub_date", { ascending: false })
         .limit(100);
 
