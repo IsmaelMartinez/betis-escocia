@@ -14,6 +14,21 @@ import {
   getMatches,
   updateContactSubmissionStatus,
 } from "@/lib/supabase";
+
+// Extended type to include player data from joined query
+interface NewsPlayer {
+  player_id: number;
+  role: string;
+  players: {
+    id: number;
+    name: string;
+    normalized_name: string;
+  } | null;
+}
+
+interface BetisNewsWithPlayers extends BetisNews {
+  news_players?: NewsPlayer[];
+}
 import {
   Users,
   Mail,
@@ -115,7 +130,7 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
   const [allContactSubmissions, setAllContactSubmissions] = useState<
     ContactSubmission[]
   >([]);
-  const [betisNews, setBetisNews] = useState<BetisNews[]>([]);
+  const [betisNews, setBetisNews] = useState<BetisNewsWithPlayers[]>([]);
   const [soylentiError, setSoylentiError] = useState<string | null>(null);
 
   const handleUpdateContactStatus = async (
@@ -189,7 +204,7 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
         .limit(100);
 
       if (fetchError) throw fetchError;
-      setBetisNews(data || []);
+      setBetisNews((data as BetisNewsWithPlayers[]) || []);
     } catch (err) {
       log.error("Failed to fetch Soylenti news in admin panel", err, {
         userId: user?.id,

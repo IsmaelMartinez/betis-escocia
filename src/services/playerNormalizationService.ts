@@ -231,7 +231,10 @@ export async function mergePlayers(
     .eq("player_id", duplicateId);
 
   if (linksError) {
-    return { success: false, error: `Error fetching duplicate links: ${linksError.message}` };
+    return {
+      success: false,
+      error: `Error fetching duplicate links: ${linksError.message}`,
+    };
   }
 
   let newsTransferred = 0;
@@ -274,7 +277,10 @@ export async function mergePlayers(
     .eq("id", primaryId);
 
   if (updateError) {
-    return { success: false, error: `Error updating primary player: ${updateError.message}` };
+    return {
+      success: false,
+      error: `Error updating primary player: ${updateError.message}`,
+    };
   }
 
   // Delete the duplicate player
@@ -284,7 +290,10 @@ export async function mergePlayers(
     .eq("id", duplicateId);
 
   if (deleteError) {
-    return { success: false, error: `Error deleting duplicate: ${deleteError.message}` };
+    return {
+      success: false,
+      error: `Error deleting duplicate: ${deleteError.message}`,
+    };
   }
 
   log.business("players_merged", {
