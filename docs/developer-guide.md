@@ -106,10 +106,12 @@ if (!isEnabled) return null;
 
 ### Key Flags
 
-- `show-debug-info` - Debug information (default: disabled)
-- `show-clerk-auth` - Authentication features (default: disabled)
 - `show-rsvp` - RSVP functionality (default: disabled)
 - `show-contacto` - Contact form (default: disabled)
+- `show-clasificacion` - League standings (default: disabled)
+- `show-partidos` - Match information (default: disabled)
+- `show-clerk-auth` - Authentication features (default: disabled)
+- `show-debug-info` - Debug information (default: disabled)
 
 ### Always-On Features (No Flags Needed)
 

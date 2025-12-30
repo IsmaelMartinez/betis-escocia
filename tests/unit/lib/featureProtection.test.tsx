@@ -7,7 +7,7 @@ import {
   useFeatureFlag,
   FeatureWrapper,
 } from "../../../src/lib/featureProtection";
-import { isFeatureEnabled, hasFeature } from "../../../src/lib/featureFlags";
+import { hasFeature } from "../../../src/lib/featureFlags";
 
 // Mock next/navigation
 vi.mock("next/navigation", () => ({
