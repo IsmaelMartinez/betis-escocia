@@ -1,10 +1,6 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import dotenv from "dotenv";
 
-// Load environment variables from .env or .env.local
-dotenv.config({ path: ".env.local" });
-dotenv.config();
-
+// Next.js automatically loads .env.local - no dotenv needed
 export type { SupabaseClient };
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;

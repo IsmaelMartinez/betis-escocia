@@ -91,9 +91,6 @@ export default defineConfig({
         NEXT_PUBLIC_FEATURE_NOSOTROS: 'true',
         NEXT_PUBLIC_FEATURE_UNETE: 'true',
         NEXT_PUBLIC_FEATURE_CLERK_AUTH: 'true',
-        NEXT_PUBLIC_FEATURE_ADMIN: 'true',
-        NEXT_PUBLIC_FEATURE_TRIVIA_GAME: 'true',
-        NEXT_PUBLIC_FEATURE_ADMIN_PUSH_NOTIFICATIONS: 'true',
         // Feature flags for E2E testing
       },
     },

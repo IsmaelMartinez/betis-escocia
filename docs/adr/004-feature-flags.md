@@ -9,13 +9,13 @@ Accepted
 ## Why Environment Variables
 After evaluating Flagsmith (too complex for our needs), we settled on simple environment variables:
 - **Simplicity**: Synchronous resolution, no external dependencies
-- **Performance**: Build-time resolution, no API calls
+- **Performance**: Cached in production, no caching in development for hot reload support
 - **Cost**: Free, no external service
 - **Sufficient**: Our scale doesn't need real-time flag updates
 
 ## Implementation
 ```typescript
-// src/lib/featureConfig.ts
+// src/lib/featureFlags.ts
 import { hasFeature } from '@/lib/featureFlags';
 
 // Synchronous check
@@ -24,19 +24,33 @@ if (hasFeature('show-galeria')) {
 }
 ```
 
-## Environment Variables (set only for disabled features)
+## Default Feature States
+
+### Enabled by Default (Core Features)
+- `show-nosotros` - About page
+- `show-unete` - Join functionality  
+- `show-soylenti` - Transfer rumors/news
+
+### Disabled by Default (Set `=true` to Enable)
+- `show-rsvp` - RSVP functionality
+- `show-contacto` - Contact form
+- `show-clasificacion` - League standings
+- `show-partidos` - Match information
+- `show-galeria` - Photo gallery
+- `show-redes-sociales` - Social networks
+- `show-clerk-auth` - Authentication UI
+- `show-debug-info` - Debug panel
+
+## Environment Variable Examples
 ```bash
-NEXT_PUBLIC_FEATURE_GALERIA=false
-NEXT_PUBLIC_FEATURE_SOCIAL_MEDIA=false
-NEXT_PUBLIC_FEATURE_DEBUG_INFO=false
+# Enable Phase 2 features
+NEXT_PUBLIC_FEATURE_RSVP=true
+NEXT_PUBLIC_FEATURE_CONTACTO=true
+NEXT_PUBLIC_FEATURE_CLERK_AUTH=true
+NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
 ```
 
-## Always-On Features (no env vars needed)
-- RSVP, Únete, Contacto - core functionality
-- Clasificación, Partidos, Nosotros - production ready
-- Clerk Auth - production ready
-
 ## References
-- `src/lib/featureConfig.ts`
+- `src/lib/featureFlags.ts`
 - `docs/feature-flags-deployment.md`
 

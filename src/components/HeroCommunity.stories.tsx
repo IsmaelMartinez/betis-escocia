@@ -1,17 +1,17 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import HeroCommunity from './HeroCommunity';
+import type { Meta, StoryObj } from "@storybook/nextjs";
+import HeroCommunity from "./HeroCommunity";
 
 const meta: Meta<typeof HeroCommunity> = {
-  title: 'Components/HeroCommunity',
+  title: "Components/HeroCommunity",
   component: HeroCommunity,
   parameters: {
-    layout: 'fullscreen',
+    layout: "fullscreen",
     clerk: { enabled: false }, // This component does not use Clerk directly
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
-    showPartidos: { control: 'boolean', description: 'Show Partidos link' },
-    showRsvp: { control: 'boolean', description: 'Show RSVP section' },
+    showPartidos: { control: "boolean", description: "Show Partidos link" },
+    showRsvp: { control: "boolean", description: "Show RSVP section" },
   },
 };
 
