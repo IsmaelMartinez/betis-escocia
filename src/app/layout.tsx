@@ -9,6 +9,7 @@ import {
 import "./globals.css";
 import Layout from "@/components/Layout";
 import OfflineDetector from "@/components/OfflineDetector";
+import { getFeatureFlagsStatus, getEnabledNavigationItems } from "@/lib/featureFlags";
 import * as Sentry from "@sentry/nextjs";
 import SentryUserContext from "@/components/SentryUserContext";
 
@@ -170,8 +171,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Environment variables are resolved at build time; no runtime initialization required
-  const debugInfo = null;
+  // Get feature flags debug info (returns null if debug mode is disabled)
+  const debugInfo = getFeatureFlagsStatus();
+  // Get navigation items on the server to avoid hydration mismatch
+  const navigationItems = getEnabledNavigationItems();
 
   return (
     <html lang="es">
@@ -204,7 +207,7 @@ export default function RootLayout({
         >
           <SentryUserContext />
           <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
-            <Layout debugInfo={debugInfo}>{children}</Layout>
+            <Layout debugInfo={debugInfo} navigationItems={navigationItems}>{children}</Layout>
           </Sentry.ErrorBoundary>
         </ClerkProvider>
         {isVercel && <Analytics />}

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import HeroCommunity from "@/components/HeroCommunity";
-import { FeatureWrapper } from "@/lib/featureProtection";
+import { hasFeature } from "@/lib/featureFlags";
 
 // Lazy load widgets that are below the fold for better LCP
 const UpcomingMatchesWidget = dynamic(
@@ -45,9 +45,14 @@ const ClassificationWidget = dynamic(
 );
 
 export default function Home() {
+  // Get feature flags on server to pass to client components
+  const showPartidos = hasFeature("show-partidos");
+  const showClasificacion = hasFeature("show-clasificacion");
+  const showRsvp = hasFeature("show-rsvp");
+
   return (
     <>
-      <HeroCommunity />
+      <HeroCommunity showPartidos={showPartidos} showRsvp={showRsvp} />
 
       {/* Upcoming Matches and Classification Widgets */}
       {/* El Tercio Nuevo: Warm canvas + subtle tartan texture */}
@@ -61,23 +66,23 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Upcoming Matches */}
             <div className="lg:col-span-3">
-              <FeatureWrapper feature="show-partidos">
-                {/* Section header with display typography */}
-                <div className="mb-8 text-center lg:text-left">
-                  <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-black text-scotland-navy mb-3 uppercase tracking-tight">
-                    Próximos Partidos
-                  </h2>
-                  <div className="h-1 w-32 bg-gradient-to-r from-betis-verde via-betis-oro to-scotland-navy mx-auto lg:mx-0 rounded-full" />
-                </div>
-                <UpcomingMatchesWidget className="" />
-              </FeatureWrapper>
+              {showPartidos && (
+                <>
+                  {/* Section header with display typography */}
+                  <div className="mb-8 text-center lg:text-left">
+                    <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-black text-scotland-navy mb-3 uppercase tracking-tight">
+                      Próximos Partidos
+                    </h2>
+                    <div className="h-1 w-32 bg-gradient-to-r from-betis-verde via-betis-oro to-scotland-navy mx-auto lg:mx-0 rounded-full" />
+                  </div>
+                  <UpcomingMatchesWidget className="" />
+                </>
+              )}
             </div>
 
             {/* Classification */}
             <div className="lg:col-span-1">
-              <FeatureWrapper feature="show-clasificacion">
-                <ClassificationWidget className="" />
-              </FeatureWrapper>
+              {showClasificacion && <ClassificationWidget className="" />}
             </div>
           </div>
         </div>

@@ -28,12 +28,29 @@ vi.mock("@clerk/nextjs", () => ({
 // Mock feature flags
 vi.mock("@/lib/featureFlags", () => ({
   hasFeature: vi.fn(() => false),
-  getEnabledNavigationItems: vi.fn(() => [
-    { name: "RSVP", href: "/rsvp", external: false },
-    { name: "Únete", href: "/unete", external: false },
-    { name: "Contacto", href: "/contacto", external: false },
-  ]),
 }));
+
+// Default navigation items for tests
+const defaultNavigationItems = [
+  {
+    name: "RSVP",
+    href: "/rsvp",
+    nameEn: "RSVP",
+    feature: "show-rsvp" as const,
+  },
+  {
+    name: "Únete",
+    href: "/unete",
+    nameEn: "Join",
+    feature: "show-unete" as const,
+  },
+  {
+    name: "Contacto",
+    href: "/contacto",
+    nameEn: "Contact",
+    feature: "show-contacto" as const,
+  },
+];
 
 describe("Layout Component", () => {
   beforeEach(() => {
@@ -43,7 +60,7 @@ describe("Layout Component", () => {
   describe("Basic Rendering", () => {
     it("should render children content", () => {
       render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div data-testid="test-content">Test Content</div>
         </Layout>,
       );
@@ -53,7 +70,7 @@ describe("Layout Component", () => {
 
     it("should render navigation elements", () => {
       render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -68,7 +85,7 @@ describe("Layout Component", () => {
 
     it("should have proper HTML structure", () => {
       const { container } = render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -83,7 +100,7 @@ describe("Layout Component", () => {
   describe("Navigation Links", () => {
     it("should have correct href attributes for navigation links", () => {
       const { container } = render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -101,7 +118,7 @@ describe("Layout Component", () => {
 
     it("should render logo with correct link", () => {
       render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -114,7 +131,7 @@ describe("Layout Component", () => {
   describe("Responsive Design", () => {
     it("should have mobile-friendly classes", () => {
       const { container } = render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -133,7 +150,7 @@ describe("Layout Component", () => {
   describe("Accessibility", () => {
     it("should have proper ARIA roles and labels", () => {
       render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -149,7 +166,7 @@ describe("Layout Component", () => {
 
     it("should have skip link for accessibility", () => {
       render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -165,7 +182,7 @@ describe("Layout Component", () => {
   describe("Betis Branding", () => {
     it("should use Betis green color scheme", () => {
       const { container } = render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -185,7 +202,7 @@ describe("Layout Component", () => {
 
     it("should display proper team branding", () => {
       render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -197,7 +214,7 @@ describe("Layout Component", () => {
   describe("Mobile Navigation", () => {
     it("should have mobile menu button", async () => {
       render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -209,7 +226,7 @@ describe("Layout Component", () => {
 
     it("should handle mobile menu interaction", async () => {
       render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -245,7 +262,7 @@ describe("Layout Component", () => {
       });
 
       render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -271,7 +288,7 @@ describe("Layout Component", () => {
       });
 
       render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -307,7 +324,7 @@ describe("Layout Component", () => {
       });
 
       render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -320,15 +337,17 @@ describe("Layout Component", () => {
   describe("Debug Information", () => {
     it("should handle debug info prop", () => {
       const mockDebugInfo = {
-        flags: {},
+        features: {},
         environment: "test",
         enabledFeatures: [],
         disabledFeatures: [],
-        cacheStatus: { cached: false, expires: "" },
       };
 
       render(
-        <Layout debugInfo={mockDebugInfo}>
+        <Layout
+          debugInfo={mockDebugInfo}
+          navigationItems={defaultNavigationItems}
+        >
           <div>Content</div>
         </Layout>,
       );
@@ -339,7 +358,7 @@ describe("Layout Component", () => {
 
     it("should handle null debug info", () => {
       render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -360,7 +379,7 @@ describe("Layout Component", () => {
       } as any);
 
       render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -390,7 +409,7 @@ describe("Layout Component", () => {
       });
 
       render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -404,7 +423,7 @@ describe("Layout Component", () => {
   describe("Design System v2 Elements", () => {
     it("should have top ribbon with location", () => {
       render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -415,7 +434,7 @@ describe("Layout Component", () => {
 
     it("should have footer with cultural styling", () => {
       const { container } = render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
@@ -428,7 +447,7 @@ describe("Layout Component", () => {
 
     it("should use new typography classes", () => {
       const { container } = render(
-        <Layout debugInfo={null}>
+        <Layout debugInfo={null} navigationItems={defaultNavigationItems}>
           <div>Content</div>
         </Layout>,
       );
