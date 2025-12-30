@@ -140,7 +140,6 @@ The `rumorSyncService` processes items with `needs_reassessment=true` before fet
 **Admin UI:**
 
 - Located in `/admin` panel under "Soylenti" tab
-- Predefined context options: "Wrong player", "Wrong team", "Not a transfer", "Duplicate", "Outdated"
 - Custom context input for specific corrections
 - Real-time feedback on reassessment results
 
