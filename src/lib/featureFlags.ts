@@ -8,10 +8,8 @@
 // Feature flag names
 export type FeatureName =
   | "show-clasificacion"
-  | "show-galeria"
   | "show-partidos"
   | "show-nosotros"
-  | "show-redes-sociales"
   | "show-clerk-auth"
   | "show-debug-info"
   | "show-rsvp"
@@ -31,10 +29,8 @@ export interface NavigationItem {
 // Minimal initial release: only essential informational pages
 const DEFAULT_FEATURES: Record<FeatureName, boolean> = {
   "show-clasificacion": false, // Phase 2: requires external API
-  "show-galeria": false,
   "show-partidos": false, // Phase 2: requires match sync
   "show-nosotros": true, // Core: About page
-  "show-redes-sociales": false,
   "show-clerk-auth": false, // Phase 2: user accounts
   "show-debug-info": false,
   "show-rsvp": false, // Phase 2: RSVP functionality
@@ -46,10 +42,8 @@ const DEFAULT_FEATURES: Record<FeatureName, boolean> = {
 // Environment variable mapping
 const ENV_VAR_MAP: Record<FeatureName, string> = {
   "show-clasificacion": "NEXT_PUBLIC_FEATURE_CLASIFICACION",
-  "show-galeria": "NEXT_PUBLIC_FEATURE_GALERIA",
   "show-partidos": "NEXT_PUBLIC_FEATURE_PARTIDOS",
   "show-nosotros": "NEXT_PUBLIC_FEATURE_NOSOTROS",
-  "show-redes-sociales": "NEXT_PUBLIC_FEATURE_REDES_SOCIALES",
   "show-clerk-auth": "NEXT_PUBLIC_FEATURE_CLERK_AUTH",
   "show-debug-info": "NEXT_PUBLIC_FEATURE_DEBUG_INFO",
   "show-rsvp": "NEXT_PUBLIC_FEATURE_RSVP",
@@ -142,22 +136,10 @@ export function getEnabledNavigationItems(): NavigationItem[] {
       feature: "show-clasificacion",
     },
     {
-      name: "Galería",
-      href: "/galeria",
-      nameEn: "Gallery",
-      feature: "show-galeria",
-    },
-    {
       name: "Nosotros",
       href: "/nosotros",
       nameEn: "About",
       feature: "show-nosotros",
-    },
-    {
-      name: "Redes Sociales",
-      href: "/redes-sociales",
-      nameEn: "Social Media",
-      feature: "show-redes-sociales",
     },
     {
       name: "Soylenti",

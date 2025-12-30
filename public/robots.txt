@@ -6,7 +6,6 @@ Allow: /nosotros
 Allow: /unete
 Allow: /contacto
 Allow: /rsvp
-Allow: /galeria
 Allow: /partidos
 Allow: /clasificacion
 

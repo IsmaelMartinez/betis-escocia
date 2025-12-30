@@ -32,8 +32,6 @@ These features are disabled by default and require `NEXT_PUBLIC_FEATURE_*=true` 
 - `show-contacto` - Contact form (`NEXT_PUBLIC_FEATURE_CONTACTO=true`)
 - `show-clasificacion` - League standings (`NEXT_PUBLIC_FEATURE_CLASIFICACION=true`)
 - `show-partidos` - Match information (`NEXT_PUBLIC_FEATURE_PARTIDOS=true`)
-- `show-galeria` - Photo gallery (`NEXT_PUBLIC_FEATURE_GALERIA=true`)
-- `show-redes-sociales` - Social networks page (`NEXT_PUBLIC_FEATURE_REDES_SOCIALES=true`)
 - `show-clerk-auth` - Authentication UI (`NEXT_PUBLIC_FEATURE_CLERK_AUTH=true`)
 - `show-debug-info` - Debug info panel (`NEXT_PUBLIC_FEATURE_DEBUG_INFO=true`)
 
@@ -58,8 +56,6 @@ NEXT_PUBLIC_FEATURE_CONTACTO=true
 NEXT_PUBLIC_FEATURE_CLASIFICACION=true
 NEXT_PUBLIC_FEATURE_PARTIDOS=true
 NEXT_PUBLIC_FEATURE_CLERK_AUTH=true
-NEXT_PUBLIC_FEATURE_GALERIA=true
-NEXT_PUBLIC_FEATURE_REDES_SOCIALES=true
 # Note: Don't enable debug info in production
 ```
 
@@ -72,8 +68,6 @@ NEXT_PUBLIC_FEATURE_CONTACTO=true
 NEXT_PUBLIC_FEATURE_CLASIFICACION=true
 NEXT_PUBLIC_FEATURE_PARTIDOS=true
 NEXT_PUBLIC_FEATURE_CLERK_AUTH=true
-NEXT_PUBLIC_FEATURE_GALERIA=true
-NEXT_PUBLIC_FEATURE_REDES_SOCIALES=true
 NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
 ```
 
@@ -83,8 +77,8 @@ NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
 import { hasFeature } from "@/lib/featureFlags";
 
 // Synchronous feature check
-const isGalleryEnabled = hasFeature("show-galeria");
-if (!isGalleryEnabled) return null;
+const isRsvpEnabled = hasFeature("show-rsvp");
+if (!isRsvpEnabled) return null;
 
 // Navigation filtering
 const enabledItems = getEnabledNavigationItems();
