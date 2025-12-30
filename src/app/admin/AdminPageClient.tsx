@@ -7,12 +7,28 @@ import {
   RSVP,
   ContactSubmission,
   Match,
+  BetisNews,
   createMatch,
   updateMatch,
   deleteMatch,
   getMatches,
   updateContactSubmissionStatus,
 } from "@/lib/supabase";
+
+// Extended type to include player data from joined query
+interface NewsPlayer {
+  player_id: number;
+  role: string;
+  players: {
+    id: number;
+    name: string;
+    normalized_name: string;
+  } | null;
+}
+
+interface BetisNewsWithPlayers extends BetisNews {
+  news_players?: NewsPlayer[];
+}
 import {
   Users,
   Mail,
@@ -22,6 +38,7 @@ import {
   Calendar,
   Plus,
   RotateCcw,
+  Newspaper,
 } from "lucide-react";
 import Card, { CardHeader, CardBody } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
@@ -59,6 +76,12 @@ const ContactSubmissionsList = dynamicImport(
     loading: () => <LoadingSpinner />,
   },
 );
+const SoylentiNewsList = dynamicImport(
+  () => import("@/components/admin/SoylentiNewsList"),
+  {
+    loading: () => <LoadingSpinner />,
+  },
+);
 
 interface AdminStats {
   totalRSVPs: number;
@@ -69,7 +92,12 @@ interface AdminStats {
   recentContacts: ContactSubmission[];
 }
 
-type AdminView = "dashboard" | "matches" | "match-form" | "contacts";
+type AdminView =
+  | "dashboard"
+  | "matches"
+  | "match-form"
+  | "contacts"
+  | "soylenti";
 
 interface MatchFormData {
   mode: "create" | "edit";
@@ -78,9 +106,10 @@ interface MatchFormData {
 
 interface AdminPageClientProps {
   readonly showPartidos: boolean;
+  readonly showSoylenti: boolean;
 }
 
-function AdminPageClient({ showPartidos }: AdminPageClientProps) {
+function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
   const { isLoaded, isSignedIn, getToken } = useAuth();
   const { user } = useUser();
   const router = useRouter();
@@ -101,6 +130,8 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
   const [allContactSubmissions, setAllContactSubmissions] = useState<
     ContactSubmission[]
   >([]);
+  const [betisNews, setBetisNews] = useState<BetisNewsWithPlayers[]>([]);
+  const [soylentiError, setSoylentiError] = useState<string | null>(null);
 
   const handleUpdateContactStatus = async (
     id: number,
@@ -147,6 +178,74 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
         ? prev.filter((s) => s !== status)
         : [...prev, status],
     );
+  };
+
+  // Fetch Soylenti news for admin panel (with player data)
+  const fetchSoylentiNews = useCallback(async () => {
+    try {
+      setSoylentiError(null);
+      const { data, error: fetchError } = await supabase
+        .from("betis_news")
+        .select(
+          `
+          *,
+          news_players (
+            player_id,
+            role,
+            players (
+              id,
+              name,
+              normalized_name
+            )
+          )
+        `,
+        )
+        .order("pub_date", { ascending: false })
+        .limit(100);
+
+      if (fetchError) throw fetchError;
+      setBetisNews((data as BetisNewsWithPlayers[]) || []);
+    } catch (err) {
+      log.error("Failed to fetch Soylenti news in admin panel", err, {
+        userId: user?.id,
+      });
+      setSoylentiError("Error al cargar las noticias de Soylenti");
+    }
+  }, [user?.id]);
+
+  // Handle news reassessment
+  const handleReassessNews = async (
+    newsId: number,
+    adminContext: string,
+  ): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const response = await fetch("/api/admin/soylenti/reassess", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ newsId, adminContext }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Refresh the news list after successful reassessment
+        await fetchSoylentiNews();
+        return { success: true };
+      } else {
+        return {
+          success: false,
+          error: result.error || "Error al re-analizar",
+        };
+      }
+    } catch (err) {
+      log.error("Failed to reassess news in admin panel", err, {
+        newsId,
+        userId: user?.id,
+      });
+      return { success: false, error: "Error al re-analizar la noticia" };
+    }
   };
 
   // Redirect to sign-in if not authenticated
@@ -420,6 +519,13 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
     }
   }, [syncMessage]);
 
+  // Fetch Soylenti news when switching to soylenti view
+  useEffect(() => {
+    if (currentView === "soylenti" && isSignedIn) {
+      fetchSoylentiNews();
+    }
+  }, [currentView, isSignedIn, fetchSoylentiNews]);
+
   // Show loading while Clerk is loading
   if (!isLoaded) {
     return (
@@ -469,6 +575,9 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
                   (matchFormData.mode === "create"
                     ? "Crear nuevo partido"
                     : "Editar partido")}
+                {currentView === "contacts" && "Gestión de contactos"}
+                {currentView === "soylenti" &&
+                  "Gestión de noticias y rumores de Soylenti"}
               </p>
               {user && (
                 <p className="text-sm text-betis-green mt-1">
@@ -552,6 +661,21 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
                 <Mail className="h-4 w-4 inline mr-2" />
                 Contactos
               </button>
+
+              {showSoylenti && (
+                <button
+                  onClick={() => setCurrentView("soylenti")}
+                  className={clsx(
+                    "py-2 px-1 border-b-2 font-medium text-sm",
+                    currentView === "soylenti"
+                      ? "border-betis-green text-betis-green"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
+                  )}
+                >
+                  <Newspaper className="h-4 w-4 inline mr-2" />
+                  Soylenti
+                </button>
+              )}
             </nav>
           </div>
         </div>
@@ -868,6 +992,24 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
               onUpdateStatus={handleUpdateContactStatus}
               isLoading={loading}
               error={error}
+            />
+          </>
+        )}
+
+        {/* Soylenti News Management View */}
+        {currentView === "soylenti" && showSoylenti && (
+          <>
+            <div className="mb-6">
+              <p className="text-sm text-gray-600">
+                Re-analiza noticias con IA proporcionando contexto adicional
+                (jugador incorrecto, equipo incorrecto, etc.)
+              </p>
+            </div>
+            <SoylentiNewsList
+              news={betisNews}
+              onReassess={handleReassessNews}
+              isLoading={loading}
+              error={soylentiError}
             />
           </>
         )}
