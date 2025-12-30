@@ -395,7 +395,9 @@ describe("rumorSyncService - Integration Tests", () => {
       // First call is for reassessment (select *), second is for deduplication
       expect(mockSupabaseSelect).toHaveBeenCalledTimes(2);
       expect(mockSupabaseSelect).toHaveBeenCalledWith("*"); // Reassessment query
-      expect(mockSupabaseSelect).toHaveBeenCalledWith("id, title, description, content_hash"); // Deduplication query
+      expect(mockSupabaseSelect).toHaveBeenCalledWith(
+        "id, title, description, content_hash",
+      ); // Deduplication query
     });
 
     it("should use service role key for database operations", async () => {

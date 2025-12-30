@@ -91,7 +91,10 @@ export async function syncRumors(): Promise<SyncResult> {
             item.description || "",
             item.source,
             articleContent,
-            { adminContext: item.admin_context || undefined, isReassessment: true },
+            {
+              adminContext: item.admin_context || undefined,
+              isReassessment: true,
+            },
           );
 
           // Update the news item
@@ -107,9 +110,13 @@ export async function syncRumors(): Promise<SyncResult> {
             .eq("id", item.id);
 
           if (updateError) {
-            log.error("Failed to update reassessed item", new Error(updateError.message), {
-              newsId: item.id,
-            });
+            log.error(
+              "Failed to update reassessed item",
+              new Error(updateError.message),
+              {
+                newsId: item.id,
+              },
+            );
             result.errors++;
           } else {
             result.reassessed++;
@@ -118,7 +125,8 @@ export async function syncRumors(): Promise<SyncResult> {
             if (
               analysis.players &&
               analysis.players.length > 0 &&
-              (analysis.confidence === "high" || analysis.confidence === "medium")
+              (analysis.confidence === "high" ||
+                analysis.confidence === "medium")
             ) {
               const playerResult = await processExtractedPlayers(
                 item.id,

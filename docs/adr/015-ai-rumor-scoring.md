@@ -7,6 +7,7 @@ Accepted (Updated December 29, 2025 - Phase 2B Complete, Admin Reassessment Adde
 ## Decision
 
 **Google Gemini 3.0 Flash** for automated analysis and probability scoring of Real Betis transfer rumors ("Fran Mode"). The AI evaluates news items and extracts structured data:
+
 1. Determine if it's a transfer rumor
 2. Assign a credibility probability (0-100%)
 3. Classify transfer direction (in/out)
@@ -49,20 +50,21 @@ interface RumorAnalysis {
   reasoning: string;
   confidence: "low" | "medium" | "high";
   transferDirection: "in" | "out" | "unknown" | null;
-  players: ExtractedPlayer[];  // Phase 2A
+  players: ExtractedPlayer[]; // Phase 2A
 }
 
 export async function analyzeRumorCredibility(
   title: string,
   description: string,
   source: string,
-  articleContent?: string | null,  // Full article for better analysis
+  articleContent?: string | null, // Full article for better analysis
 ): Promise<RumorAnalysis>;
 ```
 
 ### Player Normalization (`src/services/playerNormalizationService.ts`)
 
 Phase 2A introduces player tracking with deduplication:
+
 - Names normalized (lowercase, no diacritics, trimmed)
 - `players` table stores unique players with rumor counts
 - `news_players` junction links news to players with roles
@@ -79,18 +81,21 @@ Phase 2A introduces player tracking with deduplication:
 ### Database Schema
 
 **betis_news table:**
+
 - `ai_probability`: Numeric (0-100), nullable for unanalyzed items
 - `ai_analysis`: AI reasoning in Spanish
 - `ai_analyzed_at`: Timestamp of analysis
 - `transfer_direction`: "in", "out", "unknown", or null
 
 **players table (Phase 2A):**
+
 - `name`: Original player name
 - `normalized_name`: Deduplicated key (unique index)
 - `rumor_count`: Number of mentions
 - `first_seen_at`, `last_seen_at`: Tracking timeline
 
 **news_players junction (Phase 2A):**
+
 - `news_id`: FK to betis_news
 - `player_id`: FK to players
 - `role`: "target", "departing", or "mentioned"
@@ -106,12 +111,14 @@ Phase 2A introduces player tracking with deduplication:
 Admins can request AI re-analysis of news items with additional context to improve classification accuracy:
 
 **Use Cases:**
+
 - Wrong player extracted (e.g., coach instead of player)
 - Wrong team attribution
 - Item incorrectly classified as transfer rumor
 - Missing context that affects credibility
 
 **Architecture:**
+
 ```
 Admin Panel → API (POST /api/admin/soylenti/reassess)
                             ↓
@@ -121,6 +128,7 @@ Admin Panel → API (POST /api/admin/soylenti/reassess)
 ```
 
 **Database Fields (betis_news):**
+
 - `admin_context`: Admin-provided feedback for AI ("wrong player", "not a transfer", etc.)
 - `needs_reassessment`: Boolean flag for items queued for re-analysis
 - `reassessed_at`: Timestamp of last reassessment
@@ -130,6 +138,7 @@ Admin Panel → API (POST /api/admin/soylenti/reassess)
 The `rumorSyncService` processes items with `needs_reassessment=true` before fetching new RSS items, ensuring admin corrections are applied promptly.
 
 **Admin UI:**
+
 - Located in `/admin` panel under "Soylenti" tab
 - Predefined context options: "Wrong player", "Wrong team", "Not a transfer", "Duplicate", "Outdated"
 - Custom context input for specific corrections

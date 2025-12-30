@@ -149,10 +149,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
       )}
 
       {news.length === 0 ? (
-        <MessageComponent
-          type="info"
-          message="No hay noticias para mostrar."
-        />
+        <MessageComponent type="info" message="No hay noticias para mostrar." />
       ) : (
         <div className="space-y-4">
           {news.map((item) => {
