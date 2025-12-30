@@ -7,5 +7,7 @@ export default function AdminPage() {
   const showPartidos = hasFeature("show-partidos");
   const showSoylenti = hasFeature("show-soylenti");
 
-  return <AdminPageClient showPartidos={showPartidos} showSoylenti={showSoylenti} />;
+  return (
+    <AdminPageClient showPartidos={showPartidos} showSoylenti={showSoylenti} />
+  );
 }

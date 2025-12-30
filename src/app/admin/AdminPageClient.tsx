@@ -77,7 +77,12 @@ interface AdminStats {
   recentContacts: ContactSubmission[];
 }
 
-type AdminView = "dashboard" | "matches" | "match-form" | "contacts" | "soylenti";
+type AdminView =
+  | "dashboard"
+  | "matches"
+  | "match-form"
+  | "contacts"
+  | "soylenti";
 
 interface MatchFormData {
   mode: "create" | "edit";
@@ -201,7 +206,10 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
         await fetchSoylentiNews();
         return { success: true };
       } else {
-        return { success: false, error: result.error || "Error al re-analizar" };
+        return {
+          success: false,
+          error: result.error || "Error al re-analizar",
+        };
       }
     } catch (err) {
       log.error("Failed to reassess news in admin panel", err, {
