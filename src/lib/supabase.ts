@@ -877,6 +877,7 @@ export interface Player {
   id: number;
   name: string;
   normalized_name: string;
+  aliases: string[]; // Array of alternative normalized names (nicknames, full names)
   known_club?: string | null;
   known_position?: string | null;
   first_seen_at: string;
@@ -894,6 +895,7 @@ export interface PlayerInsert {
 
 export interface PlayerUpdate {
   name?: string;
+  aliases?: string[];
   known_club?: string | null;
   known_position?: string | null;
   last_seen_at?: string;

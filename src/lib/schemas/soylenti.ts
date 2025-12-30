@@ -39,6 +39,13 @@ export const REASSESSMENT_CONTEXT_OPTIONS = [
   { value: "custom", label: "Otro (especificar)" },
 ] as const;
 
+// Player merge schema for deduplication
+export const playerMergeSchema = z.object({
+  primaryId: z.number().int().positive("ID de jugador primario inválido"),
+  duplicateId: z.number().int().positive("ID de jugador duplicado inválido"),
+});
+
 export type RumorItem = z.infer<typeof rumorItemSchema>;
 export type RumorsResponse = z.infer<typeof rumorsResponseSchema>;
 export type ReassessmentInput = z.infer<typeof reassessmentSchema>;
+export type PlayerMergeInput = z.infer<typeof playerMergeSchema>;
