@@ -70,6 +70,7 @@ export async function fetchMoreRumors(
     `,
     )
     .eq("is_duplicate", false)
+    .eq("is_hidden", false)
     .lt("pub_date", cursor)
     .order("pub_date", { ascending: false })
     .limit(limit + 1);
@@ -139,6 +140,7 @@ export async function fetchRumorsByPlayer(
     )
     .in("id", newsIds)
     .eq("is_duplicate", false)
+    .eq("is_hidden", false)
     .order("pub_date", { ascending: false });
 
   if (error) {
