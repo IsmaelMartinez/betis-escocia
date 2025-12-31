@@ -132,6 +132,7 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
   >([]);
   const [betisNews, setBetisNews] = useState<BetisNewsWithPlayers[]>([]);
   const [soylentiError, setSoylentiError] = useState<string | null>(null);
+  const [showHiddenNews, setShowHiddenNews] = useState(true);
 
   const handleUpdateContactStatus = async (
     id: number,
@@ -245,6 +246,43 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
         userId: user?.id,
       });
       return { success: false, error: "Error al re-analizar la noticia" };
+    }
+  };
+
+  // Handle news hide/unhide
+  const handleHideNews = async (
+    newsId: number,
+    hide: boolean,
+    reason?: string,
+  ): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const response = await fetch("/api/admin/soylenti/hide", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ newsId, hide, reason }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Refresh the news list after successful hide/unhide
+        await fetchSoylentiNews();
+        return { success: true };
+      } else {
+        return {
+          success: false,
+          error: result.error || "Error al cambiar visibilidad",
+        };
+      }
+    } catch (err) {
+      log.error("Failed to hide/unhide news in admin panel", err, {
+        newsId,
+        hide,
+        userId: user?.id,
+      });
+      return { success: false, error: "Error al cambiar visibilidad" };
     }
   };
 
@@ -999,17 +1037,31 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
         {/* Soylenti News Management View */}
         {currentView === "soylenti" && showSoylenti && (
           <>
-            <div className="mb-6">
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <p className="text-sm text-gray-600">
                 Re-analiza noticias con IA proporcionando contexto adicional
                 (jugador incorrecto, equipo incorrecto, etc.)
               </p>
+              <label className="inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={showHiddenNews}
+                  onChange={(e) => setShowHiddenNews(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-betis-verde/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-betis-verde"></div>
+                <span className="ms-3 text-sm font-medium text-gray-700">
+                  Mostrar ocultos
+                </span>
+              </label>
             </div>
             <SoylentiNewsList
               news={betisNews}
               onReassess={handleReassessNews}
+              onHide={handleHideNews}
               isLoading={loading}
               error={soylentiError}
+              showHidden={showHiddenNews}
             />
           </>
         )}

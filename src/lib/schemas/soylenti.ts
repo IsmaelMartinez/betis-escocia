@@ -45,7 +45,28 @@ export const playerMergeSchema = z.object({
   duplicateId: z.number().int().positive("ID de jugador duplicado inválido"),
 });
 
+// Hide news schema for admin
+export const hideNewsSchema = z.object({
+  newsId: z.number().int().positive("ID de noticia inválido"),
+  hide: z.boolean(), // true to hide, false to unhide
+  reason: z
+    .string()
+    .max(500, "La razón no puede exceder 500 caracteres")
+    .trim()
+    .optional(),
+});
+
+// Predefined hide reasons for admin UI
+export const HIDE_REASON_OPTIONS = [
+  { value: "not_betis", label: "No es sobre el Betis" },
+  { value: "duplicate", label: "Es un duplicado" },
+  { value: "spam", label: "Spam o contenido irrelevante" },
+  { value: "outdated", label: "Información muy antigua" },
+  { value: "custom", label: "Otro (especificar)" },
+] as const;
+
 export type RumorItem = z.infer<typeof rumorItemSchema>;
 export type RumorsResponse = z.infer<typeof rumorsResponseSchema>;
 export type ReassessmentInput = z.infer<typeof reassessmentSchema>;
 export type PlayerMergeInput = z.infer<typeof playerMergeSchema>;
+export type HideNewsInput = z.infer<typeof hideNewsSchema>;

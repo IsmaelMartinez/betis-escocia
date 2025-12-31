@@ -1,5 +1,5 @@
 import axios from "axios";
-import { JSDOM } from "jsdom";
+import * as cheerio from "cheerio";
 import { log } from "@/lib/logger";
 
 const FETCH_TIMEOUT_MS = 10000;
@@ -25,14 +25,12 @@ export async function fetchArticleContent(url: string): Promise<string | null> {
       return null;
     }
 
-    const dom = new JSDOM(html);
-    const document = dom.window.document;
+    const $ = cheerio.load(html);
 
     // Remove script, style, nav, header, footer, aside elements
-    const elementsToRemove = document.querySelectorAll(
+    $(
       "script, style, nav, header, footer, aside, .sidebar, .comments, .advertisement, .social-share",
-    );
-    elementsToRemove.forEach((el: Element) => el.remove());
+    ).remove();
 
     // Try to find article content in common containers
     const articleSelectors = [
@@ -47,16 +45,16 @@ export async function fetchArticleContent(url: string): Promise<string | null> {
 
     let content = "";
     for (const selector of articleSelectors) {
-      const element = document.querySelector(selector);
-      if (element) {
-        content = element.textContent || "";
+      const element = $(selector).first();
+      if (element.length > 0) {
+        content = element.text();
         break;
       }
     }
 
     // Fallback to body if no article container found
     if (!content) {
-      content = document.body?.textContent || "";
+      content = $("body").text();
     }
 
     // Clean up the text

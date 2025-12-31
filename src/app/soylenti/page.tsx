@@ -34,12 +34,14 @@ async function fetchRumors() {
       `,
       )
       .eq("is_duplicate", false)
+      .eq("is_hidden", false)
       .order("pub_date", { ascending: false })
       .limit(INITIAL_LIMIT + 1),
     supabase
       .from("betis_news")
       .select("*", { count: "exact", head: true })
-      .eq("is_duplicate", false),
+      .eq("is_duplicate", false)
+      .eq("is_hidden", false),
   ]);
 
   if (rumorsResult.error || countResult.error) {
