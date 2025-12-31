@@ -62,7 +62,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
   onHide,
   isLoading,
   error,
-  showHidden = true,
+  showHidden = false,
 }) => {
   const [reassessmentState, setReassessmentState] = useState<ReassessmentState>(
     {
@@ -201,7 +201,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
       ) : (
         <div className="space-y-4">
           {news
-            .filter((item) => showHidden || !item.is_hidden)
+            .filter((item) => (showHidden ? item.is_hidden : !item.is_hidden))
             .map((item) => {
               const isExpanded = expandedItems.has(item.id);
               const isReassessing = reassessmentState.newsId === item.id;

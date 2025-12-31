@@ -132,7 +132,7 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
   >([]);
   const [betisNews, setBetisNews] = useState<BetisNewsWithPlayers[]>([]);
   const [soylentiError, setSoylentiError] = useState<string | null>(null);
-  const [showHiddenNews, setShowHiddenNews] = useState(true);
+  const [showHiddenNews, setShowHiddenNews] = useState(false);
 
   const handleUpdateContactStatus = async (
     id: number,
