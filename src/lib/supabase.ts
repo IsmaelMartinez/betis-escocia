@@ -864,6 +864,8 @@ export interface BetisNewsInsert {
   // AI relevance fields
   is_relevant_to_betis?: boolean;
   irrelevance_reason?: string | null;
+  // Hidden news field (auto-set for irrelevant news)
+  is_hidden?: boolean;
 }
 
 export interface BetisNewsUpdate {

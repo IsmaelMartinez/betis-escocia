@@ -254,9 +254,10 @@ export async function syncRumors(): Promise<SyncResult> {
           ai_analysis: analysis.reasoning,
           ai_analyzed_at: new Date().toISOString(),
           is_duplicate: false,
-          // Relevance fields
+          // Relevance fields - auto-hide irrelevant news
           is_relevant_to_betis: isRelevant,
           irrelevance_reason: analysis.irrelevanceReason || null,
+          is_hidden: !isRelevant,
         };
 
         const { data: insertedNews, error } = await supabase
