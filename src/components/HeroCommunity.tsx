@@ -214,7 +214,7 @@ function HeroCommunity({ showPartidos, showRsvp }: HeroCommunityProps) {
                           id: undefined,
                           title: "Real Betis - Próximo Partido",
                           date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-                          location: "Polwarth Tavern, Edinburgh",
+                          location: "Edinburgh",
                           description:
                             "Únete a la peña para el próximo partido del Betis",
                         }}
@@ -256,7 +256,7 @@ function HeroCommunity({ showPartidos, showRsvp }: HeroCommunityProps) {
 
             <div className="relative max-w-4xl mx-auto">
               <h3 className="font-display text-2xl md:text-3xl font-black mb-4 uppercase tracking-wide">
-                📍 Polwarth Tavern
+                🍻 Nos Vemos en el Pub
               </h3>
               <p className="font-accent text-betis-oro text-xl md:text-2xl mb-4 italic">
                 Nuestro hogar en Edimburgo
@@ -268,7 +268,7 @@ function HeroCommunity({ showPartidos, showRsvp }: HeroCommunityProps) {
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full backdrop-blur-sm">
                 <MapPin className="h-4 w-4 text-betis-oro" />
                 <span className="font-body text-sm text-white font-medium">
-                  35 Polwarth Crescent, Edinburgh EH11 1HR
+                  Edinburgh, Escocia
                 </span>
               </div>
             </div>

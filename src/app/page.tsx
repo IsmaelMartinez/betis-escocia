@@ -117,7 +117,7 @@ export default function Home() {
           </h2>
 
           <p className="font-accent text-2xl sm:text-3xl lg:text-4xl mb-6 text-oro-bright text-shadow-lg italic">
-            ¡Únete a nosotros en The Polwarth Tavern!
+            ¡Ven a ver los partidos con nosotros!
           </p>
 
           <p className="font-body text-lg sm:text-xl lg:text-2xl mb-12 max-w-3xl mx-auto text-white/95 leading-relaxed text-shadow-lg">
@@ -155,9 +155,7 @@ export default function Home() {
                 📍 Ubicación
               </h3>
               <p className="font-body text-base text-white/90 leading-relaxed">
-                The Polwarth Tavern
-                <br />
-                35 Polwarth Crescent
+                Polwarth Tavern
                 <br />
                 Edinburgh EH11 1HR
               </p>
