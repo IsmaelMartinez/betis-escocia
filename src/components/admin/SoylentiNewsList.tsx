@@ -289,7 +289,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
                         )}
                         title={item.is_hidden ? "Mostrar noticia" : "Ocultar noticia"}
                       >
-                        {item.is_hidden ? <Eye size={18} /> : <EyeOff size={18} />}
+                        {item.is_hidden ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                       <a
                         href={item.link}
