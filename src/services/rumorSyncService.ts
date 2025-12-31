@@ -16,6 +16,7 @@ export interface SyncResult {
   transferRumors: number; // Items identified as transfer rumors (ai_probability > 0)
   regularNews: number; // Regular news items (ai_probability = 0)
   notAnalyzed: number; // Items that couldn't be analyzed (ai_probability = null)
+  autoHidden: number; // Items auto-hidden because not relevant to Betis
   analyzed: number;
   inserted: number;
   playersProcessed: number; // Phase 2A: Players extracted and linked
@@ -31,6 +32,7 @@ export async function syncRumors(): Promise<SyncResult> {
     transferRumors: 0,
     regularNews: 0,
     notAnalyzed: 0,
+    autoHidden: 0,
     analyzed: 0,
     inserted: 0,
     playersProcessed: 0,
@@ -229,6 +231,16 @@ export async function syncRumors(): Promise<SyncResult> {
           });
         }
 
+        // Check relevance to Betis - auto-hide if not relevant
+        const isRelevant = analysis.isRelevantToBetis;
+        if (!isRelevant) {
+          result.autoHidden++;
+          log.business("news_auto_hidden", {
+            title: rumor.title,
+            reason: analysis.irrelevanceReason,
+          });
+        }
+
         // Insert into database (all items: transfer rumors AND regular news)
         // Note: transfer_direction is no longer set by AI - can be inferred from squad
         const newsInsert: BetisNewsInsert = {
@@ -242,6 +254,9 @@ export async function syncRumors(): Promise<SyncResult> {
           ai_analysis: analysis.reasoning,
           ai_analyzed_at: new Date().toISOString(),
           is_duplicate: false,
+          // Relevance fields
+          is_relevant_to_betis: isRelevant,
+          irrelevance_reason: analysis.irrelevanceReason || null,
         };
 
         const { data: insertedNews, error } = await supabase
@@ -268,7 +283,9 @@ export async function syncRumors(): Promise<SyncResult> {
           result.inserted++;
 
           // Phase 2A: Process extracted players (medium or high confidence)
+          // Skip player extraction for irrelevant news
           const shouldProcessPlayers =
+            isRelevant &&
             analysis.players &&
             analysis.players.length > 0 &&
             (analysis.confidence === "high" ||

@@ -12,6 +12,9 @@ export interface RumorAnalysis {
   reasoning: string;
   confidence: "low" | "medium" | "high";
   players: ExtractedPlayer[]; // Extracted player names mentioned in the article
+  // Relevance check - is this news actually about Real Betis?
+  isRelevantToBetis: boolean; // true if the news is specifically about Betis
+  irrelevanceReason?: string; // reason why it's not relevant (only if isRelevantToBetis=false)
 }
 
 export interface ReassessmentOptions {
@@ -53,7 +56,12 @@ ${contentSection}
 Fuente: ${source}
 
 INSTRUCCIONES:
-1. Determina si es un RUMOR DE FICHAJE (transferencia de jugador). NO es fichaje: partidos, lesiones, declaraciones, premios, inocentadas/bromas del 28 de diciembre.
+0. PRIMERO: Determina si esta noticia es ESPECÍFICAMENTE sobre el Real Betis Balompié.
+   - isRelevantToBetis = true: La noticia trata directamente sobre el Betis, sus jugadores, fichajes, o el club
+   - isRelevantToBetis = false: La noticia es sobre otros equipos (incluso de La Liga), fútbol general, o solo menciona al Betis de pasada
+   - Si NO es relevante, incluye irrelevanceReason con una explicación breve (ej: "Noticia sobre el Sevilla FC", "Noticia de fútbol general")
+
+1. Si es relevante: Determina si es un RUMOR DE FICHAJE (transferencia de jugador). NO es fichaje: partidos, lesiones, declaraciones, premios, inocentadas/bromas del 28 de diciembre.
 2. Si es fichaje: evalúa credibilidad 0-100 basándote en la fuente y el lenguaje usado.
 
 3. EXTRACCIÓN DE JUGADORES (MUY IMPORTANTE - sigue estas reglas estrictamente):
@@ -73,7 +81,7 @@ EJEMPLOS de extracción correcta:
 - "Pellegrini habló sobre el mercado" → [] (entrenador, no jugador)
 ${adminContextSection}
 JSON (solo el JSON, sin markdown):
-{"isTransferRumor":<bool>,"probability":<0-100|null>,"reasoning":"<explicación breve>","confidence":"<low|medium|high>","players":[{"name":"<nombre>"}]}`;
+{"isRelevantToBetis":<bool>,"irrelevanceReason":"<razón si no es relevante>","isTransferRumor":<bool>,"probability":<0-100|null>,"reasoning":"<explicación breve>","confidence":"<low|medium|high>","players":[{"name":"<nombre>"}]}`;
 
   // Simple retry with backoff (3 attempts, 1 second delay)
   for (let attempt = 0; attempt < 3; attempt++) {
@@ -93,12 +101,15 @@ JSON (solo el JSON, sin markdown):
         probability: result.probability,
         confidence: result.confidence,
         playerCount: result.players?.length || 0,
+        isRelevantToBetis: result.isRelevantToBetis,
       });
 
-      // Ensure players array exists (fallback for older responses)
+      // Ensure players array and relevance fields exist (fallback for older responses)
       return {
         ...result,
         players: result.players || [],
+        isRelevantToBetis: result.isRelevantToBetis ?? true,
+        irrelevanceReason: result.irrelevanceReason,
       };
     } catch (error) {
       const errorMessage =
@@ -122,6 +133,7 @@ JSON (solo el JSON, sin markdown):
           reasoning: "No se pudo analizar este rumor automáticamente.",
           confidence: "low",
           players: [],
+          isRelevantToBetis: true, // Assume relevant when we can't analyze
         };
       }
 
@@ -137,6 +149,7 @@ JSON (solo el JSON, sin markdown):
           reasoning: "No se pudo analizar este rumor automáticamente.",
           confidence: "low",
           players: [],
+          isRelevantToBetis: true, // Assume relevant when we can't analyze
         };
       }
       // Wait before retry

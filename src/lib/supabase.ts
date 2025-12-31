@@ -833,6 +833,14 @@ export interface BetisNews {
   needs_reassessment?: boolean;
   reassessed_at?: string | null;
   reassessed_by?: string | null;
+  // Hidden news fields
+  is_hidden?: boolean;
+  hidden_at?: string | null;
+  hidden_by?: string | null;
+  hidden_reason?: string | null;
+  // AI relevance fields
+  is_relevant_to_betis?: boolean;
+  irrelevance_reason?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -853,6 +861,9 @@ export interface BetisNewsInsert {
   // Phase 2: Transfer direction tracking
   transfer_direction?: "in" | "out" | "unknown" | null;
   transfer_status?: "rumor" | "confirmed" | "denied" | null;
+  // AI relevance fields
+  is_relevant_to_betis?: boolean;
+  irrelevance_reason?: string | null;
 }
 
 export interface BetisNewsUpdate {
@@ -870,6 +881,14 @@ export interface BetisNewsUpdate {
   needs_reassessment?: boolean;
   reassessed_at?: string | null;
   reassessed_by?: string | null;
+  // Hidden news fields
+  is_hidden?: boolean;
+  hidden_at?: string | null;
+  hidden_by?: string | null;
+  hidden_reason?: string | null;
+  // AI relevance fields
+  is_relevant_to_betis?: boolean;
+  irrelevance_reason?: string | null;
 }
 
 // Phase 2A: Player tracking types

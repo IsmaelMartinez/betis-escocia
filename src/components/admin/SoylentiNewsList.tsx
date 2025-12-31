@@ -14,6 +14,8 @@ import {
   ChevronDown,
   ChevronUp,
   User,
+  EyeOff,
+  Eye,
 } from "lucide-react";
 import clsx from "clsx";
 
@@ -38,8 +40,14 @@ interface SoylentiNewsListProps {
     newsId: number,
     adminContext: string,
   ) => Promise<{ success: boolean; error?: string }>;
+  onHide: (
+    newsId: number,
+    hide: boolean,
+    reason?: string,
+  ) => Promise<{ success: boolean; error?: string }>;
   isLoading: boolean;
   error: string | null;
+  showHidden?: boolean;
 }
 
 interface ReassessmentState {
@@ -51,8 +59,10 @@ interface ReassessmentState {
 const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
   news,
   onReassess,
+  onHide,
   isLoading,
   error,
+  showHidden = true,
 }) => {
   const [reassessmentState, setReassessmentState] = useState<ReassessmentState>(
     {
@@ -64,6 +74,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
   const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [hidingNewsId, setHidingNewsId] = useState<number | null>(null);
 
   // Auto-clear success/error messages after 5 seconds
   useEffect(() => {
@@ -127,6 +138,25 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
     }
   };
 
+  const handleHideToggle = async (newsId: number, currentlyHidden: boolean) => {
+    setHidingNewsId(newsId);
+    setErrorMessage(null);
+
+    const result = await onHide(newsId, !currentlyHidden);
+
+    if (result.success) {
+      setSuccessMessage(
+        currentlyHidden
+          ? "Noticia mostrada correctamente"
+          : "Noticia ocultada correctamente",
+      );
+    } else {
+      setErrorMessage(result.error || "Error al cambiar visibilidad");
+    }
+
+    setHidingNewsId(null);
+  };
+
   const getProbabilityColor = (probability: number | null | undefined) => {
     if (probability === null || probability === undefined) return "bg-gray-200";
     if (probability >= 70) return "bg-betis-verde";
@@ -170,9 +200,12 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
         <MessageComponent type="info" message="No hay noticias para mostrar." />
       ) : (
         <div className="space-y-4">
-          {news.map((item) => {
-            const isExpanded = expandedItems.has(item.id);
-            const isReassessing = reassessmentState.newsId === item.id;
+          {news
+            .filter((item) => showHidden || !item.is_hidden)
+            .map((item) => {
+              const isExpanded = expandedItems.has(item.id);
+              const isReassessing = reassessmentState.newsId === item.id;
+              const isHiding = hidingNewsId === item.id;
 
             return (
               <Card key={item.id} className="hover-lift">
@@ -206,6 +239,14 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
                             Re-analizado
                           </span>
                         )}
+
+                        {/* Hidden indicator */}
+                        {item.is_hidden && (
+                          <span className="inline-flex items-center text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                            <EyeOff size={12} className="mr-1" />
+                            Oculto
+                          </span>
+                        )}
                       </div>
 
                       <h3 className="font-semibold text-betis-black truncate">
@@ -237,6 +278,19 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
 
                     {/* Actions */}
                     <div className="flex items-center gap-2 flex-shrink-0">
+                      <button
+                        onClick={() =>
+                          handleHideToggle(item.id, item.is_hidden || false)
+                        }
+                        disabled={isHiding}
+                        className={clsx(
+                          "text-gray-500 hover:text-betis-verde disabled:opacity-50",
+                          isHiding && "animate-pulse",
+                        )}
+                        title={item.is_hidden ? "Mostrar noticia" : "Ocultar noticia"}
+                      >
+                        {item.is_hidden ? <Eye size={18} /> : <EyeOff size={18} />}
+                      </button>
                       <a
                         href={item.link}
                         target="_blank"

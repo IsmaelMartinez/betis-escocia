@@ -97,15 +97,28 @@ class Logger {
    * Error level logging
    */
   error(message: string, error?: Error | unknown, context?: LogContext, metadata?: Record<string, unknown>): void {
-    const errorInfo = error instanceof Error ? {
-      name: error.name,
-      message: error.message,
-      stack: error.stack,
-      cause: error.cause
-    } : error ? { 
-      name: 'Unknown Error',
-      message: String(error) 
-    } : undefined;
+    let errorInfo: LogEntry['error'] | undefined;
+
+    if (error instanceof Error) {
+      errorInfo = {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+        cause: error.cause
+      };
+    } else if (error && typeof error === 'object') {
+      // Handle Supabase/PostgreSQL errors and other object errors
+      const errorObj = error as Record<string, unknown>;
+      errorInfo = {
+        name: (errorObj.code as string) || 'Unknown Error',
+        message: (errorObj.message as string) || (errorObj.hint as string) || JSON.stringify(error)
+      };
+    } else if (error) {
+      errorInfo = {
+        name: 'Unknown Error',
+        message: String(error)
+      };
+    }
 
     this.log('error', message, context, metadata, errorInfo);
   }
