@@ -68,7 +68,10 @@ export default function SoylentiClient({
           const isTransfer = prob !== null && prob !== undefined && prob > 0;
           return isTransfer || showAllNews;
         })
-        .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()),
+        .sort(
+          (a, b) =>
+            new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime(),
+        ),
     [rumorsToFilter, showAllNews],
   );
 
