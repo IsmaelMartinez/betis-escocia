@@ -18,21 +18,7 @@ import {
   Eye,
 } from "lucide-react";
 import clsx from "clsx";
-
-// Extended type to include player data from the joined query
-interface NewsPlayer {
-  player_id: number;
-  role: string;
-  players: {
-    id: number;
-    name: string;
-    normalized_name: string;
-  } | null;
-}
-
-interface BetisNewsWithPlayers extends BetisNews {
-  news_players?: NewsPlayer[];
-}
+import type { BetisNewsWithPlayers } from "@/types/soylenti";
 
 interface SoylentiNewsListProps {
   news: BetisNewsWithPlayers[];

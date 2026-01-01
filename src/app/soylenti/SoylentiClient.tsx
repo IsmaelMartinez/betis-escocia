@@ -6,22 +6,8 @@ import TrendingPlayers from "@/components/TrendingPlayers";
 import { RefreshCw, Loader2, X, ChevronUp, ChevronDown } from "lucide-react";
 import { fetchMoreRumors, fetchRumorsByPlayer } from "./actions";
 import type { TrendingPlayer } from "@/lib/supabase";
-
-interface PlayerInfo {
-  name: string;
-  normalizedName?: string;
-}
-
-interface Rumor {
-  title: string;
-  link: string;
-  pubDate: string;
-  source: string;
-  description?: string;
-  aiProbability?: number | null;
-  aiAnalysis?: string | null;
-  players?: PlayerInfo[];
-}
+import type { Rumor, PlayerInfo } from "@/types/soylenti";
+import { isTransferRumor } from "@/lib/soylenti/utils";
 
 interface SoylentiClientProps {
   initialRumors: Rumor[];
@@ -64,8 +50,7 @@ export default function SoylentiClient({
     () =>
       rumorsToFilter
         .filter((rumor) => {
-          const prob = Number(rumor.aiProbability);
-          const isTransfer = !isNaN(prob) && prob > 0;
+          const isTransfer = isTransferRumor(rumor.aiProbability);
           return isTransfer || showAllNews;
         })
         .sort(
@@ -76,11 +61,7 @@ export default function SoylentiClient({
   );
 
   const rumorCount = useMemo(
-    () =>
-      rumorsToFilter.filter((r) => {
-        const prob = Number(r.aiProbability);
-        return !isNaN(prob) && prob > 0;
-      }).length,
+    () => rumorsToFilter.filter((r) => isTransferRumor(r.aiProbability)).length,
     [rumorsToFilter],
   );
 
