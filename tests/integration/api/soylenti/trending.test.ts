@@ -21,7 +21,7 @@ describe("Trending Players API", () => {
   });
 
   describe("GET /api/soylenti/trending", () => {
-    it("should return trending players sorted by activity", async () => {
+    it("should return trending players sorted by rumor count", async () => {
       const mockPlayers = [
         {
           name: "Isco Alarcón",
@@ -31,11 +31,18 @@ describe("Trending Players API", () => {
           last_seen_at: "2025-12-28T10:00:00Z",
         },
         {
+          name: "Nabil Fekir",
+          normalized_name: "nabil fekir",
+          rumor_count: 5,
+          first_seen_at: "2025-12-18T10:00:00Z",
+          last_seen_at: "2025-12-26T10:00:00Z",
+        },
+        {
           name: "Marc Roca",
           normalized_name: "marc roca",
           rumor_count: 3,
           first_seen_at: "2025-12-15T10:00:00Z",
-          last_seen_at: "2025-12-25T10:00:00Z",
+          last_seen_at: "2025-12-29T10:00:00Z", // Most recent, but fewer rumors
         },
       ];
 
@@ -62,11 +69,18 @@ describe("Trending Players API", () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.data.players).toHaveLength(2);
+      expect(data.data.players).toHaveLength(3);
+      expect(data.data.totalCount).toBe(3);
+
+      // Verify primary sort by rumor_count (desc)
       expect(data.data.players[0].name).toBe("Isco Alarcón");
-      expect(data.data.players[0].normalizedName).toBe("isco alarcon");
+      expect(data.data.players[1].name).toBe("Nabil Fekir");
+      // Verify secondary sort by last_seen_at (desc)
       expect(data.data.players[0].rumorCount).toBe(5);
-      expect(data.data.totalCount).toBe(2);
+      expect(data.data.players[1].rumorCount).toBe(5);
+      // Marc Roca has fewer rumors, so should be last despite recent activity
+      expect(data.data.players[2].name).toBe("Marc Roca");
+      expect(data.data.players[2].rumorCount).toBe(3);
     });
 
     it("should return empty array when no players found", async () => {
