@@ -1,11 +1,11 @@
 import { createApiHandler } from "@/lib/apiUtils";
-import { fetchTrendingPlayers } from "@/lib/data/players";
+import { fetchTrendingPlayersWithTimeline } from "@/lib/data/players";
 
-// GET - Fetch trending players by rumor activity
+// GET - Fetch trending players with timeline data for visualization
 export const GET = createApiHandler({
   auth: "none", // Public endpoint
   handler: async () => {
-    const trendingPlayers = await fetchTrendingPlayers();
+    const trendingPlayers = await fetchTrendingPlayersWithTimeline();
 
     return {
       players: trendingPlayers,

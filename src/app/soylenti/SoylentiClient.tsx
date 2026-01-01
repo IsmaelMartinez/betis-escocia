@@ -2,11 +2,10 @@
 
 import { useState, useTransition, useMemo } from "react";
 import RumorCard from "@/components/RumorCard";
-import TrendingPlayers from "@/components/TrendingPlayers";
-import { RefreshCw, Loader2, X, ChevronUp, ChevronDown } from "lucide-react";
+import TrendingPlayersChart from "@/components/TrendingPlayersChart";
+import { RefreshCw, Loader2, X } from "lucide-react";
 import { fetchMoreRumors, fetchRumorsByPlayer } from "./actions";
-import type { TrendingPlayer } from "@/lib/supabase";
-import type { Rumor, PlayerInfo } from "@/types/soylenti";
+import type { Rumor, TrendingPlayerWithTimeline } from "@/types/soylenti";
 import { isTransferRumor } from "@/lib/soylenti/utils";
 
 interface SoylentiClientProps {
@@ -14,7 +13,7 @@ interface SoylentiClientProps {
   lastUpdated: string;
   initialHasMore: boolean;
   totalCount: number;
-  trendingPlayers?: TrendingPlayer[];
+  trendingPlayers?: TrendingPlayerWithTimeline[];
 }
 
 export default function SoylentiClient({
@@ -30,7 +29,6 @@ export default function SoylentiClient({
   const [franMode, setFranMode] = useState(true);
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [playerRumors, setPlayerRumors] = useState<Rumor[]>([]);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -113,34 +111,15 @@ export default function SoylentiClient({
     <>
       {/* Trending Players Sidebar (on larger screens) */}
       <div className="lg:flex lg:gap-8">
-        {/* Trending Players - collapsible sidebar */}
+        {/* Trending Players Chart - collapsible, collapsed by default */}
         {trendingPlayers.length > 0 && (
-          <div className="lg:w-72 mb-8 lg:mb-0 flex-shrink-0">
-            <button
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="flex items-center gap-2 w-full mb-2 py-2 px-3 bg-white rounded-lg shadow-sm border border-gray-200 hover:bg-betis-verde-pale transition-colors"
-              aria-label={
-                sidebarCollapsed ? "Mostrar jugadores" : "Ocultar jugadores"
-              }
-              aria-expanded={!sidebarCollapsed}
-            >
-              <span className="text-sm font-medium text-betis-verde-dark flex-1 text-left">
-                Jugadores en tendencia
-              </span>
-              {sidebarCollapsed ? (
-                <ChevronDown size={20} className="text-betis-verde" />
-              ) : (
-                <ChevronUp size={20} className="text-betis-verde" />
-              )}
-            </button>
-
-            {!sidebarCollapsed && (
-              <TrendingPlayers
-                players={trendingPlayers}
-                onPlayerClick={handlePlayerClick}
-                selectedPlayer={selectedPlayer}
-              />
-            )}
+          <div className="lg:w-80 mb-8 lg:mb-0 flex-shrink-0">
+            <TrendingPlayersChart
+              players={trendingPlayers}
+              onPlayerClick={handlePlayerClick}
+              selectedPlayer={selectedPlayer}
+              defaultCollapsed={true}
+            />
           </div>
         )}
 
