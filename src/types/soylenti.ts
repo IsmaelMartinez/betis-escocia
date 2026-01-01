@@ -43,3 +43,30 @@ export interface NewsPlayer {
 export interface BetisNewsWithPlayers extends BetisNews {
   news_players?: NewsPlayer[];
 }
+
+/** Momentum phase for trending players visualization */
+export type MomentumPhase = "hot" | "rising" | "stable" | "cooling" | "dormant";
+
+/** Daily mention count for sparkline visualization */
+export interface DailyMention {
+  date: string; // ISO date string (YYYY-MM-DD)
+  count: number;
+}
+
+/** Enhanced trending player with timeline data */
+export interface TrendingPlayerWithTimeline {
+  name: string;
+  normalizedName: string;
+  rumorCount: number;
+  firstSeen: string;
+  lastSeen: string;
+  isActive: boolean;
+  /** Daily mentions for last 14 days (sparse - only days with mentions) */
+  timeline: DailyMention[];
+  /** Calculated momentum phase */
+  phase: MomentumPhase;
+  /** Momentum percentage change (recent vs previous period) */
+  momentumPct: number;
+  /** Days since last mention */
+  daysSinceLastMention: number;
+}
