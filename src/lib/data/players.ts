@@ -172,7 +172,9 @@ export async function fetchTrendingPlayersWithTimeline(): Promise<
     const playerId = record.player_id;
     // Handle both single object and array formats from Supabase
     const newsData = record.betis_news;
-    const pubDate = Array.isArray(newsData) ? newsData[0]?.pub_date : newsData?.pub_date;
+    const pubDate = Array.isArray(newsData)
+      ? newsData[0]?.pub_date
+      : newsData?.pub_date;
     if (!pubDate) continue;
     const dateStr = new Date(pubDate).toISOString().split("T")[0];
 
