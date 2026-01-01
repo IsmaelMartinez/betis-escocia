@@ -31,10 +31,41 @@ export default function Sparkline({
   className = "",
 }: SparklineProps) {
   const filledData = fillTimeline(data, days);
+  const total = filledData.reduce((a, b) => a + b, 0);
   const max = Math.max(...filledData, 1);
   const padding = 2;
   const effectiveHeight = height - padding * 2;
   const effectiveWidth = width - padding * 2;
+
+  // Color based on trend
+  const strokeColor =
+    trend === "up"
+      ? "var(--betis-verde)"
+      : trend === "down"
+        ? "#dc2626"
+        : "#6b7280";
+
+  // If no activity at all, show a dashed baseline
+  if (total === 0) {
+    return (
+      <svg
+        width={width}
+        height={height}
+        className={`inline-block ${className}`}
+        aria-hidden="true"
+      >
+        <line
+          x1={padding}
+          y1={height / 2}
+          x2={width - padding}
+          y2={height / 2}
+          stroke="#d1d5db"
+          strokeWidth="1"
+          strokeDasharray="2,2"
+        />
+      </svg>
+    );
+  }
 
   // Generate SVG path (handle single data point to avoid division by zero)
   const divisor = filledData.length > 1 ? filledData.length - 1 : 1;
@@ -45,14 +76,6 @@ export default function Sparkline({
       return `${index === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
     })
     .join(" ");
-
-  // Color based on trend
-  const strokeColor =
-    trend === "up"
-      ? "var(--betis-verde)"
-      : trend === "down"
-        ? "#dc2626"
-        : "#6b7280";
 
   // Create area fill path (for subtle background)
   const areaPath =

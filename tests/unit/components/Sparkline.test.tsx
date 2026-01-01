@@ -63,10 +63,14 @@ describe("Sparkline", () => {
   });
 
   describe("Edge Cases", () => {
-    it("should handle empty data array", () => {
+    it("should show dashed line for empty data array", () => {
       const { container } = render(<Sparkline data={[]} />);
       const svg = container.querySelector("svg");
       expect(svg).toBeInTheDocument();
+      // Should show a dashed line when no data
+      const line = container.querySelector("line");
+      expect(line).toBeInTheDocument();
+      expect(line).toHaveAttribute("stroke-dasharray", "2,2");
     });
 
     it("should handle single data point without division by zero", () => {
@@ -82,7 +86,7 @@ describe("Sparkline", () => {
       });
     });
 
-    it("should handle all zeros data", () => {
+    it("should show dashed line for all zeros data", () => {
       const zeroData: DailyMention[] = [
         { date: "2025-12-25", count: 0 },
         { date: "2025-12-26", count: 0 },
@@ -90,6 +94,9 @@ describe("Sparkline", () => {
       const { container } = render(<Sparkline data={zeroData} />);
       const svg = container.querySelector("svg");
       expect(svg).toBeInTheDocument();
+      // Should show a dashed line when all zeros
+      const line = container.querySelector("line");
+      expect(line).toBeInTheDocument();
     });
   });
 

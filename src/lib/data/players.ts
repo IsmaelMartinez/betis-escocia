@@ -154,7 +154,6 @@ export async function fetchTrendingPlayersWithTimeline(): Promise<
   }
 
   // Group timeline data by player and date
-  // Supabase returns betis_news as an array; we take the first element
   const playerTimelines = new Map<number, Map<string, number>>();
   for (const record of (timelineData as TimelineRecord[]) || []) {
     const playerId = record.player_id;
