@@ -62,7 +62,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
   onHide,
   isLoading,
   error,
-  showHidden = true,
+  showHidden = false,
 }) => {
   const [reassessmentState, setReassessmentState] = useState<ReassessmentState>(
     {
@@ -192,219 +192,231 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
         <MessageComponent type="success" message={successMessage} />
       )}
 
-      {errorMessage && (
-        <MessageComponent type="error" message={errorMessage} />
-      )}
+      {errorMessage && <MessageComponent type="error" message={errorMessage} />}
 
       {news.length === 0 ? (
         <MessageComponent type="info" message="No hay noticias para mostrar." />
       ) : (
         <div className="space-y-4">
           {news
-            .filter((item) => showHidden || !item.is_hidden)
+            .filter((item) => (showHidden ? item.is_hidden : !item.is_hidden))
+            .sort(
+              (a, b) =>
+                new Date(b.pub_date).getTime() - new Date(a.pub_date).getTime(),
+            )
             .map((item) => {
               const isExpanded = expandedItems.has(item.id);
               const isReassessing = reassessmentState.newsId === item.id;
               const isHiding = hidingNewsId === item.id;
 
-            return (
-              <Card key={item.id} className="hover-lift">
-                <CardBody>
-                  {/* Header */}
-                  <div className="flex justify-between items-start gap-4 mb-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        {/* Probability Badge */}
-                        <span
-                          className={clsx(
-                            "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium text-white",
-                            getProbabilityColor(item.ai_probability),
+              return (
+                <Card key={item.id} className="hover-lift">
+                  <CardBody>
+                    {/* Header */}
+                    <div className="flex justify-between items-start gap-4 mb-3">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          {/* Probability Badge */}
+                          <span
+                            className={clsx(
+                              "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium text-white",
+                              getProbabilityColor(item.ai_probability),
+                            )}
+                          >
+                            {item.ai_probability !== null &&
+                            item.ai_probability !== undefined
+                              ? `${item.ai_probability}%`
+                              : "Sin analizar"}
+                          </span>
+
+                          {/* Source Badge */}
+                          <span className="inline-block bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full text-xs">
+                            {item.source}
+                          </span>
+
+                          {/* Reassessed indicator */}
+                          {item.reassessed_at && (
+                            <span className="inline-flex items-center text-xs text-betis-verde">
+                              <CheckCircle size={12} className="mr-1" />
+                              Re-analizado
+                            </span>
                           )}
-                        >
-                          {item.ai_probability !== null &&
-                          item.ai_probability !== undefined
-                            ? `${item.ai_probability}%`
-                            : "Sin analizar"}
-                        </span>
 
-                        {/* Source Badge */}
-                        <span className="inline-block bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full text-xs">
-                          {item.source}
-                        </span>
-
-                        {/* Reassessed indicator */}
-                        {item.reassessed_at && (
-                          <span className="inline-flex items-center text-xs text-betis-verde">
-                            <CheckCircle size={12} className="mr-1" />
-                            Re-analizado
-                          </span>
-                        )}
-
-                        {/* Hidden indicator */}
-                        {item.is_hidden && (
-                          <span className="inline-flex items-center text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                            <EyeOff size={12} className="mr-1" />
-                            Oculto
-                          </span>
-                        )}
-                      </div>
-
-                      <h3 className="font-semibold text-betis-black truncate">
-                        {item.title}
-                      </h3>
-
-                      <div className="text-xs text-gray-500 mt-1">
-                        {formatDate(item.pub_date)}
-                      </div>
-
-                      {/* Player Tags */}
-                      {item.news_players && item.news_players.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mt-2">
-                          {item.news_players.map(
-                            (np) =>
-                              np.players && (
-                                <span
-                                  key={np.player_id}
-                                  className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs"
-                                >
-                                  <User size={10} />
-                                  {np.players.name}
-                                </span>
-                              ),
+                          {/* Hidden indicator */}
+                          {item.is_hidden && (
+                            <span className="inline-flex items-center text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                              <EyeOff size={12} className="mr-1" />
+                              Oculto
+                            </span>
                           )}
                         </div>
-                      )}
-                    </div>
 
-                    {/* Actions */}
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <button
-                        onClick={() =>
-                          handleHideToggle(item.id, item.is_hidden || false)
-                        }
-                        disabled={isHiding}
-                        className={clsx(
-                          "text-gray-500 hover:text-betis-verde disabled:opacity-50",
-                          isHiding && "animate-pulse",
-                        )}
-                        title={item.is_hidden ? "Mostrar noticia" : "Ocultar noticia"}
-                      >
-                        {item.is_hidden ? <Eye size={18} /> : <EyeOff size={18} />}
-                      </button>
-                      <a
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-gray-500 hover:text-betis-verde"
-                        title="Ver artículo original"
-                      >
-                        <ExternalLink size={18} />
-                      </a>
-                      <button
-                        onClick={() => toggleExpand(item.id)}
-                        className="text-gray-500 hover:text-betis-verde"
-                        title={isExpanded ? "Ocultar detalles" : "Ver detalles"}
-                      >
-                        {isExpanded ? (
-                          <ChevronUp size={18} />
-                        ) : (
-                          <ChevronDown size={18} />
-                        )}
-                      </button>
-                    </div>
-                  </div>
+                        <h3 className="font-semibold text-betis-black truncate">
+                          {item.title}
+                        </h3>
 
-                  {/* Expanded Content */}
-                  {isExpanded && (
-                    <div className="border-t border-gray-200 pt-3 mt-3">
-                      {item.description && (
-                        <p className="text-sm text-gray-600 mb-3">
-                          {item.description}
-                        </p>
-                      )}
-
-                      {item.ai_analysis && (
-                        <div className="bg-betis-verde-pale p-3 rounded-lg mb-3">
-                          <h4 className="text-xs font-semibold text-betis-verde-dark mb-1">
-                            Análisis IA:
-                          </h4>
-                          <p className="text-sm text-gray-700">
-                            {item.ai_analysis}
-                          </p>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {formatDate(item.pub_date)}
                         </div>
-                      )}
 
-                      {item.admin_context && (
-                        <div className="bg-yellow-50 p-3 rounded-lg mb-3">
-                          <h4 className="text-xs font-semibold text-yellow-800 mb-1 flex items-center">
-                            <AlertCircle size={12} className="mr-1" />
-                            Contexto del administrador:
-                          </h4>
-                          <p className="text-sm text-yellow-700">
-                            {item.admin_context}
-                          </p>
-                        </div>
-                      )}
-
-                      {/* Reassessment Form */}
-                      {isReassessing ? (
-                        <div className="border-t border-gray-200 pt-3 mt-3">
-                          <h4 className="text-sm font-semibold text-betis-black mb-2">
-                            Re-análisis con IA
-                          </h4>
-
-                          <textarea
-                            id={`context-${item.id}`}
-                            value={reassessmentState.context}
-                            onChange={(e) =>
-                              setReassessmentState((prev) => ({
-                                ...prev,
-                                context: e.target.value,
-                              }))
-                            }
-                            placeholder="Añade contexto para el re-análisis (ej: jugador incorrecto, no es un fichaje...)"
-                            rows={3}
-                            maxLength={500}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-betis-verde resize-none mb-3"
-                          />
-
-                          <div className="flex gap-2">
-                            <Button
-                              onClick={handleReassess}
-                              variant="primary"
-                              size="sm"
-                              isLoading={reassessmentState.isSubmitting}
-                              disabled={!reassessmentState.context.trim()}
-                              leftIcon={<RefreshCw size={14} />}
-                            >
-                              Re-analizar
-                            </Button>
-                            <Button
-                              onClick={closeReassessmentModal}
-                              variant="outline"
-                              size="sm"
-                              disabled={reassessmentState.isSubmitting}
-                            >
-                              Cancelar
-                            </Button>
+                        {/* Player Tags */}
+                        {item.news_players && item.news_players.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {item.news_players.map(
+                              (np) =>
+                                np.players && (
+                                  <span
+                                    key={np.player_id}
+                                    className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs"
+                                  >
+                                    <User size={10} />
+                                    {np.players.name}
+                                  </span>
+                                ),
+                            )}
                           </div>
-                        </div>
-                      ) : (
-                        <Button
-                          onClick={() => openReassessmentModal(item.id)}
-                          variant="secondary"
-                          size="sm"
-                          leftIcon={<RefreshCw size={14} />}
+                        )}
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <button
+                          onClick={() =>
+                            handleHideToggle(item.id, item.is_hidden || false)
+                          }
+                          disabled={isHiding}
+                          className={clsx(
+                            "text-gray-500 hover:text-betis-verde disabled:opacity-50",
+                            isHiding && "animate-pulse",
+                          )}
+                          title={
+                            item.is_hidden
+                              ? "Mostrar noticia"
+                              : "Ocultar noticia"
+                          }
                         >
-                          Solicitar re-análisis
-                        </Button>
-                      )}
+                          {item.is_hidden ? (
+                            <EyeOff size={18} />
+                          ) : (
+                            <Eye size={18} />
+                          )}
+                        </button>
+                        <a
+                          href={item.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-gray-500 hover:text-betis-verde"
+                          title="Ver artículo original"
+                        >
+                          <ExternalLink size={18} />
+                        </a>
+                        <button
+                          onClick={() => toggleExpand(item.id)}
+                          className="text-gray-500 hover:text-betis-verde"
+                          title={
+                            isExpanded ? "Ocultar detalles" : "Ver detalles"
+                          }
+                        >
+                          {isExpanded ? (
+                            <ChevronUp size={18} />
+                          ) : (
+                            <ChevronDown size={18} />
+                          )}
+                        </button>
+                      </div>
                     </div>
-                  )}
-                </CardBody>
-              </Card>
-            );
-          })}
+
+                    {/* Expanded Content */}
+                    {isExpanded && (
+                      <div className="border-t border-gray-200 pt-3 mt-3">
+                        {item.description && (
+                          <p className="text-sm text-gray-600 mb-3">
+                            {item.description}
+                          </p>
+                        )}
+
+                        {item.ai_analysis && (
+                          <div className="bg-betis-verde-pale p-3 rounded-lg mb-3">
+                            <h4 className="text-xs font-semibold text-betis-verde-dark mb-1">
+                              Análisis IA:
+                            </h4>
+                            <p className="text-sm text-gray-700">
+                              {item.ai_analysis}
+                            </p>
+                          </div>
+                        )}
+
+                        {item.admin_context && (
+                          <div className="bg-yellow-50 p-3 rounded-lg mb-3">
+                            <h4 className="text-xs font-semibold text-yellow-800 mb-1 flex items-center">
+                              <AlertCircle size={12} className="mr-1" />
+                              Contexto del administrador:
+                            </h4>
+                            <p className="text-sm text-yellow-700">
+                              {item.admin_context}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Reassessment Form */}
+                        {isReassessing ? (
+                          <div className="border-t border-gray-200 pt-3 mt-3">
+                            <h4 className="text-sm font-semibold text-betis-black mb-2">
+                              Re-análisis con IA
+                            </h4>
+
+                            <textarea
+                              id={`context-${item.id}`}
+                              value={reassessmentState.context}
+                              onChange={(e) =>
+                                setReassessmentState((prev) => ({
+                                  ...prev,
+                                  context: e.target.value,
+                                }))
+                              }
+                              placeholder="Añade contexto para el re-análisis (ej: jugador incorrecto, no es un fichaje...)"
+                              rows={3}
+                              maxLength={500}
+                              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-betis-verde resize-none mb-3"
+                            />
+
+                            <div className="flex gap-2">
+                              <Button
+                                onClick={handleReassess}
+                                variant="primary"
+                                size="sm"
+                                isLoading={reassessmentState.isSubmitting}
+                                disabled={!reassessmentState.context.trim()}
+                                leftIcon={<RefreshCw size={14} />}
+                              >
+                                Re-analizar
+                              </Button>
+                              <Button
+                                onClick={closeReassessmentModal}
+                                variant="outline"
+                                size="sm"
+                                disabled={reassessmentState.isSubmitting}
+                              >
+                                Cancelar
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <Button
+                            onClick={() => openReassessmentModal(item.id)}
+                            variant="secondary"
+                            size="sm"
+                            leftIcon={<RefreshCw size={14} />}
+                          >
+                            Solicitar re-análisis
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                  </CardBody>
+                </Card>
+              );
+            })}
         </div>
       )}
     </div>

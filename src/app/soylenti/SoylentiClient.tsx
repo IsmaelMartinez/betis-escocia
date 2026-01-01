@@ -62,11 +62,16 @@ export default function SoylentiClient({
 
   const displayedRumors = useMemo(
     () =>
-      rumorsToFilter.filter((rumor) => {
-        const prob = rumor.aiProbability;
-        const isTransfer = prob !== null && prob !== undefined && prob > 0;
-        return isTransfer || showAllNews;
-      }),
+      rumorsToFilter
+        .filter((rumor) => {
+          const prob = rumor.aiProbability;
+          const isTransfer = prob !== null && prob !== undefined && prob > 0;
+          return isTransfer || showAllNews;
+        })
+        .sort(
+          (a, b) =>
+            new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime(),
+        ),
     [rumorsToFilter, showAllNews],
   );
 
