@@ -130,6 +130,7 @@ export async function fetchMoreRumors(
     .select(RUMOR_SELECT)
     .eq("is_duplicate", false)
     .eq("is_hidden", false)
+    .gt("ai_probability", 0)
     .lt("pub_date", cursor)
     .order("pub_date", { ascending: false })
     .limit(limit + 1);

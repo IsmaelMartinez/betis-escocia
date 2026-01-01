@@ -35,13 +35,15 @@ async function fetchRumors() {
       )
       .eq("is_duplicate", false)
       .eq("is_hidden", false)
+      .gt("ai_probability", 0)
       .order("pub_date", { ascending: false })
       .limit(INITIAL_LIMIT + 1),
     supabase
       .from("betis_news")
       .select("*", { count: "exact", head: true })
       .eq("is_duplicate", false)
-      .eq("is_hidden", false),
+      .eq("is_hidden", false)
+      .gt("ai_probability", 0),
   ]);
 
   if (rumorsResult.error || countResult.error) {
