@@ -44,7 +44,7 @@ export default function SoylentiClient({
   const [franMode, setFranMode] = useState(true);
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [playerRumors, setPlayerRumors] = useState<Rumor[]>([]);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 

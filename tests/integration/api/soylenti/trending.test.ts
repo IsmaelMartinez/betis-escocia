@@ -21,7 +21,7 @@ describe("Trending Players API", () => {
   });
 
   describe("GET /api/soylenti/trending", () => {
-    it("should return trending players sorted by activity", async () => {
+    it("should return trending players sorted by rumor count", async () => {
       const mockPlayers = [
         {
           name: "Isco Alarcón",

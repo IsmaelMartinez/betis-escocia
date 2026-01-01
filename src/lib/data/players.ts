@@ -3,7 +3,7 @@ import { supabase, type TrendingPlayer } from "@/lib/supabase";
 /**
  * Fetches trending players by rumor activity.
  * Returns the top 10 players with at least 1 rumor mention,
- * sorted by most recent activity and rumor count.
+ * sorted by rumor count (descending), then by most recent activity.
  */
 export async function fetchTrendingPlayers(): Promise<TrendingPlayer[]> {
   const sevenDaysAgo = new Date();
@@ -13,8 +13,8 @@ export async function fetchTrendingPlayers(): Promise<TrendingPlayer[]> {
     .from("players")
     .select("name, normalized_name, rumor_count, first_seen_at, last_seen_at")
     .gte("rumor_count", 1)
-    .order("last_seen_at", { ascending: false })
     .order("rumor_count", { ascending: false })
+    .order("last_seen_at", { ascending: false })
     .limit(10);
 
   if (error) {
