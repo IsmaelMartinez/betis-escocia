@@ -202,6 +202,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
         <div className="space-y-4">
           {news
             .filter((item) => (showHidden ? item.is_hidden : !item.is_hidden))
+            .sort((a, b) => new Date(b.pub_date).getTime() - new Date(a.pub_date).getTime())
             .map((item) => {
               const isExpanded = expandedItems.has(item.id);
               const isReassessing = reassessmentState.newsId === item.id;
