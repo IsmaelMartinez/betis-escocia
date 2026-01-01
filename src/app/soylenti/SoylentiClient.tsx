@@ -6,22 +6,8 @@ import TrendingPlayers from "@/components/TrendingPlayers";
 import { RefreshCw, Loader2, X, ChevronUp, ChevronDown } from "lucide-react";
 import { fetchMoreRumors, fetchRumorsByPlayer } from "./actions";
 import type { TrendingPlayer } from "@/lib/supabase";
-
-interface PlayerInfo {
-  name: string;
-  normalizedName?: string;
-}
-
-interface Rumor {
-  title: string;
-  link: string;
-  pubDate: string;
-  source: string;
-  description?: string;
-  aiProbability?: number | null;
-  aiAnalysis?: string | null;
-  players?: PlayerInfo[];
-}
+import type { Rumor, PlayerInfo } from "@/types/soylenti";
+import { isTransferRumor } from "@/lib/soylenti/utils";
 
 interface SoylentiClientProps {
   initialRumors: Rumor[];
@@ -44,7 +30,7 @@ export default function SoylentiClient({
   const [franMode, setFranMode] = useState(true);
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [playerRumors, setPlayerRumors] = useState<Rumor[]>([]);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -62,20 +48,20 @@ export default function SoylentiClient({
 
   const displayedRumors = useMemo(
     () =>
-      rumorsToFilter.filter((rumor) => {
-        const prob = rumor.aiProbability;
-        const isTransfer = prob !== null && prob !== undefined && prob > 0;
-        return isTransfer || showAllNews;
-      }),
+      rumorsToFilter
+        .filter((rumor) => {
+          const isTransfer = isTransferRumor(rumor.aiProbability);
+          return isTransfer || showAllNews;
+        })
+        .sort(
+          (a, b) =>
+            new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime(),
+        ),
     [rumorsToFilter, showAllNews],
   );
 
   const rumorCount = useMemo(
-    () =>
-      rumorsToFilter.filter((r) => {
-        const prob = r.aiProbability;
-        return prob !== null && prob !== undefined && prob > 0;
-      }).length,
+    () => rumorsToFilter.filter((r) => isTransferRumor(r.aiProbability)).length,
     [rumorsToFilter],
   );
 

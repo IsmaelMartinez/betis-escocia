@@ -2,10 +2,12 @@
 
 import Card from "@/components/ui/Card";
 import { ExternalLink } from "lucide-react";
-
-interface PlayerInfo {
-  name: string;
-}
+import type { PlayerInfo } from "@/types/soylenti";
+import {
+  getProbabilityColor,
+  formatSoylentiDate,
+  isTransferRumor,
+} from "@/lib/soylenti/utils";
 
 interface RumorCardProps {
   title: string;
@@ -30,17 +32,6 @@ export default function RumorCard({
   showCredibility = true,
   players = [],
 }: RumorCardProps) {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("es-ES", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(date);
-  };
-
   const getSourceColor = (source: string) => {
     if (source.includes("Fichajes"))
       return "bg-betis-oro text-betis-verde-dark";
@@ -62,25 +53,18 @@ export default function RumorCard({
             >
               {source}
             </span>
-            {showCredibility &&
-              aiProbability !== null &&
-              aiProbability !== undefined &&
-              aiProbability > 0 && (
-                <span
-                  className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                    aiProbability >= 70
-                      ? "bg-betis-verde text-white"
-                      : aiProbability >= 40
-                        ? "bg-betis-oro text-betis-verde-dark"
-                        : "bg-gray-200 text-gray-700"
-                  }`}
-                  title={aiAnalysis || undefined}
-                >
-                  {aiProbability}%
-                </span>
-              )}
+            {showCredibility && isTransferRumor(aiProbability) && (
+              <span
+                className={`px-2 py-0.5 rounded-full text-xs font-medium ${getProbabilityColor(aiProbability)}`}
+                title={aiAnalysis || undefined}
+              >
+                {Math.round(Number(aiProbability))}%
+              </span>
+            )}
           </div>
-          <span className="text-sm text-gray-500">{formatDate(pubDate)}</span>
+          <span className="text-sm text-gray-500">
+            {formatSoylentiDate(pubDate)}
+          </span>
         </div>
 
         {/* Players (if available) */}

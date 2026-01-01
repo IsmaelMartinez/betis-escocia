@@ -45,7 +45,7 @@ describe("Home page", () => {
     expect(screen.getByText(/¿Estás de visita/i)).toBeInTheDocument();
     expect(screen.getByText(/en Escocia\?/i)).toBeInTheDocument();
     expect(
-      screen.getByText("¡Únete a nosotros en The Polwarth Tavern!"),
+      screen.getByText("¡Ven a ver los partidos con nosotros!"),
     ).toBeInTheDocument();
     expect(
       screen.getByText(/Todos los béticos son bienvenidos/i),
@@ -60,7 +60,7 @@ describe("Home page", () => {
     const locationSection = screen.getByText("📍 Ubicación").closest("div");
     expect(locationSection).toBeInTheDocument();
     expect(
-      within(locationSection!).getByText(/The Polwarth Tavern/i),
+      within(locationSection!).getByText(/Polwarth Tavern/i),
     ).toBeInTheDocument();
 
     // Find the "Ambiente" section and query within it
