@@ -4,7 +4,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Spinner from "@/components/ui/Spinner";
 import { withFeatureFlag } from "@/lib/featureProtection";
 import { Newspaper } from "lucide-react";
-import { fetchTrendingPlayers } from "@/lib/data/players";
+import { fetchTrendingPlayersWithTimeline } from "@/lib/data/players";
 import SoylentiClient from "./SoylentiClient";
 
 export const metadata: Metadata = {
@@ -87,7 +87,7 @@ async function fetchRumors() {
 async function SoylentiContent() {
   const [response, trendingPlayers] = await Promise.all([
     fetchRumors(),
-    fetchTrendingPlayers(),
+    fetchTrendingPlayersWithTimeline(),
   ]);
   const data = response.data || {};
   const rumors = data.rumors || [];

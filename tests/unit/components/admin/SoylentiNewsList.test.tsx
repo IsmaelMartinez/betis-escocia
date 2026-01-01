@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import SoylentiNewsList from "@/components/admin/SoylentiNewsList";
-import type { BetisNews } from "@/lib/supabase";
+import type { BetisNewsWithPlayers } from "@/types/soylenti";
 
 // Mock dependencies
 vi.mock("@/components/ui/Card", () => ({
@@ -38,18 +38,6 @@ vi.mock("@/components/ui/Button", () => ({
     </button>
   )),
 }));
-
-interface BetisNewsWithPlayers extends BetisNews {
-  news_players?: Array<{
-    player_id: number;
-    role: string;
-    players: {
-      id: number;
-      name: string;
-      normalized_name: string;
-    } | null;
-  }>;
-}
 
 describe("SoylentiNewsList", () => {
   const mockOnReassess = vi.fn();
