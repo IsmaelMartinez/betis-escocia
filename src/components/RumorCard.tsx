@@ -3,7 +3,11 @@
 import Card from "@/components/ui/Card";
 import { ExternalLink } from "lucide-react";
 import type { PlayerInfo } from "@/types/soylenti";
-import { getProbabilityColor, formatSoylentiDate } from "@/lib/soylenti/utils";
+import {
+  getProbabilityColor,
+  formatSoylentiDate,
+  isTransferRumor,
+} from "@/lib/soylenti/utils";
 
 interface RumorCardProps {
   title: string;
@@ -49,7 +53,7 @@ export default function RumorCard({
             >
               {source}
             </span>
-            {showCredibility && Number(aiProbability) > 0 && (
+            {showCredibility && isTransferRumor(aiProbability) && (
               <span
                 className={`px-2 py-0.5 rounded-full text-xs font-medium ${getProbabilityColor(aiProbability)}`}
                 title={aiAnalysis || undefined}

@@ -44,12 +44,16 @@ interface DbRumor {
  */
 export function mapToRumor(dbRumor: DbRumor): Rumor {
   const players: PlayerInfo[] =
-    dbRumor.news_players
-      ?.filter((np) => np.players !== null)
-      .map((np) => ({
-        name: np.players?.name || "",
-        normalizedName: np.players?.normalized_name || "",
-      })) || [];
+    dbRumor.news_players?.flatMap((np) =>
+      np.players
+        ? [
+            {
+              name: np.players.name || "",
+              normalizedName: np.players.normalized_name || "",
+            },
+          ]
+        : [],
+    ) || [];
 
   return {
     title: dbRumor.title,
