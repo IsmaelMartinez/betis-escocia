@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useAuthSafe as useAuth, useUserSafe as useUser } from "@/hooks/useClerkSafe";
 import {
   supabase,
   RSVP,

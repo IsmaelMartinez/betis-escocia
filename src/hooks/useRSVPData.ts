@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useUser } from '@clerk/nextjs';
+import { useUserSafe as useUser } from '@/hooks/useClerkSafe';
 import { EventDetails } from '@/components/RSVPWidget';
 
 export interface RSVPData {

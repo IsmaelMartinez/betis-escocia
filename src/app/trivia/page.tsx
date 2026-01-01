@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { TriviaQuestion } from '@/lib/supabase';
 import ErrorMessage from '@/components/ErrorMessage';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { useUser, useAuth } from '@clerk/nextjs';
+import { useUserSafe as useUser, useAuthSafe as useAuth } from '@/hooks/useClerkSafe';
 import { log } from '@/lib/logger';
 
 // Simplified state machine type

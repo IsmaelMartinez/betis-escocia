@@ -5,7 +5,7 @@ import { UserProfile } from '@clerk/nextjs';
 import DashboardDisplay from '@/components/DashboardDisplay';
 import GDPRTabContent from '@/components/user/GDPRTabContent';
 import { User, PieChart } from 'lucide-react';
-import { useAuth } from '@clerk/nextjs';
+import { useAuthSafe as useAuth } from '@/hooks/useClerkSafe';
 import { RSVP, ContactSubmission } from '@/lib/supabase';
 
 interface Counts {

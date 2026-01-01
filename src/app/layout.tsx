@@ -1,11 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import {
-  Geist,
-  Geist_Mono,
-  Oswald,
-  Source_Sans_3,
-  Playfair_Display,
-} from "next/font/google";
 import "./globals.css";
 import Layout from "@/components/Layout";
 import OfflineDetector from "@/components/OfflineDetector";
@@ -16,7 +9,7 @@ import {
 import * as Sentry from "@sentry/nextjs";
 import SentryUserContext from "@/components/SentryUserContext";
 
-import { ClerkProvider } from "@clerk/nextjs";
+import ConditionalClerkProvider from "@/components/ConditionalClerkProvider";
 import FacebookSDK from "@/components/FacebookSDK";
 
 // Conditionally import Vercel Analytics/SpeedInsights only in production on Vercel
@@ -24,46 +17,8 @@ const isVercel = process.env.VERCEL === "1";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
-// Core system fonts (fallbacks)
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap",
-  preload: true,
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-  preload: true,
-});
-
-// Design System v2 fonts
-// Display font: Oswald - bold, condensed, perfect for sports/impact headlines
-const displayFont = Oswald({
-  variable: "--font-display",
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["400", "500", "600", "700"],
-});
-
-// Body/Heading font: Source Sans 3 - professional, readable, Spanish heritage
-const bodyFont = Source_Sans_3({
-  variable: "--font-body",
-  subsets: ["latin", "latin-ext"],
-  display: "swap",
-  weight: ["400", "500", "600", "700"],
-});
-
-// Accent font: Playfair Display - elegant, for taglines and ceremonial text
-const accentFont = Playfair_Display({
-  variable: "--font-accent",
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
-});
+// Fonts are now loaded via fontsource CSS imports in globals.css
+// This avoids Google Fonts API calls during build which can fail in CI environments
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -196,25 +151,18 @@ export default function RootLayout({
         />
         <link rel="dns-prefetch" href="https://connect.facebook.net" />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${displayFont.variable} ${bodyFont.variable} ${accentFont.variable} antialiased`}
-      >
+      <body className="antialiased">
         <FacebookSDK />
 
         <OfflineDetector />
-        <ClerkProvider
-          signInUrl="/sign-in"
-          signUpUrl="/sign-up"
-          signInFallbackRedirectUrl="/dashboard"
-          afterSignUpUrl="/dashboard"
-        >
+        <ConditionalClerkProvider>
           <SentryUserContext />
           <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
             <Layout debugInfo={debugInfo} navigationItems={navigationItems}>
               {children}
             </Layout>
           </Sentry.ErrorBoundary>
-        </ClerkProvider>
+        </ConditionalClerkProvider>
         {isVercel && <Analytics />}
         {isVercel && <SpeedInsights />}
       </body>

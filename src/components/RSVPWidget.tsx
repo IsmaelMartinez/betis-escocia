@@ -5,7 +5,7 @@ import { User, Mail, MessageSquare, Users, Calendar, MapPin, Clock } from 'lucid
 import { FormSuccessMessage, FormErrorMessage, FormLoadingMessage } from '@/components/MessageComponent';
 import Field, { ValidatedInput, ValidatedTextarea } from '@/components/Field';
 import { useFormValidation, commonValidationRules } from '@/lib/formValidation';
-import { useUser } from '@clerk/nextjs';
+import { useUserSafe as useUser } from '@/hooks/useClerkSafe';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import { useRSVPData } from '@/hooks/useRSVPData';
 

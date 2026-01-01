@@ -3,20 +3,72 @@ import { createClient, SupabaseClient } from "@supabase/supabase-js";
 // Next.js automatically loads .env.local - no dotenv needed
 export type { SupabaseClient };
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+// Check if Supabase is configured
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Lazy initialization to avoid errors during build when env vars aren't available
+let _supabase: SupabaseClient | null = null;
+
+function getSupabaseClient(): SupabaseClient | null {
+  if (!isSupabaseConfigured) {
+    return null;
+  }
+  if (!_supabase) {
+    _supabase = createClient(supabaseUrl!, supabaseAnonKey!);
+  }
+  return _supabase;
+}
+
+// Create a proxy that returns null-safe operations when Supabase isn't configured
+export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
+  get(_target, prop) {
+    const client = getSupabaseClient();
+    if (!client) {
+      // Return a function that returns an error response for database operations
+      if (prop === "from") {
+        return () => ({
+          select: () => ({
+            order: () => ({
+              limit: () =>
+                Promise.resolve({ data: null, error: { message: "Supabase not configured" } }),
+            }),
+            eq: () =>
+              Promise.resolve({ data: null, error: { message: "Supabase not configured" } }),
+            single: () =>
+              Promise.resolve({ data: null, error: { message: "Supabase not configured" } }),
+          }),
+          insert: () =>
+            Promise.resolve({ data: null, error: { message: "Supabase not configured" } }),
+          update: () =>
+            Promise.resolve({ data: null, error: { message: "Supabase not configured" } }),
+          delete: () =>
+            Promise.resolve({ data: null, error: { message: "Supabase not configured" } }),
+        });
+      }
+      // For other properties, return undefined
+      return undefined;
+    }
+    return (client as unknown as Record<string | symbol, unknown>)[prop];
+  },
+});
 
 export function getAuthenticatedSupabaseClient(
   supabaseAccessToken: string,
 ): SupabaseClient {
-  return createClient(supabaseUrl, supabaseAnonKey, {
+  if (!isSupabaseConfigured) {
+    // Return a mock client that returns errors
+    return supabase;
+  }
+  return createClient(supabaseUrl!, supabaseAnonKey!, {
     global: {
       headers: { Authorization: `Bearer ${supabaseAccessToken}` },
     },
   });
 }
+
+export { isSupabaseConfigured };
 
 // Type definitions for our matches table
 export interface Match {

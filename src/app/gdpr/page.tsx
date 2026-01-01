@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic";
 
-import { useAuth } from "@clerk/nextjs";
+import { useAuthSafe as useAuth } from "@/hooks/useClerkSafe";
 import { Shield, Mail } from "lucide-react";
 import Card, { CardBody } from "@/components/ui/Card";
 

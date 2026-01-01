@@ -13,7 +13,7 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { FormSuccessMessage, FormErrorMessage, FormLoadingMessage } from '@/components/MessageComponent';
-import { useUser } from '@clerk/nextjs';
+import { useUserSafe as useUser } from '@/hooks/useClerkSafe';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface ContactFormData {

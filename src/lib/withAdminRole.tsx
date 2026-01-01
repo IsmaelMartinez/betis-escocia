@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuth, useUser } from '@clerk/nextjs';
+import { useAuthSafe as useAuth, useUserSafe as useUser } from '@/hooks/useClerkSafe';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner';

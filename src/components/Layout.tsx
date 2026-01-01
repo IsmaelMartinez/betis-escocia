@@ -19,7 +19,11 @@ import {
 } from "lucide-react";
 import BetisLogo from "@/components/BetisLogo";
 import { type NavigationItem } from "@/lib/featureFlags";
-import { useUser, useClerk } from "@clerk/nextjs";
+import {
+  useUserSafe as useUser,
+  useClerkSafe as useClerk,
+  isClerkConfigured,
+} from "@/hooks/useClerkSafe";
 
 interface DebugInfo {
   features: Record<string, boolean>;
@@ -45,7 +49,9 @@ export default function Layout({
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
   // Derive auth enabled from debugInfo features (passed from server) to avoid hydration mismatch
-  const isAuthEnabled = debugInfo?.features?.["show-clerk-auth"] ?? false;
+  // Also check if Clerk is configured - if not, auth is effectively disabled
+  const isAuthEnabled =
+    isClerkConfigured && (debugInfo?.features?.["show-clerk-auth"] ?? false);
 
   const handleSignOut = async () => {
     await signOut();

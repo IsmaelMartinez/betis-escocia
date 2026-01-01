@@ -26,6 +26,9 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.36.2",
+    "@fontsource-variable/oswald": "^5.2.8",
+    "@fontsource-variable/playfair-display": "^5.2.8",
+    "@fontsource-variable/source-sans-3": "^5.2.9",
     "@google/genai": "^1.34.0",
     "@sentry/nextjs": "^10.30.0",
     "@supabase/supabase-js": "^2.87.1",

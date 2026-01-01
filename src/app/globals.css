@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Self-hosted fonts from fontsource (avoid Google Fonts API issues during build) */
+@import "@fontsource-variable/oswald";
+@import "@fontsource-variable/source-sans-3";
+@import "@fontsource-variable/playfair-display";
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -92,12 +97,12 @@
    * TYPOGRAPHY SYSTEM
    * =========================================== */
   
-  /* Font Families - uses CSS variables from next/font/google */
-  --font-display-stack: var(--font-display), 'Oswald', var(--font-geist-sans), sans-serif;
-  --font-heading: var(--font-body), var(--font-geist-sans), sans-serif;
-  --font-body-stack: var(--font-body), var(--font-geist-sans), sans-serif;
-  --font-mono: var(--font-geist-mono), 'JetBrains Mono', monospace;
-  --font-accent-stack: var(--font-accent), 'Playfair Display', serif;
+  /* Font Families - uses fontsource self-hosted fonts + system fallbacks */
+  --font-display-stack: 'Oswald Variable', 'Oswald', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Source Sans 3 Variable', 'Source Sans 3', ui-sans-serif, system-ui, sans-serif;
+  --font-body-stack: 'Source Sans 3 Variable', 'Source Sans 3', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', monospace;
+  --font-accent-stack: 'Playfair Display Variable', 'Playfair Display', ui-serif, Georgia, serif;
   
   /* Type Scale (modular scale 1.25) */
   --text-xs: 0.75rem;

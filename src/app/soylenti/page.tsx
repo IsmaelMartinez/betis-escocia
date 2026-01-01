@@ -1,5 +1,8 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
+
+// Force dynamic rendering - this page fetches data from Supabase
+export const dynamic = "force-dynamic";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Spinner from "@/components/ui/Spinner";
 import { withFeatureFlag } from "@/lib/featureProtection";

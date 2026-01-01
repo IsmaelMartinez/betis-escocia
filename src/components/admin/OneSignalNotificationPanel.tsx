@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Bell, Check, AlertCircle, TestTube } from 'lucide-react';
-import { useUser } from '@clerk/nextjs';
+import { useUserSafe as useUser } from '@/hooks/useClerkSafe';
 import Button from '@/components/ui/Button';
 import Card, { CardHeader, CardBody } from '@/components/ui/Card';
 import LoadingSpinner from '@/components/LoadingSpinner';
