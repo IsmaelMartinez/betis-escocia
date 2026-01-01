@@ -64,8 +64,8 @@ export default function SoylentiClient({
     () =>
       rumorsToFilter
         .filter((rumor) => {
-          const prob = rumor.aiProbability;
-          const isTransfer = prob !== null && prob !== undefined && prob > 0;
+          const prob = Number(rumor.aiProbability);
+          const isTransfer = !isNaN(prob) && prob > 0;
           return isTransfer || showAllNews;
         })
         .sort(
@@ -78,8 +78,8 @@ export default function SoylentiClient({
   const rumorCount = useMemo(
     () =>
       rumorsToFilter.filter((r) => {
-        const prob = r.aiProbability;
-        return prob !== null && prob !== undefined && prob > 0;
+        const prob = Number(r.aiProbability);
+        return !isNaN(prob) && prob > 0;
       }).length,
     [rumorsToFilter],
   );
