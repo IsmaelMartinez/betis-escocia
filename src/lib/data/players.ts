@@ -114,10 +114,10 @@ export async function fetchTrendingPlayersWithTimeline(): Promise<
   const playerIds = players.map((p) => p.id);
 
   // Define the expected response type for the timeline query
-  // Supabase returns betis_news as an array even with !inner join
+  // Supabase may return betis_news as array or single object depending on relationship
   interface TimelineRecord {
     player_id: number;
-    betis_news: { pub_date: string }[];
+    betis_news: { pub_date: string } | { pub_date: string }[];
   }
 
   const { data: timelineData, error: timelineError } = await supabase
@@ -157,7 +157,11 @@ export async function fetchTrendingPlayersWithTimeline(): Promise<
   const playerTimelines = new Map<number, Map<string, number>>();
   for (const record of (timelineData as TimelineRecord[]) || []) {
     const playerId = record.player_id;
-    const pubDate = record.betis_news?.[0]?.pub_date;
+    // Handle both single object and array formats from Supabase
+    const newsData = record.betis_news;
+    const pubDate = Array.isArray(newsData)
+      ? newsData[0]?.pub_date
+      : newsData?.pub_date;
     if (!pubDate) continue;
     const dateStr = new Date(pubDate).toISOString().split("T")[0];
 
