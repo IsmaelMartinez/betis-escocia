@@ -5,22 +5,7 @@ import type {
   MomentumPhase,
 } from "@/types/soylenti";
 import { fillTimeline } from "@/lib/utils/timeline";
-
-/**
- * Momentum phase thresholds for classifying player activity trends.
- * These values determine how we categorize a player's media buzz.
- */
-const MOMENTUM_THRESHOLDS = {
-  /** Minimum recent mentions + pct increase to be classified as "hot" */
-  HOT_MIN_RECENT: 3,
-  HOT_MIN_PCT: 50,
-  /** Percentage increase threshold for "rising" classification */
-  RISING_PCT: 20,
-  /** Percentage decrease threshold for "cooling" classification */
-  COOLING_PCT: -30,
-  /** Days without mentions before classified as "dormant" */
-  DORMANT_DAYS: 7,
-} as const;
+import { MOMENTUM_THRESHOLDS } from "@/lib/soylenti/constants";
 
 /**
  * Fetches trending players by rumor activity.

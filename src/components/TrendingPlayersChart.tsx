@@ -14,6 +14,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import Sparkline from "@/components/Sparkline";
+import { getTrendFromMomentum } from "@/lib/soylenti/constants";
 import type {
   TrendingPlayerWithTimeline,
   MomentumPhase,
@@ -87,13 +88,6 @@ function formatDaysAgo(days: number): string {
   return `hace ${days} días`;
 }
 
-/** Get trend direction from momentum */
-function getTrend(momentumPct: number): "up" | "down" | "stable" {
-  if (momentumPct > 20) return "up";
-  if (momentumPct < -20) return "down";
-  return "stable";
-}
-
 /** Get momentum arrow component */
 function MomentumArrow({ trend }: { trend: "up" | "down" | "stable" }) {
   if (trend === "up") {
@@ -115,7 +109,7 @@ function PlayerRow({
   isSelected: boolean;
   onClick?: () => void;
 }) {
-  const trend = getTrend(player.momentumPct);
+  const trend = getTrendFromMomentum(player.momentumPct);
 
   return (
     <button
