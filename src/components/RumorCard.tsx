@@ -62,23 +62,27 @@ export default function RumorCard({
             >
               {source}
             </span>
-            {showCredibility &&
-              aiProbability !== null &&
-              aiProbability !== undefined &&
-              aiProbability > 0 && (
-                <span
-                  className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                    aiProbability >= 70
-                      ? "bg-betis-verde text-white"
-                      : aiProbability >= 40
-                        ? "bg-betis-oro text-betis-verde-dark"
-                        : "bg-gray-200 text-gray-700"
-                  }`}
-                  title={aiAnalysis || undefined}
-                >
-                  {aiProbability}%
-                </span>
-              )}
+            {(() => {
+              const prob = Number(aiProbability);
+              return (
+                showCredibility &&
+                !isNaN(prob) &&
+                prob > 0 && (
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                      prob >= 70
+                        ? "bg-betis-verde text-white"
+                        : prob >= 40
+                          ? "bg-betis-oro text-betis-verde-dark"
+                          : "bg-gray-200 text-gray-700"
+                    }`}
+                    title={aiAnalysis || undefined}
+                  >
+                    {Math.round(prob)}%
+                  </span>
+                )
+              );
+            })()}
           </div>
           <span className="text-sm text-gray-500">{formatDate(pubDate)}</span>
         </div>
