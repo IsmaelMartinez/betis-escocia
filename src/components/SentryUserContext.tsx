@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
+import { useEffect } from "react";
 import * as Sentry from "@sentry/nextjs";
 import { useUserSafe, isClerkConfigured } from "@/hooks/useClerkSafe";
 

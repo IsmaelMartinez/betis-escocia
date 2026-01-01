@@ -32,19 +32,37 @@ export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
           select: () => ({
             order: () => ({
               limit: () =>
-                Promise.resolve({ data: null, error: { message: "Supabase not configured" } }),
+                Promise.resolve({
+                  data: null,
+                  error: { message: "Supabase not configured" },
+                }),
             }),
             eq: () =>
-              Promise.resolve({ data: null, error: { message: "Supabase not configured" } }),
+              Promise.resolve({
+                data: null,
+                error: { message: "Supabase not configured" },
+              }),
             single: () =>
-              Promise.resolve({ data: null, error: { message: "Supabase not configured" } }),
+              Promise.resolve({
+                data: null,
+                error: { message: "Supabase not configured" },
+              }),
           }),
           insert: () =>
-            Promise.resolve({ data: null, error: { message: "Supabase not configured" } }),
+            Promise.resolve({
+              data: null,
+              error: { message: "Supabase not configured" },
+            }),
           update: () =>
-            Promise.resolve({ data: null, error: { message: "Supabase not configured" } }),
+            Promise.resolve({
+              data: null,
+              error: { message: "Supabase not configured" },
+            }),
           delete: () =>
-            Promise.resolve({ data: null, error: { message: "Supabase not configured" } }),
+            Promise.resolve({
+              data: null,
+              error: { message: "Supabase not configured" },
+            }),
         });
       }
       // For other properties, return undefined

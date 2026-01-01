@@ -1,71 +1,75 @@
-'use client';
+"use client";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import { 
-  Send, 
-  MessageSquare, 
-  UserPlus, 
-  Camera, 
-  MessageCircle, 
-  HelpCircle
-} from 'lucide-react';
-import { FormSuccessMessage, FormErrorMessage, FormLoadingMessage } from '@/components/MessageComponent';
-import { useUserSafe as useUser } from '@/hooks/useClerkSafe';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import {
+  Send,
+  MessageSquare,
+  UserPlus,
+  Camera,
+  MessageCircle,
+  HelpCircle,
+} from "lucide-react";
+import {
+  FormSuccessMessage,
+  FormErrorMessage,
+  FormLoadingMessage,
+} from "@/components/MessageComponent";
+import { useUserSafe as useUser } from "@/hooks/useClerkSafe";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 interface ContactFormData {
   name: string;
   email: string;
   phone?: string;
-  type: 'general' | 'rsvp' | 'photo' | 'whatsapp' | 'feedback';
+  type: "general" | "rsvp" | "photo" | "whatsapp" | "feedback";
   subject: string;
   message: string;
 }
 
 const formTypes = [
   {
-    id: 'general' as const,
-    name: 'Consulta General',
-    description: 'Preguntas generales sobre la peña',
+    id: "general" as const,
+    name: "Consulta General",
+    description: "Preguntas generales sobre la peña",
     icon: MessageSquare,
-    color: 'bg-scotland-blue',
-    feature: null // Always enabled
+    color: "bg-scotland-blue",
+    feature: null, // Always enabled
   },
   {
-    id: 'rsvp' as const,
-    name: 'Eventos y RSVP',
-    description: 'Dudas sobre eventos y confirmaciones',
+    id: "rsvp" as const,
+    name: "Eventos y RSVP",
+    description: "Dudas sobre eventos y confirmaciones",
     icon: UserPlus,
-    color: 'bg-betis-verde',
-    feature: null // Always enabled
+    color: "bg-betis-verde",
+    feature: null, // Always enabled
   },
   {
-  id: 'photo' as const,
-    name: 'Fotos y Galería',
-    description: 'Envío de fotos o problemas con la galería',
+    id: "photo" as const,
+    name: "Fotos y Galería",
+    description: "Envío de fotos o problemas con la galería",
     icon: Camera,
-    color: 'bg-pink-500',
-    feature: null // Always enabled
+    color: "bg-pink-500",
+    feature: null, // Always enabled
   },
   {
-    id: 'whatsapp' as const,
-    name: 'Unirse a WhatsApp',
-    description: 'Solicitar invitación al grupo de WhatsApp',
+    id: "whatsapp" as const,
+    name: "Unirse a WhatsApp",
+    description: "Solicitar invitación al grupo de WhatsApp",
     icon: MessageCircle,
-    color: 'bg-betis-verde-dark',
-    feature: null // Always enabled for now
+    color: "bg-betis-verde-dark",
+    feature: null, // Always enabled for now
   },
   {
-    id: 'feedback' as const,
-    name: 'Sugerencias Web',
-    description: 'Mejoras y feedback sobre la web',
+    id: "feedback" as const,
+    name: "Sugerencias Web",
+    description: "Mejoras y feedback sobre la web",
     icon: HelpCircle,
-    color: 'bg-betis-oro',
-    feature: null // Always enabled for now
-  }
+    color: "bg-betis-oro",
+    feature: null, // Always enabled for now
+  },
 ];
 
 export default function ContactPage() {
@@ -76,36 +80,38 @@ export default function ContactPage() {
   const [highlightFeatures] = useState<Record<string, boolean>>({
     general: true,
     rsvp: true,
-  photo: true,
+    photo: true,
     whatsapp: true,
     feedback: true,
   });
 
-
   const [formData, setFormData] = useState<ContactFormData>({
-    name: '',
-    email: '',
-    phone: '',
-    type: 'general',
-    subject: '',
-    message: ''
+    name: "",
+    email: "",
+    phone: "",
+    type: "general",
+    subject: "",
+    message: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   // Feature always enabled; no flag checks needed
 
   // Pre-populate form with user data when authenticated
   useEffect(() => {
     if (user) {
-      const userName = user.firstName && user.lastName 
-        ? `${user.firstName} ${user.lastName}` 
-        : user.firstName || '';
-      const userEmail = user.emailAddresses[0]?.emailAddress || '';
-      
-      setFormData(prev => ({
+      const userName =
+        user.firstName && user.lastName
+          ? `${user.firstName} ${user.lastName}`
+          : user.firstName || "";
+      const userEmail = user.emailAddresses[0]?.emailAddress || "";
+
+      setFormData((prev) => ({
         ...prev,
         name: prev.name || userName,
         email: prev.email || userEmail,
@@ -113,45 +119,54 @@ export default function ContactPage() {
     }
   }, [user]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  const handleTypeChange = (type: ContactFormData['type']) => {
-    setFormData(prev => ({
+  const handleTypeChange = (type: ContactFormData["type"]) => {
+    setFormData((prev) => ({
       ...prev,
       type,
-      subject: getDefaultSubject(type)
+      subject: getDefaultSubject(type),
     }));
     // Scroll to form when type changes
-    formRef.current?.scrollIntoView({ behavior: 'smooth' });
+    formRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const getDefaultSubject = (type: ContactFormData['type']): string => {
+  const getDefaultSubject = (type: ContactFormData["type"]): string => {
     switch (type) {
-      case 'rsvp': return 'Consulta sobre eventos';
-  case 'photo': return 'Envío de fotos';
-      case 'whatsapp': return 'Solicitud de invitación a WhatsApp';
-      case 'feedback': return 'Sugerencias para la web';
-      default: return '';
+      case "rsvp":
+        return "Consulta sobre eventos";
+      case "photo":
+        return "Envío de fotos";
+      case "whatsapp":
+        return "Solicitud de invitación a WhatsApp";
+      case "feedback":
+        return "Sugerencias para la web";
+      default:
+        return "";
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setSubmitStatus('idle');
-    setErrorMessage('');
+    setSubmitStatus("idle");
+    setErrorMessage("");
 
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
+      const response = await fetch("/api/contact", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
@@ -159,30 +174,32 @@ export default function ContactPage() {
       const result = await response.json();
 
       if (response.ok) {
-        setSubmitStatus('success');
-        setFormData(prev => ({
+        setSubmitStatus("success");
+        setFormData((prev) => ({
           ...prev,
-          phone: '',
-          type: 'general',
-          subject: '',
-          message: ''
+          phone: "",
+          type: "general",
+          subject: "",
+          message: "",
         }));
       } else {
-        setSubmitStatus('error');
-        setErrorMessage(result.error ?? 'Error al enviar el mensaje');
+        setSubmitStatus("error");
+        setErrorMessage(result.error ?? "Error al enviar el mensaje");
       }
     } catch (err) {
-      console.error('Contact form error:', err);
-      setSubmitStatus('error');
-      setErrorMessage('Error de conexión. Inténtalo de nuevo.');
+      console.error("Contact form error:", err);
+      setSubmitStatus("error");
+      setErrorMessage("Error de conexión. Inténtalo de nuevo.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const selectedType = formTypes.find(type => type.id === formData.type);
+  const selectedType = formTypes.find((type) => type.id === formData.type);
 
-  const visibleFormTypes = formTypes.filter(type => !type.feature || highlightFeatures[type.id]);
+  const visibleFormTypes = formTypes.filter(
+    (type) => !type.feature || highlightFeatures[type.id],
+  );
 
   if (loadingFeatureFlag) {
     return (
@@ -206,7 +223,7 @@ export default function ContactPage() {
             <p className="text-gray-700 mb-4">
               Por favor, inténtalo de nuevo más tarde.
             </p>
-            <Link 
+            <Link
               href="/"
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-betis-verde hover:bg-betis-verde-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-betis-verde"
             >
@@ -224,9 +241,7 @@ export default function ContactPage() {
       <section className="bg-betis-verde text-white py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <Send className="h-16 w-16 mx-auto mb-4" />
-          <h1 className="text-4xl sm:text-5xl font-black mb-4">
-            Contacto
-          </h1>
+          <h1 className="text-4xl sm:text-5xl font-black mb-4">Contacto</h1>
           <p className="text-xl opacity-90">
             ¿Tienes alguna pregunta? Estamos aquí para ayudarte
           </p>
@@ -239,8 +254,10 @@ export default function ContactPage() {
           <h2 className="text-3xl font-bold text-center mb-8 text-gray-900">
             💬 ¿Qué necesitas?
           </h2>
-          
-          <div className={`grid grid-cols-1 md:grid-cols-2 ${visibleFormTypes.length === 4 ? 'lg:grid-cols-2' : 'lg:grid-cols-3'} gap-6 mb-12`}>
+
+          <div
+            className={`grid grid-cols-1 md:grid-cols-2 ${visibleFormTypes.length === 4 ? "lg:grid-cols-2" : "lg:grid-cols-3"} gap-6 mb-12`}
+          >
             {formTypes.map((type) => {
               const Icon = type.icon;
               // Conditionally render based on feature flag
@@ -253,14 +270,18 @@ export default function ContactPage() {
                   onClick={() => handleTypeChange(type.id)}
                   className={`p-6 rounded-2xl border-2 transition-all duration-300 text-left ${
                     formData.type === type.id
-                      ? 'border-betis-verde bg-betis-verde-pale shadow-lg'
-                      : 'border-gray-200 hover:border-betis-verde/50 hover:shadow-md'
+                      ? "border-betis-verde bg-betis-verde-pale shadow-lg"
+                      : "border-gray-200 hover:border-betis-verde/50 hover:shadow-md"
                   }`}
                 >
-                  <div className={`${type.color} w-12 h-12 rounded-full flex items-center justify-center mb-4`}>
+                  <div
+                    className={`${type.color} w-12 h-12 rounded-full flex items-center justify-center mb-4`}
+                  >
                     <Icon className="h-6 w-6 text-white" />
                   </div>
-                  <h3 className="font-bold text-lg mb-2 text-gray-900">{type.name}</h3>
+                  <h3 className="font-bold text-lg mb-2 text-gray-900">
+                    {type.name}
+                  </h3>
                   <p className="text-gray-600 text-sm">{type.description}</p>
                 </button>
               );
@@ -275,19 +296,22 @@ export default function ContactPage() {
           <div className="bg-white rounded-2xl shadow-xl p-8">
             <div className="text-center mb-8">
               {selectedType && (
-                <div className={`${selectedType.color} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4`}>
+                <div
+                  className={`${selectedType.color} w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4`}
+                >
                   <selectedType.icon className="h-8 w-8 text-white" />
                 </div>
               )}
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                {selectedType?.name ?? 'Formulario de Contacto'}
+                {selectedType?.name ?? "Formulario de Contacto"}
               </h3>
               <p className="text-gray-600">
-                {selectedType?.description ?? 'Completa el formulario y te responderemos pronto'}
+                {selectedType?.description ??
+                  "Completa el formulario y te responderemos pronto"}
               </p>
             </div>
 
-            {submitStatus === 'success' && (
+            {submitStatus === "success" && (
               <FormSuccessMessage
                 title="¡Mensaje enviado!"
                 message="Te responderemos pronto."
@@ -295,9 +319,12 @@ export default function ContactPage() {
               />
             )}
 
-            {submitStatus === 'error' && (
+            {submitStatus === "error" && (
               <FormErrorMessage
-                message={errorMessage || 'Error al enviar el mensaje. Inténtalo de nuevo.'}
+                message={
+                  errorMessage ||
+                  "Error al enviar el mensaje. Inténtalo de nuevo."
+                }
                 className="mb-6"
               />
             )}
@@ -316,7 +343,10 @@ export default function ContactPage() {
                   </div>
                 )}
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Nombre completo *
                   </label>
                   <input
@@ -333,7 +363,10 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
                     Email *
                   </label>
                   <input
@@ -352,7 +385,10 @@ export default function ContactPage() {
 
               {/* Phone (optional) */}
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Teléfono (opcional)
                 </label>
                 <input
@@ -368,7 +404,10 @@ export default function ContactPage() {
 
               {/* Subject */}
               <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="subject"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Asunto *
                 </label>
                 <input
@@ -386,7 +425,10 @@ export default function ContactPage() {
 
               {/* Message */}
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="message"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Mensaje *
                 </label>
                 <textarea
@@ -403,21 +445,23 @@ export default function ContactPage() {
               </div>
 
               {/* Special instructions based on type */}
-              {formData.type === 'whatsapp' && (
+              {formData.type === "whatsapp" && (
                 <div className="bg-betis-verde-light border border-betis-verde/20 rounded-lg p-4">
                   <p className="text-betis-verde-dark text-sm">
-                    📱 <strong>Solicitud de WhatsApp:</strong> Incluye tu número de móvil en el mensaje 
-                    para poder añadirte al grupo. El grupo se usa para avisar de cambios de horario 
-                    y eventos especiales.
+                    📱 <strong>Solicitud de WhatsApp:</strong> Incluye tu número
+                    de móvil en el mensaje para poder añadirte al grupo. El
+                    grupo se usa para avisar de cambios de horario y eventos
+                    especiales.
                   </p>
                 </div>
               )}
 
-              {formData.type === 'photo' && (
+              {formData.type === "photo" && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <p className="text-blue-800 text-sm">
-                    📸 <strong>Envío de fotos:</strong> Puedes adjuntar fotos directamente en la galería 
-                    o enviárnoslas por email. Menciona si quieres que se publiquen en redes sociales.
+                    📸 <strong>Envío de fotos:</strong> Puedes adjuntar fotos
+                    directamente en la galería o enviárnoslas por email.
+                    Menciona si quieres que se publiquen en redes sociales.
                   </p>
                 </div>
               )}
@@ -430,7 +474,10 @@ export default function ContactPage() {
                 data-testid="submit-contact"
               >
                 {isSubmitting ? (
-                  <FormLoadingMessage message="Enviando mensaje..." className="text-white" />
+                  <FormLoadingMessage
+                    message="Enviando mensaje..."
+                    className="text-white"
+                  />
                 ) : (
                   <>
                     <Send className="h-5 w-5 inline mr-2" />
@@ -449,40 +496,49 @@ export default function ContactPage() {
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             Preguntas Frecuentes
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <h3 className="text-lg font-bold mb-3 text-betis-verde">¿Cómo puedo unirme a la peña?</h3>
+              <h3 className="text-lg font-bold mb-3 text-betis-verde">
+                ¿Cómo puedo unirme a la peña?
+              </h3>
               <p className="text-gray-700 mb-6">
-                Simplemente ven a The Polwarth Tavern cualquier día que juegue el Betis. 
-                No hace falta ser socio, solo ganas de pasarlo bien.
+                Simplemente ven a The Polwarth Tavern cualquier día que juegue
+                el Betis. No hace falta ser socio, solo ganas de pasarlo bien.
               </p>
 
-              <h3 className="text-lg font-bold mb-3 text-betis-verde">¿Tengo que confirmar asistencia?</h3>
+              <h3 className="text-lg font-bold mb-3 text-betis-verde">
+                ¿Tengo que confirmar asistencia?
+              </h3>
               <p className="text-gray-700 mb-6">
-                No es obligatorio, pero nos ayuda a reservar mesa. Usa el formulario RSVP 
-                si sabes que vas a venir.
+                No es obligatorio, pero nos ayuda a reservar mesa. Usa el
+                formulario RSVP si sabes que vas a venir.
               </p>
 
-              <h3 className="text-lg font-bold mb-3 text-betis-verde">¿Puedo traer amigos?</h3>
+              <h3 className="text-lg font-bold mb-3 text-betis-verde">
+                ¿Puedo traer amigos?
+              </h3>
               <p className="text-gray-700">
-                ¡Por supuesto! Cuantos más seamos, mejor ambiente. Solo menciona 
+                ¡Por supuesto! Cuantos más seamos, mejor ambiente. Solo menciona
                 cuántos sois en el RSVP.
               </p>
             </div>
 
             <div>
-
-              <h3 className="text-lg font-bold mb-3 text-betis-verde">¿Puedo enviar fotos?</h3>
+              <h3 className="text-lg font-bold mb-3 text-betis-verde">
+                ¿Puedo enviar fotos?
+              </h3>
               <p className="text-gray-700 mb-6">
-                Sí, usa la galería online o escríbenos. Nos encanta ver fotos de 
+                Sí, usa la galería online o escríbenos. Nos encanta ver fotos de
                 béticos animando al Betis.
               </p>
 
-              <h3 className="text-lg font-bold mb-3 text-betis-verde">¿Hay grupo de WhatsApp?</h3>
+              <h3 className="text-lg font-bold mb-3 text-betis-verde">
+                ¿Hay grupo de WhatsApp?
+              </h3>
               <p className="text-gray-700">
-                Sí, úsalo para solicitar invitación. Te añadimos para avisos importantes 
-                y coordinación de eventos.
+                Sí, úsalo para solicitar invitación. Te añadimos para avisos
+                importantes y coordinación de eventos.
               </p>
             </div>
           </div>
@@ -492,8 +548,10 @@ export default function ContactPage() {
       {/* Alternative Contact Methods */}
       <section className="py-16 bg-betis-verde text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-8">📱 Otras formas de contacto</h2>
-          
+          <h2 className="text-3xl font-bold mb-8">
+            📱 Otras formas de contacto
+          </h2>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
               <MessageCircle className="h-12 w-12 mx-auto mb-4" />

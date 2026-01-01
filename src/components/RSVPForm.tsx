@@ -1,12 +1,20 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { User, Mail, MessageSquare, Users } from 'lucide-react';
-import { FormSuccessMessage, FormErrorMessage, FormLoadingMessage } from '@/components/MessageComponent';
-import Field, { ValidatedInput, ValidatedSelect, ValidatedTextarea } from '@/components/Field';
-import { useFormValidation, commonValidationRules } from '@/lib/formValidation';
-import { useUserSafe as useUser } from '@/hooks/useClerkSafe';
-import { isFeatureEnabled } from '@/lib/featureFlags';
+import { useState, useEffect } from "react";
+import { User, Mail, MessageSquare, Users } from "lucide-react";
+import {
+  FormSuccessMessage,
+  FormErrorMessage,
+  FormLoadingMessage,
+} from "@/components/MessageComponent";
+import Field, {
+  ValidatedInput,
+  ValidatedSelect,
+  ValidatedTextarea,
+} from "@/components/Field";
+import { useFormValidation, commonValidationRules } from "@/lib/formValidation";
+import { useUserSafe as useUser } from "@/hooks/useClerkSafe";
+import { isFeatureEnabled } from "@/lib/featureFlags";
 
 interface RSVPFormProps {
   readonly onSuccess?: () => void;
@@ -17,13 +25,16 @@ const rsvpValidationRules = {
   name: commonValidationRules.name,
   email: commonValidationRules.email,
   attendees: { required: true },
-  message: { ...commonValidationRules.message, required: false }
+  message: { ...commonValidationRules.message, required: false },
 };
 
-export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) {
+export default function RSVPForm({
+  onSuccess,
+  selectedMatchId,
+}: RSVPFormProps) {
   const { user } = useUser();
-  const isAuthEnabled = isFeatureEnabled('show-clerk-auth');
-  
+  const isAuthEnabled = isFeatureEnabled("show-clerk-auth");
+
   const {
     data: formData,
     errors,
@@ -31,80 +42,92 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
     updateField,
     touchField,
     validateAll,
-    reset
-  } = useFormValidation({
-    name: '',
-    email: '',
-    attendees: 1,
-    message: '',
-    whatsappInterest: false
-  }, rsvpValidationRules);
-  
+    reset,
+  } = useFormValidation(
+    {
+      name: "",
+      email: "",
+      attendees: 1,
+      message: "",
+      whatsappInterest: false,
+    },
+    rsvpValidationRules,
+  );
+
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
-  
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+
   // Pre-fill form with user data when authenticated
   useEffect(() => {
     if (isAuthEnabled && user) {
-      const userName = user.firstName && user.lastName 
-        ? `${user.firstName} ${user.lastName}` 
-        : user.firstName || '';
-      const userEmail = user.emailAddresses[0]?.emailAddress || '';
-      
-      if (userName) updateField('name', userName);
-      if (userEmail) updateField('email', userEmail);
+      const userName =
+        user.firstName && user.lastName
+          ? `${user.firstName} ${user.lastName}`
+          : user.firstName || "";
+      const userEmail = user.emailAddresses[0]?.emailAddress || "";
+
+      if (userName) updateField("name", userName);
+      if (userEmail) updateField("email", userEmail);
     }
   }, [user, isAuthEnabled, updateField]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const validation = validateAll();
     if (!validation.isValid) {
       return;
     }
-    
+
     setIsSubmitting(true);
-    setSubmitStatus('idle');
+    setSubmitStatus("idle");
 
     try {
-      const apiUrl = selectedMatchId ? `/api/rsvp?match=${selectedMatchId}` : '/api/rsvp';
+      const apiUrl = selectedMatchId
+        ? `/api/rsvp?match=${selectedMatchId}`
+        : "/api/rsvp";
       const submissionData = {
         ...formData,
         matchId: selectedMatchId,
-        ...(isAuthEnabled && user ? { userId: user.id } : {})
+        ...(isAuthEnabled && user ? { userId: user.id } : {}),
       };
-      
+
       const response = await fetch(apiUrl, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(submissionData),
       });
 
       if (!response.ok) {
-        throw new Error('Error al enviar la confirmación');
+        throw new Error("Error al enviar la confirmación");
       }
 
-      setSubmitStatus('success');
+      setSubmitStatus("success");
       reset();
-      
+
       // Call success callback after a delay
       setTimeout(() => {
         onSuccess?.();
       }, 2000);
-
     } catch (error) {
-      setSubmitStatus('error');
-      setErrorMessage(error instanceof Error ? error.message : 'Error desconocido');
+      setSubmitStatus("error");
+      setErrorMessage(
+        error instanceof Error ? error.message : "Error desconocido",
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleInputChange = (field: string, value: string | number | boolean) => {
+  const handleInputChange = (
+    field: string,
+    value: string | number | boolean,
+  ) => {
     updateField(field, value);
   };
 
@@ -112,7 +135,7 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
     touchField(field);
   };
 
-  if (submitStatus === 'success') {
+  if (submitStatus === "success") {
     return (
       <FormSuccessMessage
         title="¡Confirmación Recibida!"
@@ -159,8 +182,8 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
             name="name"
             required
             value={formData.name as string}
-            onChange={(e) => handleInputChange('name', e.target.value)}
-            onBlur={() => handleBlur('name')}
+            onChange={(e) => handleInputChange("name", e.target.value)}
+            onBlur={() => handleBlur("name")}
             placeholder="Tu nombre y apellido"
             error={errors.name}
             touched={touched.name}
@@ -184,8 +207,8 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
             name="email"
             required
             value={formData.email as string}
-            onChange={(e) => handleInputChange('email', e.target.value)}
-            onBlur={() => handleBlur('email')}
+            onChange={(e) => handleInputChange("email", e.target.value)}
+            onBlur={() => handleBlur("email")}
             placeholder="tu@email.com"
             error={errors.email}
             touched={touched.email}
@@ -208,8 +231,10 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
             name="attendees"
             required
             value={formData.attendees as number}
-            onChange={(e) => handleInputChange('attendees', parseInt(e.target.value))}
-            onBlur={() => handleBlur('attendees')}
+            onChange={(e) =>
+              handleInputChange("attendees", parseInt(e.target.value))
+            }
+            onBlur={() => handleBlur("attendees")}
             error={errors.attendees}
             touched={touched.attendees}
             data-testid="attendees-select"
@@ -235,8 +260,8 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
             name="message"
             rows={3}
             value={formData.message as string}
-            onChange={(e) => handleInputChange('message', e.target.value)}
-            onBlur={() => handleBlur('message')}
+            onChange={(e) => handleInputChange("message", e.target.value)}
+            onBlur={() => handleBlur("message")}
             placeholder="¿Alguna pregunta o comentario?"
             error={errors.message}
             touched={touched.message}
@@ -251,22 +276,28 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
             id="whatsappInterest"
             name="whatsappInterest"
             checked={formData.whatsappInterest as boolean}
-            onChange={(e) => handleInputChange('whatsappInterest', e.target.checked)}
+            onChange={(e) =>
+              handleInputChange("whatsappInterest", e.target.checked)
+            }
             className="mt-1 h-5 w-5 text-betis-green border-gray-300 rounded focus:ring-betis-green"
           />
           <label htmlFor="whatsappInterest" className="text-sm text-gray-700">
             <strong>¿Te interesa unirte al grupo de WhatsApp?</strong>
             <br />
             <span className="text-gray-500">
-              Recibe notificaciones sobre cambios de horario, eventos especiales y más.
+              Recibe notificaciones sobre cambios de horario, eventos especiales
+              y más.
             </span>
           </label>
         </div>
 
         {/* Error Message */}
-        {submitStatus === 'error' && (
-          <FormErrorMessage 
-            message={errorMessage || 'Error al enviar la confirmación. Por favor, inténtalo de nuevo.'}
+        {submitStatus === "error" && (
+          <FormErrorMessage
+            message={
+              errorMessage ||
+              "Error al enviar la confirmación. Por favor, inténtalo de nuevo."
+            }
           />
         )}
 
@@ -278,16 +309,20 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
           data-testid="submit-rsvp"
         >
           {isSubmitting ? (
-            <FormLoadingMessage message="Enviando confirmación..." className="text-white" />
+            <FormLoadingMessage
+              message="Enviando confirmación..."
+              className="text-white"
+            />
           ) : (
-            '✅ Confirmar Asistencia'
+            "✅ Confirmar Asistencia"
           )}
         </button>
       </form>
 
       <div className="mt-6 text-center">
         <p className="text-xs text-gray-500">
-          * Campos obligatorios. Tus datos solo se usan para organizar el evento.
+          * Campos obligatorios. Tus datos solo se usan para organizar el
+          evento.
         </p>
       </div>
     </div>

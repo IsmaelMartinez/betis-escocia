@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useAuthSafe as useAuth, useUserSafe as useUser } from "@/hooks/useClerkSafe";
+import {
+  useAuthSafe as useAuth,
+  useUserSafe as useUser,
+} from "@/hooks/useClerkSafe";
 import {
   supabase,
   RSVP,
