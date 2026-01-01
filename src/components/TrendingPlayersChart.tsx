@@ -95,11 +95,11 @@ function getTrend(momentumPct: number): "up" | "down" | "stable" {
 }
 
 /** Get momentum arrow component */
-function MomentumArrow({ pct }: { pct: number }) {
-  if (pct > 20) {
+function MomentumArrow({ trend }: { trend: "up" | "down" | "stable" }) {
+  if (trend === "up") {
     return <ArrowUpRight size={14} className="text-betis-verde" />;
   }
-  if (pct < -20) {
+  if (trend === "down") {
     return <ArrowDownRight size={14} className="text-red-500" />;
   }
   return <ArrowRight size={14} className="text-gray-400" />;
@@ -115,7 +115,6 @@ function PlayerRow({
   isSelected: boolean;
   onClick?: () => void;
 }) {
-  const config = phaseConfig[player.phase];
   const trend = getTrend(player.momentumPct);
 
   return (
@@ -143,7 +142,7 @@ function PlayerRow({
           <span className="font-medium text-gray-900 truncate text-sm">
             {player.name}
           </span>
-          <MomentumArrow pct={player.momentumPct} />
+          <MomentumArrow trend={trend} />
         </div>
         <div className="text-xs text-gray-500">
           {formatDaysAgo(player.daysSinceLastMention)} · {player.rumorCount}{" "}

@@ -1,6 +1,7 @@
 "use client";
 
 import type { DailyMention } from "@/types/soylenti";
+import { fillTimeline } from "@/lib/utils/timeline";
 
 interface SparklineProps {
   /** Sparse timeline data with dates and counts */
@@ -15,26 +16,6 @@ interface SparklineProps {
   trend?: "up" | "down" | "stable";
   /** Additional CSS classes */
   className?: string;
-}
-
-/**
- * Fill sparse timeline data into a complete array for the given number of days
- */
-function fillTimeline(sparseData: DailyMention[], days: number): number[] {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const result: number[] = [];
-  const dataMap = new Map(sparseData.map((d) => [d.date, d.count]));
-
-  for (let i = days - 1; i >= 0; i--) {
-    const date = new Date(today);
-    date.setDate(date.getDate() - i);
-    const dateStr = date.toISOString().split("T")[0];
-    result.push(dataMap.get(dateStr) || 0);
-  }
-
-  return result;
 }
 
 /**
@@ -55,10 +36,11 @@ export default function Sparkline({
   const effectiveHeight = height - padding * 2;
   const effectiveWidth = width - padding * 2;
 
-  // Generate SVG path
+  // Generate SVG path (handle single data point to avoid division by zero)
+  const divisor = filledData.length > 1 ? filledData.length - 1 : 1;
   const points = filledData
     .map((value, index) => {
-      const x = padding + (index / (filledData.length - 1)) * effectiveWidth;
+      const x = padding + (index / divisor) * effectiveWidth;
       const y = height - padding - (value / max) * effectiveHeight;
       return `${index === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
     })

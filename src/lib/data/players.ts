@@ -4,6 +4,23 @@ import type {
   DailyMention,
   MomentumPhase,
 } from "@/types/soylenti";
+import { fillTimeline } from "@/lib/utils/timeline";
+
+/**
+ * Momentum phase thresholds for classifying player activity trends.
+ * These values determine how we categorize a player's media buzz.
+ */
+const MOMENTUM_THRESHOLDS = {
+  /** Minimum recent mentions + pct increase to be classified as "hot" */
+  HOT_MIN_RECENT: 3,
+  HOT_MIN_PCT: 50,
+  /** Percentage increase threshold for "rising" classification */
+  RISING_PCT: 20,
+  /** Percentage decrease threshold for "cooling" classification */
+  COOLING_PCT: -30,
+  /** Days without mentions before classified as "dormant" */
+  DORMANT_DAYS: 7,
+} as const;
 
 /**
  * Fetches trending players by rumor activity.
@@ -38,15 +55,16 @@ export async function fetchTrendingPlayers(): Promise<TrendingPlayer[]> {
 }
 
 /**
- * Calculate momentum phase based on recent vs previous activity
+ * Calculate momentum phase based on recent vs previous activity.
+ * Uses MOMENTUM_THRESHOLDS constants for classification.
  */
 function calculateMomentumPhase(
   recentCount: number,
   previousCount: number,
   daysSinceLastMention: number,
 ): { phase: MomentumPhase; momentumPct: number } {
-  // If no mentions in last 7 days, dormant
-  if (daysSinceLastMention > 7) {
+  // If no mentions recently, dormant
+  if (daysSinceLastMention > MOMENTUM_THRESHOLDS.DORMANT_DAYS) {
     return { phase: "dormant", momentumPct: -100 };
   }
 
@@ -58,37 +76,20 @@ function calculateMomentumPhase(
         ? 100
         : 0;
 
-  // Classify phase
-  if (recentCount >= 3 && momentumPct > 50) {
+  // Classify phase based on thresholds
+  if (
+    recentCount >= MOMENTUM_THRESHOLDS.HOT_MIN_RECENT &&
+    momentumPct > MOMENTUM_THRESHOLDS.HOT_MIN_PCT
+  ) {
     return { phase: "hot", momentumPct };
   }
-  if (momentumPct > 20) {
+  if (momentumPct > MOMENTUM_THRESHOLDS.RISING_PCT) {
     return { phase: "rising", momentumPct };
   }
-  if (momentumPct < -30) {
+  if (momentumPct < MOMENTUM_THRESHOLDS.COOLING_PCT) {
     return { phase: "cooling", momentumPct };
   }
   return { phase: "stable", momentumPct };
-}
-
-/**
- * Fill sparse timeline data into a complete 14-day array
- */
-function fillTimeline(sparseData: DailyMention[], days: number = 14): number[] {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const result: number[] = [];
-  const dataMap = new Map(sparseData.map((d) => [d.date, d.count]));
-
-  for (let i = days - 1; i >= 0; i--) {
-    const date = new Date(today);
-    date.setDate(date.getDate() - i);
-    const dateStr = date.toISOString().split("T")[0];
-    result.push(dataMap.get(dateStr) || 0);
-  }
-
-  return result;
 }
 
 /**
@@ -128,9 +129,10 @@ export async function fetchTrendingPlayersWithTimeline(): Promise<
   const playerIds = players.map((p) => p.id);
 
   // Define the expected response type for the timeline query
+  // Supabase returns betis_news as an array even with !inner join
   interface TimelineRecord {
     player_id: number;
-    betis_news: { pub_date: string } | { pub_date: string }[];
+    betis_news: { pub_date: string }[];
   }
 
   const { data: timelineData, error: timelineError } = await supabase
@@ -167,14 +169,11 @@ export async function fetchTrendingPlayersWithTimeline(): Promise<
   }
 
   // Group timeline data by player and date
+  // Supabase returns betis_news as an array; we take the first element
   const playerTimelines = new Map<number, Map<string, number>>();
   for (const record of (timelineData as TimelineRecord[]) || []) {
     const playerId = record.player_id;
-    // Handle both single object and array formats from Supabase
-    const newsData = record.betis_news;
-    const pubDate = Array.isArray(newsData)
-      ? newsData[0]?.pub_date
-      : newsData?.pub_date;
+    const pubDate = record.betis_news?.[0]?.pub_date;
     if (!pubDate) continue;
     const dateStr = new Date(pubDate).toISOString().split("T")[0];
 

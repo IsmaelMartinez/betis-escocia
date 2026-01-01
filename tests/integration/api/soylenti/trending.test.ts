@@ -33,7 +33,6 @@ function setupTrendingMock(
     betis_news: { pub_date: string };
   }> = [],
 ) {
-  let callCount = 0;
   mockSupabase.from.mockImplementation((table: string) => {
     if (table === "players") {
       return {
