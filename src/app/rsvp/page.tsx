@@ -1,14 +1,21 @@
-'use client';
+"use client";
 
-import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { Calendar, MapPin, Users, Clock, CheckCircle, ChevronDown } from 'lucide-react';
-import RSVPForm from '@/components/RSVPForm';
-import { getUpcomingMatchesWithRSVPCounts, Match } from '@/lib/supabase';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
-import { DATETIME_FORMAT } from '@/lib/constants/dateFormats';
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import {
+  Calendar,
+  MapPin,
+  Users,
+  Clock,
+  CheckCircle,
+  ChevronDown,
+} from "lucide-react";
+import RSVPForm from "@/components/RSVPForm";
+import { getUpcomingMatchesWithRSVPCounts, Match } from "@/lib/supabase";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { DATETIME_FORMAT } from "@/lib/constants/dateFormats";
 
 interface RSVPData {
   currentMatch: {
@@ -35,7 +42,7 @@ function RSVPPage() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const matchId = searchParams.get('match');
+    const matchId = searchParams.get("match");
     if (matchId) {
       setSelectedMatchId(parseInt(matchId));
     }
@@ -57,23 +64,23 @@ function RSVPPage() {
         setAvailableMatches(matches as MatchWithRSVP[]);
       }
     } catch (error) {
-      console.error('Error fetching available matches:', error);
+      console.error("Error fetching available matches:", error);
     }
   };
 
   const fetchRSVPData = async () => {
     try {
-      const response = await fetch('/api/rsvp');
+      const response = await fetch("/api/rsvp");
       if (response.ok) {
         const data = await response.json();
         setRSVPData({
           currentMatch: data.currentMatch,
           totalAttendees: data.totalAttendees,
-          confirmedCount: data.confirmedCount
+          confirmedCount: data.confirmedCount,
         });
       }
     } catch (error) {
-      console.error('Error fetching RSVP data:', error);
+      console.error("Error fetching RSVP data:", error);
     }
   };
 
@@ -85,11 +92,11 @@ function RSVPPage() {
         setRSVPData({
           currentMatch: data.currentMatch,
           totalAttendees: data.totalAttendees,
-          confirmedCount: data.confirmedCount
+          confirmedCount: data.confirmedCount,
         });
       }
     } catch (error) {
-      console.error('Error fetching RSVP data for match:', error);
+      console.error("Error fetching RSVP data for match:", error);
     }
   };
 
@@ -107,8 +114,8 @@ function RSVPPage() {
     setSelectedMatchId(matchId);
     setShowMatchSelector(false);
     const newUrl = new URL(window.location.href);
-    newUrl.searchParams.set('match', matchId.toString());
-    window.history.pushState({}, '', newUrl.toString());
+    newUrl.searchParams.set("match", matchId.toString());
+    window.history.pushState({}, "", newUrl.toString());
   };
 
   const formatDate = (dateString: string) => {
@@ -120,29 +127,39 @@ function RSVPPage() {
   const nextMatch = rsvpData?.currentMatch ?? {
     opponent: "Real Madrid",
     date: "2025-06-28T20:00:00",
-    competition: "LaLiga"
+    competition: "LaLiga",
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <div className="bg-betis-green text-white py-12 px-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+    <div className="min-h-screen">
+      {/* Hero Section - Cultural Fusion Design */}
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-hero-fusion" />
+        <div className="absolute inset-0 pattern-tartan-navy opacity-25" />
+        <div className="absolute left-0 top-0 bottom-0 w-8 pattern-verdiblanco-subtle opacity-30" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl bg-oro-glow opacity-40 pointer-events-none" />
+
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
             ¿Vienes al Polwarth?
           </h1>
-          <p className="text-xl md:text-2xl text-betis-verde-light mb-6">
+          <p className="font-accent text-2xl sm:text-3xl text-oro-bright text-shadow-lg italic">
             Confirma tu asistencia para el próximo partido
           </p>
         </div>
-      </div>
+      </section>
 
       {/* Next Match Info */}
-      <section className="py-12 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-betis-verde rounded-3xl p-8 text-white text-center mb-8">
+      <section className="relative py-16 overflow-hidden">
+        <div className="absolute inset-0 bg-canvas-warm" />
+        <div className="absolute inset-0 pattern-tartan-subtle opacity-40" />
+
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-betis-verde rounded-3xl p-8 text-white text-center mb-8 shadow-xl">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold">Próximo Partido</h2>
+              <h2 className="font-display text-3xl font-black uppercase tracking-tight">
+                Próximo Partido
+              </h2>
               {availableMatches.length > 1 && (
                 <div className="relative">
                   <button
@@ -150,9 +167,11 @@ function RSVPPage() {
                     className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
                   >
                     <span className="text-sm font-medium">Cambiar partido</span>
-                    <ChevronDown className={`h-4 w-4 transition-transform ${showMatchSelector ? 'rotate-180' : ''}`} />
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform ${showMatchSelector ? "rotate-180" : ""}`}
+                    />
                   </button>
-                  
+
                   {showMatchSelector && (
                     <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 min-w-64 z-10">
                       {availableMatches.map((match) => (
@@ -161,9 +180,14 @@ function RSVPPage() {
                           onClick={() => handleMatchSelect(match.id)}
                           className="w-full text-left px-4 py-3 hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg border-b border-gray-100 last:border-b-0"
                         >
-                          <div className="text-gray-900 font-medium">{match.opponent}</div>
+                          <div className="text-gray-900 font-medium">
+                            {match.opponent}
+                          </div>
                           <div className="text-gray-500 text-sm">
-                            {format(new Date(match.date_time), 'dd MMM HH:mm', { locale: es })} • {match.competition}
+                            {format(new Date(match.date_time), "dd MMM HH:mm", {
+                              locale: es,
+                            })}{" "}
+                            • {match.competition}
                           </div>
                         </button>
                       ))}
@@ -172,7 +196,7 @@ function RSVPPage() {
                 </div>
               )}
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               {/* Teams */}
               <div className="flex items-center justify-center space-x-4">
@@ -188,7 +212,9 @@ function RSVPPage() {
               {/* Date & Time */}
               <div className="text-center">
                 <Calendar className="h-8 w-8 mx-auto mb-2" />
-                <p className="font-bold text-lg">{formatDate(nextMatch.date)}</p>
+                <p className="font-bold text-lg">
+                  {formatDate(nextMatch.date)}
+                </p>
                 <p className="text-sm opacity-90">{nextMatch.competition}</p>
               </div>
 
@@ -196,7 +222,9 @@ function RSVPPage() {
               <div className="text-center">
                 <MapPin className="h-8 w-8 mx-auto mb-2" />
                 <p className="font-bold">Polwarth Tavern</p>
-                <p className="text-sm opacity-90">35 Polwarth Cres, Edinburgh</p>
+                <p className="text-sm opacity-90">
+                  35 Polwarth Cres, Edinburgh
+                </p>
                 <p className="text-sm opacity-90">Llegada: 19:30</p>
               </div>
             </div>
@@ -204,21 +232,24 @@ function RSVPPage() {
 
           {/* RSVP Status */}
           <div className="text-center mb-12">
-            <div className="inline-flex items-center bg-betis-verde-light text-betis-green px-6 py-3 rounded-full font-bold text-lg mb-4">
-              <Users className="h-5 w-5 mr-2" />
+            <div className="inline-flex items-center bg-betis-verde-light text-betis-verde-dark px-8 py-4 rounded-full font-heading font-bold text-xl mb-6 shadow-lg uppercase tracking-wide">
+              <Users className="h-6 w-6 mr-2" />
               {rsvpData?.totalAttendees ?? 0} béticos confirmados
             </div>
-            
+
             {!showForm ? (
               <button
                 onClick={() => setShowForm(true)}
-                className="bg-betis-green hover:bg-betis-verde-dark text-white px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+                className="bg-betis-verde hover:bg-betis-verde-dark text-white px-10 py-5 rounded-2xl font-display font-black text-xl transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-[0_0_30px_rgba(72,187,120,0.4)] uppercase tracking-tight"
               >
                 ✋ ¡Confirmar Asistencia! ({rsvpData?.totalAttendees ?? 0})
               </button>
             ) : (
               <div className="max-w-2xl mx-auto">
-                <RSVPForm onSuccess={handleRSVPSuccess} selectedMatchId={selectedMatchId || undefined} />
+                <RSVPForm
+                  onSuccess={handleRSVPSuccess}
+                  selectedMatchId={selectedMatchId || undefined}
+                />
               </div>
             )}
           </div>
@@ -226,67 +257,94 @@ function RSVPPage() {
       </section>
 
       {/* Why RSVP */}
-      <section className="py-16 bg-gray-100">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 pattern-tartan-subtle opacity-20" />
+
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-black text-gray-900 mb-6">
+            <h2 className="font-display text-4xl sm:text-5xl font-black text-scotland-navy mb-6 uppercase tracking-tight">
               ¿Por qué confirmar tu asistencia?
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-2xl p-8 text-center shadow-lg">
-              <div className="w-16 h-16 bg-betis-green rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="h-8 w-8 text-white" />
+            <div className="group relative bg-white rounded-2xl p-8 text-center shadow-xl border border-gray-100 hover:border-betis-verde transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 pattern-verdiblanco-diagonal-subtle opacity-20" />
+              <div className="relative">
+                <div className="w-16 h-16 bg-betis-verde rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <Users className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="font-heading text-xl font-bold mb-4 text-scotland-navy uppercase tracking-wide">
+                  Reservamos Mesa
+                </h3>
+                <p className="font-body text-gray-700">
+                  Con tu confirmación, podemos reservar una mesa grande para que
+                  todos estemos juntos viendo el partido.
+                </p>
               </div>
-              <h3 className="text-xl font-bold mb-4">Reservamos Mesa</h3>
-              <p className="text-gray-600">
-                Con tu confirmación, podemos reservar una mesa grande para que todos 
-                estemos juntos viendo el partido.
-              </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-8 text-center shadow-lg">
-              <div className="w-16 h-16 bg-betis-green rounded-full flex items-center justify-center mx-auto mb-4">
-                <Clock className="h-8 w-8 text-white" />
+            <div className="group relative bg-white rounded-2xl p-8 text-center shadow-xl border border-gray-100 hover:border-betis-verde transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 pattern-verdiblanco-diagonal-subtle opacity-20" />
+              <div className="relative">
+                <div className="w-16 h-16 bg-betis-verde rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <Clock className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="font-heading text-xl font-bold mb-4 text-scotland-navy uppercase tracking-wide">
+                  Llegada Puntual
+                </h3>
+                <p className="font-body text-gray-700">
+                  Sabemos cuántos venís y podemos avisar si hay que llegar antes
+                  para conseguir sitio en partidos importantes.
+                </p>
               </div>
-              <h3 className="text-xl font-bold mb-4">Llegada Puntual</h3>
-              <p className="text-gray-600">
-                Sabemos cuántos venís y podemos avisar si hay que llegar antes 
-                para conseguir sitio en partidos importantes.
-              </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-8 text-center shadow-lg">
-              <div className="w-16 h-16 bg-betis-green rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="h-8 w-8 text-white" />
+            <div className="group relative bg-white rounded-2xl p-8 text-center shadow-xl border border-gray-100 hover:border-betis-verde transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 pattern-verdiblanco-diagonal-subtle opacity-20" />
+              <div className="relative">
+                <div className="w-16 h-16 bg-betis-verde rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <CheckCircle className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="font-heading text-xl font-bold mb-4 text-scotland-navy uppercase tracking-wide">
+                  Ambiente Bético
+                </h3>
+                <p className="font-body text-gray-700">
+                  Cuantos más seamos, mejor ambiente. Tu presencia hace que la
+                  experiencia sea más especial para todos.
+                </p>
               </div>
-              <h3 className="text-xl font-bold mb-4">Ambiente Bético</h3>
-              <p className="text-gray-600">
-                Cuantos más seamos, mejor ambiente. Tu presencia hace que la 
-                experiencia sea más especial para todos.
-              </p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Contact Info */}
-      <section className="py-16 bg-betis-green text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-8">¿Dudas sobre el partido?</h2>
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-betis-verde" />
+        <div className="absolute inset-0 pattern-verdiblanco-subtle opacity-20" />
+
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="font-display text-4xl font-black mb-12 text-white uppercase tracking-tight">
+            ¿Dudas sobre el partido?
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-xl font-bold mb-4">Polwarth Tavern</h3>
-              <div className="space-y-2 text-lg">
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+              <h3 className="font-heading text-2xl font-bold mb-6 text-white uppercase tracking-wide">
+                Polwarth Tavern
+              </h3>
+              <div className="space-y-3 font-body text-lg text-white/90">
                 <p>📍 35 Polwarth Cres, Edinburgh EH11 1HR</p>
                 <p>🕕 Llegada recomendada: 15 min antes</p>
                 <p>🍺 Bar completo con ambiente bético</p>
               </div>
             </div>
-            <div>
-              <h3 className="text-xl font-bold mb-4">Organización</h3>
-              <div className="space-y-2 text-lg">
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
+              <h3 className="font-heading text-2xl font-bold mb-6 text-white uppercase tracking-wide">
+                Organización
+              </h3>
+              <div className="space-y-3 font-body text-lg text-white/90">
                 <p>📱 WhatsApp: Pregunta por el grupo</p>
                 <p>📧 Contacto a través de este formulario</p>
                 <p>🌐 Redes sociales: Síguenos en nuestras redes</p>
