@@ -1,6 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
 import FeatureCard from "./FeatureCard";
-import { Users, Clock, CheckCircle, MapPin, Calendar, Award } from "lucide-react";
+import {
+  Users,
+  Clock,
+  CheckCircle,
+  MapPin,
+  Calendar,
+  Award,
+} from "lucide-react";
 
 const meta: Meta<typeof FeatureCard> = {
   title: "UI/FeatureCard",

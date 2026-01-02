@@ -228,7 +228,13 @@ describe("FeatureCard Component", () => {
       const pattern = container.querySelector(
         ".pattern-verdiblanco-diagonal-subtle",
       );
-      expect(pattern).toHaveClass("absolute", "top-0", "right-0", "w-20", "h-20");
+      expect(pattern).toHaveClass(
+        "absolute",
+        "top-0",
+        "right-0",
+        "w-20",
+        "h-20",
+      );
     });
   });
 
@@ -386,21 +392,23 @@ describe("FeatureCard Component", () => {
       ).toBeInTheDocument();
     });
 
-    it("handles different icon types", () => {
-      const icons = [Users, Clock, CheckCircle, MapPin, Award];
+    it.each([
+      { icon: Users, name: "Users" },
+      { icon: Clock, name: "Clock" },
+      { icon: CheckCircle, name: "CheckCircle" },
+      { icon: MapPin, name: "MapPin" },
+      { icon: Award, name: "Award" },
+    ])("handles different icon types: $name", ({ icon: Icon }) => {
+      const { container } = render(
+        <FeatureCard
+          icon={Icon}
+          title="Icon test"
+          description="Different icon"
+        />,
+      );
 
-      icons.forEach((Icon, index) => {
-        const { container } = render(
-          <FeatureCard
-            icon={Icon}
-            title={`Icon ${index}`}
-            description="Different icon"
-          />,
-        );
-
-        const svg = container.querySelector("svg");
-        expect(svg).toBeInTheDocument();
-      });
+      const svg = container.querySelector("svg");
+      expect(svg).toBeInTheDocument();
     });
   });
 });

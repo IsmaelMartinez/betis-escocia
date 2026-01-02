@@ -87,7 +87,11 @@ describe("CulturalFusionHero Component", () => {
 
       const oroGlow = container.querySelector(".bg-oro-glow");
       expect(oroGlow).toBeInTheDocument();
-      expect(oroGlow).toHaveClass("blur-3xl", "opacity-40", "pointer-events-none");
+      expect(oroGlow).toHaveClass(
+        "blur-3xl",
+        "opacity-40",
+        "pointer-events-none",
+      );
     });
   });
 

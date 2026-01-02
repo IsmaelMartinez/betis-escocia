@@ -21,16 +21,18 @@ const meta: Meta<typeof CulturalFusionHero> = {
 export default meta;
 type Story = StoryObj<typeof CulturalFusionHero>;
 
+// Common class names for consistent styling across stories
+const HEADING_CLASSES =
+  "font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight";
+const TAGLINE_CLASSES =
+  "font-accent text-2xl sm:text-3xl text-oro-bright text-shadow-lg italic";
+
 export const Default: Story = {
   args: {
     children: (
       <>
-        <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
-          Página Principal
-        </h1>
-        <p className="font-accent text-2xl sm:text-3xl text-oro-bright text-shadow-lg italic">
-          Bienvenidos a la Peña Bética Escocesa
-        </p>
+        <h1 className={HEADING_CLASSES}>Página Principal</h1>
+        <p className={TAGLINE_CLASSES}>Bienvenidos a la Peña Bética Escocesa</p>
       </>
     ),
   },
@@ -41,10 +43,8 @@ export const CenteredContent: Story = {
     containerClassName: "max-w-4xl text-center",
     children: (
       <>
-        <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
-          Contacto
-        </h1>
-        <p className="font-accent text-2xl sm:text-3xl text-oro-bright mb-8 text-shadow-lg italic">
+        <h1 className={HEADING_CLASSES}>Contacto</h1>
+        <p className={`${TAGLINE_CLASSES} mb-8`}>
           ¿Tienes alguna pregunta? Estamos aquí para ayudarte
         </p>
       </>
@@ -58,12 +58,8 @@ export const SideBySideLayout: Story = {
     children: (
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
         <div className="text-center md:text-left flex-1">
-          <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
-            Clasificación
-          </h1>
-          <p className="font-accent text-2xl sm:text-3xl text-oro-bright text-shadow-lg italic">
-            La Liga
-          </p>
+          <h1 className={HEADING_CLASSES}>Clasificación</h1>
+          <p className={TAGLINE_CLASSES}>La Liga</p>
         </div>
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-center">
           <div className="font-heading text-sm text-oro-bright mb-2 uppercase tracking-wide">
@@ -84,10 +80,8 @@ export const WideContent: Story = {
     containerClassName: "max-w-6xl text-center",
     children: (
       <>
-        <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
-          ¿Vienes al Polwarth?
-        </h1>
-        <p className="font-accent text-2xl sm:text-3xl text-oro-bright text-shadow-lg italic">
+        <h1 className={HEADING_CLASSES}>¿Vienes al Polwarth?</h1>
+        <p className={TAGLINE_CLASSES}>
           Confirma tu asistencia para el próximo partido
         </p>
       </>
@@ -106,10 +100,8 @@ export const WithBadge: Story = {
             Ponte en contacto
           </span>
         </div>
-        <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
-          Contacto
-        </h1>
-        <p className="font-accent text-2xl sm:text-3xl text-oro-bright mb-8 text-shadow-lg italic">
+        <h1 className={HEADING_CLASSES}>Contacto</h1>
+        <p className={`${TAGLINE_CLASSES} mb-8`}>
           ¿Tienes alguna pregunta? Estamos aquí para ayudarte
         </p>
       </>
