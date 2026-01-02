@@ -464,7 +464,7 @@ const handleAnswerClick = () => {
 
 ## Soylenti Implementation
 
-The Soylenti feature provides AI-analyzed transfer rumors from RSS feeds with player tracking.
+The Soylenti feature provides AI-analyzed transfer rumors from RSS feeds with player tracking. The page shows ONLY transfer rumors (filtered server-side) - "Soylenti" means "rumors" in Turkish.
 
 ### Architecture
 
@@ -478,6 +478,8 @@ The feature uses a consolidated architecture with shared code:
 ### Key Patterns
 
 The `ai_probability` field comes from the database as a string (NUMERIC type) - always use `Number()` conversion before comparisons. The semantics are: `null` = unanalyzed, `0` = non-transfer news, `>0` = transfer rumor with credibility score (1-100).
+
+All public queries filter for rumors only using `.gt("ai_probability", 0)` - this includes the initial page load, pagination, and player filtering. General news (ai_probability = 0 or null) is only accessible in the admin panel.
 
 Color thresholds for probability badges: 70+ = green (high credibility), 40-69 = gold (medium), <40 = gray (low).
 
