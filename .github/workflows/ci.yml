@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main, staging]
+    branches: [main, staging, claude/*]
   pull_request:
     branches: [main]
 
@@ -110,26 +110,27 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-  # Deploy to production only if all tests pass
+  # Deploy to Vercel after tests pass
   deploy:
-    name: Deploy to Production
+    name: Deploy to Vercel
     runs-on: ubuntu-latest
     permissions:
       contents: read        # Read repository contents
       deployments: write    # Write deployment status
     needs: [test]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    environment: production
+    if: github.event_name == 'push'
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
     steps:
       - uses: actions/checkout@v4
       - name: Deploy to Vercel
+        id: vercel-deploy
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }}
       - name: Deployment successful
         run: |
           echo "✅ Tests passed and deployment completed!"
-          echo "🔗 Production URL: https://betis-escocia.vercel.app"
+          echo "🔗 Deployment URL: ${{ steps.vercel-deploy.outputs.preview-url }}"
