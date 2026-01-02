@@ -219,25 +219,40 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="bg-betis-verde text-white py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Send className="h-16 w-16 mx-auto mb-4" />
-          <h1 className="text-4xl sm:text-5xl font-black mb-4">
+    <div className="min-h-screen">
+      {/* Hero Section - Cultural Fusion Design */}
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-hero-fusion" />
+        <div className="absolute inset-0 pattern-tartan-navy opacity-25" />
+        <div className="absolute left-0 top-0 bottom-0 w-8 pattern-verdiblanco-subtle opacity-30" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl bg-oro-glow opacity-40 pointer-events-none" />
+
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8">
+            <Send size={20} className="text-oro-bright" />
+            <span className="text-white font-heading font-medium text-sm tracking-wide">
+              Ponte en contacto
+            </span>
+          </div>
+
+          <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
             Contacto
           </h1>
-          <p className="text-xl opacity-90">
+
+          <p className="font-accent text-2xl sm:text-3xl text-oro-bright mb-8 text-shadow-lg italic">
             ¿Tienes alguna pregunta? Estamos aquí para ayudarte
           </p>
         </div>
       </section>
 
       {/* Quick Contact Options */}
-      <section className="py-12 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-8 text-gray-900">
-            💬 ¿Qué necesitas?
+      <section className="relative py-16 overflow-hidden">
+        <div className="absolute inset-0 bg-canvas-warm" />
+        <div className="absolute inset-0 pattern-tartan-subtle opacity-40" />
+
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="font-display text-4xl font-black text-center mb-12 text-scotland-navy uppercase tracking-tight">
+            ¿Qué necesitas?
           </h2>
           
           <div className={`grid grid-cols-1 md:grid-cols-2 ${visibleFormTypes.length === 4 ? 'lg:grid-cols-2' : 'lg:grid-cols-3'} gap-6 mb-12`}>
@@ -251,17 +266,20 @@ export default function ContactPage() {
                 <button
                   key={type.id}
                   onClick={() => handleTypeChange(type.id)}
-                  className={`p-6 rounded-2xl border-2 transition-all duration-300 text-left ${
+                  className={`group relative bg-white rounded-2xl p-8 shadow-xl border transition-all duration-300 transform hover:-translate-y-1 text-left overflow-hidden ${
                     formData.type === type.id
-                      ? 'border-betis-verde bg-betis-verde-pale shadow-lg'
-                      : 'border-gray-200 hover:border-betis-verde/50 hover:shadow-md'
+                      ? 'border-betis-verde shadow-2xl'
+                      : 'border-gray-100 hover:border-betis-verde/50 hover:shadow-2xl'
                   }`}
                 >
-                  <div className={`${type.color} w-12 h-12 rounded-full flex items-center justify-center mb-4`}>
-                    <Icon className="h-6 w-6 text-white" />
+                  <div className="absolute top-0 right-0 w-20 h-20 pattern-verdiblanco-diagonal-subtle opacity-20" />
+                  <div className="relative">
+                    <div className={`${type.color} w-14 h-14 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                      <Icon className="h-7 w-7 text-white" />
+                    </div>
+                    <h3 className="font-heading text-xl font-bold mb-2 text-scotland-navy uppercase tracking-wide">{type.name}</h3>
+                    <p className="font-body text-gray-700 text-sm">{type.description}</p>
                   </div>
-                  <h3 className="font-bold text-lg mb-2 text-gray-900">{type.name}</h3>
-                  <p className="text-gray-600 text-sm">{type.description}</p>
                 </button>
               );
             })}
@@ -444,94 +462,111 @@ export default function ContactPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 pattern-tartan-subtle opacity-20" />
+
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="font-display text-4xl font-black text-center mb-12 text-scotland-navy uppercase tracking-tight">
             Preguntas Frecuentes
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="text-lg font-bold mb-3 text-betis-verde">¿Cómo puedo unirme a la peña?</h3>
-              <p className="text-gray-700 mb-6">
-                Simplemente ven a The Polwarth Tavern cualquier día que juegue el Betis. 
-                No hace falta ser socio, solo ganas de pasarlo bien.
-              </p>
+            <div className="space-y-6">
+              <div>
+                <h3 className="font-heading text-lg font-bold mb-3 text-betis-verde-dark">¿Cómo puedo unirme a la peña?</h3>
+                <p className="font-body text-gray-700">
+                  Simplemente ven a The Polwarth Tavern cualquier día que juegue el Betis.
+                  No hace falta ser socio, solo ganas de pasarlo bien.
+                </p>
+              </div>
 
-              <h3 className="text-lg font-bold mb-3 text-betis-verde">¿Tengo que confirmar asistencia?</h3>
-              <p className="text-gray-700 mb-6">
-                No es obligatorio, pero nos ayuda a reservar mesa. Usa el formulario RSVP 
-                si sabes que vas a venir.
-              </p>
+              <div>
+                <h3 className="font-heading text-lg font-bold mb-3 text-betis-verde-dark">¿Tengo que confirmar asistencia?</h3>
+                <p className="font-body text-gray-700">
+                  No es obligatorio, pero nos ayuda a reservar mesa. Usa el formulario RSVP
+                  si sabes que vas a venir.
+                </p>
+              </div>
 
-              <h3 className="text-lg font-bold mb-3 text-betis-verde">¿Puedo traer amigos?</h3>
-              <p className="text-gray-700">
-                ¡Por supuesto! Cuantos más seamos, mejor ambiente. Solo menciona 
-                cuántos sois en el RSVP.
-              </p>
+              <div>
+                <h3 className="font-heading text-lg font-bold mb-3 text-betis-verde-dark">¿Puedo traer amigos?</h3>
+                <p className="font-body text-gray-700">
+                  ¡Por supuesto! Cuantos más seamos, mejor ambiente. Solo menciona
+                  cuántos sois en el RSVP.
+                </p>
+              </div>
             </div>
 
-            <div>
+            <div className="space-y-6">
+              <div>
+                <h3 className="font-heading text-lg font-bold mb-3 text-betis-verde-dark">¿Puedo enviar fotos?</h3>
+                <p className="font-body text-gray-700">
+                  Sí, usa la galería online o escríbenos. Nos encanta ver fotos de
+                  béticos animando al Betis.
+                </p>
+              </div>
 
-              <h3 className="text-lg font-bold mb-3 text-betis-verde">¿Puedo enviar fotos?</h3>
-              <p className="text-gray-700 mb-6">
-                Sí, usa la galería online o escríbenos. Nos encanta ver fotos de 
-                béticos animando al Betis.
-              </p>
-
-              <h3 className="text-lg font-bold mb-3 text-betis-verde">¿Hay grupo de WhatsApp?</h3>
-              <p className="text-gray-700">
-                Sí, úsalo para solicitar invitación. Te añadimos para avisos importantes 
-                y coordinación de eventos.
-              </p>
+              <div>
+                <h3 className="font-heading text-lg font-bold mb-3 text-betis-verde-dark">¿Hay grupo de WhatsApp?</h3>
+                <p className="font-body text-gray-700">
+                  Sí, úsalo para solicitar invitación. Te añadimos para avisos importantes
+                  y coordinación de eventos.
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Alternative Contact Methods */}
-      <section className="py-16 bg-betis-verde text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold mb-8">📱 Otras formas de contacto</h2>
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-betis-verde" />
+        <div className="absolute inset-0 pattern-verdiblanco-subtle opacity-20" />
+
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="font-display text-4xl font-black mb-12 text-white uppercase tracking-tight">
+            Otras formas de contacto
+          </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-              <MessageCircle className="h-12 w-12 mx-auto mb-4" />
-              <h3 className="text-xl font-bold mb-3">Facebook</h3>
-              <p className="mb-4 opacity-90">Grupo oficial en Facebook</p>
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition-all duration-300">
+              <MessageCircle className="h-14 w-14 mx-auto mb-4" />
+              <h3 className="font-heading text-xl font-bold mb-3 text-white uppercase tracking-wide">Facebook</h3>
+              <p className="font-body mb-6 text-white/90">Grupo oficial en Facebook</p>
               <a
                 href="https://www.facebook.com/groups/beticosenescocia/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white text-betis-verde px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition-colors"
+                className="inline-block bg-white text-betis-verde px-6 py-3 rounded-xl font-heading font-bold hover:bg-oro-bright hover:text-scotland-navy transition-all duration-300 transform hover:scale-105 shadow-lg uppercase tracking-wide text-sm"
               >
                 Ir al grupo
               </a>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-              <Camera className="h-12 w-12 mx-auto mb-4" />
-              <h3 className="text-xl font-bold mb-3">Instagram</h3>
-              <p className="mb-4 opacity-90">Síguenos @rbetisescocia</p>
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition-all duration-300">
+              <Camera className="h-14 w-14 mx-auto mb-4" />
+              <h3 className="font-heading text-xl font-bold mb-3 text-white uppercase tracking-wide">Instagram</h3>
+              <p className="font-body mb-6 text-white/90">Síguenos @rbetisescocia</p>
               <a
                 href="https://www.instagram.com/rbetisescocia/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white text-betis-verde px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition-colors"
+                className="inline-block bg-white text-betis-verde px-6 py-3 rounded-xl font-heading font-bold hover:bg-oro-bright hover:text-scotland-navy transition-all duration-300 transform hover:scale-105 shadow-lg uppercase tracking-wide text-sm"
               >
                 Seguir
               </a>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-              <HelpCircle className="h-12 w-12 mx-auto mb-4" />
-              <h3 className="text-xl font-bold mb-3">En persona</h3>
-              <p className="mb-4 opacity-90">The Polwarth Tavern, Edinburgh</p>
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition-all duration-300">
+              <HelpCircle className="h-14 w-14 mx-auto mb-4" />
+              <h3 className="font-heading text-xl font-bold mb-3 text-white uppercase tracking-wide">En persona</h3>
+              <p className="font-body mb-6 text-white/90">The Polwarth Tavern, Edinburgh</p>
               <a
                 href="https://maps.google.com/maps?q=The+Polwarth+Tavern+Edinburgh"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white text-betis-verde px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition-colors"
+                className="inline-block bg-white text-betis-verde px-6 py-3 rounded-xl font-heading font-bold hover:bg-oro-bright hover:text-scotland-navy transition-all duration-300 transform hover:scale-105 shadow-lg uppercase tracking-wide text-sm"
               >
                 Ver mapa
               </a>

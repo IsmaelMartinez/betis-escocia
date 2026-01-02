@@ -89,7 +89,7 @@ describe('Contact Page', () => {
 
       render(<ContactPage />);
 
-      expect(screen.getByText('💬 ¿Qué necesitas?')).toBeInTheDocument();
+      expect(screen.getByText('¿Qué necesitas?')).toBeInTheDocument();
       expect(screen.getAllByText('Consulta General').length).toBeGreaterThan(0);
       expect(screen.getByText('Eventos y RSVP')).toBeInTheDocument();
   // No shop/collectibles button expected
@@ -127,7 +127,7 @@ describe('Contact Page', () => {
 
       render(<ContactPage />);
 
-      expect(screen.getByText('📱 Otras formas de contacto')).toBeInTheDocument();
+      expect(screen.getByText('Otras formas de contacto')).toBeInTheDocument();
       expect(screen.getByText('Facebook')).toBeInTheDocument();
       expect(screen.getByText('Instagram')).toBeInTheDocument();
       expect(screen.getByText('En persona')).toBeInTheDocument();
