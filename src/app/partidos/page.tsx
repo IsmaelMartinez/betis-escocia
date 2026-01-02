@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { ApiErrorBoundary } from '@/components/ErrorBoundary';
-import BetisPositionWidget from '@/components/BetisPositionWidget';
-import AllDatabaseMatches from '@/components/AllDatabaseMatches';
-import RSVPModal, { useRSVPModal } from '@/components/RSVPModal';
-import SidebarCard from '@/components/SidebarCard';
-import { Calendar, MapPin } from 'lucide-react';
+import { ApiErrorBoundary } from "@/components/ErrorBoundary";
+import BetisPositionWidget from "@/components/BetisPositionWidget";
+import AllDatabaseMatches from "@/components/AllDatabaseMatches";
+import RSVPModal, { useRSVPModal } from "@/components/RSVPModal";
+import SidebarCard from "@/components/SidebarCard";
+import { Calendar, MapPin } from "lucide-react";
 
 export default function MatchesPage() {
   const { isOpen, openModal, closeModal } = useRSVPModal();
@@ -124,7 +124,7 @@ export default function MatchesPage() {
           title: "Próximo Partido del Betis",
           date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
           location: "Polwarth Tavern, Edinburgh",
-          description: "Confirma tu asistencia para ver el partido con la peña"
+          description: "Confirma tu asistencia para ver el partido con la peña",
         }}
         modalTitle="¿Vienes al próximo partido?"
       />

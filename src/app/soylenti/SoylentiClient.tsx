@@ -45,8 +45,7 @@ export default function SoylentiClient({
   const displayedRumors = useMemo(
     () =>
       [...rumorsToDisplay].sort(
-        (a, b) =>
-          new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime(),
+        (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime(),
       ),
     [rumorsToDisplay],
   );
