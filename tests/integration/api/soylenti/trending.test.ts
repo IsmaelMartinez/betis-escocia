@@ -16,55 +16,60 @@ import { supabase } from "@/lib/supabase";
 const mockSupabase = supabase as unknown as { from: ReturnType<typeof vi.fn> };
 
 /**
- * Helper to create mock for the new fetchTrendingPlayersWithTimeline function.
- * It makes two queries: players table first, then news_players for timeline.
+ * Helper to create mock for fetchTrendingPlayersWithTimeline.
+ * The new implementation queries news_players with inner joins to players and betis_news,
+ * filtering by ai_probability > 0, then groups/counts in application code.
  */
 function setupTrendingMock(
-  mockPlayers: Array<{
-    id: number;
-    name: string;
-    normalized_name: string;
-    rumor_count: number;
-    first_seen_at: string;
-    last_seen_at: string;
-  }>,
-  mockTimeline: Array<{
+  mockMentions: Array<{
     player_id: number;
+    players: {
+      id: number;
+      name: string;
+      normalized_name: string;
+      first_seen_at: string;
+      last_seen_at: string;
+    };
     betis_news: { pub_date: string };
-  }> = [],
+  }>,
 ) {
   mockSupabase.from.mockImplementation((table: string) => {
-    if (table === "players") {
+    if (table === "news_players") {
       return {
         select: vi.fn().mockReturnValue({
-          gte: vi.fn().mockReturnValue({
-            order: vi.fn().mockReturnValue({
-              order: vi.fn().mockReturnValue({
-                limit: vi.fn().mockResolvedValue({
-                  data: mockPlayers,
-                  error: null,
-                }),
-              }),
-            }),
-          }),
-        }),
-      };
-    } else if (table === "news_players") {
-      return {
-        select: vi.fn().mockReturnValue({
-          in: vi.fn().mockReturnValue({
-            gte: vi.fn().mockReturnValue({
-              gt: vi.fn().mockResolvedValue({
-                data: mockTimeline,
-                error: null,
-              }),
-            }),
+          gt: vi.fn().mockResolvedValue({
+            data: mockMentions,
+            error: null,
           }),
         }),
       };
     }
     return {};
   });
+}
+
+/**
+ * Helper to create mock mention data for a player with multiple mentions
+ */
+function createPlayerMentions(
+  playerId: number,
+  playerName: string,
+  normalizedName: string,
+  mentionDates: string[],
+  firstSeen: string = "2025-12-01T10:00:00Z",
+  lastSeen: string = "2025-12-28T10:00:00Z",
+) {
+  return mentionDates.map((pubDate) => ({
+    player_id: playerId,
+    players: {
+      id: playerId,
+      name: playerName,
+      normalized_name: normalizedName,
+      first_seen_at: firstSeen,
+      last_seen_at: lastSeen,
+    },
+    betis_news: { pub_date: pubDate },
+  }));
 }
 
 describe("Trending Players API", () => {
@@ -74,34 +79,51 @@ describe("Trending Players API", () => {
 
   describe("GET /api/soylenti/trending", () => {
     it("should return trending players sorted by rumor count", async () => {
-      const mockPlayers = [
-        {
-          id: 1,
-          name: "Isco Alarcón",
-          normalized_name: "isco alarcon",
-          rumor_count: 5,
-          first_seen_at: "2025-12-20T10:00:00Z",
-          last_seen_at: "2025-12-28T10:00:00Z",
-        },
-        {
-          id: 2,
-          name: "Nabil Fekir",
-          normalized_name: "nabil fekir",
-          rumor_count: 5,
-          first_seen_at: "2025-12-18T10:00:00Z",
-          last_seen_at: "2025-12-26T10:00:00Z",
-        },
-        {
-          id: 3,
-          name: "Marc Roca",
-          normalized_name: "marc roca",
-          rumor_count: 3,
-          first_seen_at: "2025-12-15T10:00:00Z",
-          last_seen_at: "2025-12-29T10:00:00Z", // Most recent, but fewer rumors
-        },
-      ];
+      // Player 1: 5 rumor mentions
+      const player1Mentions = createPlayerMentions(
+        1,
+        "Isco Alarcón",
+        "isco alarcon",
+        [
+          "2025-12-28T10:00:00Z",
+          "2025-12-27T10:00:00Z",
+          "2025-12-26T10:00:00Z",
+          "2025-12-25T10:00:00Z",
+          "2025-12-24T10:00:00Z",
+        ],
+      );
 
-      setupTrendingMock(mockPlayers, []);
+      // Player 2: 5 rumor mentions (same count, but older last mention)
+      const player2Mentions = createPlayerMentions(
+        2,
+        "Nabil Fekir",
+        "nabil fekir",
+        [
+          "2025-12-26T10:00:00Z",
+          "2025-12-25T10:00:00Z",
+          "2025-12-24T10:00:00Z",
+          "2025-12-23T10:00:00Z",
+          "2025-12-22T10:00:00Z",
+        ],
+      );
+
+      // Player 3: 3 rumor mentions (fewer rumors)
+      const player3Mentions = createPlayerMentions(
+        3,
+        "Marc Roca",
+        "marc roca",
+        [
+          "2025-12-29T10:00:00Z",
+          "2025-12-28T10:00:00Z",
+          "2025-12-27T10:00:00Z",
+        ],
+      );
+
+      setupTrendingMock([
+        ...player1Mentions,
+        ...player2Mentions,
+        ...player3Mentions,
+      ]);
 
       const request = new NextRequest(
         "http://localhost:3000/api/soylenti/trending",
@@ -117,7 +139,7 @@ describe("Trending Players API", () => {
       // Verify primary sort by rumor_count (desc)
       expect(data.data.players[0].name).toBe("Isco Alarcón");
       expect(data.data.players[1].name).toBe("Nabil Fekir");
-      // Verify secondary sort by last_seen_at (desc)
+      // Verify counts
       expect(data.data.players[0].rumorCount).toBe(5);
       expect(data.data.players[1].rumorCount).toBe(5);
       // Marc Roca has fewer rumors, so should be last despite recent activity
@@ -126,7 +148,7 @@ describe("Trending Players API", () => {
     });
 
     it("should return empty array when no players found", async () => {
-      setupTrendingMock([], []);
+      setupTrendingMock([]);
 
       const request = new NextRequest(
         "http://localhost:3000/api/soylenti/trending",
@@ -142,18 +164,12 @@ describe("Trending Players API", () => {
 
     it("should return empty array on database error", async () => {
       mockSupabase.from.mockImplementation((table: string) => {
-        if (table === "players") {
+        if (table === "news_players") {
           return {
             select: vi.fn().mockReturnValue({
-              gte: vi.fn().mockReturnValue({
-                order: vi.fn().mockReturnValue({
-                  order: vi.fn().mockReturnValue({
-                    limit: vi.fn().mockResolvedValue({
-                      data: null,
-                      error: { message: "Database error" },
-                    }),
-                  }),
-                }),
+              gt: vi.fn().mockResolvedValue({
+                data: null,
+                error: { message: "Database error" },
               }),
             }),
           };
@@ -180,26 +196,23 @@ describe("Trending Players API", () => {
       const tenDaysAgo = new Date(now);
       tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
 
-      const mockPlayers = [
-        {
-          id: 1,
-          name: "Active Player",
-          normalized_name: "active player",
-          rumor_count: 2,
-          first_seen_at: "2025-12-01T10:00:00Z",
-          last_seen_at: threeDaysAgo.toISOString(),
-        },
-        {
-          id: 2,
-          name: "Inactive Player",
-          normalized_name: "inactive player",
-          rumor_count: 2,
-          first_seen_at: "2025-12-01T10:00:00Z",
-          last_seen_at: tenDaysAgo.toISOString(),
-        },
-      ];
+      // Active player: recent mentions
+      const activeMentions = createPlayerMentions(
+        1,
+        "Active Player",
+        "active player",
+        [threeDaysAgo.toISOString(), threeDaysAgo.toISOString()],
+      );
 
-      setupTrendingMock(mockPlayers, []);
+      // Inactive player: old mentions
+      const inactiveMentions = createPlayerMentions(
+        2,
+        "Inactive Player",
+        "inactive player",
+        [tenDaysAgo.toISOString(), tenDaysAgo.toISOString()],
+      );
+
+      setupTrendingMock([...activeMentions, ...inactiveMentions]);
 
       const request = new NextRequest(
         "http://localhost:3000/api/soylenti/trending",
@@ -212,15 +225,15 @@ describe("Trending Players API", () => {
       expect(data.data.players[1].isActive).toBe(false);
     });
 
-    it("should limit results to 10 players", async () => {
-      setupTrendingMock([], []);
+    it("should query news_players table for rumor mentions", async () => {
+      setupTrendingMock([]);
 
       const request = new NextRequest(
         "http://localhost:3000/api/soylenti/trending",
       );
       await GET(request);
 
-      expect(mockSupabase.from).toHaveBeenCalledWith("players");
+      expect(mockSupabase.from).toHaveBeenCalledWith("news_players");
     });
 
     it("should include timeline data and momentum phase", async () => {
@@ -228,25 +241,14 @@ describe("Trending Players API", () => {
       const oneDayAgo = new Date(now);
       oneDayAgo.setDate(oneDayAgo.getDate() - 1);
 
-      const mockPlayers = [
-        {
-          id: 1,
-          name: "Hot Player",
-          normalized_name: "hot player",
-          rumor_count: 10,
-          first_seen_at: "2025-12-01T10:00:00Z",
-          last_seen_at: oneDayAgo.toISOString(),
-        },
-      ];
+      // Player with recent activity for momentum calculation
+      const mentions = createPlayerMentions(1, "Hot Player", "hot player", [
+        oneDayAgo.toISOString(),
+        oneDayAgo.toISOString(),
+        oneDayAgo.toISOString(),
+      ]);
 
-      // Mock timeline data with recent activity
-      const mockTimeline = [
-        { player_id: 1, betis_news: { pub_date: oneDayAgo.toISOString() } },
-        { player_id: 1, betis_news: { pub_date: oneDayAgo.toISOString() } },
-        { player_id: 1, betis_news: { pub_date: oneDayAgo.toISOString() } },
-      ];
-
-      setupTrendingMock(mockPlayers, mockTimeline);
+      setupTrendingMock(mentions);
 
       const request = new NextRequest(
         "http://localhost:3000/api/soylenti/trending",
