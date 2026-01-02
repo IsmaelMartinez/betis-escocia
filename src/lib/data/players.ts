@@ -80,6 +80,9 @@ function calculateMomentumPhase(
 /**
  * Fetches trending players with timeline data for sparkline visualization.
  * Returns the top 10 players with activity data for the last 14 days.
+ *
+ * IMPORTANT: This query dynamically counts only RUMOR mentions (ai_probability > 0)
+ * instead of using the cached rumor_count field, which may include non-rumor mentions.
  */
 export async function fetchTrendingPlayersWithTimeline(): Promise<
   TrendingPlayerWithTimeline[]
@@ -90,98 +93,133 @@ export async function fetchTrendingPlayersWithTimeline(): Promise<
   const fourteenDaysAgo = new Date(now);
   fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
 
-  // Fetch base player data
-  const { data: players, error: playersError } = await supabase
-    .from("players")
-    .select(
-      "id, name, normalized_name, rumor_count, first_seen_at, last_seen_at",
-    )
-    .gte("rumor_count", 1)
-    .order("rumor_count", { ascending: false })
-    .order("last_seen_at", { ascending: false })
-    .limit(10);
-
-  if (playersError || !players) {
-    console.error("Error fetching trending players:", playersError);
-    return [];
+  // Define the expected response type for the rumor mentions query
+  // Supabase may return joined data as arrays or single objects depending on relationship
+  interface PlayerInfo {
+    id: number;
+    name: string;
+    normalized_name: string;
+    first_seen_at: string;
+    last_seen_at: string;
   }
-
-  if (players.length === 0) {
-    return [];
+  interface NewsInfo {
+    pub_date: string;
   }
-
-  // Fetch timeline data for all players in one query
-  const playerIds = players.map((p) => p.id);
-
-  // Define the expected response type for the timeline query
-  // Supabase may return betis_news as array or single object depending on relationship
-  interface TimelineRecord {
+  interface RumorMentionRecord {
     player_id: number;
-    betis_news: { pub_date: string } | { pub_date: string }[];
+    players: PlayerInfo | PlayerInfo[];
+    betis_news: NewsInfo | NewsInfo[];
   }
 
-  const { data: timelineData, error: timelineError } = await supabase
+  // Fetch all rumor mentions with player data in one query
+  // This ensures we only count actual rumors (ai_probability > 0)
+  const { data: mentionData, error: mentionError } = await supabase
     .from("news_players")
     .select(
       `
       player_id,
+      players!inner (
+        id,
+        name,
+        normalized_name,
+        first_seen_at,
+        last_seen_at
+      ),
       betis_news!inner (
-        pub_date
+        pub_date,
+        ai_probability
       )
     `,
     )
-    .in("player_id", playerIds)
-    .gte("betis_news.pub_date", fourteenDaysAgo.toISOString());
+    .gt("betis_news.ai_probability", 0);
 
-  if (timelineError) {
-    console.error("Error fetching timeline data:", timelineError);
-    // Fall back to basic data without timeline
-    return players.map((player) => ({
-      name: player.name,
-      normalizedName: player.normalized_name,
-      rumorCount: player.rumor_count,
-      firstSeen: player.first_seen_at,
-      lastSeen: player.last_seen_at,
-      isActive: new Date(player.last_seen_at) > sevenDaysAgo,
-      timeline: [],
-      phase: "stable" as MomentumPhase,
-      momentumPct: 0,
-      daysSinceLastMention: Math.floor(
-        (now.getTime() - new Date(player.last_seen_at).getTime()) /
-          (1000 * 60 * 60 * 24),
-      ),
-    }));
+  if (mentionError || !mentionData) {
+    console.error("Error fetching rumor mentions:", mentionError);
+    return [];
   }
 
-  // Group timeline data by player and date
-  const playerTimelines = new Map<number, Map<string, number>>();
-  for (const record of (timelineData as TimelineRecord[]) || []) {
+  // Group by player and count rumor mentions + build timeline
+  const playerDataMap = new Map<
+    number,
+    {
+      id: number;
+      name: string;
+      normalizedName: string;
+      firstSeen: string;
+      lastSeen: string;
+      rumorCount: number;
+      timeline: Map<string, number>;
+      lastMentionDate: Date;
+    }
+  >();
+
+  for (const record of mentionData as unknown as RumorMentionRecord[]) {
     const playerId = record.player_id;
     // Handle both single object and array formats from Supabase
-    const newsData = record.betis_news;
-    const pubDate = Array.isArray(newsData)
-      ? newsData[0]?.pub_date
-      : newsData?.pub_date;
-    if (!pubDate) continue;
-    const dateStr = new Date(pubDate).toISOString().split("T")[0];
+    const player = Array.isArray(record.players)
+      ? record.players[0]
+      : record.players;
+    const newsData = Array.isArray(record.betis_news)
+      ? record.betis_news[0]
+      : record.betis_news;
+    const pubDate = newsData?.pub_date;
+    if (!pubDate || !player) continue;
 
-    if (!playerTimelines.has(playerId)) {
-      playerTimelines.set(playerId, new Map());
+    const mentionDate = new Date(pubDate);
+    const dateStr = mentionDate.toISOString().split("T")[0];
+
+    if (!playerDataMap.has(playerId)) {
+      playerDataMap.set(playerId, {
+        id: player.id,
+        name: player.name,
+        normalizedName: player.normalized_name,
+        firstSeen: player.first_seen_at,
+        lastSeen: player.last_seen_at,
+        rumorCount: 0,
+        timeline: new Map(),
+        lastMentionDate: mentionDate,
+      });
     }
-    const dateMap = playerTimelines.get(playerId)!;
-    dateMap.set(dateStr, (dateMap.get(dateStr) || 0) + 1);
+
+    const playerData = playerDataMap.get(playerId)!;
+    playerData.rumorCount++;
+
+    // Track most recent mention date
+    if (mentionDate > playerData.lastMentionDate) {
+      playerData.lastMentionDate = mentionDate;
+    }
+
+    // Only add to timeline if within last 14 days
+    if (mentionDate >= fourteenDaysAgo) {
+      playerData.timeline.set(
+        dateStr,
+        (playerData.timeline.get(dateStr) || 0) + 1,
+      );
+    }
   }
 
-  // Build enhanced player data
-  return players.map((player) => {
-    const dateMap = playerTimelines.get(player.id) || new Map();
-    const timeline: DailyMention[] = Array.from(dateMap.entries()).map(
-      ([date, count]) => ({ date, count }),
-    );
+  // Convert to array, filter players with at least 1 rumor, sort by count
+  const sortedPlayers = Array.from(playerDataMap.values())
+    .filter((p) => p.rumorCount >= 1)
+    .sort((a, b) => {
+      // Primary sort: rumor count descending
+      if (b.rumorCount !== a.rumorCount) {
+        return b.rumorCount - a.rumorCount;
+      }
+      // Secondary sort: most recent activity
+      return b.lastMentionDate.getTime() - a.lastMentionDate.getTime();
+    })
+    .slice(0, 10);
+
+  // Build enhanced player data with momentum calculations
+  return sortedPlayers.map((playerData) => {
+    const timeline: DailyMention[] = Array.from(
+      playerData.timeline.entries(),
+    ).map(([date, count]) => ({ date, count }));
 
     // Calculate days since last mention
     const daysSinceLastMention = Math.floor(
-      (now.getTime() - new Date(player.last_seen_at).getTime()) /
+      (now.getTime() - playerData.lastMentionDate.getTime()) /
         (1000 * 60 * 60 * 24),
     );
 
@@ -199,12 +237,12 @@ export async function fetchTrendingPlayersWithTimeline(): Promise<
     );
 
     return {
-      name: player.name,
-      normalizedName: player.normalized_name,
-      rumorCount: player.rumor_count,
-      firstSeen: player.first_seen_at,
-      lastSeen: player.last_seen_at,
-      isActive: new Date(player.last_seen_at) > sevenDaysAgo,
+      name: playerData.name,
+      normalizedName: playerData.normalizedName,
+      rumorCount: playerData.rumorCount,
+      firstSeen: playerData.firstSeen,
+      lastSeen: playerData.lastSeen,
+      isActive: playerData.lastMentionDate > sevenDaysAgo,
       timeline,
       phase,
       momentumPct,

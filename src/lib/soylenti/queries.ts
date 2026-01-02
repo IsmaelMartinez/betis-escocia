@@ -161,6 +161,7 @@ export async function fetchInitialRumors(
     .select(RUMOR_SELECT)
     .eq("is_duplicate", false)
     .eq("is_hidden", false)
+    .gt("ai_probability", 0)
     .order("pub_date", { ascending: false })
     .limit(limit + 1);
 
