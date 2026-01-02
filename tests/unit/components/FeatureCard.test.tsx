@@ -280,7 +280,7 @@ describe("FeatureCard Component", () => {
 
   describe("Typography", () => {
     it("applies correct heading classes", () => {
-      const { container } = render(
+      render(
         <FeatureCard
           icon={Users}
           title="Typography Test"
