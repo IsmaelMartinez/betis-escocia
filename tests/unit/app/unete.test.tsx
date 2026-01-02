@@ -10,173 +10,177 @@ vi.mock("next/link", () => ({
   ),
 }));
 
+// Mock FeatureWrapper
+vi.mock("@/lib/featureProtection", () => ({
+  FeatureWrapper: ({ children }: any) => children,
+}));
+
+// Mock Lucide React icons
+vi.mock("lucide-react", () => ({
+  MapPin: vi.fn(({ className }) => (
+    <div data-testid="map-pin-icon" className={className} />
+  )),
+  Clock: vi.fn(({ className }) => (
+    <div data-testid="clock-icon" className={className} />
+  )),
+  Users: vi.fn(({ className }) => (
+    <div data-testid="users-icon" className={className} />
+  )),
+}));
+
 describe("Unete Page", () => {
-  it("should render the main heading", async () => {
-    const UnetePage = (await import("@/app/unete/page")).default;
-    render(<UnetePage />);
+  describe("Basic rendering", () => {
+    it("should render the main heading", async () => {
+      const UnetePage = (await import("@/app/unete/page")).default;
+      render(<UnetePage />);
 
-    expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
-  });
+      const h1 = screen.getByRole("heading", { level: 1 });
+      expect(h1).toBeInTheDocument();
+      expect(h1).toHaveTextContent("Únete");
+    });
 
-  it("should render all four steps to join", async () => {
-    const UnetePage = (await import("@/app/unete/page")).default;
-    render(<UnetePage />);
+    it("should render tagline", async () => {
+      const UnetePage = (await import("@/app/unete/page")).default;
+      render(<UnetePage />);
 
-    // Check for step titles (using getAllByText since there might be duplicates)
-    expect(
-      screen.getAllByText("Aparece en el Polwarth").length,
-    ).toBeGreaterThan(0);
-    expect(screen.getAllByText("Preséntate").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Disfruta del partido").length).toBeGreaterThan(
-      0,
-    );
-    expect(screen.getAllByText("Únete digitalmente").length).toBeGreaterThan(0);
-  });
-
-  it("should render step descriptions", async () => {
-    const UnetePage = (await import("@/app/unete/page")).default;
-    render(<UnetePage />);
-
-    expect(
-      screen.getByText(/Simplemente ven al Polwarth Tavern 15 minutos antes/),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        /Di que eres bético y que has visto que tenemos una peña/,
-      ),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Vive el partido con nosotros/),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/únete a nuestro grupo de Facebook e Instagram/),
-    ).toBeInTheDocument();
-  });
-
-  it("should render step details", async () => {
-    const UnetePage = (await import("@/app/unete/page")).default;
-    render(<UnetePage />);
-
-    expect(
-      screen.getByText(/No hace falta avisar ni reservar/),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/Somos muy acogedores/)).toBeInTheDocument();
-    expect(
-      screen.getByText(/Cantamos, sufrimos, celebramos/),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Así podrás seguir todas las novedades/),
-    ).toBeInTheDocument();
-  });
-
-  it("should render FAQ section", async () => {
-    const UnetePage = (await import("@/app/unete/page")).default;
-    render(<UnetePage />);
-
-    // Check for FAQ questions - use regex for partial matches to be more resilient
-    expect(
-      screen.getByText(/¿Tengo que ser socio del Betis/),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/¿Hay que pagar algo/)).toBeInTheDocument();
-    expect(
-      screen.getByText(/¿Puedo venir con amigos no béticos/),
-    ).toBeInTheDocument();
-  });
-
-  it("should render FAQ answers", async () => {
-    const UnetePage = (await import("@/app/unete/page")).default;
-    render(<UnetePage />);
-
-    expect(
-      screen.getByText(/No es necesario. Solo necesitas ser bético de corazón/),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Solo tu consumición en el pub/),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        /¡Por supuesto! Todos son bienvenidos mientras haya buen rollo/,
-      ),
-    ).toBeInTheDocument();
-  });
-
-  it("should render location information", async () => {
-    const UnetePage = (await import("@/app/unete/page")).default;
-    render(<UnetePage />);
-
-    // Use getAllByText for elements that might appear multiple times
-    expect(screen.getAllByText(/Polwarth Tavern/).length).toBeGreaterThan(0);
-  });
-
-  it("should have proper accessibility structure with headings", async () => {
-    const UnetePage = (await import("@/app/unete/page")).default;
-    render(<UnetePage />);
-
-    // Should have hierarchical heading structure
-    const headings = screen.getAllByRole("heading");
-    expect(headings.length).toBeGreaterThan(0);
-
-    // Should have a main heading (h1)
-    const h1 = screen.getByRole("heading", { level: 1 });
-    expect(h1).toBeInTheDocument();
-  });
-
-  it("should render step numbers", async () => {
-    const UnetePage = (await import("@/app/unete/page")).default;
-    render(<UnetePage />);
-
-    // Check for step numbers (1, 2, 3, 4)
-    expect(screen.getByText("1")).toBeInTheDocument();
-    expect(screen.getByText("2")).toBeInTheDocument();
-    expect(screen.getByText("3")).toBeInTheDocument();
-    expect(screen.getByText("4")).toBeInTheDocument();
-  });
-
-  it("should render step icons/emojis", async () => {
-    const UnetePage = (await import("@/app/unete/page")).default;
-    render(<UnetePage />);
-
-    // Check that emojis are present (they may appear multiple times)
-    expect(screen.getAllByText("📍").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("👋").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("⚽").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("📱").length).toBeGreaterThan(0);
-  });
-
-  it("should contain all FAQ questions and answers", async () => {
-    const UnetePage = (await import("@/app/unete/page")).default;
-    render(<UnetePage />);
-
-    // Expected FAQ structure
-    const expectedFAQs = [
-      {
-        question: "¿Tengo que ser socio del Betis?",
-        answerPart: "No es necesario",
-      },
-      {
-        question: "¿Hay que pagar algo?",
-        answerPart: "Solo tu consumición",
-      },
-      {
-        question: "¿Puedo venir con amigos no béticos?",
-        answerPart: "¡Por supuesto!",
-      },
-    ];
-
-    expectedFAQs.forEach(({ question, answerPart }) => {
-      expect(screen.getByText(question)).toBeInTheDocument();
-      expect(screen.getByText(new RegExp(answerPart))).toBeInTheDocument();
+      expect(
+        screen.getByText(/Tres cosas que necesitas saber/),
+      ).toBeInTheDocument();
     });
   });
 
-  it("should be informative about the joining process", async () => {
-    const UnetePage = (await import("@/app/unete/page")).default;
-    render(<UnetePage />);
+  describe("Three main cards", () => {
+    it("should render all three card headings", async () => {
+      const UnetePage = (await import("@/app/unete/page")).default;
+      render(<UnetePage />);
 
-    // Key information that should be present
-    expect(screen.getByText(/15 minutos antes/)).toBeInTheDocument();
-    expect(screen.getByText(/ambiente es familiar/)).toBeInTheDocument();
-    expect(screen.getByText(/no cobra cuotas/)).toBeInTheDocument();
-    expect(screen.getByText(/Villamarín/)).toBeInTheDocument();
+      expect(screen.getByText("1. Aparece")).toBeInTheDocument();
+      expect(screen.getByText("2. Conéctate")).toBeInTheDocument();
+      expect(screen.getByText("3. Disfruta")).toBeInTheDocument();
+    });
+
+    it("should render location information in card 1", async () => {
+      const UnetePage = (await import("@/app/unete/page")).default;
+      render(<UnetePage />);
+
+      expect(screen.getByText("Polwarth Tavern")).toBeInTheDocument();
+      expect(screen.getByText(/35 Polwarth Crescent/)).toBeInTheDocument();
+      expect(screen.getByText(/Edinburgh EH11 1HR/)).toBeInTheDocument();
+      expect(screen.getByText(/15 minutos antes del partido/)).toBeInTheDocument();
+    });
+
+    it("should render social media links in card 2", async () => {
+      const UnetePage = (await import("@/app/unete/page")).default;
+      render(<UnetePage />);
+
+      const facebookLink = screen.getByRole("link", { name: /Facebook/ });
+      expect(facebookLink).toHaveAttribute(
+        "href",
+        "https://www.facebook.com/groups/beticosenescocia/",
+      );
+
+      const instagramLink = screen.getByRole("link", { name: /Instagram/ });
+      expect(instagramLink).toHaveAttribute(
+        "href",
+        "https://www.instagram.com/rbetisescocia/",
+      );
+    });
+
+    it("should render benefits list in card 3", async () => {
+      const UnetePage = (await import("@/app/unete/page")).default;
+      render(<UnetePage />);
+
+      expect(screen.getByText(/Sin cuotas ni gastos/)).toBeInTheDocument();
+      expect(screen.getByText(/Ambiente familiar y acogedor/)).toBeInTheDocument();
+      expect(screen.getByText(/Niños bienvenidos/)).toBeInTheDocument();
+      expect(screen.getByText(/No hace falta reservar/)).toBeInTheDocument();
+    });
+  });
+
+  describe("Visitor information section", () => {
+    it("should render visitor welcome message", async () => {
+      const UnetePage = (await import("@/app/unete/page")).default;
+      render(<UnetePage />);
+
+      expect(
+        screen.getByText(/¿De visita en Escocia?/),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/Turistas, estudiantes, trabajadores temporales/),
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe("Links and CTAs", () => {
+    it("should render Google Maps link", async () => {
+      const UnetePage = (await import("@/app/unete/page")).default;
+      render(<UnetePage />);
+
+      const mapsLink = screen.getByRole("link", { name: /Abrir en Maps/ });
+      expect(mapsLink).toHaveAttribute(
+        "href",
+        "https://maps.google.com/maps?q=Polwarth+Tavern+Edinburgh",
+      );
+    });
+
+    it("should render Ver Próximos Partidos CTA", async () => {
+      const UnetePage = (await import("@/app/unete/page")).default;
+      render(<UnetePage />);
+
+      const ctaLink = screen.getByRole("link", {
+        name: /Ver Próximos Partidos/,
+      });
+      expect(ctaLink).toHaveAttribute("href", "/partidos");
+    });
+  });
+
+  describe("Accessibility", () => {
+    it("should have proper heading structure", async () => {
+      const UnetePage = (await import("@/app/unete/page")).default;
+      render(<UnetePage />);
+
+      const headings = screen.getAllByRole("heading");
+      expect(headings.length).toBeGreaterThan(0);
+
+      // Should have a main heading (h1)
+      const h1 = screen.getByRole("heading", { level: 1 });
+      expect(h1).toBeInTheDocument();
+    });
+
+    it("should have external links with proper attributes", async () => {
+      const UnetePage = (await import("@/app/unete/page")).default;
+      render(<UnetePage />);
+
+      const externalLinks = screen.getAllByRole("link", {
+        name: /Facebook|Instagram|Maps/,
+      });
+      externalLinks.forEach((link) => {
+        expect(link).toHaveAttribute("target", "_blank");
+        expect(link).toHaveAttribute("rel", "noopener noreferrer");
+      });
+    });
+  });
+
+  describe("Design system consistency", () => {
+    it("should use cultural fusion design patterns", async () => {
+      const UnetePage = (await import("@/app/unete/page")).default;
+      const { container } = render(<UnetePage />);
+
+      // Check for design system classes
+      expect(container.querySelector(".bg-hero-fusion")).toBeInTheDocument();
+      expect(container.querySelector(".pattern-tartan-navy")).toBeInTheDocument();
+      expect(
+        container.querySelector(".pattern-verdiblanco-subtle"),
+      ).toBeInTheDocument();
+    });
+
+    it("should render icons from Lucide React", async () => {
+      const UnetePage = (await import("@/app/unete/page")).default;
+      render(<UnetePage />);
+
+      expect(screen.getByTestId("map-pin-icon")).toBeInTheDocument();
+      expect(screen.getByTestId("clock-icon")).toBeInTheDocument();
+      expect(screen.getByTestId("users-icon")).toBeInTheDocument();
+    });
   });
 });
