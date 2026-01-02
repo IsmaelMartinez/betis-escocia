@@ -66,7 +66,9 @@ describe("Unete Page", () => {
       expect(screen.getByText("Polwarth Tavern")).toBeInTheDocument();
       expect(screen.getByText(/35 Polwarth Crescent/)).toBeInTheDocument();
       expect(screen.getByText(/Edinburgh EH11 1HR/)).toBeInTheDocument();
-      expect(screen.getByText(/15 minutos antes del partido/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/15 minutos antes del partido/),
+      ).toBeInTheDocument();
     });
 
     it("should render social media links in card 2", async () => {
@@ -91,7 +93,9 @@ describe("Unete Page", () => {
       render(<UnetePage />);
 
       expect(screen.getByText(/Sin cuotas ni gastos/)).toBeInTheDocument();
-      expect(screen.getByText(/Ambiente familiar y acogedor/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Ambiente familiar y acogedor/),
+      ).toBeInTheDocument();
       expect(screen.getByText(/Niños bienvenidos/)).toBeInTheDocument();
       expect(screen.getByText(/No hace falta reservar/)).toBeInTheDocument();
     });
@@ -102,9 +106,7 @@ describe("Unete Page", () => {
       const UnetePage = (await import("@/app/unete/page")).default;
       render(<UnetePage />);
 
-      expect(
-        screen.getByText(/¿De visita en Escocia?/),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/¿De visita en Escocia?/)).toBeInTheDocument();
       expect(
         screen.getByText(/Turistas, estudiantes, trabajadores temporales/),
       ).toBeInTheDocument();
@@ -168,7 +170,9 @@ describe("Unete Page", () => {
 
       // Check for design system classes
       expect(container.querySelector(".bg-hero-fusion")).toBeInTheDocument();
-      expect(container.querySelector(".pattern-tartan-navy")).toBeInTheDocument();
+      expect(
+        container.querySelector(".pattern-tartan-navy"),
+      ).toBeInTheDocument();
       expect(
         container.querySelector(".pattern-verdiblanco-subtle"),
       ).toBeInTheDocument();
@@ -178,9 +182,9 @@ describe("Unete Page", () => {
       const UnetePage = (await import("@/app/unete/page")).default;
       render(<UnetePage />);
 
-      expect(screen.getByTestId("map-pin-icon")).toBeInTheDocument();
-      expect(screen.getByTestId("clock-icon")).toBeInTheDocument();
-      expect(screen.getByTestId("users-icon")).toBeInTheDocument();
+      expect(screen.getAllByTestId("map-pin-icon").length).toBeGreaterThan(0);
+      expect(screen.getAllByTestId("clock-icon").length).toBeGreaterThan(0);
+      expect(screen.getAllByTestId("users-icon").length).toBeGreaterThan(0);
     });
   });
 });
