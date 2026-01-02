@@ -6,7 +6,6 @@ import TrendingPlayersChart from "@/components/TrendingPlayersChart";
 import { RefreshCw, Loader2, X } from "lucide-react";
 import { fetchMoreRumors, fetchRumorsByPlayer } from "./actions";
 import type { Rumor, TrendingPlayerWithTimeline } from "@/types/soylenti";
-import { isTransferRumor } from "@/lib/soylenti/utils";
 
 interface SoylentiClientProps {
   initialRumors: Rumor[];
@@ -25,7 +24,6 @@ export default function SoylentiClient({
 }: SoylentiClientProps) {
   const [rumors, setRumors] = useState(initialRumors);
   const [hasMore, setHasMore] = useState(initialHasMore);
-  const [showAllNews, setShowAllNews] = useState(false);
   const [franMode, setFranMode] = useState(true);
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
   const [playerRumors, setPlayerRumors] = useState<Rumor[]>([]);
@@ -42,25 +40,15 @@ export default function SoylentiClient({
   }, [selectedPlayer, trendingPlayers]);
 
   // When a player is selected, show their rumors; otherwise show the main list
-  const rumorsToFilter = selectedPlayer ? playerRumors : rumors;
+  const rumorsToDisplay = selectedPlayer ? playerRumors : rumors;
 
   const displayedRumors = useMemo(
     () =>
-      rumorsToFilter
-        .filter((rumor) => {
-          const isTransfer = isTransferRumor(rumor.aiProbability);
-          return isTransfer || showAllNews;
-        })
-        .sort(
-          (a, b) =>
-            new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime(),
-        ),
-    [rumorsToFilter, showAllNews],
-  );
-
-  const rumorCount = useMemo(
-    () => rumorsToFilter.filter((r) => isTransferRumor(r.aiProbability)).length,
-    [rumorsToFilter],
+      [...rumorsToDisplay].sort(
+        (a, b) =>
+          new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime(),
+      ),
+    [rumorsToDisplay],
   );
 
   const handlePlayerClick = (normalizedName: string) => {
@@ -102,7 +90,7 @@ export default function SoylentiClient({
         setRumors((prev) => [...prev, ...result.rumors]);
         setHasMore(result.hasMore);
       } catch {
-        setError("Error al cargar más noticias. Inténtalo de nuevo.");
+        setError("Error al cargar más rumores. Inténtalo de nuevo.");
       }
     });
   };
@@ -133,42 +121,27 @@ export default function SoylentiClient({
                 <p className="text-sm text-gray-600">
                   {selectedPlayer ? (
                     <>
-                      {displayedRumors.length} noticias de {selectedPlayerName}
-                      {rumorCount > 0 && ` (${rumorCount} rumores)`}
+                      {displayedRumors.length} rumores de {selectedPlayerName}
                     </>
                   ) : (
                     <>
-                      {displayedRumors.length} de {totalCount} noticias
-                      {rumorCount > 0 && ` (${rumorCount} rumores)`}
+                      {displayedRumors.length} de {totalCount} rumores
                     </>
                   )}
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-4">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={franMode}
-                    onChange={(e) => setFranMode(e.target.checked)}
-                    className="w-4 h-4 rounded border-betis-verde text-betis-verde focus:ring-betis-verde"
-                  />
-                  <span className="text-sm text-betis-verde-dark font-medium">
-                    Fran Mode
-                  </span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={showAllNews}
-                    onChange={(e) => setShowAllNews(e.target.checked)}
-                    className="w-4 h-4 rounded border-betis-verde text-betis-verde focus:ring-betis-verde"
-                  />
-                  <span className="text-sm text-betis-verde-dark">
-                    Mostrar noticias
-                  </span>
-                </label>
-              </div>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={franMode}
+                  onChange={(e) => setFranMode(e.target.checked)}
+                  className="w-4 h-4 rounded border-betis-verde text-betis-verde focus:ring-betis-verde"
+                />
+                <span className="text-sm text-betis-verde-dark font-medium">
+                  Fran Mode
+                </span>
+              </label>
             </div>
 
             {/* Player filter indicator */}
@@ -208,7 +181,7 @@ export default function SoylentiClient({
                 className="animate-spin text-betis-verde mx-auto"
               />
               <p className="mt-4 text-gray-600">
-                Cargando noticias de {selectedPlayerName}...
+                Cargando rumores de {selectedPlayerName}...
               </p>
             </div>
           ) : displayedRumors.length > 0 ? (
@@ -244,7 +217,7 @@ export default function SoylentiClient({
                         Cargando...
                       </>
                     ) : (
-                      "Cargar más noticias"
+                      "Cargar más rumores"
                     )}
                   </button>
                   {error && (

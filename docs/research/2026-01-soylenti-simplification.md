@@ -225,24 +225,25 @@ LIMIT $2
 
 **Goal**: Eliminate redundant computations.
 
-#### 3.1 Combine Filter and Count
+#### 3.1 Server-side Filtering (COMPLETED)
 
-Update `SoylentiClient.tsx`:
+As of January 2026, the Soylenti page now shows ONLY rumors (ai_probability > 0) with server-side filtering. The "Mostrar noticias" toggle was removed.
+
+All queries now include `.gt("ai_probability", 0)`:
+- Initial page load query in `page.tsx`
+- Pagination query `fetchMoreRumors()` in `queries.ts`
+- Player filtering query `fetchRumorsByPlayer()` in `queries.ts`
+
+Client-side filtering is no longer needed - the `displayedRumors` useMemo simply sorts by date:
 
 ```typescript
-const { displayedRumors, rumorCount } = useMemo(() => {
-  let count = 0;
-  const filtered = rumorsToFilter
-    .filter((rumor) => {
-      const isTransfer = isTransferRumor(rumor.aiProbability);
-      if (isTransfer) count++;
-      return isTransfer || showAllNews;
-    })
-    .sort(
+const displayedRumors = useMemo(
+  () =>
+    [...rumorsToDisplay].sort(
       (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime(),
-    );
-  return { displayedRumors: filtered, rumorCount: count };
-}, [rumorsToFilter, showAllNews]);
+    ),
+  [rumorsToDisplay],
+);
 ```
 
 #### 3.2 Add Caching
@@ -312,7 +313,7 @@ Use `useSearchParams` for `selectedPlayer` to enable:
 
 Extract into focused hooks:
 
-- `useSoylentiFilters()` - showAllNews, franMode
+- `useFranMode()` - franMode toggle for credibility display (showAllNews removed - server-side filtering only)
 - `useSoylentiPagination()` - hasMore, loadMore, cursor
 
 ## Success Metrics

@@ -108,6 +108,7 @@ export async function fetchRumorsByPlayer(
     .eq("news_players.players.normalized_name", normalizedName)
     .eq("is_duplicate", false)
     .eq("is_hidden", false)
+    .gt("ai_probability", 0)
     .order("pub_date", { ascending: false });
 
   if (error) {
@@ -130,6 +131,7 @@ export async function fetchMoreRumors(
     .select(RUMOR_SELECT)
     .eq("is_duplicate", false)
     .eq("is_hidden", false)
+    .gt("ai_probability", 0)
     .lt("pub_date", cursor)
     .order("pub_date", { ascending: false })
     .limit(limit + 1);
@@ -159,6 +161,7 @@ export async function fetchInitialRumors(
     .select(RUMOR_SELECT)
     .eq("is_duplicate", false)
     .eq("is_hidden", false)
+    .gt("ai_probability", 0)
     .order("pub_date", { ascending: false })
     .limit(limit + 1);
 
