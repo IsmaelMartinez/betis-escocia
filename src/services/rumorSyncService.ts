@@ -123,8 +123,11 @@ export async function syncRumors(): Promise<SyncResult> {
           } else {
             result.reassessed++;
 
-            // Process extracted players if any
+            // Process extracted players if any (only for transfer rumors)
             if (
+              analysis.isTransferRumor === true &&
+              analysis.probability !== null &&
+              analysis.probability > 0 &&
               analysis.players &&
               analysis.players.length > 0 &&
               (analysis.confidence === "high" ||
@@ -284,9 +287,12 @@ export async function syncRumors(): Promise<SyncResult> {
           result.inserted++;
 
           // Phase 2A: Process extracted players (medium or high confidence)
-          // Skip player extraction for irrelevant news
+          // Only extract players from transfer rumors (ai_probability > 0)
+          // Skip player extraction for regular news and irrelevant news
           const shouldProcessPlayers =
             isRelevant &&
+            aiProbability !== null &&
+            aiProbability > 0 &&
             analysis.players &&
             analysis.players.length > 0 &&
             (analysis.confidence === "high" ||
