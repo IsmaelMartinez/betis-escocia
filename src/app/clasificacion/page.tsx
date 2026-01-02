@@ -1,27 +1,44 @@
-import { Metadata } from 'next';
-import { FootballDataService, StandingEntry } from '@/services/footballDataService';
-import axios from 'axios';
-import { ErrorBoundary } from '@/components/ErrorBoundary';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Suspense } from 'react';
-import { withFeatureFlag, FeatureWrapper } from '@/lib/featureProtection';
+import { Metadata } from "next";
+import {
+  FootballDataService,
+  StandingEntry,
+} from "@/services/footballDataService";
+import axios from "axios";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import Image from "next/image";
+import Link from "next/link";
+import { Suspense } from "react";
+import { withFeatureFlag, FeatureWrapper } from "@/lib/featureProtection";
 
 export const metadata: Metadata = {
-  title: 'Clasificación de La Liga',
-  description: 'Clasificación actual de La Liga Santander con la posición del Real Betis. Puntos, partidos jugados y estadísticas completas.',
+  title: "Clasificación de La Liga",
+  description:
+    "Clasificación actual de La Liga Santander con la posición del Real Betis. Puntos, partidos jugados y estadísticas completas.",
 };
 
-import { getPositionStyle, getPositionBadge, formatForm, getFormResultStyle } from './utils';
+import {
+  getPositionStyle,
+  getPositionBadge,
+  formatForm,
+  getFormResultStyle,
+} from "./utils";
 
 // Standing row component
-function StandingRow({ entry, isBetis }: { entry: StandingEntry; isBetis: boolean }) {
+function StandingRow({
+  entry,
+  isBetis,
+}: {
+  entry: StandingEntry;
+  isBetis: boolean;
+}) {
   const positionBadge = getPositionBadge(entry.position);
   const formResults = formatForm(entry.form);
 
   return (
-    <tr className={`${isBetis ? 'bg-betis-verde-pale border-betis-verde/20' : 'hover:bg-gray-50'} transition-colors`}>
+    <tr
+      className={`${isBetis ? "bg-betis-verde-pale border-betis-verde/20" : "hover:bg-gray-50"} transition-colors`}
+    >
       {/* Position */}
       <td className="px-3 py-4 text-sm">
         <div className="flex items-center space-x-2">
@@ -29,7 +46,9 @@ function StandingRow({ entry, isBetis }: { entry: StandingEntry; isBetis: boolea
             {entry.position}
           </span>
           {positionBadge && (
-            <span className={`px-2 py-1 text-xs font-medium rounded-full ${positionBadge.color}`}>
+            <span
+              className={`px-2 py-1 text-xs font-medium rounded-full ${positionBadge.color}`}
+            >
               {positionBadge.text}
             </span>
           )}
@@ -48,7 +67,9 @@ function StandingRow({ entry, isBetis }: { entry: StandingEntry; isBetis: boolea
             unoptimized
           />
           <div className="flex flex-col">
-            <span className={`font-medium text-sm ${isBetis ? 'text-betis-verde-dark' : 'text-gray-900'}`}>
+            <span
+              className={`font-medium text-sm ${isBetis ? "text-betis-verde-dark" : "text-gray-900"}`}
+            >
               {entry.team.shortName || entry.team.name}
             </span>
             <span className="text-xs text-gray-500 sm:hidden">
@@ -60,7 +81,7 @@ function StandingRow({ entry, isBetis }: { entry: StandingEntry; isBetis: boolea
 
       {/* Points */}
       <td className="px-3 py-4 text-sm font-bold text-center">
-        <span className={isBetis ? 'text-betis-verde-dark' : 'text-gray-900'}>
+        <span className={isBetis ? "text-betis-verde-dark" : "text-gray-900"}>
           {entry.points}
         </span>
       </td>
@@ -87,8 +108,13 @@ function StandingRow({ entry, isBetis }: { entry: StandingEntry; isBetis: boolea
 
       {/* Goal Difference */}
       <td className="px-3 py-4 text-sm text-center text-gray-600 hidden lg:table-cell">
-        <span className={entry.goalDifference >= 0 ? 'text-betis-verde' : 'text-red-600'}>
-          {entry.goalDifference > 0 ? '+' : ''}{entry.goalDifference}
+        <span
+          className={
+            entry.goalDifference >= 0 ? "text-betis-verde" : "text-red-600"
+          }
+        >
+          {entry.goalDifference > 0 ? "+" : ""}
+          {entry.goalDifference}
         </span>
       </td>
 
@@ -115,10 +141,10 @@ async function StandingsContent() {
   const standings = await service.getLaLigaStandings();
 
   if (!standings) {
-    throw new Error('No se pudieron cargar las clasificaciones de La Liga');
+    throw new Error("No se pudieron cargar las clasificaciones de La Liga");
   }
 
-  const betisEntry = standings.table.find(entry => entry.team.id === 90);
+  const betisEntry = standings.table.find((entry) => entry.team.id === 90);
 
   return (
     <div className="min-h-screen">
@@ -158,26 +184,35 @@ async function StandingsContent() {
       </section>
 
       <div className="container mx-auto px-4 py-8">
-
         {/* Competition Legend */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 mb-8 p-6">
-          <h3 className="font-heading text-lg font-bold text-scotland-navy mb-4 uppercase tracking-wide">Leyenda de Competiciones</h3>
+          <h3 className="font-heading text-lg font-bold text-scotland-navy mb-4 uppercase tracking-wide">
+            Leyenda de Competiciones
+          </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="flex items-center space-x-2">
               <span className="w-3 h-3 bg-betis-verde rounded-full"></span>
-              <span className="font-body text-sm text-gray-700">Champions League (1-4)</span>
+              <span className="font-body text-sm text-gray-700">
+                Champions League (1-4)
+              </span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="w-3 h-3 bg-scotland-navy rounded-full"></span>
-              <span className="font-body text-sm text-gray-700">Europa League (5-6)</span>
+              <span className="font-body text-sm text-gray-700">
+                Europa League (5-6)
+              </span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="w-3 h-3 bg-orange-500 rounded-full"></span>
-              <span className="font-body text-sm text-gray-700">Conference League (7)</span>
+              <span className="font-body text-sm text-gray-700">
+                Conference League (7)
+              </span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="w-3 h-3 bg-red-500 rounded-full"></span>
-              <span className="font-body text-sm text-gray-700">Descenso (18-20)</span>
+              <span className="font-body text-sm text-gray-700">
+                Descenso (18-20)
+              </span>
             </div>
           </div>
         </div>
@@ -250,11 +285,13 @@ async function StandingsContent() {
 async function StandingsPage() {
   return (
     <ErrorBoundary>
-      <Suspense fallback={
-        <div className="min-h-screen bg-gradient-to-b from-betis-verde-pale to-white flex items-center justify-center">
-          <LoadingSpinner />
-        </div>
-      }>
+      <Suspense
+        fallback={
+          <div className="min-h-screen bg-gradient-to-b from-betis-verde-pale to-white flex items-center justify-center">
+            <LoadingSpinner />
+          </div>
+        }
+      >
         <StandingsContent />
       </Suspense>
     </ErrorBoundary>
@@ -262,4 +299,4 @@ async function StandingsPage() {
 }
 
 // Export the protected component
-export default withFeatureFlag(StandingsPage, 'show-clasificacion');
+export default withFeatureFlag(StandingsPage, "show-clasificacion");
