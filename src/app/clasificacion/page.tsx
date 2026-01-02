@@ -10,6 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { withFeatureFlag, FeatureWrapper } from "@/lib/featureProtection";
+import CulturalFusionHero from "@/components/CulturalFusionHero";
 
 export const metadata: Metadata = {
   title: "Clasificación de La Liga",
@@ -149,39 +150,32 @@ async function StandingsContent() {
   return (
     <div className="min-h-screen">
       {/* Hero Section - Cultural Fusion Design */}
-      <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-hero-fusion" />
-        <div className="absolute inset-0 pattern-tartan-navy opacity-25" />
-        <div className="absolute left-0 top-0 bottom-0 w-8 pattern-verdiblanco-subtle opacity-30" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl bg-oro-glow opacity-40 pointer-events-none" />
-
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
-            <div className="text-center md:text-left flex-1">
-              <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
-                Clasificación
-              </h1>
-              <p className="font-accent text-2xl sm:text-3xl text-oro-bright text-shadow-lg italic">
-                La Liga
-              </p>
-            </div>
-
-            {betisEntry && (
-              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-center">
-                <div className="font-heading text-sm text-oro-bright mb-2 uppercase tracking-wide">
-                  Posición Betis
-                </div>
-                <div className="font-display text-5xl font-black text-white mb-2">
-                  {betisEntry.position}º
-                </div>
-                <div className="font-body text-lg text-white/90">
-                  {betisEntry.points} puntos
-                </div>
-              </div>
-            )}
+      <CulturalFusionHero containerClassName="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+          <div className="text-center md:text-left flex-1">
+            <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
+              Clasificación
+            </h1>
+            <p className="font-accent text-2xl sm:text-3xl text-oro-bright text-shadow-lg italic">
+              La Liga
+            </p>
           </div>
+
+          {betisEntry && (
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-center">
+              <div className="font-heading text-sm text-oro-bright mb-2 uppercase tracking-wide">
+                Posición Betis
+              </div>
+              <div className="font-display text-5xl font-black text-white mb-2">
+                {betisEntry.position}º
+              </div>
+              <div className="font-body text-lg text-white/90">
+                {betisEntry.points} puntos
+              </div>
+            </div>
+          )}
         </div>
-      </section>
+      </CulturalFusionHero>
 
       <div className="container mx-auto px-4 py-8">
         {/* Competition Legend */}
