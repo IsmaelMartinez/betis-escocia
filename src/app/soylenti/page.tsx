@@ -3,9 +3,12 @@ import { Suspense } from "react";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Spinner from "@/components/ui/Spinner";
 import { withFeatureFlag } from "@/lib/featureProtection";
-import { Newspaper } from "lucide-react";
+import { Newspaper, AlertCircle } from "lucide-react";
 import { fetchTrendingPlayersWithTimeline } from "@/lib/data/players";
 import SoylentiClient from "./SoylentiClient";
+
+// Ensure fresh data on every request - prevents stale trend data
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Soylenti - Rumores de Fichajes | Peña Bética Escocesa",
@@ -95,26 +98,39 @@ async function SoylentiContent() {
   const rumors = data.rumors || [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-betis-verde-pale to-white">
-      {/* Hero Section */}
-      <section className="bg-betis-verde text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="flex items-center justify-center mb-4">
-            <Newspaper size={48} />
+    <div className="min-h-screen">
+      {/* Hero Section - Cultural Fusion Design */}
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-hero-fusion" />
+        <div className="absolute inset-0 pattern-tartan-navy opacity-25" />
+        <div className="absolute left-0 top-0 bottom-0 w-8 pattern-verdiblanco-subtle opacity-30" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl bg-oro-glow opacity-40 pointer-events-none" />
+
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8">
+            <Newspaper className="h-5 w-5 text-white" />
+            <span className="text-white font-heading font-medium text-sm tracking-wide">
+              Rumores de Fichajes
+            </span>
           </div>
-          <h1 className="text-4xl font-bold mb-2">
-            Soylenti - Rumores de Fichajes
+
+          <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
+            Soylenti
           </h1>
-          <p className="text-xl opacity-90 max-w-2xl mx-auto">
-            Las últimas noticias y rumores del Real Betis desde múltiples
-            fuentes
+
+          <p className="font-accent text-2xl sm:text-3xl text-oro-bright mb-8 text-shadow-lg italic">
+            Las últimas noticias y rumores del Real Betis
           </p>
         </div>
       </section>
 
-      {/* Rumors Grid */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Rumors Grid - Canvas Warm Background */}
+      <section className="relative py-16 overflow-hidden">
+        <div className="absolute inset-0 bg-canvas-warm" />
+        <div className="absolute inset-0 pattern-tartan-subtle opacity-40" />
+        <div className="absolute left-0 top-0 bottom-0 w-4 pattern-verdiblanco-whisper" />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SoylentiClient
             initialRumors={rumors}
             lastUpdated={data.lastUpdated}
@@ -125,14 +141,20 @@ async function SoylentiContent() {
         </div>
       </section>
 
-      {/* Disclaimer */}
-      <section className="bg-gray-50 py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-sm text-gray-600">
-            Los rumores mostrados provienen de fuentes externas y no representan
-            información oficial del Real Betis. Esta sección es solo para
-            entretenimiento de la comunidad bética.
-          </p>
+      {/* Disclaimer - Cultural Fusion Style */}
+      <section className="relative py-12 overflow-hidden">
+        <div className="absolute inset-0 bg-betis-verde-light" />
+        <div className="absolute inset-0 pattern-tartan-subtle opacity-20" />
+
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-start gap-4 bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-betis-verde/10">
+            <AlertCircle className="h-5 w-5 text-betis-verde-dark flex-shrink-0 mt-0.5" />
+            <p className="font-body text-sm text-betis-verde-dark leading-relaxed">
+              Los rumores mostrados provienen de fuentes externas y no
+              representan información oficial del Real Betis. Esta sección es
+              solo para entretenimiento de la comunidad bética.
+            </p>
+          </div>
         </div>
       </section>
     </div>
@@ -145,11 +167,46 @@ async function SoylentiPage() {
     <ErrorBoundary>
       <Suspense
         fallback={
-          <div className="min-h-screen bg-gradient-to-b from-betis-verde-pale to-white flex items-center justify-center">
-            <div className="text-center">
-              <Spinner size="lg" />
-              <p className="mt-4 text-gray-600">Cargando rumores...</p>
-            </div>
+          <div className="min-h-screen">
+            {/* Hero Section Skeleton */}
+            <section className="relative py-20 overflow-hidden">
+              <div className="absolute inset-0 bg-hero-fusion" />
+              <div className="absolute inset-0 pattern-tartan-navy opacity-25" />
+              <div className="absolute left-0 top-0 bottom-0 w-8 pattern-verdiblanco-subtle opacity-30" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl bg-oro-glow opacity-40 pointer-events-none" />
+
+              <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8">
+                  <Newspaper className="h-5 w-5 text-white" />
+                  <span className="text-white font-heading font-medium text-sm tracking-wide">
+                    Rumores de Fichajes
+                  </span>
+                </div>
+
+                <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
+                  Soylenti
+                </h1>
+
+                <p className="font-accent text-2xl sm:text-3xl text-oro-bright mb-8 text-shadow-lg italic">
+                  Las últimas noticias y rumores del Real Betis
+                </p>
+              </div>
+            </section>
+
+            {/* Loading Content */}
+            <section className="relative py-16 overflow-hidden">
+              <div className="absolute inset-0 bg-canvas-warm" />
+              <div className="absolute inset-0 pattern-tartan-subtle opacity-40" />
+
+              <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center min-h-[400px]">
+                <div className="text-center">
+                  <Spinner size="lg" />
+                  <p className="mt-4 font-body text-betis-verde-dark">
+                    Cargando rumores...
+                  </p>
+                </div>
+              </div>
+            </section>
           </div>
         }
       >

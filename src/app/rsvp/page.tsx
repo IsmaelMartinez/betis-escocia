@@ -16,6 +16,8 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { DATETIME_FORMAT } from "@/lib/constants/dateFormats";
+import CulturalFusionHero from "@/components/CulturalFusionHero";
+import FeatureCard from "@/components/FeatureCard";
 
 interface RSVPData {
   currentMatch: {
@@ -133,21 +135,14 @@ function RSVPPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section - Cultural Fusion Design */}
-      <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-hero-fusion" />
-        <div className="absolute inset-0 pattern-tartan-navy opacity-25" />
-        <div className="absolute left-0 top-0 bottom-0 w-8 pattern-verdiblanco-subtle opacity-30" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl bg-oro-glow opacity-40 pointer-events-none" />
-
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
-            ¿Vienes al Polwarth?
-          </h1>
-          <p className="font-accent text-2xl sm:text-3xl text-oro-bright text-shadow-lg italic">
-            Confirma tu asistencia para el próximo partido
-          </p>
-        </div>
-      </section>
+      <CulturalFusionHero>
+        <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
+          ¿Vienes al Polwarth?
+        </h1>
+        <p className="font-accent text-2xl sm:text-3xl text-oro-bright text-shadow-lg italic">
+          Confirma tu asistencia para el próximo partido
+        </p>
+      </CulturalFusionHero>
 
       {/* Next Match Info */}
       <section className="relative py-16 overflow-hidden">
@@ -269,53 +264,21 @@ function RSVPPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="group relative bg-white rounded-2xl p-8 text-center shadow-xl border border-gray-100 hover:border-betis-verde transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-              <div className="absolute top-0 right-0 w-20 h-20 pattern-verdiblanco-diagonal-subtle opacity-20" />
-              <div className="relative">
-                <div className="w-16 h-16 bg-betis-verde rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <Users className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="font-heading text-xl font-bold mb-4 text-scotland-navy uppercase tracking-wide">
-                  Reservamos Mesa
-                </h3>
-                <p className="font-body text-gray-700">
-                  Con tu confirmación, podemos reservar una mesa grande para que
-                  todos estemos juntos viendo el partido.
-                </p>
-              </div>
-            </div>
-
-            <div className="group relative bg-white rounded-2xl p-8 text-center shadow-xl border border-gray-100 hover:border-betis-verde transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-              <div className="absolute top-0 right-0 w-20 h-20 pattern-verdiblanco-diagonal-subtle opacity-20" />
-              <div className="relative">
-                <div className="w-16 h-16 bg-betis-verde rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <Clock className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="font-heading text-xl font-bold mb-4 text-scotland-navy uppercase tracking-wide">
-                  Llegada Puntual
-                </h3>
-                <p className="font-body text-gray-700">
-                  Sabemos cuántos venís y podemos avisar si hay que llegar antes
-                  para conseguir sitio en partidos importantes.
-                </p>
-              </div>
-            </div>
-
-            <div className="group relative bg-white rounded-2xl p-8 text-center shadow-xl border border-gray-100 hover:border-betis-verde transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-              <div className="absolute top-0 right-0 w-20 h-20 pattern-verdiblanco-diagonal-subtle opacity-20" />
-              <div className="relative">
-                <div className="w-16 h-16 bg-betis-verde rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <CheckCircle className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="font-heading text-xl font-bold mb-4 text-scotland-navy uppercase tracking-wide">
-                  Ambiente Bético
-                </h3>
-                <p className="font-body text-gray-700">
-                  Cuantos más seamos, mejor ambiente. Tu presencia hace que la
-                  experiencia sea más especial para todos.
-                </p>
-              </div>
-            </div>
+            <FeatureCard
+              icon={Users}
+              title="Reservamos Mesa"
+              description="Con tu confirmación, podemos reservar una mesa grande para que todos estemos juntos viendo el partido."
+            />
+            <FeatureCard
+              icon={Clock}
+              title="Llegada Puntual"
+              description="Sabemos cuántos venís y podemos avisar si hay que llegar antes para conseguir sitio en partidos importantes."
+            />
+            <FeatureCard
+              icon={CheckCircle}
+              title="Ambiente Bético"
+              description="Cuantos más seamos, mejor ambiente. Tu presencia hace que la experiencia sea más especial para todos."
+            />
           </div>
         </div>
       </section>

@@ -19,6 +19,7 @@ import {
 } from "@/components/MessageComponent";
 import { useUser } from "@clerk/nextjs";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import CulturalFusionHero from "@/components/CulturalFusionHero";
 
 interface ContactFormData {
   name: string;
@@ -238,29 +239,22 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section - Cultural Fusion Design */}
-      <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-hero-fusion" />
-        <div className="absolute inset-0 pattern-tartan-navy opacity-25" />
-        <div className="absolute left-0 top-0 bottom-0 w-8 pattern-verdiblanco-subtle opacity-30" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl bg-oro-glow opacity-40 pointer-events-none" />
-
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8">
-            <Send size={20} className="text-oro-bright" />
-            <span className="text-white font-heading font-medium text-sm tracking-wide">
-              Ponte en contacto
-            </span>
-          </div>
-
-          <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
-            Contacto
-          </h1>
-
-          <p className="font-accent text-2xl sm:text-3xl text-oro-bright mb-8 text-shadow-lg italic">
-            ¿Tienes alguna pregunta? Estamos aquí para ayudarte
-          </p>
+      <CulturalFusionHero containerClassName="max-w-4xl text-center">
+        <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8">
+          <Send size={20} className="text-oro-bright" />
+          <span className="text-white font-heading font-medium text-sm tracking-wide">
+            Ponte en contacto
+          </span>
         </div>
-      </section>
+
+        <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
+          Contacto
+        </h1>
+
+        <p className="font-accent text-2xl sm:text-3xl text-oro-bright mb-8 text-shadow-lg italic">
+          ¿Tienes alguna pregunta? Estamos aquí para ayudarte
+        </p>
+      </CulturalFusionHero>
 
       {/* Quick Contact Options */}
       <section className="relative py-16 overflow-hidden">
@@ -272,9 +266,7 @@ export default function ContactPage() {
             ¿Qué necesitas?
           </h2>
 
-          <div
-            className={`grid grid-cols-1 md:grid-cols-2 ${visibleFormTypes.length === 4 ? "lg:grid-cols-2" : "lg:grid-cols-3"} gap-6 mb-12`}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {formTypes.map((type) => {
               const Icon = type.icon;
               // Conditionally render based on feature flag
