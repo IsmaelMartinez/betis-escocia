@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import {
-  MapPin,
   Heart,
   Coffee,
   Smile,
@@ -233,44 +232,6 @@ function HeroCommunity({ showPartidos, showRsvp }: HeroCommunityProps) {
             </div>
             <div className="absolute -bottom-3 -left-3 bg-white rounded-full p-3 shadow-lg">
               <span className="text-2xl leading-none">🏴󠁧󠁢󠁳󠁣󠁴󠁿</span>
-            </div>
-          </div>
-        </div>
-
-        {/* ============================================
-         * BOTTOM SECTION - Location Bar
-         * Cultural gradient with pattern overlay
-         * ============================================ */}
-        <div className="mt-20">
-          <div className="relative bg-betis-verde-dark rounded-2xl p-8 text-white text-center overflow-hidden">
-            {/* Gradient overlay using CSS variables */}
-            <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(to right, var(--betis-verde), var(--betis-verde-dark), var(--scotland-navy))",
-              }}
-            />
-            {/* Pattern overlay */}
-            <div className="absolute inset-0 pattern-tartan-navy opacity-30" />
-
-            <div className="relative max-w-4xl mx-auto">
-              <h3 className="font-display text-2xl md:text-3xl font-black mb-4 uppercase tracking-wide">
-                🍻 Nos Vemos en el Pub
-              </h3>
-              <p className="font-accent text-betis-oro text-xl md:text-2xl mb-4 italic">
-                Nuestro hogar en Edimburgo
-              </p>
-              <p className="font-body text-white/90 mb-6 text-lg">
-                Cada partido es una excusa perfecta para juntarnos, reír y
-                disfrutar del Betis en buena compañía.
-              </p>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full backdrop-blur-sm">
-                <MapPin className="h-4 w-4 text-betis-oro" />
-                <span className="font-body text-sm text-white font-medium">
-                  Edinburgh, Escocia
-                </span>
-              </div>
             </div>
           </div>
         </div>

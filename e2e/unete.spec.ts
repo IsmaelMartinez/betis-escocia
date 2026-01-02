@@ -1,34 +1,49 @@
-import { test, expect } from './fixtures';
+import { test, expect } from "./fixtures";
 
-test.describe('Unete Page Happy Path', () => {
-
-  test('should load successfully and display key elements', async ({ page }) => {
+test.describe("Unete Page Happy Path", () => {
+  test("should load successfully and display key elements", async ({
+    page,
+  }) => {
     // 2.6.1 Verify page loads successfully (HTTP 200)
-    const response = await page.goto('/unete');
+    const response = await page.goto("/unete");
     expect(response?.status()).toBe(200);
 
     // 2.6.2 Assert visibility of key elements
-    await expect(page.getByRole('heading', { name: 'Únete', level: 1 })).toBeVisible();
-    await expect(page.getByText('Ser bético en Escocia nunca fue tan fácil')).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Únete", level: 1 }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Tres cosas que necesitas saber"),
+    ).toBeVisible();
+
+    // Verify the 3 main cards are present
+    await expect(page.getByText("1. Aparece")).toBeVisible();
+    await expect(page.getByText("2. Conéctate")).toBeVisible();
+    await expect(page.getByText("3. Disfruta")).toBeVisible();
+
+    // Verify location information (use exact match to avoid multiple matches)
+    await expect(page.getByText("Polwarth Tavern", { exact: true })).toBeVisible();
 
     // 2.6.4 Ensure no console errors or network failures on page load
-    page.on('console', msg => {
-      if (msg.type() === 'error') {
+    page.on("console", (msg) => {
+      if (msg.type() === "error") {
         console.error(`Console error: ${msg.text()}`);
-        expect(msg.type()).not.toBe('error');
+        expect(msg.type()).not.toBe("error");
       }
     });
-    page.on('requestfailed', request => {
-      console.error(`Network request failed: ${request.url()} - ${request.failure()?.errorText}`);
+    page.on("requestfailed", (request) => {
+      console.error(
+        `Network request failed: ${request.url()} - ${request.failure()?.errorText}`,
+      );
       expect(request.failure()).toBeNull();
     });
   });
 
-  test('should navigate back to home page', async ({ page }) => {
-    await page.goto('/unete');
+  test("should navigate back to home page", async ({ page }) => {
+    await page.goto("/unete");
 
     // 2.6.3 Verify basic navigation
     await page.locator('header a[href="/"]').click();
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL("/");
   });
 });
