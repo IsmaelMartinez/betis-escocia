@@ -15,184 +15,167 @@ vi.mock('@/components/BetisPositionWidget', () => ({
   default: () => <div data-testid="betis-position-widget">Betis Position Widget</div>,
 }));
 
+vi.mock('@/components/RSVPModal', () => ({
+  default: () => <div data-testid="rsvp-modal">RSVP Modal</div>,
+  useRSVPModal: () => ({
+    isOpen: false,
+    openModal: vi.fn(),
+    closeModal: vi.fn(),
+  }),
+}));
+
+// Mock Lucide React icons
+vi.mock('lucide-react', () => ({
+  Calendar: vi.fn(({ className }) => (
+    <div data-testid="calendar-icon" className={className} />
+  )),
+  MapPin: vi.fn(({ className }) => (
+    <div data-testid="map-pin-icon" className={className} />
+  )),
+}));
+
 describe('MatchesPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should render the main partidos page with all sections', () => {
-    render(<MatchesPage />);
+  describe('Basic rendering', () => {
+    it('should render the main heading', () => {
+      render(<MatchesPage />);
 
-    // Check hero section
-    expect(screen.getByText('📅 Partidos del Betis')).toBeInTheDocument();
-    expect(screen.getByText('Todos los partidos se ven en el Polwarth Tavern. ¡No te pierdas ni uno!')).toBeInTheDocument();
+      const heading = screen.getByRole('heading', { level: 1 });
+      expect(heading).toBeInTheDocument();
+      expect(heading).toHaveTextContent('Partidos');
+    });
 
-    // Check that main components are rendered
-    expect(screen.getByTestId('api-error-boundary')).toBeInTheDocument();
-    expect(screen.getByTestId('all-database-matches')).toBeInTheDocument();
-    expect(screen.getByTestId('betis-position-widget')).toBeInTheDocument();
+    it('should render hero section with tagline', () => {
+      render(<MatchesPage />);
 
-    // Check Polwarth Tavern section
-    expect(screen.getByText('🍺 Polwarth Tavern')).toBeInTheDocument();
-    expect(screen.getByText('Dirección')).toBeInTheDocument();
-    expect(screen.getByText('35 Polwarth Cres')).toBeInTheDocument();
-    expect(screen.getByText('Edinburgh EH11 1HR')).toBeInTheDocument();
-    expect(screen.getByText('📞 +44 131 221 9906')).toBeInTheDocument();
+      expect(screen.getByText('Todos los partidos en el Polwarth Tavern')).toBeInTheDocument();
+      expect(screen.getByText(/No te pierdas ningún partido del Betis/)).toBeInTheDocument();
+    });
 
-    // Check transport information
-    expect(screen.getByText('¿Cómo llegar?')).toBeInTheDocument();
-    expect(screen.getByText('🚌 Autobuses: 10, 27, 45')).toBeInTheDocument();
-    expect(screen.getByText('🚶 10 min desde Haymarket')).toBeInTheDocument();
+    it('should render main components', () => {
+      render(<MatchesPage />);
 
-    // Check Google Maps link
-    const googleMapsLink = screen.getByRole('link', { name: /ver en google maps/i });
-    expect(googleMapsLink).toBeInTheDocument();
-    expect(googleMapsLink).toHaveAttribute('href', 'https://maps.google.com/maps?q=Polwarth+Tavern+Edinburgh');
-    expect(googleMapsLink).toHaveAttribute('target', '_blank');
-    expect(googleMapsLink).toHaveAttribute('rel', 'noopener noreferrer');
+      expect(screen.getByTestId('api-error-boundary')).toBeInTheDocument();
+      expect(screen.getByTestId('all-database-matches')).toBeInTheDocument();
+      expect(screen.getByTestId('betis-position-widget')).toBeInTheDocument();
+      expect(screen.getByTestId('rsvp-modal')).toBeInTheDocument();
+    });
   });
 
-  it('should have proper page structure and layout classes', () => {
-    const { container } = render(<MatchesPage />);
+  describe('Sidebar content', () => {
+    it('should render RSVP card in sidebar', () => {
+      render(<MatchesPage />);
 
-    // Check main container has proper styling
-    const mainContainer = container.querySelector('.min-h-screen');
-    expect(mainContainer).toHaveClass('min-h-screen', 'bg-gray-50');
+      expect(screen.getByText('Próximo Partido')).toBeInTheDocument();
+      expect(screen.getByText('¿Vienes al Polwarth Tavern?')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Confirmar Asistencia/i })).toBeInTheDocument();
+    });
 
-    // Check hero section styling
-    const heroSection = screen.getByText('📅 Partidos del Betis').closest('section');
-    expect(heroSection).toHaveClass('bg-betis-green', 'text-white', 'py-16');
+    it('should render Polwarth info in sidebar', () => {
+      render(<MatchesPage />);
 
-    // Check Polwarth Tavern section styling
-    const polwarthSection = screen.getByText('🍺 Polwarth Tavern').closest('section');
-    expect(polwarthSection).toHaveClass('py-16', 'bg-scotland-blue', 'text-white');
+      expect(screen.getByText('Polwarth Tavern')).toBeInTheDocument();
+      expect(screen.getByText(/35 Polwarth Cres/)).toBeInTheDocument();
+      expect(screen.getByText(/Edinburgh EH11 1HR/)).toBeInTheDocument();
+      expect(screen.getByText('📞 +44 131 221 9906')).toBeInTheDocument();
+    });
+
+    it('should render Google Maps link in sidebar', () => {
+      render(<MatchesPage />);
+
+      const mapsLink = screen.getByRole('link', { name: /Ver en Maps/i });
+      expect(mapsLink).toBeInTheDocument();
+      expect(mapsLink).toHaveAttribute('href', 'https://maps.google.com/maps?q=Polwarth+Tavern+Edinburgh');
+      expect(mapsLink).toHaveAttribute('target', '_blank');
+      expect(mapsLink).toHaveAttribute('rel', 'noopener noreferrer');
+    });
+
+    it('should have sticky positioning for sidebar', () => {
+      render(<MatchesPage />);
+
+      const stickyContainer = screen.getByTestId('betis-position-widget').closest('.sticky');
+      expect(stickyContainer).toBeInTheDocument();
+      expect(stickyContainer).toHaveClass('sticky', 'top-8');
+    });
   });
 
-  it('should render grid layout for matches and sidebar', () => {
-    render(<MatchesPage />);
+  describe('Layout structure', () => {
+    it('should render grid layout for matches and sidebar', () => {
+      render(<MatchesPage />);
 
-    // Find the grid container that holds matches and sidebar
-    const matchesSection = screen.getByTestId('all-database-matches').closest('.lg\\:col-span-3');
-    const sidebarSection = screen.getByTestId('betis-position-widget').closest('.lg\\:col-span-1');
+      const matchesSection = screen.getByTestId('all-database-matches').closest('.lg\\:col-span-3');
+      const sidebarSection = screen.getByTestId('betis-position-widget').closest('.lg\\:col-span-1');
 
-    expect(matchesSection).toBeInTheDocument();
-    expect(sidebarSection).toBeInTheDocument();
+      expect(matchesSection).toBeInTheDocument();
+      expect(sidebarSection).toBeInTheDocument();
 
-    // Check grid container
-    const gridContainer = matchesSection?.parentElement;
-    expect(gridContainer).toHaveClass('grid', 'grid-cols-1', 'lg:grid-cols-4', 'gap-8');
+      const gridContainer = matchesSection?.parentElement;
+      expect(gridContainer).toHaveClass('grid', 'grid-cols-1', 'lg:grid-cols-4', 'gap-8');
+    });
+
+    it('should wrap AllDatabaseMatches in ApiErrorBoundary', () => {
+      render(<MatchesPage />);
+
+      const errorBoundary = screen.getByTestId('api-error-boundary');
+      const matchesComponent = screen.getByTestId('all-database-matches');
+
+      expect(errorBoundary).toContainElement(matchesComponent);
+    });
   });
 
-  it('should have sticky positioning for sidebar', () => {
-    render(<MatchesPage />);
+  describe('Design system consistency', () => {
+    it('should use cultural fusion design patterns', () => {
+      const { container } = render(<MatchesPage />);
 
-    const stickyContainer = screen.getByTestId('betis-position-widget').closest('.sticky');
-    expect(stickyContainer).toBeInTheDocument();
-    expect(stickyContainer).toHaveClass('sticky', 'top-8');
+      expect(container.querySelector('.bg-hero-fusion')).toBeInTheDocument();
+      expect(container.querySelector('.pattern-tartan-navy')).toBeInTheDocument();
+      expect(container.querySelector('.pattern-verdiblanco-subtle')).toBeInTheDocument();
+    });
+
+    it('should use typography system classes', () => {
+      render(<MatchesPage />);
+
+      const heading = screen.getByText('Partidos');
+      expect(heading).toHaveClass('font-display');
+    });
+
+    it('should use branded background for main content', () => {
+      const { container } = render(<MatchesPage />);
+
+      expect(container.querySelector('.bg-canvas-warm')).toBeInTheDocument();
+      expect(container.querySelector('.pattern-tartan-subtle')).toBeInTheDocument();
+    });
   });
 
-  it('should render contact information in proper format', () => {
-    render(<MatchesPage />);
+  describe('Accessibility', () => {
+    it('should have proper heading hierarchy', () => {
+      render(<MatchesPage />);
 
-    // Check address information card
-    const addressCard = screen.getByText('Dirección').closest('div');
-    expect(addressCard).toHaveClass('bg-white/10', 'rounded-lg', 'p-6');
+      const mainHeading = screen.getByRole('heading', { level: 1 });
+      expect(mainHeading).toHaveTextContent('Partidos');
 
-    // Check transport information card
-    const transportCard = screen.getByText('¿Cómo llegar?').closest('div');
-    expect(transportCard).toHaveClass('bg-white/10', 'rounded-lg', 'p-6');
+      const headings = screen.getAllByRole('heading');
+      expect(headings.length).toBeGreaterThan(0);
+    });
+
+    it('should have proper link attributes', () => {
+      render(<MatchesPage />);
+
+      const externalLink = screen.getByRole('link', { name: /Ver en Maps/i });
+      expect(externalLink).toHaveAttribute('rel', 'noopener noreferrer');
+      expect(externalLink).toHaveAttribute('target', '_blank');
+    });
   });
 
-  it('should have proper responsive design classes', () => {
-    render(<MatchesPage />);
+  describe('Icons', () => {
+    it('should render Lucide icons', () => {
+      render(<MatchesPage />);
 
-    // Check hero text is responsive
-    const heroTitle = screen.getByText('📅 Partidos del Betis');
-    expect(heroTitle).toHaveClass('text-4xl', 'font-bold', 'mb-2');
-
-    const heroDescription = screen.getByText('Todos los partidos se ven en el Polwarth Tavern. ¡No te pierdas ni uno!');
-    expect(heroDescription).toHaveClass('text-xl', 'opacity-90', 'max-w-2xl', 'mx-auto');
-
-    // Check grid in Polwarth section is responsive
-    const polwarthGrid = screen.getByText('Dirección').closest('.md\\:grid-cols-2');
-    expect(polwarthGrid).toHaveClass('grid', 'grid-cols-1', 'md:grid-cols-2', 'gap-8');
-  });
-
-  it('should wrap AllDatabaseMatches in ApiErrorBoundary', () => {
-    render(<MatchesPage />);
-
-    // Check that AllDatabaseMatches is wrapped in ApiErrorBoundary
-    const errorBoundary = screen.getByTestId('api-error-boundary');
-    const matchesComponent = screen.getByTestId('all-database-matches');
-    
-    expect(errorBoundary).toContainElement(matchesComponent);
-  });
-
-  it('should have accessibility features', () => {
-    render(<MatchesPage />);
-
-    // Check that hero section has proper heading hierarchy
-    const mainHeading = screen.getByRole('heading', { level: 1 });
-    expect(mainHeading).toHaveTextContent('📅 Partidos del Betis');
-
-    const secondaryHeadings = screen.getAllByRole('heading', { level: 2 });
-    expect(secondaryHeadings.length).toBeGreaterThan(0);
-    expect(secondaryHeadings.some(h => h.textContent?.includes('Polwarth Tavern'))).toBe(true);
-
-    // Check link has proper accessibility attributes
-    const externalLink = screen.getByRole('link', { name: /ver en google maps/i });
-    expect(externalLink).toHaveAttribute('rel', 'noopener noreferrer');
-  });
-
-  it('should display proper styling for Google Maps button', () => {
-    render(<MatchesPage />);
-
-    const googleMapsButton = screen.getByRole('link', { name: /ver en google maps/i });
-    expect(googleMapsButton).toHaveClass(
-      'bg-betis-gold',
-      'text-betis-dark',
-      'px-8',
-      'py-3',
-      'rounded-lg',
-      'font-bold',
-      'text-lg',
-      'hover:bg-yellow-400',
-      'transition-colors',
-      'duration-200',
-      'inline-block'
-    );
-  });
-
-  it('should render emoji icons consistently', () => {
-    render(<MatchesPage />);
-
-    // Check various emoji icons are present
-    expect(screen.getByText('📅 Partidos del Betis')).toBeInTheDocument();
-    expect(screen.getByText('🍺 Polwarth Tavern')).toBeInTheDocument();
-    expect(screen.getByText('📞 +44 131 221 9906')).toBeInTheDocument();
-    expect(screen.getByText('🚌 Autobuses: 10, 27, 45')).toBeInTheDocument();
-    expect(screen.getByText('🚶 10 min desde Haymarket')).toBeInTheDocument();
-    expect(screen.getByText('📍 Ver en Google Maps')).toBeInTheDocument();
-  });
-
-  it('should have proper content hierarchy and structure', () => {
-    render(<MatchesPage />);
-
-    // Check that content appears in logical order
-    const content = screen.getByText('📅 Partidos del Betis').closest('.min-h-screen');
-    expect(content).toBeInTheDocument();
-
-    // Hero section should come first
-    const heroSection = screen.getByText('📅 Partidos del Betis').closest('section');
-    
-    // Matches section should come after hero
-    const matchesSection = screen.getByTestId('all-database-matches').closest('section');
-    
-    // Polwarth section should come last
-    const polwarthSection = screen.getByText('🍺 Polwarth Tavern').closest('section');
-
-    expect(heroSection).toBeInTheDocument();
-    expect(matchesSection).toBeInTheDocument();
-    expect(polwarthSection).toBeInTheDocument();
+      expect(screen.getAllByTestId('calendar-icon').length).toBeGreaterThan(0);
+      expect(screen.getAllByTestId('map-pin-icon').length).toBeGreaterThan(0);
+    });
   });
 });
