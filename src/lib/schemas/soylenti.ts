@@ -65,8 +65,42 @@ export const HIDE_REASON_OPTIONS = [
   { value: "custom", label: "Otro (especificar)" },
 ] as const;
 
+// Update probability schema for admin
+export const updateProbabilitySchema = z.object({
+  newsId: z.number().int().positive("ID de noticia inválido"),
+  probability: z
+    .number()
+    .min(0, "La probabilidad debe ser al menos 0")
+    .max(100, "La probabilidad no puede exceder 100"),
+});
+
+// Add player to news schema
+export const addPlayerToNewsSchema = z.object({
+  newsId: z.number().int().positive("ID de noticia inválido"),
+  playerName: z
+    .string()
+    .min(2, "El nombre del jugador debe tener al menos 2 caracteres")
+    .max(200, "El nombre del jugador no puede exceder 200 caracteres")
+    .trim(),
+  role: z
+    .enum(["target", "departing", "mentioned"])
+    .optional()
+    .default("mentioned"),
+});
+
+// Remove player from news schema
+export const removePlayerFromNewsSchema = z.object({
+  newsId: z.number().int().positive("ID de noticia inválido"),
+  playerId: z.number().int().positive("ID de jugador inválido"),
+});
+
 export type RumorItem = z.infer<typeof rumorItemSchema>;
 export type RumorsResponse = z.infer<typeof rumorsResponseSchema>;
 export type ReassessmentInput = z.infer<typeof reassessmentSchema>;
 export type PlayerMergeInput = z.infer<typeof playerMergeSchema>;
 export type HideNewsInput = z.infer<typeof hideNewsSchema>;
+export type UpdateProbabilityInput = z.infer<typeof updateProbabilitySchema>;
+export type AddPlayerToNewsInput = z.infer<typeof addPlayerToNewsSchema>;
+export type RemovePlayerFromNewsInput = z.infer<
+  typeof removePlayerFromNewsSchema
+>;

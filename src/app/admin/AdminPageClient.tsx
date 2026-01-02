@@ -272,6 +272,111 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
     }
   };
 
+  // Handle probability update
+  const handleUpdateProbability = async (
+    newsId: number,
+    probability: number,
+  ): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const response = await fetch("/api/admin/soylenti/probability", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ newsId, probability }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await fetchSoylentiNews();
+        return { success: true };
+      } else {
+        return {
+          success: false,
+          error: result.error || "Error al actualizar probabilidad",
+        };
+      }
+    } catch (err) {
+      log.error("Failed to update probability in admin panel", err, {
+        newsId,
+        probability,
+        userId: user?.id,
+      });
+      return { success: false, error: "Error al actualizar la probabilidad" };
+    }
+  };
+
+  // Handle add player to news
+  const handleAddPlayer = async (
+    newsId: number,
+    playerName: string,
+  ): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const response = await fetch("/api/admin/soylenti/news-players", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ newsId, playerName }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await fetchSoylentiNews();
+        return { success: true };
+      } else {
+        return {
+          success: false,
+          error: result.error || "Error al añadir jugador",
+        };
+      }
+    } catch (err) {
+      log.error("Failed to add player in admin panel", err, {
+        newsId,
+        playerName,
+        userId: user?.id,
+      });
+      return { success: false, error: "Error al añadir el jugador" };
+    }
+  };
+
+  // Handle remove player from news
+  const handleRemovePlayer = async (
+    newsId: number,
+    playerId: number,
+  ): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const response = await fetch("/api/admin/soylenti/news-players", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ newsId, playerId }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await fetchSoylentiNews();
+        return { success: true };
+      } else {
+        return {
+          success: false,
+          error: result.error || "Error al eliminar jugador",
+        };
+      }
+    } catch (err) {
+      log.error("Failed to remove player in admin panel", err, {
+        newsId,
+        playerId,
+        userId: user?.id,
+      });
+      return { success: false, error: "Error al eliminar el jugador" };
+    }
+  };
+
   // Redirect to sign-in if not authenticated
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -1045,6 +1150,9 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
               news={betisNews}
               onReassess={handleReassessNews}
               onHide={handleHideNews}
+              onUpdateProbability={handleUpdateProbability}
+              onAddPlayer={handleAddPlayer}
+              onRemovePlayer={handleRemovePlayer}
               isLoading={loading}
               error={soylentiError}
               showHidden={showHiddenNews}
