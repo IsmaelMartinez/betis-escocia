@@ -126,12 +126,14 @@ export async function fetchTrendingPlayersWithTimeline(): Promise<
       `
       player_id,
       betis_news!inner (
-        pub_date
+        pub_date,
+        ai_probability
       )
     `,
     )
     .in("player_id", playerIds)
-    .gte("betis_news.pub_date", fourteenDaysAgo.toISOString());
+    .gte("betis_news.pub_date", fourteenDaysAgo.toISOString())
+    .gt("betis_news.ai_probability", 0);
 
   if (timelineError) {
     console.error("Error fetching timeline data:", timelineError);

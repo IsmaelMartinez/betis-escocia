@@ -53,9 +53,11 @@ function setupTrendingMock(
       return {
         select: vi.fn().mockReturnValue({
           in: vi.fn().mockReturnValue({
-            gte: vi.fn().mockResolvedValue({
-              data: mockTimeline,
-              error: null,
+            gte: vi.fn().mockReturnValue({
+              gt: vi.fn().mockResolvedValue({
+                data: mockTimeline,
+                error: null,
+              }),
             }),
           }),
         }),
