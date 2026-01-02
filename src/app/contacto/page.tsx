@@ -239,7 +239,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section - Cultural Fusion Design */}
-      <CulturalFusionHero containerClassName="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <CulturalFusionHero containerClassName="max-w-4xl text-center">
         <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8">
           <Send size={20} className="text-oro-bright" />
           <span className="text-white font-heading font-medium text-sm tracking-wide">

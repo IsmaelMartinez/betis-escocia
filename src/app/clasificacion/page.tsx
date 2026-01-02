@@ -150,7 +150,7 @@ async function StandingsContent() {
   return (
     <div className="min-h-screen">
       {/* Hero Section - Cultural Fusion Design */}
-      <CulturalFusionHero containerClassName="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <CulturalFusionHero containerClassName="max-w-4xl">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
           <div className="text-center md:text-left flex-1">
             <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
