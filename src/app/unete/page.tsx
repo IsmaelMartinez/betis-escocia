@@ -1,338 +1,198 @@
 import Link from "next/link";
-import { MapPin, Users, MessageCircle, Heart } from "lucide-react";
+import { MapPin, Clock, Users } from "lucide-react";
 import { FeatureWrapper } from "@/lib/featureProtection";
 
 export default function Unete() {
-  const steps = [
-    {
-      number: 1,
-      title: "Aparece en el Polwarth",
-      description:
-        "Simplemente ven al Polwarth Tavern 15 minutos antes de cualquier partido del Betis.",
-      icon: "📍",
-      details:
-        "No hace falta avisar ni reservar. Solo aparece y pregunta por cualquiera de la peña.",
-    },
-    {
-      number: 2,
-      title: "Preséntate",
-      description:
-        "Di que eres bético y que has visto que tenemos una peña aquí. Te haremos sitio inmediatamente.",
-      icon: "👋",
-      details:
-        "Somos muy acogedores. En 5 minutos ya estarás integrado como uno más.",
-    },
-    {
-      number: 3,
-      title: "Disfruta del partido",
-      description:
-        "Vive el partido con nosotros. Verás que el ambiente es familiar, relajado y siempre con buen rollo.",
-      icon: "⚽",
-      details:
-        "Cantamos, sufrimos, celebramos y vivimos cada jugada como si estuviéramos en el Villamarín.",
-    },
-    {
-      number: 4,
-      title: "Únete digitalmente",
-      description:
-        "Si te gusta el ambiente, únete a nuestro grupo de Facebook e Instagram para estar al día.",
-      icon: "📱",
-      details:
-        "Así podrás seguir todas las novedades, fotos y planes entre partidos.",
-      links: [
-        {
-          label: "Facebook",
-          href: "https://www.facebook.com/groups/beticosenescocia/",
-          icon: "📘",
-        },
-        {
-          label: "Instagram",
-          href: "https://www.instagram.com/rbetisescocia/",
-          icon: "📷",
-        },
-      ],
-    },
-  ];
-
-  const faqs = [
-    {
-      question: "¿Tengo que ser socio del Betis?",
-      answer:
-        "No es necesario. Solo necesitas ser bético de corazón y tener ganas de compartir la pasión por nuestro equipo.",
-    },
-    {
-      question: "¿Hay que pagar algo?",
-      answer:
-        "Solo tu consumición en el pub. La peña no cobra cuotas ni tiene gastos fijos. Todo es voluntario y familiar.",
-    },
-    {
-      question: "¿Puedo venir con amigos no béticos?",
-      answer:
-        "¡Por supuesto! Todos son bienvenidos mientras haya buen rollo y respeto mutuo.",
-    },
-    {
-      question: "¿Qué pasa si el Betis pierde?",
-      answer:
-        "Nos consolamos juntos, analizamos el partido y ya empezamos a pensar en el siguiente. La familia está para lo bueno y lo malo.",
-    },
-    {
-      question: "¿Hay ambiente familiar?",
-      answer:
-        "Totalmente. Vienen padres con hijos, parejas, estudiantes, trabajadores... Es un ambiente muy sano y acogedor.",
-    },
-  ];
-
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <div className="bg-betis-verde text-white py-12 px-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Únete</h1>
-          <p className="text-xl sm:text-2xl mb-6 font-bold text-betis-oro drop-shadow-lg">
-            Ser bético en Escocia nunca fue tan fácil
-          </p>
-          <p className="text-lg max-w-3xl mx-auto text-white leading-relaxed font-medium drop-shadow-xl">
-            No importa si acabas de llegar a Edinburgh o si llevas años aquí. Si
-            eres bético, ya tienes sitio en nuestra mesa.
-          </p>
-        </div>
-      </div>
+    <div className="min-h-screen">
+      {/* Hero Section - Cultural Fusion Design */}
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-hero-fusion" />
+        <div className="absolute inset-0 pattern-tartan-navy opacity-25" />
+        <div className="absolute left-0 top-0 bottom-0 w-8 pattern-verdiblanco-subtle opacity-30" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl bg-oro-glow opacity-40 pointer-events-none" />
 
-      {/* How to Join Steps */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <div className="inline-block bg-betis-verde text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
-              🚀 PROCESO FÁCIL
-            </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
-              CÓMO UNIRTE
-            </h2>
-            <p className="text-xl text-gray-800 max-w-3xl mx-auto leading-relaxed">
-              Es tan fácil como aparecer. No hay formularios, cuotas ni
-              complicaciones.
-            </p>
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8">
+            <span className="text-white font-heading font-medium text-sm tracking-wide">
+              💚 Bienvenido a la familia
+            </span>
           </div>
 
-          <div className="space-y-12">
-            {steps.map((step, index) => (
-              <div
-                key={step.number}
-                className={`flex flex-col lg:flex-row items-center gap-8 ${
-                  index % 2 === 1 ? "lg:flex-row-reverse" : ""
-                }`}
-              >
-                <div className="flex-1 max-w-lg">
-                  <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
-                    <div className="flex items-center mb-6">
-                      <div className="w-12 h-12 bg-betis-verde text-white rounded-full flex items-center justify-center font-bold text-xl mr-4">
-                        {step.number}
-                      </div>
-                      <span className="text-4xl">{step.icon}</span>
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                      {step.title}
-                    </h3>
-                    <p className="text-gray-800 mb-4 leading-relaxed text-base">
-                      {step.description}
-                    </p>
-                    <div className="bg-betis-verde-light rounded-lg p-4 border-l-4 border-betis-verde">
-                      <p className="text-sm text-gray-700 font-medium">
-                        💡 {step.details}
-                      </p>
-                    </div>
-                    {step.links && (
-                      <div className="flex flex-wrap gap-3 mt-4">
-                        {step.links.map((link) => (
-                          <a
-                            key={link.href}
-                            href={link.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 bg-betis-verde hover:bg-betis-verde-dark text-white px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-300"
-                          >
-                            <span>{link.icon}</span>
-                            {link.label}
-                          </a>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
+          <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
+            Únete
+          </h1>
 
-                <div className="flex-1 max-w-lg">
-                  <div className="bg-gradient-to-br from-betis-verde-light to-betis-oro-light rounded-2xl p-8 border border-betis-verde/20">
-                    <div className="text-center">
-                      <div className="text-6xl mb-4">{step.icon}</div>
-                      <h4 className="text-xl font-bold text-gray-900 mb-2">
-                        Paso {step.number}
-                      </h4>
-                      <p className="text-gray-700 font-medium">{step.title}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <p className="font-accent text-2xl sm:text-3xl text-oro-bright mb-8 text-shadow-lg italic">
+            Tres cosas que necesitas saber
+          </p>
         </div>
       </section>
 
-      {/* Contact Info */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <div className="inline-block bg-betis-verde text-white px-6 py-3 rounded-lg font-bold text-lg mb-6 uppercase tracking-wide">
-              📍 INFORMACIÓN PRÁCTICA
-            </div>
-            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
-              TODO LO QUE NECESITAS SABER
-            </h2>
-          </div>
+      {/* Main Content - 3 Simple Cards */}
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-canvas-warm" />
+        <div className="absolute inset-0 pattern-tartan-subtle opacity-40" />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center">
-              <MapPin className="h-12 w-12 text-betis-verde mx-auto mb-6" />
-              <h3 className="text-xl font-bold text-gray-900 mb-4">
-                Ubicación
-              </h3>
-              <p className="text-gray-800 mb-4 leading-relaxed">
-                <strong className="text-gray-900">Polwarth Tavern</strong>
-                <br />
-                35 Polwarth Crescent
-                <br />
-                Edinburgh EH11 1HR
-              </p>
-              <a
-                href="https://maps.google.com/maps?q=Polwarth+Tavern+Edinburgh"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center bg-betis-verde hover:bg-betis-verde-dark text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300"
-              >
-                <MapPin className="h-4 w-4 mr-2" />
-                Ver en Maps
-              </a>
-            </div>
-
-            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 text-center">
-              <Users className="h-12 w-12 text-betis-verde mx-auto mb-6" />
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Contacto</h3>
-              <p className="text-gray-800 mb-4 leading-relaxed">
-                <strong className="text-gray-900">¿Dudas?</strong>
-                <br />
-                Escríbenos por Facebook
-                <br />o Instagram
-              </p>
-              <a
-                href="https://www.facebook.com/groups/beticosenescocia/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center bg-betis-verde hover:bg-betis-verde-dark text-white px-4 py-2 rounded-lg font-semibold transition-all duration-300"
-              >
-                <MessageCircle className="h-4 w-4 mr-2" />
-                Contactar
-              </a>
-            </div>
-          </div>
-
-          {/* Special Welcome for Tourists */}
-          <div className="bg-gradient-to-r from-betis-verde-light to-betis-oro-light rounded-2xl p-8 border border-betis-verde/20">
-            <div className="text-center">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center justify-center">
-                <Heart className="h-6 w-6 text-betis-verde mr-3" />
-                🏴󠁧󠁢󠁳󠁣󠁴󠁿 ¿Estás de visita en Escocia?
-              </h3>
-              <p className="text-lg text-gray-800 mb-6 leading-relaxed max-w-3xl mx-auto">
-                Si eres bético y estás de vacaciones, trabajo o estudios en
-                Edinburgh, ¡eres especialmente bienvenido! Nos encanta conocer
-                béticos de toda España y hacer que se sientan como en casa.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                  <h4 className="font-bold text-gray-900 mb-2">✈️ Turistas</h4>
-                  <p className="text-sm text-gray-700">
-                    Si coincides con un partido durante tu visita, ven y vive la
-                    experiencia de ser bético en Escocia.
-                  </p>
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Card 1: Show Up */}
+            <div className="group bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:border-betis-verde transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 pattern-verdiblanco-diagonal-subtle opacity-20" />
+              <div className="relative">
+                <div className="w-16 h-16 bg-betis-verde rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <MapPin className="h-8 w-8 text-white" />
                 </div>
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                  <h4 className="font-bold text-gray-900 mb-2">
-                    🎓 Estudiantes
-                  </h4>
-                  <p className="text-sm text-gray-700">
-                    Edinburgh tiene muchos estudiantes españoles. Si eres bético
-                    y estudias aquí, esta es tu casa.
+                <h2 className="font-display text-2xl font-black text-scotland-navy mb-4 uppercase tracking-tight">
+                  1. Aparece
+                </h2>
+                <div className="space-y-3 font-body text-gray-700">
+                  <p className="font-bold text-betis-verde-dark">
+                    Polwarth Tavern
                   </p>
+                  <p className="text-sm">
+                    35 Polwarth Crescent
+                    <br />
+                    Edinburgh EH11 1HR
+                  </p>
+                  <div className="pt-4 border-t border-gray-100">
+                    <div className="flex items-start gap-2 text-sm">
+                      <Clock className="h-4 w-4 text-betis-verde mt-0.5 flex-shrink-0" />
+                      <span>15 minutos antes del partido</span>
+                    </div>
+                  </div>
                 </div>
+                <a
+                  href="https://maps.google.com/maps?q=Polwarth+Tavern+Edinburgh"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-6 inline-flex items-center gap-2 bg-betis-verde hover:bg-betis-verde-dark text-white px-6 py-3 rounded-xl font-heading font-bold text-sm transition-all duration-300 transform hover:scale-105"
+                >
+                  <MapPin className="h-4 w-4" />
+                  Abrir en Maps
+                </a>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* FAQ Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl font-black text-gray-900 mb-6 uppercase">
-              PREGUNTAS FRECUENTES
-            </h2>
-            <p className="text-xl text-gray-800 max-w-3xl mx-auto leading-relaxed">
-              RESOLVEMOS TUS DUDAS
-            </p>
-          </div>
-
-          <div className="space-y-6">
-            {faqs.map((faq) => (
-              <div
-                key={faq.question}
-                className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200"
-              >
-                <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
-                  <span className="w-6 h-6 bg-betis-verde text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">
-                    ?
-                  </span>
-                  {faq.question}
-                </h3>
-                <p className="text-gray-800 leading-relaxed pl-9 text-base">
-                  {faq.answer}
+            {/* Card 2: Connect Online */}
+            <div className="group bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:border-betis-verde transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 pattern-tartan-subtle opacity-30" />
+              <div className="relative">
+                <div className="w-16 h-16 bg-betis-verde rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Users className="h-8 w-8 text-white" />
+                </div>
+                <h2 className="font-display text-2xl font-black text-scotland-navy mb-4 uppercase tracking-tight">
+                  2. Conéctate
+                </h2>
+                <p className="font-body text-gray-700 mb-6">
+                  Síguenos para estar al día de partidos, planes y fotos de la
+                  peña.
                 </p>
+                <div className="space-y-3">
+                  <a
+                    href="https://www.facebook.com/groups/beticosenescocia/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-heading font-bold text-sm transition-all duration-300 transform hover:scale-105"
+                  >
+                    <span className="text-xl">📘</span>
+                    Facebook
+                  </a>
+                  <a
+                    href="https://www.instagram.com/rbetisescocia/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-xl font-heading font-bold text-sm transition-all duration-300 transform hover:scale-105"
+                  >
+                    <span className="text-xl">📷</span>
+                    Instagram
+                  </a>
+                </div>
               </div>
-            ))}
+            </div>
+
+            {/* Card 3: That's It */}
+            <div className="group bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:border-betis-oro transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-20 h-20 pattern-verdiblanco-diagonal-subtle opacity-20" />
+              <div className="relative">
+                <div className="w-16 h-16 bg-betis-oro rounded-full flex items-center justify-center mb-6 text-4xl group-hover:scale-110 transition-transform duration-300">
+                  💚
+                </div>
+                <h2 className="font-display text-2xl font-black text-scotland-navy mb-4 uppercase tracking-tight">
+                  3. Disfruta
+                </h2>
+                <div className="space-y-4 font-body text-gray-700">
+                  <p className="font-semibold text-betis-verde-dark">
+                    No hace falta más
+                  </p>
+                  <ul className="space-y-2 text-sm">
+                    <li className="flex items-start gap-2">
+                      <span className="text-betis-verde">✓</span>
+                      <span>Sin cuotas ni gastos</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-betis-verde">✓</span>
+                      <span>Ambiente familiar y acogedor</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-betis-verde">✓</span>
+                      <span>Niños bienvenidos</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-betis-verde">✓</span>
+                      <span>No hace falta reservar</span>
+                    </li>
+                  </ul>
+                  <p className="text-sm italic pt-4 border-t border-gray-100">
+                    Solo preséntate, di que eres bético y ya eres de los
+                    nuestros.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
+      </section>
+
+      {/* Quick Info Bar */}
+      <section className="relative py-16 overflow-hidden">
+        <div className="absolute inset-0 bg-betis-verde-light" />
+        <div className="absolute inset-0 pattern-verdiblanco-subtle opacity-30" />
+
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="font-heading text-xl font-bold text-betis-verde-dark mb-6 uppercase tracking-wide">
+            🏴󠁧󠁢󠁳󠁣󠁴󠁿 ¿De visita en Escocia?
+          </h2>
+          <p className="font-body text-lg text-gray-700 leading-relaxed">
+            Turistas, estudiantes, trabajadores temporales... si eres bético y
+            estás en Edinburgh, este es tu sitio. Nos encanta conocer béticos de
+            toda España y hacerles sentir como en casa.
+          </p>
         </div>
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 bg-gradient-to-r from-betis-verde to-betis-verde-dark text-white relative">
-        {/* Background overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/20"></div>
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-hero-fusion" />
+        <div className="absolute inset-0 pattern-tartan-navy opacity-25" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl bg-oro-glow opacity-40 pointer-events-none" />
+        <div className="absolute inset-0 bg-black/15" />
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h2 className="text-3xl sm:text-4xl font-black mb-6 text-white drop-shadow-xl">
-            💚 ¿A qué esperas?
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="font-display text-3xl sm:text-4xl font-black mb-6 text-white drop-shadow-xl uppercase tracking-tight">
+            Te esperamos
           </h2>
-          <p className="text-xl mb-8 text-white font-medium leading-relaxed drop-shadow-lg">
-            El próximo partido del Betis puede ser el momento perfecto para
-            conocernos. Te garantizamos que volverás.
+          <p className="font-body text-xl mb-8 text-white/95 leading-relaxed drop-shadow-lg">
+            El próximo partido puede ser el momento perfecto para conocernos.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <FeatureWrapper feature="show-partidos">
-              <Link
-                href="/partidos"
-                className="bg-betis-oro hover:bg-betis-oro-dark text-betis-dark px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
-              >
-                📅 Ver próximo partido
-              </Link>
-            </FeatureWrapper>
-            <a
-              href="https://www.facebook.com/groups/beticosenescocia/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-blue-600 text-white hover:bg-blue-700 hover:text-betis-verde px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105"
+          <FeatureWrapper feature="show-partidos">
+            <Link
+              href="/partidos"
+              className="inline-flex items-center gap-3 bg-oro-bright hover:bg-oro-antique text-scotland-navy px-10 py-5 rounded-2xl font-display font-black text-xl transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-[0_0_30px_rgba(255,215,0,0.4)] uppercase tracking-wide"
             >
-              💬 Contactar por Facebook
-            </a>
-          </div>
+              📅 Ver Próximos Partidos
+            </Link>
+          </FeatureWrapper>
         </div>
       </section>
     </div>

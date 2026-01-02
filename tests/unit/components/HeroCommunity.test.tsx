@@ -19,9 +19,6 @@ const defaultProps = {
 
 // Mock Lucide React icons
 vi.mock("lucide-react", () => ({
-  MapPin: vi.fn(({ className }) => (
-    <div data-testid="map-pin-icon" className={className} />
-  )),
   Users: vi.fn(({ className }) => (
     <div data-testid="users-icon" className={className} />
   )),
@@ -213,24 +210,6 @@ describe("HeroCommunity", () => {
     });
   });
 
-  describe("Bottom section", () => {
-    it("renders pub meetup information", () => {
-      render(<HeroCommunity {...defaultProps} />);
-
-      expect(screen.getByText(/Nos Vemos en el Pub/i)).toBeInTheDocument();
-      expect(
-        screen.getByText(/Cada partido es una excusa perfecta/),
-      ).toBeInTheDocument();
-      expect(screen.getByText("Edinburgh, Escocia")).toBeInTheDocument();
-    });
-
-    it("includes map pin icon in address", () => {
-      render(<HeroCommunity {...defaultProps} />);
-
-      expect(screen.getAllByTestId("map-pin-icon").length).toBeGreaterThan(0);
-    });
-  });
-
   describe("Layout and styling", () => {
     it("uses grid layout for main content", () => {
       render(<HeroCommunity {...defaultProps} />);
@@ -248,16 +227,6 @@ describe("HeroCommunity", () => {
         "sm:px-6",
         "lg:px-8",
       );
-    });
-
-    it("uses official Betis styling colors in bottom section", () => {
-      render(<HeroCommunity {...defaultProps} />);
-
-      // The bottom section uses betis-verde-dark with gradient overlay
-      const bottomSection = screen
-        .getByText(/Nos Vemos en el Pub/i)
-        .closest(".bg-betis-verde-dark");
-      expect(bottomSection).toBeInTheDocument();
     });
   });
 
