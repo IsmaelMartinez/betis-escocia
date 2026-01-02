@@ -15,164 +15,187 @@ vi.mock("@/lib/featureProtection", () => ({
   FeatureWrapper: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
+// Mock Lucide React icons
+vi.mock("lucide-react", () => ({
+  Heart: vi.fn(({ className }) => (
+    <div data-testid="heart-icon" className={className} />
+  )),
+  Users: vi.fn(({ className }) => (
+    <div data-testid="users-icon" className={className} />
+  )),
+  Calendar: vi.fn(({ className }) => (
+    <div data-testid="calendar-icon" className={className} />
+  )),
+}));
+
 describe("Nosotros Page", () => {
-  it("should render the main heading", async () => {
-    const NosotrosPage = (await import("@/app/nosotros/page")).default;
-    render(<NosotrosPage />);
+  describe("Basic rendering", () => {
+    it("should render the main heading", async () => {
+      const NosotrosPage = (await import("@/app/nosotros/page")).default;
+      render(<NosotrosPage />);
 
-    expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
-    expect(screen.getByText("Nosotros")).toBeInTheDocument();
+      expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
+      expect(screen.getByText("Nosotros")).toBeInTheDocument();
+    });
+
+    it("should render the hero section tagline", async () => {
+      const NosotrosPage = (await import("@/app/nosotros/page")).default;
+      render(<NosotrosPage />);
+
+      expect(
+        screen.getByText("Más que una peña, somos familia"),
+      ).toBeInTheDocument();
+      expect(screen.getByText(/💚 Nuestra Historia/)).toBeInTheDocument();
+    });
   });
 
-  it("should render the hero section content", async () => {
-    const NosotrosPage = (await import("@/app/nosotros/page")).default;
-    render(<NosotrosPage />);
+  describe("Three main cards", () => {
+    it("should render all three card headings", async () => {
+      const NosotrosPage = (await import("@/app/nosotros/page")).default;
+      render(<NosotrosPage />);
 
-    expect(
-      screen.getByText("Más que una peña, somos familia"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        /Desde 2010, hemos sido el hogar de todos los béticos en Escocia/,
-      ),
-    ).toBeInTheDocument();
+      expect(screen.getByText("Nuestros Orígenes")).toBeInTheDocument();
+      expect(screen.getByText("Nuestra Familia")).toBeInTheDocument();
+      expect(screen.getByText("Nuestro Legado")).toBeInTheDocument();
+    });
+
+    it("should render founding story in card 1", async () => {
+      const NosotrosPage = (await import("@/app/nosotros/page")).default;
+      render(<NosotrosPage />);
+
+      expect(screen.getByText(/4 de diciembre de 2010/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Juan Morata y José María Conde/),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/primera peña oficial del Real Betis en Reino Unido/),
+      ).toBeInTheDocument();
+    });
+
+    it("should render LaLiga quote in card 1", async () => {
+      const NosotrosPage = (await import("@/app/nosotros/page")).default;
+      render(<NosotrosPage />);
+
+      expect(
+        screen.getByText(
+          /La idea vino tomando algo en un pub. Simplemente lo decidieron así/,
+        ),
+      ).toBeInTheDocument();
+      expect(screen.getByText("— LaLiga oficial")).toBeInTheDocument();
+    });
+
+    it("should render community description in card 2", async () => {
+      const NosotrosPage = (await import("@/app/nosotros/page")).default;
+      render(<NosotrosPage />);
+
+      expect(screen.getByText(/todos son bienvenidos/)).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          /Reconocidos por LaLiga como "bastión" del betismo en Escocia/,
+        ),
+      ).toBeInTheDocument();
+    });
+
+    it("should render condensed timeline in card 3", async () => {
+      const NosotrosPage = (await import("@/app/nosotros/page")).default;
+      render(<NosotrosPage />);
+
+      // Check for the 3 key milestones
+      expect(screen.getByText("2010")).toBeInTheDocument();
+      expect(screen.getByText("2015")).toBeInTheDocument();
+      expect(screen.getByText("2018")).toBeInTheDocument();
+
+      expect(
+        screen.getByText(/Primera peña oficial del Betis en Reino Unido/),
+      ).toBeInTheDocument();
+      expect(screen.getByText(/Nuevo hogar en Polwarth Tavern/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Reconocimiento oficial de LaLiga/),
+      ).toBeInTheDocument();
+    });
+
+    it("should render icons for all cards", async () => {
+      const NosotrosPage = (await import("@/app/nosotros/page")).default;
+      render(<NosotrosPage />);
+
+      expect(screen.getAllByTestId("heart-icon").length).toBeGreaterThan(0);
+      expect(screen.getAllByTestId("users-icon").length).toBeGreaterThan(0);
+      expect(screen.getAllByTestId("calendar-icon").length).toBeGreaterThan(0);
+    });
   });
 
-  it("should render the founding story section", async () => {
-    const NosotrosPage = (await import("@/app/nosotros/page")).default;
-    render(<NosotrosPage />);
+  describe("Call to action section", () => {
+    it("should render CTA heading and text", async () => {
+      const NosotrosPage = (await import("@/app/nosotros/page")).default;
+      render(<NosotrosPage />);
 
-    expect(screen.getByText(/NUESTRA HISTORIA/)).toBeInTheDocument();
-    expect(screen.getByText("CÓMO EMPEZÓ TODO")).toBeInTheDocument();
-    expect(screen.getByText("El Comienzo")).toBeInTheDocument();
-    expect(screen.getByText("La Comunidad")).toBeInTheDocument();
+      expect(
+        screen.getByText(/¿Quieres ser parte de nuestra historia?/),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/Tu historia también puede formar parte de la nuestra/),
+      ).toBeInTheDocument();
+    });
+
+    it("should render navigation links", async () => {
+      const NosotrosPage = (await import("@/app/nosotros/page")).default;
+      render(<NosotrosPage />);
+
+      const uneteLink = screen.getByRole("link", {
+        name: /Únete a Nosotros/,
+      });
+      const partidosLink = screen.getByRole("link", { name: /Ver Partidos/ });
+
+      expect(uneteLink).toHaveAttribute("href", "/unete");
+      expect(partidosLink).toHaveAttribute("href", "/partidos");
+    });
   });
 
-  it("should render founding story details", async () => {
-    const NosotrosPage = (await import("@/app/nosotros/page")).default;
-    render(<NosotrosPage />);
+  describe("Design system consistency", () => {
+    it("should use cultural fusion design patterns", async () => {
+      const NosotrosPage = (await import("@/app/nosotros/page")).default;
+      const { container } = render(<NosotrosPage />);
 
-    expect(screen.getByText(/4 de diciembre/)).toBeInTheDocument();
-    expect(
-      screen.getAllByText(/Juan Morata y José María Conde/).length,
-    ).toBeGreaterThan(0);
-    expect(
-      screen.getByText(/primera peña oficial del Real Betis en el Reino Unido/),
-    ).toBeInTheDocument();
+      // Check for design system classes
+      expect(container.querySelector(".bg-hero-fusion")).toBeInTheDocument();
+      expect(
+        container.querySelector(".pattern-tartan-navy"),
+      ).toBeInTheDocument();
+      expect(
+        container.querySelector(".pattern-verdiblanco-subtle"),
+      ).toBeInTheDocument();
+    });
+
+    it("should use typography system classes", async () => {
+      const NosotrosPage = (await import("@/app/nosotros/page")).default;
+      render(<NosotrosPage />);
+
+      const heading = screen.getByText("Nosotros");
+      expect(heading).toHaveClass("font-display");
+    });
   });
 
-  it("should render community statistics", async () => {
-    const NosotrosPage = (await import("@/app/nosotros/page")).default;
-    render(<NosotrosPage />);
+  describe("Accessibility", () => {
+    it("should have proper heading hierarchy", async () => {
+      const NosotrosPage = (await import("@/app/nosotros/page")).default;
+      render(<NosotrosPage />);
 
-    expect(screen.getByText("25+")).toBeInTheDocument();
-    expect(screen.getByText("Miembros activos")).toBeInTheDocument();
-    expect(screen.getByText("14")).toBeInTheDocument();
-    expect(screen.getByText("Años de historia")).toBeInTheDocument();
-  });
+      const headings = screen.getAllByRole("heading");
+      expect(headings.length).toBeGreaterThan(0);
 
-  it("should render timeline section", async () => {
-    const NosotrosPage = (await import("@/app/nosotros/page")).default;
-    render(<NosotrosPage />);
+      // Should have a main heading (h1)
+      const h1 = screen.getByRole("heading", { level: 1 });
+      expect(h1).toBeInTheDocument();
+      expect(h1).toHaveTextContent("Nosotros");
+    });
 
-    expect(screen.getByText(/CRONOLOGÍA/)).toBeInTheDocument();
-    expect(screen.getByText("MOMENTOS CLAVE")).toBeInTheDocument();
-  });
+    it("should have proper link structure", async () => {
+      const NosotrosPage = (await import("@/app/nosotros/page")).default;
+      render(<NosotrosPage />);
 
-  it("should render all timeline milestones", async () => {
-    const NosotrosPage = (await import("@/app/nosotros/page")).default;
-    render(<NosotrosPage />);
-
-    // Check for timeline years
-    expect(screen.getByText("2010")).toBeInTheDocument();
-    expect(screen.getByText("2011")).toBeInTheDocument();
-    expect(screen.getByText("2015")).toBeInTheDocument();
-    expect(screen.getByText("2018")).toBeInTheDocument();
-    expect(screen.getByText("2021")).toBeInTheDocument();
-
-    // Check for key milestone events
-    expect(screen.getByText("Fundación histórica")).toBeInTheDocument();
-    expect(screen.getByText("El ascenso que cambió todo")).toBeInTheDocument();
-    expect(screen.getByText("Nueva casa en Polwarth")).toBeInTheDocument();
-    expect(screen.getByText("Reconocimiento de LaLiga")).toBeInTheDocument();
-    expect(screen.getByText("ABC nos cita")).toBeInTheDocument();
-  });
-
-  it("should render timeline descriptions", async () => {
-    const NosotrosPage = (await import("@/app/nosotros/page")).default;
-    render(<NosotrosPage />);
-
-    expect(
-      screen.getByText(
-        /Juan Morata y José María Conde fundan la primera peña oficial/,
-      ),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Con el ascenso del Betis, la peña toma forma/),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/encontramos nuestro hogar actual: Polwarth Tavern/),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/LaLiga nos destaca oficialmente/),
-    ).toBeInTheDocument();
-  });
-
-  it("should render founders mention in story section", async () => {
-    const NosotrosPage = (await import("@/app/nosotros/page")).default;
-    render(<NosotrosPage />);
-
-    // Check founders are mentioned in the story (may appear multiple times)
-    expect(screen.getAllByText(/Juan Morata/).length).toBeGreaterThan(0);
-    expect(screen.getByText(/El Comienzo/)).toBeInTheDocument();
-  });
-
-  it("should render call to action section", async () => {
-    const NosotrosPage = (await import("@/app/nosotros/page")).default;
-    render(<NosotrosPage />);
-
-    expect(
-      screen.getByText(/¿Quieres ser parte de nuestra historia?/),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Cada bético que se une a nosotros añade un capítulo/),
-    ).toBeInTheDocument();
-  });
-
-  it("should render navigation links", async () => {
-    const NosotrosPage = (await import("@/app/nosotros/page")).default;
-    render(<NosotrosPage />);
-
-    const uneteLink = screen.getByRole("link", { name: /Únete a nosotros/ });
-    const rsvpLink = screen.getByRole("link", { name: /Próximos eventos/ });
-
-    expect(uneteLink).toHaveAttribute("href", "/unete");
-    expect(rsvpLink).toHaveAttribute("href", "/rsvp");
-  });
-
-  it("should have proper accessibility structure with headings", async () => {
-    const NosotrosPage = (await import("@/app/nosotros/page")).default;
-    render(<NosotrosPage />);
-
-    // Should have hierarchical heading structure
-    const headings = screen.getAllByRole("heading");
-    expect(headings.length).toBeGreaterThan(0);
-
-    // Should have a main heading (h1)
-    const h1 = screen.getByRole("heading", { level: 1 });
-    expect(h1).toBeInTheDocument();
-    expect(h1).toHaveTextContent("Nosotros");
-  });
-
-  it("should contain quote from LaLiga", async () => {
-    const NosotrosPage = (await import("@/app/nosotros/page")).default;
-    render(<NosotrosPage />);
-
-    expect(
-      screen.getByText(
-        /La idea de crear el club de fans vino tomando algo en un pub/,
-      ),
-    ).toBeInTheDocument();
-    expect(screen.getByText("- Fuente: LaLiga oficial")).toBeInTheDocument();
+      const links = screen.getAllByRole("link");
+      expect(links.length).toBeGreaterThan(0);
+      expect(links[0]).toHaveAttribute("href");
+    });
   });
 });
