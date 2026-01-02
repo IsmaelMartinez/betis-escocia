@@ -9,7 +9,15 @@ test.describe('Unete Page Happy Path', () => {
 
     // 2.6.2 Assert visibility of key elements
     await expect(page.getByRole('heading', { name: 'Únete', level: 1 })).toBeVisible();
-    await expect(page.getByText('Ser bético en Escocia nunca fue tan fácil')).toBeVisible();
+    await expect(page.getByText('Tres cosas que necesitas saber')).toBeVisible();
+
+    // Verify the 3 main cards are present
+    await expect(page.getByText('1. Aparece')).toBeVisible();
+    await expect(page.getByText('2. Conéctate')).toBeVisible();
+    await expect(page.getByText('3. Disfruta')).toBeVisible();
+
+    // Verify location information
+    await expect(page.getByText('Polwarth Tavern')).toBeVisible();
 
     // 2.6.4 Ensure no console errors or network failures on page load
     page.on('console', msg => {
