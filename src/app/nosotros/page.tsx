@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Heart, Users, Calendar } from "lucide-react";
 import { FeatureWrapper } from "@/lib/featureProtection";
+import InfoCard from "@/components/InfoCard";
 
 export default function Nosotros() {
   return (
@@ -37,119 +38,102 @@ export default function Nosotros() {
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Card 1: Nuestros Orígenes */}
-            <div className="group bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:border-betis-verde transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-20 h-20 pattern-verdiblanco-diagonal-subtle opacity-20" />
-              <div className="relative">
-                <div className="w-16 h-16 bg-betis-verde rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Heart className="h-8 w-8 text-white" />
-                </div>
-                <h2 className="font-display text-2xl font-black text-scotland-navy mb-4 uppercase tracking-tight">
-                  Nuestros Orígenes
-                </h2>
-                <div className="space-y-4 font-body text-gray-700">
-                  <p className="text-sm">
-                    <strong className="text-betis-verde-dark">
-                      4 de diciembre de 2010
-                    </strong>{" "}
-                    - Juan Morata y José María Conde se encuentran casualmente
-                    jugando fútbol en Edimburgo. Ambos llevaban la camiseta del
-                    Betis.
-                  </p>
-                  <p className="text-sm">
-                    Esa coincidencia fue el inicio de una gran amistad bética y
-                    la primera peña oficial del Real Betis en Reino Unido.
-                  </p>
-                  <div className="pt-4 border-t border-gray-100">
-                    <p className="text-sm italic text-betis-verde-dark">
-                      "La idea vino tomando algo en un pub. Simplemente lo
-                      decidieron así."
-                    </p>
-                    <p className="text-xs text-gray-600 mt-2">
-                      — LaLiga oficial
-                    </p>
-                  </div>
-                </div>
+            <InfoCard
+              icon={<Heart className="h-8 w-8 text-white" />}
+              title="Nuestros Orígenes"
+              hoverColor="betis-verde"
+            >
+              <p className="text-sm">
+                <strong className="text-betis-verde-dark">
+                  4 de diciembre de 2010
+                </strong>{" "}
+                - Juan Morata y José María Conde se encuentran casualmente
+                jugando fútbol en Edimburgo. Ambos llevaban la camiseta del
+                Betis.
+              </p>
+              <p className="text-sm">
+                Esa coincidencia fue el inicio de una gran amistad bética y
+                la primera peña oficial del Real Betis en Reino Unido.
+              </p>
+              <div className="pt-4 border-t border-gray-100">
+                <p className="text-sm italic text-betis-verde-dark">
+                  "La idea vino tomando algo en un pub. Simplemente lo
+                  decidieron así."
+                </p>
+                <p className="text-xs text-gray-600 mt-2">
+                  — LaLiga oficial
+                </p>
               </div>
-            </div>
+            </InfoCard>
 
             {/* Card 2: Nuestra Familia */}
-            <div className="group bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:border-betis-verde transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-20 h-20 pattern-tartan-subtle opacity-30" />
-              <div className="relative">
-                <div className="w-16 h-16 bg-betis-verde rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Users className="h-8 w-8 text-white" />
-                </div>
-                <h2 className="font-display text-2xl font-black text-scotland-navy mb-4 uppercase tracking-tight">
-                  Nuestra Familia
-                </h2>
-                <div className="space-y-4 font-body text-gray-700">
-                  <p className="text-sm">
-                    Desde 2010, hemos acogido a béticos de toda España que viven
-                    en Escocia, estudiantes de intercambio, turistas de paso...{" "}
-                    <strong className="text-betis-verde-dark">
-                      todos son bienvenidos
-                    </strong>
-                    .
-                  </p>
-                  <p className="text-sm">
-                    Hemos celebrado ascensos, títulos y momentos únicos juntos.
-                    También hemos llorado derrotas y nos hemos consolado con la
-                    certeza de que "el año que viene será el nuestro".
-                  </p>
-                  <div className="pt-4 border-t border-gray-100">
-                    <p className="text-sm font-semibold text-betis-verde-dark">
-                      Reconocidos por LaLiga como "bastión" del betismo en
-                      Escocia
-                    </p>
-                  </div>
-                </div>
+            <InfoCard
+              icon={<Users className="h-8 w-8 text-white" />}
+              title="Nuestra Familia"
+              hoverColor="betis-verde"
+              patternClass="pattern-tartan-subtle"
+            >
+              <p className="text-sm">
+                Desde 2010, hemos acogido a béticos de toda España que viven
+                en Escocia, estudiantes de intercambio, turistas de paso...{" "}
+                <strong className="text-betis-verde-dark">
+                  todos son bienvenidos
+                </strong>
+                .
+              </p>
+              <p className="text-sm">
+                Hemos celebrado ascensos, títulos y momentos únicos juntos.
+                También hemos llorado derrotas y nos hemos consolado con la
+                certeza de que "el año que viene será el nuestro".
+              </p>
+              <div className="pt-4 border-t border-gray-100">
+                <p className="text-sm font-semibold text-betis-verde-dark">
+                  Reconocidos por LaLiga como "bastión" del betismo en
+                  Escocia
+                </p>
               </div>
-            </div>
+            </InfoCard>
 
             {/* Card 3: Nuestro Legado */}
-            <div className="group bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:border-betis-oro transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-20 h-20 pattern-verdiblanco-diagonal-subtle opacity-20" />
-              <div className="relative">
-                <div className="w-16 h-16 bg-betis-oro rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <Calendar className="h-8 w-8 text-white" />
+            <InfoCard
+              icon={<Calendar className="h-8 w-8 text-white" />}
+              title="Nuestro Legado"
+              hoverColor="betis-oro"
+              iconBgColor="bg-betis-oro"
+            >
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <span className="inline-block bg-betis-verde text-white px-2 py-1 rounded-full font-bold text-xs mt-0.5">
+                    2010
+                  </span>
+                  <p className="text-sm flex-1">
+                    Primera peña oficial del Betis en Reino Unido
+                  </p>
                 </div>
-                <h2 className="font-display text-2xl font-black text-scotland-navy mb-4 uppercase tracking-tight">
-                  Nuestro Legado
-                </h2>
-                <div className="space-y-3 font-body text-gray-700">
-                  <div className="flex items-start gap-3">
-                    <span className="inline-block bg-betis-verde text-white px-2 py-1 rounded-full font-bold text-xs mt-0.5">
-                      2010
-                    </span>
-                    <p className="text-sm flex-1">
-                      Primera peña oficial del Betis en Reino Unido
-                    </p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="inline-block bg-betis-verde text-white px-2 py-1 rounded-full font-bold text-xs mt-0.5">
-                      2015
-                    </span>
-                    <p className="text-sm flex-1">
-                      Nuevo hogar en Polwarth Tavern
-                    </p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <span className="inline-block bg-betis-verde text-white px-2 py-1 rounded-full font-bold text-xs mt-0.5">
-                      2018
-                    </span>
-                    <p className="text-sm flex-1">
-                      Reconocimiento oficial de LaLiga
-                    </p>
-                  </div>
-                  <div className="pt-4 border-t border-gray-100">
-                    <p className="text-sm italic text-betis-verde-dark">
-                      Cada bético que se une añade un capítulo más a nuestra
-                      historia
-                    </p>
-                  </div>
+                <div className="flex items-start gap-3">
+                  <span className="inline-block bg-betis-verde text-white px-2 py-1 rounded-full font-bold text-xs mt-0.5">
+                    2015
+                  </span>
+                  <p className="text-sm flex-1">
+                    Nuevo hogar en Polwarth Tavern
+                  </p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="inline-block bg-betis-verde text-white px-2 py-1 rounded-full font-bold text-xs mt-0.5">
+                    2018
+                  </span>
+                  <p className="text-sm flex-1">
+                    Reconocimiento oficial de LaLiga
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-gray-100">
+                  <p className="text-sm italic text-betis-verde-dark">
+                    Cada bético que se une añade un capítulo más a nuestra
+                    historia
+                  </p>
                 </div>
               </div>
-            </div>
+            </InfoCard>
           </div>
         </div>
       </section>

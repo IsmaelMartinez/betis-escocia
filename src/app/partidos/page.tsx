@@ -4,6 +4,7 @@ import { ApiErrorBoundary } from '@/components/ErrorBoundary';
 import BetisPositionWidget from '@/components/BetisPositionWidget';
 import AllDatabaseMatches from '@/components/AllDatabaseMatches';
 import RSVPModal, { useRSVPModal } from '@/components/RSVPModal';
+import SidebarCard from '@/components/SidebarCard';
 import { Calendar, MapPin } from 'lucide-react';
 
 export default function MatchesPage() {
@@ -58,62 +59,56 @@ export default function MatchesPage() {
             <div className="lg:col-span-1">
               <div className="sticky top-8 space-y-6">
                 {/* RSVP Card - Redesigned */}
-                <div className="relative bg-white rounded-2xl shadow-xl border border-gray-100 p-6 overflow-hidden">
-                  <div className="absolute top-0 right-0 w-20 h-20 pattern-verdiblanco-diagonal-subtle opacity-20" />
-                  <div className="relative">
-                    <div className="w-12 h-12 bg-betis-verde rounded-full flex items-center justify-center mb-4 mx-auto">
-                      <Calendar className="h-6 w-6 text-white" />
-                    </div>
-                    <h3 className="font-heading text-lg font-bold text-scotland-navy mb-2 text-center uppercase tracking-wide">
-                      Próximo Partido
-                    </h3>
-                    <p className="font-body text-sm text-gray-600 mb-4 text-center">
-                      ¿Vienes al Polwarth Tavern?
-                    </p>
-                    <button
-                      onClick={openModal}
-                      className="w-full bg-betis-verde hover:bg-betis-verde-dark text-white font-heading font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl uppercase tracking-wide text-sm"
-                    >
-                      ✅ Confirmar Asistencia
-                    </button>
+                <SidebarCard>
+                  <div className="w-12 h-12 bg-betis-verde rounded-full flex items-center justify-center mb-4 mx-auto">
+                    <Calendar className="h-6 w-6 text-white" />
                   </div>
-                </div>
+                  <h3 className="font-heading text-lg font-bold text-scotland-navy mb-2 text-center uppercase tracking-wide">
+                    Próximo Partido
+                  </h3>
+                  <p className="font-body text-sm text-gray-600 mb-4 text-center">
+                    ¿Vienes al Polwarth Tavern?
+                  </p>
+                  <button
+                    onClick={openModal}
+                    className="w-full bg-betis-verde hover:bg-betis-verde-dark text-white font-heading font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl uppercase tracking-wide text-sm"
+                  >
+                    ✅ Confirmar Asistencia
+                  </button>
+                </SidebarCard>
 
                 {/* Position Widget - With design wrapper */}
-                <div className="relative bg-white rounded-2xl shadow-xl border border-gray-100 p-6 overflow-hidden">
-                  <div className="absolute top-0 right-0 w-20 h-20 pattern-tartan-subtle opacity-30" />
-                  <div className="relative">
-                    <BetisPositionWidget />
-                  </div>
-                </div>
+                <SidebarCard patternClass="pattern-tartan-subtle">
+                  <BetisPositionWidget />
+                </SidebarCard>
 
                 {/* Quick Info Card */}
-                <div className="relative bg-betis-verde-light rounded-2xl border border-betis-verde/20 p-6 overflow-hidden">
-                  <div className="absolute top-0 right-0 w-20 h-20 pattern-verdiblanco-diagonal-subtle opacity-20" />
-                  <div className="relative">
-                    <div className="flex items-center gap-2 mb-3">
-                      <MapPin size={20} className="text-betis-verde-dark" />
-                      <h3 className="font-heading font-bold text-betis-verde-dark uppercase tracking-wide text-sm">
-                        Polwarth Tavern
-                      </h3>
-                    </div>
-                    <p className="font-body text-xs text-gray-700 mb-2">
-                      35 Polwarth Cres, Edinburgh EH11 1HR
-                    </p>
-                    <p className="font-body text-xs text-gray-700 mb-3">
-                      📞 +44 131 221 9906
-                    </p>
-                    <a
-                      href="https://maps.google.com/maps?q=Polwarth+Tavern+Edinburgh"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-betis-verde-dark hover:text-betis-verde font-heading font-bold text-xs transition-colors uppercase tracking-wide"
-                    >
-                      <MapPin size={14} />
-                      Ver en Maps
-                    </a>
+                <SidebarCard
+                  bgColor="bg-betis-verde-light"
+                  borderColor="border-betis-verde/20"
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <MapPin size={20} className="text-betis-verde-dark" />
+                    <h3 className="font-heading font-bold text-betis-verde-dark uppercase tracking-wide text-sm">
+                      Polwarth Tavern
+                    </h3>
                   </div>
-                </div>
+                  <p className="font-body text-xs text-gray-700 mb-2">
+                    35 Polwarth Cres, Edinburgh EH11 1HR
+                  </p>
+                  <p className="font-body text-xs text-gray-700 mb-3">
+                    📞 +44 131 221 9906
+                  </p>
+                  <a
+                    href="https://maps.google.com/maps?q=Polwarth+Tavern+Edinburgh"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-betis-verde-dark hover:text-betis-verde font-heading font-bold text-xs transition-colors uppercase tracking-wide"
+                  >
+                    <MapPin size={14} />
+                    Ver en Maps
+                  </a>
+                </SidebarCard>
               </div>
             </div>
           </div>
