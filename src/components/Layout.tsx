@@ -316,7 +316,7 @@ export default function Layout({
                   No busques más
                 </h3>
               </div>
-              <p className="font-accent text-betis-oro/80 italic mb-3">
+              <p className="font-accent text-betis-oro italic mb-3">
                 que no hay
               </p>
               <p className="font-body text-gray-300 text-sm leading-relaxed">

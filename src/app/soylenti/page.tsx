@@ -7,6 +7,9 @@ import { Newspaper } from "lucide-react";
 import { fetchTrendingPlayersWithTimeline } from "@/lib/data/players";
 import SoylentiClient from "./SoylentiClient";
 
+// Ensure fresh data on every request - prevents stale trend data
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Soylenti - Rumores de Fichajes | Peña Bética Escocesa",
   description:
