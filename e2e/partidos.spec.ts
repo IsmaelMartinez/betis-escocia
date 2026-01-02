@@ -12,7 +12,10 @@ test.describe.skip("Partidos Page Happy Path", () => {
 
     // 2.4.2 Assert visibility of key elements
     await expect(
-      page.locator("h1", { hasText: "Partidos del Betis" }),
+      page.locator("h1", { hasText: "Partidos" }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Todos los partidos en el Polwarth Tavern"),
     ).toBeVisible();
 
     // 2.4.4 Ensure no console errors or network failures on page load
