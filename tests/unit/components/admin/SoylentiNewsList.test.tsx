@@ -134,82 +134,6 @@ describe("SoylentiNewsList", () => {
     });
   });
 
-  describe("showHidden toggle behavior", () => {
-    it("shows only visible items when showHidden is false (default)", () => {
-      render(
-        <SoylentiNewsList
-          news={mockMixedNews}
-          onReassess={mockOnReassess}
-          onHide={mockOnHide}
-          isLoading={false}
-          error={null}
-          showHidden={false}
-        />,
-      );
-
-      // Should show visible news
-      expect(screen.getByText("Visible News 1")).toBeInTheDocument();
-      expect(screen.getByText("Visible News 2")).toBeInTheDocument();
-
-      // Should NOT show hidden news
-      expect(screen.queryByText("Hidden News 1")).not.toBeInTheDocument();
-      expect(screen.queryByText("Hidden News 2")).not.toBeInTheDocument();
-    });
-
-    it("shows only hidden items when showHidden is true", () => {
-      render(
-        <SoylentiNewsList
-          news={mockMixedNews}
-          onReassess={mockOnReassess}
-          onHide={mockOnHide}
-          isLoading={false}
-          error={null}
-          showHidden={true}
-        />,
-      );
-
-      // Should show hidden news
-      expect(screen.getByText("Hidden News 1")).toBeInTheDocument();
-      expect(screen.getByText("Hidden News 2")).toBeInTheDocument();
-
-      // Should NOT show visible news
-      expect(screen.queryByText("Visible News 1")).not.toBeInTheDocument();
-      expect(screen.queryByText("Visible News 2")).not.toBeInTheDocument();
-    });
-
-    it("shows empty state when showHidden is true but no hidden items exist", () => {
-      render(
-        <SoylentiNewsList
-          news={mockVisibleNews}
-          onReassess={mockOnReassess}
-          onHide={mockOnHide}
-          isLoading={false}
-          error={null}
-          showHidden={true}
-        />,
-      );
-
-      // No cards should be rendered (empty filtered result)
-      expect(screen.queryAllByTestId("card")).toHaveLength(0);
-    });
-
-    it("shows empty state when showHidden is false but no visible items exist", () => {
-      render(
-        <SoylentiNewsList
-          news={mockHiddenNews}
-          onReassess={mockOnReassess}
-          onHide={mockOnHide}
-          isLoading={false}
-          error={null}
-          showHidden={false}
-        />,
-      );
-
-      // No cards should be rendered (empty filtered result)
-      expect(screen.queryAllByTestId("card")).toHaveLength(0);
-    });
-  });
-
   describe("Display order", () => {
     it("displays news items in the order provided (server-side sorting)", () => {
       // Data is pre-sorted by server (pub_date descending)
@@ -241,7 +165,6 @@ describe("SoylentiNewsList", () => {
           onHide={mockOnHide}
           isLoading={false}
           error={null}
-          showHidden={false}
         />,
       );
 

@@ -95,6 +95,8 @@ interface AdminPageClientProps {
   readonly showSoylenti: boolean;
 }
 
+const SOYLENTI_ITEMS_PER_PAGE = 20;
+
 function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
   const { isLoaded, isSignedIn, getToken } = useAuth();
   const { user } = useUser();
@@ -122,7 +124,6 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
   const [soylentiPage, setSoylentiPage] = useState(1);
   const [soylentiTotalCount, setSoylentiTotalCount] = useState(0);
   const [onlyWithPlayers, setOnlyWithPlayers] = useState(false);
-  const SOYLENTI_ITEMS_PER_PAGE = 20;
 
   const handleUpdateContactStatus = async (
     id: number,
@@ -173,7 +174,11 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
 
   // Fetch Soylenti news for admin panel (with player data and pagination)
   const fetchSoylentiNews = useCallback(
-    async (page: number = 1, withPlayersOnly: boolean = false) => {
+    async (
+      page: number = 1,
+      withPlayersOnly: boolean = false,
+      showHidden: boolean = false,
+    ) => {
       try {
         setSoylentiError(null);
         const offset = (page - 1) * SOYLENTI_ITEMS_PER_PAGE;
@@ -206,34 +211,19 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
           )
         `;
 
-        // Fetch data with pagination
-        const { data, error: fetchError } = await supabase
+        // Build query with all filters and get count in single request
+        let query = supabase
           .from("betis_news")
-          .select(selectQuery)
+          .select(selectQuery, { count: "exact" })
+          .eq("is_hidden", showHidden)
           .order("pub_date", { ascending: false })
           .range(offset, offset + SOYLENTI_ITEMS_PER_PAGE - 1);
 
+        const { data, error: fetchError, count } = await query;
+
         if (fetchError) throw fetchError;
 
-        // Get total count for pagination
-        // When filtering with players, count news that have at least one player
-        let countQuery;
-        if (withPlayersOnly) {
-          // Count distinct news IDs that have players
-          countQuery = await supabase
-            .from("betis_news")
-            .select("id, news_players!inner(player_id)", { count: "exact" })
-            .limit(0);
-        } else {
-          countQuery = await supabase
-            .from("betis_news")
-            .select("id", { count: "exact" })
-            .limit(0);
-        }
-
-        if (countQuery.error) throw countQuery.error;
-        setSoylentiTotalCount(countQuery.count || 0);
-
+        setSoylentiTotalCount(count || 0);
         setBetisNews((data as BetisNewsWithPlayers[]) || []);
       } catch (err) {
         log.error("Failed to fetch Soylenti news in admin panel", err, {
@@ -263,7 +253,7 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
 
       if (result.success) {
         // Refresh the news list after successful reassessment
-        await fetchSoylentiNews(soylentiPage, onlyWithPlayers);
+        await fetchSoylentiNews(soylentiPage, onlyWithPlayers, showHiddenNews);
         return { success: true };
       } else {
         return {
@@ -299,7 +289,7 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
 
       if (result.success) {
         // Refresh the news list after successful hide/unhide
-        await fetchSoylentiNews(soylentiPage, onlyWithPlayers);
+        await fetchSoylentiNews(soylentiPage, onlyWithPlayers, showHiddenNews);
         return { success: true };
       } else {
         return {
@@ -334,7 +324,7 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
       const result = await response.json();
 
       if (result.success) {
-        await fetchSoylentiNews(soylentiPage, onlyWithPlayers);
+        await fetchSoylentiNews(soylentiPage, onlyWithPlayers, showHiddenNews);
         return { success: true };
       } else {
         return {
@@ -369,7 +359,7 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
       const result = await response.json();
 
       if (result.success) {
-        await fetchSoylentiNews(soylentiPage, onlyWithPlayers);
+        await fetchSoylentiNews(soylentiPage, onlyWithPlayers, showHiddenNews);
         return { success: true };
       } else {
         return {
@@ -404,7 +394,7 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
       const result = await response.json();
 
       if (result.success) {
-        await fetchSoylentiNews(soylentiPage, onlyWithPlayers);
+        await fetchSoylentiNews(soylentiPage, onlyWithPlayers, showHiddenNews);
         return { success: true };
       } else {
         return {
@@ -696,7 +686,7 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
   // Fetch Soylenti news when switching to soylenti view or filter/page changes
   useEffect(() => {
     if (currentView === "soylenti" && isSignedIn) {
-      fetchSoylentiNews(soylentiPage, onlyWithPlayers);
+      fetchSoylentiNews(soylentiPage, onlyWithPlayers, showHiddenNews);
     }
   }, [
     currentView,
@@ -704,6 +694,7 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
     fetchSoylentiNews,
     soylentiPage,
     onlyWithPlayers,
+    showHiddenNews,
   ]);
 
   // Handler for pagination
@@ -714,6 +705,12 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
   // Handler for filter toggle - reset to page 1 when filter changes
   const handleOnlyWithPlayersChange = (value: boolean) => {
     setOnlyWithPlayers(value);
+    setSoylentiPage(1);
+  };
+
+  // Handler for hidden filter toggle - reset to page 1 when filter changes
+  const handleShowHiddenChange = (value: boolean) => {
+    setShowHiddenNews(value);
     setSoylentiPage(1);
   };
 
@@ -1216,7 +1213,7 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
                     <input
                       type="checkbox"
                       checked={showHiddenNews}
-                      onChange={(e) => setShowHiddenNews(e.target.checked)}
+                      onChange={(e) => handleShowHiddenChange(e.target.checked)}
                       className="sr-only peer"
                     />
                     <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-betis-verde/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-betis-verde"></div>
@@ -1240,7 +1237,6 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
               onRemovePlayer={handleRemovePlayer}
               isLoading={loading}
               error={soylentiError}
-              showHidden={showHiddenNews}
               currentPage={soylentiPage}
               totalCount={soylentiTotalCount}
               itemsPerPage={SOYLENTI_ITEMS_PER_PAGE}

@@ -57,7 +57,6 @@ interface SoylentiNewsListProps {
   ) => Promise<{ success: boolean; error?: string }>;
   isLoading: boolean;
   error: string | null;
-  showHidden?: boolean;
   currentPage?: number;
   totalCount?: number;
   itemsPerPage?: number;
@@ -79,7 +78,6 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
   onRemovePlayer,
   isLoading,
   error,
-  showHidden = false,
   currentPage = 1,
   totalCount = 0,
   itemsPerPage = 20,
@@ -378,9 +376,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
         <MessageComponent type="info" message="No hay noticias para mostrar." />
       ) : (
         <div className="space-y-4">
-          {news
-            .filter((item) => (showHidden ? item.is_hidden : !item.is_hidden))
-            .map((item) => {
+          {news.map((item) => {
               const isExpanded = expandedItems.has(item.id);
               const isReassessing = reassessmentState.newsId === item.id;
               const isHiding = hidingNewsId === item.id;
@@ -762,8 +758,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
             <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200">
               <div className="text-sm text-gray-600">
                 Mostrando {(currentPage - 1) * itemsPerPage + 1} -{" "}
-                {Math.min(currentPage * itemsPerPage, totalCount)} de{" "}
-                {totalCount}
+                {(currentPage - 1) * itemsPerPage + news.length} de {totalCount}
               </div>
               <div className="flex items-center gap-2">
                 <Button
