@@ -375,6 +375,7 @@ import CulturalFusionHero from "@/components/CulturalFusionHero";
 ```
 
 **Features:**
+
 - Layered backgrounds: `bg-hero-fusion`, `pattern-tartan-navy`, `pattern-verdiblanco-subtle`, `oro-glow`
 - Common layout classes baked in: `mx-auto`, `px-4`, `sm:px-6`, `lg:px-8`
 - Customizable container via `containerClassName` prop
@@ -414,12 +415,14 @@ import { Users, Clock, CheckCircle } from "lucide-react";
 ```
 
 **Props:**
+
 - `icon`: Lucide React icon component (required)
 - `iconBgColor`: One of `bg-betis-verde` (default), `bg-betis-verde-dark`, `bg-betis-oro`, `bg-scotland-navy`, `bg-scotland-blue`
 - `title`: Feature title (required)
 - `description`: Feature description (required)
 
 **Features:**
+
 - Modern card styling with shadow and border
 - Hover effects: border color change, scale transform
 - Icon container with background color options
