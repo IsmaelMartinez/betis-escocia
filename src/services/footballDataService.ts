@@ -11,11 +11,21 @@ export const REAL_BETIS_TEAM_ID = 90;
 export const LALIGA_COMPETITION_ID = 'PD';
 
 // Helper function to determine current football season
-// Football seasons typically run from August to May/June
-// The working script uses current year, so let's match that
+// Football seasons run from August to May/June
+// The API expects the START year of the season (e.g., 2025 for 2025-2026 season)
 function getCurrentFootballSeason(): number {
-  // Use current year like the working script
-  return getYear(new Date());
+  const now = new Date();
+  const currentYear = getYear(now);
+  const currentMonth = now.getMonth(); // 0-indexed: 0=Jan, 7=Aug
+
+  // If we're in Jan-July, we're still in last year's season
+  // If we're in Aug-Dec, we're in the new season
+  if (currentMonth < 7) {
+    // January (0) through July (6) -> use previous year
+    return currentYear - 1;
+  }
+  // August (7) through December (11) -> use current year
+  return currentYear;
 }
 
 // Types
