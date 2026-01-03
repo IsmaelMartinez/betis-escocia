@@ -42,23 +42,23 @@ trendScore = Σ(e^(-age_days × ln(2) / half_life) × recency_bonus)
 
 With configurable parameters:
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `HALF_LIFE_DAYS` | 3 | Days until mention weight = 50% |
-| `RECENCY_BONUS_DAYS` | 3 | Window for recency bonus |
-| `RECENCY_BONUS_MULTIPLIER` | 1.5 | Bonus for recent mentions |
+| Parameter                  | Default | Description                     |
+| -------------------------- | ------- | ------------------------------- |
+| `HALF_LIFE_DAYS`           | 3       | Days until mention weight = 50% |
+| `RECENCY_BONUS_DAYS`       | 3       | Window for recency bonus        |
+| `RECENCY_BONUS_MULTIPLIER` | 1.5     | Bonus for recent mentions       |
 
 ### Decay Weights
 
 With half-life = 3 days:
 
-| Age | Weight |
-|-----|--------|
-| Today | 100% |
-| 1 day | 79% |
-| 3 days | 50% |
-| 7 days | 22% |
-| 14 days | 5% |
+| Age     | Weight |
+| ------- | ------ |
+| Today   | 100%   |
+| 1 day   | 79%    |
+| 3 days  | 50%    |
+| 7 days  | 22%    |
+| 14 days | 5%     |
 
 ## Implementation
 
@@ -95,13 +95,13 @@ export const TRENDING_ALGORITHM: TrendingAlgorithm = "decay"; // or "legacy"
 
 ### Phase Classification
 
-| Phase | Criteria |
-|-------|----------|
-| Hot | High score (≥3.0) + high velocity (≥30%) + recent activity (≤3 days) |
-| Rising | Positive velocity (≥15%) + decent score (≥0.5) |
-| Stable | Moderate activity, no significant change |
-| Cooling | Negative velocity (≤-20%) or low activity |
-| Dormant | No mentions in 10+ days AND score below 0.2 |
+| Phase   | Criteria                                                             |
+| ------- | -------------------------------------------------------------------- |
+| Hot     | High score (≥3.0) + high velocity (≥30%) + recent activity (≤3 days) |
+| Rising  | Positive velocity (≥15%) + decent score (≥0.5)                       |
+| Stable  | Moderate activity, no significant change                             |
+| Cooling | Negative velocity (≤-20%) or low activity                            |
+| Dormant | No mentions in 10+ days AND score below 0.2                          |
 
 ## Consequences
 
