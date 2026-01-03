@@ -106,6 +106,16 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
   const [removingPlayerId, setRemovingPlayerId] = useState<number | null>(null);
   const playerSearchRef = useRef<HTMLInputElement>(null);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const dropdownId = useRef(`player-dropdown-${Date.now()}`).current;
+
+  // Cleanup timeout on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Auto-clear success/error messages after 5 seconds
   useEffect(() => {
@@ -227,6 +237,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
   };
 
   // Player search with debounce
+  // Empty deps array is correct - state setters are stable references guaranteed by React
   const searchPlayers = useCallback(async (query: string) => {
     if (query.length < 2) {
       setPlayerSearchResults([]);
@@ -244,8 +255,10 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
       if (data.success) {
         setPlayerSearchResults(data.players);
       }
-    } catch {
-      // Silent fail for search
+    } catch (err) {
+      // Log error but don't disrupt UX - empty results will show
+      console.error("Player search failed:", err);
+      setPlayerSearchResults([]);
     } finally {
       setIsSearchingPlayers(false);
     }
@@ -299,8 +312,13 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
     setAddingPlayerToNewsId(newsId);
     setPlayerSearchQuery("");
     setPlayerSearchResults([]);
-    // Focus the input after render
-    setTimeout(() => playerSearchRef.current?.focus(), 100);
+    // Focus the input after render, tracking timeout for cleanup
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    searchTimeoutRef.current = setTimeout(() => {
+      playerSearchRef.current?.focus();
+    }, 100);
   };
 
   const cancelAddingPlayer = () => {
@@ -397,6 +415,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
                                 disabled={savingProbability}
                                 className="p-0.5 text-betis-verde hover:text-betis-verde-dark disabled:opacity-50"
                                 title="Guardar"
+                                aria-label="Guardar probabilidad"
                               >
                                 <Check size={14} />
                               </button>
@@ -405,6 +424,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
                                 disabled={savingProbability}
                                 className="p-0.5 text-gray-500 hover:text-gray-700 disabled:opacity-50"
                                 title="Cancelar"
+                                aria-label="Cancelar edición"
                               >
                                 <X size={14} />
                               </button>
@@ -489,6 +509,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
                                       }
                                       className="ml-0.5 p-0.5 hover:bg-blue-200 rounded-full transition-colors"
                                       title="Eliminar jugador"
+                                      aria-label={`Eliminar ${np.players.name}`}
                                     >
                                       <X size={10} />
                                     </button>
@@ -506,6 +527,11 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
                                 onChange={handlePlayerSearchChange}
                                 placeholder="Nombre del jugador..."
                                 className="w-40 px-2 py-0.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-betis-verde"
+                                role="combobox"
+                                aria-expanded={playerSearchResults.length > 0}
+                                aria-autocomplete="list"
+                                aria-controls={dropdownId}
+                                aria-label="Buscar jugador"
                                 onKeyDown={(e) => {
                                   if (
                                     e.key === "Enter" &&
@@ -523,6 +549,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
                                 disabled={!playerSearchQuery.trim()}
                                 className="p-0.5 text-betis-verde hover:text-betis-verde-dark disabled:opacity-50"
                                 title="Añadir jugador"
+                                aria-label="Añadir jugador"
                               >
                                 <Check size={14} />
                               </button>
@@ -530,16 +557,22 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
                                 onClick={cancelAddingPlayer}
                                 className="p-0.5 text-gray-500 hover:text-gray-700"
                                 title="Cancelar"
+                                aria-label="Cancelar búsqueda"
                               >
                                 <X size={14} />
                               </button>
 
                               {/* Autocomplete dropdown */}
                               {playerSearchResults.length > 0 && (
-                                <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10 max-h-40 overflow-y-auto">
+                                <div
+                                  id={dropdownId}
+                                  role="listbox"
+                                  className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-40 overflow-y-auto"
+                                >
                                   {playerSearchResults.map((player) => (
                                     <button
                                       key={player.id}
+                                      role="option"
                                       onClick={() =>
                                         handleAddPlayer(item.id, player.name)
                                       }
@@ -558,7 +591,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
                                 </div>
                               )}
                               {isSearchingPlayers && (
-                                <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10 p-2">
+                                <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50 p-2">
                                   <span className="text-xs text-gray-500">
                                     Buscando...
                                   </span>

@@ -12,6 +12,13 @@ const searchPlayersSchema = z.object({
 });
 
 /**
+ * Escape special SQL LIKE characters to prevent injection
+ */
+function escapeLikePattern(pattern: string): string {
+  return pattern.replace(/[%_\\]/g, "\\$&");
+}
+
+/**
  * POST - Search players by name
  *
  * Returns players matching the search query for autocomplete.
@@ -23,11 +30,16 @@ export const POST = createApiHandler({
   handler: async (data, context) => {
     const { query, limit } = data;
 
+    // Escape special LIKE characters to prevent SQL injection
+    const sanitizedQuery = escapeLikePattern(query);
+
     // Search players by name (case-insensitive) using ilike
     const { data: players, error } = await context.supabase
       .from("players")
       .select("id, name, normalized_name, rumor_count")
-      .or(`name.ilike.%${query}%,normalized_name.ilike.%${query}%`)
+      .or(
+        `name.ilike.%${sanitizedQuery}%,normalized_name.ilike.%${sanitizedQuery}%`,
+      )
       .order("rumor_count", { ascending: false })
       .limit(limit);
 

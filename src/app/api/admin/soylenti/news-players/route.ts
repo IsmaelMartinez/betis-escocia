@@ -160,11 +160,19 @@ export const DELETE = createApiHandler({
     }
 
     // Get player name from the joined data
-    // Supabase types the join as array but .single() returns single object, so cast through unknown
-    const playerData = existingLink.players as unknown as {
-      name: string;
-    } | null;
-    const playerName = playerData?.name ?? "Unknown";
+    // Handle possible Supabase relation shapes (object | array | null) without unsafe casts
+    type JoinedPlayer = { name: string };
+    type NewsPlayerLinkWithPlayer = {
+      players: JoinedPlayer | JoinedPlayer[] | null;
+    };
+    const { players } = existingLink as NewsPlayerLinkWithPlayer;
+
+    let playerName = "Unknown";
+    if (Array.isArray(players)) {
+      playerName = players[0]?.name ?? "Unknown";
+    } else if (players && typeof players === "object") {
+      playerName = players.name ?? "Unknown";
+    }
 
     log.business("player_removed_from_news", {
       newsId,
