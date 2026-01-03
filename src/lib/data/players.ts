@@ -241,17 +241,13 @@ export async function fetchTrendingPlayersWithTimeline(): Promise<
         );
 
         // Calculate legacy momentumPct for backwards compatibility
-        const recentCount = filledTimeline
-          .slice(-3)
-          .reduce((a, b) => a + b, 0);
+        const recentCount = filledTimeline.slice(-3).reduce((a, b) => a + b, 0);
         const previousCount = filledTimeline
           .slice(-7, -3)
           .reduce((a, b) => a + b, 0);
         const momentumPct =
           previousCount > 0
-            ? Math.round(
-                ((recentCount - previousCount) / previousCount) * 100,
-              )
+            ? Math.round(((recentCount - previousCount) / previousCount) * 100)
             : recentCount > 0
               ? 100
               : 0;
@@ -272,9 +268,7 @@ export async function fetchTrendingPlayersWithTimeline(): Promise<
         };
       } else {
         // Legacy algorithm
-        const recentCount = filledTimeline
-          .slice(-3)
-          .reduce((a, b) => a + b, 0);
+        const recentCount = filledTimeline.slice(-3).reduce((a, b) => a + b, 0);
         const previousCount = filledTimeline
           .slice(-7, -3)
           .reduce((a, b) => a + b, 0);

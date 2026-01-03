@@ -110,7 +110,8 @@ describe("Trending Algorithm", () => {
       const olderScore = calculateTrendScore(olderMention);
 
       // Recent should have 1.5x bonus
-      const expectedRatio = 1.5 * calculateDecayWeight(2) / calculateDecayWeight(5);
+      const expectedRatio =
+        (1.5 * calculateDecayWeight(2)) / calculateDecayWeight(5);
       const actualRatio = recentScore / olderScore;
 
       expect(actualRatio).toBeCloseTo(expectedRatio, 1);
@@ -128,7 +129,9 @@ describe("Trending Algorithm", () => {
       // Should still have meaningful score
       expect(score).toBeGreaterThan(0);
       // Score should be > just the old mention
-      const oldOnlyScore = calculateTrendScore([{ date: "2025-12-25", count: 1 }]);
+      const oldOnlyScore = calculateTrendScore([
+        { date: "2025-12-25", count: 1 },
+      ]);
       expect(score).toBeGreaterThan(oldOnlyScore);
     });
 
@@ -312,7 +315,9 @@ describe("Trending Algorithm", () => {
       ];
 
       const score = calculateTrendScore(gappedTimeline);
-      const velocity = calculateVelocity([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2]);
+      const velocity = calculateVelocity([
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2,
+      ]);
 
       // Should still have a strong score
       expect(score).toBeGreaterThan(2.0);
@@ -325,9 +330,15 @@ describe("Trending Algorithm", () => {
     it("should gradually reduce score over time without hard cutoff", () => {
       // Same player at different ages
       const mentionToday: DailyMention[] = [{ date: "2025-12-30", count: 3 }];
-      const mention3DaysAgo: DailyMention[] = [{ date: "2025-12-27", count: 3 }];
-      const mention7DaysAgo: DailyMention[] = [{ date: "2025-12-23", count: 3 }];
-      const mention10DaysAgo: DailyMention[] = [{ date: "2025-12-20", count: 3 }];
+      const mention3DaysAgo: DailyMention[] = [
+        { date: "2025-12-27", count: 3 },
+      ];
+      const mention7DaysAgo: DailyMention[] = [
+        { date: "2025-12-23", count: 3 },
+      ];
+      const mention10DaysAgo: DailyMention[] = [
+        { date: "2025-12-20", count: 3 },
+      ];
 
       const scoreToday = calculateTrendScore(mentionToday);
       const score3Days = calculateTrendScore(mention3DaysAgo);
