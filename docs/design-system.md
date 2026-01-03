@@ -339,6 +339,102 @@ import MatchTicket from "@/components/MatchTicket";
 </div>
 ```
 
+### CulturalFusionHero
+
+A reusable hero section component with layered cultural fusion backgrounds.
+
+```tsx
+import CulturalFusionHero from "@/components/CulturalFusionHero";
+
+// Default usage (centered, max-width 6xl)
+<CulturalFusionHero>
+  <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
+    Página Principal
+  </h1>
+  <p className="font-accent text-2xl sm:text-3xl text-oro-bright text-shadow-lg italic">
+    Bienvenidos a la Peña Bética Escocesa
+  </p>
+</CulturalFusionHero>
+
+// Custom container width and alignment
+<CulturalFusionHero containerClassName="max-w-4xl text-left">
+  {/* Custom content */}
+</CulturalFusionHero>
+
+// Side-by-side layout
+<CulturalFusionHero containerClassName="max-w-4xl">
+  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+    <div className="flex-1">
+      <h1 className="font-display text-5xl font-black text-white">Clasificación</h1>
+    </div>
+    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+      {/* Stats card */}
+    </div>
+  </div>
+</CulturalFusionHero>
+```
+
+**Features:**
+
+- Layered backgrounds: `bg-hero-fusion`, `pattern-tartan-navy`, `pattern-verdiblanco-subtle`, `bg-oro-glow`
+- Common layout classes baked in: `mx-auto`, `px-4`, `sm:px-6`, `lg:px-8`
+
+**Props:**
+
+- `containerClassName` (`string`, optional): Additional classes for the content container. Use this for width and alignment variations. Defaults to `"max-w-6xl text-center"`.
+
+**Storybook:** See `src/components/CulturalFusionHero.stories.tsx` for examples
+
+### FeatureCard
+
+A modern card component for displaying features with icons and descriptions.
+
+```tsx
+import FeatureCard from "@/components/FeatureCard";
+import { Users, Clock, CheckCircle } from "lucide-react";
+
+// Default usage (verde background)
+<FeatureCard
+  icon={Users}
+  title="Reservamos Mesa"
+  description="Con tu confirmación, podemos reservar una mesa grande para todos."
+/>
+
+// Custom icon background color
+<FeatureCard
+  icon={Clock}
+  iconBgColor="bg-betis-oro"
+  title="Llegada Puntual"
+  description="Sabemos cuántos venís y podemos avisar si hay que llegar antes."
+/>
+
+// Grid layout
+<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+  <FeatureCard icon={Users} title="..." description="..." />
+  <FeatureCard icon={Clock} title="..." description="..." />
+  <FeatureCard icon={CheckCircle} title="..." description="..." />
+</div>
+```
+
+**Props:**
+
+| Prop          | Type         | Description                                                                                                        | Default          |
+| ------------- | ------------ | ------------------------------------------------------------------------------------------------------------------ | ---------------- |
+| `icon`        | `LucideIcon` | Lucide React icon component. **(required)**                                                                        | -                |
+| `iconBgColor` | `string`     | One of `bg-betis-verde`, `bg-betis-verde-dark`, `bg-betis-oro`, `bg-scotland-navy`, `bg-scotland-blue`.           | `bg-betis-verde` |
+| `title`       | `string`     | Feature title. **(required)**                                                                                      | -                |
+| `description` | `string`     | Feature description. **(required)**                                                                                | -                |
+
+**Features:**
+
+- Modern card styling with shadow and border
+- Hover effects: border color change, scale transform
+- Icon container with background color options
+- Pattern overlay accent (verdiblanco-diagonal-subtle)
+- Typography system integration
+
+**Storybook:** See `src/components/FeatureCard.stories.tsx` for all variations
+
 ---
 
 ## Layout Guidelines
