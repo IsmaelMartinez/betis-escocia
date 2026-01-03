@@ -90,9 +90,9 @@ export function calculateTrendScore(timeline: DailyMention[]): number {
 export function calculateVelocity(filledTimeline: number[]): number {
   if (filledTimeline.length < 7) return 0;
 
-  // Recent period: last 3 days
+  // Recent period: last 3 days (0, 1, 2 days ago)
   const recentDays = filledTimeline.slice(-3);
-  // Previous period: days 4-7
+  // Previous period: 4 days before that (3, 4, 5, 6 days ago)
   const previousDays = filledTimeline.slice(-7, -3);
 
   // Weight recent mentions more heavily
