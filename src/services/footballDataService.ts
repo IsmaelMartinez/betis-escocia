@@ -19,13 +19,13 @@ function getCurrentFootballSeason(): number {
   const currentYear = getYear(now);
   const currentMonth = now.getMonth(); // 0-indexed: 0=Jan, 7=Aug
 
-  // If we're in Jan-July, we're still in last year's season
-  // If we're in Aug-Dec, we're in the new season
+  // If we're in Jan-July, we're in the season that STARTED in the previous calendar year
+  // If we're in Aug-Dec, we're in the season that STARTS in the current calendar year
   if (currentMonth < 7) {
-    // January (0) through July (6) -> use previous year
+    // January (0) through July (6) -> use previous year as the season START year
     return currentYear - 1;
   }
-  // August (7) through December (11) -> use current year
+  // August (7) through December (11) -> use current year as the season START year
   return currentYear;
 }
 
