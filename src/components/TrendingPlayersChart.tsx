@@ -144,19 +144,6 @@ function PlayerRow({
         </div>
       </div>
 
-      {/* Momentum badge */}
-      {player.momentumPct !== 0 && player.phase !== "dormant" && (
-        <span
-          className={`text-xs font-medium px-1.5 py-0.5 rounded ${
-            player.momentumPct > 0
-              ? "bg-betis-verde-light text-betis-verde-dark"
-              : "bg-red-100 text-red-700"
-          }`}
-        >
-          {player.momentumPct > 0 ? "+" : ""}
-          {player.momentumPct}
-        </span>
-      )}
     </button>
   );
 }
