@@ -134,91 +134,10 @@ describe("SoylentiNewsList", () => {
     });
   });
 
-  describe("showHidden toggle behavior", () => {
-    it("shows only visible items when showHidden is false (default)", () => {
-      render(
-        <SoylentiNewsList
-          news={mockMixedNews}
-          onReassess={mockOnReassess}
-          onHide={mockOnHide}
-          isLoading={false}
-          error={null}
-          showHidden={false}
-        />,
-      );
-
-      // Should show visible news
-      expect(screen.getByText("Visible News 1")).toBeInTheDocument();
-      expect(screen.getByText("Visible News 2")).toBeInTheDocument();
-
-      // Should NOT show hidden news
-      expect(screen.queryByText("Hidden News 1")).not.toBeInTheDocument();
-      expect(screen.queryByText("Hidden News 2")).not.toBeInTheDocument();
-    });
-
-    it("shows only hidden items when showHidden is true", () => {
-      render(
-        <SoylentiNewsList
-          news={mockMixedNews}
-          onReassess={mockOnReassess}
-          onHide={mockOnHide}
-          isLoading={false}
-          error={null}
-          showHidden={true}
-        />,
-      );
-
-      // Should show hidden news
-      expect(screen.getByText("Hidden News 1")).toBeInTheDocument();
-      expect(screen.getByText("Hidden News 2")).toBeInTheDocument();
-
-      // Should NOT show visible news
-      expect(screen.queryByText("Visible News 1")).not.toBeInTheDocument();
-      expect(screen.queryByText("Visible News 2")).not.toBeInTheDocument();
-    });
-
-    it("shows empty state when showHidden is true but no hidden items exist", () => {
-      render(
-        <SoylentiNewsList
-          news={mockVisibleNews}
-          onReassess={mockOnReassess}
-          onHide={mockOnHide}
-          isLoading={false}
-          error={null}
-          showHidden={true}
-        />,
-      );
-
-      // No cards should be rendered (empty filtered result)
-      expect(screen.queryAllByTestId("card")).toHaveLength(0);
-    });
-
-    it("shows empty state when showHidden is false but no visible items exist", () => {
-      render(
-        <SoylentiNewsList
-          news={mockHiddenNews}
-          onReassess={mockOnReassess}
-          onHide={mockOnHide}
-          isLoading={false}
-          error={null}
-          showHidden={false}
-        />,
-      );
-
-      // No cards should be rendered (empty filtered result)
-      expect(screen.queryAllByTestId("card")).toHaveLength(0);
-    });
-  });
-
-  describe("Sorting behavior", () => {
-    it("displays news items sorted by pub_date descending (newest first)", () => {
-      const unsortedNews: BetisNewsWithPlayers[] = [
-        createMockNews({
-          id: 1,
-          title: "Oldest News",
-          pub_date: "2024-01-10T10:00:00Z",
-          is_hidden: false,
-        }),
+  describe("Display order", () => {
+    it("displays news items in the order provided (server-side sorting)", () => {
+      // Data is pre-sorted by server (pub_date descending)
+      const sortedNews: BetisNewsWithPlayers[] = [
         createMockNews({
           id: 2,
           title: "Newest News",
@@ -231,23 +150,28 @@ describe("SoylentiNewsList", () => {
           pub_date: "2024-01-15T10:00:00Z",
           is_hidden: false,
         }),
+        createMockNews({
+          id: 1,
+          title: "Oldest News",
+          pub_date: "2024-01-10T10:00:00Z",
+          is_hidden: false,
+        }),
       ];
 
       render(
         <SoylentiNewsList
-          news={unsortedNews}
+          news={sortedNews}
           onReassess={mockOnReassess}
           onHide={mockOnHide}
           isLoading={false}
           error={null}
-          showHidden={false}
         />,
       );
 
       const cards = screen.getAllByTestId("card");
       expect(cards).toHaveLength(3);
 
-      // Check order: Newest, Middle, Oldest
+      // Items should be displayed in the order provided (sorted by server)
       const titles = screen.getAllByRole("heading", { level: 3 });
       expect(titles[0]).toHaveTextContent("Newest News");
       expect(titles[1]).toHaveTextContent("Middle News");

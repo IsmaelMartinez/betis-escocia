@@ -19,6 +19,8 @@ import {
   Plus,
   Check,
   Edit2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import clsx from "clsx";
 import type { BetisNewsWithPlayers } from "@/types/soylenti";
@@ -55,7 +57,10 @@ interface SoylentiNewsListProps {
   ) => Promise<{ success: boolean; error?: string }>;
   isLoading: boolean;
   error: string | null;
-  showHidden?: boolean;
+  currentPage?: number;
+  totalCount?: number;
+  itemsPerPage?: number;
+  onPageChange?: (page: number) => void;
 }
 
 interface ReassessmentState {
@@ -73,7 +78,10 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
   onRemovePlayer,
   isLoading,
   error,
-  showHidden = false,
+  currentPage = 1,
+  totalCount = 0,
+  itemsPerPage = 20,
+  onPageChange,
 }) => {
   const [reassessmentState, setReassessmentState] = useState<ReassessmentState>(
     {
@@ -368,13 +376,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
         <MessageComponent type="info" message="No hay noticias para mostrar." />
       ) : (
         <div className="space-y-4">
-          {news
-            .filter((item) => (showHidden ? item.is_hidden : !item.is_hidden))
-            .sort(
-              (a, b) =>
-                new Date(b.pub_date).getTime() - new Date(a.pub_date).getTime(),
-            )
-            .map((item) => {
+          {news.map((item) => {
               const isExpanded = expandedItems.has(item.id);
               const isReassessing = reassessmentState.newsId === item.id;
               const isHiding = hidingNewsId === item.id;
@@ -750,6 +752,39 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
                 </Card>
               );
             })}
+
+          {/* Pagination Controls */}
+          {onPageChange && totalCount > itemsPerPage && (
+            <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200">
+              <div className="text-sm text-gray-600">
+                Mostrando {(currentPage - 1) * itemsPerPage + 1} -{" "}
+                {(currentPage - 1) * itemsPerPage + news.length} de {totalCount}
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={() => onPageChange(currentPage - 1)}
+                  disabled={currentPage <= 1}
+                  variant="outline"
+                  size="sm"
+                  leftIcon={<ChevronLeft size={16} />}
+                >
+                  Anterior
+                </Button>
+                <span className="text-sm text-gray-600 px-3">
+                  Página {currentPage} de {Math.ceil(totalCount / itemsPerPage)}
+                </span>
+                <Button
+                  onClick={() => onPageChange(currentPage + 1)}
+                  disabled={currentPage >= Math.ceil(totalCount / itemsPerPage)}
+                  variant="outline"
+                  size="sm"
+                  rightIcon={<ChevronRight size={16} />}
+                >
+                  Siguiente
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
