@@ -65,8 +65,20 @@ export interface TrendingPlayerWithTimeline {
   timeline: DailyMention[];
   /** Calculated momentum phase */
   phase: MomentumPhase;
-  /** Momentum percentage change (recent vs previous period) */
+  /** Momentum percentage change (recent vs previous period) - legacy algorithm */
   momentumPct: number;
   /** Days since last mention */
   daysSinceLastMention: number;
+  /**
+   * Trend score using half-life decay algorithm.
+   * Higher = more trending. Accounts for aggregate mentions with time decay.
+   * Only present when using the decay algorithm.
+   */
+  trendScore?: number;
+  /**
+   * Velocity of mentions (rate of change).
+   * Positive = rising, negative = cooling.
+   * Only present when using the decay algorithm.
+   */
+  velocity?: number;
 }

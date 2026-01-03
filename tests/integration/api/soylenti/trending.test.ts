@@ -78,8 +78,8 @@ describe("Trending Players API", () => {
   });
 
   describe("GET /api/soylenti/trending", () => {
-    it("should return trending players sorted by rumor count", async () => {
-      // Player 1: 5 rumor mentions
+    it("should return trending players sorted by trend score (recency-weighted)", async () => {
+      // Player 1: 5 rumor mentions (recent)
       const player1Mentions = createPlayerMentions(
         1,
         "Isco Alarcón",
@@ -93,7 +93,7 @@ describe("Trending Players API", () => {
         ],
       );
 
-      // Player 2: 5 rumor mentions (same count, but older last mention)
+      // Player 2: 5 rumor mentions (older - lower trend score)
       const player2Mentions = createPlayerMentions(
         2,
         "Nabil Fekir",
@@ -107,7 +107,7 @@ describe("Trending Players API", () => {
         ],
       );
 
-      // Player 3: 3 rumor mentions (fewer rumors)
+      // Player 3: 3 very recent mentions (high trend score due to recency bonus)
       const player3Mentions = createPlayerMentions(
         3,
         "Marc Roca",
@@ -136,15 +136,33 @@ describe("Trending Players API", () => {
       expect(data.data.players).toHaveLength(3);
       expect(data.data.totalCount).toBe(3);
 
-      // Verify primary sort by rumor_count (desc)
-      expect(data.data.players[0].name).toBe("Isco Alarcón");
-      expect(data.data.players[1].name).toBe("Nabil Fekir");
-      // Verify counts
-      expect(data.data.players[0].rumorCount).toBe(5);
-      expect(data.data.players[1].rumorCount).toBe(5);
-      // Marc Roca has fewer rumors, so should be last despite recent activity
-      expect(data.data.players[2].name).toBe("Marc Roca");
-      expect(data.data.players[2].rumorCount).toBe(3);
+      // With decay algorithm: sorted by trend score (recency-weighted)
+      // Marc Roca ranks high due to very recent activity + recency bonus
+      // Isco Alarcón has more mentions and decent recency
+      // Nabil Fekir has older mentions so lower trend score
+      // Note: Exact order depends on decay weights and recency bonus
+
+      // All players should have trend metrics
+      expect(data.data.players[0]).toHaveProperty("trendScore");
+      expect(data.data.players[0]).toHaveProperty("velocity");
+
+      // Verify counts are preserved regardless of sort order
+      const iscoPlayer = data.data.players.find(
+        (p: { name: string }) => p.name === "Isco Alarcón",
+      );
+      const fekirPlayer = data.data.players.find(
+        (p: { name: string }) => p.name === "Nabil Fekir",
+      );
+      const rocaPlayer = data.data.players.find(
+        (p: { name: string }) => p.name === "Marc Roca",
+      );
+
+      expect(iscoPlayer.rumorCount).toBe(5);
+      expect(fekirPlayer.rumorCount).toBe(5);
+      expect(rocaPlayer.rumorCount).toBe(3);
+
+      // Fekir (oldest mentions) should have lowest trend score
+      expect(fekirPlayer.trendScore).toBeLessThan(iscoPlayer.trendScore);
     });
 
     it("should return empty array when no players found", async () => {

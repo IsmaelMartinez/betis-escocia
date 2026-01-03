@@ -5,7 +5,16 @@ import type {
   MomentumPhase,
 } from "@/types/soylenti";
 import { fillTimeline } from "@/lib/utils/timeline";
-import { MOMENTUM_THRESHOLDS } from "@/lib/soylenti/constants";
+import {
+  MOMENTUM_THRESHOLDS,
+  TRENDING_ALGORITHM,
+} from "@/lib/soylenti/constants";
+import {
+  calculateTrendScore,
+  calculateVelocity,
+  determineMomentumPhase,
+  compareTrendingPlayers,
+} from "@/lib/soylenti/trendingAlgorithm";
 
 /**
  * Fetches trending players by rumor activity.
@@ -40,10 +49,13 @@ export async function fetchTrendingPlayers(): Promise<TrendingPlayer[]> {
 }
 
 /**
- * Calculate momentum phase based on recent vs previous activity.
+ * Calculate momentum phase based on recent vs previous activity (Legacy Algorithm).
  * Uses MOMENTUM_THRESHOLDS constants for classification.
+ *
+ * Note: This is the original algorithm. Consider using the decay algorithm
+ * (TRENDING_ALGORITHM = "decay") for better handling of gaps and aggregate mentions.
  */
-function calculateMomentumPhase(
+function calculateLegacyMomentumPhase(
   recentCount: number,
   previousCount: number,
   daysSinceLastMention: number,
@@ -198,55 +210,110 @@ export async function fetchTrendingPlayersWithTimeline(): Promise<
     }
   }
 
-  // Convert to array, filter players with at least 1 rumor, sort by count
-  const sortedPlayers = Array.from(playerDataMap.values())
-    .filter((p) => p.rumorCount >= 1)
-    .sort((a, b) => {
-      // Primary sort: rumor count descending
+  // Convert to array and filter players with at least 1 rumor
+  const playersArray = Array.from(playerDataMap.values()).filter(
+    (p) => p.rumorCount >= 1,
+  );
+
+  // Build enhanced player data with momentum calculations
+  const enhancedPlayers: TrendingPlayerWithTimeline[] = playersArray.map(
+    (playerData) => {
+      const timeline: DailyMention[] = Array.from(
+        playerData.timeline.entries(),
+      ).map(([date, count]) => ({ date, count }));
+
+      // Calculate days since last mention
+      const daysSinceLastMention = Math.floor(
+        (now.getTime() - playerData.lastMentionDate.getTime()) /
+          (1000 * 60 * 60 * 24),
+      );
+
+      const filledTimeline = fillTimeline(timeline);
+
+      if (TRENDING_ALGORITHM === "decay") {
+        // New decay-based algorithm
+        const trendScore = calculateTrendScore(timeline);
+        const velocity = calculateVelocity(filledTimeline);
+        const phase = determineMomentumPhase(
+          trendScore,
+          velocity,
+          daysSinceLastMention,
+        );
+
+        // Calculate legacy momentumPct for backwards compatibility
+        const recentCount = filledTimeline
+          .slice(-3)
+          .reduce((a, b) => a + b, 0);
+        const previousCount = filledTimeline
+          .slice(-7, -3)
+          .reduce((a, b) => a + b, 0);
+        const momentumPct =
+          previousCount > 0
+            ? Math.round(
+                ((recentCount - previousCount) / previousCount) * 100,
+              )
+            : recentCount > 0
+              ? 100
+              : 0;
+
+        return {
+          name: playerData.name,
+          normalizedName: playerData.normalizedName,
+          rumorCount: playerData.rumorCount,
+          firstSeen: playerData.firstSeen,
+          lastSeen: playerData.lastSeen,
+          isActive: playerData.lastMentionDate > sevenDaysAgo,
+          timeline,
+          phase,
+          momentumPct,
+          daysSinceLastMention,
+          trendScore,
+          velocity,
+        };
+      } else {
+        // Legacy algorithm
+        const recentCount = filledTimeline
+          .slice(-3)
+          .reduce((a, b) => a + b, 0);
+        const previousCount = filledTimeline
+          .slice(-7, -3)
+          .reduce((a, b) => a + b, 0);
+
+        const { phase, momentumPct } = calculateLegacyMomentumPhase(
+          recentCount,
+          previousCount,
+          daysSinceLastMention,
+        );
+
+        return {
+          name: playerData.name,
+          normalizedName: playerData.normalizedName,
+          rumorCount: playerData.rumorCount,
+          firstSeen: playerData.firstSeen,
+          lastSeen: playerData.lastSeen,
+          isActive: playerData.lastMentionDate > sevenDaysAgo,
+          timeline,
+          phase,
+          momentumPct,
+          daysSinceLastMention,
+        };
+      }
+    },
+  );
+
+  // Sort based on algorithm
+  if (TRENDING_ALGORITHM === "decay") {
+    // Sort by trend score (primary), then recency (secondary)
+    enhancedPlayers.sort(compareTrendingPlayers);
+  } else {
+    // Legacy sort: rumor count (primary), recency (secondary)
+    enhancedPlayers.sort((a, b) => {
       if (b.rumorCount !== a.rumorCount) {
         return b.rumorCount - a.rumorCount;
       }
-      // Secondary sort: most recent activity
-      return b.lastMentionDate.getTime() - a.lastMentionDate.getTime();
-    })
-    .slice(0, 10);
+      return a.daysSinceLastMention - b.daysSinceLastMention;
+    });
+  }
 
-  // Build enhanced player data with momentum calculations
-  return sortedPlayers.map((playerData) => {
-    const timeline: DailyMention[] = Array.from(
-      playerData.timeline.entries(),
-    ).map(([date, count]) => ({ date, count }));
-
-    // Calculate days since last mention
-    const daysSinceLastMention = Math.floor(
-      (now.getTime() - playerData.lastMentionDate.getTime()) /
-        (1000 * 60 * 60 * 24),
-    );
-
-    // Calculate momentum: last 3 days vs previous 4 days
-    const filledTimeline = fillTimeline(timeline);
-    const recentCount = filledTimeline.slice(-3).reduce((a, b) => a + b, 0);
-    const previousCount = filledTimeline
-      .slice(-7, -3)
-      .reduce((a, b) => a + b, 0);
-
-    const { phase, momentumPct } = calculateMomentumPhase(
-      recentCount,
-      previousCount,
-      daysSinceLastMention,
-    );
-
-    return {
-      name: playerData.name,
-      normalizedName: playerData.normalizedName,
-      rumorCount: playerData.rumorCount,
-      firstSeen: playerData.firstSeen,
-      lastSeen: playerData.lastSeen,
-      isActive: playerData.lastMentionDate > sevenDaysAgo,
-      timeline,
-      phase,
-      momentumPct,
-      daysSinceLastMention,
-    };
-  });
+  return enhancedPlayers.slice(0, 10);
 }
