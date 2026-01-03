@@ -376,10 +376,12 @@ import CulturalFusionHero from "@/components/CulturalFusionHero";
 
 **Features:**
 
-- Layered backgrounds: `bg-hero-fusion`, `pattern-tartan-navy`, `pattern-verdiblanco-subtle`, `oro-glow`
+- Layered backgrounds: `bg-hero-fusion`, `pattern-tartan-navy`, `pattern-verdiblanco-subtle`, `bg-oro-glow`
 - Common layout classes baked in: `mx-auto`, `px-4`, `sm:px-6`, `lg:px-8`
-- Customizable container via `containerClassName` prop
-- Default: `max-w-6xl text-center`
+
+**Props:**
+
+- `containerClassName` (`string`, optional): Additional classes for the content container. Use this for width and alignment variations. Defaults to `"max-w-6xl text-center"`.
 
 **Storybook:** See `src/components/CulturalFusionHero.stories.tsx` for examples
 
@@ -416,10 +418,12 @@ import { Users, Clock, CheckCircle } from "lucide-react";
 
 **Props:**
 
-- `icon`: Lucide React icon component (required)
-- `iconBgColor`: One of `bg-betis-verde` (default), `bg-betis-verde-dark`, `bg-betis-oro`, `bg-scotland-navy`, `bg-scotland-blue`
-- `title`: Feature title (required)
-- `description`: Feature description (required)
+| Prop          | Type         | Description                                                                                                        | Default          |
+| ------------- | ------------ | ------------------------------------------------------------------------------------------------------------------ | ---------------- |
+| `icon`        | `LucideIcon` | Lucide React icon component. **(required)**                                                                        | -                |
+| `iconBgColor` | `string`     | One of `bg-betis-verde`, `bg-betis-verde-dark`, `bg-betis-oro`, `bg-scotland-navy`, `bg-scotland-blue`.           | `bg-betis-verde` |
+| `title`       | `string`     | Feature title. **(required)**                                                                                      | -                |
+| `description` | `string`     | Feature description. **(required)**                                                                                | -                |
 
 **Features:**
 
