@@ -776,8 +776,7 @@ const SoylentiNewsList: React.FC<SoylentiNewsListProps> = ({
                   Anterior
                 </Button>
                 <span className="text-sm text-gray-600 px-3">
-                  Página {currentPage} de{" "}
-                  {Math.ceil(totalCount / itemsPerPage)}
+                  Página {currentPage} de {Math.ceil(totalCount / itemsPerPage)}
                 </span>
                 <Button
                   onClick={() => onPageChange(currentPage + 1)}
