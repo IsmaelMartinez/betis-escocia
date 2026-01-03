@@ -119,6 +119,10 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
   const [betisNews, setBetisNews] = useState<BetisNewsWithPlayers[]>([]);
   const [soylentiError, setSoylentiError] = useState<string | null>(null);
   const [showHiddenNews, setShowHiddenNews] = useState(false);
+  const [soylentiPage, setSoylentiPage] = useState(1);
+  const [soylentiTotalCount, setSoylentiTotalCount] = useState(0);
+  const [onlyWithPlayers, setOnlyWithPlayers] = useState(false);
+  const SOYLENTI_ITEMS_PER_PAGE = 20;
 
   const handleUpdateContactStatus = async (
     id: number,
@@ -167,14 +171,29 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
     );
   };
 
-  // Fetch Soylenti news for admin panel (with player data)
-  const fetchSoylentiNews = useCallback(async () => {
-    try {
-      setSoylentiError(null);
-      const { data, error: fetchError } = await supabase
-        .from("betis_news")
-        .select(
-          `
+  // Fetch Soylenti news for admin panel (with player data and pagination)
+  const fetchSoylentiNews = useCallback(
+    async (page: number = 1, withPlayersOnly: boolean = false) => {
+      try {
+        setSoylentiError(null);
+        const offset = (page - 1) * SOYLENTI_ITEMS_PER_PAGE;
+
+        // Build the select query based on filter
+        // When filtering for news with players, use !inner join to only return matches
+        const selectQuery = withPlayersOnly
+          ? `
+          *,
+          news_players!inner (
+            player_id,
+            role,
+            players (
+              id,
+              name,
+              normalized_name
+            )
+          )
+        `
+          : `
           *,
           news_players (
             player_id,
@@ -185,20 +204,46 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
               normalized_name
             )
           )
-        `,
-        )
-        .order("pub_date", { ascending: false })
-        .limit(100);
+        `;
 
-      if (fetchError) throw fetchError;
-      setBetisNews((data as BetisNewsWithPlayers[]) || []);
-    } catch (err) {
-      log.error("Failed to fetch Soylenti news in admin panel", err, {
-        userId: user?.id,
-      });
-      setSoylentiError("Error al cargar las noticias de Soylenti");
-    }
-  }, [user?.id]);
+        // Fetch data with pagination
+        const { data, error: fetchError } = await supabase
+          .from("betis_news")
+          .select(selectQuery)
+          .order("pub_date", { ascending: false })
+          .range(offset, offset + SOYLENTI_ITEMS_PER_PAGE - 1);
+
+        if (fetchError) throw fetchError;
+
+        // Get total count for pagination
+        // When filtering with players, count news that have at least one player
+        let countQuery;
+        if (withPlayersOnly) {
+          // Count distinct news IDs that have players
+          countQuery = await supabase
+            .from("betis_news")
+            .select("id, news_players!inner(player_id)", { count: "exact" })
+            .limit(0);
+        } else {
+          countQuery = await supabase
+            .from("betis_news")
+            .select("id", { count: "exact" })
+            .limit(0);
+        }
+
+        if (countQuery.error) throw countQuery.error;
+        setSoylentiTotalCount(countQuery.count || 0);
+
+        setBetisNews((data as BetisNewsWithPlayers[]) || []);
+      } catch (err) {
+        log.error("Failed to fetch Soylenti news in admin panel", err, {
+          userId: user?.id,
+        });
+        setSoylentiError("Error al cargar las noticias de Soylenti");
+      }
+    },
+    [user?.id],
+  );
 
   // Handle news reassessment
   const handleReassessNews = async (
@@ -218,7 +263,7 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
 
       if (result.success) {
         // Refresh the news list after successful reassessment
-        await fetchSoylentiNews();
+        await fetchSoylentiNews(soylentiPage, onlyWithPlayers);
         return { success: true };
       } else {
         return {
@@ -254,7 +299,7 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
 
       if (result.success) {
         // Refresh the news list after successful hide/unhide
-        await fetchSoylentiNews();
+        await fetchSoylentiNews(soylentiPage, onlyWithPlayers);
         return { success: true };
       } else {
         return {
@@ -289,7 +334,7 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
       const result = await response.json();
 
       if (result.success) {
-        await fetchSoylentiNews();
+        await fetchSoylentiNews(soylentiPage, onlyWithPlayers);
         return { success: true };
       } else {
         return {
@@ -324,7 +369,7 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
       const result = await response.json();
 
       if (result.success) {
-        await fetchSoylentiNews();
+        await fetchSoylentiNews(soylentiPage, onlyWithPlayers);
         return { success: true };
       } else {
         return {
@@ -359,7 +404,7 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
       const result = await response.json();
 
       if (result.success) {
-        await fetchSoylentiNews();
+        await fetchSoylentiNews(soylentiPage, onlyWithPlayers);
         return { success: true };
       } else {
         return {
@@ -648,12 +693,29 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
     }
   }, [syncMessage]);
 
-  // Fetch Soylenti news when switching to soylenti view
+  // Fetch Soylenti news when switching to soylenti view or filter/page changes
   useEffect(() => {
     if (currentView === "soylenti" && isSignedIn) {
-      fetchSoylentiNews();
+      fetchSoylentiNews(soylentiPage, onlyWithPlayers);
     }
-  }, [currentView, isSignedIn, fetchSoylentiNews]);
+  }, [
+    currentView,
+    isSignedIn,
+    fetchSoylentiNews,
+    soylentiPage,
+    onlyWithPlayers,
+  ]);
+
+  // Handler for pagination
+  const handleSoylentiPageChange = (newPage: number) => {
+    setSoylentiPage(newPage);
+  };
+
+  // Handler for filter toggle - reset to page 1 when filter changes
+  const handleOnlyWithPlayersChange = (value: boolean) => {
+    setOnlyWithPlayers(value);
+    setSoylentiPage(1);
+  };
 
   // Show loading while Clerk is loading
   if (!isLoaded) {
@@ -1128,23 +1190,46 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
         {/* Soylenti News Management View */}
         {currentView === "soylenti" && showSoylenti && (
           <>
-            <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="mb-6 flex flex-col gap-4">
               <p className="text-sm text-gray-600">
                 Re-analiza noticias con IA proporcionando contexto adicional
                 (jugador incorrecto, equipo incorrecto, etc.)
               </p>
-              <label className="inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={showHiddenNews}
-                  onChange={(e) => setShowHiddenNews(e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-betis-verde/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-betis-verde"></div>
-                <span className="ms-3 text-sm font-medium text-gray-700">
-                  Mostrar solo ocultos
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                {/* Filter toggles */}
+                <div className="flex flex-wrap items-center gap-4">
+                  <label className="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={onlyWithPlayers}
+                      onChange={(e) =>
+                        handleOnlyWithPlayersChange(e.target.checked)
+                      }
+                      className="sr-only peer"
+                    />
+                    <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-betis-verde/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-betis-verde"></div>
+                    <span className="ms-3 text-sm font-medium text-gray-700">
+                      Solo con jugadores
+                    </span>
+                  </label>
+                  <label className="inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={showHiddenNews}
+                      onChange={(e) => setShowHiddenNews(e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-betis-verde/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-betis-verde"></div>
+                    <span className="ms-3 text-sm font-medium text-gray-700">
+                      Mostrar solo ocultos
+                    </span>
+                  </label>
+                </div>
+                {/* Total count */}
+                <span className="text-sm text-gray-500">
+                  {soylentiTotalCount} noticias en total
                 </span>
-              </label>
+              </div>
             </div>
             <SoylentiNewsList
               news={betisNews}
@@ -1156,6 +1241,10 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
               isLoading={loading}
               error={soylentiError}
               showHidden={showHiddenNews}
+              currentPage={soylentiPage}
+              totalCount={soylentiTotalCount}
+              itemsPerPage={SOYLENTI_ITEMS_PER_PAGE}
+              onPageChange={handleSoylentiPageChange}
             />
           </>
         )}

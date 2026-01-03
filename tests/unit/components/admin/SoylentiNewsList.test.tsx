@@ -210,15 +210,10 @@ describe("SoylentiNewsList", () => {
     });
   });
 
-  describe("Sorting behavior", () => {
-    it("displays news items sorted by pub_date descending (newest first)", () => {
-      const unsortedNews: BetisNewsWithPlayers[] = [
-        createMockNews({
-          id: 1,
-          title: "Oldest News",
-          pub_date: "2024-01-10T10:00:00Z",
-          is_hidden: false,
-        }),
+  describe("Display order", () => {
+    it("displays news items in the order provided (server-side sorting)", () => {
+      // Data is pre-sorted by server (pub_date descending)
+      const sortedNews: BetisNewsWithPlayers[] = [
         createMockNews({
           id: 2,
           title: "Newest News",
@@ -231,11 +226,17 @@ describe("SoylentiNewsList", () => {
           pub_date: "2024-01-15T10:00:00Z",
           is_hidden: false,
         }),
+        createMockNews({
+          id: 1,
+          title: "Oldest News",
+          pub_date: "2024-01-10T10:00:00Z",
+          is_hidden: false,
+        }),
       ];
 
       render(
         <SoylentiNewsList
-          news={unsortedNews}
+          news={sortedNews}
           onReassess={mockOnReassess}
           onHide={mockOnHide}
           isLoading={false}
@@ -247,7 +248,7 @@ describe("SoylentiNewsList", () => {
       const cards = screen.getAllByTestId("card");
       expect(cards).toHaveLength(3);
 
-      // Check order: Newest, Middle, Oldest
+      // Items should be displayed in the order provided (sorted by server)
       const titles = screen.getAllByRole("heading", { level: 3 });
       expect(titles[0]).toHaveTextContent("Newest News");
       expect(titles[1]).toHaveTextContent("Middle News");
