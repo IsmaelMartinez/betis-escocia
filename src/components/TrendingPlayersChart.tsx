@@ -154,7 +154,7 @@ function PlayerRow({
           }`}
         >
           {player.momentumPct > 0 ? "+" : ""}
-          {player.momentumPct}%
+          {player.momentumPct}
         </span>
       )}
     </button>
