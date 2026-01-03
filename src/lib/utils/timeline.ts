@@ -13,10 +13,8 @@ export function fillTimeline(
   days: number = 14,
 ): number[] {
   // Use UTC consistently to match server-generated date strings
-  const now = new Date();
-  const todayUTC = new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
-  );
+  const todayUTC = new Date();
+  todayUTC.setUTCHours(0, 0, 0, 0);
 
   const result: number[] = [];
   const dataMap = new Map(sparseData.map((d) => [d.date, d.count]));
