@@ -13,7 +13,7 @@ import {
   calculateTrendScore,
   calculateVelocity,
   determineMomentumPhase,
-  compareTrendingPlayers,
+  sortByTrendScore,
 } from "@/lib/soylenti/trendingAlgorithm";
 
 /**
@@ -230,6 +230,24 @@ export async function fetchTrendingPlayersWithTimeline(): Promise<
 
       const filledTimeline = fillTimeline(timeline);
 
+      // Common base data for both algorithms
+      const basePlayerData = {
+        name: playerData.name,
+        normalizedName: playerData.normalizedName,
+        rumorCount: playerData.rumorCount,
+        firstSeen: playerData.firstSeen,
+        lastSeen: playerData.lastSeen,
+        isActive: playerData.lastMentionDate > sevenDaysAgo,
+        timeline,
+        daysSinceLastMention,
+      };
+
+      // Calculate recentCount/previousCount (used by both algorithms)
+      const recentCount = filledTimeline.slice(-3).reduce((a, b) => a + b, 0);
+      const previousCount = filledTimeline
+        .slice(-7, -3)
+        .reduce((a, b) => a + b, 0);
+
       if (TRENDING_ALGORITHM === "decay") {
         // New decay-based algorithm
         const trendScore = calculateTrendScore(timeline);
@@ -241,10 +259,6 @@ export async function fetchTrendingPlayersWithTimeline(): Promise<
         );
 
         // Calculate legacy momentumPct for backwards compatibility
-        const recentCount = filledTimeline.slice(-3).reduce((a, b) => a + b, 0);
-        const previousCount = filledTimeline
-          .slice(-7, -3)
-          .reduce((a, b) => a + b, 0);
         const momentumPct =
           previousCount > 0
             ? Math.round(((recentCount - previousCount) / previousCount) * 100)
@@ -253,26 +267,14 @@ export async function fetchTrendingPlayersWithTimeline(): Promise<
               : 0;
 
         return {
-          name: playerData.name,
-          normalizedName: playerData.normalizedName,
-          rumorCount: playerData.rumorCount,
-          firstSeen: playerData.firstSeen,
-          lastSeen: playerData.lastSeen,
-          isActive: playerData.lastMentionDate > sevenDaysAgo,
-          timeline,
+          ...basePlayerData,
           phase,
           momentumPct,
-          daysSinceLastMention,
           trendScore,
           velocity,
         };
       } else {
         // Legacy algorithm
-        const recentCount = filledTimeline.slice(-3).reduce((a, b) => a + b, 0);
-        const previousCount = filledTimeline
-          .slice(-7, -3)
-          .reduce((a, b) => a + b, 0);
-
         const { phase, momentumPct } = calculateLegacyMomentumPhase(
           recentCount,
           previousCount,
@@ -280,16 +282,9 @@ export async function fetchTrendingPlayersWithTimeline(): Promise<
         );
 
         return {
-          name: playerData.name,
-          normalizedName: playerData.normalizedName,
-          rumorCount: playerData.rumorCount,
-          firstSeen: playerData.firstSeen,
-          lastSeen: playerData.lastSeen,
-          isActive: playerData.lastMentionDate > sevenDaysAgo,
-          timeline,
+          ...basePlayerData,
           phase,
           momentumPct,
-          daysSinceLastMention,
         };
       }
     },
@@ -298,7 +293,7 @@ export async function fetchTrendingPlayersWithTimeline(): Promise<
   // Sort based on algorithm
   if (TRENDING_ALGORITHM === "decay") {
     // Sort by trend score (primary), then recency (secondary)
-    enhancedPlayers.sort(compareTrendingPlayers);
+    enhancedPlayers.sort(sortByTrendScore);
   } else {
     // Legacy sort: rumor count (primary), recency (secondary)
     enhancedPlayers.sort((a, b) => {

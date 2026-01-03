@@ -157,12 +157,17 @@ describe("Trending Players API", () => {
         (p: { name: string }) => p.name === "Marc Roca",
       );
 
-      expect(iscoPlayer.rumorCount).toBe(5);
-      expect(fekirPlayer.rumorCount).toBe(5);
-      expect(rocaPlayer.rumorCount).toBe(3);
+      // Ensure all players were found
+      expect(iscoPlayer).toBeDefined();
+      expect(fekirPlayer).toBeDefined();
+      expect(rocaPlayer).toBeDefined();
+
+      expect(iscoPlayer!.rumorCount).toBe(5);
+      expect(fekirPlayer!.rumorCount).toBe(5);
+      expect(rocaPlayer!.rumorCount).toBe(3);
 
       // Fekir (oldest mentions) should have lowest trend score
-      expect(fekirPlayer.trendScore).toBeLessThan(iscoPlayer.trendScore);
+      expect(fekirPlayer!.trendScore).toBeLessThan(iscoPlayer!.trendScore);
     });
 
     it("should return empty array when no players found", async () => {

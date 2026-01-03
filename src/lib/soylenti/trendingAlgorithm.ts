@@ -163,34 +163,11 @@ export function determineMomentumPhase(
 }
 
 /**
- * Combined function to calculate all trending metrics for a player.
- * Returns score, velocity, and phase in one call.
+ * Comparator function for sorting players by trending score.
+ * Sort by trend score (descending), then by recency (ascending).
+ * Used with Array.sort() for ranking in the trending list.
  */
-export function calculateTrendingMetrics(
-  timeline: DailyMention[],
-  filledTimeline: number[],
-  daysSinceLastMention: number,
-): {
-  trendScore: number;
-  velocity: number;
-  phase: MomentumPhase;
-} {
-  const trendScore = calculateTrendScore(timeline);
-  const velocity = calculateVelocity(filledTimeline);
-  const phase = determineMomentumPhase(
-    trendScore,
-    velocity,
-    daysSinceLastMention,
-  );
-
-  return { trendScore, velocity, phase };
-}
-
-/**
- * Sort players by trending score (primary) and recency (secondary).
- * Used for ranking in the trending list.
- */
-export function compareTrendingPlayers<
+export function sortByTrendScore<
   T extends { trendScore?: number; daysSinceLastMention: number },
 >(a: T, b: T): number {
   // Primary: trend score (descending)

@@ -4,7 +4,7 @@ import {
   calculateTrendScore,
   calculateVelocity,
   determineMomentumPhase,
-  compareTrendingPlayers,
+  sortByTrendScore,
 } from "@/lib/soylenti/trendingAlgorithm";
 import type { DailyMention } from "@/types/soylenti";
 
@@ -237,13 +237,13 @@ describe("Trending Algorithm", () => {
     });
   });
 
-  describe("compareTrendingPlayers", () => {
+  describe("sortByTrendScore", () => {
     it("should sort by trend score descending", () => {
       const playerA = { trendScore: 3.0, daysSinceLastMention: 2 };
       const playerB = { trendScore: 5.0, daysSinceLastMention: 2 };
 
-      expect(compareTrendingPlayers(playerA, playerB)).toBeGreaterThan(0);
-      expect(compareTrendingPlayers(playerB, playerA)).toBeLessThan(0);
+      expect(sortByTrendScore(playerA, playerB)).toBeGreaterThan(0);
+      expect(sortByTrendScore(playerB, playerA)).toBeLessThan(0);
     });
 
     it("should use recency as tiebreaker when scores are equal", () => {
@@ -251,15 +251,15 @@ describe("Trending Algorithm", () => {
       const playerB = { trendScore: 3.0, daysSinceLastMention: 2 };
 
       // Player B is more recent, so should come first
-      expect(compareTrendingPlayers(playerA, playerB)).toBeGreaterThan(0);
-      expect(compareTrendingPlayers(playerB, playerA)).toBeLessThan(0);
+      expect(sortByTrendScore(playerA, playerB)).toBeGreaterThan(0);
+      expect(sortByTrendScore(playerB, playerA)).toBeLessThan(0);
     });
 
     it("should return 0 for identical players", () => {
       const playerA = { trendScore: 3.0, daysSinceLastMention: 2 };
       const playerB = { trendScore: 3.0, daysSinceLastMention: 2 };
 
-      expect(compareTrendingPlayers(playerA, playerB)).toBe(0);
+      expect(sortByTrendScore(playerA, playerB)).toBe(0);
     });
 
     it("should handle undefined trendScore", () => {
@@ -267,7 +267,7 @@ describe("Trending Algorithm", () => {
       const playerB = { trendScore: 5.0, daysSinceLastMention: 2 };
 
       // Player B should come first (has score)
-      expect(compareTrendingPlayers(playerA, playerB)).toBeGreaterThan(0);
+      expect(sortByTrendScore(playerA, playerB)).toBeGreaterThan(0);
     });
   });
 
