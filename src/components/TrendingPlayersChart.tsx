@@ -131,7 +131,7 @@ function PlayerRow({
       </div>
 
       {/* Player info */}
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0">
         <div className="flex items-center gap-1.5">
           <span className="font-medium text-gray-900 truncate text-sm">
             {player.name}
