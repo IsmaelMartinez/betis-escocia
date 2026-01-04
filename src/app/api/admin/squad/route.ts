@@ -2,12 +2,13 @@ import { createApiHandler } from "@/lib/apiUtils";
 import { squadMemberSchema } from "@/lib/schemas/squad";
 import { POSITION_TO_SHORT } from "@/types/squad";
 import type { Position } from "@/types/squad";
+import { log } from "@/lib/logger";
 
 // GET: List all squad members with joined player data
 export const GET = createApiHandler({
   auth: "admin",
   handler: async (_, { supabase }) => {
-    console.log("Fetching squad members...");
+    log.info("Fetching squad members...");
     const { data, error } = await supabase
       .from("squad_members")
       .select(
@@ -27,11 +28,11 @@ export const GET = createApiHandler({
       .order("shirt_number", { ascending: true });
 
     if (error) {
-      console.error("Error fetching squad members:", error);
+      log.error("Error fetching squad members:", error);
       throw new Error(`Error al obtener plantilla: ${error.message}`);
     }
 
-    console.log(`Fetched ${data?.length || 0} squad members`);
+    log.info(`Fetched ${data?.length || 0} squad members`);
     return { success: true, squadMembers: data };
   },
 });
