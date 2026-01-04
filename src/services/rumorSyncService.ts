@@ -287,7 +287,7 @@ export async function syncRumors(): Promise<SyncResult> {
           ai_analyzed_at: new Date().toISOString(),
           is_duplicate: false,
           is_relevant_to_betis: true,
-          irrelevance_reason: null,
+          irrelevance_reason: analysis.irrelevanceReason || null,
           is_hidden: false,
         };
 
