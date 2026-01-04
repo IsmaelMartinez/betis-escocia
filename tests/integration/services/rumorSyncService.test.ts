@@ -70,7 +70,10 @@ describe("rumorSyncService - Integration Tests", () => {
       insert: mockSupabaseInsert,
     });
 
-    // Support both the reassessment query (select * with eq) and deduplication query (select with gte)
+    // Support multiple query patterns:
+    // 1. Reassessment query: select(*).eq("needs_reassessment", true).limit(10)
+    // 2. Deduplication query: select("id, title, description, content_hash").gte("pub_date", ...)
+    // 3. Current squad query: select("name").eq("is_current_squad", true)
     mockSupabaseSelect.mockImplementation((columns) => {
       if (columns === "*") {
         // Reassessment query: select(*).eq("needs_reassessment", true).limit(10)
@@ -80,6 +83,15 @@ describe("rumorSyncService - Integration Tests", () => {
               data: [], // No items need reassessment by default
               error: null,
             }),
+          }),
+        };
+      }
+      if (columns === "name") {
+        // Current squad query: select("name").eq("is_current_squad", true)
+        return {
+          eq: vi.fn().mockResolvedValue({
+            data: [{ name: "Isco" }, { name: "Lo Celso" }], // Mock squad
+            error: null,
           }),
         };
       }
@@ -392,8 +404,9 @@ describe("rumorSyncService - Integration Tests", () => {
 
       await syncRumors();
 
-      // First call is for reassessment (select *), second is for deduplication
-      expect(mockSupabaseSelect).toHaveBeenCalledTimes(2);
+      // Calls: 1) current squad (name), 2) reassessment (*), 3) deduplication
+      expect(mockSupabaseSelect).toHaveBeenCalledTimes(3);
+      expect(mockSupabaseSelect).toHaveBeenCalledWith("name"); // Current squad query
       expect(mockSupabaseSelect).toHaveBeenCalledWith("*"); // Reassessment query
       expect(mockSupabaseSelect).toHaveBeenCalledWith(
         "id, title, description, content_hash",

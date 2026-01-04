@@ -2,6 +2,7 @@ import axios, { AxiosInstance } from "axios";
 import rateLimit from "axios-rate-limit";
 import type { Match } from "@/types/match";
 import { getYear, isAfter, isBefore, compareDesc, compareAsc } from "date-fns";
+import { log } from "@/lib/logger";
 
 const API_KEY = process.env.FOOTBALL_DATA_API_KEY;
 const BASE_URL =
@@ -30,6 +31,20 @@ function getCurrentFootballSeason(): number {
 }
 
 // Types
+export interface SquadPlayer {
+  id: number;
+  name: string;
+  position: string | null;
+  dateOfBirth: string | null;
+  nationality: string | null;
+}
+
+export interface TeamSquadResponse {
+  id: number;
+  name: string;
+  squad: SquadPlayer[];
+}
+
 export interface StandingEntry {
   position: number;
   team: {
@@ -225,6 +240,28 @@ export class FootballDataService {
     }
 
     return { table: [] };
+  }
+
+  /**
+   * Fetches the current squad for Real Betis from Football-Data.org.
+   * Returns an array of players with their positions.
+   */
+  async fetchRealBetisSquad(): Promise<SquadPlayer[]> {
+    const url = `${BASE_URL}/teams/${REAL_BETIS_TEAM_ID}`;
+
+    try {
+      const response = await this.http.get<TeamSquadResponse>(url);
+      log.business("squad_fetched", {
+        squadSize: response.data.squad?.length || 0,
+      });
+      return response.data.squad || [];
+    } catch (error: unknown) {
+      log.error("Error fetching squad from Football-Data.org", error, {
+        url,
+        teamId: REAL_BETIS_TEAM_ID,
+      });
+      throw error;
+    }
   }
 
   isHomeMatch(match: Match): boolean {

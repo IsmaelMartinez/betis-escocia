@@ -901,6 +901,7 @@ export interface Player {
   aliases: string[]; // Array of alternative normalized names (nicknames, full names)
   known_club?: string | null;
   known_position?: string | null;
+  is_current_squad: boolean; // True if player is currently in the Betis squad
   first_seen_at: string;
   last_seen_at: string;
   rumor_count: number;
@@ -919,6 +920,7 @@ export interface PlayerUpdate {
   aliases?: string[];
   known_club?: string | null;
   known_position?: string | null;
+  is_current_squad?: boolean;
   last_seen_at?: string;
   rumor_count?: number;
 }
