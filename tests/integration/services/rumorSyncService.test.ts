@@ -142,6 +142,7 @@ describe("rumorSyncService - Integration Tests", () => {
         confidence: "high",
         transferDirection: "in",
         players: [],
+        isRelevantToBetis: true,
       });
 
       const result = await syncRumors();
@@ -179,6 +180,7 @@ describe("rumorSyncService - Integration Tests", () => {
         confidence: "high",
         transferDirection: null,
         players: [],
+        isRelevantToBetis: true,
       });
 
       const result = await syncRumors();
@@ -212,6 +214,7 @@ describe("rumorSyncService - Integration Tests", () => {
         confidence: "low",
         transferDirection: null,
         players: [],
+        isRelevantToBetis: true,
       });
 
       const result = await syncRumors();
@@ -248,6 +251,42 @@ describe("rumorSyncService - Integration Tests", () => {
       expect(result.inserted).toBe(0);
       expect(result.analyzed).toBe(0);
       expect(mockAnalyzeRumorCredibility).not.toHaveBeenCalled();
+    });
+
+    it("should skip non-Betis rumors entirely without storing them", async () => {
+      const mockRumors: RumorItem[] = [
+        {
+          title: "Sevilla FC ficha a nuevo delantero",
+          link: "https://example.com/1",
+          pubDate: new Date(),
+          source: "Google News (Fichajes)",
+          description: "Noticia sobre el Sevilla FC",
+        },
+      ];
+
+      mockFetchAllRumors.mockResolvedValue(mockRumors);
+      mockCheckDuplicate.mockReturnValue({
+        contentHash: "abc123",
+        isDuplicate: false,
+      });
+      mockAnalyzeRumorCredibility.mockResolvedValue({
+        isTransferRumor: true,
+        probability: 80,
+        reasoning: "Fichaje confirmado pero para el Sevilla FC",
+        confidence: "high",
+        transferDirection: "in",
+        players: [],
+        isRelevantToBetis: false,
+        irrelevanceReason: "Noticia sobre el Sevilla FC, no sobre el Betis",
+      });
+
+      const result = await syncRumors();
+
+      expect(result.fetched).toBe(1);
+      expect(result.analyzed).toBe(1);
+      expect(result.skippedNonBetis).toBe(1);
+      expect(result.inserted).toBe(0);
+      expect(mockSupabaseInsert).not.toHaveBeenCalled();
     });
 
     // Increased timeout due to rate limiting delays (4s per API call)
@@ -290,6 +329,7 @@ describe("rumorSyncService - Integration Tests", () => {
           confidence: "high",
           transferDirection: "in",
           players: [],
+          isRelevantToBetis: true,
         })
         .mockResolvedValueOnce({
           isTransferRumor: false,
@@ -298,6 +338,7 @@ describe("rumorSyncService - Integration Tests", () => {
           confidence: "high",
           transferDirection: null,
           players: [],
+          isRelevantToBetis: true,
         })
         .mockResolvedValueOnce({
           isTransferRumor: null,
@@ -306,6 +347,7 @@ describe("rumorSyncService - Integration Tests", () => {
           confidence: "low",
           transferDirection: null,
           players: [],
+          isRelevantToBetis: true,
         });
 
       const result = await syncRumors();
@@ -341,6 +383,7 @@ describe("rumorSyncService - Integration Tests", () => {
         confidence: "medium",
         transferDirection: "in",
         players: [],
+        isRelevantToBetis: true,
       });
 
       mockSupabaseInsert.mockReturnValue({
@@ -381,6 +424,7 @@ describe("rumorSyncService - Integration Tests", () => {
         confidence: "medium",
         transferDirection: "out",
         players: [],
+        isRelevantToBetis: true,
       });
 
       mockSupabaseInsert.mockReturnValue({
@@ -457,6 +501,7 @@ describe("rumorSyncService - Integration Tests", () => {
           confidence: "medium",
           transferDirection: "in",
           players: [],
+          isRelevantToBetis: true,
         })
         .mockRejectedValueOnce(new Error("AI service error"));
 
@@ -525,6 +570,7 @@ describe("rumorSyncService - Integration Tests", () => {
           confidence: "medium",
           transferDirection: "in",
           players: [],
+          isRelevantToBetis: true,
         })
         .mockRejectedValueOnce(new Error("Failed"))
         .mockResolvedValueOnce({
@@ -534,6 +580,7 @@ describe("rumorSyncService - Integration Tests", () => {
           confidence: "high",
           transferDirection: null,
           players: [],
+          isRelevantToBetis: true,
         });
 
       const result = await syncRumors();
@@ -567,6 +614,7 @@ describe("rumorSyncService - Integration Tests", () => {
         confidence: "high",
         transferDirection: "in",
         players: [],
+        isRelevantToBetis: true,
       });
 
       await syncRumors();
@@ -618,6 +666,7 @@ describe("rumorSyncService - Integration Tests", () => {
           confidence: "high",
           transferDirection: "in",
           players: [],
+          isRelevantToBetis: true,
         })
         .mockResolvedValueOnce({
           isTransferRumor: false,
@@ -626,6 +675,7 @@ describe("rumorSyncService - Integration Tests", () => {
           confidence: "high",
           transferDirection: null,
           players: [],
+          isRelevantToBetis: true,
         });
 
       await syncRumors();

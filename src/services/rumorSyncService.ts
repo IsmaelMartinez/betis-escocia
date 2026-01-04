@@ -34,7 +34,7 @@ export interface SyncResult {
   transferRumors: number; // Items identified as transfer rumors (ai_probability > 0)
   regularNews: number; // Regular news items (ai_probability = 0)
   notAnalyzed: number; // Items that couldn't be analyzed (ai_probability = null)
-  autoHidden: number; // Items auto-hidden because not relevant to Betis
+  skippedNonBetis: number; // Items skipped because not relevant to Betis
   analyzed: number;
   inserted: number;
   playersProcessed: number; // Phase 2A: Players extracted and linked
@@ -50,7 +50,7 @@ export async function syncRumors(): Promise<SyncResult> {
     transferRumors: 0,
     regularNews: 0,
     notAnalyzed: 0,
-    autoHidden: 0,
+    skippedNonBetis: 0,
     analyzed: 0,
     inserted: 0,
     playersProcessed: 0,
@@ -262,17 +262,18 @@ export async function syncRumors(): Promise<SyncResult> {
           });
         }
 
-        // Check relevance to Betis - auto-hide if not relevant
+        // Check relevance to Betis - skip if not relevant
         const isRelevant = analysis.isRelevantToBetis;
         if (!isRelevant) {
-          result.autoHidden++;
-          log.business("news_auto_hidden", {
+          result.skippedNonBetis++;
+          log.business("news_skipped_non_betis", {
             title: rumor.title,
             reason: analysis.irrelevanceReason,
           });
+          continue; // Skip non-Betis rumors entirely
         }
 
-        // Insert into database (all items: transfer rumors AND regular news)
+        // Insert into database (only Betis-relevant items)
         // Note: transfer_direction is no longer set by AI - can be inferred from squad
         const newsInsert: BetisNewsInsert = {
           title: rumor.title,
@@ -285,10 +286,9 @@ export async function syncRumors(): Promise<SyncResult> {
           ai_analysis: analysis.reasoning,
           ai_analyzed_at: new Date().toISOString(),
           is_duplicate: false,
-          // Relevance fields - auto-hide irrelevant news
-          is_relevant_to_betis: isRelevant,
-          irrelevance_reason: analysis.irrelevanceReason || null,
-          is_hidden: !isRelevant,
+          is_relevant_to_betis: true,
+          irrelevance_reason: null,
+          is_hidden: false,
         };
 
         const { data: insertedNews, error } = await supabase
@@ -316,9 +316,7 @@ export async function syncRumors(): Promise<SyncResult> {
 
           // Phase 2A: Process extracted players (medium or high confidence)
           // Only extract players from transfer rumors (ai_probability > 0)
-          // Skip player extraction for regular news and irrelevant news
           const shouldProcessPlayers =
-            isRelevant &&
             aiProbability !== null &&
             aiProbability > 0 &&
             analysis.players &&
