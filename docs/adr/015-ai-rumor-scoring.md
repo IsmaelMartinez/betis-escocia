@@ -153,7 +153,7 @@ Multi-layer approach to prevent duplicate rumors:
 
 ### RSS Feed Sources
 
-Six feeds provide rumor content (fetched in parallel):
+Three feeds provide rumor content (fetched in parallel):
 
 **Traditional RSS:**
 
@@ -161,11 +161,12 @@ Six feeds provide rumor content (fetched in parallel):
 - Google News (general): `Real+Betis` - comprehensive coverage
 - BetisWeb: `betisweb.com/feed/` - dedicated Betis source, high credibility
 
-**X/Twitter (via RSSHub bridge):**
+**X/Twitter (Removed January 2026):**
 
-- `@RealBetis` - Official club account for announcements and signings
-- `@FabrizioRomano` - Top transfer specialist ("Here we go")
-- `@MatteMoretto` - Tier 1 La Liga transfer journalist
+Previously used RSSHub bridge for @RealBetis, @FabrizioRomano, and @MatteMoretto feeds.
+Removed because the public rsshub.app instance no longer supports Twitter/X feeds due to
+API restrictions. Self-hosted RSSHub with authentication would be needed to restore this.
+See: https://github.com/zedeus/nitter/issues/1158
 
 ## Alternatives Considered
 

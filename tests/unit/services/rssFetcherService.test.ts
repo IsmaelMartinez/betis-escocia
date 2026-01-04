@@ -28,7 +28,7 @@ import {
   _testExports,
 } from "@/services/rssFetcherService";
 
-const TOTAL_FEEDS = _testExports.FEED_CONFIGS.length; // 6 feeds
+const TOTAL_FEEDS = _testExports.FEED_CONFIGS.length; // 3 feeds (Twitter feeds removed)
 
 // Helper to create mock responses for all feeds
 const mockAllFeedsEmpty = () => {
@@ -107,10 +107,6 @@ describe("rssFetcherService", () => {
             ),
           ],
         },
-        // X feeds with empty items for this test
-        { items: [] },
-        { items: [] },
-        { items: [] },
       ];
 
       feeds.forEach((feed) => mockParseURL.mockResolvedValueOnce(feed));
@@ -136,14 +132,11 @@ describe("rssFetcherService", () => {
       const rumors = await fetchAllRumors();
 
       const sources = rumors.map((r) => r.source);
-      // Traditional RSS sources
+      // Traditional RSS sources (X/Twitter feeds removed due to RSSHub unavailability)
       expect(sources).toContain("Google News (Fichajes)");
       expect(sources).toContain("Google News (General)");
       expect(sources).toContain("BetisWeb");
-      // X/Twitter sources via RSSHub
-      expect(sources).toContain("X: @RealBetis");
-      expect(sources).toContain("X: @FabrizioRomano");
-      expect(sources).toContain("X: @MatteMoretto");
+      expect(sources).toHaveLength(3);
     });
 
     it("should handle missing title with default value", async () => {
@@ -351,8 +344,8 @@ describe("rssFetcherService", () => {
       await fetchAllRumors();
       const duration = Date.now() - startTime;
 
-      // If running in parallel, total time should be ~50ms, not ~300ms (6 * 50ms)
-      expect(duration).toBeLessThan(150);
+      // If running in parallel, total time should be ~50ms, not ~150ms (3 * 50ms)
+      expect(duration).toBeLessThan(100);
     });
 
     it("should sort rumors by pubDate in descending order", async () => {
@@ -397,16 +390,16 @@ describe("rssFetcherService", () => {
     it("should have correct feed configuration", () => {
       const configs = _testExports.FEED_CONFIGS;
 
-      expect(configs).toHaveLength(6);
+      // Only RSS feeds remain (X/Twitter feeds via RSSHub removed)
+      expect(configs).toHaveLength(3);
 
       // Verify RSS feeds
       const rssFeeds = configs.filter((c) => c.type === "rss");
       expect(rssFeeds).toHaveLength(3);
 
-      // Verify RSSHub feeds
+      // No RSSHub feeds currently configured (Twitter feeds removed)
       const rsshubFeeds = configs.filter((c) => c.type === "rsshub");
-      expect(rsshubFeeds).toHaveLength(3);
-      expect(rsshubFeeds.every((f) => f.url.includes("rsshub.app"))).toBe(true);
+      expect(rsshubFeeds).toHaveLength(0);
     });
   });
 });

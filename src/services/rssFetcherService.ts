@@ -5,13 +5,7 @@ export interface RumorItem {
   title: string;
   link: string;
   pubDate: Date;
-  source:
-    | "Google News (Fichajes)"
-    | "Google News (General)"
-    | "BetisWeb"
-    | "X: @RealBetis"
-    | "X: @FabrizioRomano"
-    | "X: @MatteMoretto";
+  source: "Google News (Fichajes)" | "Google News (General)" | "BetisWeb";
   description?: string;
 }
 
@@ -39,22 +33,12 @@ const FEED_CONFIGS: FeedConfig[] = [
     source: "BetisWeb",
     type: "rss",
   },
-  // X/Twitter feeds via RSSHub bridge (https://docs.rsshub.app/routes/social-media#twitter)
-  {
-    url: "https://rsshub.app/twitter/user/RealBetis",
-    source: "X: @RealBetis",
-    type: "rsshub",
-  },
-  {
-    url: "https://rsshub.app/twitter/user/FabrizioRomano",
-    source: "X: @FabrizioRomano",
-    type: "rsshub",
-  },
-  {
-    url: "https://rsshub.app/twitter/user/MatteMoretto",
-    source: "X: @MatteMoretto",
-    type: "rsshub",
-  },
+  // NOTE: X/Twitter feeds via RSSHub removed (January 2026)
+  // The public rsshub.app instance no longer supports Twitter feeds due to
+  // Twitter/X API restrictions. Self-hosted RSSHub with authentication would
+  // be needed to restore this functionality. See:
+  // - https://docs.rsshub.app/routes/social-media#twitter
+  // - https://github.com/zedeus/nitter/issues/1158
 ];
 
 const parser = new Parser({
