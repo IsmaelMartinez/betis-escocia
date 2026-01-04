@@ -30,7 +30,7 @@ export const GET = createApiHandler({
           aliases,
           rumor_count
         )
-      `
+      `,
       )
       .eq("id", id)
       .single();
@@ -61,7 +61,8 @@ export const PATCH = createApiHandler({
     const updateData: Record<string, unknown> = {};
 
     if (data.externalId !== undefined) updateData.external_id = data.externalId;
-    if (data.shirtNumber !== undefined) updateData.shirt_number = data.shirtNumber;
+    if (data.shirtNumber !== undefined)
+      updateData.shirt_number = data.shirtNumber;
     if (data.position !== undefined) {
       updateData.position = data.position;
       updateData.position_short = data.position
@@ -71,14 +72,19 @@ export const PATCH = createApiHandler({
     if (data.positionShort !== undefined && data.position === undefined) {
       updateData.position_short = data.positionShort;
     }
-    if (data.dateOfBirth !== undefined) updateData.date_of_birth = data.dateOfBirth;
-    if (data.nationality !== undefined) updateData.nationality = data.nationality;
+    if (data.dateOfBirth !== undefined)
+      updateData.date_of_birth = data.dateOfBirth;
+    if (data.nationality !== undefined)
+      updateData.nationality = data.nationality;
     if (data.photoUrl !== undefined) updateData.photo_url = data.photoUrl;
     if (data.isCaptain !== undefined) updateData.is_captain = data.isCaptain;
-    if (data.isViceCaptain !== undefined) updateData.is_vice_captain = data.isViceCaptain;
-    if (data.squadStatus !== undefined) updateData.squad_status = data.squadStatus;
+    if (data.isViceCaptain !== undefined)
+      updateData.is_vice_captain = data.isViceCaptain;
+    if (data.squadStatus !== undefined)
+      updateData.squad_status = data.squadStatus;
     if (data.joinedAt !== undefined) updateData.joined_at = data.joinedAt;
-    if (data.contractUntil !== undefined) updateData.contract_until = data.contractUntil;
+    if (data.contractUntil !== undefined)
+      updateData.contract_until = data.contractUntil;
 
     // Add updated_at timestamp
     updateData.updated_at = new Date().toISOString();
@@ -97,12 +103,14 @@ export const PATCH = createApiHandler({
           display_name,
           aliases
         )
-      `
+      `,
       )
       .single();
 
     if (error) {
-      throw new Error(`Error al actualizar miembro de plantilla: ${error.message}`);
+      throw new Error(
+        `Error al actualizar miembro de plantilla: ${error.message}`,
+      );
     }
 
     return { success: true, squadMember };
@@ -133,7 +141,9 @@ export const DELETE = createApiHandler({
       .eq("id", id);
 
     if (deleteError) {
-      throw new Error(`Error al eliminar miembro de plantilla: ${deleteError.message}`);
+      throw new Error(
+        `Error al eliminar miembro de plantilla: ${deleteError.message}`,
+      );
     }
 
     // Update the players table to mark as not current squad

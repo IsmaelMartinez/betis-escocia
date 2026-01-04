@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import clsx from "clsx";
 import { Users, Shield, GitMerge, Layout, RefreshCw } from "lucide-react";
 import Card, { CardHeader, CardBody } from "@/components/ui/Card";
@@ -27,12 +27,29 @@ export default function PlayersTab({ isLoading = false }: PlayersTabProps) {
   const [subView, setSubView] = useState<PlayersSubView>("all-players");
   const [syncing, setSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
-  const [editingPlayer, setEditingPlayer] = useState<PlayerWithDetails | null>(null);
+  const [editingPlayer, setEditingPlayer] = useState<PlayerWithDetails | null>(
+    null,
+  );
   const [refreshKey, setRefreshKey] = useState(0);
+  const syncTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (syncTimeoutRef.current) {
+        clearTimeout(syncTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleSyncSquad = useCallback(async () => {
     setSyncing(true);
     setSyncMessage(null);
+
+    // Clear any existing timeout
+    if (syncTimeoutRef.current) {
+      clearTimeout(syncTimeoutRef.current);
+    }
 
     try {
       const response = await fetch("/api/admin/squad/sync", {
@@ -54,7 +71,7 @@ export default function PlayersTab({ isLoading = false }: PlayersTabProps) {
     } finally {
       setSyncing(false);
       // Clear message after 5 seconds
-      setTimeout(() => setSyncMessage(null), 5000);
+      syncTimeoutRef.current = setTimeout(() => setSyncMessage(null), 5000);
     }
   }, []);
 
@@ -73,7 +90,7 @@ export default function PlayersTab({ isLoading = false }: PlayersTabProps) {
               "inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors",
               subView === "all-players"
                 ? "bg-betis-verde text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200",
             )}
           >
             <Users className="h-4 w-4" />
@@ -85,7 +102,7 @@ export default function PlayersTab({ isLoading = false }: PlayersTabProps) {
               "inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors",
               subView === "squad"
                 ? "bg-betis-verde text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200",
             )}
           >
             <Shield className="h-4 w-4" />
@@ -97,7 +114,7 @@ export default function PlayersTab({ isLoading = false }: PlayersTabProps) {
               "inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors",
               subView === "merge"
                 ? "bg-betis-verde text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200",
             )}
           >
             <GitMerge className="h-4 w-4" />
@@ -109,7 +126,7 @@ export default function PlayersTab({ isLoading = false }: PlayersTabProps) {
               "inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors",
               subView === "starting-xi"
                 ? "bg-betis-verde text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200",
             )}
           >
             <Layout className="h-4 w-4" />
@@ -122,7 +139,11 @@ export default function PlayersTab({ isLoading = false }: PlayersTabProps) {
             onClick={handleSyncSquad}
             variant="secondary"
             size="sm"
-            leftIcon={<RefreshCw className={clsx("h-4 w-4", syncing && "animate-spin")} />}
+            leftIcon={
+              <RefreshCw
+                className={clsx("h-4 w-4", syncing && "animate-spin")}
+              />
+            }
             isLoading={syncing}
           >
             Sincronizar Plantilla
@@ -137,7 +158,7 @@ export default function PlayersTab({ isLoading = false }: PlayersTabProps) {
             "p-3 rounded-lg text-sm",
             syncMessage.includes("Error")
               ? "bg-red-100 text-red-700"
-              : "bg-green-100 text-green-700"
+              : "bg-green-100 text-green-700",
           )}
         >
           {syncMessage}
@@ -148,9 +169,12 @@ export default function PlayersTab({ isLoading = false }: PlayersTabProps) {
       {subView === "all-players" && (
         <Card>
           <CardHeader>
-            <h2 className="text-xl font-bold text-betis-black">Todos los Jugadores</h2>
+            <h2 className="text-xl font-bold text-betis-black">
+              Todos los Jugadores
+            </h2>
             <p className="text-sm text-gray-500 mt-1">
-              Lista de todos los jugadores en la base de datos con sus alias y menciones
+              Lista de todos los jugadores en la base de datos con sus alias y
+              menciones
             </p>
           </CardHeader>
           <CardBody>
@@ -173,9 +197,12 @@ export default function PlayersTab({ isLoading = false }: PlayersTabProps) {
       {subView === "squad" && (
         <Card>
           <CardHeader>
-            <h2 className="text-xl font-bold text-betis-black">Plantilla Actual</h2>
+            <h2 className="text-xl font-bold text-betis-black">
+              Plantilla Actual
+            </h2>
             <p className="text-sm text-gray-500 mt-1">
-              Gestiona la plantilla actual del Real Betis con datos de posición, nacionalidad y más
+              Gestiona la plantilla actual del Real Betis con datos de posición,
+              nacionalidad y más
             </p>
           </CardHeader>
           <CardBody>
@@ -187,13 +214,18 @@ export default function PlayersTab({ isLoading = false }: PlayersTabProps) {
       {subView === "merge" && (
         <Card>
           <CardHeader>
-            <h2 className="text-xl font-bold text-betis-black">Fusionar Jugadores</h2>
+            <h2 className="text-xl font-bold text-betis-black">
+              Fusionar Jugadores
+            </h2>
             <p className="text-sm text-gray-500 mt-1">
-              Combina jugadores duplicados manteniendo todas sus noticias y alias
+              Combina jugadores duplicados manteniendo todas sus noticias y
+              alias
             </p>
           </CardHeader>
           <CardBody>
-            <PlayerMergeUI onMergeComplete={() => setRefreshKey((k) => k + 1)} />
+            <PlayerMergeUI
+              onMergeComplete={() => setRefreshKey((k) => k + 1)}
+            />
           </CardBody>
         </Card>
       )}

@@ -65,11 +65,17 @@ export const POST = createApiHandler({
         .select("id, name, normalized_name, aliases");
 
       // Build lookup maps
-      const playersByNormalizedName = new Map<string, { id: number; name: string }>();
+      const playersByNormalizedName = new Map<
+        string,
+        { id: number; name: string }
+      >();
       const playersByAlias = new Map<string, { id: number; name: string }>();
 
       for (const player of existingPlayers || []) {
-        playersByNormalizedName.set(player.normalized_name, { id: player.id, name: player.name });
+        playersByNormalizedName.set(player.normalized_name, {
+          id: player.id,
+          name: player.name,
+        });
         if (player.aliases) {
           for (const alias of player.aliases) {
             playersByAlias.set(alias, { id: player.id, name: player.name });
@@ -124,15 +130,22 @@ export const POST = createApiHandler({
               .single();
 
             if (insertError || !newPlayer) {
-              log.error("Error creating player", new Error(insertError?.message || "Unknown error"), {
-                playerName: apiPlayer.name,
-              });
+              log.error(
+                "Error creating player",
+                new Error(insertError?.message || "Unknown error"),
+                {
+                  playerName: apiPlayer.name,
+                },
+              );
               result.errors++;
               continue;
             }
 
             playerId = newPlayer.id;
-            playersByNormalizedName.set(normalizedName, { id: playerId, name: apiPlayer.name });
+            playersByNormalizedName.set(normalizedName, {
+              id: playerId,
+              name: apiPlayer.name,
+            });
           }
 
           processedPlayerIds.add(playerId);
@@ -140,7 +153,9 @@ export const POST = createApiHandler({
           // Check if already in squad
           const existingSquadMemberId =
             currentSquadByPlayerId.get(playerId) ||
-            (apiPlayer.id ? currentSquadByExternalId.get(apiPlayer.id) : undefined);
+            (apiPlayer.id
+              ? currentSquadByExternalId.get(apiPlayer.id)
+              : undefined);
 
           if (existingSquadMemberId) {
             // Update existing squad member
@@ -158,33 +173,43 @@ export const POST = createApiHandler({
               .eq("id", existingSquadMemberId);
 
             if (updateError) {
-              log.error("Error updating squad member", new Error(updateError.message), {
-                playerId,
-              });
+              log.error(
+                "Error updating squad member",
+                new Error(updateError.message),
+                {
+                  playerId,
+                },
+              );
               result.errors++;
             } else {
               result.updated++;
             }
           } else {
             // Insert new squad member
-            const { error: insertError } = await supabase.from("squad_members").insert({
-              player_id: playerId,
-              external_id: apiPlayer.id,
-              position,
-              position_short: positionShort,
-              date_of_birth: apiPlayer.dateOfBirth,
-              nationality: apiPlayer.nationality,
-              squad_status: "active",
-            });
+            const { error: insertError } = await supabase
+              .from("squad_members")
+              .insert({
+                player_id: playerId,
+                external_id: apiPlayer.id,
+                position,
+                position_short: positionShort,
+                date_of_birth: apiPlayer.dateOfBirth,
+                nationality: apiPlayer.nationality,
+                squad_status: "active",
+              });
 
             if (insertError) {
               // Check if it's a unique constraint violation
               if (insertError.code === "23505") {
                 result.updated++; // Already exists, count as updated
               } else {
-                log.error("Error inserting squad member", new Error(insertError.message), {
-                  playerId,
-                });
+                log.error(
+                  "Error inserting squad member",
+                  new Error(insertError.message),
+                  {
+                    playerId,
+                  },
+                );
                 result.errors++;
               }
             } else {
@@ -238,7 +263,7 @@ export const POST = createApiHandler({
     } catch (error) {
       log.error("Squad sync failed", error);
       throw new Error(
-        `Error al sincronizar plantilla: ${error instanceof Error ? error.message : "Unknown error"}`
+        `Error al sincronizar plantilla: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
     }
   },

@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Search, ArrowRight, Check, X, AlertTriangle, Newspaper } from "lucide-react";
+import {
+  Search,
+  ArrowRight,
+  Check,
+  X,
+  AlertTriangle,
+  Newspaper,
+} from "lucide-react";
 import Button from "@/components/ui/Button";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import clsx from "clsx";
@@ -16,12 +23,17 @@ interface PlayerMergeUIProps {
 }
 
 export default function PlayerMergeUI({ onMergeComplete }: PlayerMergeUIProps) {
-  const [primaryPlayer, setPrimaryPlayer] = useState<PlayerWithDetails | null>(null);
-  const [duplicatePlayer, setDuplicatePlayer] = useState<PlayerWithDetails | null>(null);
+  const [primaryPlayer, setPrimaryPlayer] = useState<PlayerWithDetails | null>(
+    null,
+  );
+  const [duplicatePlayer, setDuplicatePlayer] =
+    useState<PlayerWithDetails | null>(null);
   const [primarySearch, setPrimarySearch] = useState("");
   const [duplicateSearch, setDuplicateSearch] = useState("");
   const [primaryResults, setPrimaryResults] = useState<PlayerWithDetails[]>([]);
-  const [duplicateResults, setDuplicateResults] = useState<PlayerWithDetails[]>([]);
+  const [duplicateResults, setDuplicateResults] = useState<PlayerWithDetails[]>(
+    [],
+  );
   const [searchingPrimary, setSearchingPrimary] = useState(false);
   const [searchingDuplicate, setSearchingDuplicate] = useState(false);
   const [merging, setMerging] = useState(false);
@@ -68,7 +80,7 @@ export default function PlayerMergeUI({ onMergeComplete }: PlayerMergeUIProps) {
         }
       }
     },
-    []
+    [],
   );
 
   // Debounce search
@@ -133,7 +145,7 @@ export default function PlayerMergeUI({ onMergeComplete }: PlayerMergeUIProps) {
 
       if (result.success) {
         setSuccessMessage(
-          `Jugadores fusionados correctamente. ${result.newsTransferred || 0} noticias transferidas.`
+          `Jugadores fusionados correctamente. ${result.newsTransferred || 0} noticias transferidas.`,
         );
         setPrimaryPlayer(null);
         setDuplicatePlayer(null);
@@ -161,7 +173,7 @@ export default function PlayerMergeUI({ onMergeComplete }: PlayerMergeUIProps) {
 
   const renderPlayerCard = (
     player: PlayerWithDetails | null,
-    type: "primary" | "duplicate"
+    type: "primary" | "duplicate",
   ) => {
     if (!player) return null;
 
@@ -169,21 +181,27 @@ export default function PlayerMergeUI({ onMergeComplete }: PlayerMergeUIProps) {
       <div
         className={clsx(
           "border rounded-lg p-4",
-          type === "primary" ? "border-betis-verde bg-betis-verde-pale" : "border-orange-400 bg-orange-50"
+          type === "primary"
+            ? "border-betis-verde bg-betis-verde-pale"
+            : "border-orange-400 bg-orange-50",
         )}
       >
         <div className="flex items-center justify-between mb-2">
           <span
             className={clsx(
               "text-xs font-medium px-2 py-0.5 rounded",
-              type === "primary" ? "bg-betis-verde text-white" : "bg-orange-400 text-white"
+              type === "primary"
+                ? "bg-betis-verde text-white"
+                : "bg-orange-400 text-white",
             )}
           >
             {type === "primary" ? "Jugador Principal" : "Jugador Duplicado"}
           </span>
           <button
             onClick={() =>
-              type === "primary" ? setPrimaryPlayer(null) : setDuplicatePlayer(null)
+              type === "primary"
+                ? setPrimaryPlayer(null)
+                : setDuplicatePlayer(null)
             }
             className="text-gray-400 hover:text-gray-600"
             aria-label="Eliminar selección"
@@ -217,7 +235,7 @@ export default function PlayerMergeUI({ onMergeComplete }: PlayerMergeUIProps) {
     results: PlayerWithDetails[],
     isSearching: boolean,
     onSelect: (p: PlayerWithDetails) => void,
-    selectedPlayer: PlayerWithDetails | null
+    selectedPlayer: PlayerWithDetails | null,
   ) => {
     return (
       <div className="flex-1 space-y-4">
@@ -255,7 +273,8 @@ export default function PlayerMergeUI({ onMergeComplete }: PlayerMergeUIProps) {
                 {results.map((player) => {
                   const isSelected =
                     (type === "primary" && primaryPlayer?.id === player.id) ||
-                    (type === "duplicate" && duplicatePlayer?.id === player.id) ||
+                    (type === "duplicate" &&
+                      duplicatePlayer?.id === player.id) ||
                     (type === "duplicate" && primaryPlayer?.id === player.id);
 
                   return (
@@ -265,7 +284,8 @@ export default function PlayerMergeUI({ onMergeComplete }: PlayerMergeUIProps) {
                       disabled={isSelected}
                       className={clsx(
                         "w-full text-left px-3 py-2 hover:bg-gray-50",
-                        isSelected && "bg-gray-100 opacity-50 cursor-not-allowed"
+                        isSelected &&
+                          "bg-gray-100 opacity-50 cursor-not-allowed",
                       )}
                     >
                       <div className="font-medium text-gray-900">
@@ -301,11 +321,14 @@ export default function PlayerMergeUI({ onMergeComplete }: PlayerMergeUIProps) {
         <div className="flex items-start gap-3">
           <AlertTriangle className="h-5 w-5 text-blue-500 mt-0.5" />
           <div>
-            <h4 className="font-medium text-blue-700">¿Cómo funciona la fusión?</h4>
+            <h4 className="font-medium text-blue-700">
+              ¿Cómo funciona la fusión?
+            </h4>
             <p className="text-sm text-blue-600 mt-1">
-              Al fusionar, todas las noticias del jugador duplicado se transfieren al jugador
-              principal. El nombre normalizado del duplicado se añade como alias al principal.
-              El jugador duplicado se elimina de la base de datos.
+              Al fusionar, todas las noticias del jugador duplicado se
+              transfieren al jugador principal. El nombre normalizado del
+              duplicado se añade como alias al principal. El jugador duplicado
+              se elimina de la base de datos.
             </p>
           </div>
         </div>
@@ -334,7 +357,7 @@ export default function PlayerMergeUI({ onMergeComplete }: PlayerMergeUIProps) {
           primaryResults,
           searchingPrimary,
           handleSelectPrimary,
-          primaryPlayer
+          primaryPlayer,
         )}
 
         {/* Arrow between panels */}
@@ -351,14 +374,16 @@ export default function PlayerMergeUI({ onMergeComplete }: PlayerMergeUIProps) {
           duplicateResults,
           searchingDuplicate,
           handleSelectDuplicate,
-          duplicatePlayer
+          duplicatePlayer,
         )}
       </div>
 
       {/* Preview and action */}
       {primaryPlayer && duplicatePlayer && (
         <div className="border-t pt-6">
-          <h4 className="font-medium text-gray-700 mb-4">Vista previa de la fusión</h4>
+          <h4 className="font-medium text-gray-700 mb-4">
+            Vista previa de la fusión
+          </h4>
 
           <div className="bg-gray-50 rounded-lg p-4 space-y-3">
             <div className="flex items-center gap-2">
@@ -368,7 +393,9 @@ export default function PlayerMergeUI({ onMergeComplete }: PlayerMergeUIProps) {
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Noticias combinadas:</span>
+              <span className="text-sm text-gray-500">
+                Noticias combinadas:
+              </span>
               <span className="font-medium">
                 {primaryPlayer.rumor_count + duplicatePlayer.rumor_count}
               </span>

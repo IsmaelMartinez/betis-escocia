@@ -1,7 +1,14 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Search, Edit2, ChevronLeft, ChevronRight, Shield, Newspaper } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import {
+  Search,
+  Edit2,
+  ChevronLeft,
+  ChevronRight,
+  Shield,
+  Newspaper,
+} from "lucide-react";
 import Button from "@/components/ui/Button";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import clsx from "clsx";
@@ -45,13 +52,22 @@ export default function PlayersList({ onEditPlayer }: PlayersListProps) {
     return () => clearTimeout(timer);
   }, [search]);
 
-  const fetchPlayers = useCallback(async () => {
+  // Track previous filter values to detect changes and reset page
+  const prevFiltersRef = useRef({
+    debouncedSearch,
+    currentSquadOnly,
+    withRumorsOnly,
+  });
+
+  const fetchPlayers = useCallback(async (pageOverride?: number) => {
     setLoading(true);
     setError(null);
 
+    const pageToFetch = pageOverride ?? pagination.page;
+
     try {
       const params = new URLSearchParams();
-      params.set("page", pagination.page.toString());
+      params.set("page", pageToFetch.toString());
       params.set("limit", pagination.limit.toString());
 
       if (debouncedSearch) {
@@ -71,6 +87,7 @@ export default function PlayersList({ onEditPlayer }: PlayersListProps) {
         setPlayers(result.players);
         setPagination((prev) => ({
           ...prev,
+          page: pageToFetch,
           total: result.pagination.total,
           totalPages: result.pagination.totalPages,
         }));
@@ -84,17 +101,22 @@ export default function PlayersList({ onEditPlayer }: PlayersListProps) {
     }
   }, [debouncedSearch, currentSquadOnly, withRumorsOnly, pagination.page, pagination.limit]);
 
+  // Single effect to handle fetching with filter change detection
   useEffect(() => {
-    fetchPlayers();
-  }, [fetchPlayers]);
+    const filtersChanged =
+      prevFiltersRef.current.debouncedSearch !== debouncedSearch ||
+      prevFiltersRef.current.currentSquadOnly !== currentSquadOnly ||
+      prevFiltersRef.current.withRumorsOnly !== withRumorsOnly;
 
-  // Reset to page 1 when filters change
-  useEffect(() => {
-    setPagination((prev) => ({ ...prev, page: 1 }));
-  }, [debouncedSearch, currentSquadOnly, withRumorsOnly]);
+    // Update ref for next comparison
+    prevFiltersRef.current = { debouncedSearch, currentSquadOnly, withRumorsOnly };
+
+    // Reset to page 1 when filters change, otherwise use current page
+    fetchPlayers(filtersChanged ? 1 : undefined);
+  }, [debouncedSearch, currentSquadOnly, withRumorsOnly, fetchPlayers]);
 
   const handlePageChange = (newPage: number) => {
-    setPagination((prev) => ({ ...prev, page: newPage }));
+    fetchPlayers(newPage);
   };
 
   if (loading && players.length === 0) {
@@ -105,7 +127,12 @@ export default function PlayersList({ onEditPlayer }: PlayersListProps) {
     return (
       <div className="text-center py-8 text-red-600">
         <p>{error}</p>
-        <Button variant="outline" size="sm" onClick={fetchPlayers} className="mt-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => fetchPlayers()}
+          className="mt-4"
+        >
           Reintentar
         </Button>
       </div>
@@ -136,7 +163,9 @@ export default function PlayersList({ onEditPlayer }: PlayersListProps) {
               className="sr-only peer"
             />
             <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-betis-verde/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-betis-verde"></div>
-            <span className="ms-2 text-sm font-medium text-gray-700">Solo plantilla</span>
+            <span className="ms-2 text-sm font-medium text-gray-700">
+              Solo plantilla
+            </span>
           </label>
 
           <label className="inline-flex items-center cursor-pointer">
@@ -147,7 +176,9 @@ export default function PlayersList({ onEditPlayer }: PlayersListProps) {
               className="sr-only peer"
             />
             <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-betis-verde/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-betis-verde"></div>
-            <span className="ms-2 text-sm font-medium text-gray-700">Con noticias</span>
+            <span className="ms-2 text-sm font-medium text-gray-700">
+              Con noticias
+            </span>
           </label>
         </div>
       </div>
@@ -187,30 +218,37 @@ export default function PlayersList({ onEditPlayer }: PlayersListProps) {
                     <div className="font-medium text-gray-900">
                       {player.display_name || player.name}
                     </div>
-                    {player.display_name && player.display_name !== player.name && (
-                      <div className="text-sm text-gray-500">{player.name}</div>
-                    )}
+                    {player.display_name &&
+                      player.display_name !== player.name && (
+                        <div className="text-sm text-gray-500">
+                          {player.name}
+                        </div>
+                      )}
                   </div>
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex flex-wrap gap-1">
-                    {player.aliases && (player.aliases as string[]).length > 0 ? (
-                      (player.aliases as string[]).slice(0, 3).map((alias, idx) => (
-                        <span
-                          key={idx}
-                          className="inline-block px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded"
-                        >
-                          {alias}
-                        </span>
-                      ))
+                    {player.aliases &&
+                    (player.aliases as string[]).length > 0 ? (
+                      (player.aliases as string[])
+                        .slice(0, 3)
+                        .map((alias, idx) => (
+                          <span
+                            key={idx}
+                            className="inline-block px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded"
+                          >
+                            {alias}
+                          </span>
+                        ))
                     ) : (
                       <span className="text-sm text-gray-400">Sin alias</span>
                     )}
-                    {player.aliases && (player.aliases as string[]).length > 3 && (
-                      <span className="text-xs text-gray-400">
-                        +{(player.aliases as string[]).length - 3} más
-                      </span>
-                    )}
+                    {player.aliases &&
+                      (player.aliases as string[]).length > 3 && (
+                        <span className="text-xs text-gray-400">
+                          +{(player.aliases as string[]).length - 3} más
+                        </span>
+                      )}
                   </div>
                 </td>
                 <td className="px-4 py-3 text-center whitespace-nowrap">
@@ -219,7 +257,7 @@ export default function PlayersList({ onEditPlayer }: PlayersListProps) {
                       "inline-flex items-center gap-1 px-2 py-1 rounded text-sm font-medium",
                       player.rumor_count > 0
                         ? "bg-betis-verde-light text-betis-verde-dark"
-                        : "bg-gray-100 text-gray-500"
+                        : "bg-gray-100 text-gray-500",
                     )}
                   >
                     <Newspaper className="h-3 w-3" />

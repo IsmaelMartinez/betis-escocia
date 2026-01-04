@@ -4,7 +4,10 @@ import { positionShortSchema } from "./squad";
 // Schema for individual player in a lineup
 export const lineupPlayerSchema = z.object({
   playerId: z.number().int().positive("ID del jugador requerido"),
-  squadMemberId: z.number().int().positive("ID del miembro del equipo requerido"),
+  squadMemberId: z
+    .number()
+    .int()
+    .positive("ID del miembro del equipo requerido"),
   position: positionShortSchema,
   x: z
     .number()
@@ -21,7 +24,7 @@ export const formationPatternSchema = z
   .string()
   .regex(
     /^\d(-\d){1,3}$/,
-    "Formación inválida. Usa formato como 4-3-3, 4-4-2, 4-2-3-1"
+    "Formación inválida. Usa formato como 4-3-3, 4-4-2, 4-2-3-1",
   );
 
 // Schema for creating a starting eleven
@@ -48,4 +51,6 @@ export const startingElevenUpdateSchema = startingElevenSchema.partial();
 // Type exports
 export type LineupPlayerInput = z.infer<typeof lineupPlayerSchema>;
 export type StartingElevenInput = z.infer<typeof startingElevenSchema>;
-export type StartingElevenUpdateInput = z.infer<typeof startingElevenUpdateSchema>;
+export type StartingElevenUpdateInput = z.infer<
+  typeof startingElevenUpdateSchema
+>;

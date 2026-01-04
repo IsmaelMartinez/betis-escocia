@@ -1,6 +1,9 @@
 import { NextRequest } from "next/server";
 import { createApiHandler } from "@/lib/apiUtils";
-import { playerAliasUpdateSchema, playerDisplayNameSchema } from "@/lib/schemas/squad";
+import {
+  playerAliasUpdateSchema,
+  playerDisplayNameSchema,
+} from "@/lib/schemas/squad";
 import { normalizePlayerName } from "@/services/playerNormalizationService";
 import { log } from "@/lib/logger";
 
@@ -46,14 +49,16 @@ export const PATCH = createApiHandler({
 
     if (body.aliases !== undefined) {
       // Validate aliases
-      const aliasResult = playerAliasUpdateSchema.safeParse({ aliases: body.aliases });
+      const aliasResult = playerAliasUpdateSchema.safeParse({
+        aliases: body.aliases,
+      });
       if (!aliasResult.success) {
         throw new Error(`Aliases inválidos: ${aliasResult.error.message}`);
       }
 
       // Normalize all aliases
       const normalizedAliases = aliasResult.data.aliases.map((alias) =>
-        normalizePlayerName(alias)
+        normalizePlayerName(alias),
       );
 
       // Remove duplicates
@@ -68,7 +73,9 @@ export const PATCH = createApiHandler({
         displayName: body.displayName,
       });
       if (!displayResult.success) {
-        throw new Error(`Nombre de visualización inválido: ${displayResult.error.message}`);
+        throw new Error(
+          `Nombre de visualización inválido: ${displayResult.error.message}`,
+        );
       }
 
       updateData.display_name = displayResult.data.displayName;

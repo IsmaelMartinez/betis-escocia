@@ -34,7 +34,11 @@ export type SquadStatus =
   | "loaned_out"
   | "on_loan";
 
-export type PositionGroup = "goalkeepers" | "defenders" | "midfielders" | "forwards";
+export type PositionGroup =
+  | "goalkeepers"
+  | "defenders"
+  | "midfielders"
+  | "forwards";
 
 // Map full position to short code
 export const POSITION_TO_SHORT: Record<Position, PositionShort> = {
@@ -185,7 +189,10 @@ export interface StartingElevenUpdate {
 }
 
 // Default positions for common formations (x, y in percentage)
-export const FORMATION_POSITIONS: Record<Formation, { position: PositionShort; x: number; y: number }[]> = {
+export const FORMATION_POSITIONS: Record<
+  Formation,
+  { position: PositionShort; x: number; y: number }[]
+> = {
   "4-3-3": [
     { position: "GK", x: 50, y: 5 },
     { position: "LB", x: 15, y: 25 },

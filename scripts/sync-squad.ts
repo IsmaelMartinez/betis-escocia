@@ -139,7 +139,10 @@ async function syncSquad(): Promise<SyncResult> {
     .select("id, player_id, external_id");
 
   if (squadFetchError) {
-    log.error("Error fetching squad members", new Error(squadFetchError.message));
+    log.error(
+      "Error fetching squad members",
+      new Error(squadFetchError.message),
+    );
     // Continue - squad_members table might not exist yet
   }
 
@@ -161,7 +164,9 @@ async function syncSquad(): Promise<SyncResult> {
     const position = mapApiPosition(apiPlayer.position);
     const positionShort = position ? POSITION_TO_SHORT[position] : null;
 
-    log.debug(`Processing: ${apiPlayer.name} (${apiPlayer.position || "Unknown"})`);
+    log.debug(
+      `Processing: ${apiPlayer.name} (${apiPlayer.position || "Unknown"})`,
+    );
 
     // Look up existing player in memory
     let existingPlayer =
@@ -209,9 +214,13 @@ async function syncSquad(): Promise<SyncResult> {
         .single();
 
       if (insertError || !newPlayer) {
-        log.error("Error creating player", new Error(insertError?.message || "Unknown error"), {
-          playerName: apiPlayer.name,
-        });
+        log.error(
+          "Error creating player",
+          new Error(insertError?.message || "Unknown error"),
+          {
+            playerName: apiPlayer.name,
+          },
+        );
         result.errors++;
         continue;
       }
@@ -251,9 +260,13 @@ async function syncSquad(): Promise<SyncResult> {
         .eq("id", existingSquadMember.id);
 
       if (updateError) {
-        log.error("Error updating squad member", new Error(updateError.message), {
-          playerId,
-        });
+        log.error(
+          "Error updating squad member",
+          new Error(updateError.message),
+          {
+            playerId,
+          },
+        );
         result.errors++;
       } else {
         result.squadMembersUpdated++;
@@ -277,9 +290,13 @@ async function syncSquad(): Promise<SyncResult> {
         if (insertError.code === "23505") {
           result.squadMembersUpdated++;
         } else {
-          log.error("Error creating squad member", new Error(insertError.message), {
-            playerId,
-          });
+          log.error(
+            "Error creating squad member",
+            new Error(insertError.message),
+            {
+              playerId,
+            },
+          );
           result.errors++;
         }
       } else {

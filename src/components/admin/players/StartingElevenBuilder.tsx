@@ -6,7 +6,13 @@ import Button from "@/components/ui/Button";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PitchView from "./PitchView";
 import { FORMATION_POSITIONS } from "@/types/squad";
-import type { SquadMember, Formation, LineupPlayer, PositionShort, StartingEleven } from "@/types/squad";
+import type {
+  SquadMember,
+  Formation,
+  LineupPlayer,
+  PositionShort,
+  StartingEleven,
+} from "@/types/squad";
 
 const FORMATION_OPTIONS: Formation[] = [
   "4-3-3",
@@ -24,7 +30,9 @@ export default function StartingElevenBuilder() {
   const [lineup, setLineup] = useState<LineupPlayer[]>([]);
   const [squadMembers, setSquadMembers] = useState<SquadMember[]>([]);
   const [savedFormations, setSavedFormations] = useState<StartingEleven[]>([]);
-  const [selectedPositionIndex, setSelectedPositionIndex] = useState<number | null>(null);
+  const [selectedPositionIndex, setSelectedPositionIndex] = useState<
+    number | null
+  >(null);
   const [formationName, setFormationName] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -37,7 +45,11 @@ export default function StartingElevenBuilder() {
       const response = await fetch("/api/admin/squad");
       const result = await response.json();
       if (result.success) {
-        setSquadMembers(result.squadMembers.filter((m: SquadMember) => m.squad_status === "active"));
+        setSquadMembers(
+          result.squadMembers.filter(
+            (m: SquadMember) => m.squad_status === "active",
+          ),
+        );
       }
     } catch (err) {
       setError("Error al cargar la plantilla");
@@ -58,7 +70,9 @@ export default function StartingElevenBuilder() {
   }, []);
 
   useEffect(() => {
-    Promise.all([fetchSquad(), fetchFormations()]).finally(() => setLoading(false));
+    Promise.all([fetchSquad(), fetchFormations()]).finally(() =>
+      setLoading(false),
+    );
   }, [fetchSquad, fetchFormations]);
 
   const positions = FORMATION_POSITIONS[formation];
@@ -70,7 +84,10 @@ export default function StartingElevenBuilder() {
   };
 
   // Handle position click - select for player assignment
-  const handlePositionClick = (position: { position: PositionShort; x: number; y: number }, index: number) => {
+  const handlePositionClick = (
+    position: { position: PositionShort; x: number; y: number },
+    index: number,
+  ) => {
     setSelectedPositionIndex(index);
   };
 
@@ -81,7 +98,9 @@ export default function StartingElevenBuilder() {
     const position = positions[selectedPositionIndex];
 
     // Check if player is already in lineup
-    const existingIndex = lineup.findIndex((l) => l.playerId === member.player_id);
+    const existingIndex = lineup.findIndex(
+      (l) => l.playerId === member.player_id,
+    );
     if (existingIndex >= 0) {
       // Remove from old position
       setLineup((prev) => prev.filter((l) => l.playerId !== member.player_id));
@@ -99,7 +118,8 @@ export default function StartingElevenBuilder() {
     // Remove any existing player at this position
     setLineup((prev) => {
       const filtered = prev.filter(
-        (l) => !(Math.abs(l.x - position.x) < 5 && Math.abs(l.y - position.y) < 5)
+        (l) =>
+          !(Math.abs(l.x - position.x) < 5 && Math.abs(l.y - position.y) < 5),
       );
       return [...filtered, newLineupPlayer];
     });
@@ -111,7 +131,10 @@ export default function StartingElevenBuilder() {
   const handleRemovePlayer = (index: number) => {
     const position = positions[index];
     setLineup((prev) =>
-      prev.filter((l) => !(Math.abs(l.x - position.x) < 5 && Math.abs(l.y - position.y) < 5))
+      prev.filter(
+        (l) =>
+          !(Math.abs(l.x - position.x) < 5 && Math.abs(l.y - position.y) < 5),
+      ),
     );
   };
 
@@ -205,7 +228,8 @@ export default function StartingElevenBuilder() {
   if (squadMembers.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
-        No hay jugadores en la plantilla. Sincroniza primero desde la pestaña Plantilla.
+        No hay jugadores en la plantilla. Sincroniza primero desde la pestaña
+        Plantilla.
       </div>
     );
   }
@@ -214,14 +238,21 @@ export default function StartingElevenBuilder() {
     <div className="space-y-6">
       {/* Messages */}
       {successMessage && (
-        <div className="bg-green-100 text-green-700 p-3 rounded-lg">{successMessage}</div>
+        <div className="bg-green-100 text-green-700 p-3 rounded-lg">
+          {successMessage}
+        </div>
       )}
-      {error && <div className="bg-red-100 text-red-700 p-3 rounded-lg">{error}</div>}
+      {error && (
+        <div className="bg-red-100 text-red-700 p-3 rounded-lg">{error}</div>
+      )}
 
       {/* Formation selector */}
       <div className="flex flex-wrap gap-4 items-center">
         <div>
-          <label htmlFor="formation" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="formation"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Formación
           </label>
           <select
@@ -243,7 +274,10 @@ export default function StartingElevenBuilder() {
         </div>
 
         <div className="flex-1">
-          <label htmlFor="formationName" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="formationName"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
             Nombre de la alineación
           </label>
           <input
@@ -257,7 +291,11 @@ export default function StartingElevenBuilder() {
         </div>
 
         <div className="flex gap-2 pt-6">
-          <Button variant="outline" onClick={handleClear} leftIcon={<RefreshCw className="h-4 w-4" />}>
+          <Button
+            variant="outline"
+            onClick={handleClear}
+            leftIcon={<RefreshCw className="h-4 w-4" />}
+          >
             Limpiar
           </Button>
           <Button
@@ -281,7 +319,8 @@ export default function StartingElevenBuilder() {
               {lineup.length}/11 jugadores seleccionados
               {selectedPositionIndex !== null && (
                 <span className="ml-2 text-betis-verde font-medium">
-                  - Selecciona un jugador para la posición {positions[selectedPositionIndex].position}
+                  - Selecciona un jugador para la posición{" "}
+                  {positions[selectedPositionIndex].position}
                 </span>
               )}
             </div>
@@ -302,7 +341,8 @@ export default function StartingElevenBuilder() {
           <div className="max-h-[500px] overflow-y-auto space-y-2 pr-2">
             {squadMembers.map((member) => {
               const isInLineup = isPlayerInLineup(member.player_id);
-              const playerName = member.player?.display_name || member.player?.name || "Jugador";
+              const playerName =
+                member.player?.display_name || member.player?.name || "Jugador";
 
               return (
                 <button
@@ -322,9 +362,13 @@ export default function StartingElevenBuilder() {
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold ${
                         member.position_short === "GK"
                           ? "bg-yellow-500"
-                          : ["CB", "LB", "RB"].includes(member.position_short || "")
+                          : ["CB", "LB", "RB"].includes(
+                                member.position_short || "",
+                              )
                             ? "bg-blue-500"
-                            : ["DM", "CM", "AM"].includes(member.position_short || "")
+                            : ["DM", "CM", "AM"].includes(
+                                  member.position_short || "",
+                                )
                               ? "bg-green-500"
                               : "bg-red-500"
                       }`}
@@ -332,9 +376,13 @@ export default function StartingElevenBuilder() {
                       {member.shirt_number || playerName.charAt(0)}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-gray-900 truncate">{playerName}</div>
+                      <div className="font-medium text-gray-900 truncate">
+                        {playerName}
+                      </div>
                       <div className="text-xs text-gray-500">
-                        {member.position_short || member.position || "Sin posición"}
+                        {member.position_short ||
+                          member.position ||
+                          "Sin posición"}
                       </div>
                     </div>
                     {isInLineup && (
@@ -353,14 +401,20 @@ export default function StartingElevenBuilder() {
       {/* Saved formations */}
       {savedFormations.length > 0 && (
         <div className="border-t pt-6">
-          <h4 className="font-medium text-gray-700 mb-4">Alineaciones Guardadas</h4>
+          <h4 className="font-medium text-gray-700 mb-4">
+            Alineaciones Guardadas
+          </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {savedFormations.map((saved) => (
               <div key={saved.id} className="border rounded-lg p-3 bg-white">
                 <div className="flex items-center justify-between mb-2">
                   <div>
-                    <div className="font-medium text-gray-900">{saved.name}</div>
-                    <div className="text-sm text-gray-500">{saved.formation}</div>
+                    <div className="font-medium text-gray-900">
+                      {saved.name}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {saved.formation}
+                    </div>
                   </div>
                   <div className="flex gap-1">
                     <Button

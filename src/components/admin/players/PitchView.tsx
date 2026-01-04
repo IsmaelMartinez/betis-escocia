@@ -44,7 +44,8 @@ export default function PitchView({
   const getLineupForPosition = (index: number): LineupPlayer | undefined => {
     return lineup.find(
       (l) =>
-        Math.abs(l.x - positions[index].x) < 5 && Math.abs(l.y - positions[index].y) < 5
+        Math.abs(l.x - positions[index].x) < 5 &&
+        Math.abs(l.y - positions[index].y) < 5,
     );
   };
 
@@ -65,10 +66,26 @@ export default function PitchView({
         />
 
         {/* Center line */}
-        <line x1="5" y1="75" x2="95" y2="75" stroke="white" strokeWidth="0.5" opacity="0.5" />
+        <line
+          x1="5"
+          y1="75"
+          x2="95"
+          y2="75"
+          stroke="white"
+          strokeWidth="0.5"
+          opacity="0.5"
+        />
 
         {/* Center circle */}
-        <circle cx="50" cy="75" r="15" fill="none" stroke="white" strokeWidth="0.5" opacity="0.5" />
+        <circle
+          cx="50"
+          cy="75"
+          r="15"
+          fill="none"
+          stroke="white"
+          strokeWidth="0.5"
+          opacity="0.5"
+        />
         <circle cx="50" cy="75" r="0.5" fill="white" opacity="0.5" />
 
         {/* Top penalty area */}
@@ -118,8 +135,20 @@ export default function PitchView({
         />
 
         {/* Corner arcs */}
-        <path d="M 5 8 A 3 3 0 0 0 8 5" fill="none" stroke="white" strokeWidth="0.5" opacity="0.5" />
-        <path d="M 92 5 A 3 3 0 0 0 95 8" fill="none" stroke="white" strokeWidth="0.5" opacity="0.5" />
+        <path
+          d="M 5 8 A 3 3 0 0 0 8 5"
+          fill="none"
+          stroke="white"
+          strokeWidth="0.5"
+          opacity="0.5"
+        />
+        <path
+          d="M 92 5 A 3 3 0 0 0 95 8"
+          fill="none"
+          stroke="white"
+          strokeWidth="0.5"
+          opacity="0.5"
+        />
         <path
           d="M 5 142 A 3 3 0 0 1 8 145"
           fill="none"
@@ -139,7 +168,9 @@ export default function PitchView({
       {/* Position markers */}
       {positions.map((pos, index) => {
         const lineupPlayer = getLineupForPosition(index);
-        const playerName = lineupPlayer ? getPlayerName(lineupPlayer.playerId) : null;
+        const playerName = lineupPlayer
+          ? getPlayerName(lineupPlayer.playerId)
+          : null;
         const isHighlighted = highlightedPosition === index;
         const hasPlayer = !!lineupPlayer;
 
@@ -148,7 +179,7 @@ export default function PitchView({
             key={`${pos.position}-${index}`}
             className={clsx(
               "absolute transform -translate-x-1/2 -translate-y-1/2 transition-all",
-              onPositionClick && "cursor-pointer"
+              onPositionClick && "cursor-pointer",
             )}
             style={{
               left: `${pos.x}%`,
@@ -159,18 +190,23 @@ export default function PitchView({
             <div
               className={clsx(
                 "relative flex flex-col items-center",
-                isHighlighted && "ring-2 ring-white ring-offset-2 ring-offset-green-600 rounded"
+                isHighlighted &&
+                  "ring-2 ring-white ring-offset-2 ring-offset-green-600 rounded",
               )}
             >
               {/* Player circle */}
               <div
                 className={clsx(
                   "w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md border-2 border-white/30",
-                  hasPlayer ? POSITION_COLORS[pos.position] || "bg-gray-500" : "bg-white/20"
+                  hasPlayer
+                    ? POSITION_COLORS[pos.position] || "bg-gray-500"
+                    : "bg-white/20",
                 )}
               >
                 {hasPlayer ? (
-                  playerName?.charAt(0).toUpperCase() || <User className="h-5 w-5" />
+                  playerName?.charAt(0).toUpperCase() || (
+                    <User className="h-5 w-5" />
+                  )
                 ) : (
                   <span className="text-white/60">{pos.position}</span>
                 )}

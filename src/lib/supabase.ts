@@ -900,7 +900,7 @@ export interface Player {
   normalized_name: string;
   display_name?: string | null; // Short display name for UI (e.g., "Isco" vs "Francisco Roman Alarcon")
   external_id?: number | null; // Football-Data.org player ID for API matching
-  aliases: string[]; // Array of alternative normalized names (nicknames, full names)
+  aliases: string[] | null; // Array of alternative normalized names (nicknames, full names)
   known_club?: string | null;
   known_position?: string | null;
   is_current_squad: boolean; // True if player is currently in the Betis squad
@@ -923,7 +923,7 @@ export interface PlayerUpdate {
   name?: string;
   display_name?: string | null;
   external_id?: number | null;
-  aliases?: string[];
+  aliases?: string[] | null;
   known_club?: string | null;
   known_position?: string | null;
   is_current_squad?: boolean;

@@ -40,12 +40,14 @@ export const PATCH = createApiHandler({
     const updateData: Record<string, unknown> = {};
 
     if (data.name !== undefined) updateData.name = data.name;
-    if (data.description !== undefined) updateData.description = data.description;
+    if (data.description !== undefined)
+      updateData.description = data.description;
     if (data.formation !== undefined) updateData.formation = data.formation;
     if (data.lineup !== undefined) updateData.lineup = data.lineup;
     if (data.matchId !== undefined) updateData.match_id = data.matchId;
     if (data.isActive !== undefined) updateData.is_active = data.isActive;
-    if (data.isPredicted !== undefined) updateData.is_predicted = data.isPredicted;
+    if (data.isPredicted !== undefined)
+      updateData.is_predicted = data.isPredicted;
 
     // Add updated_at timestamp
     updateData.updated_at = new Date().toISOString();
@@ -71,7 +73,10 @@ export const DELETE = createApiHandler({
   handler: async (_, { supabase, request }) => {
     const id = extractIdFromRequest(request);
 
-    const { error } = await supabase.from("starting_elevens").delete().eq("id", id);
+    const { error } = await supabase
+      .from("starting_elevens")
+      .delete()
+      .eq("id", id);
 
     if (error) {
       throw new Error(`Error al eliminar formación: ${error.message}`);

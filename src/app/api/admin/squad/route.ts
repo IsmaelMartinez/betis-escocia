@@ -20,7 +20,7 @@ export const GET = createApiHandler({
           aliases,
           rumor_count
         )
-      `
+      `,
       )
       .order("position", { ascending: true })
       .order("shirt_number", { ascending: true });
@@ -93,12 +93,14 @@ export const POST = createApiHandler({
           display_name,
           aliases
         )
-      `
+      `,
       )
       .single();
 
     if (insertError) {
-      throw new Error(`Error al añadir jugador a plantilla: ${insertError.message}`);
+      throw new Error(
+        `Error al añadir jugador a plantilla: ${insertError.message}`,
+      );
     }
 
     // Also update the players table to mark as current squad

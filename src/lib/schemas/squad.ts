@@ -70,7 +70,7 @@ export const playerAliasUpdateSchema = z.object({
       z
         .string()
         .min(2, "Cada alias debe tener al menos 2 caracteres")
-        .max(100, "Cada alias debe tener máximo 100 caracteres")
+        .max(100, "Cada alias debe tener máximo 100 caracteres"),
     )
     .max(20, "Máximo 20 aliases permitidos"),
 });

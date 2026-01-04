@@ -64,7 +64,7 @@ export default function SquadManagement({ onSync }: SquadManagementProps) {
       });
       return acc;
     },
-    {} as Record<PositionGroup, SquadMember[]>
+    {} as Record<PositionGroup, SquadMember[]>,
   );
 
   const formatDate = (dateStr: string | null): string => {
@@ -88,7 +88,10 @@ export default function SquadManagement({ onSync }: SquadManagementProps) {
       const today = new Date();
       let age = today.getFullYear() - dob.getFullYear();
       const monthDiff = today.getMonth() - dob.getMonth();
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+      if (
+        monthDiff < 0 ||
+        (monthDiff === 0 && today.getDate() < dob.getDate())
+      ) {
         age--;
       }
       return age;
@@ -105,7 +108,12 @@ export default function SquadManagement({ onSync }: SquadManagementProps) {
     return (
       <div className="text-center py-8 text-red-600">
         <p>{error}</p>
-        <Button variant="outline" size="sm" onClick={fetchSquad} className="mt-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={fetchSquad}
+          className="mt-4"
+        >
           Reintentar
         </Button>
       </div>
@@ -116,7 +124,8 @@ export default function SquadManagement({ onSync }: SquadManagementProps) {
     return (
       <div className="text-center py-8">
         <p className="text-gray-500 mb-4">
-          No hay jugadores en la plantilla. Sincroniza desde Football-Data.org para importar la plantilla actual.
+          No hay jugadores en la plantilla. Sincroniza desde Football-Data.org
+          para importar la plantilla actual.
         </p>
         {onSync && (
           <Button variant="primary" onClick={onSync}>
@@ -142,25 +151,29 @@ export default function SquadManagement({ onSync }: SquadManagementProps) {
                   group === "goalkeepers" && "bg-yellow-500",
                   group === "defenders" && "bg-blue-500",
                   group === "midfielders" && "bg-green-500",
-                  group === "forwards" && "bg-red-500"
+                  group === "forwards" && "bg-red-500",
                 )}
               />
               {POSITION_GROUP_LABELS[group]}
-              <span className="text-sm font-normal text-gray-400">({members.length})</span>
+              <span className="text-sm font-normal text-gray-400">
+                ({members.length})
+              </span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {members.map((member) => {
                 const age = getAge(member.date_of_birth);
                 const playerName =
-                  member.player?.display_name || member.player?.name || "Jugador desconocido";
+                  member.player?.display_name ||
+                  member.player?.name ||
+                  "Jugador desconocido";
 
                 return (
                   <div
                     key={member.id}
                     className={clsx(
                       "border rounded-lg p-4 bg-white hover:shadow-md transition-shadow",
-                      member.squad_status !== "active" && "opacity-60"
+                      member.squad_status !== "active" && "opacity-60",
                     )}
                   >
                     <div className="flex items-start justify-between">
@@ -171,15 +184,19 @@ export default function SquadManagement({ onSync }: SquadManagementProps) {
                             group === "goalkeepers" && "bg-yellow-500",
                             group === "defenders" && "bg-blue-500",
                             group === "midfielders" && "bg-green-500",
-                            group === "forwards" && "bg-red-500"
+                            group === "forwards" && "bg-red-500",
                           )}
                         >
                           {member.shirt_number || <User className="h-5 w-5" />}
                         </div>
                         <div>
-                          <div className="font-semibold text-gray-900">{playerName}</div>
+                          <div className="font-semibold text-gray-900">
+                            {playerName}
+                          </div>
                           <div className="text-sm text-gray-500">
-                            {member.position_short || member.position || "Sin posición"}
+                            {member.position_short ||
+                              member.position ||
+                              "Sin posición"}
                           </div>
                         </div>
                       </div>
@@ -214,11 +231,12 @@ export default function SquadManagement({ onSync }: SquadManagementProps) {
                           )}
                         </div>
                       )}
-                      {member.player?.rumor_count !== undefined && member.player.rumor_count > 0 && (
-                        <div className="text-sm text-betis-verde">
-                          {member.player.rumor_count} menciones en noticias
-                        </div>
-                      )}
+                      {member.player?.rumor_count !== undefined &&
+                        member.player.rumor_count > 0 && (
+                          <div className="text-sm text-betis-verde">
+                            {member.player.rumor_count} menciones en noticias
+                          </div>
+                        )}
                     </div>
 
                     {member.squad_status !== "active" && (
@@ -226,10 +244,14 @@ export default function SquadManagement({ onSync }: SquadManagementProps) {
                         <span
                           className={clsx(
                             "inline-block px-2 py-0.5 text-xs rounded",
-                            member.squad_status === "injured" && "bg-red-100 text-red-700",
-                            member.squad_status === "suspended" && "bg-orange-100 text-orange-700",
-                            member.squad_status === "loaned_out" && "bg-gray-100 text-gray-700",
-                            member.squad_status === "on_loan" && "bg-blue-100 text-blue-700"
+                            member.squad_status === "injured" &&
+                              "bg-red-100 text-red-700",
+                            member.squad_status === "suspended" &&
+                              "bg-orange-100 text-orange-700",
+                            member.squad_status === "loaned_out" &&
+                              "bg-gray-100 text-gray-700",
+                            member.squad_status === "on_loan" &&
+                              "bg-blue-100 text-blue-700",
                           )}
                         >
                           {member.squad_status === "injured" && "Lesionado"}

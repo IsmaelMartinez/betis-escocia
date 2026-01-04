@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { X, Plus, Trash2, Save } from "lucide-react";
 import Button from "@/components/ui/Button";
 import type { Player } from "@/lib/supabase";
@@ -28,6 +28,10 @@ export default function PlayerEditModal({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const modalRef = useRef<HTMLDivElement>(null);
+  const firstInputRef = useRef<HTMLInputElement>(null);
+  const previousActiveElement = useRef<HTMLElement | null>(null);
+
   // Initialize form when player changes
   useEffect(() => {
     if (player) {
@@ -37,6 +41,54 @@ export default function PlayerEditModal({
       setError(null);
     }
   }, [player]);
+
+  // Focus management: trap focus in modal and restore on close
+  useEffect(() => {
+    if (isOpen) {
+      previousActiveElement.current = document.activeElement as HTMLElement;
+      // Focus first input after modal renders
+      setTimeout(() => firstInputRef.current?.focus(), 0);
+    } else if (previousActiveElement.current) {
+      previousActiveElement.current.focus();
+    }
+  }, [isOpen]);
+
+  // Handle escape key and focus trap
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (!isOpen) return;
+
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+
+      // Focus trap
+      if (e.key === "Tab" && modalRef.current) {
+        const focusableElements = modalRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        );
+        const firstEl = focusableElements[0] as HTMLElement;
+        const lastEl = focusableElements[
+          focusableElements.length - 1
+        ] as HTMLElement;
+
+        if (e.shiftKey && document.activeElement === firstEl) {
+          e.preventDefault();
+          lastEl?.focus();
+        } else if (!e.shiftKey && document.activeElement === lastEl) {
+          e.preventDefault();
+          firstEl?.focus();
+        }
+      }
+    },
+    [isOpen, onClose],
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
 
   const handleAddAlias = () => {
     const trimmed = newAlias.trim().toLowerCase();
@@ -89,7 +141,7 @@ export default function PlayerEditModal({
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
       handleAddAlias();
@@ -109,10 +161,18 @@ export default function PlayerEditModal({
 
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative bg-white rounded-lg shadow-xl w-full max-w-md">
+        <div
+          ref={modalRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
+          className="relative bg-white rounded-lg shadow-xl w-full max-w-md"
+        >
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
-            <h3 className="text-lg font-semibold text-gray-900">Editar Jugador</h3>
+            <h3 id="modal-title" className="text-lg font-semibold text-gray-900">
+              Editar Jugador
+            </h3>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-500"
@@ -143,6 +203,7 @@ export default function PlayerEditModal({
                 Nombre a Mostrar
               </label>
               <input
+                ref={firstInputRef}
                 id="displayName"
                 type="text"
                 value={displayName}
@@ -151,7 +212,8 @@ export default function PlayerEditModal({
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-verde focus:border-transparent"
               />
               <p className="mt-1 text-xs text-gray-500">
-                El nombre que se mostrará en la UI (dejar vacío para usar el original)
+                El nombre que se mostrará en la UI (dejar vacío para usar el
+                original)
               </p>
             </div>
 
@@ -190,7 +252,7 @@ export default function PlayerEditModal({
                   type="text"
                   value={newAlias}
                   onChange={(e) => setNewAlias(e.target.value)}
-                  onKeyDown={handleKeyDown}
+                  onKeyDown={handleInputKeyDown}
                   placeholder="Añadir alias..."
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-verde focus:border-transparent text-sm"
                 />
@@ -206,7 +268,8 @@ export default function PlayerEditModal({
                 </Button>
               </div>
               <p className="mt-1 text-xs text-gray-500">
-                Los aliases se usan para detectar menciones del jugador en noticias
+                Los aliases se usan para detectar menciones del jugador en
+                noticias
               </p>
             </div>
 
@@ -214,19 +277,25 @@ export default function PlayerEditModal({
             <div className="pt-2 border-t">
               <div className="flex justify-between text-sm text-gray-500">
                 <span>Menciones en noticias:</span>
-                <span className="font-medium text-gray-700">{player.rumor_count}</span>
+                <span className="font-medium text-gray-700">
+                  {player.rumor_count}
+                </span>
               </div>
               {player.is_current_squad && (
                 <div className="flex justify-between text-sm text-gray-500 mt-1">
                   <span>Estado:</span>
-                  <span className="font-medium text-betis-verde">En plantilla</span>
+                  <span className="font-medium text-betis-verde">
+                    En plantilla
+                  </span>
                 </div>
               )}
             </div>
 
             {/* Error message */}
             {error && (
-              <div className="p-2 bg-red-100 text-red-700 rounded text-sm">{error}</div>
+              <div className="p-2 bg-red-100 text-red-700 rounded text-sm">
+                {error}
+              </div>
             )}
           </div>
 
