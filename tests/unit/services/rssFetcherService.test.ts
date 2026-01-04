@@ -22,7 +22,26 @@ vi.mock("@/lib/logger", () => ({
   },
 }));
 
-import { fetchAllRumors, type RumorItem } from "@/services/rssFetcherService";
+import {
+  fetchAllRumors,
+  type RumorItem,
+  _testExports,
+} from "@/services/rssFetcherService";
+
+const TOTAL_FEEDS = _testExports.FEED_CONFIGS.length; // 6 feeds
+
+// Helper to create mock responses for all feeds
+const mockAllFeedsEmpty = () => {
+  for (let i = 0; i < TOTAL_FEEDS; i++) {
+    mockParseURL.mockResolvedValueOnce({ items: [] });
+  }
+};
+
+const mockAllFeedsWithSingleItem = (feed: { items: unknown[] }) => {
+  for (let i = 0; i < TOTAL_FEEDS; i++) {
+    mockParseURL.mockResolvedValueOnce(feed);
+  }
+};
 
 describe("rssFetcherService", () => {
   // Use dynamic dates relative to today to avoid flaky tests when dates become older than 1 month
@@ -56,47 +75,49 @@ describe("rssFetcherService", () => {
 
   describe("fetchAllRumors", () => {
     it("should fetch and merge rumors from all RSS feeds", async () => {
-      const googleFichajesFeed = {
-        items: [
-          mockFeedItem(
-            "Betis interesado en Fichaje 1",
-            "https://example.com/1",
-            getRecentDate(1, 0), // 1 day ago at noon
-            "Descripción del fichaje 1",
-          ),
-        ],
-      };
+      // Create feeds with different timestamps to verify sorting
+      const feeds = [
+        {
+          items: [
+            mockFeedItem(
+              "Betis interesado en Fichaje 1",
+              "https://example.com/1",
+              getRecentDate(1, 0),
+              "Descripción del fichaje 1",
+            ),
+          ],
+        },
+        {
+          items: [
+            mockFeedItem(
+              "Betis gana partido",
+              "https://example.com/2",
+              getRecentDate(1, -1),
+              "Resumen del partido",
+            ),
+          ],
+        },
+        {
+          items: [
+            mockFeedItem(
+              "Análisis táctico Betis",
+              "https://example.com/3",
+              getRecentDate(1, 1),
+              "Análisis completo",
+            ),
+          ],
+        },
+        // X feeds with empty items for this test
+        { items: [] },
+        { items: [] },
+        { items: [] },
+      ];
 
-      const googleGeneralFeed = {
-        items: [
-          mockFeedItem(
-            "Betis gana partido",
-            "https://example.com/2",
-            getRecentDate(1, -1), // 1 day ago at 11am
-            "Resumen del partido",
-          ),
-        ],
-      };
-
-      const betisWebFeed = {
-        items: [
-          mockFeedItem(
-            "Análisis táctico Betis",
-            "https://example.com/3",
-            getRecentDate(1, 1), // 1 day ago at 1pm
-            "Análisis completo",
-          ),
-        ],
-      };
-
-      mockParseURL
-        .mockResolvedValueOnce(googleFichajesFeed)
-        .mockResolvedValueOnce(googleGeneralFeed)
-        .mockResolvedValueOnce(betisWebFeed);
+      feeds.forEach((feed) => mockParseURL.mockResolvedValueOnce(feed));
 
       const rumors = await fetchAllRumors();
 
-      expect(mockParseURL).toHaveBeenCalledTimes(3);
+      expect(mockParseURL).toHaveBeenCalledTimes(TOTAL_FEEDS);
       expect(rumors).toHaveLength(3);
 
       // Should be sorted by date (newest first)
@@ -110,17 +131,19 @@ describe("rssFetcherService", () => {
         items: [mockFeedItem("Test", "https://test.com", getRecentDate(1))],
       };
 
-      mockParseURL
-        .mockResolvedValueOnce(feed)
-        .mockResolvedValueOnce(feed)
-        .mockResolvedValueOnce(feed);
+      mockAllFeedsWithSingleItem(feed);
 
       const rumors = await fetchAllRumors();
 
       const sources = rumors.map((r) => r.source);
+      // Traditional RSS sources
       expect(sources).toContain("Google News (Fichajes)");
       expect(sources).toContain("Google News (General)");
       expect(sources).toContain("BetisWeb");
+      // X/Twitter sources via RSSHub
+      expect(sources).toContain("X: @RealBetis");
+      expect(sources).toContain("X: @FabrizioRomano");
+      expect(sources).toContain("X: @MatteMoretto");
     });
 
     it("should handle missing title with default value", async () => {
@@ -134,10 +157,11 @@ describe("rssFetcherService", () => {
         ],
       };
 
-      mockParseURL
-        .mockResolvedValueOnce(feed)
-        .mockResolvedValueOnce({ items: [] })
-        .mockResolvedValueOnce({ items: [] });
+      mockParseURL.mockResolvedValueOnce(feed);
+      // Rest of feeds return empty
+      for (let i = 1; i < TOTAL_FEEDS; i++) {
+        mockParseURL.mockResolvedValueOnce({ items: [] });
+      }
 
       const rumors = await fetchAllRumors();
 
@@ -155,10 +179,10 @@ describe("rssFetcherService", () => {
         ],
       };
 
-      mockParseURL
-        .mockResolvedValueOnce(feed)
-        .mockResolvedValueOnce({ items: [] })
-        .mockResolvedValueOnce({ items: [] });
+      mockParseURL.mockResolvedValueOnce(feed);
+      for (let i = 1; i < TOTAL_FEEDS; i++) {
+        mockParseURL.mockResolvedValueOnce({ items: [] });
+      }
 
       const rumors = await fetchAllRumors();
 
@@ -178,10 +202,10 @@ describe("rssFetcherService", () => {
         ],
       };
 
-      mockParseURL
-        .mockResolvedValueOnce(feed)
-        .mockResolvedValueOnce({ items: [] })
-        .mockResolvedValueOnce({ items: [] });
+      mockParseURL.mockResolvedValueOnce(feed);
+      for (let i = 1; i < TOTAL_FEEDS; i++) {
+        mockParseURL.mockResolvedValueOnce({ items: [] });
+      }
 
       const rumors = await fetchAllRumors();
       const afterTest = new Date();
@@ -207,10 +231,10 @@ describe("rssFetcherService", () => {
         ],
       };
 
-      mockParseURL
-        .mockResolvedValueOnce(feed)
-        .mockResolvedValueOnce({ items: [] })
-        .mockResolvedValueOnce({ items: [] });
+      mockParseURL.mockResolvedValueOnce(feed);
+      for (let i = 1; i < TOTAL_FEEDS; i++) {
+        mockParseURL.mockResolvedValueOnce({ items: [] });
+      }
 
       const rumors = await fetchAllRumors();
 
@@ -229,10 +253,10 @@ describe("rssFetcherService", () => {
         ],
       };
 
-      mockParseURL
-        .mockResolvedValueOnce(feed)
-        .mockResolvedValueOnce({ items: [] })
-        .mockResolvedValueOnce({ items: [] });
+      mockParseURL.mockResolvedValueOnce(feed);
+      for (let i = 1; i < TOTAL_FEEDS; i++) {
+        mockParseURL.mockResolvedValueOnce({ items: [] });
+      }
 
       const rumors = await fetchAllRumors();
 
@@ -240,10 +264,7 @@ describe("rssFetcherService", () => {
     });
 
     it("should handle empty feeds gracefully", async () => {
-      mockParseURL
-        .mockResolvedValueOnce({ items: [] })
-        .mockResolvedValueOnce({ items: [] })
-        .mockResolvedValueOnce({ items: [] });
+      mockAllFeedsEmpty();
 
       const rumors = await fetchAllRumors();
 
@@ -252,13 +273,17 @@ describe("rssFetcherService", () => {
 
     it("should handle RSS feed errors gracefully", async () => {
       const validFeed = {
-        items: [mockFeedItem("Valid item", "https://example.com/1", getRecentDate(1))],
+        items: [
+          mockFeedItem("Valid item", "https://example.com/1", getRecentDate(1)),
+        ],
       };
 
-      mockParseURL
-        .mockRejectedValueOnce(new Error("Network error"))
-        .mockResolvedValueOnce(validFeed)
-        .mockRejectedValueOnce(new Error("Timeout"));
+      // First feed fails, second succeeds, rest empty
+      mockParseURL.mockRejectedValueOnce(new Error("Network error"));
+      mockParseURL.mockResolvedValueOnce(validFeed);
+      for (let i = 2; i < TOTAL_FEEDS; i++) {
+        mockParseURL.mockResolvedValueOnce({ items: [] });
+      }
 
       const rumors = await fetchAllRumors();
 
@@ -269,28 +294,33 @@ describe("rssFetcherService", () => {
 
     it("should continue fetching even if one feed fails", async () => {
       const feed1 = {
-        items: [mockFeedItem("Item 1", "https://example.com/1", getRecentDate(1, 0))],
+        items: [
+          mockFeedItem("Item 1", "https://example.com/1", getRecentDate(1, 0)),
+        ],
       };
       const feed2 = {
-        items: [mockFeedItem("Item 2", "https://example.com/2", getRecentDate(1, -1))],
+        items: [
+          mockFeedItem("Item 2", "https://example.com/2", getRecentDate(1, -1)),
+        ],
       };
 
-      mockParseURL
-        .mockRejectedValueOnce(new Error("Feed 1 failed"))
-        .mockResolvedValueOnce(feed1)
-        .mockResolvedValueOnce(feed2);
+      mockParseURL.mockRejectedValueOnce(new Error("Feed 1 failed"));
+      mockParseURL.mockResolvedValueOnce(feed1);
+      mockParseURL.mockResolvedValueOnce(feed2);
+      for (let i = 3; i < TOTAL_FEEDS; i++) {
+        mockParseURL.mockResolvedValueOnce({ items: [] });
+      }
 
       const rumors = await fetchAllRumors();
 
       expect(rumors).toHaveLength(2);
-      expect(mockParseURL).toHaveBeenCalledTimes(3);
+      expect(mockParseURL).toHaveBeenCalledTimes(TOTAL_FEEDS);
     });
 
     it("should return empty array if all feeds fail", async () => {
-      mockParseURL
-        .mockRejectedValueOnce(new Error("Network error"))
-        .mockRejectedValueOnce(new Error("Timeout"))
-        .mockRejectedValueOnce(new Error("Parse error"));
+      for (let i = 0; i < TOTAL_FEEDS; i++) {
+        mockParseURL.mockRejectedValueOnce(new Error(`Error ${i}`));
+      }
 
       const rumors = await fetchAllRumors();
 
@@ -304,23 +334,25 @@ describe("rssFetcherService", () => {
           setTimeout(
             () =>
               resolve({
-                items: [mockFeedItem("Item", "https://example.com/1", recentDate)],
+                items: [
+                  mockFeedItem("Item", "https://example.com/1", recentDate),
+                ],
               }),
             delay,
           ),
         );
 
-      mockParseURL
-        .mockImplementationOnce(() => delayedFeed(100))
-        .mockImplementationOnce(() => delayedFeed(100))
-        .mockImplementationOnce(() => delayedFeed(100));
+      // All feeds take 50ms each
+      for (let i = 0; i < TOTAL_FEEDS; i++) {
+        mockParseURL.mockImplementationOnce(() => delayedFeed(50));
+      }
 
       const startTime = Date.now();
       await fetchAllRumors();
       const duration = Date.now() - startTime;
 
-      // If running in parallel, total time should be ~100ms, not ~300ms
-      expect(duration).toBeLessThan(200);
+      // If running in parallel, total time should be ~50ms, not ~300ms (6 * 50ms)
+      expect(duration).toBeLessThan(150);
     });
 
     it("should sort rumors by pubDate in descending order", async () => {
@@ -332,10 +364,10 @@ describe("rssFetcherService", () => {
         ],
       };
 
-      mockParseURL
-        .mockResolvedValueOnce(feed)
-        .mockResolvedValueOnce({ items: [] })
-        .mockResolvedValueOnce({ items: [] });
+      mockParseURL.mockResolvedValueOnce(feed);
+      for (let i = 1; i < TOTAL_FEEDS; i++) {
+        mockParseURL.mockResolvedValueOnce({ items: [] });
+      }
 
       const rumors = await fetchAllRumors();
 
@@ -350,16 +382,31 @@ describe("rssFetcherService", () => {
         items: [mockFeedItem("Test", "https://example.com/1", testDate)],
       };
 
-      mockParseURL
-        .mockResolvedValueOnce(feed)
-        .mockResolvedValueOnce({ items: [] })
-        .mockResolvedValueOnce({ items: [] });
+      mockParseURL.mockResolvedValueOnce(feed);
+      for (let i = 1; i < TOTAL_FEEDS; i++) {
+        mockParseURL.mockResolvedValueOnce({ items: [] });
+      }
 
       const rumors = await fetchAllRumors();
 
       expect(rumors[0].pubDate).toBeInstanceOf(Date);
       // Verify the date was parsed correctly (matches input)
       expect(rumors[0].pubDate.toISOString()).toBe(testDate);
+    });
+
+    it("should have correct feed configuration", () => {
+      const configs = _testExports.FEED_CONFIGS;
+
+      expect(configs).toHaveLength(6);
+
+      // Verify RSS feeds
+      const rssFeeds = configs.filter((c) => c.type === "rss");
+      expect(rssFeeds).toHaveLength(3);
+
+      // Verify RSSHub feeds
+      const rsshubFeeds = configs.filter((c) => c.type === "rsshub");
+      expect(rsshubFeeds).toHaveLength(3);
+      expect(rsshubFeeds.every((f) => f.url.includes("rsshub.app"))).toBe(true);
     });
   });
 });
