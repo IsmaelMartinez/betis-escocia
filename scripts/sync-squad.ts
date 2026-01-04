@@ -13,6 +13,7 @@ import axios from "axios";
 import { FootballDataService } from "../src/services/footballDataService";
 import { normalizePlayerName } from "../src/services/playerNormalizationService";
 import { createClient } from "@supabase/supabase-js";
+import { log } from "../src/lib/logger";
 
 // Create a fresh FootballDataService instance after env vars are loaded
 const footballDataService = new FootballDataService(axios.create());
@@ -22,6 +23,13 @@ interface SyncResult {
   created: number;
   updated: number;
   errors: number;
+}
+
+interface ExistingPlayer {
+  id: number;
+  name: string;
+  normalized_name: string;
+  aliases: string[] | null;
 }
 
 async function syncSquad(): Promise<SyncResult> {
@@ -45,11 +53,11 @@ async function syncSquad(): Promise<SyncResult> {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 
-  console.log("📡 Fetching current Betis squad from Football-Data.org...");
+  log.info("Fetching current Betis squad from Football-Data.org");
   const squad = await footballDataService.fetchRealBetisSquad();
   result.squadSize = squad.length;
 
-  console.log(`\n📋 Found ${squad.length} players in the squad:\n`);
+  log.info(`Found ${squad.length} players in squad`);
 
   // First, clear all current squad flags (so departed players are unmarked)
   const { error: clearError } = await supabase
@@ -58,58 +66,58 @@ async function syncSquad(): Promise<SyncResult> {
     .eq("is_current_squad", true);
 
   if (clearError) {
-    console.error("❌ Error clearing current squad flags:", clearError.message);
+    log.error("Error clearing current squad flags", new Error(clearError.message));
     result.errors++;
   }
 
-  // Process each player from the API
+  // Batch fetch all existing players in one query (addresses N+1 query issue)
+  const { data: existingPlayers, error: fetchError } = await supabase
+    .from("players")
+    .select("id, name, normalized_name, aliases");
+
+  if (fetchError) {
+    log.error("Error fetching existing players", new Error(fetchError.message));
+    throw new Error("Cannot continue without player data");
+  }
+
+  // Build lookup maps for efficient matching
+  const playersByNormalizedName = new Map<string, ExistingPlayer>();
+  const playersByAlias = new Map<string, ExistingPlayer>();
+
+  for (const player of existingPlayers || []) {
+    playersByNormalizedName.set(player.normalized_name, player);
+    if (player.aliases) {
+      for (const alias of player.aliases) {
+        playersByAlias.set(alias, player);
+      }
+    }
+  }
+
+  // Collect players to update and create
+  const playersToUpdate: { id: number; position: string | null }[] = [];
+  const playersToCreate: {
+    name: string;
+    normalized_name: string;
+    is_current_squad: boolean;
+    known_club: string;
+    known_position: string | null;
+    rumor_count: number;
+  }[] = [];
+
+  // Process each player from the API using in-memory lookup
   for (const player of squad) {
     const normalizedName = normalizePlayerName(player.name);
-    console.log(
-      `  - ${player.name} (${player.position || "Unknown position"})`,
-    );
+    log.debug(`Processing: ${player.name} (${player.position || "Unknown"})`);
 
-    // Try to find existing player by normalized name
-    const { data: existingPlayer } = await supabase
-      .from("players")
-      .select("id, name, normalized_name")
-      .eq("normalized_name", normalizedName)
-      .maybeSingle();
+    // Look up in memory instead of querying DB
+    const existingPlayer =
+      playersByNormalizedName.get(normalizedName) ||
+      playersByAlias.get(normalizedName);
 
-    // Also check aliases
-    let playerToUpdate = existingPlayer;
-    if (!playerToUpdate) {
-      const { data: aliasMatch } = await supabase
-        .from("players")
-        .select("id, name, normalized_name")
-        .contains("aliases", [normalizedName])
-        .maybeSingle();
-      playerToUpdate = aliasMatch;
-    }
-
-    if (playerToUpdate) {
-      // Update existing player
-      const { error: updateError } = await supabase
-        .from("players")
-        .update({
-          is_current_squad: true,
-          known_club: "Real Betis",
-          known_position: player.position,
-        })
-        .eq("id", playerToUpdate.id);
-
-      if (updateError) {
-        console.error(
-          `    ❌ Error updating ${player.name}:`,
-          updateError.message,
-        );
-        result.errors++;
-      } else {
-        result.updated++;
-      }
+    if (existingPlayer) {
+      playersToUpdate.push({ id: existingPlayer.id, position: player.position });
     } else {
-      // Create new player
-      const { error: insertError } = await supabase.from("players").insert({
+      playersToCreate.push({
         name: player.name,
         normalized_name: normalizedName,
         is_current_squad: true,
@@ -117,17 +125,44 @@ async function syncSquad(): Promise<SyncResult> {
         known_position: player.position,
         rumor_count: 0,
       });
+    }
+  }
 
-      if (insertError) {
-        console.error(
-          `    ❌ Error creating ${player.name}:`,
-          insertError.message,
-        );
-        result.errors++;
-      } else {
-        console.log(`    ✨ Created new player record`);
-        result.created++;
-      }
+  // Batch update existing players
+  for (const player of playersToUpdate) {
+    const { error: updateError } = await supabase
+      .from("players")
+      .update({
+        is_current_squad: true,
+        known_club: "Real Betis",
+        known_position: player.position,
+      })
+      .eq("id", player.id);
+
+    if (updateError) {
+      log.error("Error updating player", new Error(updateError.message), {
+        playerId: player.id,
+      });
+      result.errors++;
+    } else {
+      result.updated++;
+    }
+  }
+
+  // Batch insert new players (addresses individual insert issue)
+  if (playersToCreate.length > 0) {
+    const { error: insertError } = await supabase
+      .from("players")
+      .insert(playersToCreate);
+
+    if (insertError) {
+      log.error("Error batch creating players", new Error(insertError.message), {
+        count: playersToCreate.length,
+      });
+      result.errors += playersToCreate.length;
+    } else {
+      result.created = playersToCreate.length;
+      log.info(`Created ${playersToCreate.length} new player records`);
     }
   }
 
@@ -135,11 +170,19 @@ async function syncSquad(): Promise<SyncResult> {
 }
 
 async function main() {
-  console.log("🏟️  Syncing Betis squad from Football-Data.org...\n");
+  log.info("Starting Betis squad sync from Football-Data.org");
 
   try {
     const result = await syncSquad();
 
+    log.business("squad_sync_completed", {
+      squadSize: result.squadSize,
+      created: result.created,
+      updated: result.updated,
+      errors: result.errors,
+    });
+
+    // Also print to console for CLI visibility
     console.log("\n📊 Sync Results:");
     console.log(`  - Squad size: ${result.squadSize} players`);
     console.log(`  - New players created: ${result.created}`);
@@ -148,7 +191,7 @@ async function main() {
 
     process.exit(result.errors > 0 ? 1 : 0);
   } catch (error) {
-    console.error("❌ Sync failed:", error);
+    log.error("Squad sync failed", error);
     process.exit(1);
   }
 }
