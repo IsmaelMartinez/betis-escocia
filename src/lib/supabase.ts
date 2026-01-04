@@ -898,6 +898,8 @@ export interface Player {
   id: number;
   name: string;
   normalized_name: string;
+  display_name?: string | null; // Short display name for UI (e.g., "Isco" vs "Francisco Roman Alarcon")
+  external_id?: number | null; // Football-Data.org player ID for API matching
   aliases: string[]; // Array of alternative normalized names (nicknames, full names)
   known_club?: string | null;
   known_position?: string | null;
@@ -911,12 +913,16 @@ export interface Player {
 export interface PlayerInsert {
   name: string;
   normalized_name: string;
+  display_name?: string | null;
+  external_id?: number | null;
   known_club?: string | null;
   known_position?: string | null;
 }
 
 export interface PlayerUpdate {
   name?: string;
+  display_name?: string | null;
+  external_id?: number | null;
   aliases?: string[];
   known_club?: string | null;
   known_position?: string | null;
@@ -954,3 +960,19 @@ export interface TrendingPlayer {
   lastSeen: string;
   isActive: boolean; // mentioned in last 7 days
 }
+
+// Re-export squad types for convenience
+export type {
+  SquadMember,
+  SquadMemberInsert,
+  SquadMemberUpdate,
+  StartingEleven,
+  StartingElevenInsert,
+  StartingElevenUpdate,
+  LineupPlayer,
+  Position,
+  PositionShort,
+  SquadStatus,
+  PositionGroup,
+  Formation,
+} from "@/types/squad";
