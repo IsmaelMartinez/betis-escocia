@@ -30,6 +30,20 @@ function getCurrentFootballSeason(): number {
 }
 
 // Types
+export interface SquadPlayer {
+  id: number;
+  name: string;
+  position: string | null;
+  dateOfBirth: string | null;
+  nationality: string | null;
+}
+
+export interface TeamSquadResponse {
+  id: number;
+  name: string;
+  squad: SquadPlayer[];
+}
+
 export interface StandingEntry {
   position: number;
   team: {
@@ -225,6 +239,33 @@ export class FootballDataService {
     }
 
     return { table: [] };
+  }
+
+  /**
+   * Fetches the current squad for Real Betis from Football-Data.org.
+   * Returns an array of players with their positions.
+   */
+  async fetchRealBetisSquad(): Promise<SquadPlayer[]> {
+    const url = `${BASE_URL}/teams/${REAL_BETIS_TEAM_ID}`;
+
+    console.log("🔍 Fetching Real Betis squad from:", url);
+
+    try {
+      const response = await this.http.get<TeamSquadResponse>(url);
+      console.log("✅ Squad Response Status:", response.status);
+      console.log("✅ Squad Size:", response.data.squad?.length || 0);
+      return response.data.squad || [];
+    } catch (error: unknown) {
+      console.error("❌ Error fetching squad:");
+      if (error && typeof error === "object" && "response" in error) {
+        const axiosError = error as {
+          response?: { status?: number; statusText?: string; data?: unknown };
+        };
+        console.error("Status:", axiosError.response?.status);
+        console.error("Data:", axiosError.response?.data);
+      }
+      throw error;
+    }
   }
 
   isHomeMatch(match: Match): boolean {

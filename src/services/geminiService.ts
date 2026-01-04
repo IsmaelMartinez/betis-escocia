@@ -20,6 +20,7 @@ export interface RumorAnalysis {
 export interface ReassessmentOptions {
   adminContext?: string; // e.g., "wrong player", "wrong team", "not a transfer rumor"
   isReassessment?: boolean;
+  currentSquad?: string[]; // List of current Betis player names for context
 }
 
 export async function analyzeRumorCredibility(
@@ -48,6 +49,15 @@ ${options.adminContext}
 
 Nota: Un administrador ha marcado esta noticia para re-evaluación con el contexto anterior. Por favor, ajusta tu análisis según esta información.`
     : "";
+
+  // Build current squad section if available
+  const currentSquadSection =
+    options?.currentSquad && options.currentSquad.length > 0
+      ? `\n\nPLANTILLA ACTUAL DEL BETIS (jugadores que actualmente pertenecen al club):
+${options.currentSquad.join(", ")}
+
+IMPORTANTE: Si un jugador de esta lista aparece en la noticia, ten en cuenta que ya es jugador del Betis. Si la noticia habla de su posible salida, es un rumor de SALIDA (departing). Si la noticia habla de su renovación o situación en el club, no es un fichaje.`
+      : "";
 
   const prompt = `Analiza esta noticia del Real Betis Balompié (equipo de fútbol de Sevilla, España):
 
@@ -79,7 +89,7 @@ EJEMPLOS de extracción correcta:
 - "Marc Roca y William Carvalho..." → [{"name":"Marc Roca"},{"name":"William Carvalho"}]
 - "El club negocia con el Liverpool" → [] (no hay jugador nombrado)
 - "Pellegrini habló sobre el mercado" → [] (entrenador, no jugador)
-${adminContextSection}
+${currentSquadSection}${adminContextSection}
 JSON (solo el JSON, sin markdown):
 {"isRelevantToBetis":<bool>,"irrelevanceReason":"<razón si no es relevante>","isTransferRumor":<bool>,"probability":<0-100|null>,"reasoning":"<explicación breve>","confidence":"<low|medium|high>","players":[{"name":"<nombre>"}]}`;
 

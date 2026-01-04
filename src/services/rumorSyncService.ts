@@ -3,9 +3,27 @@ import { checkDuplicate } from "./deduplicationService";
 import { analyzeRumorCredibility } from "./geminiService";
 import { processExtractedPlayers } from "./playerNormalizationService";
 import { fetchArticleContent } from "./articleFetcherService";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { log } from "@/lib/logger";
 import type { BetisNewsInsert } from "@/lib/supabase";
+
+/**
+ * Fetches the list of current Betis squad players from the database.
+ * Returns an array of player names that are marked as is_current_squad = true.
+ */
+async function getCurrentSquad(supabase: SupabaseClient): Promise<string[]> {
+  const { data: players, error } = await supabase
+    .from("players")
+    .select("name")
+    .eq("is_current_squad", true);
+
+  if (error) {
+    log.error("Failed to fetch current squad", new Error(error.message));
+    return [];
+  }
+
+  return players?.map((p) => p.name) || [];
+}
 
 // Rate limiting: Gemini free tier allows 15 RPM, so ~4 seconds between calls
 const API_CALL_DELAY_MS = 4000;
@@ -63,6 +81,14 @@ export async function syncRumors(): Promise<SyncResult> {
       },
     });
 
+    // Fetch current squad once for all analyses
+    const currentSquad = await getCurrentSquad(supabase);
+    if (currentSquad.length > 0) {
+      log.business("current_squad_loaded", {
+        playerCount: currentSquad.length,
+      });
+    }
+
     // 0. Process items that need reassessment (admin-requested re-analysis)
     const { data: itemsToReassess } = await supabase
       .from("betis_news")
@@ -87,7 +113,7 @@ export async function syncRumors(): Promise<SyncResult> {
           // Fetch article content for better analysis
           const articleContent = await fetchArticleContent(item.link);
 
-          // Re-analyze with admin context
+          // Re-analyze with admin context and current squad
           const analysis = await analyzeRumorCredibility(
             item.title,
             item.description || "",
@@ -96,6 +122,7 @@ export async function syncRumors(): Promise<SyncResult> {
             {
               adminContext: item.admin_context || undefined,
               isReassessment: true,
+              currentSquad,
             },
           );
 
@@ -196,12 +223,13 @@ export async function syncRumors(): Promise<SyncResult> {
         // Fetch full article content for better analysis
         const articleContent = await fetchArticleContent(rumor.link);
 
-        // Analyze with Gemini AI (with full article content if available)
+        // Analyze with Gemini AI (with full article content and current squad)
         const analysis = await analyzeRumorCredibility(
           rumor.title,
           rumor.description || "",
           rumor.source,
           articleContent,
+          { currentSquad },
         );
         result.analyzed++;
 

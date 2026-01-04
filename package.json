@@ -20,6 +20,7 @@
     "lighthouse:accessibility": "npx lighthouse http://localhost:3000 --output=json --output-path=./lighthouse-report.json --headless",
     "update-trivia": "tsx scripts/update-trivia-questions.ts",
     "sync-rumors": "tsx scripts/sync-rumors.ts",
+    "sync-squad": "tsx scripts/sync-squad.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "prepare": "lefthook install"
