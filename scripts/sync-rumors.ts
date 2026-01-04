@@ -11,6 +11,7 @@ async function main() {
   console.log("\nSync Results:");
   console.log(`- Fetched: ${result.fetched}`);
   console.log(`- Duplicates: ${result.duplicates}`);
+  console.log(`- Skipped (non-Betis): ${result.skippedNonBetis}`);
   console.log(
     `- Transfer Rumors: ${result.transferRumors} (ai_probability > 0)`,
   );
