@@ -10,9 +10,17 @@ export const PUT = createApiHandler({
   schema: updateStatusSchema,
   handler: async (validatedData, context) => {
     const { status } = validatedData;
-    const { user, authenticatedSupabase } = context;
+    const { user, authenticatedSupabase, params } = context;
     
-    const id = parseInt(context.request.url.split('/').pop() || '', 10);
+    if (!params) {
+      throw new Error("Parámetros de ruta no encontrados");
+    }
+    const { id: idStr } = await params;
+    if (!idStr) {
+      throw new Error("El ID no fue proporcionado en la ruta");
+    }
+
+    const id = parseInt(idStr, 10);
     if (isNaN(id)) {
       throw new Error('Invalid ID');
     }
