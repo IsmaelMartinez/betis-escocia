@@ -11,11 +11,11 @@ interface RouteParams {
 // GET: Get a specific squad member
 export const GET = createApiHandler({
   auth: "admin",
-  handler: async (_, { supabase, request }) => {
-    // Extract id from URL
-    const url = new URL(request.url);
-    const pathParts = url.pathname.split("/");
-    const id = pathParts[pathParts.length - 1];
+  handler: async (_, { supabase, params }) => {
+    if (!params) {
+      throw new Error("ID no proporcionado");
+    }
+    const { id } = await params;
 
     const { data, error } = await supabase
       .from("squad_members")
@@ -43,19 +43,15 @@ export const GET = createApiHandler({
   },
 });
 
-// Helper to extract ID from request context
-function extractIdFromRequest(request: NextRequest): string {
-  const url = new URL(request.url);
-  const pathParts = url.pathname.split("/");
-  return pathParts[pathParts.length - 1];
-}
-
 // PATCH: Update a squad member
 export const PATCH = createApiHandler({
   auth: "admin",
   schema: squadMemberUpdateSchema,
-  handler: async (data, { supabase, request }) => {
-    const id = extractIdFromRequest(request);
+  handler: async (data, { supabase, params }) => {
+    if (!params) {
+      throw new Error("ID no proporcionado");
+    }
+    const { id } = await params;
 
     // Build update object, calculating position_short if position changed
     const updateData: Record<string, unknown> = {};
@@ -120,8 +116,11 @@ export const PATCH = createApiHandler({
 // DELETE: Remove a player from the squad
 export const DELETE = createApiHandler({
   auth: "admin",
-  handler: async (_, { supabase, request }) => {
-    const id = extractIdFromRequest(request);
+  handler: async (_, { supabase, params }) => {
+    if (!params) {
+      throw new Error("ID no proporcionado");
+    }
+    const { id } = await params;
 
     // First get the player_id to update the players table
     const { data: existing, error: fetchError } = await supabase

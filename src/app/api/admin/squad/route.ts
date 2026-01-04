@@ -7,6 +7,7 @@ import type { Position } from "@/types/squad";
 export const GET = createApiHandler({
   auth: "admin",
   handler: async (_, { supabase }) => {
+    console.log("Fetching squad members...");
     const { data, error } = await supabase
       .from("squad_members")
       .select(
@@ -26,9 +27,11 @@ export const GET = createApiHandler({
       .order("shirt_number", { ascending: true });
 
     if (error) {
+      console.error("Error fetching squad members:", error);
       throw new Error(`Error al obtener plantilla: ${error.message}`);
     }
 
+    console.log(`Fetched ${data?.length || 0} squad members`);
     return { success: true, squadMembers: data };
   },
 });

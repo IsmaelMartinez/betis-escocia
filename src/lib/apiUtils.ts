@@ -15,6 +15,7 @@ export type AuthRequirement = 'admin' | 'user' | 'optional' | 'none';
 // API context provided to handlers
 export interface ApiContext {
   request: NextRequest;
+  params?: Promise<Record<string, string>>; // Next.js 15 params are promises
   user?: {
     id: string;
     isAdmin: boolean;
@@ -183,7 +184,7 @@ async function handleAuthentication(
 export function createApiHandler<TInput = unknown, TOutput = unknown>(
   config: ApiHandlerConfig<TInput, TOutput>
 ) {
-  return async (request: NextRequest): Promise<NextResponse> => {
+  return async (request: NextRequest, routeContext?: { params: Promise<Record<string, string>> }): Promise<NextResponse> => {
     try {
       // Handle authentication
       const { context, error: authError } = await handleAuthentication(
@@ -193,6 +194,11 @@ export function createApiHandler<TInput = unknown, TOutput = unknown>(
       
       if (authError) {
         return authError;
+      }
+
+      // Add params to context if available
+      if (routeContext && routeContext.params) {
+        context.params = routeContext.params;
       }
 
       // Parse and validate request data
