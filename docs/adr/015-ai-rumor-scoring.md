@@ -153,11 +153,19 @@ Multi-layer approach to prevent duplicate rumors:
 
 ### RSS Feed Sources
 
-Three optimized feeds provide rumor content:
+Six feeds provide rumor content (fetched in parallel):
+
+**Traditional RSS:**
 
 - Google News (transfer query): `Real+Betis+fichajes+rumores` - 60-70% transfer-focused
 - Google News (general): `Real+Betis` - comprehensive coverage
 - BetisWeb: `betisweb.com/feed/` - dedicated Betis source, high credibility
+
+**X/Twitter (via RSSHub bridge):**
+
+- `@RealBetis` - Official club account for announcements and signings
+- `@FabrizioRomano` - Top transfer specialist ("Here we go")
+- `@MatteMoretto` - Tier 1 La Liga transfer journalist
 
 ## Alternatives Considered
 
