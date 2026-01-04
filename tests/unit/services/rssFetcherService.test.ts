@@ -28,7 +28,7 @@ import {
   _testExports,
 } from "@/services/rssFetcherService";
 
-const TOTAL_FEEDS = _testExports.FEED_CONFIGS.length; // 6 feeds
+const TOTAL_FEEDS = _testExports.FEED_CONFIGS.length; // 5 feeds (3 RSS + 2 Telegram)
 
 // Helper to create mock responses for all feeds
 const mockAllFeedsEmpty = () => {
@@ -74,7 +74,7 @@ describe("rssFetcherService", () => {
   });
 
   describe("fetchAllRumors", () => {
-    it("should fetch and merge rumors from all RSS feeds", async () => {
+    it("should fetch and merge rumors from all feeds", async () => {
       // Create feeds with different timestamps to verify sorting
       const feeds = [
         {
@@ -107,10 +107,27 @@ describe("rssFetcherService", () => {
             ),
           ],
         },
-        // X feeds with empty items for this test
-        { items: [] },
-        { items: [] },
-        { items: [] },
+        // Telegram feeds
+        {
+          items: [
+            mockFeedItem(
+              "Fabrizio Romano: Here we go!",
+              "https://t.me/FabrizioRomanoTG/123",
+              getRecentDate(1, 2),
+              "Transfer confirmed",
+            ),
+          ],
+        },
+        {
+          items: [
+            mockFeedItem(
+              "Ficherío Betis: Nuevo fichaje",
+              "https://t.me/ficherioRealBetis/456",
+              getRecentDate(1, -2),
+              "Betis transfer news",
+            ),
+          ],
+        },
       ];
 
       feeds.forEach((feed) => mockParseURL.mockResolvedValueOnce(feed));
@@ -118,12 +135,12 @@ describe("rssFetcherService", () => {
       const rumors = await fetchAllRumors();
 
       expect(mockParseURL).toHaveBeenCalledTimes(TOTAL_FEEDS);
-      expect(rumors).toHaveLength(3);
+      expect(rumors).toHaveLength(5);
 
       // Should be sorted by date (newest first)
-      expect(rumors[0].title).toBe("Análisis táctico Betis");
-      expect(rumors[1].title).toBe("Betis interesado en Fichaje 1");
-      expect(rumors[2].title).toBe("Betis gana partido");
+      expect(rumors[0].title).toBe("Fabrizio Romano: Here we go!");
+      expect(rumors[1].title).toBe("Análisis táctico Betis");
+      expect(rumors[2].title).toBe("Betis interesado en Fichaje 1");
     });
 
     it("should assign correct source to each feed", async () => {
@@ -136,14 +153,14 @@ describe("rssFetcherService", () => {
       const rumors = await fetchAllRumors();
 
       const sources = rumors.map((r) => r.source);
-      // Traditional RSS sources
+      // RSS sources
       expect(sources).toContain("Google News (Fichajes)");
       expect(sources).toContain("Google News (General)");
       expect(sources).toContain("BetisWeb");
-      // X/Twitter sources via RSSHub
-      expect(sources).toContain("X: @RealBetis");
-      expect(sources).toContain("X: @FabrizioRomano");
-      expect(sources).toContain("X: @MatteMoretto");
+      // Telegram sources (replaces broken Twitter/RSSHub feeds)
+      expect(sources).toContain("Telegram: @FabrizioRomanoTG");
+      expect(sources).toContain("Telegram: @ficherioRealBetis");
+      expect(sources).toHaveLength(5);
     });
 
     it("should handle missing title with default value", async () => {
@@ -351,7 +368,7 @@ describe("rssFetcherService", () => {
       await fetchAllRumors();
       const duration = Date.now() - startTime;
 
-      // If running in parallel, total time should be ~50ms, not ~300ms (6 * 50ms)
+      // If running in parallel, total time should be ~50ms, not ~250ms (5 * 50ms)
       expect(duration).toBeLessThan(150);
     });
 
@@ -397,16 +414,19 @@ describe("rssFetcherService", () => {
     it("should have correct feed configuration", () => {
       const configs = _testExports.FEED_CONFIGS;
 
-      expect(configs).toHaveLength(6);
+      // 5 feeds: 3 RSS + 2 Telegram
+      expect(configs).toHaveLength(5);
 
       // Verify RSS feeds
       const rssFeeds = configs.filter((c) => c.type === "rss");
       expect(rssFeeds).toHaveLength(3);
 
-      // Verify RSSHub feeds
-      const rsshubFeeds = configs.filter((c) => c.type === "rsshub");
-      expect(rsshubFeeds).toHaveLength(3);
-      expect(rsshubFeeds.every((f) => f.url.includes("rsshub.app"))).toBe(true);
+      // Verify Telegram feeds (replaced broken Twitter/RSSHub feeds)
+      const telegramFeeds = configs.filter((c) => c.type === "telegram");
+      expect(telegramFeeds).toHaveLength(2);
+      expect(telegramFeeds.every((f) => f.url.includes("tg.i-c-a.su"))).toBe(
+        true,
+      );
     });
   });
 });

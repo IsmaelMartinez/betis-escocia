@@ -9,16 +9,15 @@ export interface RumorItem {
     | "Google News (Fichajes)"
     | "Google News (General)"
     | "BetisWeb"
-    | "X: @RealBetis"
-    | "X: @FabrizioRomano"
-    | "X: @MatteMoretto";
+    | "Telegram: @FabrizioRomanoTG"
+    | "Telegram: @ficherioRealBetis";
   description?: string;
 }
 
 interface FeedConfig {
   url: string;
   source: RumorItem["source"];
-  type: "rss" | "rsshub";
+  type: "rss" | "telegram";
 }
 
 // Unified feed configuration - add new feeds here
@@ -39,21 +38,17 @@ const FEED_CONFIGS: FeedConfig[] = [
     source: "BetisWeb",
     type: "rss",
   },
-  // X/Twitter feeds via RSSHub bridge (https://docs.rsshub.app/routes/social-media#twitter)
+  // Telegram feeds via tg.i-c-a.su (free, no auth required)
+  // Replaces broken RSSHub Twitter feeds - see https://tg.i-c-a.su/
   {
-    url: "https://rsshub.app/twitter/user/RealBetis",
-    source: "X: @RealBetis",
-    type: "rsshub",
+    url: "https://tg.i-c-a.su/rss/FabrizioRomanoTG",
+    source: "Telegram: @FabrizioRomanoTG",
+    type: "telegram",
   },
   {
-    url: "https://rsshub.app/twitter/user/FabrizioRomano",
-    source: "X: @FabrizioRomano",
-    type: "rsshub",
-  },
-  {
-    url: "https://rsshub.app/twitter/user/MatteMoretto",
-    source: "X: @MatteMoretto",
-    type: "rsshub",
+    url: "https://tg.i-c-a.su/rss/ficherioRealBetis",
+    source: "Telegram: @ficherioRealBetis",
+    type: "telegram",
   },
 ];
 
@@ -78,12 +73,12 @@ async function fetchFeed(config: FeedConfig): Promise<RumorItem[]> {
       description: item.contentSnippet || item.content,
     }));
   } catch (error) {
-    // Distinguish RSSHub failures for monitoring
-    if (config.type === "rsshub") {
-      log.error("RSSHub bridge failed - X feed unavailable", error, {
+    // Distinguish feed types for monitoring
+    if (config.type === "telegram") {
+      log.error("Telegram feed bridge failed", error, {
         source: config.source,
         url: config.url,
-        feedType: "rsshub",
+        feedType: "telegram",
       });
     } else {
       log.error("Failed to fetch RSS feed", error, {
