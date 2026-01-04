@@ -159,7 +159,11 @@ async function syncSquad(): Promise<SyncResult> {
   const processedPlayerIds = new Set<number>();
 
   // Collect batches for efficient database operations
-  const playersToUpdate: { id: number; position: string | null; externalId: number }[] = [];
+  const playersToUpdate: {
+    id: number;
+    position: string | null;
+    externalId: number;
+  }[] = [];
   const playersToCreate: {
     name: string;
     normalized_name: string;
@@ -371,7 +375,10 @@ async function syncSquad(): Promise<SyncResult> {
       if (insertError.code === "23505") {
         result.squadMembersUpdated += squadMembersToCreate.length;
       } else {
-        log.error("Error batch creating squad members", new Error(insertError.message));
+        log.error(
+          "Error batch creating squad members",
+          new Error(insertError.message),
+        );
         result.errors += squadMembersToCreate.length;
       }
     } else {

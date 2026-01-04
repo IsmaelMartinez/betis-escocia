@@ -180,7 +180,8 @@ export default function PitchView({
             className={clsx(
               "absolute transform -translate-x-1/2 -translate-y-1/2 transition-all",
               onPositionClick && "cursor-pointer",
-              onPositionClick && "focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-green-600 rounded",
+              onPositionClick &&
+                "focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-green-600 rounded",
             )}
             style={{
               left: `${pos.x}%`,
