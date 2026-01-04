@@ -1,6 +1,6 @@
 /**
  * Script to sync the current Betis squad from Football-Data.org to the database.
- * This updates the players table to mark which players are currently in the squad.
+ * This updates both the players table and squad_members table with rich data.
  *
  * Usage: npx tsx scripts/sync-squad.ts
  */
@@ -14,15 +14,43 @@ import { FootballDataService } from "../src/services/footballDataService";
 import { normalizePlayerName } from "../src/services/playerNormalizationService";
 import { createClient } from "@supabase/supabase-js";
 import { log } from "../src/lib/logger";
+import { Position, POSITION_TO_SHORT } from "../src/types/squad";
 
 // Create a fresh FootballDataService instance after env vars are loaded
 const footballDataService = new FootballDataService(axios.create());
 
 interface SyncResult {
   squadSize: number;
-  created: number;
-  updated: number;
+  playersCreated: number;
+  playersUpdated: number;
+  squadMembersCreated: number;
+  squadMembersUpdated: number;
+  squadMembersRemoved: number;
   errors: number;
+}
+
+// Map Football-Data.org positions to our Position type
+function mapApiPosition(apiPosition: string | null): Position | null {
+  if (!apiPosition) return null;
+
+  const positionMap: Record<string, Position> = {
+    Goalkeeper: "Goalkeeper",
+    "Centre-Back": "Centre-Back",
+    "Left-Back": "Left-Back",
+    "Right-Back": "Right-Back",
+    "Defensive Midfield": "Defensive Midfield",
+    "Central Midfield": "Central Midfield",
+    "Attacking Midfield": "Attacking Midfield",
+    "Left Winger": "Left Winger",
+    "Right Winger": "Right Winger",
+    "Centre-Forward": "Centre-Forward",
+    // Additional mappings for API variations
+    Defence: "Centre-Back",
+    Midfield: "Central Midfield",
+    Offence: "Centre-Forward",
+  };
+
+  return positionMap[apiPosition] || null;
 }
 
 interface ExistingPlayer {
@@ -32,11 +60,20 @@ interface ExistingPlayer {
   aliases: string[] | null;
 }
 
+interface ExistingSquadMember {
+  id: number;
+  player_id: number;
+  external_id: number | null;
+}
+
 async function syncSquad(): Promise<SyncResult> {
   const result: SyncResult = {
     squadSize: 0,
-    created: 0,
-    updated: 0,
+    playersCreated: 0,
+    playersUpdated: 0,
+    squadMembersCreated: 0,
+    squadMembersUpdated: 0,
+    squadMembersRemoved: 0,
     errors: 0,
   };
 
@@ -96,23 +133,81 @@ async function syncSquad(): Promise<SyncResult> {
     }
   }
 
-  // Collect players to update and create
-  const playersToUpdate: { id: number; position: string | null }[] = [];
+  // Fetch existing squad members for tracking changes
+  const { data: existingSquadMembers, error: squadFetchError } = await supabase
+    .from("squad_members")
+    .select("id, player_id, external_id");
+
+  if (squadFetchError) {
+    log.error(
+      "Error fetching squad members",
+      new Error(squadFetchError.message),
+    );
+    // Continue - squad_members table might not exist yet
+  }
+
+  const squadByPlayerId = new Map<number, ExistingSquadMember>();
+  const squadByExternalId = new Map<number, ExistingSquadMember>();
+  for (const member of existingSquadMembers || []) {
+    squadByPlayerId.set(member.player_id, member);
+    if (member.external_id) {
+      squadByExternalId.set(member.external_id, member);
+    }
+  }
+
+  // Track which player IDs we process (to mark departed players)
+  const processedPlayerIds = new Set<number>();
+
+  // Collect batches for efficient database operations
+  const playersToUpdate: { id: number; position: string | null; externalId: number }[] = [];
   const playersToCreate: {
     name: string;
     normalized_name: string;
     is_current_squad: boolean;
     known_club: string;
     known_position: string | null;
+    external_id: number;
     rumor_count: number;
   }[] = [];
+  const squadMembersToUpdate: {
+    id: number;
+    external_id: number;
+    position: Position | null;
+    position_short: string | null;
+    date_of_birth: string | null;
+    nationality: string | null;
+  }[] = [];
+  const squadMembersToCreate: {
+    player_id: number;
+    external_id: number;
+    position: Position | null;
+    position_short: string | null;
+    date_of_birth: string | null;
+    nationality: string | null;
+    squad_status: string;
+  }[] = [];
 
-  // Process each player from the API using in-memory lookup
-  for (const player of squad) {
-    const normalizedName = normalizePlayerName(player.name);
-    log.debug(`Processing: ${player.name} (${player.position || "Unknown"})`);
+  // First pass: categorize players and prepare batches
+  interface ProcessedPlayer {
+    apiPlayer: (typeof squad)[0];
+    playerId: number | null;
+    isNew: boolean;
+    normalizedName: string;
+    position: Position | null;
+    positionShort: string | null;
+    existingSquadMemberId: number | null;
+  }
+  const processedPlayers: ProcessedPlayer[] = [];
 
-    // Look up in memory instead of querying DB
+  for (const apiPlayer of squad) {
+    const normalizedName = normalizePlayerName(apiPlayer.name);
+    const position = mapApiPosition(apiPlayer.position);
+    const positionShort = position ? POSITION_TO_SHORT[position] : null;
+
+    log.debug(
+      `Processing: ${apiPlayer.name} (${apiPlayer.position || "Unknown"})`,
+    );
+
     const existingPlayer =
       playersByNormalizedName.get(normalizedName) ||
       playersByAlias.get(normalizedName);
@@ -120,60 +215,193 @@ async function syncSquad(): Promise<SyncResult> {
     if (existingPlayer) {
       playersToUpdate.push({
         id: existingPlayer.id,
-        position: player.position,
+        position: apiPlayer.position,
+        externalId: apiPlayer.id,
+      });
+      processedPlayerIds.add(existingPlayer.id);
+
+      const existingSquadMember =
+        squadByPlayerId.get(existingPlayer.id) ||
+        (apiPlayer.id ? squadByExternalId.get(apiPlayer.id) : undefined);
+
+      processedPlayers.push({
+        apiPlayer,
+        playerId: existingPlayer.id,
+        isNew: false,
+        normalizedName,
+        position,
+        positionShort,
+        existingSquadMemberId: existingSquadMember?.id ?? null,
       });
     } else {
       playersToCreate.push({
-        name: player.name,
+        name: apiPlayer.name,
         normalized_name: normalizedName,
         is_current_squad: true,
         known_club: "Real Betis",
-        known_position: player.position,
+        known_position: apiPlayer.position,
+        external_id: apiPlayer.id,
         rumor_count: 0,
+      });
+      processedPlayers.push({
+        apiPlayer,
+        playerId: null,
+        isNew: true,
+        normalizedName,
+        position,
+        positionShort,
+        existingSquadMemberId: null,
       });
     }
   }
 
   // Batch update existing players
-  for (const player of playersToUpdate) {
-    const { error: updateError } = await supabase
-      .from("players")
-      .update({
-        is_current_squad: true,
-        known_club: "Real Betis",
-        known_position: player.position,
-      })
-      .eq("id", player.id);
-
-    if (updateError) {
-      log.error("Error updating player", new Error(updateError.message), {
-        playerId: player.id,
-      });
-      result.errors++;
-    } else {
-      result.updated++;
+  if (playersToUpdate.length > 0) {
+    const updatePromises = playersToUpdate.map((p) =>
+      supabase
+        .from("players")
+        .update({
+          is_current_squad: true,
+          known_club: "Real Betis",
+          known_position: p.position,
+          external_id: p.externalId,
+        })
+        .eq("id", p.id),
+    );
+    const updateResults = await Promise.all(updatePromises);
+    for (const res of updateResults) {
+      if (res.error) {
+        log.error("Error updating player", new Error(res.error.message));
+        result.errors++;
+      } else {
+        result.playersUpdated++;
+      }
     }
   }
 
-  // Batch insert new players (addresses individual insert issue)
+  // Batch insert new players and get their IDs
   if (playersToCreate.length > 0) {
-    const { error: insertError } = await supabase
+    const { data: newPlayers, error: insertError } = await supabase
       .from("players")
-      .insert(playersToCreate);
+      .insert(playersToCreate)
+      .select("id, normalized_name");
 
     if (insertError) {
-      log.error(
-        "Error batch creating players",
-        new Error(insertError.message),
-        {
-          count: playersToCreate.length,
-        },
-      );
+      log.error("Error batch creating players", new Error(insertError.message));
       result.errors += playersToCreate.length;
-    } else {
-      result.created = playersToCreate.length;
-      log.info(`Created ${playersToCreate.length} new player records`);
+    } else if (newPlayers) {
+      result.playersCreated = newPlayers.length;
+
+      // Map normalized names to new IDs
+      const newPlayerIdMap = new Map<string, number>();
+      for (const np of newPlayers) {
+        newPlayerIdMap.set(np.normalized_name, np.id);
+        processedPlayerIds.add(np.id);
+      }
+
+      // Update processedPlayers with new IDs
+      for (const pp of processedPlayers) {
+        if (pp.isNew && pp.playerId === null) {
+          pp.playerId = newPlayerIdMap.get(pp.normalizedName) ?? null;
+        }
+      }
     }
+  }
+
+  // Now prepare squad member batches with resolved player IDs
+  for (const pp of processedPlayers) {
+    if (pp.playerId === null) continue;
+
+    if (pp.existingSquadMemberId !== null) {
+      squadMembersToUpdate.push({
+        id: pp.existingSquadMemberId,
+        external_id: pp.apiPlayer.id,
+        position: pp.position,
+        position_short: pp.positionShort,
+        date_of_birth: pp.apiPlayer.dateOfBirth,
+        nationality: pp.apiPlayer.nationality,
+      });
+    } else {
+      squadMembersToCreate.push({
+        player_id: pp.playerId,
+        external_id: pp.apiPlayer.id,
+        position: pp.position,
+        position_short: pp.positionShort,
+        date_of_birth: pp.apiPlayer.dateOfBirth,
+        nationality: pp.apiPlayer.nationality,
+        squad_status: "active",
+      });
+    }
+  }
+
+  // Batch update existing squad members
+  if (squadMembersToUpdate.length > 0) {
+    const updatePromises = squadMembersToUpdate.map((sm) =>
+      supabase
+        .from("squad_members")
+        .update({
+          external_id: sm.external_id,
+          position: sm.position,
+          position_short: sm.position_short,
+          date_of_birth: sm.date_of_birth,
+          nationality: sm.nationality,
+          squad_status: "active",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", sm.id),
+    );
+    const updateResults = await Promise.all(updatePromises);
+    for (const res of updateResults) {
+      if (res.error) {
+        log.error("Error updating squad member", new Error(res.error.message));
+        result.errors++;
+      } else {
+        result.squadMembersUpdated++;
+      }
+    }
+  }
+
+  // Batch insert new squad members
+  if (squadMembersToCreate.length > 0) {
+    const { error: insertError } = await supabase
+      .from("squad_members")
+      .insert(squadMembersToCreate);
+
+    if (insertError) {
+      if (insertError.code === "23505") {
+        result.squadMembersUpdated += squadMembersToCreate.length;
+      } else {
+        log.error("Error batch creating squad members", new Error(insertError.message));
+        result.errors += squadMembersToCreate.length;
+      }
+    } else {
+      result.squadMembersCreated = squadMembersToCreate.length;
+    }
+  }
+
+  // Batch update departed players
+  const departedSquadMemberIds: number[] = [];
+  const departedPlayerIds: number[] = [];
+  for (const [playerId, squadMember] of squadByPlayerId) {
+    if (!processedPlayerIds.has(playerId)) {
+      departedSquadMemberIds.push(squadMember.id);
+      departedPlayerIds.push(playerId);
+    }
+  }
+
+  if (departedSquadMemberIds.length > 0) {
+    await supabase
+      .from("squad_members")
+      .update({ squad_status: "loaned_out" })
+      .in("id", departedSquadMemberIds);
+    result.squadMembersRemoved = departedSquadMemberIds.length;
+  }
+
+  if (departedPlayerIds.length > 0) {
+    await supabase
+      .from("players")
+      .update({ is_current_squad: false })
+      .in("id", departedPlayerIds);
   }
 
   return result;
@@ -185,19 +413,19 @@ async function main() {
   try {
     const result = await syncSquad();
 
-    log.business("squad_sync_completed", {
-      squadSize: result.squadSize,
-      created: result.created,
-      updated: result.updated,
-      errors: result.errors,
-    });
+    log.business("squad_sync_completed", { ...result });
 
     // Also print to console for CLI visibility
     console.log("\n📊 Sync Results:");
-    console.log(`  - Squad size: ${result.squadSize} players`);
-    console.log(`  - New players created: ${result.created}`);
-    console.log(`  - Existing players updated: ${result.updated}`);
-    console.log(`  - Errors: ${result.errors}`);
+    console.log(`  Squad size: ${result.squadSize} players`);
+    console.log("\n  Players table:");
+    console.log(`    - Created: ${result.playersCreated}`);
+    console.log(`    - Updated: ${result.playersUpdated}`);
+    console.log("\n  Squad members table:");
+    console.log(`    - Created: ${result.squadMembersCreated}`);
+    console.log(`    - Updated: ${result.squadMembersUpdated}`);
+    console.log(`    - Marked inactive: ${result.squadMembersRemoved}`);
+    console.log(`\n  Errors: ${result.errors}`);
 
     process.exit(result.errors > 0 ? 1 : 0);
   } catch (error) {

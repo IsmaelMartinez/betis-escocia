@@ -68,6 +68,12 @@ const SoylentiNewsList = dynamicImport(
     loading: () => <LoadingSpinner />,
   },
 );
+const PlayersTab = dynamicImport(
+  () => import("@/components/admin/players/PlayersTab"),
+  {
+    loading: () => <LoadingSpinner />,
+  },
+);
 
 interface AdminStats {
   totalRSVPs: number;
@@ -83,7 +89,8 @@ type AdminView =
   | "matches"
   | "match-form"
   | "contacts"
-  | "soylenti";
+  | "soylenti"
+  | "players";
 
 interface MatchFormData {
   mode: "create" | "edit";
@@ -766,6 +773,8 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
                 {currentView === "contacts" && "Gestión de contactos"}
                 {currentView === "soylenti" &&
                   "Gestión de noticias y rumores de Soylenti"}
+                {currentView === "players" &&
+                  "Gestión de jugadores, plantilla y alineaciones"}
               </p>
               {user && (
                 <p className="text-sm text-betis-green mt-1">
@@ -862,6 +871,21 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
                 >
                   <Newspaper className="h-4 w-4 inline mr-2" />
                   Soylenti
+                </button>
+              )}
+
+              {showSoylenti && (
+                <button
+                  onClick={() => setCurrentView("players")}
+                  className={clsx(
+                    "py-2 px-1 border-b-2 font-medium text-sm",
+                    currentView === "players"
+                      ? "border-betis-green text-betis-green"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
+                  )}
+                >
+                  <Users className="h-4 w-4 inline mr-2" />
+                  Jugadores
                 </button>
               )}
             </nav>
@@ -1243,6 +1267,11 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
               onPageChange={handleSoylentiPageChange}
             />
           </>
+        )}
+
+        {/* Players Management View */}
+        {currentView === "players" && showSoylenti && (
+          <PlayersTab isLoading={loading} />
         )}
       </div>
     </div>
