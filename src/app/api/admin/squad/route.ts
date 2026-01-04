@@ -29,7 +29,7 @@ export const GET = createApiHandler({
       throw new Error(`Error al obtener plantilla: ${error.message}`);
     }
 
-    return { success: true, squad: data };
+    return { success: true, squadMembers: data };
   },
 });
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { User, Flag, Calendar, Edit2 } from "lucide-react";
+import { User, Flag, Calendar } from "lucide-react";
 import Button from "@/components/ui/Button";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import clsx from "clsx";

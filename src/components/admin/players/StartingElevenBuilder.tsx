@@ -177,6 +177,7 @@ export default function StartingElevenBuilder() {
       if (result.success) {
         setSuccessMessage("Alineación guardada correctamente");
         setFormationName("");
+        setLineup([]);
         fetchFormations();
       } else {
         setError(result.error || "Error al guardar");

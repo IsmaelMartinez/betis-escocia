@@ -170,7 +170,10 @@ export default function PlayerEditModal({
         >
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
-            <h3 id="modal-title" className="text-lg font-semibold text-gray-900">
+            <h3
+              id="modal-title"
+              className="text-lg font-semibold text-gray-900"
+            >
               Editar Jugador
             </h3>
             <button

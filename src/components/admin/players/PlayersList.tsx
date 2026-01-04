@@ -59,47 +59,56 @@ export default function PlayersList({ onEditPlayer }: PlayersListProps) {
     withRumorsOnly,
   });
 
-  const fetchPlayers = useCallback(async (pageOverride?: number) => {
-    setLoading(true);
-    setError(null);
+  const fetchPlayers = useCallback(
+    async (pageOverride?: number) => {
+      setLoading(true);
+      setError(null);
 
-    const pageToFetch = pageOverride ?? pagination.page;
+      const pageToFetch = pageOverride ?? pagination.page;
 
-    try {
-      const params = new URLSearchParams();
-      params.set("page", pageToFetch.toString());
-      params.set("limit", pagination.limit.toString());
+      try {
+        const params = new URLSearchParams();
+        params.set("page", pageToFetch.toString());
+        params.set("limit", pagination.limit.toString());
 
-      if (debouncedSearch) {
-        params.set("search", debouncedSearch);
+        if (debouncedSearch) {
+          params.set("search", debouncedSearch);
+        }
+        if (currentSquadOnly) {
+          params.set("currentSquad", "true");
+        }
+        if (withRumorsOnly) {
+          params.set("withRumors", "true");
+        }
+
+        const response = await fetch(`/api/admin/players?${params}`);
+        const result = await response.json();
+
+        if (result.success) {
+          setPlayers(result.players);
+          setPagination((prev) => ({
+            ...prev,
+            page: pageToFetch,
+            total: result.pagination.total,
+            totalPages: result.pagination.totalPages,
+          }));
+        } else {
+          setError(result.error || "Error al cargar jugadores");
+        }
+      } catch (err) {
+        setError("Error al cargar jugadores");
+      } finally {
+        setLoading(false);
       }
-      if (currentSquadOnly) {
-        params.set("currentSquad", "true");
-      }
-      if (withRumorsOnly) {
-        params.set("withRumors", "true");
-      }
-
-      const response = await fetch(`/api/admin/players?${params}`);
-      const result = await response.json();
-
-      if (result.success) {
-        setPlayers(result.players);
-        setPagination((prev) => ({
-          ...prev,
-          page: pageToFetch,
-          total: result.pagination.total,
-          totalPages: result.pagination.totalPages,
-        }));
-      } else {
-        setError(result.error || "Error al cargar jugadores");
-      }
-    } catch (err) {
-      setError("Error al cargar jugadores");
-    } finally {
-      setLoading(false);
-    }
-  }, [debouncedSearch, currentSquadOnly, withRumorsOnly, pagination.page, pagination.limit]);
+    },
+    [
+      debouncedSearch,
+      currentSquadOnly,
+      withRumorsOnly,
+      pagination.page,
+      pagination.limit,
+    ],
+  );
 
   // Single effect to handle fetching with filter change detection
   useEffect(() => {
@@ -109,7 +118,11 @@ export default function PlayersList({ onEditPlayer }: PlayersListProps) {
       prevFiltersRef.current.withRumorsOnly !== withRumorsOnly;
 
     // Update ref for next comparison
-    prevFiltersRef.current = { debouncedSearch, currentSquadOnly, withRumorsOnly };
+    prevFiltersRef.current = {
+      debouncedSearch,
+      currentSquadOnly,
+      withRumorsOnly,
+    };
 
     // Reset to page 1 when filters change, otherwise use current page
     fetchPlayers(filtersChanged ? 1 : undefined);

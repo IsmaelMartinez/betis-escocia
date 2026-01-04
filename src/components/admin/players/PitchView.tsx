@@ -180,12 +180,29 @@ export default function PitchView({
             className={clsx(
               "absolute transform -translate-x-1/2 -translate-y-1/2 transition-all",
               onPositionClick && "cursor-pointer",
+              onPositionClick && "focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-green-600 rounded",
             )}
             style={{
               left: `${pos.x}%`,
               top: `${100 - pos.y}%`, // Invert Y so bottom is 0
             }}
+            role={onPositionClick ? "button" : undefined}
+            tabIndex={onPositionClick ? 0 : -1}
+            aria-label={
+              onPositionClick
+                ? hasPlayer
+                  ? `Posición ${pos.position}: ${playerName}`
+                  : `Posición ${pos.position} vacía`
+                : undefined
+            }
             onClick={() => onPositionClick?.(pos, index)}
+            onKeyDown={(e) => {
+              if (!onPositionClick) return;
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onPositionClick(pos, index);
+              }
+            }}
           >
             <div
               className={clsx(
