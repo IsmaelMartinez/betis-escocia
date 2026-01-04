@@ -13,9 +13,12 @@ export const GET = createApiHandler({
   auth: "admin",
   handler: async (_, { supabase, params }) => {
     if (!params) {
-      throw new Error("ID no proporcionado");
+      throw new Error("Parámetros de ruta no encontrados");
     }
     const { id } = await params;
+    if (!id) {
+      throw new Error("El ID del miembro de la plantilla no fue proporcionado en la ruta");
+    }
 
     const { data, error } = await supabase
       .from("squad_members")
@@ -49,9 +52,12 @@ export const PATCH = createApiHandler({
   schema: squadMemberUpdateSchema,
   handler: async (data, { supabase, params }) => {
     if (!params) {
-      throw new Error("ID no proporcionado");
+      throw new Error("Parámetros de ruta no encontrados");
     }
     const { id } = await params;
+    if (!id) {
+      throw new Error("El ID del miembro de la plantilla no fue proporcionado en la ruta");
+    }
 
     // Build update object, calculating position_short if position changed
     const updateData: Record<string, unknown> = {};
@@ -118,9 +124,12 @@ export const DELETE = createApiHandler({
   auth: "admin",
   handler: async (_, { supabase, params }) => {
     if (!params) {
-      throw new Error("ID no proporcionado");
+      throw new Error("Parámetros de ruta no encontrados");
     }
     const { id } = await params;
+    if (!id) {
+      throw new Error("El ID del miembro de la plantilla no fue proporcionado en la ruta");
+    }
 
     // First get the player_id to update the players table
     const { data: existing, error: fetchError } = await supabase
