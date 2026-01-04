@@ -86,15 +86,9 @@ export const playerDisplayNameSchema = z.object({
     .nullable(),
 });
 
-// Schema for player merge operation
-export const playerMergeSchema = z.object({
-  primaryId: z.number().int().positive("ID del jugador principal requerido"),
-  duplicateId: z.number().int().positive("ID del jugador duplicado requerido"),
-});
-
 // Type exports
 export type SquadMemberInput = z.infer<typeof squadMemberSchema>;
 export type SquadMemberUpdateInput = z.infer<typeof squadMemberUpdateSchema>;
 export type PlayerAliasUpdateInput = z.infer<typeof playerAliasUpdateSchema>;
 export type PlayerDisplayNameInput = z.infer<typeof playerDisplayNameSchema>;
-export type PlayerMergeInput = z.infer<typeof playerMergeSchema>;
+// Note: PlayerMergeInput is exported from @/lib/schemas/soylenti to avoid duplication
