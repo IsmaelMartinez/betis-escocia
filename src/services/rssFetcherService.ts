@@ -5,14 +5,19 @@ export interface RumorItem {
   title: string;
   link: string;
   pubDate: Date;
-  source: "Google News (Fichajes)" | "Google News (General)" | "BetisWeb";
+  source:
+    | "Google News (Fichajes)"
+    | "Google News (General)"
+    | "BetisWeb"
+    | "Telegram: @FabrizioRomanoTG"
+    | "Telegram: @ficherioRealBetis";
   description?: string;
 }
 
 interface FeedConfig {
   url: string;
   source: RumorItem["source"];
-  type: "rss" | "rsshub";
+  type: "rss" | "telegram";
 }
 
 // Unified feed configuration - add new feeds here
@@ -33,12 +38,18 @@ const FEED_CONFIGS: FeedConfig[] = [
     source: "BetisWeb",
     type: "rss",
   },
-  // NOTE: X/Twitter feeds via RSSHub removed (January 2026)
-  // The public rsshub.app instance no longer supports Twitter feeds due to
-  // Twitter/X API restrictions. Self-hosted RSSHub with authentication would
-  // be needed to restore this functionality. See:
-  // - https://docs.rsshub.app/routes/social-media#twitter
-  // - https://github.com/zedeus/nitter/issues/1158
+  // Telegram feeds via tg.i-c-a.su (free, no auth required)
+  // Replaces broken RSSHub Twitter feeds - see https://tg.i-c-a.su/
+  {
+    url: "https://tg.i-c-a.su/rss/FabrizioRomanoTG",
+    source: "Telegram: @FabrizioRomanoTG",
+    type: "telegram",
+  },
+  {
+    url: "https://tg.i-c-a.su/rss/ficherioRealBetis",
+    source: "Telegram: @ficherioRealBetis",
+    type: "telegram",
+  },
 ];
 
 const parser = new Parser({
@@ -62,12 +73,12 @@ async function fetchFeed(config: FeedConfig): Promise<RumorItem[]> {
       description: item.contentSnippet || item.content,
     }));
   } catch (error) {
-    // Distinguish RSSHub failures for monitoring
-    if (config.type === "rsshub") {
-      log.error("RSSHub bridge failed - X feed unavailable", error, {
+    // Distinguish feed types for monitoring
+    if (config.type === "telegram") {
+      log.error("Telegram feed bridge failed", error, {
         source: config.source,
         url: config.url,
-        feedType: "rsshub",
+        feedType: "telegram",
       });
     } else {
       log.error("Failed to fetch RSS feed", error, {
