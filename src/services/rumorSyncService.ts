@@ -263,8 +263,7 @@ export async function syncRumors(): Promise<SyncResult> {
         }
 
         // Check relevance to Betis - skip if not relevant
-        const isRelevant = analysis.isRelevantToBetis;
-        if (!isRelevant) {
+        if (!analysis.isRelevantToBetis) {
           result.skippedNonBetis++;
           log.business("news_skipped_non_betis", {
             title: rumor.title,
