@@ -66,7 +66,10 @@ async function syncSquad(): Promise<SyncResult> {
     .eq("is_current_squad", true);
 
   if (clearError) {
-    log.error("Error clearing current squad flags", new Error(clearError.message));
+    log.error(
+      "Error clearing current squad flags",
+      new Error(clearError.message),
+    );
     result.errors++;
   }
 
@@ -115,7 +118,10 @@ async function syncSquad(): Promise<SyncResult> {
       playersByAlias.get(normalizedName);
 
     if (existingPlayer) {
-      playersToUpdate.push({ id: existingPlayer.id, position: player.position });
+      playersToUpdate.push({
+        id: existingPlayer.id,
+        position: player.position,
+      });
     } else {
       playersToCreate.push({
         name: player.name,
@@ -156,9 +162,13 @@ async function syncSquad(): Promise<SyncResult> {
       .insert(playersToCreate);
 
     if (insertError) {
-      log.error("Error batch creating players", new Error(insertError.message), {
-        count: playersToCreate.length,
-      });
+      log.error(
+        "Error batch creating players",
+        new Error(insertError.message),
+        {
+          count: playersToCreate.length,
+        },
+      );
       result.errors += playersToCreate.length;
     } else {
       result.created = playersToCreate.length;
