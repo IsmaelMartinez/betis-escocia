@@ -31,14 +31,6 @@ vi.mock('@clerk/nextjs/server', () => ({
   }))
 }));
 
-vi.mock('@/lib/notifications/oneSignalClient', () => ({
-  sendAdminNotification: vi.fn(() => Promise.resolve()),
-  createContactNotificationPayload: vi.fn(() => ({
-    headings: { en: 'New Contact Submission' },
-    contents: { en: 'Test message' }
-  }))
-}));
-
 vi.mock('@/lib/logger', () => ({
   log: {
     error: vi.fn(),
@@ -59,17 +51,13 @@ vi.mock('@/lib/standardErrors', () => ({
 describe('Contact API - Comprehensive Tests', () => {
   let mockSupabase: any;
   let mockGetAuth: any;
-  let mockSendAdminNotification: any;
-  let mockCreateContactNotificationPayload: any;
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    
+
     // Initialize mocks
     mockSupabase = (await import('@/lib/supabase')).supabase;
     mockGetAuth = vi.mocked((await import('@clerk/nextjs/server')).getAuth);
-    mockSendAdminNotification = vi.mocked((await import('@/lib/notifications/oneSignalClient')).sendAdminNotification);
-    mockCreateContactNotificationPayload = vi.mocked((await import('@/lib/notifications/oneSignalClient')).createContactNotificationPayload);
   });
 
   afterEach(() => {
@@ -271,61 +259,6 @@ describe('Contact API - Comprehensive Tests', () => {
       const response = await POST(request);
 
       expect(response.status).toBe(400);
-    });
-
-    it('should handle OneSignal notification failures gracefully', async () => {
-      // Mock notification failure
-      mockSendAdminNotification.mockRejectedValue(new Error('OneSignal service unavailable'));
-
-      const { POST } = await import('@/app/api/contact/route');
-      
-      const validContactData = {
-        name: 'Test User',
-        email: 'test@example.com',
-        type: 'general',
-        subject: 'Test Subject',
-        message: 'This is a test message with sufficient length.'
-      };
-
-      const request = new NextRequest('http://localhost:3000/api/contact', {
-        method: 'POST',
-        body: JSON.stringify(validContactData),
-        headers: { 'Content-Type': 'application/json' }
-      });
-      
-      const response = await POST(request);
-      const data = await response.json();
-
-      // Should still succeed even if notification fails
-      expect(response.status).toBe(200);
-      expect(data.success).toBe(true);
-    });
-
-    it('should create appropriate notification payload', async () => {
-      const { POST } = await import('@/app/api/contact/route');
-      
-      const contactData = {
-        name: 'Jane Smith',
-        email: 'jane@example.com',
-        type: 'feedback',
-        subject: 'Website Feedback',
-        message: 'Great community features on the website!'
-      };
-
-      const request = new NextRequest('http://localhost:3000/api/contact', {
-        method: 'POST',
-        body: JSON.stringify(contactData),
-        headers: { 'Content-Type': 'application/json' }
-      });
-      
-      await POST(request);
-
-      expect(mockCreateContactNotificationPayload).toHaveBeenCalledWith(
-        'Jane Smith',
-        'Website Feedback',
-        'feedback'
-      );
-      expect(mockSendAdminNotification).toHaveBeenCalled();
     });
 
     it('should log business events for contact submissions', async () => {

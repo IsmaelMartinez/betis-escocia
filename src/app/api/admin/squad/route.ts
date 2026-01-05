@@ -39,7 +39,6 @@ export const GET = createApiHandler({
         )
       `,
       )
-      .order("position", { ascending: true })
       .order("shirt_number", { ascending: true });
 
     if (error) {

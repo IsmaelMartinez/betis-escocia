@@ -13,19 +13,9 @@ RETURNS TABLE(deleted_count BIGINT) AS $$
 DECLARE
     cutoff_timestamp TIMESTAMPTZ;
     rows_deleted BIGINT;
-    caller_role TEXT;
 BEGIN
-    -- SECURITY CHECK: Verify caller is admin
-    -- This prevents unauthorized deletion via anon/authenticated roles
-    caller_role := COALESCE(
-        (auth.jwt() ->> 'publicMetadata')::jsonb ->> 'role',
-        'anonymous'
-    );
-
-    IF caller_role != 'admin' THEN
-        RAISE EXCEPTION 'Access denied: cleanup_old_non_rumor_news requires admin role'
-            USING HINT = 'Only admins can execute cleanup operations';
-    END IF;
+    -- SECURITY: Permissions managed by GRANT/REVOKE statements below
+    -- Service role execution will have auth.jwt() = null, which would fail internal checks
 
     -- Calculate cutoff timestamp using make_interval for safety
     -- This prevents potential SQL injection from string concatenation

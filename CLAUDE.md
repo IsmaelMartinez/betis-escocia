@@ -112,21 +112,6 @@ sql/                    # Database migrations & scripts
 - **Cache strategy**: Use `classification_cache` table for external API data
 - **Location**: `src/lib/supabase.ts` for client and types
 
-### Push Notifications System
-
-- **Admin-only**: Real-time background notifications for RSVP and contact form submissions
-- **Service Worker**: Complete PWA service worker (`public/sw.js`) with background notification handling
-- **SSE Integration**: Server-Sent Events for real-time notification delivery via `/api/notifications/trigger`
-- **Notification Manager**: Client-side coordinator (`src/lib/notifications/notificationManager.ts`) with automatic reconnection
-- **Deduplication**: Multi-layered approach (server timestamp + client localStorage) prevents duplicate notifications
-- **Database preferences**: `notification_preferences` table with user control and RLS policies
-- **Background operation**: Works even when admin dashboard is closed - notifications persist in system tray
-- **Browser compatibility**: Full support in Chrome/Firefox/Edge, limited in Safari (HTTPS required)
-- **Non-blocking**: Notification failures don't impact core RSVP/contact functionality
-- **Auto-cleanup**: Server removes old notifications after 10 minutes, client after 1 hour
-- **Location**: `src/lib/notifications/` for utilities, `public/sw.js` for Service Worker
-- **Documentation**: See `docs/adr/011-admin-notifications.md`
-
 ## Component Development
 
 ### Storybook Integration
@@ -252,9 +237,7 @@ export const POST = createApiHandler({
 - Server-Sent Events (SSE) endpoints that return streaming responses
 - External integrations with very specific protocol requirements
 
-**✅ Complete**: All standard API routes now use `createApiHandler`. The legacy pattern is only used for specialized endpoints like:
-
-- `/api/notifications/trigger` - SSE endpoint for real-time notifications
+**✅ Complete**: All standard API routes now use `createApiHandler`.
 
 ### Legacy Protected Route Pattern
 
@@ -376,7 +359,6 @@ test('renders component correctly', () => {
 - **User Data**: Clerk authentication with separate anonymous/authenticated submissions
 - **Admin Dashboard**: Match sync, contact submissions management
 - **User Management**: Handled directly through Clerk dashboard or API
-- **Push Notifications**: Real-time admin notifications for RSVP and contact submissions
 
 ## Admin Panel Architecture
 
