@@ -60,17 +60,20 @@ export async function syncRumors(): Promise<SyncResult> {
 
   try {
     // Create Supabase client with service role key (bypasses RLS)
-    // SUPABASE_SYNC_* vars are used for production in GitHub Actions
-    // Falls back to NEXT_PUBLIC_* for local development
-    const supabaseUrl =
-      process.env.SUPABASE_SYNC_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey =
-      process.env.SUPABASE_SYNC_SERVICE_ROLE_KEY ||
-      process.env.SUPABASE_SERVICE_ROLE_KEY;
+    // SUPABASE_SYNC_* vars must be explicitly configured for production (GitHub Actions)
+    // For local development, use the same SUPABASE_SYNC_* variables
+    const supabaseUrl = process.env.SUPABASE_SYNC_URL;
+    const serviceRoleKey = process.env.SUPABASE_SYNC_SERVICE_ROLE_KEY;
 
-    if (!supabaseUrl || !serviceRoleKey) {
+    if (!supabaseUrl) {
       throw new Error(
-        "Supabase URL and service role key environment variables are required",
+        "SUPABASE_SYNC_URL environment variable is required. Configure it in your environment.",
+      );
+    }
+
+    if (!serviceRoleKey) {
+      throw new Error(
+        "SUPABASE_SYNC_SERVICE_ROLE_KEY environment variable is required. This is a privileged key that bypasses RLS - ensure it is only used server-side.",
       );
     }
 

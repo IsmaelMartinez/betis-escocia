@@ -411,7 +411,7 @@ describe("geminiService", () => {
 
       for (const prob of probabilities) {
         const mockResponse = {
-          text: `{"isTransferRumor": true, "probability": ${prob}, "reasoning": "Test", "confidence": "medium"}`,
+          text: `{"isTransferRumor": true, "probability": ${prob}, "reasoning": "Detailed analysis confirms this assessment with supporting evidence", "confidence": "medium"}`,
         };
 
         mockGenerateContent.mockResolvedValueOnce(mockResponse);
