@@ -1,14 +1,14 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import CommunityStats from './CommunityStats';
+import type { Meta, StoryObj } from "@storybook/nextjs";
+import CommunityStats from "./CommunityStats";
 
 const meta: Meta<typeof CommunityStats> = {
-  title: 'Components/CommunityStats',
+  title: "Components/CommunityStats",
   component: CommunityStats,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     clerk: { enabled: false }, // This component does not use Clerk
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     // CommunityStats does not have any props, so argTypes are not needed
   },

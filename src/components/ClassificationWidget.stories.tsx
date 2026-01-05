@@ -1,15 +1,20 @@
-
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import ClassificationWidget from './ClassificationWidget';
-import { StandingEntry } from '@/services/footballDataService';
+import type { Meta, StoryObj } from "@storybook/nextjs";
+import ClassificationWidget from "./ClassificationWidget";
+import { StandingEntry } from "@/services/footballDataService";
 
 // Mock data for StandingEntry
 const mockStandings: StandingEntry[] = [
   {
     position: 1,
-    team: { id: 1, name: 'Real Madrid', shortName: 'RMA', tla: 'RMA', crest: 'https://crests.football-data.org/86.png' },
+    team: {
+      id: 1,
+      name: "Real Madrid",
+      shortName: "RMA",
+      tla: "RMA",
+      crest: "https://crests.football-data.org/86.png",
+    },
     playedGames: 38,
-    form: 'WWWDW',
+    form: "WWWDW",
     won: 28,
     draw: 8,
     lost: 2,
@@ -20,9 +25,15 @@ const mockStandings: StandingEntry[] = [
   },
   {
     position: 2,
-    team: { id: 2, name: 'FC Barcelona', shortName: 'BAR', tla: 'BAR', crest: 'https://crests.football-data.org/81.png' },
+    team: {
+      id: 2,
+      name: "FC Barcelona",
+      shortName: "BAR",
+      tla: "BAR",
+      crest: "https://crests.football-data.org/81.png",
+    },
     playedGames: 38,
-    form: 'LWWWD',
+    form: "LWWWD",
     won: 26,
     draw: 7,
     lost: 5,
@@ -33,9 +44,15 @@ const mockStandings: StandingEntry[] = [
   },
   {
     position: 3,
-    team: { id: 3, name: 'Girona FC', shortName: 'GIR', tla: 'GIR', crest: 'https://crests.football-data.org/298.png' },
+    team: {
+      id: 3,
+      name: "Girona FC",
+      shortName: "GIR",
+      tla: "GIR",
+      crest: "https://crests.football-data.org/298.png",
+    },
     playedGames: 38,
-    form: 'WWLLW',
+    form: "WWLLW",
     won: 25,
     draw: 6,
     lost: 7,
@@ -46,9 +63,15 @@ const mockStandings: StandingEntry[] = [
   },
   {
     position: 4,
-    team: { id: 4, name: 'Atlético de Madrid', shortName: 'ATM', tla: 'ATM', crest: 'https://crests.football-data.org/92.png' },
+    team: {
+      id: 4,
+      name: "Atlético de Madrid",
+      shortName: "ATM",
+      tla: "ATM",
+      crest: "https://crests.football-data.org/92.png",
+    },
     playedGames: 38,
-    form: 'WWLWD',
+    form: "WWLWD",
     won: 24,
     draw: 4,
     lost: 10,
@@ -59,9 +82,15 @@ const mockStandings: StandingEntry[] = [
   },
   {
     position: 5,
-    team: { id: 90, name: 'Real Betis Balompié', shortName: 'BET', tla: 'BET', crest: 'https://crests.football-data.org/90.png' },
+    team: {
+      id: 90,
+      name: "Real Betis Balompié",
+      shortName: "BET",
+      tla: "BET",
+      crest: "https://crests.football-data.org/90.png",
+    },
     playedGames: 38,
-    form: 'WWWWW',
+    form: "WWWWW",
     won: 17,
     draw: 14,
     lost: 7,
@@ -72,9 +101,15 @@ const mockStandings: StandingEntry[] = [
   },
   {
     position: 6,
-    team: { id: 6, name: 'Real Sociedad', shortName: 'RSO', tla: 'RSO', crest: 'https://crests.football-data.org/94.png' },
+    team: {
+      id: 6,
+      name: "Real Sociedad",
+      shortName: "RSO",
+      tla: "RSO",
+      crest: "https://crests.football-data.org/94.png",
+    },
     playedGames: 38,
-    form: 'DWLWD',
+    form: "DWLWD",
     won: 16,
     draw: 12,
     lost: 10,
@@ -86,21 +121,21 @@ const mockStandings: StandingEntry[] = [
 ];
 
 const meta: Meta<typeof ClassificationWidget> = {
-  title: 'Widgets/ClassificationWidget',
+  title: "Widgets/ClassificationWidget",
   component: ClassificationWidget,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     clerk: { enabled: false }, // Disable Clerk for this component
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     className: {
-      control: 'text',
-      description: 'Additional CSS classes for styling the widget container.',
+      control: "text",
+      description: "Additional CSS classes for styling the widget container.",
     },
     initialStandings: {
-      control: 'object',
-      description: 'Initial standings data to bypass API call.',
+      control: "object",
+      description: "Initial standings data to bypass API call.",
     },
   },
 };
@@ -137,4 +172,3 @@ export const ErrorState: Story = {
     mockFetchError: true,
   },
 };
-

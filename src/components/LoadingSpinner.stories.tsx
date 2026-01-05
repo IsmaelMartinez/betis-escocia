@@ -1,24 +1,24 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import LoadingSpinner from './LoadingSpinner';
+import type { Meta, StoryObj } from "@storybook/nextjs";
+import LoadingSpinner from "./LoadingSpinner";
 
 const meta: Meta<typeof LoadingSpinner> = {
-  title: 'UI/LoadingSpinner',
+  title: "UI/LoadingSpinner",
   component: LoadingSpinner,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     clerk: { enabled: false }, // Disable Clerk for this component
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     size: {
-      control: { type: 'select' },
-      options: ['sm', 'md', 'lg'],
+      control: { type: "select" },
+      options: ["sm", "md", "lg"],
     },
     label: {
-      control: 'text',
+      control: "text",
     },
     className: {
-      control: 'text',
+      control: "text",
     },
   },
 };
@@ -28,42 +28,42 @@ type Story = StoryObj<typeof LoadingSpinner>;
 
 export const Default: Story = {
   args: {
-    size: 'md',
-    label: 'Cargando...',
+    size: "md",
+    label: "Cargando...",
   },
 };
 
 export const Small: Story = {
   args: {
-    size: 'sm',
-    label: 'Loading small...',
+    size: "sm",
+    label: "Loading small...",
   },
 };
 
 export const Medium: Story = {
   args: {
-    size: 'md',
-    label: 'Loading medium...',
+    size: "md",
+    label: "Loading medium...",
   },
 };
 
 export const Large: Story = {
   args: {
-    size: 'lg',
-    label: 'Loading large...',
+    size: "lg",
+    label: "Loading large...",
   },
 };
 
 export const CustomLabel: Story = {
   args: {
-    size: 'md',
-    label: 'Fetching data...',
+    size: "md",
+    label: "Fetching data...",
   },
 };
 
 export const NoLabel: Story = {
   args: {
-    size: 'md',
-    label: '',
+    size: "md",
+    label: "",
   },
 };

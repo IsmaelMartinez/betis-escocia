@@ -1,30 +1,30 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import StockIndicator from './StockIndicator';
+import type { Meta, StoryObj } from "@storybook/nextjs";
+import StockIndicator from "./StockIndicator";
 
 const meta: Meta<typeof StockIndicator> = {
-  title: 'Components/StockIndicator',
+  title: "Components/StockIndicator",
   component: StockIndicator,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     clerk: { enabled: false }, // This component does not use Clerk
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     stock: {
-      control: 'number',
-      description: 'Current stock quantity.',
+      control: "number",
+      description: "Current stock quantity.",
     },
     maxStock: {
-      control: 'number',
-      description: 'Maximum stock quantity for calculating status thresholds.',
+      control: "number",
+      description: "Maximum stock quantity for calculating status thresholds.",
     },
     showQuantity: {
-      control: 'boolean',
-      description: 'Whether to display the stock quantity number.',
+      control: "boolean",
+      description: "Whether to display the stock quantity number.",
     },
     className: {
-      control: 'text',
-      description: 'Additional CSS classes.',
+      control: "text",
+      description: "Additional CSS classes.",
     },
   },
 };
