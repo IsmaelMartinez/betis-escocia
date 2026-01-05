@@ -1,5 +1,6 @@
 import { createApiHandler } from "@/lib/apiUtils";
 import { z } from "zod";
+import { log } from "@/lib/logger";
 
 const updateStatusSchema = z.object({
   status: z.enum(["new", "in progress", "resolved"]),
@@ -33,7 +34,7 @@ export const PUT = createApiHandler({
       .maybeSingle();
 
     if (error) {
-      console.error("Supabase update error:", error);
+      log.error("Supabase update error:", error);
       throw new Error("Failed to update status");
     }
 

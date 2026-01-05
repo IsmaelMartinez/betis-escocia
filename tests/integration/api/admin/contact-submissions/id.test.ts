@@ -46,7 +46,7 @@ vi.mock('@/lib/logger', () => ({
 // Mock API utils
 vi.mock('@/lib/apiUtils', () => ({
   createApiHandler: vi.fn((config) => {
-    return async (request: any) => {
+    return async (request: any, routeContext: any) => {
       try {
         let validatedData;
         
@@ -62,7 +62,8 @@ vi.mock('@/lib/apiUtils', () => ({
           request,
           user: request.user, // Assume user is attached to request by test
           authenticatedSupabase: request.authenticatedSupabase, // Assume authenticatedSupabase is attached to request by test
-          supabase: undefined
+          supabase: undefined,
+          params: routeContext?.params
         };
 
         // If the route requires admin auth and no user is present, simulate unauthorized
@@ -111,6 +112,12 @@ vi.mock('@/lib/apiUtils', () => ({
             json: () => Promise.resolve(errorResult),
             status: 500
           };
+        } else if (error.message === 'Parámetros de ruta no encontrados' || error.message === 'El ID no fue proporcionado en la ruta') {
+             errorResult.error = error.message;
+             return {
+                json: () => Promise.resolve(errorResult),
+                status: 400
+             };
         }
         
         return {
@@ -157,7 +164,7 @@ describe('Contact Submissions API - PUT', () => {
       },
     } as unknown as NextRequest;
 
-    const response = await PUT(mockRequest);
+    const response = await PUT(mockRequest, { params: Promise.resolve({ id: String(mockId) }) });
     const json = await response.json();
 
     expect(response.status).toBe(200);
@@ -182,7 +189,7 @@ describe('Contact Submissions API - PUT', () => {
       authenticatedSupabase: undefined, // Not used in this path
     } as unknown as NextRequest;
 
-    const response = await PUT(mockRequest);
+    const response = await PUT(mockRequest, { params: Promise.resolve({ id: String(mockId) }) });
     const json = await response.json();
 
     expect(response.status).toBe(400);
@@ -212,7 +219,7 @@ describe('Contact Submissions API - PUT', () => {
       },
     } as unknown as NextRequest;
 
-    const response = await PUT(mockRequest);
+    const response = await PUT(mockRequest, { params: Promise.resolve({ id: String(mockId) }) });
     const json = await response.json();
 
     expect(response.status).toBe(500);
@@ -242,7 +249,7 @@ describe('Contact Submissions API - PUT', () => {
       },
     } as unknown as NextRequest;
 
-    const response = await PUT(mockRequest);
+    const response = await PUT(mockRequest, { params: Promise.resolve({ id: String(mockId) }) });
     const json = await response.json();
 
     expect(response.status).toBe(404);
@@ -262,7 +269,7 @@ describe('Contact Submissions API - PUT', () => {
       authenticatedSupabase: undefined, // Not used in this path
     } as unknown as NextRequest;
 
-    const response = await PUT(mockRequest);
+    const response = await PUT(mockRequest, { params: Promise.resolve({ id: String(mockId) }) });
     const json = await response.json();
 
     expect(response.status).toBe(400);
@@ -292,7 +299,7 @@ describe('Contact Submissions API - PUT', () => {
       authenticatedSupabase: undefined, // No authenticatedSupabase for unauthorized test
     } as unknown as NextRequest;
 
-    const response = await PUT(mockRequest);
+    const response = await PUT(mockRequest, { params: Promise.resolve({ id: String(mockId) }) });
     const json = await response.json();
 
     expect(response.status).toBe(401);

@@ -28,25 +28,27 @@ vi.mock('@/lib/supabase', () => ({
   supabase: {}
 }));
 
+vi.mock('@/lib/logger', () => ({
+  log: {
+    error: vi.fn(),
+    warn: vi.fn(),
+    info: vi.fn(),
+    business: vi.fn(),
+  }
+}));
+
 import { checkAdminRole } from '@/lib/adminApiProtection';
 import { getAuth } from '@clerk/nextjs/server';
 import { getAuthenticatedSupabaseClient, supabase } from '@/lib/supabase';
+import { log } from '@/lib/logger';
 
 const mockCheckAdminRole = checkAdminRole as any;
 const mockGetAuth = getAuth as any;
 const mockGetAuthenticatedSupabaseClient = getAuthenticatedSupabaseClient as any;
 
 describe('apiUtils', () => {
-  // Mock console.error to avoid noise in tests
-  const originalConsoleError = console.error;
-  
   beforeEach(() => {
-    console.error = vi.fn();
     vi.clearAllMocks();
-  });
-
-  afterEach(() => {
-    console.error = originalConsoleError;
   });
 
   describe('createSuccessResponse', () => {
@@ -681,7 +683,7 @@ describe('apiUtils', () => {
         const request = createMockRequest();
         await handler(request);
         
-        expect(console.error).toHaveBeenCalledWith('API Handler Error:', expect.any(Error));
+        expect(log.error).toHaveBeenCalledWith('API Handler Error:', expect.any(Error));
       });
     });
   });
@@ -712,7 +714,7 @@ describe('apiUtils', () => {
       expect(result.success).toBe(false);
       expect(result.data).toBeUndefined();
       expect(result.error).toBe('Custom error message');
-      expect(console.error).toHaveBeenCalledWith('Supabase operation error:', expect.any(Error));
+      expect(log.error).toHaveBeenCalledWith('Supabase operation error:', expect.any(Error));
     });
 
     it('should return error for operation exception', async () => {
@@ -722,7 +724,7 @@ describe('apiUtils', () => {
       
       expect(result.success).toBe(false);
       expect(result.error).toBe('Error de base de datos');
-      expect(console.error).toHaveBeenCalledWith('Unexpected database error:', expect.any(Error));
+      expect(log.error).toHaveBeenCalledWith('Unexpected database error:', expect.any(Error));
     });
 
     it('should handle null data as undefined', async () => {
