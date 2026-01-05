@@ -13,7 +13,9 @@ const supabaseKey =
 
 if (!supabaseUrl || !supabaseKey) {
   console.error("Error: Missing Supabase credentials");
-  console.error("Required: SUPABASE_CLEANUP_URL and SUPABASE_CLEANUP_SERVICE_ROLE_KEY");
+  console.error(
+    "Required: SUPABASE_CLEANUP_URL and SUPABASE_CLEANUP_SERVICE_ROLE_KEY",
+  );
   console.error("Or: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY");
   process.exit(1);
 }
@@ -21,11 +23,16 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Configurable retention period (default: 24 hours)
-const RETENTION_HOURS = parseInt(process.env.CLEANUP_RETENTION_HOURS || "24", 10);
+const RETENTION_HOURS = parseInt(
+  process.env.CLEANUP_RETENTION_HOURS || "24",
+  10,
+);
 
 async function main() {
   console.log("Starting cleanup of old non-rumor news...");
-  console.log(`Target: News with ai_probability = 0 older than ${RETENTION_HOURS} hours\n`);
+  console.log(
+    `Target: News with ai_probability = 0 older than ${RETENTION_HOURS} hours\n`,
+  );
 
   try {
     // Check count before deletion
@@ -34,8 +41,7 @@ async function main() {
       .from("betis_news")
       .select("id", { count: "exact", head: true })
       .eq("ai_probability", 0)
-      .lt("pub_date", cutoffDate.toISOString())
-      .eq("is_hidden", false);
+      .lt("pub_date", cutoffDate.toISOString());
 
     if (countError) {
       console.error("Error checking news count:", countError);
