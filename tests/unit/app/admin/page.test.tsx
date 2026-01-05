@@ -48,10 +48,6 @@ vi.mock('@/lib/logger', () => ({
 }));
 
 // Mock all admin components
-vi.mock('@/components/admin/OneSignalNotificationPanel', () => ({
-  default: vi.fn(() => <div data-testid="onesignal-panel">OneSignal Panel</div>),
-}));
-
 vi.mock('@/components/admin/MatchForm', () => ({
   default: vi.fn(() => <div data-testid="match-form">Match Form</div>),
 }));
@@ -451,15 +447,12 @@ describe('AdminPage', () => {
   describe('Component Integration', () => {
     it('should have admin components available', async () => {
       // Should integrate with admin components
-      const OneSignalPanel = await import('@/components/admin/OneSignalNotificationPanel');
-      expect(OneSignalPanel.default).toBeDefined();
-      
       const MatchForm = await import('@/components/admin/MatchForm');
       expect(MatchForm.default).toBeDefined();
-      
+
       const MatchesList = await import('@/components/admin/MatchesList');
       expect(MatchesList.default).toBeDefined();
-      
+
       const ContactSubmissionsList = await import('@/components/admin/ContactSubmissionsList');
       expect(ContactSubmissionsList.default).toBeDefined();
     });
