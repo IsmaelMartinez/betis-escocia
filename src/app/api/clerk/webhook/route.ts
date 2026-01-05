@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { Webhook } from 'svix';
 import { supabase } from '@/lib/supabase';
+import { log } from '@/lib/logger';
 
 // Clerk webhook secret - should be set in environment variables
 const CLERK_WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
 export async function POST(request: NextRequest) {
   if (!CLERK_WEBHOOK_SECRET) {
-    console.error('CLERK_WEBHOOK_SECRET is not set');
+    log.error('CLERK_WEBHOOK_SECRET is not set', new Error('Missing webhook secret'));
     return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });
   }
 
@@ -36,7 +37,7 @@ export async function POST(request: NextRequest) {
       'svix-signature': svixSignature,
     }) as { type: string; data: Record<string, unknown> };
   } catch (error) {
-    console.error('Webhook verification failed:', error);
+    log.error('Webhook verification failed', error);
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
       await handleUserDeleted(event.data as { id: string });
       break;
     default:
-      console.log(`Unhandled event type: ${event.type}`);
+      log.info(`Unhandled Clerk webhook event type: ${event.type}`);
   }
 
   return NextResponse.json({ message: 'Webhook processed successfully' });
@@ -62,12 +63,12 @@ async function handleUserCreated(userData: {
   id: string;
   email_addresses?: { email_address: string }[];
 }) {
-  console.log('User created:', userData.id);
-  
+  log.business('clerk_user_created', { userId: userData.id });
+
   // Get user email for linking existing submissions
   const email = userData.email_addresses?.[0]?.email_address;
   if (!email) {
-    console.warn('No email found for user:', userData.id);
+    log.warn('No email found for Clerk user', { userId: userData.id });
     return;
   }
 
@@ -80,9 +81,9 @@ async function handleUserCreated(userData: {
       .is('user_id', null);
 
     if (rsvpError) {
-      console.error('Error linking RSVP submissions:', rsvpError);
+      log.error('Error linking RSVP submissions', new Error(rsvpError.message), { userId: userData.id, email });
     } else {
-      console.log(`Linked RSVP submissions for user ${userData.id} with email ${email}`);
+      log.business('rsvp_submissions_linked', { userId: userData.id, email });
     }
 
     // Link existing contact submissions to this user
@@ -93,13 +94,13 @@ async function handleUserCreated(userData: {
       .is('user_id', null);
 
     if (contactError) {
-      console.error('Error linking contact submissions:', contactError);
+      log.error('Error linking contact submissions', new Error(contactError.message), { userId: userData.id, email });
     } else {
-      console.log(`Linked contact submissions for user ${userData.id} with email ${email}`);
+      log.business('contact_submissions_linked', { userId: userData.id, email });
     }
 
   } catch (error) {
-    console.error('Error in handleUserCreated:', error);
+    log.error('Error in handleUserCreated', error, { userId: userData.id });
   }
 }
 
@@ -107,8 +108,8 @@ async function handleUserUpdated(userData: {
   id: string;
   email_addresses?: { email_address: string }[];
 }) {
-  console.log('User updated:', userData.id);
-  
+  log.business('clerk_user_updated', { userId: userData.id });
+
   // Handle email changes - re-link submissions if email changed
   const email = userData.email_addresses?.[0]?.email_address;
   if (email) {
@@ -127,7 +128,7 @@ async function handleUserUpdated(userData: {
         .is('user_id', null);
 
     } catch (error) {
-      console.error('Error in handleUserUpdated:', error);
+      log.error('Error in handleUserUpdated', error, { userId: userData.id });
     }
   }
 }
@@ -135,8 +136,8 @@ async function handleUserUpdated(userData: {
 async function handleUserDeleted(userData: {
   id: string;
 }) {
-  console.log('User deleted:', userData.id);
-  
+  log.business('clerk_user_deleted', { userId: userData.id });
+
   try {
     // Remove user association from submissions (keep submissions but unlink them)
     await supabase
@@ -149,8 +150,8 @@ async function handleUserDeleted(userData: {
       .update({ user_id: null })
       .eq('user_id', userData.id);
 
-    console.log(`Unlinked submissions for deleted user ${userData.id}`);
+    log.business('submissions_unlinked', { userId: userData.id });
   } catch (error) {
-    console.error('Error in handleUserDeleted:', error);
+    log.error('Error in handleUserDeleted', error, { userId: userData.id });
   }
 }
