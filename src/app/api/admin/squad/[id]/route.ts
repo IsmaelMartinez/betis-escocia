@@ -17,7 +17,9 @@ export const GET = createApiHandler({
     }
     const { id } = await params;
     if (!id) {
-      throw new Error("El ID del miembro de la plantilla no fue proporcionado en la ruta");
+      throw new Error(
+        "El ID del miembro de la plantilla no fue proporcionado en la ruta",
+      );
     }
 
     const { data, error } = await supabase
@@ -56,7 +58,9 @@ export const PATCH = createApiHandler({
     }
     const { id } = await params;
     if (!id) {
-      throw new Error("El ID del miembro de la plantilla no fue proporcionado en la ruta");
+      throw new Error(
+        "El ID del miembro de la plantilla no fue proporcionado en la ruta",
+      );
     }
 
     // Build update object, calculating position_short if position changed
@@ -128,7 +132,9 @@ export const DELETE = createApiHandler({
     }
     const { id } = await params;
     if (!id) {
-      throw new Error("El ID del miembro de la plantilla no fue proporcionado en la ruta");
+      throw new Error(
+        "El ID del miembro de la plantilla no fue proporcionado en la ruta",
+      );
     }
 
     // First get the player_id to update the players table
