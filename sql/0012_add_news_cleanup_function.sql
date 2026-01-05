@@ -40,6 +40,14 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 COMMENT ON FUNCTION cleanup_old_non_rumor_news(INTEGER) IS
     'Delete non-rumor news (ai_probability = 0) older than retention period. Default: 24 hours.';
 
+-- Performance optimization: Partial index for cleanup queries
+-- This index only includes rows that are candidates for deletion
+CREATE INDEX IF NOT EXISTS idx_betis_news_cleanup ON betis_news(pub_date)
+WHERE ai_probability = 0 AND is_hidden = false;
+
+COMMENT ON INDEX idx_betis_news_cleanup IS
+    'Optimizes cleanup queries by indexing only non-rumor, non-hidden news by publication date';
+
 -- Example usage:
 -- Manual run: SELECT * FROM cleanup_old_non_rumor_news(24);
 -- Check before deleting: SELECT COUNT(*) FROM betis_news WHERE ai_probability = 0 AND pub_date < NOW() - INTERVAL '24 hours' AND is_hidden = false;

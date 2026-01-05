@@ -45,6 +45,7 @@ The cleanup runs automatically every day at 2 AM UTC via GitHub Actions.
 **Workflow file:** `.github/workflows/cleanup-old-news.yml`
 
 The workflow:
+
 - Runs daily at 2 AM UTC
 - Can be triggered manually via GitHub Actions UI
 - Uses production Supabase credentials from GitHub Secrets
@@ -54,6 +55,7 @@ The workflow:
 **Setup:**
 
 Ensure the following secrets are configured in your GitHub repository:
+
 - `SUPABASE_PRODUCTION_URL` (or fallback to `NEXT_PUBLIC_SUPABASE_URL`)
 - `SUPABASE_PRODUCTION_SERVICE_ROLE_KEY` (or fallback to `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
 
@@ -73,15 +75,21 @@ npm run cleanup-news
 ```
 
 This will:
+
 1. Check how many items would be deleted
 2. Call the database cleanup function
 3. Report results
 
 **Requirements:**
-- `.env.local` file with Supabase credentials:
+
+- `.env.local` file with Supabase service role credentials:
   ```bash
   NEXT_PUBLIC_SUPABASE_URL=your-project-url
-  NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+  SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+  ```
+- Optional: Configure retention period (default: 24 hours):
+  ```bash
+  CLEANUP_RETENTION_HOURS=48
   ```
 
 ## Monitoring
@@ -173,10 +181,11 @@ To modify when the cleanup runs, edit `.github/workflows/cleanup-old-news.yml`:
 on:
   schedule:
     # Every 6 hours instead of daily
-    - cron: '0 */6 * * *'
+    - cron: "0 */6 * * *"
 ```
 
 Common cron patterns:
+
 - `0 2 * * *` - Daily at 2 AM UTC (current)
 - `0 */6 * * *` - Every 6 hours
 - `0 0 * * 0` - Weekly on Sunday at midnight
@@ -187,6 +196,7 @@ Common cron patterns:
 ### GitHub Actions workflow failing
 
 **Check workflow logs:**
+
 1. Go to Actions tab
 2. Click on failed run
 3. Expand "Run news cleanup" step
@@ -200,15 +210,19 @@ Common cron patterns:
 
 ### Local script fails with connection error
 
-Ensure `.env.local` has correct credentials:
+Ensure `.env.local` has correct service role credentials (not anon key):
+
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
 ```
+
+**Note:** The cleanup operation requires the `service_role` key (admin privileges), not the public `anon` key. The service role key bypasses Row Level Security to perform administrative deletions.
 
 ### Nothing gets deleted
 
 Check if items exist:
+
 ```sql
 -- Count non-rumor news older than 24 hours
 SELECT COUNT(*)
@@ -249,6 +263,7 @@ Ensure the `idx_betis_news_ai_probability` and `idx_betis_news_pub_date` indexes
    - Add `SUPABASE_PRODUCTION_URL` and `SUPABASE_PRODUCTION_SERVICE_ROLE_KEY`
 
 3. **Test locally:**
+
    ```bash
    npm run cleanup-news
    ```

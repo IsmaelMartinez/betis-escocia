@@ -29,9 +29,9 @@ jobs:
 
       - name: Run news cleanup
         env:
-          # Use production-specific secrets if available, otherwise fall back to standard secrets
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_PRODUCTION_URL || secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_PRODUCTION_SERVICE_ROLE_KEY || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          # Use production service role key for admin operations
+          SUPABASE_CLEANUP_URL: ${{ secrets.SUPABASE_PRODUCTION_URL || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_CLEANUP_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_PRODUCTION_SERVICE_ROLE_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: npm run cleanup-news
 
       - name: Report status
