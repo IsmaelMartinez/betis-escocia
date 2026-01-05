@@ -3,11 +3,26 @@ import { squadMemberSchema } from "@/lib/schemas/squad";
 import { POSITION_TO_SHORT } from "@/types/squad";
 import type { Position } from "@/types/squad";
 import { log } from "@/lib/logger";
+import { createClient } from "@supabase/supabase-js";
 
 // GET: List all squad members with joined player data
 export const GET = createApiHandler({
   auth: "admin",
-  handler: async (_, { supabase }) => {
+  handler: async () => {
+    // Use service role client to bypass RLS and schema cache issues
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error(
+        "Server configuration error: Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY",
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
     log.info("Fetching squad members...");
     const { data, error } = await supabase
       .from("squad_members")

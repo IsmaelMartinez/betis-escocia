@@ -1,17 +1,27 @@
-import { NextRequest } from "next/server";
 import { createApiHandler } from "@/lib/apiUtils";
 import { squadMemberUpdateSchema } from "@/lib/schemas/squad";
 import { POSITION_TO_SHORT } from "@/types/squad";
 import type { Position } from "@/types/squad";
-
-interface RouteParams {
-  params: Promise<{ id: string }>;
-}
+import { createClient } from "@supabase/supabase-js";
 
 // GET: Get a specific squad member
 export const GET = createApiHandler({
   auth: "admin",
-  handler: async (_, { supabase, params }) => {
+  handler: async (_, { params }) => {
+    // Use service role client to bypass RLS and schema cache issues
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error(
+        "Server configuration error: Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY",
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
     if (!params) {
       throw new Error("Parámetros de ruta no encontrados");
     }
@@ -52,7 +62,21 @@ export const GET = createApiHandler({
 export const PATCH = createApiHandler({
   auth: "admin",
   schema: squadMemberUpdateSchema,
-  handler: async (data, { supabase, params }) => {
+  handler: async (data, { params }) => {
+    // Use service role client to bypass RLS and schema cache issues
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error(
+        "Server configuration error: Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY",
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
     if (!params) {
       throw new Error("Parámetros de ruta no encontrados");
     }
@@ -126,7 +150,21 @@ export const PATCH = createApiHandler({
 // DELETE: Remove a player from the squad
 export const DELETE = createApiHandler({
   auth: "admin",
-  handler: async (_, { supabase, params }) => {
+  handler: async (_, { params }) => {
+    // Use service role client to bypass RLS and schema cache issues
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error(
+        "Server configuration error: Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY",
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
     if (!params) {
       throw new Error("Parámetros de ruta no encontrados");
     }

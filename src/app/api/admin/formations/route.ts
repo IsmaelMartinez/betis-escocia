@@ -1,10 +1,25 @@
 import { createApiHandler } from "@/lib/apiUtils";
 import { startingElevenSchema } from "@/lib/schemas/formation";
+import { createClient } from "@supabase/supabase-js";
 
 // GET: List all formations
 export const GET = createApiHandler({
   auth: "admin",
-  handler: async (_, { supabase }) => {
+  handler: async () => {
+    // Use service role client to bypass RLS and schema cache issues
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error(
+        "Server configuration error: Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY",
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
     const { data, error } = await supabase
       .from("starting_elevens")
       .select("*")
@@ -22,7 +37,21 @@ export const GET = createApiHandler({
 export const POST = createApiHandler({
   auth: "admin",
   schema: startingElevenSchema,
-  handler: async (data, { supabase, userId }) => {
+  handler: async (data, { userId }) => {
+    // Use service role client to bypass RLS and schema cache issues
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error(
+        "Server configuration error: Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY",
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
     const { data: formation, error } = await supabase
       .from("starting_elevens")
       .insert({
