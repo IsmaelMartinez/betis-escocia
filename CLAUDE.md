@@ -489,6 +489,10 @@ The `fetchRumorsByPlayer` function uses an optimized single query with `!inner` 
 
 The feature uses three tables: `betis_news` (main news storage), `players` (normalized player tracking), and `news_players` (junction table with roles: target, departing, mentioned).
 
+### Automatic Cleanup
+
+Non-rumor news (ai_probability = 0) is automatically deleted after 24 hours to keep the database lean. Cleanup runs daily at 2 AM UTC via GitHub Actions. Transfer rumors (ai_probability > 0) are preserved indefinitely. See `docs/soylenti-cleanup.md` for details.
+
 ## Areas for Future Enhancement
 
 ### Performance & Scalability
