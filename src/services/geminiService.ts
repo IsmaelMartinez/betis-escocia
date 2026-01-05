@@ -23,6 +23,54 @@ export interface ReassessmentOptions {
   currentSquad?: string[]; // List of current Betis player names for context
 }
 
+/**
+ * Sanitize user input to prevent prompt injection attacks
+ */
+function sanitizeInput(input: string, maxLength: number): string {
+  return input
+    .replace(/```/g, "") // Remove code blocks that could break prompt structure
+    .replace(/INSTRUCCIONES:|IGNORE|IMPORTANT:|SYSTEM:|ADMIN:/gi, "") // Remove command-like keywords
+    .substring(0, maxLength) // Truncate to prevent excessive input
+    .trim();
+}
+
+/**
+ * Validate AI response for anomalous patterns that might indicate manipulation
+ */
+function validateAIResponse(
+  result: RumorAnalysis,
+  title: string,
+): { valid: boolean; reason?: string } {
+  // Flag suspiciously perfect probability without proper reasoning
+  if (
+    result.probability === 100 &&
+    (!result.reasoning || result.reasoning.length < 20)
+  ) {
+    return {
+      valid: false,
+      reason: "Suspicious: probability=100 with minimal reasoning",
+    };
+  }
+
+  // Flag if marked as not relevant but still has high probability
+  if (result.isRelevantToBetis === false && (result.probability ?? 0) > 50) {
+    return {
+      valid: false,
+      reason: "Suspicious: irrelevant news with high probability",
+    };
+  }
+
+  // Flag if probability is high but confidence is low (contradiction)
+  if ((result.probability ?? 0) > 70 && result.confidence === "low") {
+    return {
+      valid: false,
+      reason: "Suspicious: high probability with low confidence",
+    };
+  }
+
+  return { valid: true };
+}
+
 export async function analyzeRumorCredibility(
   title: string,
   description: string,
@@ -37,12 +85,20 @@ export async function analyzeRumorCredibility(
 
   const genAI = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
-  // Build content section - include article if available
-  const contentSection = articleContent
-    ? `Contenido del artículo:\n${articleContent}`
-    : `Descripción: ${description || "Sin descripción"}`;
+  // Sanitize inputs to prevent prompt injection
+  const sanitizedTitle = sanitizeInput(title, 500);
+  const sanitizedDescription = sanitizeInput(description || "", 1000);
+  const sanitizedArticle = articleContent
+    ? sanitizeInput(articleContent, 5000)
+    : null;
+  const sanitizedSource = sanitizeInput(source, 200);
 
-  // Build admin context section for reassessment
+  // Build content section - include article if available
+  const contentSection = sanitizedArticle
+    ? `Contenido del artículo:\n${sanitizedArticle}`
+    : `Descripción: ${sanitizedDescription || "Sin descripción"}`;
+
+  // Build admin context section for reassessment (admin input is trusted)
   const adminContextSection = options?.adminContext
     ? `\n\nCORRECCIÓN DEL ADMINISTRADOR (IMPORTANTE - ten esto en cuenta para tu análisis):
 ${options.adminContext}
@@ -50,7 +106,7 @@ ${options.adminContext}
 Nota: Un administrador ha marcado esta noticia para re-evaluación con el contexto anterior. Por favor, ajusta tu análisis según esta información.`
     : "";
 
-  // Build current squad section if available
+  // Build current squad section if available (trusted data from database)
   const currentSquadSection =
     options?.currentSquad && options.currentSquad.length > 0
       ? `\n\nPLANTILLA ACTUAL DEL BETIS (jugadores que actualmente pertenecen al club):
@@ -61,9 +117,9 @@ IMPORTANTE: Si un jugador de esta lista aparece en la noticia, ten en cuenta que
 
   const prompt = `Analiza esta noticia del Real Betis Balompié (equipo de fútbol de Sevilla, España):
 
-Título: ${title}
+Título: ${sanitizedTitle}
 ${contentSection}
-Fuente: ${source}
+Fuente: ${sanitizedSource}
 
 INSTRUCCIONES:
 0. PRIMERO: Determina si esta noticia es ESPECÍFICAMENTE sobre el Real Betis Balompié.
@@ -106,6 +162,28 @@ JSON (solo el JSON, sin markdown):
       }
       const cleanText = text.replace(/```json\n?|\n?```/g, "").trim();
       const result = JSON.parse(cleanText);
+
+      // Validate response for anomalous patterns
+      const validation = validateAIResponse(result, sanitizedTitle);
+      if (!validation.valid) {
+        log.error("Suspicious AI response detected", null, {
+          title: sanitizedTitle,
+          source: sanitizedSource,
+          reason: validation.reason,
+          probability: result.probability,
+          confidence: result.confidence,
+        });
+        // Return with null probability to flag for manual review
+        return {
+          isTransferRumor: null,
+          probability: null,
+          reasoning: `Análisis automático bloqueado por patrones sospechosos: ${validation.reason}`,
+          confidence: "low",
+          players: result.players || [],
+          isRelevantToBetis: result.isRelevantToBetis ?? true,
+          irrelevanceReason: result.irrelevanceReason,
+        };
+      }
 
       log.business("rumor_analyzed", {
         probability: result.probability,
