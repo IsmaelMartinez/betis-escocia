@@ -27,8 +27,9 @@ BEGIN
             USING HINT = 'Only admins can execute cleanup operations';
     END IF;
 
-    -- Calculate cutoff timestamp
-    cutoff_timestamp := NOW() - (retention_hours || ' hours')::INTERVAL;
+    -- Calculate cutoff timestamp using make_interval for safety
+    -- This prevents potential SQL injection from string concatenation
+    cutoff_timestamp := NOW() - make_interval(hours => retention_hours);
 
     -- Delete news where:
     -- 1. ai_probability = 0 (confirmed non-transfer news, including hidden items)
