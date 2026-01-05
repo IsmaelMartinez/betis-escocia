@@ -1,17 +1,17 @@
-import { createApiHandler } from '@/lib/apiUtils';
-import { z } from 'zod';
+import { createApiHandler } from "@/lib/apiUtils";
+import { z } from "zod";
 
 const updateStatusSchema = z.object({
-  status: z.enum(['new', 'in progress', 'resolved'])
+  status: z.enum(["new", "in progress", "resolved"]),
 });
 
 export const PUT = createApiHandler({
-  auth: 'admin',
+  auth: "admin",
   schema: updateStatusSchema,
   handler: async (validatedData, context) => {
     const { status } = validatedData;
     const { user, authenticatedSupabase, params } = context;
-    
+
     if (!params) {
       throw new Error("Parámetros de ruta no encontrados");
     }
@@ -22,25 +22,25 @@ export const PUT = createApiHandler({
 
     const id = parseInt(idStr, 10);
     if (isNaN(id)) {
-      throw new Error('Invalid ID');
+      throw new Error("Invalid ID");
     }
 
     const { data, error } = await authenticatedSupabase!
-      .from('contact_submissions')
+      .from("contact_submissions")
       .update({ status: status, updated_by: user!.id })
-      .eq('id', id)
+      .eq("id", id)
       .select()
       .maybeSingle();
 
     if (error) {
-      console.error('Supabase update error:', error);
-      throw new Error('Failed to update status');
+      console.error("Supabase update error:", error);
+      throw new Error("Failed to update status");
     }
 
     if (!data) {
-      throw new Error('Submission not found or not authorized');
+      throw new Error("Submission not found or not authorized");
     }
 
     return { success: true, data };
-  }
+  },
 });

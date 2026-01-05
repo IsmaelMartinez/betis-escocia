@@ -1,14 +1,17 @@
 # ADR-018: Player and Squad Management System
 
 ## Status
+
 Accepted
 
 ## Decision
+
 **Comprehensive player management system** with separate squad tracking, formation builder, and Football-Data.org sync integration.
 
 ## Architecture
 
 ### Database Design
+
 - **squad_members table**: Canonical source for current squad with rich metadata (position, DOB, nationality, shirt numbers)
 - **starting_elevens table**: Saved formations with JSONB lineup data and visual coordinates
 - **players table enhancements**: Added `display_name` and `external_id` for sync deduplication
@@ -16,22 +19,26 @@ Accepted
 ### Key Design Decisions
 
 **Separate squad_members vs Flags**
+
 - Dedicated table enables complex metadata (position, status, contract dates) without polluting players table
 - Maintains separation of concerns: `players` = rumor tracking, `squad_members` = current roster
 - Supports rich queries: group by position, filter by status, calculate ages
 - UNIQUE constraint on `player_id` ensures one squad entry per player
 
 **External ID Linking**
+
 - Football-Data.org IDs stored on both tables for reliable sync matching
 - Enables idempotent syncs surviving name changes
 - Dual matching: normalized name first, then aliases, finally external ID
 
 **Batch Operations Pattern**
+
 - All sync operations use batched updates with `Promise.all()` to prevent N+1 queries
 - Collect data in first pass, execute batch operations in second pass
 - Departed player handling: marks as "loaned_out" instead of deleting (preserves history)
 
 **Service Role for Sync**
+
 - Both script (`sync-squad.ts`) and API route (`/api/admin/squad/sync`) use service role client
 - Bypasses RLS for admin operations while maintaining security boundaries
 - Enables efficient batch operations without per-row permission checks
@@ -41,28 +48,32 @@ Accepted
 All routes use `createApiHandler` abstraction for consistent auth and validation:
 
 ### Squad Management
+
 ```typescript
-GET/POST /api/admin/squad              // List/add squad members
-GET/PATCH/DELETE /api/admin/squad/[id] // Individual operations
-POST /api/admin/squad/sync             // Sync from Football-Data.org
+GET / POST / api / admin / squad; // List/add squad members
+GET / PATCH / DELETE / api / admin / squad / [id]; // Individual operations
+POST / api / admin / squad / sync; // Sync from Football-Data.org
 ```
 
 ### Formations
+
 ```typescript
-GET/POST /api/admin/formations         // List/create formations
-GET/PATCH/DELETE /api/admin/formations/[id]
+GET / POST / api / admin / formations; // List/create formations
+GET / PATCH / DELETE / api / admin / formations / [id];
 ```
 
 ### Player Operations
+
 ```typescript
-GET /api/admin/players                 // List with filters (search, currentSquad, withRumors)
-GET/PATCH/POST/DELETE /api/admin/players/[id]/aliases // Alias management
-POST /api/admin/soylenti/players/merge // Merge duplicate players
+GET / api / admin / players; // List with filters (search, currentSquad, withRumors)
+GET / PATCH / POST / DELETE / api / admin / players / [id] / aliases; // Alias management
+POST / api / admin / soylenti / players / merge; // Merge duplicate players
 ```
 
 ## Data Flow
 
 ### Squad Sync
+
 ```
 Football-Data.org API → sync endpoint → normalize names →
 match existing players → batch update/create →
@@ -70,6 +81,7 @@ mark departed players → return statistics
 ```
 
 ### Formation Creation
+
 ```
 Select formation → assign players to positions →
 build JSONB lineup (playerId, position, x%, y%) →
@@ -77,6 +89,7 @@ validate 11 players → save to database
 ```
 
 ### Player Merge
+
 ```
 Select primary & duplicate → preview merge →
 transfer betis_news records → add alias →

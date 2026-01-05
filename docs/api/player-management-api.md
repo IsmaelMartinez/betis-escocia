@@ -5,6 +5,7 @@ Comprehensive player and squad management system with Football-Data.org sync int
 ## Overview
 
 The player management system provides:
+
 - **Squad Tracking**: Current Real Betis squad with positions, shirt numbers, and metadata
 - **Formation Builder**: Create and save starting eleven formations with visual pitch positions
 - **Player Operations**: Alias management, display names, search/filtering
@@ -82,6 +83,7 @@ GET /api/admin/squad
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -126,11 +128,14 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
   "message": "Jugador añadido a la plantilla correctamente",
-  "squadMember": { /* created squad member */ }
+  "squadMember": {
+    /* created squad member */
+  }
 }
 ```
 
@@ -170,6 +175,7 @@ POST /api/admin/squad/sync
 ```
 
 **Process:**
+
 1. Fetches Real Betis squad from Football-Data.org API
 2. Matches players by normalized name or aliases
 3. Batch updates existing players and squad members
@@ -177,6 +183,7 @@ POST /api/admin/squad/sync
 5. Marks departed players as "loaned_out"
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -202,6 +209,7 @@ GET /api/admin/formations
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -249,6 +257,7 @@ Content-Type: application/json
 ```
 
 **Validation**:
+
 - Lineup must contain exactly 11 players
 - Each player requires: playerId, squadMemberId, position, x (0-100), y (0-100)
 
@@ -279,6 +288,7 @@ GET /api/admin/players?search=isco&currentSquadOnly=true&page=1&limit=20
 ```
 
 **Query Parameters:**
+
 - `search`: Search by name, normalized_name, or display_name (ILIKE with escaping)
 - `currentSquadOnly`: Filter to current squad members only
 - `withRumorsOnly`: Filter to players with rumor_count > 0
@@ -286,6 +296,7 @@ GET /api/admin/players?search=isco&currentSquadOnly=true&page=1&limit=20
 - `limit`: Items per page (max 100)
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -320,6 +331,7 @@ GET /api/admin/players/[id]/aliases
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -345,6 +357,7 @@ Content-Type: application/json
 ```
 
 **Process:**
+
 - Normalizes all aliases
 - Removes duplicates
 - Prevents circular references (alias = normalized_name)
@@ -387,12 +400,14 @@ Content-Type: application/json
 ```
 
 **Process:**
+
 1. Transfers all `betis_news` records from duplicate to primary
 2. Adds duplicate's normalized name as alias to primary
 3. Cascade deletes duplicate player (including squad_member if exists)
 4. Preserves all mention history
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -406,6 +421,7 @@ Content-Type: application/json
 ### Position Enum
 
 Full position names:
+
 ```typescript
 type Position =
   | "Goalkeeper"
@@ -421,33 +437,59 @@ type Position =
 ```
 
 Short codes:
+
 ```typescript
-type PositionShort = "GK" | "CB" | "LB" | "RB" | "DM" | "CM" | "AM" | "LW" | "RW" | "ST";
+type PositionShort =
+  | "GK"
+  | "CB"
+  | "LB"
+  | "RB"
+  | "DM"
+  | "CM"
+  | "AM"
+  | "LW"
+  | "RW"
+  | "ST";
 ```
 
 ### Squad Status
 
 ```typescript
-type SquadStatus = "active" | "injured" | "suspended" | "loaned_out" | "on_loan";
+type SquadStatus =
+  | "active"
+  | "injured"
+  | "suspended"
+  | "loaned_out"
+  | "on_loan";
 ```
 
 ### Formation Patterns
 
 Supported formations:
+
 ```typescript
-type Formation = "4-3-3" | "4-4-2" | "4-2-3-1" | "3-5-2" | "3-4-3" | "5-3-2" | "4-1-4-1" | "4-5-1";
+type Formation =
+  | "4-3-3"
+  | "4-4-2"
+  | "4-2-3-1"
+  | "3-5-2"
+  | "3-4-3"
+  | "5-3-2"
+  | "4-1-4-1"
+  | "4-5-1";
 ```
 
 ### Lineup Player
 
 JSONB structure for starting eleven positions:
+
 ```typescript
 interface LineupPlayer {
-  playerId: number;        // Reference to players table
-  squadMemberId: number;   // Reference to squad_members table
+  playerId: number; // Reference to players table
+  squadMemberId: number; // Reference to squad_members table
   position: PositionShort; // GK, CB, etc.
-  x: number;              // Horizontal position (0-100 percentage)
-  y: number;              // Vertical position (0-100 percentage)
+  x: number; // Horizontal position (0-100 percentage)
+  y: number; // Vertical position (0-100 percentage)
 }
 ```
 
@@ -473,6 +515,7 @@ interface LineupPlayer {
 ### Duplicate Handling
 
 Squad member with same `player_id`:
+
 ```json
 {
   "success": false,
@@ -501,6 +544,7 @@ await supabase.insert(playersToCreate);
 ### Indexes
 
 Optimized queries via indexes on:
+
 - `squad_members.position`
 - `squad_members.squad_status`
 - `squad_members.shirt_number`
@@ -511,6 +555,7 @@ Optimized queries via indexes on:
 ### Pagination Bounds
 
 Enforced limits to prevent abuse:
+
 - Max 100 items per page
 - Max page number 1000
 - Total query limit: 100,000 records
@@ -520,14 +565,15 @@ Enforced limits to prevent abuse:
 ### Authentication
 
 All endpoints require Clerk admin authentication:
+
 ```typescript
 createApiHandler({
-  auth: 'admin',
+  auth: "admin",
   handler: async (data, { supabase, user }) => {
     // user contains Clerk user data
     // supabase is authenticated client
-  }
-})
+  },
+});
 ```
 
 ### RLS Policies
