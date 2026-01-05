@@ -17,11 +17,13 @@ Automatically deletes non-rumor news (`ai_probability = 0`) after 24 hours to ke
 Runs daily at 2 AM UTC via `.github/workflows/cleanup-old-news.yml`
 
 **Manual trigger:**
+
 1. Go to GitHub Actions tab
 2. Select "Cleanup Old News (Scheduled)"
 3. Click "Run workflow"
 
 **Required secrets:**
+
 - `SUPABASE_PRODUCTION_URL`
 - `SUPABASE_PRODUCTION_SERVICE_ROLE_KEY`
 
@@ -32,12 +34,14 @@ npm run cleanup-news
 ```
 
 **Required in `.env.local`:**
+
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=your-project-url
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
 **Optional - change retention period (default: 24h):**
+
 ```bash
 CLEANUP_RETENTION_HOURS=48
 ```
@@ -68,13 +72,16 @@ WHERE ai_probability = 0
 ## Troubleshooting
 
 **Missing credentials:**
+
 - Workflow needs `SUPABASE_PRODUCTION_SERVICE_ROLE_KEY` (not anon key)
 - Local needs `SUPABASE_SERVICE_ROLE_KEY` in `.env.local`
 
 **Nothing deleted:**
+
 - Normal if no non-rumors older than 24 hours exist
 
 **Function not found:**
+
 - Apply SQL migration to database
 
 ## See Also
