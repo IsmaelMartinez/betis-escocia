@@ -631,9 +631,14 @@ Notifications require HTTPS (localhost exception applies). Users must grant brow
 
 ### Admin Dashboard
 
-- User management with push notifications
-- RSVP and contact form oversight
-- Real-time community activity monitoring
+- **Player & Squad Management**: Manage current Real Betis squad, sync from Football-Data.org API
+- **Formation Builder**: Create and save starting eleven formations with visual pitch
+- **Player Operations**: Alias management, display names, merge duplicate players
+- **User management**: Push notifications and role assignment
+- **RSVP and contact form oversight**: Community engagement tracking
+- **Real-time monitoring**: Community activity and admin notifications
+
+See [Player Management API Documentation](api/player-management-api.md) for complete API reference.
 
 ## Troubleshooting
 
@@ -676,7 +681,8 @@ Key technical decisions are documented in [ADRs](adr/):
 - [ADR-001: Clerk Authentication](adr/001-clerk-authentication.md) - Why Clerk over alternatives
 - [ADR-003: Supabase Database](adr/003-supabase-database.md) - Database choice and patterns
 - [ADR-004: Environment Variable Feature Flags](adr/004-flagsmith-feature-flags.md) - Feature flag system migration
-- [ADR-016: Admin Push Notifications](adr/016-admin-push-notifications.md) - Real-time notification system
+- [ADR-011: Admin Push Notifications](adr/011-admin-notifications.md) - Real-time notification system
+- [ADR-018: Player & Squad Management](adr/018-player-squad-management.md) - Squad tracking, formations, and sync
 
 ## Contributing
 
