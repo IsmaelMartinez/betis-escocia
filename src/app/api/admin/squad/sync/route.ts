@@ -4,6 +4,7 @@ import { normalizePlayerName } from "@/services/playerNormalizationService";
 import { POSITION_TO_SHORT } from "@/types/squad";
 import type { Position } from "@/types/squad";
 import { log } from "@/lib/logger";
+import { createClient } from "@supabase/supabase-js";
 
 // Map Football-Data.org positions to our Position type
 function mapApiPosition(apiPosition: string | null): Position | null {
@@ -40,7 +41,21 @@ interface SyncResult {
 // POST: Sync squad from Football-Data.org API
 export const POST = createApiHandler({
   auth: "admin",
-  handler: async (_, { supabase }) => {
+  handler: async () => {
+    // Initialize service role client for admin operations to bypass RLS
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error(
+        "Server configuration error: Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY",
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
     const result: SyncResult = {
       squadSize: 0,
       created: 0,

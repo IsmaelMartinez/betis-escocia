@@ -1,19 +1,32 @@
-import { NextRequest } from "next/server";
 import { createApiHandler } from "@/lib/apiUtils";
 import { startingElevenUpdateSchema } from "@/lib/schemas/formation";
-
-// Helper to extract ID from request
-function extractIdFromRequest(request: NextRequest): string {
-  const url = new URL(request.url);
-  const pathParts = url.pathname.split("/");
-  return pathParts[pathParts.length - 1];
-}
+import { createClient } from "@supabase/supabase-js";
 
 // GET: Get a specific formation
 export const GET = createApiHandler({
   auth: "admin",
-  handler: async (_, { supabase, request }) => {
-    const id = extractIdFromRequest(request);
+  handler: async (_, { params }) => {
+    // Use service role client to bypass RLS and schema cache issues
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error(
+        "Server configuration error: Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY",
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
+    if (!params) {
+      throw new Error("Parámetros de ruta no encontrados");
+    }
+    const { id } = await params;
+    if (!id) {
+      throw new Error("El ID de la formación no fue proporcionado en la ruta");
+    }
 
     const { data, error } = await supabase
       .from("starting_elevens")
@@ -33,8 +46,28 @@ export const GET = createApiHandler({
 export const PATCH = createApiHandler({
   auth: "admin",
   schema: startingElevenUpdateSchema,
-  handler: async (data, { supabase, request }) => {
-    const id = extractIdFromRequest(request);
+  handler: async (data, { params }) => {
+    // Use service role client to bypass RLS and schema cache issues
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error(
+        "Server configuration error: Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY",
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
+    if (!params) {
+      throw new Error("Parámetros de ruta no encontrados");
+    }
+    const { id } = await params;
+    if (!id) {
+      throw new Error("El ID de la formación no fue proporcionado en la ruta");
+    }
 
     // Build update object
     const updateData: Record<string, unknown> = {};
@@ -70,8 +103,28 @@ export const PATCH = createApiHandler({
 // DELETE: Delete a formation
 export const DELETE = createApiHandler({
   auth: "admin",
-  handler: async (_, { supabase, request }) => {
-    const id = extractIdFromRequest(request);
+  handler: async (_, { params }) => {
+    // Use service role client to bypass RLS and schema cache issues
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error(
+        "Server configuration error: Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY",
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
+    if (!params) {
+      throw new Error("Parámetros de ruta no encontrados");
+    }
+    const { id } = await params;
+    if (!id) {
+      throw new Error("El ID de la formación no fue proporcionado en la ruta");
+    }
 
     const { error } = await supabase
       .from("starting_elevens")

@@ -3,18 +3,24 @@
  * Eliminates repetitive patterns across API routes while maintaining type safety
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { ZodError, ZodSchema } from 'zod';
-import { checkAdminRole } from '@/lib/adminApiProtection';
-import { getAuth } from '@clerk/nextjs/server';
-import { getAuthenticatedSupabaseClient, supabase, type SupabaseClient } from '@/lib/supabase';
+import { NextRequest, NextResponse } from "next/server";
+import { ZodError, ZodSchema } from "zod";
+import { checkAdminRole } from "@/lib/adminApiProtection";
+import { getAuth } from "@clerk/nextjs/server";
+import {
+  getAuthenticatedSupabaseClient,
+  supabase,
+  type SupabaseClient,
+} from "@/lib/supabase";
+import { log } from "@/lib/logger";
 
 // Authentication types
-export type AuthRequirement = 'admin' | 'user' | 'optional' | 'none';
+export type AuthRequirement = "admin" | "user" | "optional" | "none";
 
 // API context provided to handlers
 export interface ApiContext {
   request: NextRequest;
+  params?: Promise<Record<string, string>>; // Next.js 15 params are promises
   user?: {
     id: string;
     isAdmin: boolean;
@@ -34,9 +40,12 @@ export interface ApiHandlerConfig<TInput = unknown, TOutput = unknown> {
 
 // Custom error class for business logic errors that should pass through
 export class BusinessLogicError extends Error {
-  constructor(message: string, public statusCode: number = 400) {
+  constructor(
+    message: string,
+    public statusCode: number = 400,
+  ) {
     super(message);
-    this.name = 'BusinessLogicError';
+    this.name = "BusinessLogicError";
   }
 }
 
@@ -52,125 +61,139 @@ export interface ApiResponse<T = unknown> {
 /**
  * Create standardized API responses
  */
-export function createSuccessResponse<T>(data?: T, message?: string): NextResponse<ApiResponse<T>> {
-  return NextResponse.json({ 
-    success: true, 
+export function createSuccessResponse<T>(
+  data?: T,
+  message?: string,
+): NextResponse<ApiResponse<T>> {
+  return NextResponse.json({
+    success: true,
     ...(data !== undefined && { data }),
-    ...(message && { message })
+    ...(message && { message }),
   });
 }
 
 export function createErrorResponse(
-  error: string, 
-  status: number, 
-  details?: string[]
+  error: string,
+  status: number,
+  details?: string[],
 ): NextResponse<ApiResponse> {
-  return NextResponse.json({ 
-    success: false, 
-    error,
-    ...(details && { details })
-  }, { status });
+  return NextResponse.json(
+    {
+      success: false,
+      error,
+      ...(details && { details }),
+    },
+    { status },
+  );
 }
 
 /**
  * Handle Zod validation errors with Spanish user-friendly messages
  */
 export function handleZodError(error: ZodError): NextResponse<ApiResponse> {
-  const errorMessages = error.issues.map(issue => {
+  const errorMessages = error.issues.map((issue) => {
     // Map common Zod error codes to Spanish messages
-    const path = issue.path.join('.');
+    const path = issue.path.join(".");
     switch (issue.code) {
-      case 'too_small':
+      case "too_small":
         return `${path}: El valor es demasiado corto`;
-      case 'too_big':
+      case "too_big":
         return `${path}: El valor es demasiado largo`;
-      case 'invalid_type':
+      case "invalid_type":
         return `${path}: Tipo de dato inválido`;
       default:
         return issue.message;
     }
   });
-  
-  return createErrorResponse('Datos de entrada inválidos', 400, errorMessages);
+
+  return createErrorResponse("Datos de entrada inválidos", 400, errorMessages);
 }
 
 /**
  * Handle authentication based on requirements
  */
 async function handleAuthentication(
-  request: NextRequest, 
-  authRequirement: AuthRequirement
+  request: NextRequest,
+  authRequirement: AuthRequirement,
 ): Promise<{ context: ApiContext; error?: NextResponse }> {
   const context: ApiContext = {
     request,
-    supabase: supabase // Default to anonymous client
+    supabase: supabase, // Default to anonymous client
   };
 
-  if (authRequirement === 'none') {
+  if (authRequirement === "none") {
     return { context };
   }
 
-  if (authRequirement === 'optional') {
+  if (authRequirement === "optional") {
     // Optional auth - include user info if available
     const { userId, getToken } = getAuth(request);
-    
+
     if (userId) {
-      const token = await getToken({ template: 'supabase' });
+      const token = await getToken({ template: "supabase" });
       context.user = { id: userId, isAdmin: false };
       context.userId = userId;
       context.clerkToken = token || undefined;
-      context.authenticatedSupabase = token ? getAuthenticatedSupabaseClient(token) : undefined;
-      context.supabase = token ? getAuthenticatedSupabaseClient(token) : supabase;
+      context.authenticatedSupabase = token
+        ? getAuthenticatedSupabaseClient(token)
+        : undefined;
+      context.supabase = token
+        ? getAuthenticatedSupabaseClient(token)
+        : supabase;
     }
-    
+
     return { context };
   }
 
-  if (authRequirement === 'admin') {
+  if (authRequirement === "admin") {
     const { user, isAdmin, error } = await checkAdminRole();
-    
+
     if (!isAdmin || !user) {
       return {
         context,
         error: createErrorResponse(
-          error || 'Acceso de administrador requerido', 
-          !user ? 401 : 403
-        )
+          error || "Acceso de administrador requerido",
+          !user ? 401 : 403,
+        ),
       };
     }
 
     // Get authenticated Supabase client for admin
     const { getToken } = getAuth(request);
-    const token = await getToken({ template: 'supabase' });
-    
+    const token = await getToken({ template: "supabase" });
+
     context.user = { id: user.id, isAdmin: true };
     context.userId = user.id;
     context.clerkToken = token || undefined;
-    context.authenticatedSupabase = token ? getAuthenticatedSupabaseClient(token) : undefined;
+    context.authenticatedSupabase = token
+      ? getAuthenticatedSupabaseClient(token)
+      : undefined;
     context.supabase = token ? getAuthenticatedSupabaseClient(token) : supabase;
-    
+
     return { context };
   }
 
-  if (authRequirement === 'user') {
+  if (authRequirement === "user") {
     const { userId, getToken } = getAuth(request);
-    
+
     if (!userId) {
       return {
         context,
-        error: createErrorResponse('Autenticación requerida', 401)
+        error: createErrorResponse("Autenticación requerida", 401),
       };
     }
 
     // Get authenticated Supabase client for user
-    const token = await getToken({ template: 'supabase' });
-    
+    const token = await getToken({ template: "supabase" });
+
     context.user = { id: userId, isAdmin: false };
     context.userId = userId;
     context.clerkToken = token || undefined;
-    context.authenticatedSupabase = token ? getAuthenticatedSupabaseClient(token) : undefined;
+    context.authenticatedSupabase = token
+      ? getAuthenticatedSupabaseClient(token)
+      : undefined;
     context.supabase = token ? getAuthenticatedSupabaseClient(token) : supabase;
-    
+
     return { context };
   }
 
@@ -181,31 +204,44 @@ async function handleAuthentication(
  * Create a standardized API handler with automatic auth, validation, and error handling
  */
 export function createApiHandler<TInput = unknown, TOutput = unknown>(
-  config: ApiHandlerConfig<TInput, TOutput>
+  config: ApiHandlerConfig<TInput, TOutput>,
 ) {
-  return async (request: NextRequest): Promise<NextResponse> => {
+  return async (
+    request: NextRequest,
+    routeContext?: { params: Promise<Record<string, string>> },
+  ): Promise<NextResponse> => {
     try {
       // Handle authentication
       const { context, error: authError } = await handleAuthentication(
-        request, 
-        config.auth || 'none'
+        request,
+        config.auth || "none",
       );
-      
+
       if (authError) {
         return authError;
       }
 
+      // Add params to context if available
+      if (routeContext && routeContext.params) {
+        context.params = routeContext.params;
+      }
+
       // Parse and validate request data
       let validatedData: TInput;
-      
+
       if (config.schema) {
         try {
-          if (request.method === 'GET') {
+          if (request.method === "GET") {
             // Parse query parameters for GET requests
             const url = new URL(request.url);
             const queryParams = Object.fromEntries(url.searchParams.entries());
             validatedData = config.schema.parse(queryParams);
-          } else if (request.method === 'POST' || request.method === 'PUT' || request.method === 'PATCH' || request.method === 'DELETE') {
+          } else if (
+            request.method === "POST" ||
+            request.method === "PUT" ||
+            request.method === "PATCH" ||
+            request.method === "DELETE"
+          ) {
             // Parse request body for other methods
             const body = await request.json();
             validatedData = config.schema.parse(body);
@@ -216,7 +252,7 @@ export function createApiHandler<TInput = unknown, TOutput = unknown>(
           if (error instanceof ZodError) {
             return handleZodError(error);
           }
-          return createErrorResponse('Error al procesar datos de entrada', 400);
+          return createErrorResponse("Error al procesar datos de entrada", 400);
         }
       } else {
         validatedData = {} as TInput;
@@ -224,36 +260,35 @@ export function createApiHandler<TInput = unknown, TOutput = unknown>(
 
       // Call the actual handler
       const result = await config.handler(validatedData, context);
-      
+
       // Return successful response
-      if (result && typeof result === 'object' && 'success' in result) {
+      if (result && typeof result === "object" && "success" in result) {
         // Handler returned a pre-formatted response
         return NextResponse.json(result);
       } else {
         // Handler returned data, wrap in success response
         return createSuccessResponse(result);
       }
-
     } catch (error) {
-      console.error('API Handler Error:', error);
-      
+      log.error("API Handler Error:", error);
+
       // Handle specific error types
       if (error instanceof ZodError) {
         return handleZodError(error);
       }
-      
+
       // Handle business logic errors that should pass through
       if (error instanceof BusinessLogicError) {
         return createErrorResponse(error.message, error.statusCode);
       }
-      
+
       // Handle standard Error objects with specific messages
       if (error instanceof Error) {
         return createErrorResponse(error.message, 400);
       }
-      
+
       // Generic server error for unknown error types
-      return createErrorResponse('Error interno del servidor', 500);
+      return createErrorResponse("Error interno del servidor", 500);
     }
   };
 }
@@ -261,13 +296,16 @@ export function createApiHandler<TInput = unknown, TOutput = unknown>(
 /**
  * Create handlers for different HTTP methods with the same configuration
  */
-export function createCrudHandlers<TInput = unknown, TOutput = unknown>(config: {
+export function createCrudHandlers<
+  TInput = unknown,
+  TOutput = unknown,
+>(config: {
   auth?: AuthRequirement;
   handlers: {
     GET?: (context: ApiContext) => Promise<TOutput>;
-    POST?: ApiHandlerConfig<TInput, TOutput>['handler'];
-    PUT?: ApiHandlerConfig<TInput, TOutput>['handler'];
-    PATCH?: ApiHandlerConfig<TInput, TOutput>['handler'];
+    POST?: ApiHandlerConfig<TInput, TOutput>["handler"];
+    PUT?: ApiHandlerConfig<TInput, TOutput>["handler"];
+    PATCH?: ApiHandlerConfig<TInput, TOutput>["handler"];
     DELETE?: (context: ApiContext) => Promise<TOutput>;
   };
   schemas?: {
@@ -278,7 +316,10 @@ export function createCrudHandlers<TInput = unknown, TOutput = unknown>(config: 
     DELETE?: ZodSchema<unknown>;
   };
 }) {
-  const handlers: Record<string, (request: NextRequest) => Promise<NextResponse>> = {};
+  const handlers: Record<
+    string,
+    (request: NextRequest) => Promise<NextResponse>
+  > = {};
 
   if (config.handlers.GET) {
     handlers.GET = createApiHandler({
@@ -294,7 +335,7 @@ export function createCrudHandlers<TInput = unknown, TOutput = unknown>(config: 
           return config.handlers.GET!(context);
         }
         return config.handlers.GET!(context);
-      }
+      },
     });
   }
 
@@ -302,7 +343,7 @@ export function createCrudHandlers<TInput = unknown, TOutput = unknown>(config: 
     handlers.POST = createApiHandler({
       auth: config.auth,
       schema: config.schemas?.POST,
-      handler: config.handlers.POST
+      handler: config.handlers.POST,
     });
   }
 
@@ -310,7 +351,7 @@ export function createCrudHandlers<TInput = unknown, TOutput = unknown>(config: 
     handlers.PUT = createApiHandler({
       auth: config.auth,
       schema: config.schemas?.PUT,
-      handler: config.handlers.PUT
+      handler: config.handlers.PUT,
     });
   }
 
@@ -318,7 +359,7 @@ export function createCrudHandlers<TInput = unknown, TOutput = unknown>(config: 
     handlers.PATCH = createApiHandler({
       auth: config.auth,
       schema: config.schemas?.PATCH,
-      handler: config.handlers.PATCH
+      handler: config.handlers.PATCH,
     });
   }
 
@@ -329,7 +370,7 @@ export function createCrudHandlers<TInput = unknown, TOutput = unknown>(config: 
       handler: (validatedData, context) => {
         // For DELETE requests, always pass context only (validation handled separately)
         return config.handlers.DELETE!(context);
-      }
+      },
     });
   }
 
@@ -341,19 +382,19 @@ export function createCrudHandlers<TInput = unknown, TOutput = unknown>(config: 
  */
 export async function executeSupabaseOperation<T>(
   operation: () => Promise<{ data: T | null; error: Error | null }>,
-  errorMessage: string = 'Error de base de datos'
+  errorMessage: string = "Error de base de datos",
 ): Promise<{ success: boolean; data?: T; error?: string }> {
   try {
     const { data, error } = await operation();
-    
+
     if (error) {
-      console.error('Supabase operation error:', error);
+      log.error("Supabase operation error:", error);
       return { success: false, error: errorMessage };
     }
-    
+
     return { success: true, data: data || undefined };
   } catch (error) {
-    console.error('Unexpected database error:', error);
+    log.error("Unexpected database error:", error);
     return { success: false, error: errorMessage };
   }
 }
@@ -362,30 +403,30 @@ export async function executeSupabaseOperation<T>(
  * Utility for handling query parameters with validation
  */
 export function getQueryParams<T>(
-  request: NextRequest, 
-  schema?: ZodSchema<T>
+  request: NextRequest,
+  schema?: ZodSchema<T>,
 ): { params: T; error?: NextResponse } {
   try {
     const { searchParams } = new URL(request.url);
     const params = Object.fromEntries(searchParams.entries());
-    
+
     if (schema) {
       const validatedParams = schema.parse(params);
       return { params: validatedParams };
     }
-    
+
     return { params: params as T };
   } catch (error) {
     if (error instanceof ZodError) {
       return {
         params: {} as T,
-        error: handleZodError(error)
+        error: handleZodError(error),
       };
     }
-    
+
     return {
       params: {} as T,
-      error: createErrorResponse('Parámetros de consulta inválidos', 400)
+      error: createErrorResponse("Parámetros de consulta inválidos", 400),
     };
   }
 }

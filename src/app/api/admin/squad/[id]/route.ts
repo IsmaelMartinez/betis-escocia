@@ -1,21 +1,36 @@
-import { NextRequest } from "next/server";
 import { createApiHandler } from "@/lib/apiUtils";
 import { squadMemberUpdateSchema } from "@/lib/schemas/squad";
 import { POSITION_TO_SHORT } from "@/types/squad";
 import type { Position } from "@/types/squad";
-
-interface RouteParams {
-  params: Promise<{ id: string }>;
-}
+import { createClient } from "@supabase/supabase-js";
 
 // GET: Get a specific squad member
 export const GET = createApiHandler({
   auth: "admin",
-  handler: async (_, { supabase, request }) => {
-    // Extract id from URL
-    const url = new URL(request.url);
-    const pathParts = url.pathname.split("/");
-    const id = pathParts[pathParts.length - 1];
+  handler: async (_, { params }) => {
+    // Use service role client to bypass RLS and schema cache issues
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error(
+        "Server configuration error: Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY",
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
+    if (!params) {
+      throw new Error("Parámetros de ruta no encontrados");
+    }
+    const { id } = await params;
+    if (!id) {
+      throw new Error(
+        "El ID del miembro de la plantilla no fue proporcionado en la ruta",
+      );
+    }
 
     const { data, error } = await supabase
       .from("squad_members")
@@ -43,19 +58,34 @@ export const GET = createApiHandler({
   },
 });
 
-// Helper to extract ID from request context
-function extractIdFromRequest(request: NextRequest): string {
-  const url = new URL(request.url);
-  const pathParts = url.pathname.split("/");
-  return pathParts[pathParts.length - 1];
-}
-
 // PATCH: Update a squad member
 export const PATCH = createApiHandler({
   auth: "admin",
   schema: squadMemberUpdateSchema,
-  handler: async (data, { supabase, request }) => {
-    const id = extractIdFromRequest(request);
+  handler: async (data, { params }) => {
+    // Use service role client to bypass RLS and schema cache issues
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error(
+        "Server configuration error: Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY",
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
+    if (!params) {
+      throw new Error("Parámetros de ruta no encontrados");
+    }
+    const { id } = await params;
+    if (!id) {
+      throw new Error(
+        "El ID del miembro de la plantilla no fue proporcionado en la ruta",
+      );
+    }
 
     // Build update object, calculating position_short if position changed
     const updateData: Record<string, unknown> = {};
@@ -120,8 +150,30 @@ export const PATCH = createApiHandler({
 // DELETE: Remove a player from the squad
 export const DELETE = createApiHandler({
   auth: "admin",
-  handler: async (_, { supabase, request }) => {
-    const id = extractIdFromRequest(request);
+  handler: async (_, { params }) => {
+    // Use service role client to bypass RLS and schema cache issues
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error(
+        "Server configuration error: Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY",
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
+    if (!params) {
+      throw new Error("Parámetros de ruta no encontrados");
+    }
+    const { id } = await params;
+    if (!id) {
+      throw new Error(
+        "El ID del miembro de la plantilla no fue proporcionado en la ruta",
+      );
+    }
 
     // First get the player_id to update the players table
     const { data: existing, error: fetchError } = await supabase

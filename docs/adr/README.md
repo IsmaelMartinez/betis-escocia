@@ -23,6 +23,7 @@ Concise documentation of key architectural decisions.
 | [015](./015-ai-rumor-scoring.md)               | AI Rumor Scoring (Soylenti)     | ✅ Accepted |
 | [016](./016-soylenti-frontend-architecture.md) | Soylenti Frontend Architecture  | ✅ Accepted |
 | [017](./017-trending-algorithm.md)             | Half-Life Decay Trending        | ✅ Accepted |
+| [018](./018-player-squad-management.md)        | Player & Squad Management       | ✅ Accepted |
 
 ## Creating New ADRs
 
