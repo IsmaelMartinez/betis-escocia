@@ -1,25 +1,25 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import CompetitionFilter, { Competition } from './CompetitionFilter';
-import { fn } from 'storybook/test';
+import type { Meta, StoryObj } from "@storybook/nextjs";
+import CompetitionFilter, { Competition } from "./CompetitionFilter";
+import { fn } from "storybook/test";
 
 const mockCompetitions: Competition[] = [
   {
-    id: 'PL',
-    code: 'PL',
-    name: 'Premier League',
-    emblem: 'https://crests.football-data.org/PL.png',
+    id: "PL",
+    code: "PL",
+    name: "Premier League",
+    emblem: "https://crests.football-data.org/PL.png",
   },
   {
-    id: 'PD',
-    code: 'PD',
-    name: 'La Liga',
-    emblem: 'https://crests.football-data.org/PD.png',
+    id: "PD",
+    code: "PD",
+    name: "La Liga",
+    emblem: "https://crests.football-data.org/PD.png",
   },
   {
-    id: 'SA',
-    code: 'SA',
-    name: 'Serie A',
-    emblem: 'https://crests.football-data.org/SA.png',
+    id: "SA",
+    code: "SA",
+    name: "Serie A",
+    emblem: "https://crests.football-data.org/SA.png",
   },
 ];
 
@@ -30,30 +30,30 @@ const mockMatchCounts = {
 };
 
 const meta: Meta<typeof CompetitionFilter> = {
-  title: 'Components/CompetitionFilter',
+  title: "Components/CompetitionFilter",
   component: CompetitionFilter,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     clerk: { enabled: false }, // This component does not use Clerk
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     competitions: {
-      control: 'object',
-      description: 'Array of competition objects',
+      control: "object",
+      description: "Array of competition objects",
     },
     selectedCompetition: {
-      control: 'select',
-      options: [null, ...mockCompetitions.map(c => c.id)],
-      description: 'ID of the currently selected competition',
+      control: "select",
+      options: [null, ...mockCompetitions.map((c) => c.id)],
+      description: "ID of the currently selected competition",
     },
     onCompetitionChange: {
-      action: 'competitionChanged',
-      description: 'Callback function when competition selection changes',
+      action: "competitionChanged",
+      description: "Callback function when competition selection changes",
     },
     matchCounts: {
-      control: 'object',
-      description: 'Object mapping competition IDs to match counts',
+      control: "object",
+      description: "Object mapping competition IDs to match counts",
     },
   },
   args: {
@@ -74,7 +74,7 @@ export const Default: Story = {
 
 export const WithSelectedCompetition: Story = {
   args: {
-    selectedCompetition: 'PD',
+    selectedCompetition: "PD",
     matchCounts: mockMatchCounts,
   },
 };

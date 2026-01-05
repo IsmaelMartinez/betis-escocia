@@ -146,7 +146,7 @@ NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
 
 ### User Types
 
-- **Admin**: Full dashboard access, user management, push notifications
+- **Admin**: Full dashboard access, user management
 - **Regular**: Personal dashboard with RSVP/contact history
 - **Anonymous**: Can submit RSVPs and contact forms
 
@@ -511,7 +511,6 @@ export async function POST(request: NextRequest) {
 
 #### Examples of Remaining Legacy Routes:
 
-- `/api/notifications/trigger` - SSE endpoint for real-time notifications
 - `/api/clerk/webhook` - Webhook with Svix signature verification
 - Routes requiring Response streaming or non-JSON responses
 
@@ -602,21 +601,6 @@ test("returns validation error for invalid data", async () => {
 - **Status codes**: Standardized error responses
 - **Mock data**: Provide data that passes Zod validation for successful tests
 
-## Push Notifications
-
-Admin users receive real-time notifications for RSVP submissions and contact forms.
-
-### Architecture
-
-- **Web Push API** with service worker
-- **Database preferences** in `notification_preferences` table
-- **Admin-only access** via role verification
-- **Non-blocking integration** - failures don't impact core functionality
-
-### Setup
-
-Notifications require HTTPS (localhost exception applies). Users must grant browser permission.
-
 ## Key Features
 
 ### RSVP System
@@ -634,9 +618,9 @@ Notifications require HTTPS (localhost exception applies). Users must grant brow
 - **Player & Squad Management**: Manage current Real Betis squad, sync from Football-Data.org API
 - **Formation Builder**: Create and save starting eleven formations with visual pitch
 - **Player Operations**: Alias management, display names, merge duplicate players
-- **User management**: Push notifications and role assignment
+- **User management**: Role assignment via Clerk
 - **RSVP and contact form oversight**: Community engagement tracking
-- **Real-time monitoring**: Community activity and admin notifications
+- **Real-time monitoring**: Community activity
 
 See [Player Management API Documentation](api/player-management-api.md) for complete API reference.
 
@@ -681,7 +665,7 @@ Key technical decisions are documented in [ADRs](adr/):
 - [ADR-001: Clerk Authentication](adr/001-clerk-authentication.md) - Why Clerk over alternatives
 - [ADR-003: Supabase Database](adr/003-supabase-database.md) - Database choice and patterns
 - [ADR-004: Environment Variable Feature Flags](adr/004-flagsmith-feature-flags.md) - Feature flag system migration
-- [ADR-011: Admin Push Notifications](adr/011-admin-notifications.md) - Real-time notification system
+- [ADR-011: Admin Push Notifications](adr/011-admin-notifications.md) - Deferred until live domain
 - [ADR-018: Player & Squad Management](adr/018-player-squad-management.md) - Squad tracking, formations, and sync
 
 ## Contributing

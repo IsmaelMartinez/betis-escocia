@@ -1,0 +1,39 @@
+name: Cleanup Old News (Scheduled)
+
+on:
+  schedule:
+    # Daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: read
+
+jobs:
+  cleanup-news:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run news cleanup
+        env:
+          # Use production service role key for admin operations
+          SUPABASE_CLEANUP_URL: ${{ secrets.SUPABASE_PRODUCTION_URL || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_CLEANUP_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_PRODUCTION_SERVICE_ROLE_KEY || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npm run cleanup-news
+
+      - name: Report status
+        if: always()
+        run: echo "News cleanup workflow completed with status ${{ job.status }}"

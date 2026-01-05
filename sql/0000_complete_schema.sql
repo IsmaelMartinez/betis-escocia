@@ -154,23 +154,6 @@ CREATE TABLE IF NOT EXISTS classification_cache (
 -- Create index for cache expiration queries
 CREATE INDEX IF NOT EXISTS idx_classification_cache_last_updated ON classification_cache(last_updated);
 
--- ===============================================================================
--- NOTIFICATION SYSTEM TABLES
--- ===============================================================================
-
--- Notification Preferences Table
--- Stores user notification settings for push notifications
-CREATE TABLE IF NOT EXISTS notification_preferences (
-    id SERIAL PRIMARY KEY,
-    user_id VARCHAR(255) NOT NULL UNIQUE, -- Clerk user ID
-    enabled BOOLEAN NOT NULL DEFAULT false,
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
-);
-
--- Create indexes for notification preferences
-CREATE INDEX IF NOT EXISTS idx_notification_preferences_user_id ON notification_preferences(user_id);
-CREATE INDEX IF NOT EXISTS idx_notification_preferences_enabled ON notification_preferences(enabled);
 
 -- ===============================================================================
 -- FUNCTIONS AND TRIGGERS
@@ -185,14 +168,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Function to update notification preferences updated_at
-CREATE OR REPLACE FUNCTION update_notification_preferences_updated_at()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = CURRENT_TIMESTAMP;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
 
 -- Function to cleanup old RSVPs (GDPR compliance)
 CREATE OR REPLACE FUNCTION cleanup_old_rsvps() 
@@ -232,10 +207,6 @@ CREATE TRIGGER trigger_update_contact_submissions_updated_at
     BEFORE UPDATE ON contact_submissions
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER trigger_update_notification_preferences_updated_at
-    BEFORE UPDATE ON notification_preferences
-    FOR EACH ROW EXECUTE FUNCTION update_notification_preferences_updated_at();
-
 CREATE TRIGGER trigger_update_matches_updated_at
     BEFORE UPDATE ON matches
     FOR EACH ROW EXECUTE FUNCTION update_matches_updated_at();
@@ -270,7 +241,6 @@ ALTER TABLE trivia_questions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE trivia_answers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_trivia_scores ENABLE ROW LEVEL SECURITY;
 ALTER TABLE classification_cache ENABLE ROW LEVEL SECURITY;
-ALTER TABLE notification_preferences ENABLE ROW LEVEL SECURITY;
 
 -- Matches table policies
 DO $$ 
@@ -380,28 +350,6 @@ BEGIN
     END IF;
 END $$;
 
--- Notification preferences policies
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can view own notification preferences' AND tablename = 'notification_preferences') THEN
-        CREATE POLICY "Users can view own notification preferences" ON notification_preferences FOR SELECT USING (user_id = auth.jwt() ->> 'sub');
-    END IF;
-    
-    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can insert own notification preferences' AND tablename = 'notification_preferences') THEN
-        CREATE POLICY "Users can insert own notification preferences" ON notification_preferences FOR INSERT WITH CHECK (user_id = auth.jwt() ->> 'sub');
-    END IF;
-END $$;
-
--- Additional notification preferences policy
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can update own notification preferences' AND tablename = 'notification_preferences') THEN
-        CREATE POLICY "Users can update own notification preferences" ON notification_preferences 
-        FOR UPDATE USING (user_id = auth.jwt() ->> 'sub') 
-        WITH CHECK (user_id = auth.jwt() ->> 'sub');
-    END IF;
-END $$;
-
 -- ===============================================================================
 -- GRANTS AND PERMISSIONS
 -- ===============================================================================
@@ -422,7 +370,6 @@ COMMENT ON TABLE trivia_questions IS 'Trivia questions for daily quiz game';
 COMMENT ON TABLE trivia_answers IS 'Multiple choice answers for trivia questions';
 COMMENT ON TABLE user_trivia_scores IS 'Daily trivia scores for authenticated users';
 COMMENT ON TABLE classification_cache IS 'Cached football league standings from external API';
-COMMENT ON TABLE notification_preferences IS 'User notification preferences for push notifications';
 
 -- ===============================================================================
 -- INITIAL DATA (Optional - uncomment if needed)
@@ -489,8 +436,8 @@ SELECT
 FROM pg_catalog.pg_tables t
 LEFT JOIN pg_catalog.pg_attribute a ON a.attrelid = (schemaname||'.'||tablename)::regclass
 LEFT JOIN pg_catalog.pg_type typ ON typ.oid = a.atttypid
-WHERE schemaname = 'public' 
-    AND tablename IN ('matches', 'rsvps', 'contact_submissions', 'trivia_questions', 'trivia_answers', 'user_trivia_scores', 'classification_cache', 'notification_preferences')
+WHERE schemaname = 'public'
+    AND tablename IN ('matches', 'rsvps', 'contact_submissions', 'trivia_questions', 'trivia_answers', 'user_trivia_scores', 'classification_cache')
     AND a.attnum > 0
     AND NOT a.attisdropped
 ORDER BY tablename, a.attnum;

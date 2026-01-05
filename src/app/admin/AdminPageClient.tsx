@@ -40,13 +40,6 @@ import { log } from "@/lib/logger";
 import clsx from "clsx";
 
 // Lazy load heavy admin components to reduce initial bundle size
-const OneSignalNotificationPanel = dynamicImport(
-  () => import("@/components/admin/OneSignalNotificationPanel"),
-  {
-    loading: () => <LoadingSpinner />,
-    ssr: false,
-  },
-);
 const MatchForm = dynamicImport(() => import("@/components/admin/MatchForm"), {
   loading: () => <LoadingSpinner />,
 });
@@ -991,11 +984,6 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
                   </div>
                 </CardBody>
               </Card>
-            </div>
-
-            {/* OneSignal Push Notifications Panel */}
-            <div className="mb-8">
-              <OneSignalNotificationPanel />
             </div>
 
             {/* Recent Data */}

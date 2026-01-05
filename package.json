@@ -21,6 +21,7 @@
     "update-trivia": "tsx scripts/update-trivia-questions.ts",
     "sync-rumors": "tsx scripts/sync-rumors.ts",
     "sync-squad": "tsx scripts/sync-squad.ts",
+    "cleanup-news": "tsx scripts/cleanup-old-news.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "prepare": "lefthook install"
@@ -43,7 +44,6 @@
     "next": "^16.0.10",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "react-onesignal": "^3.4.0",
     "rss-parser": "^3.13.0",
     "svix": "^1.82.0",
     "web-push": "^3.6.7",

@@ -1,25 +1,24 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import React, { useEffect } from 'react';
-import OfflineDetector from './OfflineDetector';
-
+import type { Meta, StoryObj } from "@storybook/nextjs";
+import React, { useEffect } from "react";
+import OfflineDetector from "./OfflineDetector";
 
 // Helper to set online status for stories
 const setOnlineStatus = (isOnline: boolean) => {
-  Object.defineProperty(navigator, 'onLine', {
+  Object.defineProperty(navigator, "onLine", {
     configurable: true,
     value: isOnline,
   });
-  window.dispatchEvent(new Event(isOnline ? 'online' : 'offline'));
+  window.dispatchEvent(new Event(isOnline ? "online" : "offline"));
 };
 
 const meta: Meta<typeof OfflineDetector> = {
-  title: 'Components/OfflineDetector',
+  title: "Components/OfflineDetector",
   component: OfflineDetector,
   parameters: {
-    layout: 'fullscreen',
+    layout: "fullscreen",
     clerk: { enabled: false }, // This component does not use Clerk
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   decorators: [
     (Story, context) => {
       // Reset online status before each story
@@ -29,7 +28,7 @@ const meta: Meta<typeof OfflineDetector> = {
       }, []);
 
       // Apply specific online status for the story if provided
-      if (typeof context.parameters.isOnline !== 'undefined') {
+      if (typeof context.parameters.isOnline !== "undefined") {
         setOnlineStatus(context.parameters.isOnline);
       }
 
@@ -83,5 +82,3 @@ export const Offline: Story = {
 //     isOnline: true,
 //   },
 // };
-
-
