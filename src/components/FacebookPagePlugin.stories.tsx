@@ -1,39 +1,39 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import FacebookPagePlugin from './FacebookPagePlugin';
+import type { Meta, StoryObj } from "@storybook/nextjs";
+import FacebookPagePlugin from "./FacebookPagePlugin";
 
 const meta: Meta<typeof FacebookPagePlugin> = {
-  title: 'Components/FacebookPagePlugin',
+  title: "Components/FacebookPagePlugin",
   component: FacebookPagePlugin,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     clerk: { enabled: false }, // This component does not use Clerk
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     showHeader: {
-      control: 'boolean',
-      description: 'Whether to display the header section of the plugin.',
+      control: "boolean",
+      description: "Whether to display the header section of the plugin.",
     },
     width: {
-      control: 'number',
-      description: 'The width of the plugin in pixels.',
+      control: "number",
+      description: "The width of the plugin in pixels.",
     },
     height: {
-      control: 'number',
-      description: 'The height of the plugin in pixels.',
+      control: "number",
+      description: "The height of the plugin in pixels.",
     },
   },
   decorators: [
     (Story) => {
       // Mock Facebook SDK global objects for Storybook environment
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         window.FB = {
-          init: () => console.log('FB.init mocked'),
+          init: () => console.log("FB.init mocked"),
           XFBML: {
-            parse: () => console.log('FB.XFBML.parse mocked'),
+            parse: () => console.log("FB.XFBML.parse mocked"),
           },
         };
-        window.fbAsyncInit = () => console.log('fbAsyncInit mocked');
+        window.fbAsyncInit = () => console.log("fbAsyncInit mocked");
       }
       return Story();
     },
@@ -73,7 +73,7 @@ export const LoadingState: Story = {
   },
   decorators: [
     (Story) => {
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         // Prevent FB.init from being called immediately
         window.FB = undefined;
         window.fbAsyncInit = undefined;
@@ -89,11 +89,11 @@ export const ErrorState: Story = {
   },
   decorators: [
     (Story) => {
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         window.FB = undefined;
         window.fbAsyncInit = undefined;
-  // Note: Error simulation is disabled for Storybook compatibility
-        console.log('Error state: Facebook script loading would fail');
+        // Note: Error simulation is disabled for Storybook compatibility
+        console.log("Error state: Facebook script loading would fail");
       }
       return Story();
     },

@@ -1,14 +1,14 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import Hero from './Hero';
+import type { Meta, StoryObj } from "@storybook/nextjs";
+import Hero from "./Hero";
 
 const meta: Meta<typeof Hero> = {
-  title: 'Components/Hero',
+  title: "Components/Hero",
   component: Hero,
   parameters: {
-    layout: 'fullscreen',
+    layout: "fullscreen",
     clerk: { enabled: false }, // This component does not use Clerk
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     // Hero component does not have any direct props
   },

@@ -1,21 +1,21 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import GameTimer from './GameTimer';
+import type { Meta, StoryObj } from "@storybook/nextjs";
+import GameTimer from "./GameTimer";
 
 const meta: Meta<typeof GameTimer> = {
-  title: 'Components/GameTimer',
+  title: "Components/GameTimer",
   component: GameTimer,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     duration: {
-      control: { type: 'number', min: 1, max: 60 },
-      description: 'Timer duration in seconds',
+      control: { type: "number", min: 1, max: 60 },
+      description: "Timer duration in seconds",
     },
     resetTrigger: {
-      control: { type: 'number' },
-      description: 'Change this value to reset the timer',
+      control: { type: "number" },
+      description: "Change this value to reset the timer",
     },
   },
 };
@@ -26,7 +26,7 @@ type Story = StoryObj<typeof GameTimer>;
 export const Default: Story = {
   args: {
     duration: 15,
-    onTimeUp: () => console.log('Time up!'),
+    onTimeUp: () => console.log("Time up!"),
     resetTrigger: 0,
   },
   decorators: [
@@ -41,7 +41,7 @@ export const Default: Story = {
 export const ShortTimer: Story = {
   args: {
     duration: 5,
-    onTimeUp: () => console.log('Time up!'),
+    onTimeUp: () => console.log("Time up!"),
     resetTrigger: 0,
   },
   decorators: [
@@ -56,7 +56,7 @@ export const ShortTimer: Story = {
 export const LongTimer: Story = {
   args: {
     duration: 30,
-    onTimeUp: () => console.log('Time up!'),
+    onTimeUp: () => console.log("Time up!"),
     resetTrigger: 0,
   },
   decorators: [
@@ -67,4 +67,3 @@ export const LongTimer: Story = {
     ),
   ],
 };
-

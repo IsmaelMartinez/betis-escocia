@@ -1,77 +1,92 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import RSVPModal, { useRSVPModal } from './RSVPModal';
-import { EventDetails } from './RSVPWidget';
-import { fn, userEvent, within } from 'storybook/test';
-import { setMockUser, resetClerkMocks } from '@/lib/clerk/__mocks__/storybook';
-import { useState } from 'react';
-import Button from '@/components/ui/Button';
+import type { Meta, StoryObj } from "@storybook/nextjs";
+import RSVPModal, { useRSVPModal } from "./RSVPModal";
+import { EventDetails } from "./RSVPWidget";
+import { fn, userEvent, within } from "storybook/test";
+import { setMockUser, resetClerkMocks } from "@/lib/clerk/__mocks__/storybook";
+import { useState } from "react";
+import Button from "@/components/ui/Button";
 
 // Mock fetch API for form submissions
-const mockFetch = (status: 'success' | 'error' | 'delay') => {
+const mockFetch = (status: "success" | "error" | "delay") => {
   return async (input: RequestInfo | URL): Promise<Response> => {
     let url: string;
-    if (typeof input === 'string') {
+    if (typeof input === "string") {
       url = input;
     } else if (input instanceof URL) {
       url = input.toString();
     } else {
       url = input.url;
     }
-    
-    if (url.includes('/api/rsvp')) {
-      if (status === 'success') {
-        return new Response(JSON.stringify({ message: 'Confirmación recibida correctamente' }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      } else if (status === 'error') {
-        return new Response(JSON.stringify({ error: 'Error al enviar la confirmación' }), {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      } else if (status === 'delay') {
-        return new Promise<Response>(resolve => setTimeout(() => {
-          resolve(new Response(JSON.stringify({ message: 'Confirmación recibida correctamente' }), {
+
+    if (url.includes("/api/rsvp")) {
+      if (status === "success") {
+        return new Response(
+          JSON.stringify({ message: "Confirmación recibida correctamente" }),
+          {
             status: 200,
-            headers: { 'Content-Type': 'application/json' },
-          }));
-        }, 3000));
+            headers: { "Content-Type": "application/json" },
+          },
+        );
+      } else if (status === "error") {
+        return new Response(
+          JSON.stringify({ error: "Error al enviar la confirmación" }),
+          {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+          },
+        );
+      } else if (status === "delay") {
+        return new Promise<Response>((resolve) =>
+          setTimeout(() => {
+            resolve(
+              new Response(
+                JSON.stringify({
+                  message: "Confirmación recibida correctamente",
+                }),
+                {
+                  status: 200,
+                  headers: { "Content-Type": "application/json" },
+                },
+              ),
+            );
+          }, 3000),
+        );
       }
     }
-    return Promise.reject(new Error('Unknown API endpoint'));
+    return Promise.reject(new Error("Unknown API endpoint"));
   };
 };
 
 // Sample event data
 const sampleEvent: EventDetails = {
   id: 123,
-  title: 'Real Betis vs Sevilla FC',
-  date: new Date('2024-12-15T16:15:00'),
-  location: 'Polwarth Tavern, Edinburgh',
-  description: 'El clásico sevillano en el mejor ambiente de Edimburgo'
+  title: "Real Betis vs Sevilla FC",
+  date: new Date("2024-12-15T16:15:00"),
+  location: "Polwarth Tavern, Edinburgh",
+  description: "El clásico sevillano en el mejor ambiente de Edimburgo",
 };
 
 // Modal wrapper component for stories
 const ModalWrapper = ({ isOpen: initialOpen = false, ...props }) => {
   const [isOpen, setIsOpen] = useState(initialOpen);
-  
+
   return (
     <div className="p-8">
       <div className="text-center mb-4">
-        <Button onClick={() => setIsOpen(true)}>
-          Open RSVP Modal
-        </Button>
+        <Button onClick={() => setIsOpen(true)}>Open RSVP Modal</Button>
       </div>
       <div className="bg-gray-100 p-8 rounded-lg">
         <h3 className="text-lg font-bold mb-4">Background Content</h3>
         <p className="text-gray-600 mb-4">
-          This is the page content behind the modal. When the modal opens, this content should be dimmed and inaccessible.
+          This is the page content behind the modal. When the modal opens, this
+          content should be dimmed and inaccessible.
         </p>
         <p className="text-gray-600">
-          The modal should handle focus management and prevent interaction with background content.
+          The modal should handle focus management and prevent interaction with
+          background content.
         </p>
       </div>
-      
+
       <RSVPModal
         {...props}
         event={sampleEvent}
@@ -83,32 +98,32 @@ const ModalWrapper = ({ isOpen: initialOpen = false, ...props }) => {
 };
 
 const meta: Meta<typeof RSVPModal> = {
-  title: 'Components/RSVPModal',
+  title: "Components/RSVPModal",
   component: RSVPModal,
   parameters: {
-    layout: 'fullscreen',
+    layout: "fullscreen",
     docs: {
-      story: { height: '500px' }
-    }
-  },
-  tags: ['autodocs'],
-  argTypes: {
-    isOpen: { control: 'boolean' },
-    event: { control: 'object' },
-    modalTitle: { control: 'text' },
-    disableBackdropClick: { control: 'boolean' },
-    disableEscapeKey: { control: 'boolean' },
-    maxWidth: {
-      control: { type: 'radio' },
-      options: ['sm', 'md', 'lg', 'xl', '2xl'],
+      story: { height: "500px" },
     },
-    showEventDetails: { control: 'boolean' },
-    showAttendeeCount: { control: 'boolean' },
-    attendeeCount: { control: { type: 'number', min: 0, max: 500 } },
-    compact: { control: 'boolean' },
-    onClose: { action: 'onClose' },
-    onSuccess: { action: 'onSuccess' },
-    onError: { action: 'onError' },
+  },
+  tags: ["autodocs"],
+  argTypes: {
+    isOpen: { control: "boolean" },
+    event: { control: "object" },
+    modalTitle: { control: "text" },
+    disableBackdropClick: { control: "boolean" },
+    disableEscapeKey: { control: "boolean" },
+    maxWidth: {
+      control: { type: "radio" },
+      options: ["sm", "md", "lg", "xl", "2xl"],
+    },
+    showEventDetails: { control: "boolean" },
+    showAttendeeCount: { control: "boolean" },
+    attendeeCount: { control: { type: "number", min: 0, max: 500 } },
+    compact: { control: "boolean" },
+    onClose: { action: "onClose" },
+    onSuccess: { action: "onSuccess" },
+    onError: { action: "onError" },
   },
   args: {
     event: sampleEvent,
@@ -120,7 +135,7 @@ const meta: Meta<typeof RSVPModal> = {
   decorators: [
     (Story) => {
       resetClerkMocks();
-      global.fetch = mockFetch('success');
+      global.fetch = mockFetch("success");
       return <Story />;
     },
   ],
@@ -177,14 +192,14 @@ export const WithAuthentication: Story = {
   },
   render: (args) => {
     setMockUser({
-      id: 'user_123',
-      firstName: 'Carlos',
-      lastName: 'González',
-      emailAddresses: [{ emailAddress: 'carlos.gonzalez@example.com' }],
-      publicMetadata: { role: 'member' },
+      id: "user_123",
+      firstName: "Carlos",
+      lastName: "González",
+      emailAddresses: [{ emailAddress: "carlos.gonzalez@example.com" }],
+      publicMetadata: { role: "member" },
       createdAt: new Date(),
       lastSignInAt: new Date(),
-      imageUrl: 'https://example.com/avatar.jpg',
+      imageUrl: "https://example.com/avatar.jpg",
     });
     return (
       <div>
@@ -206,21 +221,21 @@ export const WithExistingRSVP: Story = {
     showAttendeeCount: true,
     attendeeCount: 22,
     currentRSVP: {
-      status: 'confirmed',
+      status: "confirmed",
       attendees: 3,
-      message: 'Confirmado con la familia!'
+      message: "Confirmado con la familia!",
     },
   },
   render: (args) => {
     setMockUser({
-      id: 'user_456',
-      firstName: 'María',
-      lastName: 'López',
-      emailAddresses: [{ emailAddress: 'maria.lopez@example.com' }],
-      publicMetadata: { role: 'member' },
+      id: "user_456",
+      firstName: "María",
+      lastName: "López",
+      emailAddresses: [{ emailAddress: "maria.lopez@example.com" }],
+      publicMetadata: { role: "member" },
       createdAt: new Date(),
       lastSignInAt: new Date(),
-      imageUrl: 'https://example.com/avatar2.jpg',
+      imageUrl: "https://example.com/avatar2.jpg",
     });
     return (
       <div>
@@ -239,7 +254,7 @@ export const SmallModal: Story = {
   args: {
     isOpen: true,
     event: { ...sampleEvent, description: undefined },
-    maxWidth: 'sm',
+    maxWidth: "sm",
     showEventDetails: false,
     showAttendeeCount: true,
     attendeeCount: 8,
@@ -263,7 +278,7 @@ export const LargeModal: Story = {
   args: {
     isOpen: true,
     event: sampleEvent,
-    maxWidth: 'xl',
+    maxWidth: "xl",
     showEventDetails: true,
     showAttendeeCount: true,
     attendeeCount: 25,
@@ -291,7 +306,7 @@ export const NoBackdropClose: Story = {
     showEventDetails: true,
     showAttendeeCount: true,
     attendeeCount: 12,
-    modalTitle: 'Required RSVP (Click X to close)',
+    modalTitle: "Required RSVP (Click X to close)",
   },
   render: (args) => {
     setMockUser(null);
@@ -299,7 +314,9 @@ export const NoBackdropClose: Story = {
       <div>
         <div className="p-8 bg-gray-100 min-h-screen">
           <h1 className="text-2xl font-bold mb-4">Page Content</h1>
-          <p className="text-gray-600">Click backdrop - modal won&apos;t close</p>
+          <p className="text-gray-600">
+            Click backdrop - modal won&apos;t close
+          </p>
         </div>
         <RSVPModal {...args} />
       </div>
@@ -315,7 +332,7 @@ export const NoEscapeClose: Story = {
     showEventDetails: true,
     showAttendeeCount: true,
     attendeeCount: 12,
-    modalTitle: 'Required RSVP (Escape disabled)',
+    modalTitle: "Required RSVP (Escape disabled)",
   },
   render: (args) => {
     setMockUser(null);
@@ -342,7 +359,7 @@ export const LoadingState: Story = {
   },
   render: (args) => {
     setMockUser(null);
-    global.fetch = mockFetch('delay');
+    global.fetch = mockFetch("delay");
     return (
       <div>
         <div className="p-8 bg-gray-100 min-h-screen">
@@ -354,12 +371,12 @@ export const LoadingState: Story = {
     );
   },
   play: async ({ canvasElement }) => {
-    const nameInput = within(canvasElement).getByTestId('name-input');
-    const emailInput = within(canvasElement).getByTestId('email-input');
-    const submitButton = within(canvasElement).getByTestId('submit-rsvp');
+    const nameInput = within(canvasElement).getByTestId("name-input");
+    const emailInput = within(canvasElement).getByTestId("email-input");
+    const submitButton = within(canvasElement).getByTestId("submit-rsvp");
 
-    await userEvent.type(nameInput, 'Test User');
-    await userEvent.type(emailInput, 'test@example.com');
+    await userEvent.type(nameInput, "Test User");
+    await userEvent.type(emailInput, "test@example.com");
     await userEvent.click(submitButton);
   },
 };
@@ -374,7 +391,7 @@ export const ErrorState: Story = {
   },
   render: (args) => {
     setMockUser(null);
-    global.fetch = mockFetch('error');
+    global.fetch = mockFetch("error");
     return (
       <div>
         <div className="p-8 bg-gray-100 min-h-screen">
@@ -386,12 +403,12 @@ export const ErrorState: Story = {
     );
   },
   play: async ({ canvasElement }) => {
-    const nameInput = within(canvasElement).getByTestId('name-input');
-    const emailInput = within(canvasElement).getByTestId('email-input');
-    const submitButton = within(canvasElement).getByTestId('submit-rsvp');
+    const nameInput = within(canvasElement).getByTestId("name-input");
+    const emailInput = within(canvasElement).getByTestId("email-input");
+    const submitButton = within(canvasElement).getByTestId("submit-rsvp");
 
-    await userEvent.type(nameInput, 'Test User');
-    await userEvent.type(emailInput, 'test@example.com');
+    await userEvent.type(nameInput, "Test User");
+    await userEvent.type(emailInput, "test@example.com");
     await userEvent.click(submitButton);
   },
 };
@@ -406,7 +423,7 @@ export const SuccessState: Story = {
   },
   render: (args) => {
     setMockUser(null);
-    global.fetch = mockFetch('success');
+    global.fetch = mockFetch("success");
     return (
       <div>
         <div className="p-8 bg-gray-100 min-h-screen">
@@ -418,12 +435,12 @@ export const SuccessState: Story = {
     );
   },
   play: async ({ canvasElement }) => {
-    const nameInput = within(canvasElement).getByTestId('name-input');
-    const emailInput = within(canvasElement).getByTestId('email-input');
-    const submitButton = within(canvasElement).getByTestId('submit-rsvp');
+    const nameInput = within(canvasElement).getByTestId("name-input");
+    const emailInput = within(canvasElement).getByTestId("email-input");
+    const submitButton = within(canvasElement).getByTestId("submit-rsvp");
 
-    await userEvent.type(nameInput, 'Test User');
-    await userEvent.type(emailInput, 'test@example.com');
+    await userEvent.type(nameInput, "Test User");
+    await userEvent.type(emailInput, "test@example.com");
     await userEvent.click(submitButton);
   },
 };
@@ -433,23 +450,21 @@ export const WithHook: Story = {
   render: (args) => {
     const HookDemo = () => {
       const { isOpen, openModal, closeModal } = useRSVPModal();
-      
+
       return (
         <div className="p-8 bg-gray-100 min-h-screen">
           <h1 className="text-2xl font-bold mb-4">useRSVPModal Hook Demo</h1>
           <p className="text-gray-600 mb-4">
             This demonstrates the useRSVPModal hook for state management.
           </p>
-          
+
           <div className="space-x-4">
-            <Button onClick={openModal}>
-              Open Modal
-            </Button>
+            <Button onClick={openModal}>Open Modal</Button>
             <Button variant="outline" onClick={closeModal}>
               Close Modal
             </Button>
           </div>
-          
+
           <RSVPModal
             {...args}
             event={sampleEvent}
@@ -462,7 +477,7 @@ export const WithHook: Story = {
         </div>
       );
     };
-    
+
     setMockUser(null);
     return <HookDemo />;
   },
@@ -476,7 +491,7 @@ export const AccessibilityDemo: Story = {
     showEventDetails: true,
     showAttendeeCount: true,
     attendeeCount: 12,
-    modalTitle: 'Accessibility Features Demo',
+    modalTitle: "Accessibility Features Demo",
   },
   render: (args) => {
     setMockUser(null);

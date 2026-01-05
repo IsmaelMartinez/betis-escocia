@@ -50,8 +50,10 @@ CLEANUP_RETENTION_HOURS=48
 
 PostgreSQL function in `sql/0012_add_news_cleanup_function.sql`
 
+**Security:** Function requires admin role and is only executable by `service_role`. Public roles (`anon`, `authenticated`) cannot execute it, preventing unauthorized deletions.
+
 ```sql
--- Run manually
+-- Run manually (requires admin role)
 SELECT * FROM cleanup_old_non_rumor_news(24);
 
 -- Check what would be deleted
@@ -83,6 +85,12 @@ WHERE ai_probability = 0
 **Function not found:**
 
 - Apply SQL migration to database
+
+**Access denied error:**
+
+- Function requires admin role in JWT metadata
+- Script must use `service_role` key, not `anon` key
+- Public roles cannot execute this function (security feature)
 
 ## See Also
 

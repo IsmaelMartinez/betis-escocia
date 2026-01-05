@@ -1,27 +1,27 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import InstagramEmbed from './InstagramEmbed';
+import type { Meta, StoryObj } from "@storybook/nextjs";
+import InstagramEmbed from "./InstagramEmbed";
 
 const meta: Meta<typeof InstagramEmbed> = {
-  title: 'Components/InstagramEmbed',
+  title: "Components/InstagramEmbed",
   component: InstagramEmbed,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     clerk: { enabled: false }, // This component does not use Clerk
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     showHeader: {
-      control: 'boolean',
-      description: 'Whether to display the header section of the embed.',
+      control: "boolean",
+      description: "Whether to display the header section of the embed.",
     },
   },
   decorators: [
     (Story) => {
       // Mock Instagram SDK global objects for Storybook environment
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         window.instgrm = {
           Embeds: {
-            process: () => console.log('instgrm.Embeds.process mocked'),
+            process: () => console.log("instgrm.Embeds.process mocked"),
           },
         };
       }

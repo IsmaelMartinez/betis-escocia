@@ -5,6 +5,7 @@
 
 -- Function to delete old non-rumor news
 -- Returns the number of rows deleted
+-- SECURITY: Only callable by admin role or service_role
 CREATE OR REPLACE FUNCTION cleanup_old_non_rumor_news(
     retention_hours INTEGER DEFAULT 24
 )
@@ -12,7 +13,20 @@ RETURNS TABLE(deleted_count BIGINT) AS $$
 DECLARE
     cutoff_timestamp TIMESTAMPTZ;
     rows_deleted BIGINT;
+    caller_role TEXT;
 BEGIN
+    -- SECURITY CHECK: Verify caller is admin
+    -- This prevents unauthorized deletion via anon/authenticated roles
+    caller_role := COALESCE(
+        (auth.jwt() ->> 'publicMetadata')::jsonb ->> 'role',
+        'anonymous'
+    );
+
+    IF caller_role != 'admin' THEN
+        RAISE EXCEPTION 'Access denied: cleanup_old_non_rumor_news requires admin role'
+            USING HINT = 'Only admins can execute cleanup operations';
+    END IF;
+
     -- Calculate cutoff timestamp
     cutoff_timestamp := NOW() - (retention_hours || ' hours')::INTERVAL;
 
@@ -36,7 +50,15 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Add comment
 COMMENT ON FUNCTION cleanup_old_non_rumor_news(INTEGER) IS
-    'Delete non-rumor news (ai_probability = 0) older than retention period. Default: 24 hours.';
+    'Delete non-rumor news (ai_probability = 0) older than retention period. Default: 24 hours. Requires admin role.';
+
+-- SECURITY: Revoke public execute permissions
+-- Only service_role or admin users should be able to call this function
+REVOKE EXECUTE ON FUNCTION cleanup_old_non_rumor_news(INTEGER) FROM anon, authenticated;
+
+-- Grant execute only to service_role (used by GitHub Actions and scripts)
+-- Individual admin users will be checked via the role check inside the function
+GRANT EXECUTE ON FUNCTION cleanup_old_non_rumor_news(INTEGER) TO service_role;
 
 -- Performance optimization: Partial index for cleanup queries
 CREATE INDEX IF NOT EXISTS idx_betis_news_cleanup ON betis_news(pub_date)
