@@ -59,8 +59,8 @@ describe("rumorSyncService - Integration Tests", () => {
     vi.clearAllMocks();
     process.env = {
       ...originalEnv,
-      NEXT_PUBLIC_SUPABASE_URL: "https://test.supabase.co",
-      SUPABASE_SERVICE_ROLE_KEY: "test-service-role-key",
+      SUPABASE_SYNC_URL: "https://test.supabase.co",
+      SUPABASE_SYNC_SERVICE_ROLE_KEY: "test-service-role-key",
       GEMINI_API_KEY: "test-gemini-key",
     };
 
@@ -523,10 +523,10 @@ describe("rumorSyncService - Integration Tests", () => {
     });
 
     it("should throw error if environment variables are missing", async () => {
-      delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+      delete process.env.SUPABASE_SYNC_URL;
 
       await expect(syncRumors()).rejects.toThrow(
-        "Supabase URL and service role key environment variables are required",
+        "SUPABASE_SYNC_URL environment variable is required",
       );
     });
 
