@@ -54,6 +54,7 @@
   "devDependencies": {
     "@clerk/testing": "^1.13.23",
     "@eslint/eslintrc": "^3",
+    "@next/bundle-analyzer": "^16.1.1",
     "@playwright/test": "^1.57.0",
     "@storybook/addon-docs": "^10.1.11",
     "@storybook/addon-onboarding": "^10.1.11",
