@@ -1,5 +1,6 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import type { User } from "@clerk/nextjs/server";
+import { log } from "@/lib/logger";
 
 /**
  * Check if the current user has admin role (for use in API routes)
@@ -42,7 +43,7 @@ export async function checkAdminRole(): Promise<{
       error: isAdminUser ? undefined : "Forbidden. Admin access required.",
     };
   } catch (error) {
-    console.error("Admin role check error:", error);
+    log.error("Admin role check error", error as Error);
     return {
       user: null,
       isAdmin: false,
