@@ -1002,18 +1002,3 @@ export interface TrendingPlayer {
   isActive: boolean; // mentioned in last 7 days
 }
 
-// Re-export squad types for convenience
-export type {
-  SquadMember,
-  SquadMemberInsert,
-  SquadMemberUpdate,
-  StartingEleven,
-  StartingElevenInsert,
-  StartingElevenUpdate,
-  LineupPlayer,
-  Position,
-  PositionShort,
-  SquadStatus,
-  PositionGroup,
-  Formation,
-} from "@/types/squad";

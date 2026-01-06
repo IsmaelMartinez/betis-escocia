@@ -3,7 +3,7 @@ import { createApiHandler } from "@/lib/apiUtils";
 import {
   playerAliasUpdateSchema,
   playerDisplayNameSchema,
-} from "@/lib/schemas/squad";
+} from "@/lib/schemas/player";
 import { normalizePlayerName } from "@/services/playerNormalizationService";
 import { log } from "@/lib/logger";
 

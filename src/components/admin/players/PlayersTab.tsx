@@ -2,18 +2,16 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import clsx from "clsx";
-import { Users, Shield, GitMerge, Layout, RefreshCw } from "lucide-react";
+import { Users, GitMerge, RefreshCw } from "lucide-react";
 import Card, { CardHeader, CardBody } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import PlayersList from "./PlayersList";
 import PlayerEditModal from "./PlayerEditModal";
-import SquadManagement from "./SquadManagement";
 import PlayerMergeUI from "./PlayerMergeUI";
-import StartingElevenBuilder from "./StartingElevenBuilder";
 import type { Player } from "@/lib/supabase";
 
-type PlayersSubView = "all-players" | "squad" | "merge" | "starting-xi";
+type PlayersSubView = "all-players" | "merge";
 
 interface PlayerWithDetails extends Player {
   display_name?: string | null;
@@ -63,11 +61,13 @@ export default function PlayersTab({ isLoading = false }: PlayersTabProps) {
 
       if (result.success) {
         setSyncMessage(result.message);
+        // Refresh player list after successful sync
+        setRefreshKey((k) => k + 1);
       } else {
         setSyncMessage(`Error: ${result.error || "Error desconocido"}`);
       }
     } catch (error) {
-      setSyncMessage("Error al sincronizar plantilla");
+      setSyncMessage("Error al sincronizar jugadores");
     } finally {
       setSyncing(false);
       // Clear message after 5 seconds
@@ -97,18 +97,6 @@ export default function PlayersTab({ isLoading = false }: PlayersTabProps) {
             Todos los Jugadores
           </button>
           <button
-            onClick={() => setSubView("squad")}
-            className={clsx(
-              "inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors",
-              subView === "squad"
-                ? "bg-betis-verde text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200",
-            )}
-          >
-            <Shield className="h-4 w-4" />
-            Plantilla
-          </button>
-          <button
             onClick={() => setSubView("merge")}
             className={clsx(
               "inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors",
@@ -120,35 +108,19 @@ export default function PlayersTab({ isLoading = false }: PlayersTabProps) {
             <GitMerge className="h-4 w-4" />
             Fusionar
           </button>
-          <button
-            onClick={() => setSubView("starting-xi")}
-            className={clsx(
-              "inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-colors",
-              subView === "starting-xi"
-                ? "bg-betis-verde text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200",
-            )}
-          >
-            <Layout className="h-4 w-4" />
-            Once Inicial
-          </button>
         </div>
 
-        {subView === "squad" && (
-          <Button
-            onClick={handleSyncSquad}
-            variant="secondary"
-            size="sm"
-            leftIcon={
-              <RefreshCw
-                className={clsx("h-4 w-4", syncing && "animate-spin")}
-              />
-            }
-            isLoading={syncing}
-          >
-            Sincronizar Plantilla
-          </Button>
-        )}
+        <Button
+          onClick={handleSyncSquad}
+          variant="secondary"
+          size="sm"
+          leftIcon={
+            <RefreshCw className={clsx("h-4 w-4", syncing && "animate-spin")} />
+          }
+          isLoading={syncing}
+        >
+          Sincronizar Jugadores
+        </Button>
       </div>
 
       {/* Sync message */}
@@ -174,7 +146,8 @@ export default function PlayersTab({ isLoading = false }: PlayersTabProps) {
             </h2>
             <p className="text-sm text-gray-500 mt-1">
               Lista de todos los jugadores en la base de datos con sus alias y
-              menciones
+              menciones. Usa el botón de sincronizar para actualizar la plantilla
+              actual desde la API de Football-Data.org.
             </p>
           </CardHeader>
           <CardBody>
@@ -194,23 +167,6 @@ export default function PlayersTab({ isLoading = false }: PlayersTabProps) {
         onSave={() => setRefreshKey((k) => k + 1)}
       />
 
-      {subView === "squad" && (
-        <Card>
-          <CardHeader>
-            <h2 className="text-xl font-bold text-betis-black">
-              Plantilla Actual
-            </h2>
-            <p className="text-sm text-gray-500 mt-1">
-              Gestiona la plantilla actual del Real Betis con datos de posición,
-              nacionalidad y más
-            </p>
-          </CardHeader>
-          <CardBody>
-            <SquadManagement onSync={handleSyncSquad} />
-          </CardBody>
-        </Card>
-      )}
-
       {subView === "merge" && (
         <Card>
           <CardHeader>
@@ -226,20 +182,6 @@ export default function PlayersTab({ isLoading = false }: PlayersTabProps) {
             <PlayerMergeUI
               onMergeComplete={() => setRefreshKey((k) => k + 1)}
             />
-          </CardBody>
-        </Card>
-      )}
-
-      {subView === "starting-xi" && (
-        <Card>
-          <CardHeader>
-            <h2 className="text-xl font-bold text-betis-black">Once Inicial</h2>
-            <p className="text-sm text-gray-500 mt-1">
-              Crea y guarda alineaciones con diferentes formaciones
-            </p>
-          </CardHeader>
-          <CardBody>
-            <StartingElevenBuilder />
           </CardBody>
         </Card>
       )}
