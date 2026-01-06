@@ -28,18 +28,21 @@ Six specialized agents analyzed different aspects of the codebase:
 #### Security Vulnerabilities (CRITICAL)
 
 **1. Prompt Injection in Gemini Service**
+
 - **Location**: `src/services/geminiService.ts`
 - **Issue**: RSS feed content directly interpolated into AI prompts without sanitization
 - **Risk**: Malicious feed content could manipulate AI analysis
 - **Status**: ✅ Fixed in Phase 1
 
 **2. Insecure Service Role Key Fallback**
+
 - **Location**: `src/services/rumorSyncService.ts`
-- **Issue**: Fallback to NEXT_PUBLIC_* variables exposes privileged keys
+- **Issue**: Fallback to NEXT*PUBLIC*\* variables exposes privileged keys
 - **Risk**: Service role key could leak to client-side code
 - **Status**: ✅ Fixed in Phase 1
 
 **3. Missing Admin RLS Policies**
+
 - **Location**: Database tables (players, news_players, squad_members, starting_elevens)
 - **Issue**: Only service_role policies exist, authenticated admin routes fail
 - **Risk**: Admin API operations blocked by RLS
@@ -48,24 +51,28 @@ Six specialized agents analyzed different aspects of the codebase:
 #### Code Quality Issues
 
 **1. Validation System Duplication**
+
 - **Files**: `src/lib/security.ts`, `src/lib/formValidation.ts`
 - **Issue**: Redundant validation logic alongside Zod schemas
 - **Impact**: 400+ lines of duplicated validation code
 - **Status**: ✅ Fixed in Phase 2
 
 **2. Role Utilities Fragmentation**
+
 - **Files**: `src/lib/roleUtils.ts`, `src/lib/serverRoleUtils.ts`, `src/lib/adminApiProtection.ts`
 - **Issue**: Role checking logic split across multiple files with unused functions
 - **Impact**: 1,280 lines of dead code (now removed)
 - **Status**: ✅ Partially fixed in Phase 1 (dead code removed)
 
 **3. Excessive Console.log Usage**
+
 - **Locations**: 88 console calls across codebase
 - **Issue**: Unstructured logging, poor observability
 - **Impact**: Difficult to filter/analyze logs in production
 - **Status**: ✅ Partially fixed (16/88 migrated in Phase 1)
 
 **4. Form Validation Inconsistency**
+
 - **Files**: `src/components/RSVPForm.tsx`, `src/components/RSVPWidget.tsx`
 - **Issue**: Manual state management instead of react-hook-form + Zod
 - **Impact**: 800+ lines of complex form logic
@@ -74,15 +81,18 @@ Six specialized agents analyzed different aspects of the codebase:
 #### Performance Opportunities
 
 **1. Database Indexing**
+
 - **Status**: ✅ Verified optimal indexes exist
 - **Tables**: All frequently queried columns properly indexed
 
 **2. Bundle Size**
+
 - **Current**: Not analyzed
 - **Recommendation**: Audit with Next.js bundle analyzer
 - **Priority**: Low (no performance complaints)
 
 **3. N+1 Query Patterns**
+
 - **Status**: ✅ Verified no issues
 - **Note**: Soylenti already uses optimized joins
 
@@ -100,7 +110,7 @@ Six specialized agents analyzed different aspects of the codebase:
 
 Added dual-layer protection:
 
-```typescript
+````typescript
 // Input sanitization
 function sanitizeInput(input: string, maxLength: number): string {
   return input
@@ -111,25 +121,40 @@ function sanitizeInput(input: string, maxLength: number): string {
 }
 
 // AI response validation
-function validateAIResponse(result: RumorAnalysis, title: string): {
+function validateAIResponse(
+  result: RumorAnalysis,
+  title: string,
+): {
   valid: boolean;
   reason?: string;
 } {
   // Flag probability=100 with minimal reasoning
-  if (result.probability === 100 && (!result.reasoning || result.reasoning.length < 20)) {
-    return { valid: false, reason: "Suspicious: probability=100 with minimal reasoning" };
+  if (
+    result.probability === 100 &&
+    (!result.reasoning || result.reasoning.length < 20)
+  ) {
+    return {
+      valid: false,
+      reason: "Suspicious: probability=100 with minimal reasoning",
+    };
   }
   // Flag irrelevant news with high probability
   if (result.isRelevantToBetis === false && (result.probability ?? 0) > 50) {
-    return { valid: false, reason: "Suspicious: irrelevant news with high probability" };
+    return {
+      valid: false,
+      reason: "Suspicious: irrelevant news with high probability",
+    };
   }
   // Flag high probability with low confidence
   if ((result.probability ?? 0) > 70 && result.confidence === "low") {
-    return { valid: false, reason: "Suspicious: high probability with low confidence" };
+    return {
+      valid: false,
+      reason: "Suspicious: high probability with low confidence",
+    };
   }
   return { valid: true };
 }
-```
+````
 
 #### 2. Service Role Key Security
 
@@ -139,8 +164,11 @@ Removed insecure fallback pattern:
 
 ```typescript
 // BEFORE (INSECURE):
-const supabaseUrl = process.env.SUPABASE_SYNC_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
-const serviceRoleKey = process.env.SUPABASE_SYNC_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabaseUrl =
+  process.env.SUPABASE_SYNC_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+const serviceRoleKey =
+  process.env.SUPABASE_SYNC_SERVICE_ROLE_KEY ||
+  process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 // AFTER (SECURE):
 const supabaseUrl = process.env.SUPABASE_SYNC_URL;
@@ -150,7 +178,9 @@ if (!supabaseUrl) {
   throw new Error("SUPABASE_SYNC_URL environment variable is required.");
 }
 if (!serviceRoleKey) {
-  throw new Error("SUPABASE_SYNC_SERVICE_ROLE_KEY environment variable is required.");
+  throw new Error(
+    "SUPABASE_SYNC_SERVICE_ROLE_KEY environment variable is required.",
+  );
 }
 ```
 
@@ -159,12 +189,14 @@ if (!serviceRoleKey) {
 **File**: `sql/0013_add_admin_rls_policies.sql`
 
 Added admin policies for 4 tables:
+
 - `players` (INSERT, UPDATE, DELETE)
 - `news_players` (INSERT, UPDATE, DELETE)
 - `squad_members` (INSERT, UPDATE, DELETE)
 - `starting_elevens` (INSERT, UPDATE, DELETE)
 
 Policy pattern:
+
 ```sql
 CREATE POLICY "Admin insert access" ON players
     FOR INSERT
@@ -176,12 +208,14 @@ CREATE POLICY "Admin insert access" ON players
 #### 4. Dead Code Removal
 
 **Files Deleted** (1,280 total lines):
+
 - `src/lib/serverRoleUtils.ts` (224 lines - entire file)
 - `tests/unit/lib/serverRoleUtils.test.ts` (524 lines)
 - `tests/unit/lib/roleUtils.test.ts` (202 lines)
 - `tests/unit/lib/adminApiProtection.test.ts` (237 lines)
 
 **Functions Removed**:
+
 - `src/lib/roleUtils.ts`: `validateRoleChange()` (44 lines)
 - `src/lib/adminApiProtection.ts`: `withAdminApiProtection()` (51 lines)
 
@@ -195,19 +229,23 @@ Migrated 16 console calls to structured logger:
 
 ```typescript
 // BEFORE:
-console.error('CLERK_WEBHOOK_SECRET is not set');
-console.log('User created:', userData.id);
-console.warn('No email found for user:', userData.id);
+console.error("CLERK_WEBHOOK_SECRET is not set");
+console.log("User created:", userData.id);
+console.warn("No email found for user:", userData.id);
 
 // AFTER:
-log.error('CLERK_WEBHOOK_SECRET is not set', new Error('Missing webhook secret'));
-log.business('clerk_user_created', { userId: userData.id });
-log.warn('No email found for Clerk user', { userId: userData.id });
+log.error(
+  "CLERK_WEBHOOK_SECRET is not set",
+  new Error("Missing webhook secret"),
+);
+log.business("clerk_user_created", { userId: userData.id });
+log.warn("No email found for Clerk user", { userId: userData.id });
 ```
 
 #### 6. Test Updates
 
 **Files Modified**:
+
 - `tests/integration/services/rumorSyncService.test.ts` (16 tests fixed)
 - `tests/unit/services/geminiService.test.ts` (1 test fixed)
 
@@ -249,6 +287,7 @@ AND policyname LIKE 'Admin%';
 #### 1. React Hook Form Integration
 
 **Dependencies Added**:
+
 - `react-hook-form@7.x`
 - `@hookform/resolvers@3.x`
 
@@ -284,6 +323,7 @@ const {
 ```
 
 **Benefits**:
+
 - Eliminated 36 lines of manual state management code
 - Native integration with Zod schema validation
 - Improved type safety with automatic TypeScript inference
@@ -294,12 +334,14 @@ const {
 **File**: `src/components/RSVPWidget.tsx` (535 lines → 483 lines)
 
 Applied same pattern as RSVPForm while maintaining:
+
 - `useRSVPData` hook integration
 - Compact mode functionality
 - Event details display
 - Modal/inline display modes
 
 **Benefits**:
+
 - Eliminated 52 lines of redundant validation logic
 - Consistent form handling pattern across components
 - Maintained all existing functionality
@@ -309,6 +351,7 @@ Applied same pattern as RSVPForm while maintaining:
 **File**: `tests/unit/components/RSVPForm.test.tsx`
 
 Updated test mocks to work with react-hook-form:
+
 - Removed `useFormValidation` mock
 - Updated test assertions for new data-testid patterns
 - Tests now validate react-hook-form integration
@@ -318,11 +361,13 @@ All tests passing with new implementation.
 #### 5. Redundant File Deletion
 
 **Files Deleted** (407 total lines):
+
 - `src/lib/security.ts` (50 lines)
 - `src/lib/formValidation.ts` (207 lines)
 - Removed 150 lines of manual validation logic from forms
 
 **Validation consolidated to**:
+
 - `src/lib/schemas/rsvp.ts` - Single source of truth for RSVP validation
 
 ---
@@ -356,17 +401,18 @@ All tests passing with new implementation.
 
 ```typescript
 // BEFORE:
-console.error('Failed to fetch data:', error);
-console.log('Cache hit for key:', cacheKey);
-console.warn('Deprecated feature used');
+console.error("Failed to fetch data:", error);
+console.log("Cache hit for key:", cacheKey);
+console.warn("Deprecated feature used");
 
 // AFTER:
-log.error('Failed to fetch data', error, { context: 'additional data' });
-log.info('Cache hit', { cacheKey });
-log.warn('Deprecated feature used', { feature: 'name' });
+log.error("Failed to fetch data", error, { context: "additional data" });
+log.info("Cache hit", { cacheKey });
+log.warn("Deprecated feature used", { feature: "name" });
 ```
 
 #### Benefits
+
 - Centralized log filtering and analysis
 - Structured context for debugging
 - Production-ready observability
@@ -380,17 +426,21 @@ log.warn('Deprecated feature used', { feature: 'name' });
 #### Tasks
 
 1. **Bundle Analysis**
+
    ```bash
    ANALYZE=true npm run build
    ```
+
    - Identify large dependencies
    - Check for duplicate packages
    - Analyze code splitting effectiveness
 
 2. **Lighthouse Audit**
+
    ```bash
    npm run lighthouse:accessibility
    ```
+
    - Performance score
    - Accessibility issues
    - Best practices violations
@@ -401,6 +451,7 @@ log.warn('Deprecated feature used', { feature: 'name' });
    - Check for memory leaks
 
 #### Benefits
+
 - Baseline performance metrics
 - Identify optimization opportunities
 - Improve user experience
@@ -424,7 +475,7 @@ export function validateEmail(email: string) {
 }
 
 // src/lib/schemas/rsvp.ts - Zod schema
-email: z.string().email("Please enter a valid email address")
+email: z.string().email("Please enter a valid email address");
 ```
 
 Both implement email validation with identical logic. After form migration, `src/lib/security.ts` can be deleted.
@@ -440,6 +491,7 @@ Both implement email validation with identical logic. After form migration, `src
 - `adminApiProtection.ts`: API route protection (2 functions, 1 unused) ✅ PARTIALLY FIXED
 
 Remaining structure is clean:
+
 - `roleUtils.ts`: Client-side checks (`hasRole`, `isAdmin`, `isModerator`)
 - `adminApiProtection.ts`: Server-side checks (`checkAdminRole`)
 
@@ -451,7 +503,7 @@ Remaining structure is clean:
 
 1. **Deploy RLS Migration**: Apply `sql/0013_add_admin_rls_policies.sql` to production
 2. **Monitor Security**: Verify prompt injection protection in production logs
-3. **Update CI/CD**: Ensure GitHub Actions use new SUPABASE_SYNC_* variables
+3. **Update CI/CD**: Ensure GitHub Actions use new SUPABASE*SYNC*\* variables
 
 ### Short-term (Next Sprint)
 
@@ -468,17 +520,20 @@ Remaining structure is clean:
 ## Metrics
 
 ### Code Reduction (Both Phases)
+
 - **Phase 1**: 2,243 lines (dead code + tests)
 - **Phase 2**: 495 lines (validation files + form simplification)
 - **Total Reduction**: 2,738 lines
 
 ### Phase 1: Security Improvements
+
 - **Vulnerabilities Fixed**: 3 critical
 - **RLS Policies Added**: 12 policies across 4 tables
 - **Input Sanitization**: 1 new function protecting AI prompts
 - **Output Validation**: 1 new function detecting anomalous AI responses
 
 ### Phase 2: Form Simplification
+
 - **Forms Migrated**: 2 (RSVPForm, RSVPWidget)
 - **Validation Files Deleted**: 2 (security.ts, formValidation.ts)
 - **Dependencies Added**: 2 (react-hook-form, @hookform/resolvers)
@@ -486,6 +541,7 @@ Remaining structure is clean:
 - **Validation Consolidation**: All RSVP validation now in single Zod schema
 
 ### Overall Code Quality
+
 - **Structured Logging**: 16 console calls migrated (18% of total)
 - **Remaining Console Calls**: 72 (deferred to Phase 3)
 - **Type Safety**: Improved with react-hook-form TypeScript integration
@@ -508,6 +564,7 @@ Remaining structure is clean:
 ### documentation-status-analyzer
 
 Key findings:
+
 - Missing API documentation
 - Incomplete migration guides
 - Security documentation needs expansion
@@ -517,6 +574,7 @@ Key findings:
 ### feature-dev:code-reviewer
 
 Key findings:
+
 - Prompt injection vulnerability (CRITICAL)
 - Missing RLS policies (HIGH)
 - Insecure service role key fallback (HIGH)
@@ -525,6 +583,7 @@ Key findings:
 ### javascript-pro
 
 Key findings:
+
 - Console.log proliferation (88 instances)
 - Form state management complexity
 - Inconsistent error handling patterns
@@ -532,6 +591,7 @@ Key findings:
 ### code-simplifier
 
 Key findings:
+
 - Validation duplication (400+ lines)
 - Role utilities fragmentation (1,280 lines)
 - Over-engineered form handling

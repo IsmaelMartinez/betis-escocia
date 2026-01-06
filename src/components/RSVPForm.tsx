@@ -1,27 +1,40 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { User, Mail, MessageSquare, Users } from 'lucide-react';
-import { FormSuccessMessage, FormErrorMessage, FormLoadingMessage } from '@/components/MessageComponent';
-import Field, { ValidatedInput, ValidatedSelect, ValidatedTextarea } from '@/components/Field';
-import { useUser } from '@clerk/nextjs';
-import { isFeatureEnabled } from '@/lib/featureFlags';
-import { rsvpSchema, type RSVPInput } from '@/lib/schemas/rsvp';
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { User, Mail, MessageSquare, Users } from "lucide-react";
+import {
+  FormSuccessMessage,
+  FormErrorMessage,
+  FormLoadingMessage,
+} from "@/components/MessageComponent";
+import Field, {
+  ValidatedInput,
+  ValidatedSelect,
+  ValidatedTextarea,
+} from "@/components/Field";
+import { useUser } from "@clerk/nextjs";
+import { isFeatureEnabled } from "@/lib/featureFlags";
+import { rsvpSchema, type RSVPInput } from "@/lib/schemas/rsvp";
 
 interface RSVPFormProps {
   readonly onSuccess?: () => void;
   readonly selectedMatchId?: number;
 }
 
-export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) {
+export default function RSVPForm({
+  onSuccess,
+  selectedMatchId,
+}: RSVPFormProps) {
   const { user } = useUser();
-  const isAuthEnabled = isFeatureEnabled('show-clerk-auth');
+  const isAuthEnabled = isFeatureEnabled("show-clerk-auth");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const {
     register,
@@ -29,72 +42,76 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
     formState: { errors, touchedFields },
     setValue,
     reset,
-    watch
+    watch,
   } = useForm<RSVPInput>({
     resolver: zodResolver(rsvpSchema),
     defaultValues: {
-      name: '',
-      email: '',
+      name: "",
+      email: "",
       attendees: 1,
-      message: '',
-      whatsappInterest: false
-    }
+      message: "",
+      whatsappInterest: false,
+    },
   });
 
   // Pre-fill form with user data when authenticated
   useEffect(() => {
     if (isAuthEnabled && user) {
-      const userName = user.firstName && user.lastName
-        ? `${user.firstName} ${user.lastName}`
-        : user.firstName || '';
-      const userEmail = user.emailAddresses[0]?.emailAddress || '';
+      const userName =
+        user.firstName && user.lastName
+          ? `${user.firstName} ${user.lastName}`
+          : user.firstName || "";
+      const userEmail = user.emailAddresses[0]?.emailAddress || "";
 
-      if (userName) setValue('name', userName);
-      if (userEmail) setValue('email', userEmail);
+      if (userName) setValue("name", userName);
+      if (userEmail) setValue("email", userEmail);
     }
   }, [user, isAuthEnabled, setValue]);
 
   const onSubmit = async (data: RSVPInput) => {
     setIsSubmitting(true);
-    setSubmitStatus('idle');
+    setSubmitStatus("idle");
 
     try {
-      const apiUrl = selectedMatchId ? `/api/rsvp?match=${selectedMatchId}` : '/api/rsvp';
+      const apiUrl = selectedMatchId
+        ? `/api/rsvp?match=${selectedMatchId}`
+        : "/api/rsvp";
       const submissionData = {
         ...data,
         matchId: selectedMatchId,
-        ...(isAuthEnabled && user ? { userId: user.id } : {})
+        ...(isAuthEnabled && user ? { userId: user.id } : {}),
       };
 
       const response = await fetch(apiUrl, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(submissionData),
       });
 
       if (!response.ok) {
-        throw new Error('Error al enviar la confirmación');
+        throw new Error("Error al enviar la confirmación");
       }
 
-      setSubmitStatus('success');
+      setSubmitStatus("success");
       reset();
 
       // Call success callback after a delay
       setTimeout(() => {
         onSuccess?.();
       }, 2000);
-
     } catch (error) {
-      setSubmitStatus('error');
-      setErrorMessage(error instanceof Error ? error.message : 'Error desconocido');
+      setSubmitStatus("error");
+      setErrorMessage(
+        error instanceof Error ? error.message : "Error desconocido",
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (submitStatus === 'success') {
+  if (submitStatus === "success") {
     return (
       <FormSuccessMessage
         title="¡Confirmación Recibida!"
@@ -138,7 +155,7 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
           <ValidatedInput
             type="text"
             id="rsvp-name"
-            {...register('name')}
+            {...register("name")}
             placeholder="Tu nombre y apellido"
             error={errors.name?.message}
             touched={!!touchedFields.name}
@@ -159,7 +176,7 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
           <ValidatedInput
             type="email"
             id="rsvp-email"
-            {...register('email')}
+            {...register("email")}
             placeholder="tu@email.com"
             error={errors.email?.message}
             touched={!!touchedFields.email}
@@ -179,7 +196,7 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
         >
           <ValidatedSelect
             id="rsvp-attendees"
-            {...register('attendees', { valueAsNumber: true })}
+            {...register("attendees", { valueAsNumber: true })}
             error={errors.attendees?.message}
             touched={!!touchedFields.attendees}
             data-testid="attendees-select"
@@ -202,7 +219,7 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
         >
           <ValidatedTextarea
             id="rsvp-message"
-            {...register('message')}
+            {...register("message")}
             rows={3}
             placeholder="¿Alguna pregunta o comentario?"
             error={errors.message?.message}
@@ -216,22 +233,26 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
           <input
             type="checkbox"
             id="whatsappInterest"
-            {...register('whatsappInterest')}
+            {...register("whatsappInterest")}
             className="mt-1 h-5 w-5 text-betis-green border-gray-300 rounded focus:ring-betis-green"
           />
           <label htmlFor="whatsappInterest" className="text-sm text-gray-700">
             <strong>¿Te interesa unirte al grupo de WhatsApp?</strong>
             <br />
             <span className="text-gray-500">
-              Recibe notificaciones sobre cambios de horario, eventos especiales y más.
+              Recibe notificaciones sobre cambios de horario, eventos especiales
+              y más.
             </span>
           </label>
         </div>
 
         {/* Error Message */}
-        {submitStatus === 'error' && (
+        {submitStatus === "error" && (
           <FormErrorMessage
-            message={errorMessage || 'Error al enviar la confirmación. Por favor, inténtalo de nuevo.'}
+            message={
+              errorMessage ||
+              "Error al enviar la confirmación. Por favor, inténtalo de nuevo."
+            }
           />
         )}
 
@@ -243,16 +264,20 @@ export default function RSVPForm({ onSuccess, selectedMatchId }: RSVPFormProps) 
           data-testid="submit-rsvp"
         >
           {isSubmitting ? (
-            <FormLoadingMessage message="Enviando confirmación..." className="text-white" />
+            <FormLoadingMessage
+              message="Enviando confirmación..."
+              className="text-white"
+            />
           ) : (
-            '✅ Confirmar Asistencia'
+            "✅ Confirmar Asistencia"
           )}
         </button>
       </form>
 
       <div className="mt-6 text-center">
         <p className="text-xs text-gray-500">
-          * Campos obligatorios. Tus datos solo se usan para organizar el evento.
+          * Campos obligatorios. Tus datos solo se usan para organizar el
+          evento.
         </p>
       </div>
     </div>

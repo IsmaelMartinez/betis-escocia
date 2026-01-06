@@ -36,14 +36,15 @@ describe('RSVP Schema', () => {
         const minimalData = {
           name: 'María García',
           email: 'maria.garcia@example.com',
-          attendees: 1
+          attendees: 1,
+          whatsappInterest: false // Required field
         };
-        
+
         const result = rsvpSchema.parse(minimalData);
         expect(result.name).toBe('María García');
         expect(result.email).toBe('maria.garcia@example.com');
         expect(result.attendees).toBe(1);
-        expect(result.whatsappInterest).toBe(false); // Default value
+        expect(result.whatsappInterest).toBe(false);
       });
 
       it('should handle empty message as optional', () => {
