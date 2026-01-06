@@ -834,14 +834,12 @@ describe("supabase", () => {
     it("should update contact submission status successfully", async () => {
       const mockResponse = {
         ok: true,
-        text: vi
-          .fn()
-          .mockResolvedValue(
-            JSON.stringify({
-              success: true,
-              data: { id: 1, status: "resolved" },
-            }),
-          ),
+        text: vi.fn().mockResolvedValue(
+          JSON.stringify({
+            success: true,
+            data: { id: 1, status: "resolved" },
+          }),
+        ),
       };
       (global.fetch as any).mockResolvedValue(mockResponse);
 
