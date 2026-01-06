@@ -1,5 +1,5 @@
-import { auth, currentUser } from '@clerk/nextjs/server';
-import type { User } from '@clerk/nextjs/server';
+import { auth, currentUser } from "@clerk/nextjs/server";
+import type { User } from "@clerk/nextjs/server";
 
 /**
  * Check if the current user has admin role (for use in API routes)
@@ -17,37 +17,36 @@ export async function checkAdminRole(): Promise<{
       return {
         user: null,
         isAdmin: false,
-        error: 'Unauthorized. Please sign in.'
+        error: "Unauthorized. Please sign in.",
       };
     }
 
     // Fetch full user data with metadata
     const user = await currentUser();
-    
+
     if (!user) {
       return {
         user: null,
         isAdmin: false,
-        error: 'Unauthorized. User not found.'
+        error: "Unauthorized. User not found.",
       };
     }
 
-
     // Check admin role directly
     const userRole = user.publicMetadata?.role;
-    const isAdminUser = userRole === 'admin';
-    
+    const isAdminUser = userRole === "admin";
+
     return {
       user,
       isAdmin: isAdminUser,
-      error: isAdminUser ? undefined : 'Forbidden. Admin access required.'
+      error: isAdminUser ? undefined : "Forbidden. Admin access required.",
     };
   } catch (error) {
-    console.error('Admin role check error:', error);
+    console.error("Admin role check error:", error);
     return {
       user: null,
       isAdmin: false,
-      error: 'Internal server error'
+      error: "Internal server error",
     };
   }
 }

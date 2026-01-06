@@ -1,13 +1,27 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { User, Mail, MessageSquare, Users, Calendar, MapPin, Clock } from 'lucide-react';
-import { FormSuccessMessage, FormErrorMessage, FormLoadingMessage } from '@/components/MessageComponent';
-import Field, { ValidatedInput, ValidatedTextarea } from '@/components/Field';
-import { useFormValidation, commonValidationRules } from '@/lib/formValidation';
-import { useUser } from '@clerk/nextjs';
-import { isFeatureEnabled } from '@/lib/featureFlags';
-import { useRSVPData } from '@/hooks/useRSVPData';
+import { useState, useEffect, useMemo } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  User,
+  Mail,
+  MessageSquare,
+  Users,
+  Calendar,
+  MapPin,
+  Clock,
+} from "lucide-react";
+import {
+  FormSuccessMessage,
+  FormErrorMessage,
+  FormLoadingMessage,
+} from "@/components/MessageComponent";
+import Field, { ValidatedInput, ValidatedTextarea } from "@/components/Field";
+import { useUser } from "@clerk/nextjs";
+import { isFeatureEnabled } from "@/lib/featureFlags";
+import { useRSVPData } from "@/hooks/useRSVPData";
+import { rsvpSchema, type RSVPInput } from "@/lib/schemas/rsvp";
 
 export interface EventDetails {
   id?: number;
@@ -21,7 +35,7 @@ export interface RSVPWidgetProps {
   /** Event details to display */
   event: EventDetails;
   /** Display mode - inline shows widget directly, modal shows as overlay */
-  displayMode?: 'inline' | 'modal';
+  displayMode?: "inline" | "modal";
   /** Show event details section */
   showEventDetails?: boolean;
   /** Show attendee count */
@@ -30,7 +44,7 @@ export interface RSVPWidgetProps {
   attendeeCount?: number;
   /** Override current RSVP status (if not provided, will fetch from API for authenticated users) */
   currentRSVP?: {
-    status: 'confirmed';
+    status: "confirmed";
     attendees: number;
     message?: string;
   } | null;
@@ -46,29 +60,22 @@ export interface RSVPWidgetProps {
   disableDataFetching?: boolean;
 }
 
-const rsvpValidationRules = {
-  name: commonValidationRules.name,
-  email: commonValidationRules.email,
-  attendees: { required: true, min: 1, max: 50 },
-  message: { ...commonValidationRules.message, required: false }
-};
-
 export default function RSVPWidget({
   event,
-  displayMode = 'inline',
+  displayMode = "inline",
   showEventDetails = true,
   showAttendeeCount = true,
   attendeeCount: propAttendeeCount,
   currentRSVP: propCurrentRSVP,
   onSuccess,
   onError,
-  className = '',
+  className = "",
   compact = false,
-  disableDataFetching = false
+  disableDataFetching = false,
 }: RSVPWidgetProps) {
   const { user } = useUser();
-  const isAuthEnabled = isFeatureEnabled('show-clerk-auth');
-  
+  const isAuthEnabled = isFeatureEnabled("show-clerk-auth");
+
   // Use hook for data fetching when not disabled (e.g., in Storybook)
   const {
     currentRSVP: hookCurrentRSVP,
@@ -78,107 +85,99 @@ export default function RSVPWidget({
     error: hookError,
     submitError: hookSubmitError,
     submitRSVP,
-    clearErrors
-  } = useRSVPData({ 
-    event, 
-    enabled: !disableDataFetching 
+    clearErrors,
+  } = useRSVPData({
+    event,
+    enabled: !disableDataFetching,
   });
-  
+
   // Use prop values if provided, otherwise use hook values
-  const currentRSVP = propCurrentRSVP !== undefined ? propCurrentRSVP : hookCurrentRSVP;
-  const attendeeCount = propAttendeeCount !== undefined ? propAttendeeCount : hookAttendeeCount;
-  
+  const currentRSVP =
+    propCurrentRSVP !== undefined ? propCurrentRSVP : hookCurrentRSVP;
+  const attendeeCount =
+    propAttendeeCount !== undefined ? propAttendeeCount : hookAttendeeCount;
+
   // Create initial form data with user information pre-filled for authenticated users
   const initialFormData = useMemo(() => {
-    let initialName = '';
-    let initialEmail = '';
-    
+    let initialName = "";
+    let initialEmail = "";
+
     // Pre-fill with user data if authenticated and available
     if (isAuthEnabled && user) {
-      initialName = user.firstName && user.lastName 
-        ? `${user.firstName} ${user.lastName}` 
-        : user.firstName || '';
-      initialEmail = user.emailAddresses[0]?.emailAddress || '';
+      initialName =
+        user.firstName && user.lastName
+          ? `${user.firstName} ${user.lastName}`
+          : user.firstName || "";
+      initialEmail = user.emailAddresses[0]?.emailAddress || "";
     }
-    
+
     return {
       name: initialName,
       email: initialEmail,
       attendees: currentRSVP?.attendees || 1,
-      message: currentRSVP?.message || '',
-      whatsappInterest: false
+      message: currentRSVP?.message || "",
+      whatsappInterest: false,
     };
   }, [isAuthEnabled, user, currentRSVP]);
-  
+
   const {
-    data: formData,
-    errors,
-    touched,
-    updateField,
-    touchField,
-    validateAll,
-    reset
-  } = useFormValidation(initialFormData, rsvpValidationRules);
-  
+    register,
+    handleSubmit: handleFormSubmit,
+    formState: { errors, touchedFields },
+    setValue,
+    reset,
+  } = useForm<RSVPInput>({
+    resolver: zodResolver(rsvpSchema),
+    defaultValues: initialFormData,
+  });
+
   // Use hook states when data fetching is enabled, fallback to local state for Storybook/testing
   const [localIsSubmitting, setLocalIsSubmitting] = useState(false);
-  const [localSubmitStatus, setLocalSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [localErrorMessage, setLocalErrorMessage] = useState('');
+  const [localSubmitStatus, setLocalSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+  const [localErrorMessage, setLocalErrorMessage] = useState("");
   const [isExpanded, setIsExpanded] = useState(!compact);
-  
-  // Determine which states to use
-  const isSubmitting = disableDataFetching ? localIsSubmitting : hookIsSubmitting;
-  const submitStatus = disableDataFetching ? localSubmitStatus : (hookSubmitError ? 'error' : 'idle');
-  const errorMessage = disableDataFetching ? localErrorMessage : (hookSubmitError || hookError || '');
-  const isLoading = disableDataFetching ? false : hookIsLoading;
 
-  // Track if we've already populated form from user data to avoid loops
-  const hasPopulatedFromUser = useRef(false);
-  
-  // Memoized function to populate form data from user
-  const populateFromUser = useCallback(() => {
-    if (!isAuthEnabled || !user || hasPopulatedFromUser.current) return;
-    
-    const userName = user.firstName && user.lastName 
-      ? `${user.firstName} ${user.lastName}` 
-      : user.firstName || '';
-    const userEmail = user.emailAddresses[0]?.emailAddress || '';
-    
-    // Only update if the field is currently empty (don't overwrite user edits)
-    if (userName && !formData.name) {
-      updateField('name', userName);
-      hasPopulatedFromUser.current = true;
-    }
-    if (userEmail && !formData.email) {
-      updateField('email', userEmail);
-      hasPopulatedFromUser.current = true;
-    }
-  }, [isAuthEnabled, user, formData.name, formData.email, updateField]);
+  // Determine which states to use
+  const isSubmitting = disableDataFetching
+    ? localIsSubmitting
+    : hookIsSubmitting;
+  const submitStatus = disableDataFetching
+    ? localSubmitStatus
+    : hookSubmitError
+      ? "error"
+      : "idle";
+  const errorMessage = disableDataFetching
+    ? localErrorMessage
+    : hookSubmitError || hookError || "";
+  const isLoading = disableDataFetching ? false : hookIsLoading;
 
   // Update form data when user becomes available
   useEffect(() => {
-    populateFromUser();
-  }, [populateFromUser]);
-  
+    if (isAuthEnabled && user) {
+      const userName =
+        user.firstName && user.lastName
+          ? `${user.firstName} ${user.lastName}`
+          : user.firstName || "";
+      const userEmail = user.emailAddresses[0]?.emailAddress || "";
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const validation = validateAll();
-    if (!validation.isValid) {
-      return;
+      if (userName) setValue("name", userName);
+      if (userEmail) setValue("email", userEmail);
     }
-    
+  }, [user, isAuthEnabled, setValue]);
+
+  const onSubmit = async (data: RSVPInput) => {
     if (!disableDataFetching) {
       // Use the hook for submission
       clearErrors(); // Clear any previous errors
-      
+
       const result = await submitRSVP({
-        name: formData.name as string,
-        email: formData.email as string,
-        attendees: formData.attendees as number,
-        message: formData.message as string,
-        whatsappInterest: formData.whatsappInterest as boolean,
+        name: data.name,
+        email: data.email,
+        attendees: data.attendees,
+        message: data.message || "",
+        whatsappInterest: data.whatsappInterest,
         matchId: event.id,
       });
 
@@ -189,44 +188,44 @@ export default function RSVPWidget({
           onSuccess?.();
         }, 2000);
       } else {
-        onError?.(result.message || 'Error desconocido');
+        onError?.(result.message || "Error desconocido");
       }
     } else {
       // Fallback for Storybook/testing - use local state management
       setLocalIsSubmitting(true);
-      setLocalSubmitStatus('idle');
+      setLocalSubmitStatus("idle");
 
       try {
-        const apiUrl = event.id ? `/api/rsvp?match=${event.id}` : '/api/rsvp';
+        const apiUrl = event.id ? `/api/rsvp?match=${event.id}` : "/api/rsvp";
         const submissionData = {
-          ...formData,
+          ...data,
           matchId: event.id,
-          ...(isAuthEnabled && user ? { userId: user.id } : {})
+          ...(isAuthEnabled && user ? { userId: user.id } : {}),
         };
-        
+
         const response = await fetch(apiUrl, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(submissionData),
         });
 
         if (!response.ok) {
-          throw new Error('Error al enviar la confirmación');
+          throw new Error("Error al enviar la confirmación");
         }
 
-        setLocalSubmitStatus('success');
+        setLocalSubmitStatus("success");
         reset();
-        
+
         // Call success callback after a delay
         setTimeout(() => {
           onSuccess?.();
         }, 2000);
-
       } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : 'Error desconocido';
-        setLocalSubmitStatus('error');
+        const errorMsg =
+          error instanceof Error ? error.message : "Error desconocido";
+        setLocalSubmitStatus("error");
         setLocalErrorMessage(errorMsg);
         onError?.(errorMsg);
       } finally {
@@ -235,34 +234,28 @@ export default function RSVPWidget({
     }
   };
 
-  const handleInputChange = (field: string, value: string | number | boolean) => {
-    updateField(field, value);
-  };
-
-  const handleBlur = (field: string) => {
-    touchField(field);
-  };
-
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('es-ES', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Intl.DateTimeFormat("es-ES", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     }).format(date);
   };
 
   const getStatusText = () => {
-    return 'Confirmado';
+    return "Confirmado";
   };
 
-  const showSuccessState = disableDataFetching ? localSubmitStatus === 'success' : false; // Hook handles success internally
-  
+  const showSuccessState = disableDataFetching
+    ? localSubmitStatus === "success"
+    : false; // Hook handles success internally
+
   if (showSuccessState) {
     return (
-      <div className={`${displayMode === 'modal' ? 'p-6' : ''} ${className}`}>
+      <div className={`${displayMode === "modal" ? "p-6" : ""} ${className}`}>
         <FormSuccessMessage
           title="¡Confirmación Recibida!"
           message="Gracias por confirmar tu asistencia. Te esperamos en el Polwarth Tavern. Recordatorio: Llega 15 minutos antes del partido para asegurar sitio."
@@ -275,24 +268,35 @@ export default function RSVPWidget({
   // Show loading state when hook is initially loading data
   if (isLoading && !disableDataFetching) {
     return (
-      <div className={`bg-white rounded-2xl shadow-xl border border-gray-200 p-6 ${className}`}>
+      <div
+        className={`bg-white rounded-2xl shadow-xl border border-gray-200 p-6 ${className}`}
+      >
         <div className="text-center">
-          <FormLoadingMessage message="Cargando datos..." className="text-gray-600" />
+          <FormLoadingMessage
+            message="Cargando datos..."
+            className="text-gray-600"
+          />
         </div>
       </div>
     );
   }
 
   const widgetContent = (
-    <div className={`bg-white rounded-2xl shadow-xl border border-gray-200 ${compact && !isExpanded ? 'p-4' : 'p-6'} ${className}`}>
+    <div
+      className={`bg-white rounded-2xl shadow-xl border border-gray-200 ${compact && !isExpanded ? "p-4" : "p-6"} ${className}`}
+    >
       {/* Header */}
       <div className="text-center mb-6">
-        <h3 className={`font-bold text-gray-900 mb-2 ${compact ? 'text-lg' : 'text-2xl'}`}>
-          {currentRSVP ? 'Actualizar Confirmación' : 'Confirma tu Asistencia'}
+        <h3
+          className={`font-bold text-gray-900 mb-2 ${compact ? "text-lg" : "text-2xl"}`}
+        >
+          {currentRSVP ? "Actualizar Confirmación" : "Confirma tu Asistencia"}
         </h3>
         {!compact && (
           <p className="text-gray-600 text-sm">
-            {currentRSVP ? 'Modifica tu confirmación anterior' : 'Rellena el formulario para que sepamos que vienes'}
+            {currentRSVP
+              ? "Modifica tu confirmación anterior"
+              : "Rellena el formulario para que sepamos que vienes"}
           </p>
         )}
       </div>
@@ -332,8 +336,9 @@ export default function RSVPWidget({
       {currentRSVP && (
         <div className="mb-4 p-3 bg-betis-verde-light border border-betis-verde/20 rounded-lg">
           <p className="text-sm text-betis-verde-dark">
-            <strong>Estado actual:</strong> {getStatusText()} 
-            {currentRSVP.attendees > 1 && ` (${currentRSVP.attendees} personas)`}
+            <strong>Estado actual:</strong> {getStatusText()}
+            {currentRSVP.attendees > 1 &&
+              ` (${currentRSVP.attendees} personas)`}
           </p>
         </div>
       )}
@@ -354,35 +359,30 @@ export default function RSVPWidget({
             onClick={() => setIsExpanded(true)}
             className="w-full bg-betis-verde hover:bg-betis-verde-dark text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200"
           >
-            {currentRSVP ? 'Actualizar RSVP' : 'Confirmar Asistencia'}
+            {currentRSVP ? "Actualizar RSVP" : "Confirmar Asistencia"}
           </button>
         </div>
       )}
 
       {/* Form */}
       {(!compact || isExpanded) && (
-        <form onSubmit={handleSubmit} className="space-y-4">
-
+        <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-4">
           {/* Name */}
           <Field
             label="Nombre completo"
             htmlFor="rsvp-name"
             required
             icon={<User className="h-4 w-4" />}
-            error={errors.name}
-            touched={touched.name}
+            error={errors.name?.message}
+            touched={!!touchedFields.name}
           >
             <ValidatedInput
               type="text"
               id="rsvp-name"
-              name="name"
-              required
-              value={formData.name as string}
-              onChange={(e) => handleInputChange('name', e.target.value)}
-              onBlur={() => handleBlur('name')}
+              {...register("name")}
               placeholder="Tu nombre y apellido"
-              error={errors.name}
-              touched={touched.name}
+              error={errors.name?.message}
+              touched={!!touchedFields.name}
               data-testid="name-input"
             />
           </Field>
@@ -393,20 +393,16 @@ export default function RSVPWidget({
             htmlFor="rsvp-email"
             required
             icon={<Mail className="h-4 w-4" />}
-            error={errors.email}
-            touched={touched.email}
+            error={errors.email?.message}
+            touched={!!touchedFields.email}
           >
             <ValidatedInput
               type="email"
               id="rsvp-email"
-              name="email"
-              required
-              value={formData.email as string}
-              onChange={(e) => handleInputChange('email', e.target.value)}
-              onBlur={() => handleBlur('email')}
+              {...register("email")}
               placeholder="tu@email.com"
-              error={errors.email}
-              touched={touched.email}
+              error={errors.email?.message}
+              touched={!!touchedFields.email}
               data-testid="email-input"
             />
           </Field>
@@ -417,21 +413,17 @@ export default function RSVPWidget({
             htmlFor="rsvp-attendees"
             required
             icon={<Users className="h-4 w-4" />}
-            error={errors.attendees}
-            touched={touched.attendees}
+            error={errors.attendees?.message}
+            touched={!!touchedFields.attendees}
           >
             <ValidatedInput
               type="number"
               id="rsvp-attendees"
-              name="attendees"
-              required
+              {...register("attendees", { valueAsNumber: true })}
               min={1}
-              max={50}
-              value={formData.attendees as number}
-              onChange={(e) => handleInputChange('attendees', parseInt(e.target.value) || 1)}
-              onBlur={() => handleBlur('attendees')}
-              error={errors.attendees}
-              touched={touched.attendees}
+              max={10}
+              error={errors.attendees?.message}
+              touched={!!touchedFields.attendees}
               data-testid="attendees-input"
               placeholder="Número de personas"
             />
@@ -442,19 +434,16 @@ export default function RSVPWidget({
             label="Mensaje adicional (opcional)"
             htmlFor="rsvp-message"
             icon={<MessageSquare className="h-4 w-4" />}
-            error={errors.message}
-            touched={touched.message}
+            error={errors.message?.message}
+            touched={!!touchedFields.message}
           >
             <ValidatedTextarea
               id="rsvp-message"
-              name="message"
+              {...register("message")}
               rows={3}
-              value={formData.message as string}
-              onChange={(e) => handleInputChange('message', e.target.value)}
-              onBlur={() => handleBlur('message')}
               placeholder="¿Alguna pregunta o comentario?"
-              error={errors.message}
-              touched={touched.message}
+              error={errors.message?.message}
+              touched={!!touchedFields.message}
               data-testid="message-textarea"
             />
           </Field>
@@ -464,24 +453,26 @@ export default function RSVPWidget({
             <input
               type="checkbox"
               id="whatsappInterest"
-              name="whatsappInterest"
-              checked={formData.whatsappInterest as boolean}
-              onChange={(e) => handleInputChange('whatsappInterest', e.target.checked)}
+              {...register("whatsappInterest")}
               className="mt-1 h-4 w-4 text-betis-verde border-gray-300 rounded focus:ring-betis-verde"
             />
             <label htmlFor="whatsappInterest" className="text-sm text-gray-700">
               <strong>¿Te interesa unirte al grupo de WhatsApp?</strong>
               <br />
               <span className="text-gray-500">
-                Recibe notificaciones sobre cambios de horario y eventos especiales.
+                Recibe notificaciones sobre cambios de horario y eventos
+                especiales.
               </span>
             </label>
           </div>
 
           {/* Error Message */}
-          {submitStatus === 'error' && (
-            <FormErrorMessage 
-              message={errorMessage || 'Error al enviar la confirmación. Por favor, inténtalo de nuevo.'}
+          {submitStatus === "error" && (
+            <FormErrorMessage
+              message={
+                errorMessage ||
+                "Error al enviar la confirmación. Por favor, inténtalo de nuevo."
+              }
             />
           )}
 
@@ -503,9 +494,14 @@ export default function RSVPWidget({
               data-testid="submit-rsvp"
             >
               {isSubmitting ? (
-                <FormLoadingMessage message="Enviando..." className="text-white" />
+                <FormLoadingMessage
+                  message="Enviando..."
+                  className="text-white"
+                />
+              ) : currentRSVP ? (
+                "✅ Actualizar Confirmación"
               ) : (
-                currentRSVP ? '✅ Actualizar Confirmación' : '✅ Confirmar Asistencia'
+                "✅ Confirmar Asistencia"
               )}
             </button>
           </div>
@@ -515,14 +511,15 @@ export default function RSVPWidget({
       {(!compact || isExpanded) && (
         <div className="mt-4 text-center">
           <p className="text-xs text-gray-500">
-            * Campos obligatorios. Tus datos solo se usan para organizar el evento.
+            * Campos obligatorios. Tus datos solo se usan para organizar el
+            evento.
           </p>
         </div>
       )}
     </div>
   );
 
-  return displayMode === 'modal' ? (
+  return displayMode === "modal" ? (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="max-w-md w-full max-h-[90vh] overflow-y-auto">
         {widgetContent}

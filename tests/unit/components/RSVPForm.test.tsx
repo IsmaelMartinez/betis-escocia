@@ -1,18 +1,18 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import RSVPForm from '@/components/RSVPForm';
-import { useUser } from '@clerk/nextjs';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen } from "@testing-library/react";
+import RSVPForm from "@/components/RSVPForm";
+import { useUser } from "@clerk/nextjs";
 
 // Mock the dependencies
-vi.mock('@clerk/nextjs', () => ({
-  useUser: vi.fn()
+vi.mock("@clerk/nextjs", () => ({
+  useUser: vi.fn(),
 }));
 
-vi.mock('@/lib/featureFlags', () => ({
+vi.mock("@/lib/featureFlags", () => ({
   isFeatureEnabled: vi.fn(() => false), // Default to disabled
 }));
 
-vi.mock('@/components/MessageComponent', () => ({
+vi.mock("@/components/MessageComponent", () => ({
   FormSuccessMessage: vi.fn(({ title, message, className }) => (
     <div className={className} data-testid="success-message">
       <h3>{title}</h3>
@@ -28,10 +28,10 @@ vi.mock('@/components/MessageComponent', () => ({
     <div className={className} data-testid="loading-message">
       {message}
     </div>
-  ))
+  )),
 }));
 
-vi.mock('@/components/Field', () => ({
+vi.mock("@/components/Field", () => ({
   default: vi.fn(({ label, children, error, touched, className }) => (
     <div className={className} data-testid="field">
       <label>{label}</label>
@@ -42,13 +42,13 @@ vi.mock('@/components/Field', () => ({
   ValidatedInput: vi.fn((props) => (
     <input
       {...props}
-      data-testid={`input-${props.name}`}
+      data-testid={props["data-testid"] || `input-${props.id}`}
     />
   )),
   ValidatedSelect: vi.fn((props) => (
     <select
       {...props}
-      data-testid={`select-${props.name}`}
+      data-testid={props["data-testid"] || `select-${props.id}`}
     >
       {props.children}
     </select>
@@ -56,36 +56,12 @@ vi.mock('@/components/Field', () => ({
   ValidatedTextarea: vi.fn((props) => (
     <textarea
       {...props}
-      data-testid={`textarea-${props.name}`}
+      data-testid={props["data-testid"] || `textarea-${props.id}`}
     />
-  ))
+  )),
 }));
 
-vi.mock('@/lib/formValidation', () => ({
-  useFormValidation: vi.fn(() => ({
-    data: {
-      name: '',
-      email: '',
-      attendees: 1,
-      message: ''
-    },
-    errors: {},
-    touched: {},
-    handleChange: vi.fn(),
-    handleBlur: vi.fn(),
-    validateField: vi.fn(),
-    validateForm: vi.fn(() => ({ isValid: true, errors: {} })),
-    resetForm: vi.fn(),
-    setData: vi.fn()
-  })),
-  commonValidationRules: {
-    name: { required: true, minLength: 2, maxLength: 50 },
-    email: { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
-    message: { required: false, minLength: 5, maxLength: 500 }
-  }
-}));
-
-vi.mock('lucide-react', () => ({
+vi.mock("lucide-react", () => ({
   User: vi.fn(() => <div data-testid="user-icon" />),
   Mail: vi.fn(() => <div data-testid="mail-icon" />),
   MessageSquare: vi.fn(() => <div data-testid="message-square-icon" />),
@@ -95,7 +71,7 @@ vi.mock('lucide-react', () => ({
 // Mock fetch
 global.fetch = vi.fn();
 
-describe('RSVPForm', () => {
+describe("RSVPForm", () => {
   const mockUseUser = vi.mocked(useUser);
 
   beforeEach(() => {
@@ -103,112 +79,140 @@ describe('RSVPForm', () => {
     global.fetch = vi.fn();
   });
 
-  describe('Basic rendering', () => {
-    it('renders RSVP form with all fields', () => {
-      mockUseUser.mockReturnValue({ user: null, isLoaded: true, isSignedIn: false });
+  describe("Basic rendering", () => {
+    it("renders RSVP form with all fields", () => {
+      mockUseUser.mockReturnValue({
+        user: null,
+        isLoaded: true,
+        isSignedIn: false,
+      });
 
       render(<RSVPForm />);
 
-      expect(screen.getByTestId('input-name')).toBeInTheDocument();
-      expect(screen.getByTestId('input-email')).toBeInTheDocument();
-      expect(screen.getByTestId('select-attendees')).toBeInTheDocument();
-      expect(screen.getByTestId('textarea-message')).toBeInTheDocument();
+      expect(screen.getByTestId("name-input")).toBeInTheDocument();
+      expect(screen.getByTestId("email-input")).toBeInTheDocument();
+      expect(screen.getByTestId("attendees-select")).toBeInTheDocument();
+      expect(screen.getByTestId("message-textarea")).toBeInTheDocument();
     });
 
-    it('renders submit button', () => {
-      mockUseUser.mockReturnValue({ user: null, isLoaded: true, isSignedIn: false });
+    it("renders submit button", () => {
+      mockUseUser.mockReturnValue({
+        user: null,
+        isLoaded: true,
+        isSignedIn: false,
+      });
 
       render(<RSVPForm />);
 
-      expect(screen.getByRole('button', { name: /confirmar/i })).toBeInTheDocument();
+      expect(screen.getByTestId("submit-rsvp")).toBeInTheDocument();
     });
   });
 
-  describe('Feature flag integration', () => {
-    it('works when feature flags are disabled', () => {
-      mockUseUser.mockReturnValue({ user: null, isLoaded: true, isSignedIn: false });
-      
+  describe("Feature flag integration", () => {
+    it("works when feature flags are disabled", () => {
+      mockUseUser.mockReturnValue({
+        user: null,
+        isLoaded: true,
+        isSignedIn: false,
+      });
+
       render(<RSVPForm />);
 
       // Component should render successfully even with feature flags disabled
-      expect(screen.getByTestId('input-name')).toBeInTheDocument();
+      expect(screen.getByTestId("name-input")).toBeInTheDocument();
     });
 
-    it('works when user is not authenticated', () => {
-      mockUseUser.mockReturnValue({ user: null, isLoaded: true, isSignedIn: false });
-      
+    it("works when user is not authenticated", () => {
+      mockUseUser.mockReturnValue({
+        user: null,
+        isLoaded: true,
+        isSignedIn: false,
+      });
+
       render(<RSVPForm />);
 
-      expect(screen.getByTestId('input-name')).toBeInTheDocument();
-      expect(screen.getByTestId('input-email')).toBeInTheDocument();
+      expect(screen.getByTestId("name-input")).toBeInTheDocument();
+      expect(screen.getByTestId("email-input")).toBeInTheDocument();
     });
   });
 
-  describe('User authentication integration', () => {
-    it('pre-fills form when user is authenticated', () => {
+  describe("User authentication integration", () => {
+    it("pre-fills form when user is authenticated", () => {
       const mockUser = {
-        firstName: 'Juan',
-        lastName: 'Pérez',
-        emailAddresses: [{ emailAddress: 'juan@example.com' }]
+        firstName: "Juan",
+        lastName: "Pérez",
+        emailAddresses: [{ emailAddress: "juan@example.com" }],
       };
 
-      mockUseUser.mockReturnValue({ 
-        user: mockUser, 
-        isLoaded: true, 
-        isSignedIn: true 
+      mockUseUser.mockReturnValue({
+        user: mockUser,
+        isLoaded: true,
+        isSignedIn: true,
       } as any);
 
       render(<RSVPForm />);
 
       // Form should render with user data
-      expect(screen.getByTestId('input-name')).toBeInTheDocument();
-      expect(screen.getByTestId('input-email')).toBeInTheDocument();
+      expect(screen.getByTestId("name-input")).toBeInTheDocument();
+      expect(screen.getByTestId("email-input")).toBeInTheDocument();
     });
   });
 
-  describe('Props handling', () => {
-    it('accepts onSuccess callback prop', () => {
+  describe("Props handling", () => {
+    it("accepts onSuccess callback prop", () => {
       const mockOnSuccess = vi.fn();
-      mockUseUser.mockReturnValue({ user: null, isLoaded: true, isSignedIn: false });
+      mockUseUser.mockReturnValue({
+        user: null,
+        isLoaded: true,
+        isSignedIn: false,
+      });
 
       render(<RSVPForm onSuccess={mockOnSuccess} />);
 
-      expect(screen.getByTestId('input-name')).toBeInTheDocument();
+      expect(screen.getByTestId("name-input")).toBeInTheDocument();
     });
 
-    it('accepts selectedMatchId prop', () => {
-      mockUseUser.mockReturnValue({ user: null, isLoaded: true, isSignedIn: false });
+    it("accepts selectedMatchId prop", () => {
+      mockUseUser.mockReturnValue({
+        user: null,
+        isLoaded: true,
+        isSignedIn: false,
+      });
 
       render(<RSVPForm selectedMatchId={123} />);
 
-      expect(screen.getByTestId('input-name')).toBeInTheDocument();
+      expect(screen.getByTestId("name-input")).toBeInTheDocument();
     });
   });
 
-  describe('Error handling', () => {
-    it('renders without crashing when user data is malformed', () => {
+  describe("Error handling", () => {
+    it("renders without crashing when user data is malformed", () => {
       const mockUser = {
         firstName: null,
         lastName: undefined,
-        emailAddresses: []
+        emailAddresses: [],
       };
 
-      mockUseUser.mockReturnValue({ 
-        user: mockUser, 
-        isLoaded: true, 
-        isSignedIn: true 
+      mockUseUser.mockReturnValue({
+        user: mockUser,
+        isLoaded: true,
+        isSignedIn: true,
       } as any);
 
       expect(() => render(<RSVPForm />)).not.toThrow();
     });
 
-    it('handles loading state properly', () => {
-      mockUseUser.mockReturnValue({ user: null, isLoaded: false, isSignedIn: false } as any);
+    it("handles loading state properly", () => {
+      mockUseUser.mockReturnValue({
+        user: null,
+        isLoaded: false,
+        isSignedIn: false,
+      } as any);
 
       render(<RSVPForm />);
 
       // Component should still render while loading
-      expect(screen.getByTestId('input-name')).toBeInTheDocument();
+      expect(screen.getByTestId("name-input")).toBeInTheDocument();
     });
   });
 });

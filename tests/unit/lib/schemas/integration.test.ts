@@ -28,7 +28,8 @@ describe('Cross-Schema Integration Tests', () => {
         name: userName,
         email: userEmail,
         attendees: 2,
-        notes: 'Confirmo asistencia con mi pareja'
+        message: 'Confirmo asistencia con mi pareja',
+        whatsappInterest: false
       };
 
       const rsvpResult = rsvpSchema.parse(rsvpData);
@@ -90,7 +91,8 @@ describe('Cross-Schema Integration Tests', () => {
       expect(() => rsvpSchema.parse({
         name: 'Test User',
         email: invalidEmail,
-        attendees: 1
+        attendees: 1,
+        whatsappInterest: false
       })).toThrow(ZodError);
 
       // Trivia schema only has score field, no email validation needed
@@ -111,7 +113,8 @@ describe('Cross-Schema Integration Tests', () => {
       expect(() => rsvpSchema.parse({
         name: '',
         email: 'test@example.com',
-        attendees: 1
+        attendees: 1,
+        whatsappInterest: false
       })).toThrow(ZodError);
     });
   });
