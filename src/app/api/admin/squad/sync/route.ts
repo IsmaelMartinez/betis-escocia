@@ -86,6 +86,7 @@ export const POST = createApiHandler({
         is_current_squad: boolean;
         known_club: string;
         known_position: string | null;
+        external_id: number;
         rumor_count: number;
       }[] = [];
 
@@ -111,6 +112,7 @@ export const POST = createApiHandler({
             is_current_squad: true,
             known_club: "Real Betis",
             known_position: apiPlayer.position,
+            external_id: apiPlayer.id,
             rumor_count: 0,
           });
         }
