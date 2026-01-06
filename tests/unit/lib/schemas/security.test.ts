@@ -147,7 +147,8 @@ describe('Security and Vulnerability Testing', () => {
             name: 'DOM XSS Test',
             email: 'dom@example.com',
             attendees: 1,
-            message: payload
+            message: payload,
+            whatsappInterest: false
           });
 
           expect(result.message).toBe(payload);
