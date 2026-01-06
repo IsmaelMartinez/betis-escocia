@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS rsvps (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     attendees INTEGER NOT NULL DEFAULT 1,
     whatsapp_interest BOOLEAN NOT NULL DEFAULT false,
-    match_date TIMESTAMPTZ NOT NULL DEFAULT '2025-06-28T20:00:00+00:00',
+    match_date TIMESTAMPTZ NOT NULL,
     match_id BIGINT REFERENCES matches(id) ON DELETE SET NULL,
     user_id TEXT
 );
@@ -297,15 +297,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Matches updated_at trigger function
-CREATE OR REPLACE FUNCTION update_matches_updated_at()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = CURRENT_TIMESTAMP;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
 -- Cleanup old non-rumor news (ai_probability = 0)
 CREATE OR REPLACE FUNCTION cleanup_old_non_rumor_news(
     retention_hours INTEGER DEFAULT 24
@@ -344,7 +335,7 @@ CREATE TRIGGER trigger_update_contact_submissions_updated_at
 
 CREATE TRIGGER trigger_update_matches_updated_at
     BEFORE UPDATE ON matches
-    FOR EACH ROW EXECUTE FUNCTION update_matches_updated_at();
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER trigger_update_betis_news_updated_at
     BEFORE UPDATE ON betis_news
@@ -409,7 +400,7 @@ CREATE POLICY "Allow public insert on rsvps" ON rsvps
     FOR INSERT WITH CHECK (true);
 
 CREATE POLICY "Allow users to view own rsvps" ON rsvps
-    FOR SELECT USING (user_id = auth.jwt() ->> 'sub' OR true);
+    FOR SELECT USING (user_id = auth.jwt() ->> 'sub' OR (auth.jwt()->'claims'->'publicMetadata'->>'role' = 'admin'));
 
 CREATE POLICY "Allow admin delete on rsvps" ON rsvps
     FOR DELETE USING (true);
@@ -425,7 +416,7 @@ CREATE POLICY "Allow public read on contact_submissions" ON contact_submissions
     FOR SELECT USING (true);
 
 CREATE POLICY "Allow users to view own contact_submissions" ON contact_submissions
-    FOR SELECT USING (user_id = auth.jwt() ->> 'sub' OR true);
+    FOR SELECT USING (user_id = auth.jwt() ->> 'sub' OR (auth.jwt()->'claims'->'publicMetadata'->>'role' = 'admin'));
 
 CREATE POLICY "Allow admin update on contact_submissions" ON contact_submissions
     FOR UPDATE USING (true);
@@ -474,17 +465,17 @@ CREATE POLICY "Allow public read access on betis_news" ON betis_news
 
 CREATE POLICY "Allow admin insert on betis_news" ON betis_news
     FOR INSERT WITH CHECK (
-        ((auth.jwt()->>'publicMetadata')::jsonb->>'role' = 'admin')
+        (auth.jwt()->'claims'->'publicMetadata'->>'role' = 'admin')
     );
 
 CREATE POLICY "Allow admin update on betis_news" ON betis_news
     FOR UPDATE USING (
-        ((auth.jwt()->>'publicMetadata')::jsonb->>'role' = 'admin')
+        (auth.jwt()->'claims'->'publicMetadata'->>'role' = 'admin')
     );
 
 CREATE POLICY "Allow admin delete on betis_news" ON betis_news
     FOR DELETE USING (
-        ((auth.jwt()->>'publicMetadata')::jsonb->>'role' = 'admin')
+        (auth.jwt()->'claims'->'publicMetadata'->>'role' = 'admin')
     );
 
 -- =============================================================================
@@ -535,16 +526,35 @@ CREATE POLICY "Admin delete access" ON news_players
 -- 7. GRANTS AND PERMISSIONS
 -- ===============================================================================
 
--- Grant permissions to anon and authenticated roles
-GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated;
-GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;
-GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO anon, authenticated;
+-- Grant specific permissions following principle of least privilege
+-- Public read tables
+GRANT SELECT ON TABLE matches TO anon, authenticated;
+GRANT SELECT ON TABLE trivia_questions TO anon, authenticated;
+GRANT SELECT ON TABLE trivia_answers TO anon, authenticated;
+GRANT SELECT ON TABLE classification_cache TO anon, authenticated;
+GRANT SELECT ON TABLE betis_news TO anon, authenticated;
+GRANT SELECT ON TABLE players TO anon, authenticated;
+GRANT SELECT ON TABLE news_players TO anon, authenticated;
 
--- Additional grants for players and news_players (required for RLS)
-GRANT ALL ON TABLE players TO anon, authenticated;
+-- Public read/write tables
+GRANT SELECT, INSERT ON TABLE rsvps TO anon, authenticated;
+GRANT SELECT, INSERT ON TABLE contact_submissions TO anon, authenticated;
+GRANT SELECT, INSERT ON TABLE user_trivia_scores TO anon, authenticated;
+
+-- Sequences (allow usage and select for ID generation)
+GRANT USAGE, SELECT ON SEQUENCE matches_id_seq TO anon, authenticated;
+GRANT USAGE, SELECT ON SEQUENCE rsvps_id_seq TO anon, authenticated;
+GRANT USAGE, SELECT ON SEQUENCE contact_submissions_id_seq TO anon, authenticated;
+GRANT USAGE, SELECT ON SEQUENCE user_trivia_scores_id_seq TO anon, authenticated;
+GRANT USAGE, SELECT ON SEQUENCE classification_cache_id_seq TO anon, authenticated;
+GRANT USAGE, SELECT ON SEQUENCE betis_news_id_seq TO anon, authenticated;
 GRANT USAGE, SELECT ON SEQUENCE players_id_seq TO anon, authenticated;
-GRANT ALL ON TABLE news_players TO anon, authenticated;
 GRANT USAGE, SELECT ON SEQUENCE news_players_id_seq TO anon, authenticated;
+
+-- Functions (allow execute for cleanup and utility functions)
+GRANT EXECUTE ON FUNCTION update_updated_at_column() TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION cleanup_old_rsvps() TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION cleanup_old_contact_submissions() TO anon, authenticated;
 
 -- ===============================================================================
 -- 8. COMMENTS (Documentation)

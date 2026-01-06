@@ -98,7 +98,7 @@ Admin authentication uses Clerk JWT with this structure:
 }
 ```
 
-**Note**: The players and news_players tables use a different JWT path (`auth.jwt()->'claims'->'publicMetadata'->>'role'`) than other tables due to Clerk's nested metadata structure. This was fixed in migration 0007.
+All admin role checks consistently use the JWT path `auth.jwt()->'claims'->'publicMetadata'->>'role'` to access Clerk's nested metadata structure.
 
 ### Automatic Cleanup
 
