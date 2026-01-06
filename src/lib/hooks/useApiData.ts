@@ -1,13 +1,14 @@
 /**
  * Universal Data Fetching Hook
- * 
+ *
  * Standardizes loading, error, and data state management across components.
  * Eliminates repetitive fetch patterns while providing flexibility for different use cases.
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from "react";
+import { log } from "@/lib/logger";
 
 export interface UseApiDataOptions extends RequestInit {
   // Automatic refetch interval in milliseconds
@@ -39,13 +40,13 @@ export interface UseApiDataResult<T> {
  * Hook for fetching data from API endpoints with standardized state management
  */
 export function useApiData<T = unknown>(
-  url: string | null, 
-  options: UseApiDataOptions = {}
+  url: string | null,
+  options: UseApiDataOptions = {},
 ): UseApiDataResult<T> {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(!options.skip);
   const [error, setError] = useState<string | null>(null);
-  
+
   const retryCountRef = useRef(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -60,89 +61,93 @@ export function useApiData<T = unknown>(
     ...requestOptions
   } = options;
 
-  const fetchData = useCallback(async (isRetry = false) => {
-    if (!url || skip) return;
+  const fetchData = useCallback(
+    async (isRetry = false) => {
+      if (!url || skip) return;
 
-    try {
-      // Cancel previous request
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-
-      // Create new abort controller for this request
-      abortControllerRef.current = new AbortController();
-
-      if (!isRetry) {
-        setLoading(true);
-        setError(null);
-      }
-
-      const response = await fetch(url, {
-        ...requestOptions,
-        signal: abortControllerRef.current.signal,
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        let errorMessage = `Error ${response.status}`;
-        
-        try {
-          const errorData = JSON.parse(errorText);
-          errorMessage = errorData.error || errorData.message || errorMessage;
-        } catch {
-          // If not JSON, use the text response or default message
-          errorMessage = errorText || errorMessage;
+      try {
+        // Cancel previous request
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
         }
-        
-        throw new Error(errorMessage);
-      }
 
-      const responseData = await response.json();
-      
-      // Extract data from standardized API response format
-      const extractedData = responseData.success !== undefined 
-        ? responseData.data 
-        : responseData;
-      
-      // Transform data if transform function provided
-      const finalData = transform ? transform<T>(extractedData) : extractedData;
-      
-      setData(finalData);
-      setError(null);
-      retryCountRef.current = 0; // Reset retry count on success
-      
-      if (onSuccess) {
-        onSuccess(finalData);
-      }
+        // Create new abort controller for this request
+        abortControllerRef.current = new AbortController();
 
-    } catch (err) {
-      if (err instanceof Error && err.name === 'AbortError') {
-        return; // Request was cancelled, don't update state
-      }
+        if (!isRetry) {
+          setLoading(true);
+          setError(null);
+        }
 
-      const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
-      
-      // Retry logic
-      if (!isRetry && retryCountRef.current < retry.attempts) {
-        retryCountRef.current++;
-        setTimeout(() => {
-          fetchData(true);
-        }, retry.delay * retryCountRef.current); // Exponential backoff
-        return;
+        const response = await fetch(url, {
+          ...requestOptions,
+          signal: abortControllerRef.current.signal,
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          let errorMessage = `Error ${response.status}`;
+
+          try {
+            const errorData = JSON.parse(errorText);
+            errorMessage = errorData.error || errorData.message || errorMessage;
+          } catch {
+            // If not JSON, use the text response or default message
+            errorMessage = errorText || errorMessage;
+          }
+
+          throw new Error(errorMessage);
+        }
+
+        const responseData = await response.json();
+
+        // Extract data from standardized API response format
+        const extractedData =
+          responseData.success !== undefined ? responseData.data : responseData;
+
+        // Transform data if transform function provided
+        const finalData = transform
+          ? transform<T>(extractedData)
+          : extractedData;
+
+        setData(finalData);
+        setError(null);
+        retryCountRef.current = 0; // Reset retry count on success
+
+        if (onSuccess) {
+          onSuccess(finalData);
+        }
+      } catch (err) {
+        if (err instanceof Error && err.name === "AbortError") {
+          return; // Request was cancelled, don't update state
+        }
+
+        const errorMessage =
+          err instanceof Error ? err.message : "Error desconocido";
+
+        // Retry logic
+        if (!isRetry && retryCountRef.current < retry.attempts) {
+          retryCountRef.current++;
+          setTimeout(() => {
+            fetchData(true);
+          }, retry.delay * retryCountRef.current); // Exponential backoff
+          return;
+        }
+
+        setError(errorMessage);
+        retryCountRef.current = 0;
+
+        if (onError) {
+          onError(err instanceof Error ? err : new Error(errorMessage));
+        }
+
+        log.error("API fetch error in useApiData", err as Error, { url });
+      } finally {
+        setLoading(false);
       }
-      
-      setError(errorMessage);
-      retryCountRef.current = 0;
-      
-      if (onError) {
-        onError(err instanceof Error ? err : new Error(errorMessage));
-      }
-      
-      console.error('API fetch error:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [url, skip, retry, transform, onError, onSuccess, requestOptions]);
+    },
+    [url, skip, retry, transform, onError, onSuccess, requestOptions],
+  );
 
   // Manual refetch function
   const refetch = useCallback(async () => {
@@ -201,7 +206,7 @@ export function useApiData<T = unknown>(
     loading,
     error,
     refetch,
-    mutate
+    mutate,
   };
 }
 
@@ -213,13 +218,13 @@ export function usePaginatedApiData<T = unknown>(
   options: UseApiDataOptions & {
     pageSize?: number;
     initialPage?: number;
-  } = {}
+  } = {},
 ) {
   const [currentPage, setCurrentPage] = useState(options.initialPage || 1);
   const { pageSize = 10, ...apiOptions } = options;
-  
+
   const url = `${baseUrl}?page=${currentPage}&limit=${pageSize}`;
-  
+
   const result = useApiData<{
     data: T[];
     pagination: {
@@ -232,13 +237,13 @@ export function usePaginatedApiData<T = unknown>(
 
   const nextPage = useCallback(() => {
     if (result.data?.pagination && currentPage < result.data.pagination.pages) {
-      setCurrentPage(prev => prev + 1);
+      setCurrentPage((prev) => prev + 1);
     }
   }, [currentPage, result.data?.pagination]);
 
   const prevPage = useCallback(() => {
     if (currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
+      setCurrentPage((prev) => prev - 1);
     }
   }, [currentPage]);
 
@@ -252,8 +257,10 @@ export function usePaginatedApiData<T = unknown>(
     nextPage,
     prevPage,
     goToPage,
-    hasNextPage: result.data?.pagination ? currentPage < result.data.pagination.pages : false,
-    hasPrevPage: currentPage > 1
+    hasNextPage: result.data?.pagination
+      ? currentPage < result.data.pagination.pages
+      : false,
+    hasPrevPage: currentPage > 1,
   };
 }
 
@@ -266,44 +273,51 @@ export function useApiMutation<TData = unknown, TVariables = unknown>(
     onSuccess?: (data: TData, variables: TVariables) => void;
     onError?: (error: Error, variables: TVariables) => void;
     onMutate?: (variables: TVariables) => void;
-  } = {}
+  } = {},
 ) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const mutate = useCallback(async (variables: TVariables) => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      if (options.onMutate) {
-        options.onMutate(variables);
-      }
+  const mutate = useCallback(
+    async (variables: TVariables) => {
+      try {
+        setLoading(true);
+        setError(null);
 
-      const data = await mutationFn(variables);
-      
-      if (options.onSuccess) {
-        options.onSuccess(data, variables);
+        if (options.onMutate) {
+          options.onMutate(variables);
+        }
+
+        const data = await mutationFn(variables);
+
+        if (options.onSuccess) {
+          options.onSuccess(data, variables);
+        }
+
+        return data;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Error en la mutación";
+        setError(errorMessage);
+
+        if (options.onError) {
+          options.onError(
+            err instanceof Error ? err : new Error(errorMessage),
+            variables,
+          );
+        }
+
+        throw err;
+      } finally {
+        setLoading(false);
       }
-      
-      return data;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error en la mutación';
-      setError(errorMessage);
-      
-      if (options.onError) {
-        options.onError(err instanceof Error ? err : new Error(errorMessage), variables);
-      }
-      
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [mutationFn, options]);
+    },
+    [mutationFn, options],
+  );
 
   return {
     mutate,
     loading,
-    error
+    error,
   };
 }

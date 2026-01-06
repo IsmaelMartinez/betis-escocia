@@ -134,8 +134,11 @@ const nextConfig = {
 };
 
 const { withSentryConfig } = require("@sentry/nextjs");
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
 
-module.exports = withSentryConfig(nextConfig, {
+module.exports = withBundleAnalyzer(withSentryConfig(nextConfig, {
   // For all available options, see: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
   // Upload a larger amount of data to Sentry
@@ -157,4 +160,4 @@ module.exports = withSentryConfig(nextConfig, {
   autoInstrumentClientFunctions: true,
 
   // For all available options, see: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-});
+}));

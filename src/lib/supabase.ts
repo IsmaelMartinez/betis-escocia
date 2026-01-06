@@ -1,4 +1,5 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { log } from "@/lib/logger";
 
 // Next.js automatically loads .env.local - no dotenv needed
 export type { SupabaseClient };
@@ -198,7 +199,7 @@ export async function getMatches(limit?: number) {
   const { data, error } = await query;
 
   if (error) {
-    console.error("Error fetching matches:", error);
+    log.database("select", "matches", undefined, error as Error);
     return null;
   }
 
@@ -214,7 +215,7 @@ export async function getUpcomingMatches(limit = 2) {
     .limit(limit);
 
   if (error) {
-    console.error("Error fetching upcoming matches:", error);
+    log.database("select", "matches", undefined, error as Error);
     return null;
   }
 
@@ -229,7 +230,9 @@ export async function getMatch(id: number) {
     .maybeSingle();
 
   if (error) {
-    console.error("Error fetching match:", error);
+    log.database("select", "matches", undefined, error as Error, {
+      matchId: id,
+    });
     return null;
   }
 
@@ -244,7 +247,7 @@ export async function createMatch(match: MatchInsert) {
     .single();
 
   if (error) {
-    console.error("Error creating match:", error);
+    log.database("insert", "matches", undefined, error as Error);
     return { success: false, error: error.message };
   }
 
@@ -260,7 +263,9 @@ export async function updateMatch(id: number, updates: MatchUpdate) {
     .single();
 
   if (error) {
-    console.error("Error updating match:", error);
+    log.database("update", "matches", undefined, error as Error, {
+      matchId: id,
+    });
     return { success: false, error: error.message };
   }
 
@@ -271,7 +276,9 @@ export async function deleteMatch(id: number) {
   const { error } = await supabase.from("matches").delete().eq("id", id);
 
   if (error) {
-    console.error("Error deleting match:", error);
+    log.database("delete", "matches", undefined, error as Error, {
+      matchId: id,
+    });
     return { success: false, error: error.message };
   }
 
@@ -295,7 +302,9 @@ export async function getMatchWithRSVPCounts(id: number) {
     .single();
 
   if (error) {
-    console.error("Error fetching match with RSVP counts:", error);
+    log.database("select", "matches with RSVPs", undefined, error as Error, {
+      matchId: id,
+    });
     return null;
   }
 
@@ -334,7 +343,7 @@ export async function getUpcomingMatchesWithRSVPCounts(limit = 2) {
 
   // If there's an error with RSVP join, fallback to matches only
   if (error) {
-    console.warn("RSVP data not available, fetching matches only:", error);
+    log.warn("RSVP data not available, fetching matches only", { error });
 
     const fallbackResult = await supabase
       .from("matches")
@@ -344,7 +353,12 @@ export async function getUpcomingMatchesWithRSVPCounts(limit = 2) {
       .limit(limit);
 
     if (fallbackResult.error) {
-      console.error("Error fetching upcoming matches:", fallbackResult.error);
+      log.database(
+        "select",
+        "matches",
+        undefined,
+        fallbackResult.error as Error,
+      );
       return null;
     }
 
@@ -386,7 +400,7 @@ export async function getUserRSVPs(userId: string) {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error("Error fetching user RSVPs:", error);
+    log.database("select", "rsvps", undefined, error as Error, { userId });
     return null;
   }
 
@@ -401,7 +415,9 @@ export async function getUserContactSubmissions(userId: string) {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error("Error fetching user contact submissions:", error);
+    log.database("select", "contact_submissions", undefined, error as Error, {
+      userId,
+    });
     return null;
   }
 
@@ -508,12 +524,16 @@ export async function updateContactSubmissionStatus(
   try {
     result = JSON.parse(responseText);
   } catch (parseError) {
-    console.error("Failed to parse JSON response:", responseText, parseError);
+    log.error("Failed to parse JSON response", parseError as Error, {
+      responseText,
+    });
     return { success: false, error: "Invalid JSON response from server." };
   }
 
   if (!response.ok) {
-    console.error("Error updating contact submission status:", result.error);
+    log.error("Error updating contact submission status", undefined, {
+      error: result.error,
+    });
     return { success: false, error: result.error };
   }
 
@@ -528,7 +548,7 @@ export async function getTriviaQuestions() {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error("Error fetching trivia questions:", error);
+    log.database("select", "trivia_questions", undefined, error as Error);
     return null;
   }
   return data as TriviaQuestion[];
@@ -542,7 +562,9 @@ export async function getTriviaQuestion(id: string) {
     .maybeSingle();
 
   if (error) {
-    console.error("Error fetching trivia question:", error);
+    log.database("select", "trivia_questions", undefined, error as Error, {
+      questionId: id,
+    });
     return null;
   }
   return data as TriviaQuestion;
@@ -556,7 +578,7 @@ export async function createTriviaQuestion(question: TriviaQuestionInsert) {
     .single();
 
   if (error) {
-    console.error("Error creating trivia question:", error);
+    log.database("insert", "trivia_questions", undefined, error as Error);
     return { success: false, error: error.message };
   }
   return { success: true, data: data as TriviaQuestion };
@@ -574,7 +596,9 @@ export async function updateTriviaQuestion(
     .single();
 
   if (error) {
-    console.error("Error updating trivia question:", error);
+    log.database("update", "trivia_questions", undefined, error as Error, {
+      questionId: id,
+    });
     return { success: false, error: error.message };
   }
   return { success: true, data: data as TriviaQuestion };
@@ -587,7 +611,9 @@ export async function deleteTriviaQuestion(id: string) {
     .eq("id", id);
 
   if (error) {
-    console.error("Error deleting trivia question:", error);
+    log.database("delete", "trivia_questions", undefined, error as Error, {
+      questionId: id,
+    });
     return { success: false, error: error.message };
   }
   return { success: true };
@@ -602,7 +628,9 @@ export async function getTriviaAnswersForQuestion(questionId: string) {
     .order("created_at", { ascending: true });
 
   if (error) {
-    console.error("Error fetching trivia answers:", error);
+    log.database("select", "trivia_answers", undefined, error as Error, {
+      questionId,
+    });
     return null;
   }
   return data as TriviaAnswer[];
@@ -616,7 +644,9 @@ export async function getTriviaAnswer(id: string) {
     .maybeSingle();
 
   if (error) {
-    console.error("Error fetching trivia answer:", error);
+    log.database("select", "trivia_answers", undefined, error as Error, {
+      answerId: id,
+    });
     return null;
   }
   return data as TriviaAnswer;
@@ -630,7 +660,7 @@ export async function createTriviaAnswer(answer: TriviaAnswerInsert) {
     .single();
 
   if (error) {
-    console.error("Error creating trivia answer:", error);
+    log.database("insert", "trivia_answers", undefined, error as Error);
     return { success: false, error: error.message };
   }
   return { success: true, data: data as TriviaAnswer };
@@ -648,7 +678,9 @@ export async function updateTriviaAnswer(
     .single();
 
   if (error) {
-    console.error("Error updating trivia answer:", error);
+    log.database("update", "trivia_answers", undefined, error as Error, {
+      answerId: id,
+    });
     return { success: false, error: error.message };
   }
   return { success: true, data: data as TriviaAnswer };
@@ -658,7 +690,9 @@ export async function deleteTriviaAnswer(id: string) {
   const { error } = await supabase.from("trivia_answers").delete().eq("id", id);
 
   if (error) {
-    console.error("Error deleting trivia answer:", error);
+    log.database("delete", "trivia_answers", undefined, error as Error, {
+      answerId: id,
+    });
     return { success: false, error: error.message };
   }
   return { success: true };
@@ -669,8 +703,10 @@ export async function createUserTriviaScore(
   score: UserTriviaScoreInsert,
   authenticatedSupabase: SupabaseClient,
 ) {
-  console.log("Attempting to insert trivia score:", score);
-  console.log("Table: user_trivia_scores");
+  log.debug("Attempting to insert trivia score", {
+    score,
+    table: "user_trivia_scores",
+  });
 
   const { data, error } = await authenticatedSupabase
     .from("user_trivia_scores")
@@ -679,10 +715,8 @@ export async function createUserTriviaScore(
     .single();
 
   if (error) {
-    console.error("Error creating user trivia score:", error);
-    console.error("Error details:", {
+    log.database("insert", "user_trivia_scores", undefined, error as Error, {
       code: error.code,
-      message: error.message,
       details: error.details,
       hint: error.hint,
     });
@@ -711,7 +745,9 @@ export async function getUserDailyTriviaScore(
 
   if (error && error.code !== "PGRST116" && error.code !== "PGRST301") {
     // PGRST116 means no rows found, PGRST301 means "No suitable key or wrong key type"
-    console.error("Error fetching user daily trivia score:", error);
+    log.database("select", "user_trivia_scores", undefined, error as Error, {
+      userId,
+    });
     return { success: false, error: error.message };
   }
 
@@ -741,7 +777,7 @@ export async function getAllMatchesWithRSVPCounts(limit?: number) {
 
   // If there's an error with RSVP join, fallback to matches only
   if (error) {
-    console.warn("RSVP data not available, fetching matches only:", error);
+    log.warn("RSVP data not available, fetching matches only", { error });
 
     const fallbackResult = await (limit
       ? supabase
@@ -755,7 +791,12 @@ export async function getAllMatchesWithRSVPCounts(limit?: number) {
           .order("date_time", { ascending: true }));
 
     if (fallbackResult.error) {
-      console.error("Error fetching upcoming matches:", fallbackResult.error);
+      log.database(
+        "select",
+        "matches",
+        undefined,
+        fallbackResult.error as Error,
+      );
       return null;
     }
 

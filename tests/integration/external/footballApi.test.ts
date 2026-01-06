@@ -11,6 +11,24 @@ import { type FootballDataService } from "@/services/footballDataService";
 import axios, { type AxiosInstance } from "axios";
 import { type Match } from "@/types/match";
 
+// Mock logger
+vi.mock("@/lib/logger", () => ({
+  log: {
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    database: vi.fn(),
+    business: vi.fn(),
+    apiRequest: vi.fn(),
+    auth: vi.fn(),
+    featureFlag: vi.fn(),
+    child: vi.fn(),
+    setGlobalContext: vi.fn(),
+    clearGlobalContext: vi.fn(),
+  },
+}));
+
 // Mock axios
 vi.mock("axios");
 const mockedAxios = vi.mocked(axios);
@@ -58,15 +76,9 @@ describe("FootballDataService Integration Tests", () => {
     REAL_BETIS_TEAM_ID = module.REAL_BETIS_TEAM_ID;
     LALIGA_COMPETITION_ID = module.LALIGA_COMPETITION_ID;
   });
-  let consoleErrorSpy: any;
-  let consoleLogSpy: any;
+  let logErrorSpy: any;
   let footballDataService: FootballDataService;
   let FootballDataServiceModule: typeof import("@/services/footballDataService");
-
-  beforeAll(() => {
-    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    consoleLogSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-  });
 
   beforeEach(async () => {
     // Clear all mocks
@@ -76,19 +88,16 @@ describe("FootballDataService Integration Tests", () => {
     mockAxiosInstance.put.mockClear();
     mockAxiosInstance.delete.mockClear();
     mockAxiosInstance.patch.mockClear();
-    consoleErrorSpy?.mockClear();
-    consoleLogSpy?.mockClear();
+
+    // Get the logger spy
+    const { log } = await import("@/lib/logger");
+    logErrorSpy = log.error;
 
     // Re-import the module to get a fresh instance with mocks applied
     FootballDataServiceModule = await import("@/services/footballDataService");
     footballDataService = new FootballDataServiceModule.FootballDataService(
       mockAxiosInstance,
     );
-  });
-
-  afterAll(() => {
-    consoleErrorSpy?.mockRestore();
-    consoleLogSpy?.mockRestore();
   });
 
   describe("fetchRealBetisMatches", () => {
@@ -148,9 +157,11 @@ describe("FootballDataService Integration Tests", () => {
       await expect(
         footballDataService.fetchRealBetisMatches(season),
       ).rejects.toThrow("Too Many Requests");
-      expect(consoleErrorSpy).toHaveBeenCalledWith("❌ API Error Details:");
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Status:", 429);
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Status Text:", undefined);
+      expect(logErrorSpy).toHaveBeenCalledWith(
+        "Football-Data API request failed",
+        expect.any(Error),
+        expect.objectContaining({ status: 429, season }),
+      );
     });
   });
 
@@ -182,9 +193,10 @@ describe("FootballDataService Integration Tests", () => {
       await expect(
         footballDataService.fetchLaLigaStandings(season),
       ).rejects.toThrow(errorMessage);
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining("Error fetching La Liga standings"),
+      expect(logErrorSpy).toHaveBeenCalledWith(
+        "Error fetching La Liga standings",
         expect.any(Error),
+        expect.objectContaining({ season }),
       );
     });
   });
@@ -252,9 +264,10 @@ describe("FootballDataService Integration Tests", () => {
 
       expect(result).toEqual(mockMatchesSeason1);
       expect(mockAxiosInstance.get).toHaveBeenCalledTimes(2);
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining("Error fetching matches for season 2023"),
+      expect(logErrorSpy).toHaveBeenCalledWith(
+        "Error fetching matches for season 2023",
         expect.any(Error),
+        expect.objectContaining({ season: "2023" }),
       );
     });
 
@@ -551,9 +564,10 @@ describe("FootballDataService Integration Tests", () => {
       await expect(footballDataService.getLaLigaStandings()).rejects.toThrow(
         errorMessage,
       );
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining("Error fetching La Liga standings"),
+      expect(logErrorSpy).toHaveBeenCalledWith(
+        "Error fetching La Liga standings",
         expect.any(Error),
+        expect.any(Object),
       );
     });
   });

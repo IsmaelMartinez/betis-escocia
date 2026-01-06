@@ -2,11 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { contactSchema } from "../../../../src/lib/schemas/contact";
 import { rsvpSchema } from "../../../../src/lib/schemas/rsvp";
 import { triviaScoreSchema } from "../../../../src/lib/schemas/trivia";
-import {
-  userUpdateSchema,
-  matchSchema,
-  userQuerySchema,
-} from "../../../../src/lib/schemas/admin";
+import { userUpdateSchema } from "../../../../src/lib/schemas/admin";
 
 describe("Performance and Load Testing", () => {
   let performanceMetrics: {
