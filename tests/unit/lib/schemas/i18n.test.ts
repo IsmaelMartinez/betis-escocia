@@ -79,7 +79,8 @@ describe('Internationalization and Localization Tests', () => {
         name: 'José María Rodríguez',
         email: 'jose@example.com',
         attendees: 2,
-        message: 'Llegaremos un poco tarde, ¡pero allí estaremos! ¡Viva er Betis!'
+        message: 'Llegaremos un poco tarde, ¡pero allí estaremos! ¡Viva er Betis!',
+        whatsappInterest: false
       };
 
       const result = rsvpSchema.parse(spanishRsvpData);
@@ -93,13 +94,15 @@ describe('Internationalization and Localization Tests', () => {
           name: 'Scottish Bético',
           email: 'scottish@example.com',
           attendees: 1,
-          message: 'Can\'t wait to watch the match with fellow Béticos!'
+          message: 'Can\'t wait to watch the match with fellow Béticos!',
+          whatsappInterest: false
         },
         {
           name: 'Bético Internacional',
           email: 'international@example.com',
           attendees: 3,
-          message: '¡Qué ganas de ver al Betis con otros aficionados!'
+          message: '¡Qué ganas de ver al Betis con otros aficionados!',
+          whatsappInterest: false
         }
       ];
 

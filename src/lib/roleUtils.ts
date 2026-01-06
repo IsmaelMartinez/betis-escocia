@@ -4,12 +4,12 @@ import type { User } from "@clerk/nextjs/server";
  * Available roles in the system
  */
 export const ROLES = {
-  ADMIN: 'admin',
-  USER: 'user',
-  MODERATOR: 'moderator'
+  ADMIN: "admin",
+  USER: "user",
+  MODERATOR: "moderator",
 } as const;
 
-export type Role = typeof ROLES[keyof typeof ROLES];
+export type Role = (typeof ROLES)[keyof typeof ROLES];
 
 /**
  * Check if the user has a specific role.
@@ -40,4 +40,3 @@ export function isModerator(user: User): boolean {
   const userRole = user.publicMetadata?.role;
   return userRole === ROLES.MODERATOR || userRole === ROLES.ADMIN;
 }
-
