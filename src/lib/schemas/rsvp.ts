@@ -1,48 +1,59 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // RSVP form schema
 export const rsvpSchema = z.object({
-  name: z.string()
-    .min(2, 'Nombre debe tener al menos 2 caracteres')
-    .max(50, 'Nombre no puede exceder 50 caracteres')
+  name: z
+    .string()
+    .min(2, "Nombre debe tener al menos 2 caracteres")
+    .max(50, "Nombre no puede exceder 50 caracteres")
     .trim(),
-  email: z.string()
-    .email('Formato de email inválido')
-    .max(254, 'Email demasiado largo')
+  email: z
+    .string()
+    .email("Formato de email inválido")
+    .max(254, "Email demasiado largo")
     .toLowerCase()
     .trim(),
-  attendees: z.number()
-    .int('Número de asistentes debe ser un entero')
-    .min(1, 'Número de asistentes debe ser al menos 1')
-    .max(10, 'Número de asistentes no puede exceder 10'),
-  message: z.string()
-    .max(500, 'Mensaje no puede exceder 500 caracteres')
+  attendees: z
+    .number()
+    .int("Número de asistentes debe ser un entero")
+    .min(1, "Número de asistentes debe ser al menos 1")
+    .max(10, "Número de asistentes no puede exceder 10"),
+  message: z
+    .string()
+    .max(500, "Mensaje no puede exceder 500 caracteres")
     .trim()
-    .optional()
-    .or(z.literal('')),
+    .optional(),
   whatsappInterest: z.boolean(),
   matchId: z.number().int().positive().optional(),
-  userId: z.string().optional()
+  userId: z.string().optional(),
 });
 
-// Query schema for GET requests  
+// Query schema for GET requests
 export const rsvpQuerySchema = z.object({
-  match: z.string().transform(val => parseInt(val)).optional()
+  match: z
+    .string()
+    .transform((val) => parseInt(val))
+    .optional(),
 });
 
 // Delete schema for DELETE requests
-export const rsvpDeleteSchema = z.object({
-  id: z.string().transform(val => parseInt(val)).optional(),
-  email: z.string().email().optional()
-}).refine(data => data.id || data.email, {
-  message: "Either id or email must be provided"
-});
+export const rsvpDeleteSchema = z
+  .object({
+    id: z
+      .string()
+      .transform((val) => parseInt(val))
+      .optional(),
+    email: z.string().email().optional(),
+  })
+  .refine((data) => data.id || data.email, {
+    message: "Either id or email must be provided",
+  });
 
 // GDPR request schema
 export const gdprSchema = z.object({
-  requestType: z.enum(['access', 'deletion'], {
-    message: 'Request type is required'
-  })
+  requestType: z.enum(["access", "deletion"], {
+    message: "Request type is required",
+  }),
 });
 
 // Type inference for TypeScript
