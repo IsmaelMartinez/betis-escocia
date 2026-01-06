@@ -42,7 +42,6 @@ export default function RSVPForm({
     formState: { errors, touchedFields },
     setValue,
     reset,
-    watch,
   } = useForm<RSVPInput>({
     resolver: zodResolver(rsvpSchema),
     defaultValues: {
