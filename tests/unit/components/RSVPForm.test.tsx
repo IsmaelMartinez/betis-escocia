@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import RSVPForm from '@/components/RSVPForm';
 import { useUser } from '@clerk/nextjs';
 
@@ -42,13 +42,13 @@ vi.mock('@/components/Field', () => ({
   ValidatedInput: vi.fn((props) => (
     <input
       {...props}
-      data-testid={`input-${props.name}`}
+      data-testid={props['data-testid'] || `input-${props.id}`}
     />
   )),
   ValidatedSelect: vi.fn((props) => (
     <select
       {...props}
-      data-testid={`select-${props.name}`}
+      data-testid={props['data-testid'] || `select-${props.id}`}
     >
       {props.children}
     </select>
@@ -56,33 +56,9 @@ vi.mock('@/components/Field', () => ({
   ValidatedTextarea: vi.fn((props) => (
     <textarea
       {...props}
-      data-testid={`textarea-${props.name}`}
+      data-testid={props['data-testid'] || `textarea-${props.id}`}
     />
   ))
-}));
-
-vi.mock('@/lib/formValidation', () => ({
-  useFormValidation: vi.fn(() => ({
-    data: {
-      name: '',
-      email: '',
-      attendees: 1,
-      message: ''
-    },
-    errors: {},
-    touched: {},
-    handleChange: vi.fn(),
-    handleBlur: vi.fn(),
-    validateField: vi.fn(),
-    validateForm: vi.fn(() => ({ isValid: true, errors: {} })),
-    resetForm: vi.fn(),
-    setData: vi.fn()
-  })),
-  commonValidationRules: {
-    name: { required: true, minLength: 2, maxLength: 50 },
-    email: { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
-    message: { required: false, minLength: 5, maxLength: 500 }
-  }
 }));
 
 vi.mock('lucide-react', () => ({
@@ -109,10 +85,10 @@ describe('RSVPForm', () => {
 
       render(<RSVPForm />);
 
-      expect(screen.getByTestId('input-name')).toBeInTheDocument();
-      expect(screen.getByTestId('input-email')).toBeInTheDocument();
-      expect(screen.getByTestId('select-attendees')).toBeInTheDocument();
-      expect(screen.getByTestId('textarea-message')).toBeInTheDocument();
+      expect(screen.getByTestId('name-input')).toBeInTheDocument();
+      expect(screen.getByTestId('email-input')).toBeInTheDocument();
+      expect(screen.getByTestId('attendees-select')).toBeInTheDocument();
+      expect(screen.getByTestId('message-textarea')).toBeInTheDocument();
     });
 
     it('renders submit button', () => {
@@ -120,27 +96,27 @@ describe('RSVPForm', () => {
 
       render(<RSVPForm />);
 
-      expect(screen.getByRole('button', { name: /confirmar/i })).toBeInTheDocument();
+      expect(screen.getByTestId('submit-rsvp')).toBeInTheDocument();
     });
   });
 
   describe('Feature flag integration', () => {
     it('works when feature flags are disabled', () => {
       mockUseUser.mockReturnValue({ user: null, isLoaded: true, isSignedIn: false });
-      
+
       render(<RSVPForm />);
 
       // Component should render successfully even with feature flags disabled
-      expect(screen.getByTestId('input-name')).toBeInTheDocument();
+      expect(screen.getByTestId('name-input')).toBeInTheDocument();
     });
 
     it('works when user is not authenticated', () => {
       mockUseUser.mockReturnValue({ user: null, isLoaded: true, isSignedIn: false });
-      
+
       render(<RSVPForm />);
 
-      expect(screen.getByTestId('input-name')).toBeInTheDocument();
-      expect(screen.getByTestId('input-email')).toBeInTheDocument();
+      expect(screen.getByTestId('name-input')).toBeInTheDocument();
+      expect(screen.getByTestId('email-input')).toBeInTheDocument();
     });
   });
 
@@ -152,17 +128,17 @@ describe('RSVPForm', () => {
         emailAddresses: [{ emailAddress: 'juan@example.com' }]
       };
 
-      mockUseUser.mockReturnValue({ 
-        user: mockUser, 
-        isLoaded: true, 
-        isSignedIn: true 
+      mockUseUser.mockReturnValue({
+        user: mockUser,
+        isLoaded: true,
+        isSignedIn: true
       } as any);
 
       render(<RSVPForm />);
 
       // Form should render with user data
-      expect(screen.getByTestId('input-name')).toBeInTheDocument();
-      expect(screen.getByTestId('input-email')).toBeInTheDocument();
+      expect(screen.getByTestId('name-input')).toBeInTheDocument();
+      expect(screen.getByTestId('email-input')).toBeInTheDocument();
     });
   });
 
@@ -173,7 +149,7 @@ describe('RSVPForm', () => {
 
       render(<RSVPForm onSuccess={mockOnSuccess} />);
 
-      expect(screen.getByTestId('input-name')).toBeInTheDocument();
+      expect(screen.getByTestId('name-input')).toBeInTheDocument();
     });
 
     it('accepts selectedMatchId prop', () => {
@@ -181,7 +157,7 @@ describe('RSVPForm', () => {
 
       render(<RSVPForm selectedMatchId={123} />);
 
-      expect(screen.getByTestId('input-name')).toBeInTheDocument();
+      expect(screen.getByTestId('name-input')).toBeInTheDocument();
     });
   });
 
@@ -193,10 +169,10 @@ describe('RSVPForm', () => {
         emailAddresses: []
       };
 
-      mockUseUser.mockReturnValue({ 
-        user: mockUser, 
-        isLoaded: true, 
-        isSignedIn: true 
+      mockUseUser.mockReturnValue({
+        user: mockUser,
+        isLoaded: true,
+        isSignedIn: true
       } as any);
 
       expect(() => render(<RSVPForm />)).not.toThrow();
@@ -208,7 +184,7 @@ describe('RSVPForm', () => {
       render(<RSVPForm />);
 
       // Component should still render while loading
-      expect(screen.getByTestId('input-name')).toBeInTheDocument();
+      expect(screen.getByTestId('name-input')).toBeInTheDocument();
     });
   });
 });

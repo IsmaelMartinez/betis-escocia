@@ -20,7 +20,7 @@ export const rsvpSchema = z.object({
     .trim()
     .optional()
     .or(z.literal('')),
-  whatsappInterest: z.boolean().default(false),
+  whatsappInterest: z.boolean(),
   matchId: z.number().int().positive().optional(),
   userId: z.string().optional()
 });
