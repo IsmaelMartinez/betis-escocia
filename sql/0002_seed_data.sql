@@ -1,10 +1,11 @@
 -- ===============================================================================
--- Peña Bética Escocesa - Seed Data Script
+-- Peña Bética Escocesa - Seed Data (Migration 0002)
 -- ===============================================================================
 -- This script populates the database with initial sample data
--- Run this after 00_complete_schema.sql to set up sample content
--- 
--- Last Updated: September 2025
+-- Run this after 0001_setup.sql to set up sample content for development
+--
+-- Last Updated: 2026-01-06
+-- Source: Extracted from legacy migration 0001_seed_data.sql
 -- ===============================================================================
 
 -- ===============================================================================
@@ -25,7 +26,7 @@ INSERT INTO trivia_questions (question_text, category, difficulty) VALUES
 ('¿Cuál es el himno tradicional del Real Betis?', 'betis', 'medium'),
 ('¿Contra qué equipo tiene el Real Betis su mayor rivalidad?', 'betis', 'easy'),
 
--- Scotland questions  
+-- Scotland questions
 ('¿Cuál es la capital de Escocia?', 'scotland', 'easy'),
 ('¿Cómo se llama la falda tradicional escocesa?', 'scotland', 'easy'),
 ('¿Cuál es el instrumento musical más famoso de Escocia?', 'scotland', 'easy'),
@@ -45,41 +46,41 @@ INSERT INTO trivia_questions (question_text, category, difficulty) VALUES
 ON CONFLICT DO NOTHING;
 
 -- Insert answers for Real Betis questions
-INSERT INTO trivia_answers (question_id, answer_text, is_correct) 
+INSERT INTO trivia_answers (question_id, answer_text, is_correct)
 SELECT q.id, a.answer_text, a.is_correct
 FROM trivia_questions q
 CROSS JOIN (
-    VALUES 
+    VALUES
     ('¿En qué año fue fundado el Real Betis Balompié?', '1907', true),
     ('¿En qué año fue fundado el Real Betis Balompié?', '1912', false),
     ('¿En qué año fue fundado el Real Betis Balompié?', '1915', false),
     ('¿En qué año fue fundado el Real Betis Balompié?', '1909', false),
-    
+
     ('¿Cuál es el nombre del estadio del Real Betis?', 'Benito Villamarín', true),
     ('¿Cuál es el nombre del estadio del Real Betis?', 'Ramón Sánchez-Pizjuán', false),
     ('¿Cuál es el nombre del estadio del Real Betis?', 'La Cartuja', false),
     ('¿Cuál es el nombre del estadio del Real Betis?', 'Nuevo Los Cármenes', false),
-    
+
     ('¿De qué colores es la camiseta tradicional del Real Betis?', 'Verde y blanco', true),
     ('¿De qué colores es la camiseta tradicional del Real Betis?', 'Azul y blanco', false),
     ('¿De qué colores es la camiseta tradicional del Real Betis?', 'Rojo y blanco', false),
     ('¿De qué colores es la camiseta tradicional del Real Betis?', 'Amarillo y azul', false),
-    
+
     ('¿Cuántas veces ha ganado el Real Betis la Liga española?', '1', true),
     ('¿Cuántas veces ha ganado el Real Betis la Liga española?', '2', false),
     ('¿Cuántas veces ha ganado el Real Betis la Liga española?', '3', false),
     ('¿Cuántas veces ha ganado el Real Betis la Liga española?', '0', false),
-    
+
     ('¿En qué año ganó el Real Betis su única Liga española?', '1935', true),
     ('¿En qué año ganó el Real Betis su única Liga española?', '1934', false),
     ('¿En qué año ganó el Real Betis su única Liga española?', '1936', false),
     ('¿En qué año ganó el Real Betis su única Liga española?', '1933', false),
-    
+
     ('¿Cuál es el apodo tradicional del Real Betis?', 'Los Verdiblancos', true),
     ('¿Cuál es el apodo tradicional del Real Betis?', 'Los Rojiblancos', false),
     ('¿Cuál es el apodo tradicional del Real Betis?', 'Los Azulgranas', false),
     ('¿Cuál es el apodo tradicional del Real Betis?', 'Los Merengues', false),
-    
+
     ('¿Contra qué equipo tiene el Real Betis su mayor rivalidad?', 'Sevilla FC', true),
     ('¿Contra qué equipo tiene el Real Betis su mayor rivalidad?', 'Real Madrid', false),
     ('¿Contra qué equipo tiene el Real Betis su mayor rivalidad?', 'Barcelona', false),
@@ -93,27 +94,27 @@ INSERT INTO trivia_answers (question_id, answer_text, is_correct)
 SELECT q.id, a.answer_text, a.is_correct
 FROM trivia_questions q
 CROSS JOIN (
-    VALUES 
+    VALUES
     ('¿Cuál es la capital de Escocia?', 'Edimburgo', true),
     ('¿Cuál es la capital de Escocia?', 'Glasgow', false),
     ('¿Cuál es la capital de Escocia?', 'Aberdeen', false),
     ('¿Cuál es la capital de Escocia?', 'Dundee', false),
-    
+
     ('¿Cómo se llama la falda tradicional escocesa?', 'Kilt', true),
     ('¿Cómo se llama la falda tradicional escocesa?', 'Tartan', false),
     ('¿Cómo se llama la falda tradicional escocesa?', 'Plaid', false),
     ('¿Cómo se llama la falda tradicional escocesa?', 'Highland', false),
-    
+
     ('¿Cuál es el instrumento musical más famoso de Escocia?', 'Gaita', true),
     ('¿Cuál es el instrumento musical más famoso de Escocia?', 'Violín', false),
     ('¿Cuál es el instrumento musical más famoso de Escocia?', 'Piano', false),
     ('¿Cuál es el instrumento musical más famoso de Escocia?', 'Tambor', false),
-    
+
     ('¿En qué año se celebró el referéndum de independencia de Escocia?', '2014', true),
     ('¿En qué año se celebró el referéndum de independencia de Escocia?', '2016', false),
     ('¿En qué año se celebró el referéndum de independencia de Escocia?', '2012', false),
     ('¿En qué año se celebró el referéndum de independencia de Escocia?', '2018', false),
-    
+
     ('¿Cómo se llama el lago más famoso de Escocia?', 'Loch Ness', true),
     ('¿Cómo se llama el lago más famoso de Escocia?', 'Loch Lomond', false),
     ('¿Cómo se llama el lago más famoso de Escocia?', 'Loch Katrine', false),
@@ -127,7 +128,7 @@ INSERT INTO trivia_answers (question_id, answer_text, is_correct)
 SELECT q.id, a.answer_text, a.is_correct
 FROM trivia_questions q
 CROSS JOIN (
-    VALUES 
+    VALUES
     ('¿Cuál es la región escocesa más famosa por el whisky?', 'Speyside', true),
     ('¿Cuál es la región escocesa más famosa por el whisky?', 'Highlands', false),
     ('¿Cuál es la región escocesa más famosa por el whisky?', 'Islay', false),
@@ -160,21 +161,21 @@ ON CONFLICT (external_id, external_source) DO NOTHING;
 -- ===============================================================================
 
 -- Insert sample RSVPs for upcoming matches
-INSERT INTO rsvps (name, email, attendees, whatsapp_interest, match_date, match_id, message) 
-SELECT 
+INSERT INTO rsvps (name, email, attendees, whatsapp_interest, match_date, match_id, message)
+SELECT
     names.name,
     names.email,
     (RANDOM() * 3 + 1)::INTEGER,
     RANDOM() > 0.5,
     m.date_time,
     m.id,
-    CASE 
+    CASE
         WHEN RANDOM() > 0.7 THEN 'Vamos Betis! 💚🤍'
         WHEN RANDOM() > 0.5 THEN '¡No me lo pierdo!'
         ELSE NULL
     END
 FROM (
-    VALUES 
+    VALUES
     ('Alejandro García', 'alejandro@example.com'),
     ('María González', 'maria@example.com'),
     ('Carlos Rodríguez', 'carlos@example.com'),
@@ -187,9 +188,9 @@ FROM (
     ('Isabel Torres', 'isabel@example.com')
 ) AS names(name, email)
 CROSS JOIN (
-    SELECT id, date_time 
-    FROM matches 
-    WHERE date_time > NOW() 
+    SELECT id, date_time
+    FROM matches
+    WHERE date_time > NOW()
     LIMIT 2
 ) AS m
 WHERE RANDOM() > 0.3 -- Only some people RSVP to each match
@@ -209,58 +210,6 @@ INSERT INTO contact_submissions (name, email, subject, type, message, status) VA
 ON CONFLICT DO NOTHING;
 
 -- ===============================================================================
--- FIX USER_TRIVIA_SCORES TABLE AND RLS POLICIES
--- ===============================================================================
--- Consolidates fixes from scripts 0002, 0003, and 0004 for trivia functionality
-
--- Fix user_trivia_scores table structure (from script 0002)
-DROP TABLE IF EXISTS user_trivia_scores CASCADE;
-
--- Recreate with SERIAL primary key (more reliable than UUID generation)
-CREATE TABLE user_trivia_scores (
-    id SERIAL PRIMARY KEY,
-    user_id TEXT NOT NULL,
-    daily_score INTEGER NOT NULL,
-    timestamp TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Create indexes for performance
-CREATE INDEX idx_user_trivia_scores_user_id ON user_trivia_scores(user_id);
-CREATE INDEX idx_user_trivia_scores_timestamp ON user_trivia_scores(timestamp);
-CREATE INDEX idx_user_trivia_scores_user_id_timestamp ON user_trivia_scores(user_id, timestamp DESC);
-
--- Enable Row Level Security
-ALTER TABLE user_trivia_scores ENABLE ROW LEVEL SECURITY;
-
--- Create RLS policies for Clerk JWT integration (from scripts 0003 and 0004)
--- These policies use Clerk JWT subject claim to match user_id directly
-CREATE POLICY "Users can view own trivia scores via Clerk JWT" ON user_trivia_scores
-    FOR SELECT
-    USING (user_id = auth.jwt() ->> 'sub');
-
-CREATE POLICY "Users can insert own trivia scores via Clerk JWT" ON user_trivia_scores
-    FOR INSERT
-    WITH CHECK (user_id = auth.jwt() ->> 'sub');
-
--- Add table comment
-COMMENT ON TABLE user_trivia_scores IS 'Daily trivia scores for authenticated users';
-
--- Verify RLS policies are correctly created
-SELECT 
-    schemaname, 
-    tablename, 
-    policyname, 
-    cmd, 
-    CASE 
-        WHEN qual IS NOT NULL THEN qual 
-        WHEN with_check IS NOT NULL THEN with_check
-        ELSE 'No condition'
-    END as condition
-FROM pg_policies 
-WHERE tablename = 'user_trivia_scores'
-ORDER BY cmd, policyname;
-
--- ===============================================================================
 -- CLEANUP AND VERIFICATION
 -- ===============================================================================
 
@@ -268,18 +217,18 @@ ORDER BY cmd, policyname;
 SELECT 'Data seeding completed!' as status;
 
 -- Show counts of inserted data
-SELECT 
+SELECT
     'trivia_questions' as table_name, COUNT(*) as count FROM trivia_questions
 UNION ALL
-SELECT 
-    'trivia_answers' as table_name, COUNT(*) as count FROM trivia_answers  
+SELECT
+    'trivia_answers' as table_name, COUNT(*) as count FROM trivia_answers
 UNION ALL
-SELECT 
+SELECT
     'matches' as table_name, COUNT(*) as count FROM matches
 UNION ALL
-SELECT 
+SELECT
     'rsvps' as table_name, COUNT(*) as count FROM rsvps
 UNION ALL
-SELECT 
+SELECT
     'contact_submissions' as table_name, COUNT(*) as count FROM contact_submissions
 ORDER BY table_name;
