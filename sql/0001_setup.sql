@@ -381,13 +381,19 @@ CREATE POLICY "Allow public read access on matches" ON matches
     FOR SELECT USING (true);
 
 CREATE POLICY "Allow admin insert on matches" ON matches
-    FOR INSERT WITH CHECK (true);
+    FOR INSERT WITH CHECK (
+        (auth.jwt()->'claims'->'publicMetadata'->>'role' = 'admin')
+    );
 
 CREATE POLICY "Allow admin update on matches" ON matches
-    FOR UPDATE USING (true);
+    FOR UPDATE USING (
+        (auth.jwt()->'claims'->'publicMetadata'->>'role' = 'admin')
+    );
 
 CREATE POLICY "Allow admin delete on matches" ON matches
-    FOR DELETE USING (true);
+    FOR DELETE USING (
+        (auth.jwt()->'claims'->'publicMetadata'->>'role' = 'admin')
+    );
 
 -- =============================================================================
 -- RSVPS POLICIES
@@ -403,7 +409,9 @@ CREATE POLICY "Allow users to view own rsvps" ON rsvps
     FOR SELECT USING (user_id = auth.jwt() ->> 'sub' OR (auth.jwt()->'claims'->'publicMetadata'->>'role' = 'admin'));
 
 CREATE POLICY "Allow admin delete on rsvps" ON rsvps
-    FOR DELETE USING (true);
+    FOR DELETE USING (
+        (auth.jwt()->'claims'->'publicMetadata'->>'role' = 'admin')
+    );
 
 -- =============================================================================
 -- CONTACT SUBMISSIONS POLICIES
@@ -419,7 +427,9 @@ CREATE POLICY "Allow users to view own contact_submissions" ON contact_submissio
     FOR SELECT USING (user_id = auth.jwt() ->> 'sub' OR (auth.jwt()->'claims'->'publicMetadata'->>'role' = 'admin'));
 
 CREATE POLICY "Allow admin update on contact_submissions" ON contact_submissions
-    FOR UPDATE USING (true);
+    FOR UPDATE USING (
+        (auth.jwt()->'claims'->'publicMetadata'->>'role' = 'admin')
+    );
 
 -- =============================================================================
 -- TRIVIA POLICIES
@@ -429,13 +439,17 @@ CREATE POLICY "Allow public read on trivia_questions" ON trivia_questions
     FOR SELECT USING (true);
 
 CREATE POLICY "Allow admin insert on trivia_questions" ON trivia_questions
-    FOR INSERT WITH CHECK (true);
+    FOR INSERT WITH CHECK (
+        (auth.jwt()->'claims'->'publicMetadata'->>'role' = 'admin')
+    );
 
 CREATE POLICY "Allow public read on trivia_answers" ON trivia_answers
     FOR SELECT USING (true);
 
 CREATE POLICY "Allow admin insert on trivia_answers" ON trivia_answers
-    FOR INSERT WITH CHECK (true);
+    FOR INSERT WITH CHECK (
+        (auth.jwt()->'claims'->'publicMetadata'->>'role' = 'admin')
+    );
 
 CREATE POLICY "Allow users to view own trivia scores" ON user_trivia_scores
     FOR SELECT USING (user_id = auth.jwt() ->> 'sub');

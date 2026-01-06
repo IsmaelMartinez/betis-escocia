@@ -6,7 +6,6 @@ This directory contains the consolidated database schema and seed data for the B
 
 - **0001_setup.sql** - Complete database schema with all tables, functions, triggers, views, RLS policies, and grants
 - **0002_seed_data.sql** - Sample data for development (trivia questions, matches, RSVPs, contacts)
-- **legacy/** - Historical migration files (reference only)
 
 ## Migration Numbering
 
@@ -167,15 +166,3 @@ To backup with data:
 ```bash
 pg_dump your_database > backup_full.sql
 ```
-
-## Legacy Migrations
-
-The `legacy/` directory contains the original 15 incremental migration files for historical reference. These are no longer used for fresh database setups but provide insight into how the schema evolved over time.
-
-**Do not run legacy migration files** - they may contain:
-
-- Broken RLS policies (fixed in later migrations)
-- Tables that were later dropped (squad_members, starting_elevens)
-- Incremental ALTER statements instead of complete CREATE TABLE statements
-
-Always use `0001_setup.sql` for new database setups.
