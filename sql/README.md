@@ -11,6 +11,7 @@ This directory contains the consolidated database schema and seed data for the B
 ## Migration Numbering
 
 The schema uses a numbered migration system starting from 0001. This allows for:
+
 - Clear ordering and execution sequence
 - Easy addition of future migrations (0003, 0004, etc.)
 - Simple tracking of schema evolution over time
@@ -137,6 +138,7 @@ The betis_news table includes comprehensive transfer rumor tracking:
 For fresh database setups, the schema is defined in `0001_setup.sql`.
 
 For existing production databases that need schema changes:
+
 1. Create a new numbered migration (e.g., `0003_add_new_feature.sql`)
 2. Apply the migration to production databases
 3. Document the change in this README
@@ -147,6 +149,7 @@ For existing production databases that need schema changes:
 ### Future Migration Numbering
 
 When adding new schema changes:
+
 - Next migration: `0003_description.sql`
 - Then: `0004_description.sql`, `0005_description.sql`, etc.
 - Use descriptive names: `0003_add_notifications_table.sql`, `0004_add_user_preferences.sql`
