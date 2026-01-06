@@ -83,33 +83,45 @@ export class FootballDataService {
     // Use the same format as the working script
     const url = `${BASE_URL}/teams/${REAL_BETIS_TEAM_ID}/matches?competitions=${LALIGA_COMPETITION_ID}&season=${season}`;
 
-    console.log("🔍 API Request Details:");
-    console.log("URL:", url);
-    console.log("Headers:", {
-      "X-Auth-Token": API_KEY ? `${API_KEY.substring(0, 8)}...` : "NOT_SET",
-      "User-Agent": "Betis-Escocia-App/1.0",
+    log.debug("Football-Data API request", {
+      url,
+      season,
+      teamId: REAL_BETIS_TEAM_ID,
+      competitionId: LALIGA_COMPETITION_ID,
+      hasApiKey: !!API_KEY,
     });
-    console.log("Season:", season);
-    console.log("Real Betis Team ID:", REAL_BETIS_TEAM_ID);
-    console.log("Competition ID:", LALIGA_COMPETITION_ID);
 
     try {
       const response = await this.http.get(url);
-      console.log("✅ API Response Status:", response.status);
-      console.log("✅ API Response Data Keys:", Object.keys(response.data));
+      log.debug("Football-Data API response", {
+        status: response.status,
+        matchCount: response.data.matches?.length || 0,
+      });
       return response.data.matches;
     } catch (error: unknown) {
-      console.error("❌ API Error Details:");
       if (error && typeof error === "object" && "response" in error) {
         const axiosError = error as {
           response?: { status?: number; statusText?: string; data?: unknown };
-          config?: { url?: string; headers?: unknown };
+          config?: { url?: string };
         };
-        console.error("Status:", axiosError.response?.status);
-        console.error("Status Text:", axiosError.response?.statusText);
-        console.error("Response Data:", axiosError.response?.data);
-        console.error("Request URL:", axiosError.config?.url);
-        console.error("Request Headers:", axiosError.config?.headers);
+        log.error(
+          "Football-Data API request failed",
+          error as unknown as Error,
+          {
+            status: axiosError.response?.status,
+            statusText: axiosError.response?.statusText,
+            url: axiosError.config?.url,
+            season,
+          },
+        );
+      } else {
+        log.error(
+          "Football-Data API request failed",
+          error as unknown as Error,
+          {
+            season,
+          },
+        );
       }
       throw error;
     }
@@ -123,7 +135,10 @@ export class FootballDataService {
       const response = await this.http.get(url);
       return response.data.standings;
     } catch (error) {
-      console.error("Error fetching La Liga standings:", error);
+      log.error("Error fetching La Liga standings", error as Error, {
+        season,
+        url,
+      });
       throw error;
     }
   }
@@ -139,7 +154,11 @@ export class FootballDataService {
         const matches = await this.fetchRealBetisMatches(season);
         allMatches.push(...matches);
       } catch (error) {
-        console.error(`Error fetching matches for season ${season}:`, error);
+        log.error(
+          `Error fetching matches for season ${season}`,
+          error as Error,
+          { season },
+        );
       }
     }
 
@@ -183,10 +202,10 @@ export class FootballDataService {
     // First try to get the match directly by ID
     try {
       const url = `${BASE_URL}/matches/${matchId}`;
-      console.log(`🔍 Trying direct match API: ${url}`);
+      log.debug("Trying direct match API", { matchId, url });
 
       const response = await this.http.get(url);
-      console.log("✅ Direct match API Response Status:", response.status);
+      log.debug("Direct match API response", { status: response.status });
 
       if (response.data && response.data.id === matchId) {
         // Check if it's a Real Betis match
@@ -195,9 +214,11 @@ export class FootballDataService {
           response.data.awayTeam.id === REAL_BETIS_TEAM_ID;
 
         if (isBetisMatch) {
-          console.log(
-            `✅ Found Betis match: ${response.data.homeTeam.name} vs ${response.data.awayTeam.name}`,
-          );
+          log.info("Found Betis match", {
+            matchId,
+            homeTeam: response.data.homeTeam.name,
+            awayTeam: response.data.awayTeam.name,
+          });
           return response.data;
         }
       }
@@ -207,11 +228,16 @@ export class FootballDataService {
           response?: { status?: number; data?: { message?: string } };
           message?: string;
         };
-        console.log(
-          `❌ Direct match API failed: ${axiosError.response?.status} - ${axiosError.response?.data?.message || axiosError.message}`,
-        );
+        log.debug("Direct match API failed, trying fallback", {
+          matchId,
+          status: axiosError.response?.status,
+          message: axiosError.response?.data?.message || axiosError.message,
+        });
       } else {
-        console.log(`❌ Direct match API failed: ${error}`);
+        log.debug("Direct match API failed, trying fallback", {
+          matchId,
+          error,
+        });
       }
     }
 
