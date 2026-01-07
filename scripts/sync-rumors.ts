@@ -3,10 +3,31 @@ import * as dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local" });
 
-async function main() {
-  console.log("Starting rumor sync...");
+function parseArgs(): { maxAgeHours?: number } {
+  const args = process.argv.slice(2);
+  const options: { maxAgeHours?: number } = {};
 
-  const result = await syncRumors();
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--max-age" && args[i + 1]) {
+      const hours = parseInt(args[i + 1], 10);
+      if (!isNaN(hours) && hours > 0) {
+        options.maxAgeHours = hours;
+      }
+      i++;
+    }
+  }
+
+  return options;
+}
+
+async function main() {
+  const options = parseArgs();
+
+  console.log(
+    `Starting rumor sync (max age: ${options.maxAgeHours ?? "default 24"}h)...`,
+  );
+
+  const result = await syncRumors(options);
 
   console.log("\nSync Results:");
   console.log(`- Fetched: ${result.fetched}`);

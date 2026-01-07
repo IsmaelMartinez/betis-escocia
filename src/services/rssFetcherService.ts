@@ -1,6 +1,9 @@
 import Parser from "rss-parser";
 import { log } from "@/lib/logger";
 
+// Default to 24 hours, configurable via environment variable
+const DEFAULT_MAX_AGE_HOURS = 24;
+
 export interface RumorItem {
   title: string;
   link: string;
@@ -10,8 +13,16 @@ export interface RumorItem {
     | "Google News (General)"
     | "BetisWeb"
     | "Telegram: @FabrizioRomanoTG"
-    | "Telegram: @ficherioRealBetis";
+    | "Telegram: @ficherioRealBetis"
+    | "Telegram: @Todo_betis"
+    | "Telegram: @DMQRealBetis"
+    | "Telegram: @transfer_news_football"
+    | "Telegram: @transfersmarketfootball";
   description?: string;
+}
+
+export interface FetchOptions {
+  maxAgeHours?: number;
 }
 
 interface FeedConfig {
@@ -48,6 +59,28 @@ const FEED_CONFIGS: FeedConfig[] = [
   {
     url: "https://tg.i-c-a.su/rss/ficherioRealBetis",
     source: "Telegram: @ficherioRealBetis",
+    type: "telegram",
+  },
+  // Betis-specific Telegram channels
+  {
+    url: "https://tg.i-c-a.su/rss/Todo_betis",
+    source: "Telegram: @Todo_betis",
+    type: "telegram",
+  },
+  {
+    url: "https://tg.i-c-a.su/rss/DMQRealBetis",
+    source: "Telegram: @DMQRealBetis",
+    type: "telegram",
+  },
+  // General transfer news channels
+  {
+    url: "https://tg.i-c-a.su/rss/transfer_news_football",
+    source: "Telegram: @transfer_news_football",
+    type: "telegram",
+  },
+  {
+    url: "https://tg.i-c-a.su/rss/transfersmarketfootball",
+    source: "Telegram: @transfersmarketfootball",
     type: "telegram",
   },
 ];
@@ -93,21 +126,37 @@ async function fetchFeed(config: FeedConfig): Promise<RumorItem[]> {
 
 /**
  * Fetch and merge all RSS feeds
+ * @param options - Optional configuration for fetching
+ * @param options.maxAgeHours - Maximum age of news in hours (default: 24, env: NEWS_MAX_AGE_HOURS)
  */
-export async function fetchAllRumors(): Promise<RumorItem[]> {
+export async function fetchAllRumors(
+  options: FetchOptions = {},
+): Promise<RumorItem[]> {
   // Fetch all feeds in parallel
   const allRumorsArrays = await Promise.all(
     FEED_CONFIGS.map((config) => fetchFeed(config)),
   );
   const allRumors = allRumorsArrays.flat();
 
-  // Filter out news older than 1 month
-  const oneMonthAgo = new Date();
-  oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+  // Get max age from: options > env variable > default (24 hours)
+  const maxAgeHours =
+    options.maxAgeHours ??
+    (parseInt(process.env.NEWS_MAX_AGE_HOURS || "", 10) ||
+      DEFAULT_MAX_AGE_HOURS);
 
-  return allRumors
-    .filter((rumor) => rumor.pubDate >= oneMonthAgo)
-    .sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
+  const cutoffDate = new Date();
+  cutoffDate.setHours(cutoffDate.getHours() - maxAgeHours);
+
+  const filtered = allRumors.filter((rumor) => rumor.pubDate >= cutoffDate);
+
+  log.business("rumors_filtered_by_age", {
+    total: allRumors.length,
+    filtered: filtered.length,
+    maxAgeHours,
+    cutoffDate: cutoffDate.toISOString(),
+  });
+
+  return filtered.sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
 }
 
 // Export for testing

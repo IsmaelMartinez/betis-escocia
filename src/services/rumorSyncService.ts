@@ -1,4 +1,4 @@
-import { fetchAllRumors } from "./rssFetcherService";
+import { fetchAllRumors, FetchOptions } from "./rssFetcherService";
 import { checkDuplicate } from "./deduplicationService";
 import { analyzeRumorCredibility } from "./geminiService";
 import { processExtractedPlayers } from "./playerNormalizationService";
@@ -43,7 +43,9 @@ export interface SyncResult {
   [key: string]: unknown;
 }
 
-export async function syncRumors(): Promise<SyncResult> {
+export async function syncRumors(
+  options: FetchOptions = {},
+): Promise<SyncResult> {
   const result: SyncResult = {
     fetched: 0,
     duplicates: 0,
@@ -188,7 +190,7 @@ export async function syncRumors(): Promise<SyncResult> {
     }
 
     // 1. Fetch rumors from RSS feeds
-    const rumors = await fetchAllRumors();
+    const rumors = await fetchAllRumors(options);
     result.fetched = rumors.length;
     log.business("rumors_fetched", { count: rumors.length });
 

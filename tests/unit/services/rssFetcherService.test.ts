@@ -28,7 +28,7 @@ import {
   _testExports,
 } from "@/services/rssFetcherService";
 
-const TOTAL_FEEDS = _testExports.FEED_CONFIGS.length; // 5 feeds (3 RSS + 2 Telegram)
+const TOTAL_FEEDS = _testExports.FEED_CONFIGS.length; // 9 feeds (3 RSS + 6 Telegram)
 
 // Helper to create mock responses for all feeds
 const mockAllFeedsEmpty = () => {
@@ -157,10 +157,16 @@ describe("rssFetcherService", () => {
       expect(sources).toContain("Google News (Fichajes)");
       expect(sources).toContain("Google News (General)");
       expect(sources).toContain("BetisWeb");
-      // Telegram sources (replaces broken Twitter/RSSHub feeds)
+      // Telegram sources - original
       expect(sources).toContain("Telegram: @FabrizioRomanoTG");
       expect(sources).toContain("Telegram: @ficherioRealBetis");
-      expect(sources).toHaveLength(5);
+      // Telegram sources - Betis-specific
+      expect(sources).toContain("Telegram: @Todo_betis");
+      expect(sources).toContain("Telegram: @DMQRealBetis");
+      // Telegram sources - general transfer channels
+      expect(sources).toContain("Telegram: @transfer_news_football");
+      expect(sources).toContain("Telegram: @transfersmarketfootball");
+      expect(sources).toHaveLength(9);
     });
 
     it("should handle missing title with default value", async () => {
@@ -411,19 +417,72 @@ describe("rssFetcherService", () => {
       expect(rumors[0].pubDate.toISOString()).toBe(testDate);
     });
 
+    it("should filter out rumors older than configured maxAgeHours", async () => {
+      const now = new Date();
+      const recentDate = new Date(now.getTime() - 12 * 60 * 60 * 1000); // 12 hours ago
+      const oldDate = new Date(now.getTime() - 36 * 60 * 60 * 1000); // 36 hours ago
+
+      const feed = {
+        items: [
+          mockFeedItem(
+            "Recent",
+            "https://example.com/1",
+            recentDate.toISOString(),
+          ),
+          mockFeedItem("Old", "https://example.com/2", oldDate.toISOString()),
+        ],
+      };
+
+      mockParseURL.mockResolvedValueOnce(feed);
+      for (let i = 1; i < TOTAL_FEEDS; i++) {
+        mockParseURL.mockResolvedValueOnce({ items: [] });
+      }
+
+      // Default 24 hours should include recent but exclude old
+      const rumors = await fetchAllRumors();
+      expect(rumors).toHaveLength(1);
+      expect(rumors[0].title).toBe("Recent");
+    });
+
+    it("should respect custom maxAgeHours option", async () => {
+      const now = new Date();
+      const recentDate = new Date(now.getTime() - 12 * 60 * 60 * 1000); // 12 hours ago
+      const oldDate = new Date(now.getTime() - 36 * 60 * 60 * 1000); // 36 hours ago
+
+      const feed = {
+        items: [
+          mockFeedItem(
+            "Recent",
+            "https://example.com/1",
+            recentDate.toISOString(),
+          ),
+          mockFeedItem("Old", "https://example.com/2", oldDate.toISOString()),
+        ],
+      };
+
+      mockParseURL.mockResolvedValueOnce(feed);
+      for (let i = 1; i < TOTAL_FEEDS; i++) {
+        mockParseURL.mockResolvedValueOnce({ items: [] });
+      }
+
+      // With 48 hours max age, both should be included
+      const rumors = await fetchAllRumors({ maxAgeHours: 48 });
+      expect(rumors).toHaveLength(2);
+    });
+
     it("should have correct feed configuration", () => {
       const configs = _testExports.FEED_CONFIGS;
 
-      // 5 feeds: 3 RSS + 2 Telegram
-      expect(configs).toHaveLength(5);
+      // 9 feeds: 3 RSS + 6 Telegram
+      expect(configs).toHaveLength(9);
 
       // Verify RSS feeds
       const rssFeeds = configs.filter((c) => c.type === "rss");
       expect(rssFeeds).toHaveLength(3);
 
-      // Verify Telegram feeds (replaced broken Twitter/RSSHub feeds)
+      // Verify Telegram feeds (includes Betis-specific and general transfer channels)
       const telegramFeeds = configs.filter((c) => c.type === "telegram");
-      expect(telegramFeeds).toHaveLength(2);
+      expect(telegramFeeds).toHaveLength(6);
       expect(telegramFeeds.every((f) => f.url.includes("tg.i-c-a.su"))).toBe(
         true,
       );
