@@ -17,7 +17,7 @@ export interface RumorItem {
     | "Telegram: @Todo_betis"
     | "Telegram: @DMQRealBetis"
     | "Telegram: @transfer_news_football"
-    | "Telegram: @transfersmarketfootball";
+    | "Telegram: @real_betis_balompi";
   description?: string;
 }
 
@@ -79,8 +79,8 @@ const FEED_CONFIGS: FeedConfig[] = [
     type: "telegram",
   },
   {
-    url: "https://tg.i-c-a.su/rss/transfersmarketfootball",
-    source: "Telegram: @transfersmarketfootball",
+    url: "https://tg.i-c-a.su/rss/real_betis_balompi",
+    source: "Telegram: @real_betis_balompi",
     type: "telegram",
   },
 ];

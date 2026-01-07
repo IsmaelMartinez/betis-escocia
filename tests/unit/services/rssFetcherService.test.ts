@@ -163,9 +163,9 @@ describe("rssFetcherService", () => {
       // Telegram sources - Betis-specific
       expect(sources).toContain("Telegram: @Todo_betis");
       expect(sources).toContain("Telegram: @DMQRealBetis");
-      // Telegram sources - general transfer channels
+      // Telegram sources - additional channels
       expect(sources).toContain("Telegram: @transfer_news_football");
-      expect(sources).toContain("Telegram: @transfersmarketfootball");
+      expect(sources).toContain("Telegram: @real_betis_balompi");
       expect(sources).toHaveLength(9);
     });
 
