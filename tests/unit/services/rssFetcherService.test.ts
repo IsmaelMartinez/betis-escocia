@@ -29,8 +29,12 @@ import {
 } from "@/services/rssFetcherService";
 
 const TOTAL_FEEDS = _testExports.FEED_CONFIGS.length; // 9 feeds (3 RSS + 6 Telegram)
-const RSS_FEEDS = _testExports.FEED_CONFIGS.filter((c) => c.type === "rss").length;
-const TELEGRAM_FEEDS = _testExports.FEED_CONFIGS.filter((c) => c.type === "telegram").length;
+const RSS_FEEDS = _testExports.FEED_CONFIGS.filter(
+  (c) => c.type === "rss",
+).length;
+const TELEGRAM_FEEDS = _testExports.FEED_CONFIGS.filter(
+  (c) => c.type === "telegram",
+).length;
 
 // Helper to create mock responses for all feeds
 // Note: RSS feeds are fetched first (in parallel), then Telegram feeds (sequentially)
@@ -61,12 +65,16 @@ const mockFirstRssFeedWithData = (feed: { items: unknown[] }) => {
 };
 
 describe("rssFetcherService", () => {
-  // Use dynamic dates relative to today to avoid flaky tests when dates become older than 1 month
-  const getRecentDate = (daysAgo: number, hoursOffset = 0) => {
-    const date = new Date();
-    date.setDate(date.getDate() - daysAgo);
-    date.setHours(12 + hoursOffset, 0, 0, 0);
-    return date.toISOString();
+  // Use dynamic dates relative to now to stay within 24h filter
+  // hoursAgo(h) creates a timestamp h hours in the past
+  const hoursAgo = (h: number) =>
+    new Date(Date.now() - h * 60 * 60 * 1000).toISOString();
+
+  // Legacy helper for tests that don't need precise control - defaults to 12 hours ago
+  const getRecentDate = (_daysAgo: number, hoursOffset = 0) => {
+    // Use hours instead of days to stay within 24h filter
+    const baseHours = 12;
+    return hoursAgo(baseHours - hoursOffset);
   };
 
   const mockFeedItem = (
@@ -94,7 +102,9 @@ describe("rssFetcherService", () => {
   });
 
   // Helper to run fetchAllRumors with auto-advancing timers
-  const fetchWithTimers = async (options?: Parameters<typeof fetchAllRumors>[0]) => {
+  const fetchWithTimers = async (
+    options?: Parameters<typeof fetchAllRumors>[0],
+  ) => {
     const promise = fetchAllRumors(options);
     // Advance timers to resolve all pending timeouts
     await vi.runAllTimersAsync();
@@ -400,7 +410,9 @@ describe("rssFetcherService", () => {
       // RSS feeds are fetched in parallel, Telegram feeds sequentially
       // This test verifies the RSS parallel behavior
       const feed = {
-        items: [mockFeedItem("Item", "https://example.com/1", getRecentDate(1))],
+        items: [
+          mockFeedItem("Item", "https://example.com/1", getRecentDate(1)),
+        ],
       };
 
       mockAllFeedsWithSingleItem(feed);

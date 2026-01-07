@@ -124,10 +124,59 @@ async function fetchFeed(config: FeedConfig): Promise<RumorItem[]> {
   }
 }
 
+/**
+ * Fetch a Telegram feed with retry logic for rate limiting
+ */
+async function fetchTelegramFeedWithRetry(
+  config: FeedConfig,
+  maxRetries = 3,
+): Promise<RumorItem[]> {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const feed = await parser.parseURL(config.url);
+      return feed.items.map((item) => ({
+        title: item.title || "Sin título",
+        link: item.link || "#",
+        pubDate: item.pubDate ? new Date(item.pubDate) : new Date(),
+        source: config.source,
+        description: item.contentSnippet || item.content,
+      }));
+    } catch (error) {
+      const is420 =
+        error instanceof Error && error.message.includes("Status code 420");
+      const isTimeout =
+        error instanceof Error && error.message.includes("timed out");
+
+      if ((is420 || isTimeout) && attempt < maxRetries) {
+        // Exponential backoff: 10s, 20s, 40s
+        const backoffMs = 10000 * Math.pow(2, attempt - 1);
+        log.business("telegram_feed_retry", {
+          source: config.source,
+          attempt,
+          backoffMs,
+          reason: is420 ? "rate_limit" : "timeout",
+        });
+        await new Promise((resolve) => setTimeout(resolve, backoffMs));
+        continue;
+      }
+
+      log.error("Telegram feed bridge failed", error, {
+        source: config.source,
+        url: config.url,
+        feedType: "telegram",
+        attempt,
+        maxRetries,
+      });
+      return [];
+    }
+  }
+  return [];
+}
+
 // Delay between Telegram feed requests to avoid rate limiting (tg.i-c-a.su)
-// Can be overridden via environment variable for testing
+// Default 5 seconds - can be overridden via environment variable
 const getTelegramFeedDelay = () =>
-  parseInt(process.env.TELEGRAM_FEED_DELAY_MS || "", 10) || 2000;
+  parseInt(process.env.TELEGRAM_FEED_DELAY_MS || "", 10) || 5000;
 
 /**
  * Fetch and merge all RSS feeds
@@ -142,16 +191,18 @@ export async function fetchAllRumors(
   const telegramFeeds = FEED_CONFIGS.filter((c) => c.type === "telegram");
 
   // Fetch RSS feeds in parallel (different servers, no rate limiting)
-  const rssResults = await Promise.all(rssFeeds.map((config) => fetchFeed(config)));
+  const rssResults = await Promise.all(
+    rssFeeds.map((config) => fetchFeed(config)),
+  );
 
-  // Fetch Telegram feeds sequentially with delay to avoid 420 rate limiting
+  // Fetch Telegram feeds sequentially with delay and retry logic to handle rate limiting
   const telegramResults: RumorItem[][] = [];
   const telegramDelay = getTelegramFeedDelay();
   for (const config of telegramFeeds) {
     if (telegramResults.length > 0 && telegramDelay > 0) {
       await new Promise((resolve) => setTimeout(resolve, telegramDelay));
     }
-    telegramResults.push(await fetchFeed(config));
+    telegramResults.push(await fetchTelegramFeedWithRetry(config));
   }
 
   const allRumors = [...rssResults, ...telegramResults].flat();
