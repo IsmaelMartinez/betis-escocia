@@ -12,12 +12,15 @@ export interface RumorItem {
     | "Google News (Fichajes)"
     | "Google News (General)"
     | "BetisWeb"
+    | "Football España (Betis)"
+    | "Football España (Transfers)"
     | "Telegram: @FabrizioRomanoTG"
     | "Telegram: @ficherioRealBetis"
     | "Telegram: @Todo_betis"
     | "Telegram: @DMQRealBetis"
     | "Telegram: @transfer_news_football"
-    | "Telegram: @real_betis_balompi";
+    | "Telegram: @real_betis_balompi"
+    | "Telegram: @TransferNews_Live";
   description?: string;
 }
 
@@ -47,6 +50,17 @@ const FEED_CONFIGS: FeedConfig[] = [
   {
     url: "https://betisweb.com/feed/",
     source: "BetisWeb",
+    type: "rss",
+  },
+  // Football España - Matteo Moretto writes here, tier 1 for La Liga
+  {
+    url: "https://www.football-espana.net/category/la-liga/real-betis/feed",
+    source: "Football España (Betis)",
+    type: "rss",
+  },
+  {
+    url: "https://www.football-espana.net/category/transfer-news/feed",
+    source: "Football España (Transfers)",
     type: "rss",
   },
   // Telegram feeds via tg.i-c-a.su (free, no auth required)
@@ -81,6 +95,11 @@ const FEED_CONFIGS: FeedConfig[] = [
   {
     url: "https://tg.i-c-a.su/rss/real_betis_balompi",
     source: "Telegram: @real_betis_balompi",
+    type: "telegram",
+  },
+  {
+    url: "https://tg.i-c-a.su/rss/TransferNews_Live",
+    source: "Telegram: @TransferNews_Live",
     type: "telegram",
   },
 ];
