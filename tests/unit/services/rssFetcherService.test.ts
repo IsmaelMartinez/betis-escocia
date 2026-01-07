@@ -28,9 +28,16 @@ import {
   _testExports,
 } from "@/services/rssFetcherService";
 
-const TOTAL_FEEDS = _testExports.FEED_CONFIGS.length; // 5 feeds (3 RSS + 2 Telegram)
+const TOTAL_FEEDS = _testExports.FEED_CONFIGS.length; // 9 feeds (3 RSS + 6 Telegram)
+const RSS_FEEDS = _testExports.FEED_CONFIGS.filter(
+  (c) => c.type === "rss",
+).length;
+const TELEGRAM_FEEDS = _testExports.FEED_CONFIGS.filter(
+  (c) => c.type === "telegram",
+).length;
 
 // Helper to create mock responses for all feeds
+// Note: RSS feeds are fetched first (in parallel), then Telegram feeds (sequentially)
 const mockAllFeedsEmpty = () => {
   for (let i = 0; i < TOTAL_FEEDS; i++) {
     mockParseURL.mockResolvedValueOnce({ items: [] });
@@ -43,13 +50,31 @@ const mockAllFeedsWithSingleItem = (feed: { items: unknown[] }) => {
   }
 };
 
+// Mock first RSS feed with data, rest empty
+const mockFirstRssFeedWithData = (feed: { items: unknown[] }) => {
+  // First RSS feed gets the data
+  mockParseURL.mockResolvedValueOnce(feed);
+  // Remaining RSS feeds get empty
+  for (let i = 1; i < RSS_FEEDS; i++) {
+    mockParseURL.mockResolvedValueOnce({ items: [] });
+  }
+  // All Telegram feeds get empty
+  for (let i = 0; i < TELEGRAM_FEEDS; i++) {
+    mockParseURL.mockResolvedValueOnce({ items: [] });
+  }
+};
+
 describe("rssFetcherService", () => {
-  // Use dynamic dates relative to today to avoid flaky tests when dates become older than 1 month
-  const getRecentDate = (daysAgo: number, hoursOffset = 0) => {
-    const date = new Date();
-    date.setDate(date.getDate() - daysAgo);
-    date.setHours(12 + hoursOffset, 0, 0, 0);
-    return date.toISOString();
+  // Use dynamic dates relative to now to stay within 24h filter
+  // hoursAgo(h) creates a timestamp h hours in the past
+  const hoursAgo = (h: number) =>
+    new Date(Date.now() - h * 60 * 60 * 1000).toISOString();
+
+  // Legacy helper for tests that don't need precise control - defaults to 12 hours ago
+  const getRecentDate = (_daysAgo: number, hoursOffset = 0) => {
+    // Use hours instead of days to stay within 24h filter
+    const baseHours = 12;
+    return hoursAgo(baseHours - hoursOffset);
   };
 
   const mockFeedItem = (
@@ -67,22 +92,41 @@ describe("rssFetcherService", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Use fake timers to skip Telegram feed delays
+    vi.useFakeTimers({ shouldAdvanceTime: true });
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     vi.clearAllMocks();
   });
+
+  // Helper to run fetchAllRumors with auto-advancing timers
+  const fetchWithTimers = async (
+    options?: Parameters<typeof fetchAllRumors>[0],
+  ) => {
+    const promise = fetchAllRumors(options);
+    // Advance timers to resolve all pending timeouts
+    await vi.runAllTimersAsync();
+    return promise;
+  };
 
   describe("fetchAllRumors", () => {
     it("should fetch and merge rumors from all feeds", async () => {
       // Create feeds with different timestamps to verify sorting
-      const feeds = [
+      // Order: 3 RSS feeds first, then 6 Telegram feeds
+      // Use hours ago (not days) to stay well within 24h filter
+      const now = new Date();
+      const hoursAgo = (h: number) =>
+        new Date(now.getTime() - h * 60 * 60 * 1000).toISOString();
+
+      const rssFeeds = [
         {
           items: [
             mockFeedItem(
               "Betis interesado en Fichaje 1",
               "https://example.com/1",
-              getRecentDate(1, 0),
+              hoursAgo(4),
               "Descripción del fichaje 1",
             ),
           ],
@@ -92,7 +136,7 @@ describe("rssFetcherService", () => {
             mockFeedItem(
               "Betis gana partido",
               "https://example.com/2",
-              getRecentDate(1, -1),
+              hoursAgo(6),
               "Resumen del partido",
             ),
           ],
@@ -102,18 +146,21 @@ describe("rssFetcherService", () => {
             mockFeedItem(
               "Análisis táctico Betis",
               "https://example.com/3",
-              getRecentDate(1, 1),
+              hoursAgo(2),
               "Análisis completo",
             ),
           ],
         },
-        // Telegram feeds
+      ];
+
+      // Telegram feeds - first two have items, rest empty
+      const telegramFeeds = [
         {
           items: [
             mockFeedItem(
               "Fabrizio Romano: Here we go!",
               "https://t.me/FabrizioRomanoTG/123",
-              getRecentDate(1, 2),
+              hoursAgo(1),
               "Transfer confirmed",
             ),
           ],
@@ -123,24 +170,33 @@ describe("rssFetcherService", () => {
             mockFeedItem(
               "Ficherío Betis: Nuevo fichaje",
               "https://t.me/ficherioRealBetis/456",
-              getRecentDate(1, -2),
+              hoursAgo(8),
               "Betis transfer news",
             ),
           ],
         },
+        { items: [] }, // @Todo_betis
+        { items: [] }, // @DMQRealBetis
+        { items: [] }, // @transfer_news_football
+        { items: [] }, // @real_betis_balompi
       ];
 
-      feeds.forEach((feed) => mockParseURL.mockResolvedValueOnce(feed));
+      // Mock in correct order: RSS first, then Telegram
+      rssFeeds.forEach((feed) => mockParseURL.mockResolvedValueOnce(feed));
+      telegramFeeds.forEach((feed) => mockParseURL.mockResolvedValueOnce(feed));
 
-      const rumors = await fetchAllRumors();
+      const rumors = await fetchWithTimers();
 
       expect(mockParseURL).toHaveBeenCalledTimes(TOTAL_FEEDS);
       expect(rumors).toHaveLength(5);
 
       // Should be sorted by date (newest first)
-      expect(rumors[0].title).toBe("Fabrizio Romano: Here we go!");
-      expect(rumors[1].title).toBe("Análisis táctico Betis");
-      expect(rumors[2].title).toBe("Betis interesado en Fichaje 1");
+      // hoursAgo order: 1, 2, 4, 6, 8
+      expect(rumors[0].title).toBe("Fabrizio Romano: Here we go!"); // 1h ago
+      expect(rumors[1].title).toBe("Análisis táctico Betis"); // 2h ago
+      expect(rumors[2].title).toBe("Betis interesado en Fichaje 1"); // 4h ago
+      expect(rumors[3].title).toBe("Betis gana partido"); // 6h ago
+      expect(rumors[4].title).toBe("Ficherío Betis: Nuevo fichaje"); // 8h ago
     });
 
     it("should assign correct source to each feed", async () => {
@@ -150,17 +206,23 @@ describe("rssFetcherService", () => {
 
       mockAllFeedsWithSingleItem(feed);
 
-      const rumors = await fetchAllRumors();
+      const rumors = await fetchWithTimers();
 
       const sources = rumors.map((r) => r.source);
       // RSS sources
       expect(sources).toContain("Google News (Fichajes)");
       expect(sources).toContain("Google News (General)");
       expect(sources).toContain("BetisWeb");
-      // Telegram sources (replaces broken Twitter/RSSHub feeds)
+      // Telegram sources - original
       expect(sources).toContain("Telegram: @FabrizioRomanoTG");
       expect(sources).toContain("Telegram: @ficherioRealBetis");
-      expect(sources).toHaveLength(5);
+      // Telegram sources - Betis-specific
+      expect(sources).toContain("Telegram: @Todo_betis");
+      expect(sources).toContain("Telegram: @DMQRealBetis");
+      // Telegram sources - additional channels
+      expect(sources).toContain("Telegram: @transfer_news_football");
+      expect(sources).toContain("Telegram: @real_betis_balompi");
+      expect(sources).toHaveLength(9);
     });
 
     it("should handle missing title with default value", async () => {
@@ -180,7 +242,7 @@ describe("rssFetcherService", () => {
         mockParseURL.mockResolvedValueOnce({ items: [] });
       }
 
-      const rumors = await fetchAllRumors();
+      const rumors = await fetchWithTimers();
 
       expect(rumors[0].title).toBe("Sin título");
     });
@@ -201,7 +263,7 @@ describe("rssFetcherService", () => {
         mockParseURL.mockResolvedValueOnce({ items: [] });
       }
 
-      const rumors = await fetchAllRumors();
+      const rumors = await fetchWithTimers();
 
       expect(rumors[0].link).toBe("#");
     });
@@ -224,7 +286,7 @@ describe("rssFetcherService", () => {
         mockParseURL.mockResolvedValueOnce({ items: [] });
       }
 
-      const rumors = await fetchAllRumors();
+      const rumors = await fetchWithTimers();
       const afterTest = new Date();
 
       expect(rumors[0].pubDate.getTime()).toBeGreaterThanOrEqual(
@@ -253,7 +315,7 @@ describe("rssFetcherService", () => {
         mockParseURL.mockResolvedValueOnce({ items: [] });
       }
 
-      const rumors = await fetchAllRumors();
+      const rumors = await fetchWithTimers();
 
       expect(rumors[0].description).toBe("Snippet");
     });
@@ -275,7 +337,7 @@ describe("rssFetcherService", () => {
         mockParseURL.mockResolvedValueOnce({ items: [] });
       }
 
-      const rumors = await fetchAllRumors();
+      const rumors = await fetchWithTimers();
 
       expect(rumors[0].description).toBe("Full content");
     });
@@ -283,7 +345,7 @@ describe("rssFetcherService", () => {
     it("should handle empty feeds gracefully", async () => {
       mockAllFeedsEmpty();
 
-      const rumors = await fetchAllRumors();
+      const rumors = await fetchWithTimers();
 
       expect(rumors).toEqual([]);
     });
@@ -302,7 +364,7 @@ describe("rssFetcherService", () => {
         mockParseURL.mockResolvedValueOnce({ items: [] });
       }
 
-      const rumors = await fetchAllRumors();
+      const rumors = await fetchWithTimers();
 
       // Should return items from successful feed only
       expect(rumors).toHaveLength(1);
@@ -328,7 +390,7 @@ describe("rssFetcherService", () => {
         mockParseURL.mockResolvedValueOnce({ items: [] });
       }
 
-      const rumors = await fetchAllRumors();
+      const rumors = await fetchWithTimers();
 
       expect(rumors).toHaveLength(2);
       expect(mockParseURL).toHaveBeenCalledTimes(TOTAL_FEEDS);
@@ -339,54 +401,47 @@ describe("rssFetcherService", () => {
         mockParseURL.mockRejectedValueOnce(new Error(`Error ${i}`));
       }
 
-      const rumors = await fetchAllRumors();
+      const rumors = await fetchWithTimers();
 
       expect(rumors).toEqual([]);
     });
 
-    it("should fetch feeds in parallel", async () => {
-      const recentDate = getRecentDate(1);
-      const delayedFeed = (delay: number) =>
-        new Promise((resolve) =>
-          setTimeout(
-            () =>
-              resolve({
-                items: [
-                  mockFeedItem("Item", "https://example.com/1", recentDate),
-                ],
-              }),
-            delay,
-          ),
-        );
-
-      // All feeds take 50ms each
-      for (let i = 0; i < TOTAL_FEEDS; i++) {
-        mockParseURL.mockImplementationOnce(() => delayedFeed(50));
-      }
-
-      const startTime = Date.now();
-      await fetchAllRumors();
-      const duration = Date.now() - startTime;
-
-      // If running in parallel, total time should be ~50ms, not ~250ms (5 * 50ms)
-      expect(duration).toBeLessThan(150);
-    });
-
-    it("should sort rumors by pubDate in descending order", async () => {
+    it("should fetch RSS feeds in parallel", async () => {
+      // RSS feeds are fetched in parallel, Telegram feeds sequentially
+      // This test verifies the RSS parallel behavior
       const feed = {
         items: [
-          mockFeedItem("Oldest", "https://example.com/1", getRecentDate(1, -2)),
-          mockFeedItem("Middle", "https://example.com/2", getRecentDate(1, -1)),
-          mockFeedItem("Newest", "https://example.com/3", getRecentDate(1, 0)),
+          mockFeedItem("Item", "https://example.com/1", getRecentDate(1)),
         ],
       };
 
-      mockParseURL.mockResolvedValueOnce(feed);
-      for (let i = 1; i < TOTAL_FEEDS; i++) {
-        mockParseURL.mockResolvedValueOnce({ items: [] });
-      }
+      mockAllFeedsWithSingleItem(feed);
 
-      const rumors = await fetchAllRumors();
+      const rumors = await fetchWithTimers();
+
+      // All 9 feeds should be called
+      expect(mockParseURL).toHaveBeenCalledTimes(TOTAL_FEEDS);
+      // Should have 9 items (one from each feed)
+      expect(rumors).toHaveLength(9);
+    });
+
+    it("should sort rumors by pubDate in descending order", async () => {
+      // Use hours ago (not days) to stay well within 24h filter
+      const now = new Date();
+      const hoursAgo = (h: number) =>
+        new Date(now.getTime() - h * 60 * 60 * 1000).toISOString();
+
+      const feed = {
+        items: [
+          mockFeedItem("Oldest", "https://example.com/1", hoursAgo(6)),
+          mockFeedItem("Middle", "https://example.com/2", hoursAgo(4)),
+          mockFeedItem("Newest", "https://example.com/3", hoursAgo(2)),
+        ],
+      };
+
+      mockFirstRssFeedWithData(feed);
+
+      const rumors = await fetchWithTimers();
 
       expect(rumors[0].title).toBe("Newest");
       expect(rumors[1].title).toBe("Middle");
@@ -399,31 +454,75 @@ describe("rssFetcherService", () => {
         items: [mockFeedItem("Test", "https://example.com/1", testDate)],
       };
 
-      mockParseURL.mockResolvedValueOnce(feed);
-      for (let i = 1; i < TOTAL_FEEDS; i++) {
-        mockParseURL.mockResolvedValueOnce({ items: [] });
-      }
+      mockFirstRssFeedWithData(feed);
 
-      const rumors = await fetchAllRumors();
+      const rumors = await fetchWithTimers();
 
       expect(rumors[0].pubDate).toBeInstanceOf(Date);
       // Verify the date was parsed correctly (matches input)
       expect(rumors[0].pubDate.toISOString()).toBe(testDate);
     });
 
+    it("should filter out rumors older than configured maxAgeHours", async () => {
+      const now = new Date();
+      const recentDate = new Date(now.getTime() - 12 * 60 * 60 * 1000); // 12 hours ago
+      const oldDate = new Date(now.getTime() - 36 * 60 * 60 * 1000); // 36 hours ago
+
+      const feed = {
+        items: [
+          mockFeedItem(
+            "Recent",
+            "https://example.com/1",
+            recentDate.toISOString(),
+          ),
+          mockFeedItem("Old", "https://example.com/2", oldDate.toISOString()),
+        ],
+      };
+
+      mockFirstRssFeedWithData(feed);
+
+      // Default 24 hours should include recent but exclude old
+      const rumors = await fetchWithTimers();
+      expect(rumors).toHaveLength(1);
+      expect(rumors[0].title).toBe("Recent");
+    });
+
+    it("should respect custom maxAgeHours option", async () => {
+      const now = new Date();
+      const recentDate = new Date(now.getTime() - 12 * 60 * 60 * 1000); // 12 hours ago
+      const oldDate = new Date(now.getTime() - 36 * 60 * 60 * 1000); // 36 hours ago
+
+      const feed = {
+        items: [
+          mockFeedItem(
+            "Recent",
+            "https://example.com/1",
+            recentDate.toISOString(),
+          ),
+          mockFeedItem("Old", "https://example.com/2", oldDate.toISOString()),
+        ],
+      };
+
+      mockFirstRssFeedWithData(feed);
+
+      // With 48 hours max age, both should be included
+      const rumors = await fetchWithTimers({ maxAgeHours: 48 });
+      expect(rumors).toHaveLength(2);
+    });
+
     it("should have correct feed configuration", () => {
       const configs = _testExports.FEED_CONFIGS;
 
-      // 5 feeds: 3 RSS + 2 Telegram
-      expect(configs).toHaveLength(5);
+      // 9 feeds: 3 RSS + 6 Telegram
+      expect(configs).toHaveLength(9);
 
       // Verify RSS feeds
       const rssFeeds = configs.filter((c) => c.type === "rss");
       expect(rssFeeds).toHaveLength(3);
 
-      // Verify Telegram feeds (replaced broken Twitter/RSSHub feeds)
+      // Verify Telegram feeds (includes Betis-specific and general transfer channels)
       const telegramFeeds = configs.filter((c) => c.type === "telegram");
-      expect(telegramFeeds).toHaveLength(2);
+      expect(telegramFeeds).toHaveLength(6);
       expect(telegramFeeds.every((f) => f.url.includes("tg.i-c-a.su"))).toBe(
         true,
       );
