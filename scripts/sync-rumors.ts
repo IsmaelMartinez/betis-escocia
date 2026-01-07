@@ -1,4 +1,5 @@
 import { syncRumors } from "../src/services/rumorSyncService";
+import { DEFAULT_MAX_AGE_HOURS } from "../src/services/rssFetcherService";
 import * as dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local" });
@@ -12,6 +13,10 @@ function parseArgs(): { maxAgeHours?: number } {
       const hours = parseInt(args[i + 1], 10);
       if (!isNaN(hours) && hours > 0) {
         options.maxAgeHours = hours;
+      } else {
+        console.warn(
+          `Ignoring invalid --max-age value "${args[i + 1]}". Expected a positive integer.`,
+        );
       }
       i++;
     }
@@ -23,9 +28,12 @@ function parseArgs(): { maxAgeHours?: number } {
 async function main() {
   const options = parseArgs();
 
-  console.log(
-    `Starting rumor sync (max age: ${options.maxAgeHours ?? "default 24"}h)...`,
-  );
+  const envMaxAge = parseInt(process.env.NEWS_MAX_AGE_HOURS || "", 10);
+  const resolvedMaxAgeHours =
+    options.maxAgeHours ??
+    (!isNaN(envMaxAge) && envMaxAge > 0 ? envMaxAge : DEFAULT_MAX_AGE_HOURS);
+
+  console.log(`Starting rumor sync (max age: ${resolvedMaxAgeHours}h)...`);
 
   const result = await syncRumors(options);
 

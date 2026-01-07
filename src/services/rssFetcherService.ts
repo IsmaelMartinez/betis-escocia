@@ -2,7 +2,7 @@ import Parser from "rss-parser";
 import { log } from "@/lib/logger";
 
 // Default to 24 hours, configurable via environment variable
-const DEFAULT_MAX_AGE_HOURS = 24;
+export const DEFAULT_MAX_AGE_HOURS = 24;
 
 export interface RumorItem {
   title: string;
@@ -208,10 +208,12 @@ export async function fetchAllRumors(
   const allRumors = [...rssResults, ...telegramResults].flat();
 
   // Get max age from: options > env variable > default (24 hours)
+  const envMaxAgeHours = parseInt(process.env.NEWS_MAX_AGE_HOURS || "", 10);
   const maxAgeHours =
     options.maxAgeHours ??
-    (parseInt(process.env.NEWS_MAX_AGE_HOURS || "", 10) ||
-      DEFAULT_MAX_AGE_HOURS);
+    (!isNaN(envMaxAgeHours) && envMaxAgeHours > 0
+      ? envMaxAgeHours
+      : DEFAULT_MAX_AGE_HOURS);
 
   const cutoffDate = new Date();
   cutoffDate.setHours(cutoffDate.getHours() - maxAgeHours);
