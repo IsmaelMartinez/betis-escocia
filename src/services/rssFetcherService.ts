@@ -124,6 +124,11 @@ async function fetchFeed(config: FeedConfig): Promise<RumorItem[]> {
   }
 }
 
+// Delay between Telegram feed requests to avoid rate limiting (tg.i-c-a.su)
+// Can be overridden via environment variable for testing
+const getTelegramFeedDelay = () =>
+  parseInt(process.env.TELEGRAM_FEED_DELAY_MS || "", 10) || 2000;
+
 /**
  * Fetch and merge all RSS feeds
  * @param options - Optional configuration for fetching
@@ -132,11 +137,24 @@ async function fetchFeed(config: FeedConfig): Promise<RumorItem[]> {
 export async function fetchAllRumors(
   options: FetchOptions = {},
 ): Promise<RumorItem[]> {
-  // Fetch all feeds in parallel
-  const allRumorsArrays = await Promise.all(
-    FEED_CONFIGS.map((config) => fetchFeed(config)),
-  );
-  const allRumors = allRumorsArrays.flat();
+  // Separate RSS and Telegram feeds
+  const rssFeeds = FEED_CONFIGS.filter((c) => c.type === "rss");
+  const telegramFeeds = FEED_CONFIGS.filter((c) => c.type === "telegram");
+
+  // Fetch RSS feeds in parallel (different servers, no rate limiting)
+  const rssResults = await Promise.all(rssFeeds.map((config) => fetchFeed(config)));
+
+  // Fetch Telegram feeds sequentially with delay to avoid 420 rate limiting
+  const telegramResults: RumorItem[][] = [];
+  const telegramDelay = getTelegramFeedDelay();
+  for (const config of telegramFeeds) {
+    if (telegramResults.length > 0 && telegramDelay > 0) {
+      await new Promise((resolve) => setTimeout(resolve, telegramDelay));
+    }
+    telegramResults.push(await fetchFeed(config));
+  }
+
+  const allRumors = [...rssResults, ...telegramResults].flat();
 
   // Get max age from: options > env variable > default (24 hours)
   const maxAgeHours =
@@ -162,4 +180,5 @@ export async function fetchAllRumors(
 // Export for testing
 export const _testExports = {
   FEED_CONFIGS,
+  getTelegramFeedDelay,
 };

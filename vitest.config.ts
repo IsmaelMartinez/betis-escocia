@@ -26,6 +26,8 @@ export default defineConfig({
       SUPABASE_SERVICE_ROLE_KEY: 'test-service-role-key',
       // Test environment configuration
       NEXT_PUBLIC_DEBUG_MODE: 'false',
+      // Disable Telegram feed delay in tests
+      TELEGRAM_FEED_DELAY_MS: '0',
     },
     // Include all unit and integration tests, exclude E2E tests
     include: [

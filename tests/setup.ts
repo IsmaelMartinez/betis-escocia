@@ -1,4 +1,7 @@
 // Vitest setup file for global test configuration
+// Set test environment variables BEFORE any imports
+process.env.TELEGRAM_FEED_DELAY_MS = '0';
+
 import '@testing-library/jest-dom';
 import { beforeAll, afterAll, afterEach, vi } from 'vitest';
 
