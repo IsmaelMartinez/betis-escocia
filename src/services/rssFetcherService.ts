@@ -86,7 +86,7 @@ const FEED_CONFIGS: FeedConfig[] = [
 ];
 
 const parser = new Parser({
-  timeout: 10000, // 10 second timeout
+  timeout: 30000, // 30 second timeout - tg.i-c-a.su can be slow
   headers: {
     "User-Agent": "Pena-Betica-Escocesa/1.0",
   },
