@@ -212,23 +212,9 @@ describe("rssFetcherService", () => {
       const rumors = await fetchWithTimers();
 
       const sources = rumors.map((r) => r.source);
-      // RSS sources
-      expect(sources).toContain("Google News (Fichajes)");
-      expect(sources).toContain("Google News (General)");
-      expect(sources).toContain("BetisWeb");
-      // Telegram sources - original
-      expect(sources).toContain("Telegram: @FabrizioRomanoTG");
-      expect(sources).toContain("Telegram: @ficherioRealBetis");
-      // Telegram sources - Betis-specific
-      expect(sources).toContain("Telegram: @Todo_betis");
-      expect(sources).toContain("Telegram: @DMQRealBetis");
-      // Telegram sources - additional channels
-      expect(sources).toContain("Telegram: @transfer_news_football");
-      expect(sources).toContain("Telegram: @real_betis_balompi");
-      expect(sources).toContain("Telegram: @TransferNews_Live");
-      // RSS sources - Football España
-      expect(sources).toContain("Football España (Betis)");
-      expect(sources).toContain("Football España (Transfers)");
+      // Derive expected sources from config to make test self-updating
+      const expectedSources = _testExports.FEED_CONFIGS.map((c) => c.source);
+      expect(sources.sort()).toEqual(expectedSources.sort());
       expect(sources).toHaveLength(TOTAL_FEEDS);
     });
 
