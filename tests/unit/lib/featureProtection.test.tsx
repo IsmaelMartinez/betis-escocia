@@ -16,7 +16,6 @@ vi.mock("next/navigation", () => ({
 
 // Mock featureFlags
 vi.mock("../../../src/lib/featureFlags", () => ({
-  isFeatureEnabled: vi.fn(),
   hasFeature: vi.fn(),
 }));
 

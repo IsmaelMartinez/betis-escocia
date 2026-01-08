@@ -3,13 +3,13 @@ import { redirect } from 'next/navigation';
 import { getUserContactSubmissions } from '@/lib/supabase';
 import { MessageSquare, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
-import { isFeatureEnabled } from '@/lib/featureFlags';
+import { hasFeature } from '@/lib/featureFlags';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { DATE_FORMAT } from '@/lib/constants/dateFormats';
 
 export default async function UserContactSubmissionsPage() {
-  const isAuthEnabled = isFeatureEnabled('show-clerk-auth');
+  const isAuthEnabled = hasFeature('show-clerk-auth');
   
   if (!isAuthEnabled) {
     redirect('/');

@@ -111,13 +111,6 @@ export function hasFeature(featureName: FeatureName): boolean {
 }
 
 /**
- * Legacy helper for backward compatibility - just an alias for hasFeature
- */
-export function isFeatureEnabled(featureName: FeatureName): boolean {
-  return hasFeature(featureName);
-}
-
-/**
  * Get all enabled navigation items
  */
 export function getEnabledNavigationItems(): NavigationItem[] {
