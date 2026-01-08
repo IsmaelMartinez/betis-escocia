@@ -59,8 +59,6 @@ import {
   getUserRSVPs,
   getUserContactSubmissions,
   getUserSubmissionCounts,
-  linkExistingSubmissionsToUser,
-  unlinkUserSubmissions,
   updateContactSubmissionStatus,
   getTriviaQuestions,
   getTriviaQuestion,
@@ -749,81 +747,6 @@ describe("supabase", () => {
         totalSubmissions: 0,
       });
     });
-  });
-
-  describe("linkExistingSubmissionsToUser", () => {
-    it("should link submissions successfully", async () => {
-      // Create separate mock query builders for each call
-      const rsvpMockBuilder = createMockQueryBuilder();
-      const contactMockBuilder = createMockQueryBuilder();
-
-      (mockSupabase.from as any)
-        .mockReturnValueOnce(rsvpMockBuilder)
-        .mockReturnValueOnce(contactMockBuilder);
-
-      rsvpMockBuilder.then.mockImplementation(async (resolve: any) =>
-        resolve({ count: 2, error: null }),
-      );
-      contactMockBuilder.then.mockImplementation(async (resolve: any) =>
-        resolve({ count: 1, error: null }),
-      );
-
-      const result = await linkExistingSubmissionsToUser(
-        "user_123",
-        "john@example.com",
-      );
-
-      expect(mockSupabase.from).toHaveBeenCalledWith("rsvps");
-      expect(rsvpMockBuilder.update).toHaveBeenCalledWith({
-        user_id: "user_123",
-      });
-      expect(rsvpMockBuilder.eq).toHaveBeenCalledWith(
-        "email",
-        "john@example.com",
-      );
-      expect(rsvpMockBuilder.is).toHaveBeenCalledWith("user_id", null);
-
-      expect(result).toEqual({
-        rsvpLinked: 2,
-        contactLinked: 1,
-        errors: [],
-      });
-    });
-
-    // Note: Complex Promise.allSettled error handling test removed due to mock complexity
-  });
-
-  describe("unlinkUserSubmissions", () => {
-    it("should unlink submissions successfully", async () => {
-      // Create separate mock query builders for each call
-      const rsvpMockBuilder = createMockQueryBuilder();
-      const contactMockBuilder = createMockQueryBuilder();
-
-      (mockSupabase.from as any)
-        .mockReturnValueOnce(rsvpMockBuilder)
-        .mockReturnValueOnce(contactMockBuilder);
-
-      rsvpMockBuilder.then.mockImplementation(async (resolve: any) =>
-        resolve({ count: 2, error: null }),
-      );
-      contactMockBuilder.then.mockImplementation(async (resolve: any) =>
-        resolve({ count: 1, error: null }),
-      );
-
-      const result = await unlinkUserSubmissions("user_123");
-
-      expect(mockSupabase.from).toHaveBeenCalledWith("rsvps");
-      expect(rsvpMockBuilder.update).toHaveBeenCalledWith({ user_id: null });
-      expect(rsvpMockBuilder.eq).toHaveBeenCalledWith("user_id", "user_123");
-
-      expect(result).toEqual({
-        rsvpUnlinked: 2,
-        contactUnlinked: 1,
-        errors: [],
-      });
-    });
-
-    // Note: Complex Promise.allSettled error handling test removed due to mock complexity
   });
 
   describe("updateContactSubmissionStatus", () => {

@@ -443,67 +443,6 @@ export async function getUserSubmissionCounts(userId: string) {
   };
 }
 
-// Email-based linking functions (used by webhook)
-export async function linkExistingSubmissionsToUser(
-  userId: string,
-  email: string,
-) {
-  const results = await Promise.allSettled([
-    // Link RSVP submissions
-    supabase
-      .from("rsvps")
-      .update({ user_id: userId })
-      .eq("email", email)
-      .is("user_id", null),
-
-    // Link contact submissions
-    supabase
-      .from("contact_submissions")
-      .update({ user_id: userId })
-      .eq("email", email)
-      .is("user_id", null),
-  ]);
-
-  const rsvpResult = results[0];
-  const contactResult = results[1];
-
-  return {
-    rsvpLinked:
-      rsvpResult.status === "fulfilled" ? rsvpResult.value.count || 0 : 0,
-    contactLinked:
-      contactResult.status === "fulfilled" ? contactResult.value.count || 0 : 0,
-    errors: results
-      .filter((r) => r.status === "rejected")
-      .map((r) => (r as PromiseRejectedResult).reason),
-  };
-}
-
-export async function unlinkUserSubmissions(userId: string) {
-  const results = await Promise.allSettled([
-    // Unlink RSVP submissions
-    supabase.from("rsvps").update({ user_id: null }).eq("user_id", userId),
-
-    // Unlink contact submissions
-    supabase
-      .from("contact_submissions")
-      .update({ user_id: null })
-      .eq("user_id", userId),
-  ]);
-
-  const rsvpResult = results[0];
-  const contactResult = results[1];
-
-  return {
-    rsvpUnlinked:
-      rsvpResult.status === "fulfilled" ? rsvpResult.value.count || 0 : 0,
-    contactUnlinked:
-      contactResult.status === "fulfilled" ? contactResult.value.count || 0 : 0,
-    errors: results
-      .filter((r) => r.status === "rejected")
-      .map((r) => (r as PromiseRejectedResult).reason),
-  };
-}
-
 export async function updateContactSubmissionStatus(
   id: number,
   status: "new" | "in progress" | "resolved" | "closed",
