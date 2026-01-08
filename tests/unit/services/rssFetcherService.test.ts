@@ -151,6 +151,8 @@ describe("rssFetcherService", () => {
             ),
           ],
         },
+        { items: [] }, // Football España (Betis)
+        { items: [] }, // Football España (Transfers)
       ];
 
       // Telegram feeds - first two have items, rest empty
@@ -179,6 +181,7 @@ describe("rssFetcherService", () => {
         { items: [] }, // @DMQRealBetis
         { items: [] }, // @transfer_news_football
         { items: [] }, // @real_betis_balompi
+        { items: [] }, // @TransferNews_Live
       ];
 
       // Mock in correct order: RSS first, then Telegram
@@ -209,20 +212,10 @@ describe("rssFetcherService", () => {
       const rumors = await fetchWithTimers();
 
       const sources = rumors.map((r) => r.source);
-      // RSS sources
-      expect(sources).toContain("Google News (Fichajes)");
-      expect(sources).toContain("Google News (General)");
-      expect(sources).toContain("BetisWeb");
-      // Telegram sources - original
-      expect(sources).toContain("Telegram: @FabrizioRomanoTG");
-      expect(sources).toContain("Telegram: @ficherioRealBetis");
-      // Telegram sources - Betis-specific
-      expect(sources).toContain("Telegram: @Todo_betis");
-      expect(sources).toContain("Telegram: @DMQRealBetis");
-      // Telegram sources - additional channels
-      expect(sources).toContain("Telegram: @transfer_news_football");
-      expect(sources).toContain("Telegram: @real_betis_balompi");
-      expect(sources).toHaveLength(9);
+      // Derive expected sources from config to make test self-updating
+      const expectedSources = _testExports.FEED_CONFIGS.map((c) => c.source);
+      expect(sources.sort()).toEqual(expectedSources.sort());
+      expect(sources).toHaveLength(TOTAL_FEEDS);
     });
 
     it("should handle missing title with default value", async () => {
@@ -419,10 +412,10 @@ describe("rssFetcherService", () => {
 
       const rumors = await fetchWithTimers();
 
-      // All 9 feeds should be called
+      // All feeds should be called
       expect(mockParseURL).toHaveBeenCalledTimes(TOTAL_FEEDS);
-      // Should have 9 items (one from each feed)
-      expect(rumors).toHaveLength(9);
+      // Should have one item from each feed
+      expect(rumors).toHaveLength(TOTAL_FEEDS);
     });
 
     it("should sort rumors by pubDate in descending order", async () => {
@@ -513,16 +506,16 @@ describe("rssFetcherService", () => {
     it("should have correct feed configuration", () => {
       const configs = _testExports.FEED_CONFIGS;
 
-      // 9 feeds: 3 RSS + 6 Telegram
-      expect(configs).toHaveLength(9);
+      // 12 feeds: 5 RSS + 7 Telegram
+      expect(configs).toHaveLength(TOTAL_FEEDS);
 
-      // Verify RSS feeds
+      // Verify RSS feeds (Google News x2, BetisWeb, Football España x2)
       const rssFeeds = configs.filter((c) => c.type === "rss");
-      expect(rssFeeds).toHaveLength(3);
+      expect(rssFeeds).toHaveLength(RSS_FEEDS);
 
       // Verify Telegram feeds (includes Betis-specific and general transfer channels)
       const telegramFeeds = configs.filter((c) => c.type === "telegram");
-      expect(telegramFeeds).toHaveLength(6);
+      expect(telegramFeeds).toHaveLength(TELEGRAM_FEEDS);
       expect(telegramFeeds.every((f) => f.url.includes("tg.i-c-a.su"))).toBe(
         true,
       );
