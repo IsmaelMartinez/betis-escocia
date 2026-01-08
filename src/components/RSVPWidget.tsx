@@ -19,7 +19,7 @@ import {
 } from "@/components/MessageComponent";
 import Field, { ValidatedInput, ValidatedTextarea } from "@/components/Field";
 import { useUser } from "@clerk/nextjs";
-import { isFeatureEnabled } from "@/lib/featureFlags";
+import { hasFeature } from "@/lib/featureFlags";
 import { useRSVPData } from "@/hooks/useRSVPData";
 import { rsvpSchema, type RSVPInput } from "@/lib/schemas/rsvp";
 
@@ -74,7 +74,7 @@ export default function RSVPWidget({
   disableDataFetching = false,
 }: RSVPWidgetProps) {
   const { user } = useUser();
-  const isAuthEnabled = isFeatureEnabled("show-clerk-auth");
+  const isAuthEnabled = hasFeature("show-clerk-auth");
 
   // Use hook for data fetching when not disabled (e.g., in Storybook)
   const {

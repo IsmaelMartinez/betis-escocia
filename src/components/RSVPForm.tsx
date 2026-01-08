@@ -15,7 +15,7 @@ import Field, {
   ValidatedTextarea,
 } from "@/components/Field";
 import { useUser } from "@clerk/nextjs";
-import { isFeatureEnabled } from "@/lib/featureFlags";
+import { hasFeature } from "@/lib/featureFlags";
 import { rsvpSchema, type RSVPInput } from "@/lib/schemas/rsvp";
 
 interface RSVPFormProps {
@@ -28,7 +28,7 @@ export default function RSVPForm({
   selectedMatchId,
 }: RSVPFormProps) {
   const { user } = useUser();
-  const isAuthEnabled = isFeatureEnabled("show-clerk-auth");
+  const isAuthEnabled = hasFeature("show-clerk-auth");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<

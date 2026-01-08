@@ -9,7 +9,7 @@ vi.mock("@clerk/nextjs", () => ({
 }));
 
 vi.mock("@/lib/featureFlags", () => ({
-  isFeatureEnabled: vi.fn(() => false), // Default to disabled
+  hasFeature: vi.fn(() => false), // Default to disabled
 }));
 
 vi.mock("@/components/MessageComponent", () => ({
