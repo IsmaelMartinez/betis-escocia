@@ -50,7 +50,7 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@clerk/testing": "^1.13.23",
+    "@clerk/testing": "^1.13.28",
     "@eslint/eslintrc": "^3",
     "@next/bundle-analyzer": "^16.1.1",
     "@playwright/test": "^1.57.0",
