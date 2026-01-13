@@ -79,17 +79,25 @@ describe("Trending Players API", () => {
 
   describe("GET /api/soylenti/trending", () => {
     it("should return trending players sorted by trend score (recency-weighted)", async () => {
+      // Generate dates relative to today to avoid test failures
+      const today = new Date();
+      const getDaysAgo = (days: number) => {
+        const date = new Date(today);
+        date.setUTCDate(date.getUTCDate() - days);
+        return date.toISOString();
+      };
+
       // Player 1: 5 rumor mentions (recent)
       const player1Mentions = createPlayerMentions(
         1,
         "Isco Alarcón",
         "isco alarcon",
         [
-          "2025-12-28T10:00:00Z",
-          "2025-12-27T10:00:00Z",
-          "2025-12-26T10:00:00Z",
-          "2025-12-25T10:00:00Z",
-          "2025-12-24T10:00:00Z",
+          getDaysAgo(0), // today
+          getDaysAgo(1),
+          getDaysAgo(2),
+          getDaysAgo(3),
+          getDaysAgo(4),
         ],
       );
 
@@ -99,11 +107,11 @@ describe("Trending Players API", () => {
         "Nabil Fekir",
         "nabil fekir",
         [
-          "2025-12-26T10:00:00Z",
-          "2025-12-25T10:00:00Z",
-          "2025-12-24T10:00:00Z",
-          "2025-12-23T10:00:00Z",
-          "2025-12-22T10:00:00Z",
+          getDaysAgo(2),
+          getDaysAgo(3),
+          getDaysAgo(4),
+          getDaysAgo(5),
+          getDaysAgo(6),
         ],
       );
 
@@ -113,9 +121,9 @@ describe("Trending Players API", () => {
         "Marc Roca",
         "marc roca",
         [
-          "2025-12-29T10:00:00Z",
-          "2025-12-28T10:00:00Z",
-          "2025-12-27T10:00:00Z",
+          getDaysAgo(0), // today
+          getDaysAgo(0), // today (same day, different article)
+          getDaysAgo(1),
         ],
       );
 

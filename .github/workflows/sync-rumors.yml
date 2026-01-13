@@ -2,8 +2,8 @@ name: Sync Rumors (Scheduled)
 
 on:
   schedule:
-    # Every 2 hours
-    - cron: '0 */2 * * *'
+    # Every 6 hours
+    - cron: '0 */6 * * *'
   workflow_dispatch: # Allow manual trigger
 
 permissions:

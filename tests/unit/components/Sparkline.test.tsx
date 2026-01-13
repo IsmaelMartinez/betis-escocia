@@ -4,10 +4,24 @@ import Sparkline from "@/components/Sparkline";
 import type { DailyMention } from "@/types/soylenti";
 
 describe("Sparkline", () => {
+  // Generate recent dates dynamically to avoid test failures when dates are in the past
+  const getRecentDates = () => {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+    const dates = [];
+    for (let i = 2; i >= 0; i--) {
+      const date = new Date(today);
+      date.setUTCDate(date.getUTCDate() - i);
+      dates.push(date.toISOString().split("T")[0]);
+    }
+    return dates;
+  };
+
+  const recentDates = getRecentDates();
   const mockData: DailyMention[] = [
-    { date: "2025-12-25", count: 2 },
-    { date: "2025-12-26", count: 5 },
-    { date: "2025-12-27", count: 3 },
+    { date: recentDates[0], count: 2 },
+    { date: recentDates[1], count: 5 },
+    { date: recentDates[2], count: 3 },
   ];
 
   describe("Basic Rendering", () => {
@@ -74,7 +88,10 @@ describe("Sparkline", () => {
     });
 
     it("should handle single data point without division by zero", () => {
-      const singleData: DailyMention[] = [{ date: "2025-12-27", count: 5 }];
+      const today = new Date();
+      today.setUTCHours(0, 0, 0, 0);
+      const todayStr = today.toISOString().split("T")[0];
+      const singleData: DailyMention[] = [{ date: todayStr, count: 5 }];
       const { container } = render(<Sparkline data={singleData} days={1} />);
       const svg = container.querySelector("svg");
       expect(svg).toBeInTheDocument();
@@ -87,9 +104,17 @@ describe("Sparkline", () => {
     });
 
     it("should show dashed line for all zeros data", () => {
+      const today = new Date();
+      today.setUTCHours(0, 0, 0, 0);
+      const dates = [];
+      for (let i = 1; i >= 0; i--) {
+        const date = new Date(today);
+        date.setUTCDate(date.getUTCDate() - i);
+        dates.push(date.toISOString().split("T")[0]);
+      }
       const zeroData: DailyMention[] = [
-        { date: "2025-12-25", count: 0 },
-        { date: "2025-12-26", count: 0 },
+        { date: dates[0], count: 0 },
+        { date: dates[1], count: 0 },
       ];
       const { container } = render(<Sparkline data={zeroData} />);
       const svg = container.querySelector("svg");
