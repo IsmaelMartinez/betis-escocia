@@ -28,16 +28,9 @@ import {
   _testExports,
 } from "@/services/rssFetcherService";
 
-const TOTAL_FEEDS = _testExports.FEED_CONFIGS.length; // 9 feeds (3 RSS + 6 Telegram)
-const RSS_FEEDS = _testExports.FEED_CONFIGS.filter(
-  (c) => c.type === "rss",
-).length;
-const TELEGRAM_FEEDS = _testExports.FEED_CONFIGS.filter(
-  (c) => c.type === "telegram",
-).length;
+const TOTAL_FEEDS = _testExports.FEED_CONFIGS.length; // 5 RSS feeds
 
 // Helper to create mock responses for all feeds
-// Note: RSS feeds are fetched first (in parallel), then Telegram feeds (sequentially)
 const mockAllFeedsEmpty = () => {
   for (let i = 0; i < TOTAL_FEEDS; i++) {
     mockParseURL.mockResolvedValueOnce({ items: [] });
@@ -55,11 +48,7 @@ const mockFirstRssFeedWithData = (feed: { items: unknown[] }) => {
   // First RSS feed gets the data
   mockParseURL.mockResolvedValueOnce(feed);
   // Remaining RSS feeds get empty
-  for (let i = 1; i < RSS_FEEDS; i++) {
-    mockParseURL.mockResolvedValueOnce({ items: [] });
-  }
-  // All Telegram feeds get empty
-  for (let i = 0; i < TELEGRAM_FEEDS; i++) {
+  for (let i = 1; i < TOTAL_FEEDS; i++) {
     mockParseURL.mockResolvedValueOnce({ items: [] });
   }
 };
@@ -114,7 +103,6 @@ describe("rssFetcherService", () => {
   describe("fetchAllRumors", () => {
     it("should fetch and merge rumors from all feeds", async () => {
       // Create feeds with different timestamps to verify sorting
-      // Order: 3 RSS feeds first, then 6 Telegram feeds
       // Use hours ago (not days) to stay well within 24h filter
       const now = new Date();
       const hoursAgo = (h: number) =>
@@ -155,51 +143,19 @@ describe("rssFetcherService", () => {
         { items: [] }, // Football España (Transfers)
       ];
 
-      // Telegram feeds - first two have items, rest empty
-      const telegramFeeds = [
-        {
-          items: [
-            mockFeedItem(
-              "Fabrizio Romano: Here we go!",
-              "https://t.me/FabrizioRomanoTG/123",
-              hoursAgo(1),
-              "Transfer confirmed",
-            ),
-          ],
-        },
-        {
-          items: [
-            mockFeedItem(
-              "Ficherío Betis: Nuevo fichaje",
-              "https://t.me/ficherioRealBetis/456",
-              hoursAgo(8),
-              "Betis transfer news",
-            ),
-          ],
-        },
-        { items: [] }, // @Todo_betis
-        { items: [] }, // @DMQRealBetis
-        { items: [] }, // @transfer_news_football
-        { items: [] }, // @real_betis_balompi
-        { items: [] }, // @TransferNews_Live
-      ];
-
-      // Mock in correct order: RSS first, then Telegram
+      // Mock all RSS feeds
       rssFeeds.forEach((feed) => mockParseURL.mockResolvedValueOnce(feed));
-      telegramFeeds.forEach((feed) => mockParseURL.mockResolvedValueOnce(feed));
 
       const rumors = await fetchWithTimers();
 
       expect(mockParseURL).toHaveBeenCalledTimes(TOTAL_FEEDS);
-      expect(rumors).toHaveLength(5);
+      expect(rumors).toHaveLength(3);
 
       // Should be sorted by date (newest first)
-      // hoursAgo order: 1, 2, 4, 6, 8
-      expect(rumors[0].title).toBe("Fabrizio Romano: Here we go!"); // 1h ago
-      expect(rumors[1].title).toBe("Análisis táctico Betis"); // 2h ago
-      expect(rumors[2].title).toBe("Betis interesado en Fichaje 1"); // 4h ago
-      expect(rumors[3].title).toBe("Betis gana partido"); // 6h ago
-      expect(rumors[4].title).toBe("Ficherío Betis: Nuevo fichaje"); // 8h ago
+      // hoursAgo order: 2, 4, 6
+      expect(rumors[0].title).toBe("Análisis táctico Betis"); // 2h ago
+      expect(rumors[1].title).toBe("Betis interesado en Fichaje 1"); // 4h ago
+      expect(rumors[2].title).toBe("Betis gana partido"); // 6h ago
     });
 
     it("should assign correct source to each feed", async () => {
@@ -399,9 +355,7 @@ describe("rssFetcherService", () => {
       expect(rumors).toEqual([]);
     });
 
-    it("should fetch RSS feeds in parallel", async () => {
-      // RSS feeds are fetched in parallel, Telegram feeds sequentially
-      // This test verifies the RSS parallel behavior
+    it("should fetch all RSS feeds in parallel", async () => {
       const feed = {
         items: [
           mockFeedItem("Item", "https://example.com/1", getRecentDate(1)),
@@ -506,19 +460,13 @@ describe("rssFetcherService", () => {
     it("should have correct feed configuration", () => {
       const configs = _testExports.FEED_CONFIGS;
 
-      // 12 feeds: 5 RSS + 7 Telegram
+      // 5 RSS feeds: Google News x2, BetisWeb, Football España x2
       expect(configs).toHaveLength(TOTAL_FEEDS);
+      expect(configs).toHaveLength(5);
 
-      // Verify RSS feeds (Google News x2, BetisWeb, Football España x2)
+      // Verify all feeds are RSS type
       const rssFeeds = configs.filter((c) => c.type === "rss");
-      expect(rssFeeds).toHaveLength(RSS_FEEDS);
-
-      // Verify Telegram feeds (includes Betis-specific and general transfer channels)
-      const telegramFeeds = configs.filter((c) => c.type === "telegram");
-      expect(telegramFeeds).toHaveLength(TELEGRAM_FEEDS);
-      expect(telegramFeeds.every((f) => f.url.includes("tg.i-c-a.su"))).toBe(
-        true,
-      );
+      expect(rssFeeds).toHaveLength(TOTAL_FEEDS);
     });
   });
 });
