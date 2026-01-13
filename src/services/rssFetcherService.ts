@@ -57,7 +57,7 @@ const FEED_CONFIGS: FeedConfig[] = [
 ];
 
 const parser = new Parser({
-  timeout: 30000,
+  timeout: 10000, // 10-second timeout for RSS feeds
   headers: {
     "User-Agent": "Pena-Betica-Escocesa/1.0",
   },
