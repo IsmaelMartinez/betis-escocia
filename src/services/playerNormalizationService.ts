@@ -217,7 +217,10 @@ export async function findOrCreatePlayer(
 
   // If still not found, try similar name matching (suffix + fuzzy)
   if (!playerToUpdate) {
-    const similarMatch = await findPlayerBySimilarName(normalizedName, supabase);
+    const similarMatch = await findPlayerBySimilarName(
+      normalizedName,
+      supabase,
+    );
     if (similarMatch) {
       playerToUpdate = similarMatch;
       // Auto-add the new variant as an alias for future lookups
