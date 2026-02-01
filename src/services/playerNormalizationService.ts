@@ -21,8 +21,114 @@ export function normalizePlayerName(name: string): string {
 }
 
 /**
+ * Checks if one name is a suffix of another (for matching "Lo Celso" with "Giovani Lo Celso").
+ * Both names should already be normalized.
+ */
+function isSuffixMatch(shorter: string, longer: string): boolean {
+  if (shorter.length >= longer.length) return false;
+  // Check if the longer name ends with the shorter name preceded by a space
+  return longer.endsWith(` ${shorter}`);
+}
+
+/**
+ * Finds a player by suffix matching (e.g., "Lo Celso" matches "Giovani Lo Celso").
+ * This helps catch common variations where only last name is used.
+ * Returns the matched player if found.
+ */
+async function findPlayerBySuffixMatch(
+  normalizedName: string,
+  supabase: SupabaseClient,
+): Promise<Player | null> {
+  // Get all players to check for suffix matches
+  // We limit to players with recent activity for performance
+  const { data: players, error } = await supabase
+    .from("players")
+    .select("*")
+    .order("last_seen_at", { ascending: false })
+    .limit(500);
+
+  if (error || !players) {
+    log.error("Error fetching players for suffix match", error);
+    return null;
+  }
+
+  for (const player of players) {
+    const playerNormalized = player.normalized_name;
+
+    // Check if input is a suffix of existing player name
+    // e.g., "lo celso" is suffix of "giovani lo celso"
+    if (isSuffixMatch(normalizedName, playerNormalized)) {
+      log.debug("Found player via suffix match (input is suffix)", {
+        input: normalizedName,
+        matchedPlayer: player.name,
+        matchedNormalized: playerNormalized,
+      });
+      return player;
+    }
+
+    // Check if existing player name is a suffix of input
+    // e.g., we have "lo celso" and input is "giovani lo celso"
+    if (isSuffixMatch(playerNormalized, normalizedName)) {
+      log.debug("Found player via suffix match (existing is suffix)", {
+        input: normalizedName,
+        matchedPlayer: player.name,
+        matchedNormalized: playerNormalized,
+      });
+      return player;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Adds an alias to a player's aliases array if not already present.
+ */
+async function addAliasToPlayer(
+  player: Player,
+  alias: string,
+  supabase: SupabaseClient,
+): Promise<void> {
+  const existingAliases: string[] = (player.aliases as string[]) || [];
+
+  // Don't add if it's already the primary name or already in aliases
+  if (
+    alias === player.normalized_name ||
+    existingAliases.includes(alias)
+  ) {
+    return;
+  }
+
+  const newAliases = [...existingAliases, alias];
+
+  const { error } = await supabase
+    .from("players")
+    .update({ aliases: newAliases })
+    .eq("id", player.id);
+
+  if (error) {
+    log.error("Error adding alias to player", error, {
+      playerId: player.id,
+      alias,
+    });
+  } else {
+    log.business("alias_auto_added", {
+      playerId: player.id,
+      playerName: player.name,
+      alias,
+    });
+  }
+}
+
+/**
  * Finds an existing player by normalized name (including aliases) or creates a new one.
  * Returns the player record with its ID.
+ *
+ * Matching order:
+ * 1. Exact normalized_name match
+ * 2. Alias array containment
+ * 3. Suffix matching (e.g., "Lo Celso" matches "Giovani Lo Celso")
+ * 4. Create new player if no match
  */
 export async function findOrCreatePlayer(
   name: string,
@@ -66,6 +172,16 @@ export async function findOrCreatePlayer(
         normalizedName,
         matchedPlayer: aliasMatch.name,
       });
+    }
+  }
+
+  // If still not found, try suffix matching
+  if (!playerToUpdate) {
+    const suffixMatch = await findPlayerBySuffixMatch(normalizedName, supabase);
+    if (suffixMatch) {
+      playerToUpdate = suffixMatch;
+      // Auto-add the new variant as an alias for future lookups
+      await addAliasToPlayer(suffixMatch, normalizedName, supabase);
     }
   }
 
