@@ -92,10 +92,7 @@ async function addAliasToPlayer(
   const existingAliases: string[] = (player.aliases as string[]) || [];
 
   // Don't add if it's already the primary name or already in aliases
-  if (
-    alias === player.normalized_name ||
-    existingAliases.includes(alias)
-  ) {
+  if (alias === player.normalized_name || existingAliases.includes(alias)) {
     return;
   }
 
