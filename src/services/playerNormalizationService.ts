@@ -1,7 +1,11 @@
 import { SupabaseClient } from "@supabase/supabase-js";
+import * as fuzzball from "fuzzball";
 import { log } from "@/lib/logger";
 import type { Player, PlayerInsert, NewsPlayerInsert } from "@/lib/supabase";
 import type { ExtractedPlayer } from "./geminiService";
+
+// Threshold for fuzzy matching (same as deduplicationService)
+const PLAYER_SIMILARITY_THRESHOLD = 85;
 
 /**
  * Normalizes a player name for deduplication.
@@ -31,15 +35,17 @@ function isSuffixMatch(shorter: string, longer: string): boolean {
 }
 
 /**
- * Finds a player by suffix matching (e.g., "Lo Celso" matches "Giovani Lo Celso").
- * This helps catch common variations where only last name is used.
- * Returns the matched player if found.
+ * Finds a player by similar name matching using multiple strategies:
+ * 1. Suffix matching (e.g., "Lo Celso" matches "Giovani Lo Celso")
+ * 2. Fuzzy matching using fuzzball (like deduplicationService)
+ *
+ * Returns the matched player if found with high confidence.
  */
-async function findPlayerBySuffixMatch(
+async function findPlayerBySimilarName(
   normalizedName: string,
   supabase: SupabaseClient,
 ): Promise<Player | null> {
-  // Get all players to check for suffix matches
+  // Get all players to check for similar names
   // We limit to players with recent activity for performance
   const { data: players, error } = await supabase
     .from("players")
@@ -48,10 +54,11 @@ async function findPlayerBySuffixMatch(
     .limit(500);
 
   if (error || !players) {
-    log.error("Error fetching players for suffix match", error);
+    log.error("Error fetching players for similar name match", error);
     return null;
   }
 
+  // First pass: suffix matching (most reliable for football names)
   for (const player of players) {
     const playerNormalized = player.normalized_name;
 
@@ -76,6 +83,37 @@ async function findPlayerBySuffixMatch(
       });
       return player;
     }
+  }
+
+  // Second pass: fuzzy matching using fuzzball (same as deduplicationService)
+  let bestMatch: Player | null = null;
+  let bestScore = 0;
+
+  for (const player of players) {
+    // Also check against aliases for fuzzy matching
+    const namesToCheck = [
+      player.normalized_name,
+      ...((player.aliases as string[]) || []),
+    ];
+
+    for (const nameToCheck of namesToCheck) {
+      const score = fuzzball.token_sort_ratio(normalizedName, nameToCheck);
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestMatch = player;
+      }
+    }
+  }
+
+  if (bestScore >= PLAYER_SIMILARITY_THRESHOLD && bestMatch) {
+    log.debug("Found player via fuzzy match", {
+      input: normalizedName,
+      matchedPlayer: bestMatch.name,
+      matchedNormalized: bestMatch.normalized_name,
+      similarityScore: bestScore,
+    });
+    return bestMatch;
   }
 
   return null;
@@ -124,8 +162,13 @@ async function addAliasToPlayer(
  * Matching order:
  * 1. Exact normalized_name match
  * 2. Alias array containment
- * 3. Suffix matching (e.g., "Lo Celso" matches "Giovani Lo Celso")
+ * 3. Similar name matching:
+ *    a. Suffix matching (e.g., "Lo Celso" matches "Giovani Lo Celso")
+ *    b. Fuzzy matching with fuzzball (85% threshold, like deduplicationService)
  * 4. Create new player if no match
+ *
+ * When a similar name match is found, the new variant is automatically added
+ * as an alias for faster future lookups.
  */
 export async function findOrCreatePlayer(
   name: string,
@@ -172,13 +215,13 @@ export async function findOrCreatePlayer(
     }
   }
 
-  // If still not found, try suffix matching
+  // If still not found, try similar name matching (suffix + fuzzy)
   if (!playerToUpdate) {
-    const suffixMatch = await findPlayerBySuffixMatch(normalizedName, supabase);
-    if (suffixMatch) {
-      playerToUpdate = suffixMatch;
+    const similarMatch = await findPlayerBySimilarName(normalizedName, supabase);
+    if (similarMatch) {
+      playerToUpdate = similarMatch;
       // Auto-add the new variant as an alias for future lookups
-      await addAliasToPlayer(suffixMatch, normalizedName, supabase);
+      await addAliasToPlayer(similarMatch, normalizedName, supabase);
     }
   }
 
