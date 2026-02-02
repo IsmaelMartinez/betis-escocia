@@ -1,4 +1,4 @@
-name: Sync Rumors (Scheduled)
+name: Sync Rumors
 
 on:
   # schedule:
