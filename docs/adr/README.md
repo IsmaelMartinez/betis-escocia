@@ -20,14 +20,10 @@ Concise documentation of key architectural decisions.
 | [012](./012-libraries.md)                      | Core Libraries                  | ✅ Accepted |
 | [013](./013-security.md)                       | Security Architecture           | ✅ Accepted |
 | [014](./014-database-migrations.md)            | Database Migration Naming       | ✅ Accepted |
-| [015](./015-ai-rumor-scoring.md)               | AI Rumor Scoring (Soylenti)     | ✅ Accepted |
-| [016](./016-soylenti-frontend-architecture.md) | Soylenti Frontend Architecture  | ✅ Accepted |
-| [017](./017-trending-algorithm.md)             | Half-Life Decay Trending        | ✅ Accepted |
-| [018](./018-player-squad-management.md)        | Player & Squad Management       | ✅ Accepted |
 
 ## Creating New ADRs
 
-1. Use the next sequential number (018, 019, etc.)
+1. Use the next sequential number (015, 016, etc.)
 2. Follow naming: `NNN-kebab-case-title.md`
 3. Keep it concise - focus on **decision** and **why**
 4. Update this index

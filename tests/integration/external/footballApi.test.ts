@@ -572,67 +572,6 @@ describe("FootballDataService Integration Tests", () => {
     });
   });
 
-  describe("fetchRealBetisSquad", () => {
-    it("should fetch Real Betis squad successfully", async () => {
-      const mockSquad = [
-        {
-          id: 1,
-          name: "Isco",
-          position: "Attacking Midfield",
-          dateOfBirth: "1992-04-21",
-          nationality: "Spain",
-        },
-        {
-          id: 2,
-          name: "Antony",
-          position: "Right Winger",
-          dateOfBirth: "2000-02-24",
-          nationality: "Brazil",
-        },
-      ];
-      mockAxiosInstance.get.mockResolvedValueOnce({
-        data: { id: REAL_BETIS_TEAM_ID, name: "Real Betis", squad: mockSquad },
-        status: 200,
-      });
-
-      const result = await footballDataService.fetchRealBetisSquad();
-
-      expect(result).toEqual(mockSquad);
-      expect(mockAxiosInstance.get).toHaveBeenCalledWith(
-        `${MOCK_BASE_URL}/teams/${REAL_BETIS_TEAM_ID}`,
-      );
-    });
-
-    it("should return empty array if squad is not present in response", async () => {
-      mockAxiosInstance.get.mockResolvedValueOnce({
-        data: { id: REAL_BETIS_TEAM_ID, name: "Real Betis" },
-        status: 200,
-      });
-
-      const result = await footballDataService.fetchRealBetisSquad();
-
-      expect(result).toEqual([]);
-    });
-
-    it("should handle API errors gracefully", async () => {
-      const errorMessage = "Request failed with status code 403";
-      mockAxiosInstance.get.mockRejectedValueOnce(new Error(errorMessage));
-
-      await expect(footballDataService.fetchRealBetisSquad()).rejects.toThrow(
-        errorMessage,
-      );
-    });
-
-    it("should handle network errors", async () => {
-      const errorMessage = "Network Error";
-      mockAxiosInstance.get.mockRejectedValueOnce(new Error(errorMessage));
-
-      await expect(footballDataService.fetchRealBetisSquad()).rejects.toThrow(
-        errorMessage,
-      );
-    });
-  });
-
   describe("isHomeMatch", () => {
     it("should return true if the match is a home match for Real Betis", () => {
       const match: Match = {

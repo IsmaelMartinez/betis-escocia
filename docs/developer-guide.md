@@ -117,7 +117,6 @@ if (!isEnabled) return null;
 
 - `nosotros` - About page
 - `unete` - Join/membership functionality
-- `soylenti` - Transfer rumors/news
 
 ### Setup
 

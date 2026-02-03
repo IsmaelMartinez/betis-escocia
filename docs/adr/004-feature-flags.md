@@ -35,7 +35,6 @@ if (hasFeature("show-rsvp")) {
 
 - `show-nosotros` - About page
 - `show-unete` - Join functionality
-- `show-soylenti` - Transfer rumors/news
 
 ### Disabled by Default (Set `=true` to Enable)
 
