@@ -35,12 +35,12 @@ if (hasFeature("show-rsvp")) {
 
 - `show-nosotros` - About page
 - `show-unete` - Join functionality
+- `show-clasificacion` - League standings
 
 ### Disabled by Default (Set `=true` to Enable)
 
 - `show-rsvp` - RSVP functionality
 - `show-contacto` - Contact form
-- `show-clasificacion` - League standings
 - `show-partidos` - Match information
 - `show-clerk-auth` - Authentication UI
 - `show-debug-info` - Debug panel
