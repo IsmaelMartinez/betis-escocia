@@ -28,7 +28,6 @@ describe("Feature Flags - Simplified System", () => {
       // Enabled by default (core features)
       expect(hasFeature("show-nosotros")).toBe(true);
       expect(hasFeature("show-unete")).toBe(true);
-      expect(hasFeature("show-soylenti")).toBe(true);
 
       // Disabled by default (Phase 2 or optional features)
       expect(hasFeature("show-rsvp")).toBe(false);
@@ -87,7 +86,6 @@ describe("Feature Flags - Simplified System", () => {
       // Should include items that are enabled by default
       expect(enabledItems.some((item) => item.name === "Nosotros")).toBe(true);
       expect(enabledItems.some((item) => item.name === "Únete")).toBe(true);
-      expect(enabledItems.some((item) => item.name === "Soylenti")).toBe(true);
 
       // Should NOT include Phase 2 items (disabled by default)
       expect(enabledItems.some((item) => item.name === "RSVP")).toBe(false);

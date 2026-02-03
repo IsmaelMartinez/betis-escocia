@@ -22,7 +22,6 @@ These features are enabled by default and don't require environment variables:
 
 - `show-nosotros` - About page
 - `show-unete` - Join functionality
-- `show-soylenti` - Transfer rumors/news feed
 
 #### Disabled by Default (Require Environment Variable to Enable)
 

@@ -7,14 +7,12 @@ import {
   RSVP,
   ContactSubmission,
   Match,
-  BetisNews,
   createMatch,
   updateMatch,
   deleteMatch,
   getMatches,
   updateContactSubmissionStatus,
 } from "@/lib/supabase";
-import type { BetisNewsWithPlayers } from "@/types/soylenti";
 import {
   Users,
   Mail,
@@ -24,7 +22,6 @@ import {
   Calendar,
   Plus,
   RotateCcw,
-  Newspaper,
 } from "lucide-react";
 import Card, { CardHeader, CardBody } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
@@ -55,19 +52,6 @@ const ContactSubmissionsList = dynamicImport(
     loading: () => <LoadingSpinner />,
   },
 );
-const SoylentiNewsList = dynamicImport(
-  () => import("@/components/admin/SoylentiNewsList"),
-  {
-    loading: () => <LoadingSpinner />,
-  },
-);
-const PlayersTab = dynamicImport(
-  () => import("@/components/admin/players/PlayersTab"),
-  {
-    loading: () => <LoadingSpinner />,
-  },
-);
-
 interface AdminStats {
   totalRSVPs: number;
   totalAttendees: number;
@@ -77,13 +61,7 @@ interface AdminStats {
   recentContacts: ContactSubmission[];
 }
 
-type AdminView =
-  | "dashboard"
-  | "matches"
-  | "match-form"
-  | "contacts"
-  | "soylenti"
-  | "players";
+type AdminView = "dashboard" | "matches" | "match-form" | "contacts";
 
 interface MatchFormData {
   mode: "create" | "edit";
@@ -92,12 +70,9 @@ interface MatchFormData {
 
 interface AdminPageClientProps {
   readonly showPartidos: boolean;
-  readonly showSoylenti: boolean;
 }
 
-const SOYLENTI_ITEMS_PER_PAGE = 20;
-
-function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
+function AdminPageClient({ showPartidos }: AdminPageClientProps) {
   const { isLoaded, isSignedIn, getToken } = useAuth();
   const { user } = useUser();
   const router = useRouter();
@@ -118,13 +93,6 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
   const [allContactSubmissions, setAllContactSubmissions] = useState<
     ContactSubmission[]
   >([]);
-  const [betisNews, setBetisNews] = useState<BetisNewsWithPlayers[]>([]);
-  const [soylentiError, setSoylentiError] = useState<string | null>(null);
-  const [showHiddenNews, setShowHiddenNews] = useState(false);
-  const [soylentiPage, setSoylentiPage] = useState(1);
-  const [soylentiTotalCount, setSoylentiTotalCount] = useState(0);
-  const [onlyWithPlayers, setOnlyWithPlayers] = useState(false);
-
   const handleUpdateContactStatus = async (
     id: number,
     status: ContactSubmission["status"],
@@ -170,246 +138,6 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
         ? prev.filter((s) => s !== status)
         : [...prev, status],
     );
-  };
-
-  // Fetch Soylenti news for admin panel (with player data and pagination)
-  const fetchSoylentiNews = useCallback(
-    async (
-      page: number = 1,
-      withPlayersOnly: boolean = false,
-      showHidden: boolean = false,
-    ) => {
-      try {
-        setSoylentiError(null);
-        const offset = (page - 1) * SOYLENTI_ITEMS_PER_PAGE;
-
-        // Build the select query based on filter
-        // When filtering for news with players, use !inner join to only return matches
-        const selectQuery = withPlayersOnly
-          ? `
-          *,
-          news_players!inner (
-            player_id,
-            role,
-            players (
-              id,
-              name,
-              normalized_name
-            )
-          )
-        `
-          : `
-          *,
-          news_players (
-            player_id,
-            role,
-            players (
-              id,
-              name,
-              normalized_name
-            )
-          )
-        `;
-
-        // Build query with all filters and get count in single request
-        let query = supabase
-          .from("betis_news")
-          .select(selectQuery, { count: "exact" })
-          .eq("is_hidden", showHidden)
-          .order("pub_date", { ascending: false })
-          .range(offset, offset + SOYLENTI_ITEMS_PER_PAGE - 1);
-
-        const { data, error: fetchError, count } = await query;
-
-        if (fetchError) throw fetchError;
-
-        setSoylentiTotalCount(count || 0);
-        setBetisNews((data as BetisNewsWithPlayers[]) || []);
-      } catch (err) {
-        log.error("Failed to fetch Soylenti news in admin panel", err, {
-          userId: user?.id,
-        });
-        setSoylentiError("Error al cargar las noticias de Soylenti");
-      }
-    },
-    [user?.id],
-  );
-
-  // Handle news reassessment
-  const handleReassessNews = async (
-    newsId: number,
-    adminContext: string,
-  ): Promise<{ success: boolean; error?: string }> => {
-    try {
-      const response = await fetch("/api/admin/soylenti/reassess", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ newsId, adminContext }),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        // Refresh the news list after successful reassessment
-        await fetchSoylentiNews(soylentiPage, onlyWithPlayers, showHiddenNews);
-        return { success: true };
-      } else {
-        return {
-          success: false,
-          error: result.error || "Error al re-analizar",
-        };
-      }
-    } catch (err) {
-      log.error("Failed to reassess news in admin panel", err, {
-        newsId,
-        userId: user?.id,
-      });
-      return { success: false, error: "Error al re-analizar la noticia" };
-    }
-  };
-
-  // Handle news hide/unhide
-  const handleHideNews = async (
-    newsId: number,
-    hide: boolean,
-    reason?: string,
-  ): Promise<{ success: boolean; error?: string }> => {
-    try {
-      const response = await fetch("/api/admin/soylenti/hide", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ newsId, hide, reason }),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        // Refresh the news list after successful hide/unhide
-        await fetchSoylentiNews(soylentiPage, onlyWithPlayers, showHiddenNews);
-        return { success: true };
-      } else {
-        return {
-          success: false,
-          error: result.error || "Error al cambiar visibilidad",
-        };
-      }
-    } catch (err) {
-      log.error("Failed to hide/unhide news in admin panel", err, {
-        newsId,
-        hide,
-        userId: user?.id,
-      });
-      return { success: false, error: "Error al cambiar visibilidad" };
-    }
-  };
-
-  // Handle probability update
-  const handleUpdateProbability = async (
-    newsId: number,
-    probability: number,
-  ): Promise<{ success: boolean; error?: string }> => {
-    try {
-      const response = await fetch("/api/admin/soylenti/probability", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ newsId, probability }),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        await fetchSoylentiNews(soylentiPage, onlyWithPlayers, showHiddenNews);
-        return { success: true };
-      } else {
-        return {
-          success: false,
-          error: result.error || "Error al actualizar probabilidad",
-        };
-      }
-    } catch (err) {
-      log.error("Failed to update probability in admin panel", err, {
-        newsId,
-        probability,
-        userId: user?.id,
-      });
-      return { success: false, error: "Error al actualizar la probabilidad" };
-    }
-  };
-
-  // Handle add player to news
-  const handleAddPlayer = async (
-    newsId: number,
-    playerName: string,
-  ): Promise<{ success: boolean; error?: string }> => {
-    try {
-      const response = await fetch("/api/admin/soylenti/news-players", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ newsId, playerName }),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        await fetchSoylentiNews(soylentiPage, onlyWithPlayers, showHiddenNews);
-        return { success: true };
-      } else {
-        return {
-          success: false,
-          error: result.error || "Error al añadir jugador",
-        };
-      }
-    } catch (err) {
-      log.error("Failed to add player in admin panel", err, {
-        newsId,
-        playerName,
-        userId: user?.id,
-      });
-      return { success: false, error: "Error al añadir el jugador" };
-    }
-  };
-
-  // Handle remove player from news
-  const handleRemovePlayer = async (
-    newsId: number,
-    playerId: number,
-  ): Promise<{ success: boolean; error?: string }> => {
-    try {
-      const response = await fetch("/api/admin/soylenti/news-players", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ newsId, playerId }),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        await fetchSoylentiNews(soylentiPage, onlyWithPlayers, showHiddenNews);
-        return { success: true };
-      } else {
-        return {
-          success: false,
-          error: result.error || "Error al eliminar jugador",
-        };
-      }
-    } catch (err) {
-      log.error("Failed to remove player in admin panel", err, {
-        newsId,
-        playerId,
-        userId: user?.id,
-      });
-      return { success: false, error: "Error al eliminar el jugador" };
-    }
   };
 
   // Redirect to sign-in if not authenticated
@@ -683,37 +411,6 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
     }
   }, [syncMessage]);
 
-  // Fetch Soylenti news when switching to soylenti view or filter/page changes
-  useEffect(() => {
-    if (currentView === "soylenti" && isSignedIn) {
-      fetchSoylentiNews(soylentiPage, onlyWithPlayers, showHiddenNews);
-    }
-  }, [
-    currentView,
-    isSignedIn,
-    fetchSoylentiNews,
-    soylentiPage,
-    onlyWithPlayers,
-    showHiddenNews,
-  ]);
-
-  // Handler for pagination
-  const handleSoylentiPageChange = (newPage: number) => {
-    setSoylentiPage(newPage);
-  };
-
-  // Handler for filter toggle - reset to page 1 when filter changes
-  const handleOnlyWithPlayersChange = (value: boolean) => {
-    setOnlyWithPlayers(value);
-    setSoylentiPage(1);
-  };
-
-  // Handler for hidden filter toggle - reset to page 1 when filter changes
-  const handleShowHiddenChange = (value: boolean) => {
-    setShowHiddenNews(value);
-    setSoylentiPage(1);
-  };
-
   // Show loading while Clerk is loading
   if (!isLoaded) {
     return (
@@ -764,10 +461,6 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
                     ? "Crear nuevo partido"
                     : "Editar partido")}
                 {currentView === "contacts" && "Gestión de contactos"}
-                {currentView === "soylenti" &&
-                  "Gestión de noticias y rumores de Soylenti"}
-                {currentView === "players" &&
-                  "Gestión de jugadores, plantilla y alineaciones"}
               </p>
               {user && (
                 <p className="text-sm text-betis-green mt-1">
@@ -852,35 +545,6 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
                 Contactos
               </button>
 
-              {showSoylenti && (
-                <button
-                  onClick={() => setCurrentView("soylenti")}
-                  className={clsx(
-                    "py-2 px-1 border-b-2 font-medium text-sm",
-                    currentView === "soylenti"
-                      ? "border-betis-green text-betis-green"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
-                  )}
-                >
-                  <Newspaper className="h-4 w-4 inline mr-2" />
-                  Soylenti
-                </button>
-              )}
-
-              {showSoylenti && (
-                <button
-                  onClick={() => setCurrentView("players")}
-                  className={clsx(
-                    "py-2 px-1 border-b-2 font-medium text-sm",
-                    currentView === "players"
-                      ? "border-betis-green text-betis-green"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
-                  )}
-                >
-                  <Users className="h-4 w-4 inline mr-2" />
-                  Jugadores
-                </button>
-              )}
             </nav>
           </div>
         </div>
@@ -1196,71 +860,6 @@ function AdminPageClient({ showPartidos, showSoylenti }: AdminPageClientProps) {
           </>
         )}
 
-        {/* Soylenti News Management View */}
-        {currentView === "soylenti" && showSoylenti && (
-          <>
-            <div className="mb-6 flex flex-col gap-4">
-              <p className="text-sm text-gray-600">
-                Re-analiza noticias con IA proporcionando contexto adicional
-                (jugador incorrecto, equipo incorrecto, etc.)
-              </p>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                {/* Filter toggles */}
-                <div className="flex flex-wrap items-center gap-4">
-                  <label className="inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={onlyWithPlayers}
-                      onChange={(e) =>
-                        handleOnlyWithPlayersChange(e.target.checked)
-                      }
-                      className="sr-only peer"
-                    />
-                    <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-betis-verde/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-betis-verde"></div>
-                    <span className="ms-3 text-sm font-medium text-gray-700">
-                      Solo con jugadores
-                    </span>
-                  </label>
-                  <label className="inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={showHiddenNews}
-                      onChange={(e) => handleShowHiddenChange(e.target.checked)}
-                      className="sr-only peer"
-                    />
-                    <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-betis-verde/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-betis-verde"></div>
-                    <span className="ms-3 text-sm font-medium text-gray-700">
-                      Mostrar solo ocultos
-                    </span>
-                  </label>
-                </div>
-                {/* Total count */}
-                <span className="text-sm text-gray-500">
-                  {soylentiTotalCount} noticias en total
-                </span>
-              </div>
-            </div>
-            <SoylentiNewsList
-              news={betisNews}
-              onReassess={handleReassessNews}
-              onHide={handleHideNews}
-              onUpdateProbability={handleUpdateProbability}
-              onAddPlayer={handleAddPlayer}
-              onRemovePlayer={handleRemovePlayer}
-              isLoading={loading}
-              error={soylentiError}
-              currentPage={soylentiPage}
-              totalCount={soylentiTotalCount}
-              itemsPerPage={SOYLENTI_ITEMS_PER_PAGE}
-              onPageChange={handleSoylentiPageChange}
-            />
-          </>
-        )}
-
-        {/* Players Management View */}
-        {currentView === "players" && showSoylenti && (
-          <PlayersTab isLoading={loading} />
-        )}
       </div>
     </div>
   );

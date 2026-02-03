@@ -14,8 +14,7 @@ export type FeatureName =
   | "show-debug-info"
   | "show-rsvp"
   | "show-unete"
-  | "show-contacto"
-  | "show-soylenti";
+  | "show-contacto";
 
 // Navigation item interface
 export interface NavigationItem {
@@ -36,7 +35,6 @@ const DEFAULT_FEATURES: Record<FeatureName, boolean> = {
   "show-rsvp": false, // Phase 2: RSVP functionality
   "show-unete": true, // Core: Join page
   "show-contacto": false, // Phase 2: contact form
-  "show-soylenti": true, // Phase 1: live RSS feed display
 };
 
 // Environment variable mapping
@@ -49,7 +47,6 @@ const ENV_VAR_MAP: Record<FeatureName, string> = {
   "show-rsvp": "NEXT_PUBLIC_FEATURE_RSVP",
   "show-unete": "NEXT_PUBLIC_FEATURE_UNETE",
   "show-contacto": "NEXT_PUBLIC_FEATURE_CONTACTO",
-  "show-soylenti": "NEXT_PUBLIC_FEATURE_SOYLENTI",
 };
 
 // Cache for resolved features (only used in production for performance)
@@ -133,12 +130,6 @@ export function getEnabledNavigationItems(): NavigationItem[] {
       href: "/nosotros",
       nameEn: "About",
       feature: "show-nosotros",
-    },
-    {
-      name: "Soylenti",
-      href: "/soylenti",
-      nameEn: "Rumors",
-      feature: "show-soylenti",
     },
     { name: "Únete", href: "/unete", nameEn: "Join", feature: "show-unete" },
     {

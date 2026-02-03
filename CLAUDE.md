@@ -92,7 +92,7 @@ sql/                    # Database migrations & scripts
 - **Usage**: `hasFeature('flag-name')` (synchronous)
 - **Configuration**: Set `NEXT_PUBLIC_FEATURE_*=true` to enable disabled-by-default features
 - **Location**: `src/lib/featureFlags.ts`
-- **Enabled by default**: Nosotros, Únete (Join), Soylenti (rumors)
+- **Enabled by default**: Nosotros, Únete (Join)
 - **Disabled by default**: RSVP, Contacto, Clasificación, Partidos, Galería, Clerk Auth, Debug Info
 - **Development mode**: No caching - changes to `.env.local` apply immediately
 - **Documentation**: See `docs/adr/004-feature-flags.md`
@@ -443,37 +443,6 @@ const handleAnswerClick = () => {
   setTimeout(() => goToNextQuestion(), 2000);
 };
 ```
-
-## Soylenti Implementation
-
-The Soylenti feature provides AI-analyzed transfer rumors from RSS feeds with player tracking. The page shows ONLY transfer rumors (filtered server-side) - "Soylenti" means "rumors" in Turkish.
-
-### Architecture
-
-The feature uses a consolidated architecture with shared code:
-
-- **Types**: `src/types/soylenti.ts` - Shared types (Rumor, PlayerInfo, BetisNewsWithPlayers)
-- **Utilities**: `src/lib/soylenti/utils.ts` - Shared utilities (isTransferRumor, getProbabilityColor, formatSoylentiDate)
-- **Queries**: `src/lib/soylenti/queries.ts` - Consolidated database queries with optimized joins
-- **Server Actions**: `src/app/soylenti/actions.ts` - Server action wrappers
-
-### Key Patterns
-
-The `ai_probability` field comes from the database as a string (NUMERIC type) - always use `Number()` conversion before comparisons. The semantics are: `null` = unanalyzed, `0` = non-transfer news, `>0` = transfer rumor with credibility score (1-100).
-
-All public queries filter for rumors only using `.gt("ai_probability", 0)` - this includes the initial page load, pagination, and player filtering. General news (ai_probability = 0 or null) is only accessible in the admin panel.
-
-Color thresholds for probability badges: 70+ = green (high credibility), 40-69 = gold (medium), <40 = gray (low).
-
-The `fetchRumorsByPlayer` function uses an optimized single query with `!inner` joins instead of 3 sequential queries.
-
-### Database Tables
-
-The feature uses three tables: `betis_news` (main news storage), `players` (normalized player tracking), and `news_players` (junction table with roles: target, departing, mentioned).
-
-### Automatic Cleanup
-
-Non-rumor news (ai_probability = 0) is automatically deleted after 24 hours to keep the database lean. Cleanup runs daily at 2 AM UTC via GitHub Actions. Transfer rumors (ai_probability > 0) are preserved indefinitely. See `docs/soylenti-cleanup.md` for details.
 
 ## Areas for Future Enhancement
 
