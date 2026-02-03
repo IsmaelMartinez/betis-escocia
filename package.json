@@ -80,7 +80,7 @@
     "tsx": "^4.21.0",
     "typescript": "^5",
     "undici": "^7.16.0",
-    "vitest": "^4.0.15",
+    "vitest": "^4.0.18",
     "wait-on": "^9.0.3"
   },
   "optionalDependencies": {
