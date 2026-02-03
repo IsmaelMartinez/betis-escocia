@@ -1,8 +1,6 @@
 import { test, expect } from "./fixtures";
 
-// TODO: Re-enable these tests when NEXT_PUBLIC_FEATURE_CLASIFICACION is enabled in CI environment
-// These tests require the clasificacion feature flag to be enabled
-test.describe.skip("Clasificacion Page Happy Path", () => {
+test.describe("Clasificacion Page Happy Path", () => {
   test("should load successfully and display key elements", async ({
     page,
   }) => {
