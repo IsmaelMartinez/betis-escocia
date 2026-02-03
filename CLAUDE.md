@@ -92,10 +92,11 @@ sql/                    # Database migrations & scripts
 - **Usage**: `hasFeature('flag-name')` (synchronous)
 - **Configuration**: Set `NEXT_PUBLIC_FEATURE_*=true` to enable disabled-by-default features, or `=false` to disable core features
 - **Location**: `src/lib/featureFlags.ts`
-- **Enabled by default**: Nosotros, Únete (Join), Soylenti (rumors), Clasificación (standings)
-- **Disabled by default**: RSVP, Contacto, Partidos, Galería, Clerk Auth, Debug Info
+- **Enabled by default**: Nosotros, Únete (Join), Soylenti (rumors), Clasificación (standings), Partidos (matches)
+- **Disabled by default**: RSVP, Contacto, Galería, Clerk Auth, Debug Info
 - **Development mode**: No caching - changes to `.env.local` apply immediately
 - **Documentation**: See `docs/adr/004-feature-flags.md`
+- **Auto-sync**: Partidos feature includes automatic background sync that updates past matches with missing data when users visit the site
 
 ### Authentication Flow (Clerk + Supabase)
 
