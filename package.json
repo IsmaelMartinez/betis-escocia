@@ -73,7 +73,7 @@
     "lighthouse": "^13.0.1",
     "msw": "^2.12.4",
     "msw-storybook-addon": "^2.0.6",
-    "pg": "^8.16.3",
+    "pg": "^8.18.0",
     "playwright": "^1.57.0",
     "storybook": "^10.1.11",
     "tailwindcss": "^4",
