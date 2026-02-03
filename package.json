@@ -79,7 +79,7 @@
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5",
-    "undici": "^7.16.0",
+    "undici": "^7.18.2",
     "vitest": "^4.0.15",
     "wait-on": "^9.0.3"
   },
