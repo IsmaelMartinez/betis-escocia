@@ -1,8 +1,6 @@
 import { test, expect } from "./fixtures";
 
-// TODO: Re-enable these tests when NEXT_PUBLIC_FEATURE_CLASIFICACION is enabled in CI environment
-// These tests require the clasificacion feature flag to be enabled
-test.describe.skip("Clasificacion Page Happy Path", () => {
+test.describe("Clasificacion Page Happy Path", () => {
   test("should load successfully and display key elements", async ({
     page,
   }) => {
@@ -12,9 +10,9 @@ test.describe.skip("Clasificacion Page Happy Path", () => {
 
     // 2.3.2 Assert visibility of key elements
     await expect(
-      page.getByRole("heading", { name: "Clasificación de La Liga", level: 1 }),
+      page.getByRole("heading", { name: "Clasificación", level: 1 }),
     ).toBeVisible();
-    await expect(page.getByText("Leyenda de Competiciones")).toBeVisible();
+    await expect(page.getByText("La Liga")).toBeVisible();
 
     // 2.3.4 Ensure no console errors or network failures on page load
     page.on("console", (msg) => {

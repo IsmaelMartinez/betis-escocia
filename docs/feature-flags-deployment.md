@@ -9,7 +9,7 @@ The project uses environment variables for simple feature flag control. This doc
 ### Key Principles
 
 - **Default behavior**: Core features are enabled by default, advanced features are disabled
-- **Environment variables**: Set to `true` to enable features, or omit for defaults
+- **Environment variables**: Set to `true` to enable features, `false` to disable core features, or omit for defaults
 - **Development mode**: No caching - changes to `.env.local` take effect immediately
 - **Production mode**: Cached for performance after first read
 - **Type safety**: All feature names are strictly typed
@@ -18,10 +18,11 @@ The project uses environment variables for simple feature flag control. This doc
 
 #### Enabled by Default (Core Features)
 
-These features are enabled by default and don't require environment variables:
+These features are enabled by default and don't require environment variables. Set `NEXT_PUBLIC_FEATURE_*=false` to disable:
 
-- `show-nosotros` - About page
-- `show-unete` - Join functionality
+- `show-nosotros` - About page (`NEXT_PUBLIC_FEATURE_NOSOTROS`)
+- `show-unete` - Join functionality (`NEXT_PUBLIC_FEATURE_UNETE`)
+- `show-clasificacion` - League standings (`NEXT_PUBLIC_FEATURE_CLASIFICACION`)
 
 #### Disabled by Default (Require Environment Variable to Enable)
 
@@ -29,7 +30,6 @@ These features are disabled by default and require `NEXT_PUBLIC_FEATURE_*=true` 
 
 - `show-rsvp` - RSVP functionality (`NEXT_PUBLIC_FEATURE_RSVP=true`)
 - `show-contacto` - Contact form (`NEXT_PUBLIC_FEATURE_CONTACTO=true`)
-- `show-clasificacion` - League standings (`NEXT_PUBLIC_FEATURE_CLASIFICACION=true`)
 - `show-partidos` - Match information (`NEXT_PUBLIC_FEATURE_PARTIDOS=true`)
 - `show-clerk-auth` - Authentication UI (`NEXT_PUBLIC_FEATURE_CLERK_AUTH=true`)
 - `show-debug-info` - Debug info panel (`NEXT_PUBLIC_FEATURE_DEBUG_INFO=true`)
@@ -50,9 +50,9 @@ NEXT_PUBLIC_FEATURE_CONTACTO=true
 
 ```bash
 # Enable all Phase 2 features for production
+# (clasificacion is already enabled by default)
 NEXT_PUBLIC_FEATURE_RSVP=true
 NEXT_PUBLIC_FEATURE_CONTACTO=true
-NEXT_PUBLIC_FEATURE_CLASIFICACION=true
 NEXT_PUBLIC_FEATURE_PARTIDOS=true
 NEXT_PUBLIC_FEATURE_CLERK_AUTH=true
 # Note: Don't enable debug info in production
@@ -62,9 +62,9 @@ NEXT_PUBLIC_FEATURE_CLERK_AUTH=true
 
 ```bash
 # Enable all features including debug for testing
+# (clasificacion is already enabled by default)
 NEXT_PUBLIC_FEATURE_RSVP=true
 NEXT_PUBLIC_FEATURE_CONTACTO=true
-NEXT_PUBLIC_FEATURE_CLASIFICACION=true
 NEXT_PUBLIC_FEATURE_PARTIDOS=true
 NEXT_PUBLIC_FEATURE_CLERK_AUTH=true
 NEXT_PUBLIC_FEATURE_DEBUG_INFO=true

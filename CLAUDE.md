@@ -90,10 +90,10 @@ sql/                    # Database migrations & scripts
 
 - **Simple approach**: Environment variable-based flags, cached in production only
 - **Usage**: `hasFeature('flag-name')` (synchronous)
-- **Configuration**: Set `NEXT_PUBLIC_FEATURE_*=true` to enable disabled-by-default features
+- **Configuration**: Set `NEXT_PUBLIC_FEATURE_*=true` to enable disabled-by-default features, or `=false` to disable core features
 - **Location**: `src/lib/featureFlags.ts`
-- **Enabled by default**: Nosotros, Únete (Join)
-- **Disabled by default**: RSVP, Contacto, Clasificación, Partidos, Galería, Clerk Auth, Debug Info
+- **Enabled by default**: Nosotros, Únete (Join), Soylenti (rumors), Clasificación (standings)
+- **Disabled by default**: RSVP, Contacto, Partidos, Galería, Clerk Auth, Debug Info
 - **Development mode**: No caching - changes to `.env.local` apply immediately
 - **Documentation**: See `docs/adr/004-feature-flags.md`
 
