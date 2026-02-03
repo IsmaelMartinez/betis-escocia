@@ -10,9 +10,9 @@ test.describe("Clasificacion Page Happy Path", () => {
 
     // 2.3.2 Assert visibility of key elements
     await expect(
-      page.getByRole("heading", { name: "Clasificación de La Liga", level: 1 }),
+      page.getByRole("heading", { name: "Clasificación", level: 1 }),
     ).toBeVisible();
-    await expect(page.getByText("Leyenda de Competiciones")).toBeVisible();
+    await expect(page.getByText("La Liga")).toBeVisible();
 
     // 2.3.4 Ensure no console errors or network failures on page load
     page.on("console", (msg) => {
