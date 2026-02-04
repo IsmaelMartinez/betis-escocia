@@ -6,9 +6,11 @@ import AllDatabaseMatches from '@/components/AllDatabaseMatches';
 import RSVPModal, { useRSVPModal } from '@/components/RSVPModal';
 import SidebarCard from '@/components/SidebarCard';
 import { Calendar } from 'lucide-react';
+import { hasFeature } from '@/lib/featureFlags';
 
 export default function MatchesPage() {
   const { isOpen, openModal, closeModal } = useRSVPModal();
+  const isRSVPEnabled = hasFeature('show-rsvp');
   return (
     <div className="min-h-screen">
       {/* Hero Section - Cultural Fusion Design */}
@@ -50,23 +52,25 @@ export default function MatchesPage() {
             <div className="lg:col-span-1">
               <div className="sticky top-8 space-y-6">
                 {/* RSVP Card - Redesigned */}
-                <SidebarCard>
-                  <div className="w-12 h-12 bg-betis-verde rounded-full flex items-center justify-center mb-4 mx-auto">
-                    <Calendar className="h-6 w-6 text-white" />
-                  </div>
-                  <h3 className="font-heading text-lg font-bold text-scotland-navy mb-2 text-center uppercase tracking-wide">
-                    Próximo Partido
-                  </h3>
-                  <p className="font-body text-sm text-gray-600 mb-4 text-center">
-                    ¿Vienes al Polwarth Tavern?
-                  </p>
-                  <button
-                    onClick={openModal}
-                    className="w-full bg-betis-verde hover:bg-betis-verde-dark text-white font-heading font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl uppercase tracking-wide text-sm"
-                  >
-                    ✅ Confirmar Asistencia
-                  </button>
-                </SidebarCard>
+                {isRSVPEnabled && (
+                  <SidebarCard>
+                    <div className="w-12 h-12 bg-betis-verde rounded-full flex items-center justify-center mb-4 mx-auto">
+                      <Calendar className="h-6 w-6 text-white" />
+                    </div>
+                    <h3 className="font-heading text-lg font-bold text-scotland-navy mb-2 text-center uppercase tracking-wide">
+                      Próximo Partido
+                    </h3>
+                    <p className="font-body text-sm text-gray-600 mb-4 text-center">
+                      ¿Vienes al Polwarth Tavern?
+                    </p>
+                    <button
+                      onClick={openModal}
+                      className="w-full bg-betis-verde hover:bg-betis-verde-dark text-white font-heading font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl uppercase tracking-wide text-sm"
+                    >
+                      ✅ Confirmar Asistencia
+                    </button>
+                  </SidebarCard>
+                )}
 
                 {/* Position Widget - With design wrapper */}
                 <SidebarCard patternClass="pattern-tartan-subtle">
@@ -79,18 +83,20 @@ export default function MatchesPage() {
       </section>
 
       {/* RSVP Modal */}
-      <RSVPModal
-        isOpen={isOpen}
-        onClose={closeModal}
-        event={{
-          id: undefined,
-          title: "Próximo Partido del Betis",
-          date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-          location: "Polwarth Tavern, Edinburgh",
-          description: "Confirma tu asistencia para ver el partido con la peña"
-        }}
-        modalTitle="¿Vienes al próximo partido?"
-      />
+      {isRSVPEnabled && (
+        <RSVPModal
+          isOpen={isOpen}
+          onClose={closeModal}
+          event={{
+            id: undefined,
+            title: "Próximo Partido del Betis",
+            date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            location: "Polwarth Tavern, Edinburgh",
+            description: "Confirma tu asistencia para ver el partido con la peña"
+          }}
+          modalTitle="¿Vienes al próximo partido?"
+        />
+      )}
     </div>
   );
 }
