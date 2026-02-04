@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Users, MapPin, Trophy } from "lucide-react";
+import { Users, Trophy } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { FeatureWrapper } from "@/lib/featureProtection";
@@ -62,13 +62,6 @@ export function convertDatabaseMatchToTicketProps(
             away: dbMatch.away_score,
           }
         : undefined,
-    watchParty: isUpcoming
-      ? {
-          location: "Polwarth Tavern",
-          address: "35 Polwarth Cres, Edinburgh EH11 1HR",
-          time: format(new Date(dbMatch.date_time), "HH:mm", { locale: es }),
-        }
-      : undefined,
     rsvpInfo:
       rsvpCount !== undefined && totalAttendees !== undefined
         ? {
@@ -110,7 +103,6 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
     opponentCrest,
     competitionEmblem,
     score,
-    watchParty,
     rsvpInfo,
     showRSVP,
     priority = "normal",
@@ -340,19 +332,6 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
             </div>
           )}
         </div>
-
-        {/* Watch party info for upcoming matches */}
-        {isUpcoming && watchParty && (
-          <div className="bg-scotland-mist rounded-lg p-3 mb-4">
-            <div className="flex items-center gap-2 text-scotland-navy font-medium text-sm mb-1">
-              <MapPin className="w-4 h-4 text-betis-verde" />
-              {watchParty.location}
-            </div>
-            <div className="text-xs text-gray-600 ml-6">
-              {watchParty.address}
-            </div>
-          </div>
-        )}
 
         {/* RSVP section for upcoming matches */}
         {isUpcoming && showRSVP && (

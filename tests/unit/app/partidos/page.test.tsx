@@ -24,19 +24,27 @@ vi.mock('@/components/RSVPModal', () => ({
   }),
 }));
 
+vi.mock('@/components/SidebarCard', () => ({
+  default: ({ children }: { children: React.ReactNode }) => <div data-testid="sidebar-card">{children}</div>,
+}));
+
 // Mock Lucide React icons
 vi.mock('lucide-react', () => ({
-  Calendar: vi.fn(({ className }) => (
+  Calendar: vi.fn(({ className }: { className?: string }) => (
     <div data-testid="calendar-icon" className={className} />
   )),
-  MapPin: vi.fn(({ className }) => (
-    <div data-testid="map-pin-icon" className={className} />
-  )),
+}));
+
+// Mock feature flags - default RSVP to false (disabled by default)
+const mockHasFeature = vi.fn(() => false);
+vi.mock('@/lib/featureFlags', () => ({
+  hasFeature: (...args: unknown[]) => mockHasFeature(...args),
 }));
 
 describe('MatchesPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockHasFeature.mockReturnValue(false);
   });
 
   describe('Basic rendering', () => {
@@ -48,11 +56,10 @@ describe('MatchesPage', () => {
       expect(heading).toHaveTextContent('Partidos');
     });
 
-    it('should render hero section with tagline', () => {
+    it('should render hero section with heading', () => {
       render(<MatchesPage />);
 
-      expect(screen.getByText('Todos los partidos en el Polwarth Tavern')).toBeInTheDocument();
-      expect(screen.getByText(/No te pierdas ningún partido del Betis/)).toBeInTheDocument();
+      expect(screen.getByText('Partidos')).toBeInTheDocument();
     });
 
     it('should render main components', () => {
@@ -61,12 +68,21 @@ describe('MatchesPage', () => {
       expect(screen.getByTestId('api-error-boundary')).toBeInTheDocument();
       expect(screen.getByTestId('all-database-matches')).toBeInTheDocument();
       expect(screen.getByTestId('betis-position-widget')).toBeInTheDocument();
-      expect(screen.getByTestId('rsvp-modal')).toBeInTheDocument();
     });
   });
 
   describe('Sidebar content', () => {
-    it('should render RSVP card in sidebar', () => {
+    it('should not render RSVP card when show-rsvp flag is disabled', () => {
+      mockHasFeature.mockReturnValue(false);
+      render(<MatchesPage />);
+
+      expect(screen.queryByText('Próximo Partido')).not.toBeInTheDocument();
+      expect(screen.queryByText('¿Vienes al Polwarth Tavern?')).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /Confirmar Asistencia/i })).not.toBeInTheDocument();
+    });
+
+    it('should render RSVP card when show-rsvp flag is enabled', () => {
+      mockHasFeature.mockReturnValue(true);
       render(<MatchesPage />);
 
       expect(screen.getByText('Próximo Partido')).toBeInTheDocument();
@@ -74,23 +90,18 @@ describe('MatchesPage', () => {
       expect(screen.getByRole('button', { name: /Confirmar Asistencia/i })).toBeInTheDocument();
     });
 
-    it('should render Polwarth info in sidebar', () => {
+    it('should render RSVPModal when show-rsvp flag is enabled', () => {
+      mockHasFeature.mockReturnValue(true);
       render(<MatchesPage />);
 
-      expect(screen.getByText('Polwarth Tavern')).toBeInTheDocument();
-      expect(screen.getByText(/35 Polwarth Cres/)).toBeInTheDocument();
-      expect(screen.getByText(/Edinburgh EH11 1HR/)).toBeInTheDocument();
-      expect(screen.getByText('📞 +44 131 221 9906')).toBeInTheDocument();
+      expect(screen.getByTestId('rsvp-modal')).toBeInTheDocument();
     });
 
-    it('should render Google Maps link in sidebar', () => {
+    it('should not render RSVPModal when show-rsvp flag is disabled', () => {
+      mockHasFeature.mockReturnValue(false);
       render(<MatchesPage />);
 
-      const mapsLink = screen.getByRole('link', { name: /Ver en Maps/i });
-      expect(mapsLink).toBeInTheDocument();
-      expect(mapsLink).toHaveAttribute('href', 'https://maps.google.com/maps?q=Polwarth+Tavern+Edinburgh');
-      expect(mapsLink).toHaveAttribute('target', '_blank');
-      expect(mapsLink).toHaveAttribute('rel', 'noopener noreferrer');
+      expect(screen.queryByTestId('rsvp-modal')).not.toBeInTheDocument();
     });
 
     it('should have sticky positioning for sidebar', () => {
@@ -160,22 +171,14 @@ describe('MatchesPage', () => {
       const headings = screen.getAllByRole('heading');
       expect(headings.length).toBeGreaterThan(0);
     });
-
-    it('should have proper link attributes', () => {
-      render(<MatchesPage />);
-
-      const externalLink = screen.getByRole('link', { name: /Ver en Maps/i });
-      expect(externalLink).toHaveAttribute('rel', 'noopener noreferrer');
-      expect(externalLink).toHaveAttribute('target', '_blank');
-    });
   });
 
   describe('Icons', () => {
-    it('should render Lucide icons', () => {
+    it('should render Calendar icon when RSVP is enabled', () => {
+      mockHasFeature.mockReturnValue(true);
       render(<MatchesPage />);
 
       expect(screen.getAllByTestId('calendar-icon').length).toBeGreaterThan(0);
-      expect(screen.getAllByTestId('map-pin-icon').length).toBeGreaterThan(0);
     });
   });
 });

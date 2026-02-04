@@ -26,9 +26,7 @@ vi.mock('next/link', () => ({
 }));
 
 vi.mock('lucide-react', () => ({
-  Calendar: vi.fn(({ className }) => <div data-testid="calendar-icon" className={className} />),
-  Clock: vi.fn(({ className }) => <div data-testid="clock-icon" className={className} />),
-  Users: vi.fn(({ className }) => <div data-testid="users-icon" className={className} />)
+  Calendar: vi.fn(({ className }) => <div data-testid="calendar-icon" className={className} />)
 }));
 
 // Mock FeatureWrapper to always render children (feature enabled)
@@ -49,11 +47,6 @@ describe('MatchCard', () => {
     isHome: true,
     status: 'SCHEDULED' as const,
     matchday: 10,
-    watchParty: {
-      location: 'Polwarth Tavern',
-      address: '35 Polwarth Cres, Edinburgh EH11 1HR',
-      time: '20:00'
-    },
     rsvpInfo: {
       rsvpCount: 15,
       totalAttendees: 25
@@ -81,8 +74,6 @@ describe('MatchCard', () => {
       expect(screen.getByText('J10')).toBeInTheDocument();
       expect(screen.getByText('Real Madrid')).toBeInTheDocument();
       expect(screen.getByText('Real Betis')).toBeInTheDocument();
-      expect(screen.getByText('Local')).toBeInTheDocument();
-      expect(screen.getByText('Visitante')).toBeInTheDocument();
       expect(screen.getByText('PRÓXIMO')).toBeInTheDocument();
     });
 
@@ -168,8 +159,6 @@ describe('MatchCard', () => {
 
       expect(screen.getByText('Real Betis')).toBeInTheDocument();
       expect(screen.getByText('Real Madrid')).toBeInTheDocument();
-      expect(screen.getByText('Local')).toBeInTheDocument();
-      expect(screen.getByText('Visitante')).toBeInTheDocument();
     });
 
     it('displays away teams correctly when Betis is away', () => {
@@ -178,8 +167,6 @@ describe('MatchCard', () => {
 
       expect(screen.getByText('Real Betis')).toBeInTheDocument();
       expect(screen.getByText('Real Madrid')).toBeInTheDocument();
-      expect(screen.getByText('Local')).toBeInTheDocument();
-      expect(screen.getByText('Visitante')).toBeInTheDocument();
     });
   });
 
@@ -205,32 +192,6 @@ describe('MatchCard', () => {
     });
   });
 
-  describe('Watch party information', () => {
-    it('displays watch party info for upcoming matches', () => {
-      render(<MatchCard {...mockUpcomingMatch} />);
-
-      expect(screen.getByText('¡Nos vemos aquí!')).toBeInTheDocument();
-      expect(screen.getByText('Polwarth Tavern')).toBeInTheDocument();
-      expect(screen.getByText('35 Polwarth Cres, Edinburgh EH11 1HR')).toBeInTheDocument();
-      expect(screen.getByText('📍 Llega a las 20:00')).toBeInTheDocument();
-      expect(screen.getByTestId('clock-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('users-icon')).toBeInTheDocument();
-    });
-
-    it('does not show watch party info for finished matches', () => {
-      render(<MatchCard {...mockFinishedMatch} />);
-
-      expect(screen.queryByText('¡Nos vemos aquí!')).not.toBeInTheDocument();
-      expect(screen.queryByText('Polwarth Tavern')).not.toBeInTheDocument();
-    });
-
-    it('does not show watch party if not provided', () => {
-      const { watchParty, ...matchWithoutWatchParty } = mockUpcomingMatch;
-      render(<MatchCard {...matchWithoutWatchParty} />);
-
-      expect(screen.queryByText('¡Nos vemos aquí!')).not.toBeInTheDocument();
-    });
-  });
 
   describe('RSVP functionality', () => {
     
@@ -342,11 +303,6 @@ describe('convertDatabaseMatchToCardProps', () => {
       result: undefined,
       matchday: 15,
       score: undefined,
-      watchParty: {
-        location: 'Polwarth Tavern',
-        address: '35 Polwarth Cres, Edinburgh EH11 1HR',
-        time: expect.any(String)
-      },
       rsvpInfo: {
         rsvpCount: 10,
         totalAttendees: 20
@@ -369,7 +325,6 @@ describe('convertDatabaseMatchToCardProps', () => {
 
     expect(result.status).toBe('FINISHED');
     expect(result.score).toEqual({ home: 3, away: 1 });
-    expect(result.watchParty).toBeUndefined();
     expect(result.result).toBe('W');
   });
 

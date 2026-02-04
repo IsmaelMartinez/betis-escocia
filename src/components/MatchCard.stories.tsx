@@ -41,7 +41,6 @@ const meta: Meta<typeof MatchCard> = {
     opponentCrest: { control: "text" },
     competitionEmblem: { control: "text" },
     score: { control: "object" },
-    watchParty: { control: "object" },
     rsvpInfo: { control: "object" },
     showRSVP: { control: "boolean" },
   },
@@ -61,11 +60,6 @@ export const Default: Story = {
     isHome: true,
     status: "SCHEDULED" as MatchStatus,
     matchday: 30,
-    watchParty: {
-      location: "Polwarth Tavern",
-      address: "35 Polwarth Cres, Edinburgh EH11 1HR",
-      time: "20:00",
-    },
     showRSVP: true,
   },
 };
@@ -127,11 +121,6 @@ export const MatchWithRSVP: Story = {
     isHome: false,
     status: "SCHEDULED" as MatchStatus,
     matchday: 32,
-    watchParty: {
-      location: "Polwarth Tavern",
-      address: "35 Polwarth Cres, Edinburgh EH11 1HR",
-      time: "18:00",
-    },
     rsvpInfo: {
       rsvpCount: 15,
       totalAttendees: 25,

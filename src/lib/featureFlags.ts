@@ -28,7 +28,7 @@ export interface NavigationItem {
 // Core defaults: essential public pages + key API-backed surfaces (clasificacion)
 const DEFAULT_FEATURES: Record<FeatureName, boolean> = {
   "show-clasificacion": true, // Core: league standings
-  "show-partidos": false, // Phase 2: requires match sync
+  "show-partidos": true, // Core: match schedule and results
   "show-nosotros": true, // Core: About page
   "show-clerk-auth": false, // Phase 2: user accounts
   "show-debug-info": false,

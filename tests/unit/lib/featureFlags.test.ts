@@ -33,7 +33,7 @@ describe("Feature Flags - Simplified System", () => {
       // Disabled by default (Phase 2 or optional features)
       expect(hasFeature("show-rsvp")).toBe(false);
       expect(hasFeature("show-contacto")).toBe(false);
-      expect(hasFeature("show-partidos")).toBe(false);
+      expect(hasFeature("show-partidos")).toBe(true);
       expect(hasFeature("show-clerk-auth")).toBe(false);
       expect(hasFeature("show-debug-info")).toBe(false);
     });
@@ -90,9 +90,11 @@ describe("Feature Flags - Simplified System", () => {
         true,
       );
 
+      // Should include Partidos (now enabled by default)
+      expect(enabledItems.some((item) => item.name === "Partidos")).toBe(true);
+
       // Should NOT include Phase 2 items (disabled by default)
       expect(enabledItems.some((item) => item.name === "RSVP")).toBe(false);
-      expect(enabledItems.some((item) => item.name === "Partidos")).toBe(false);
       expect(enabledItems.some((item) => item.name === "Contacto")).toBe(false);
     });
 
