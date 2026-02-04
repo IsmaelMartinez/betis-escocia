@@ -1,14 +1,22 @@
 import { createApiHandler } from '@/lib/apiUtils';
-import { FootballDataService } from '@/services/footballDataService';
+import { FootballDataService, REAL_BETIS_TEAM_ID } from '@/services/footballDataService';
 import axios from 'axios';
 import { supabase } from '@/lib/supabase';
 import { log } from '@/lib/logger';
-import { isBefore, subDays } from 'date-fns';
+import { subDays } from 'date-fns';
+
+// Module-level singleton to preserve rate-limiting state across requests
+const footballService = new FootballDataService(axios.create());
+
+// Server-side rate limiting: track last sync timestamp in memory
+let lastSyncTimestamp = 0;
+const SYNC_COOLDOWN_MS = 60 * 60 * 1000; // 1 hour
 
 /**
- * Determine match result label based on Betis home/away and score
+ * Determine match result label based on scores.
+ * Values match the database CHECK constraint: HOME_WIN, AWAY_WIN, DRAW.
  */
-function getMatchResult(isBetisHome: boolean, homeScore: number, awayScore: number): string {
+function getMatchResult(homeScore: number, awayScore: number): string {
   if (homeScore > awayScore) {
     return 'HOME_WIN';
   }
@@ -19,8 +27,8 @@ function getMatchResult(isBetisHome: boolean, homeScore: number, awayScore: numb
 }
 
 /**
- * Background sync endpoint for updating past matches with missing data
- * This endpoint is triggered by client visits to keep match data fresh
+ * Background sync endpoint for updating past matches with missing data.
+ * This endpoint is triggered by client visits to keep match data fresh.
  */
 async function syncOutdatedMatches() {
   const now = new Date();
@@ -29,9 +37,9 @@ async function syncOutdatedMatches() {
   // Find matches that are in the past but have missing data
   const { data: outdatedMatches, error: queryError } = await supabase
     .from('matches')
-    .select('id, external_id, date_time, opponent, status, home_score, away_score')
+    .select('id, external_id, date_time, opponent, status, home_score, away_score, result')
     .lt('date_time', gracePeriod.toISOString())
-    .or('status.is.null,status.neq.FINISHED,home_score.is.null,away_score.is.null')
+    .or('status.is.null,status.neq.FINISHED,home_score.is.null,away_score.is.null,result.is.null')
     .not('external_id', 'is', null)
     .limit(20); // Limit to avoid API rate limits
 
@@ -59,13 +67,10 @@ async function syncOutdatedMatches() {
     matchIds: outdatedMatches.map(m => m.external_id)
   });
 
-  // Initialize the football data service
-  const footballService = new FootballDataService(axios.create());
-
   let updatedCount = 0;
   let errorCount = 0;
 
-  // Process each outdated match
+  // Process matches sequentially to respect the external API's rate limits
   for (const dbMatch of outdatedMatches) {
     if (!dbMatch.external_id) continue;
 
@@ -87,7 +92,7 @@ async function syncOutdatedMatches() {
       }
 
       // Extract match data
-      const isBetisHome = match.homeTeam.id === 90; // Real Betis team ID
+      const isBetisHome = match.homeTeam.id === REAL_BETIS_TEAM_ID;
       let result: string | undefined;
       let homeScore: number | undefined;
       let awayScore: number | undefined;
@@ -99,7 +104,7 @@ async function syncOutdatedMatches() {
         if (homeScoreValue != null && awayScoreValue != null) {
           homeScore = homeScoreValue;
           awayScore = awayScoreValue;
-          result = getMatchResult(isBetisHome, homeScoreValue, awayScoreValue);
+          result = getMatchResult(homeScoreValue, awayScoreValue);
         }
       }
 
@@ -110,7 +115,8 @@ async function syncOutdatedMatches() {
           result,
           home_score: homeScore,
           away_score: awayScore,
-          status: match.status
+          status: match.status,
+          home_away: isBetisHome ? 'home' : 'away'
         })
         .eq('id', dbMatch.id);
 
@@ -158,10 +164,21 @@ async function syncOutdatedMatches() {
   };
 }
 
-// GET - Sync outdated matches (no auth required for background sync)
+// GET - Sync outdated matches with server-side rate limiting
 export const GET = createApiHandler({
   auth: 'none',
   handler: async () => {
+    // Server-side rate limiting: reject if called within the cooldown period
+    const now = Date.now();
+    if (now - lastSyncTimestamp < SYNC_COOLDOWN_MS) {
+      return {
+        success: true,
+        message: 'Sync skipped: cooldown period active',
+        summary: { checked: 0, updated: 0, errors: 0 }
+      };
+    }
+    lastSyncTimestamp = now;
+
     return await syncOutdatedMatches();
   }
 });

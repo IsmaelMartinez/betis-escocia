@@ -33,11 +33,9 @@ export default function BackgroundMatchSync() {
         }
 
         // Check cookie for last sync time (1 hour throttle)
-        const cookies = document.cookie.split(';');
-        const lastSyncCookie = cookies.find(c => c.trim().startsWith('last-match-sync='));
-
-        if (lastSyncCookie) {
-          const lastSyncTime = parseInt(lastSyncCookie.split('=')[1]);
+        const cookieMatch = document.cookie.match(/(?:^|;\s*)last-match-sync=(\d+)/);
+        if (cookieMatch) {
+          const lastSyncTime = parseInt(cookieMatch[1], 10);
           const oneHourAgo = Date.now() - (60 * 60 * 1000);
 
           if (lastSyncTime > oneHourAgo) {
