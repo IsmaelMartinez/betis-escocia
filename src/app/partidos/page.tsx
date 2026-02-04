@@ -21,13 +21,6 @@ export default function MatchesPage() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl bg-oro-glow opacity-40 pointer-events-none" />
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8">
-            <Calendar size={20} className="text-oro-bright" />
-            <span className="text-white font-heading font-medium text-sm tracking-wide">
-              Ver partidos en vivo
-            </span>
-          </div>
-
           <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
             Partidos
           </h1>

@@ -56,10 +56,10 @@ describe('MatchesPage', () => {
       expect(heading).toHaveTextContent('Partidos');
     });
 
-    it('should render hero section with badge', () => {
+    it('should render hero section with heading', () => {
       render(<MatchesPage />);
 
-      expect(screen.getByText('Ver partidos en vivo')).toBeInTheDocument();
+      expect(screen.getByText('Partidos')).toBeInTheDocument();
     });
 
     it('should render main components', () => {
@@ -174,7 +174,8 @@ describe('MatchesPage', () => {
   });
 
   describe('Icons', () => {
-    it('should render Calendar icons', () => {
+    it('should render Calendar icon when RSVP is enabled', () => {
+      mockHasFeature.mockReturnValue(true);
       render(<MatchesPage />);
 
       expect(screen.getAllByTestId('calendar-icon').length).toBeGreaterThan(0);
