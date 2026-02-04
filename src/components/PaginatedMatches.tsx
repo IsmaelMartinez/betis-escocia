@@ -62,12 +62,7 @@ function transformMatch(match: Match, isUpcoming: boolean = false) {
     opponentCrest,
     competitionEmblem: match.competition.emblem,
     score: getFormattedScore(),
-    result: getResultString(),
-    watchParty: isUpcoming ? {
-      location: "Polwarth Tavern",
-      address: "35 Polwarth Cres, Edinburgh EH11 1HR",
-      time: "15 minutos antes del partido"
-    } : undefined
+    result: getResultString()
   };
 }
 
