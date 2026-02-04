@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Calendar, Clock, Users } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FeatureWrapper } from '@/lib/featureProtection';
@@ -33,12 +33,6 @@ export function convertDatabaseMatchToCardProps(
       home: dbMatch.home_score,
       away: dbMatch.away_score
     } : undefined,
-    // Add watch party info for upcoming matches (Polwarth Tavern)
-    watchParty: isUpcoming ? {
-      location: 'Polwarth Tavern',
-      address: '35 Polwarth Cres, Edinburgh EH11 1HR',
-      time: format(new Date(dbMatch.date_time), 'HH:mm', { locale: es })
-    } : undefined,
     // Add RSVP info if available
     rsvpInfo: (rsvpCount !== undefined && totalAttendees !== undefined) ? {
       rsvpCount,
@@ -50,19 +44,18 @@ export function convertDatabaseMatchToCardProps(
 }
 
 const MatchCard: React.FC<MatchCardProps> = (props) => {
-  const { 
+  const {
     id,
-    opponent, 
-    date, 
-    competition, 
-    isHome, 
-    result, 
+    opponent,
+    date,
+    competition,
+    isHome,
+    result,
     status,
     matchday,
     opponentCrest,
     competitionEmblem,
     score,
-    watchParty,
     rsvpInfo,
     showRSVP
   } = props;
@@ -225,27 +218,25 @@ const MatchCard: React.FC<MatchCardProps> = (props) => {
             <div className="flex items-center justify-center space-x-4 mb-2">
               {/* Local Team (always on left) */}
               <div className="text-right flex-1">
-                <div className="flex items-center justify-end space-x-2 mb-1">
+                <div className="flex items-center justify-end space-x-2">
                   <p className={`font-bold text-lg ${localTeam.isBetis ? 'text-betis-green' : ''}`}>
                     {localTeam.name}
                   </p>
                 </div>
-                <p className="text-sm text-gray-600">Local</p>
               </div>
-              
+
               {/* Score/VS */}
               <div className="text-2xl font-bold text-gray-400 px-4">
                 {getMatchResult()}
               </div>
-              
+
               {/* Visitor Team (always on right) */}
               <div className="text-left flex-1">
-                <div className="flex items-center justify-start space-x-2 mb-1">
+                <div className="flex items-center justify-start space-x-2">
                   <p className={`font-bold text-lg ${visitorTeam.isBetis ? 'text-betis-green' : ''}`}>
                     {visitorTeam.name}
                   </p>
                 </div>
-                <p className="text-sm text-gray-600">Visitante</p>
               </div>
             </div>
           </div>
@@ -264,26 +255,6 @@ const MatchCard: React.FC<MatchCardProps> = (props) => {
             {statusInfo.text}
           </span>
         </div>
-
-        {/* Watch party info for upcoming matches */}
-        {isUpcoming && watchParty && (
-          <div className="bg-scotland-blue/10 rounded-lg p-3 mb-4">
-            <h4 className="font-semibold text-scotland-blue mb-2 flex items-center">
-              <Clock className="h-4 w-4 mr-1" />
-              ¡Nos vemos aquí!
-            </h4>
-            <div className="text-sm space-y-1">
-              <div className="flex items-center space-x-1">
-                <Users className="h-3 w-3" />
-                <p className="font-medium">{watchParty.location}</p>
-              </div>
-              <p className="text-gray-600 ml-4">{watchParty.address}</p>
-              <p className="text-betis-green font-medium ml-4">
-                📍 Llega a las {watchParty.time}
-              </p>
-            </div>
-          </div>
-        )}
 
         {/* RSVP section for upcoming matches */}
         {isUpcoming && showRSVP && (
