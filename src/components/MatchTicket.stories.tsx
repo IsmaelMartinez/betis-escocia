@@ -61,11 +61,6 @@ const upcomingMatch = {
   isHome: true,
   status: "SCHEDULED" as const,
   matchday: 19,
-  watchParty: {
-    location: "Polwarth Tavern",
-    address: "35 Polwarth Cres, Edinburgh EH11 1HR",
-    time: "20:00",
-  },
   rsvpInfo: {
     rsvpCount: 12,
     totalAttendees: 18,
