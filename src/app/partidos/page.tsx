@@ -5,7 +5,7 @@ import BetisPositionWidget from '@/components/BetisPositionWidget';
 import AllDatabaseMatches from '@/components/AllDatabaseMatches';
 import RSVPModal, { useRSVPModal } from '@/components/RSVPModal';
 import SidebarCard from '@/components/SidebarCard';
-import { Calendar, MapPin } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 
 export default function MatchesPage() {
   const { isOpen, openModal, closeModal } = useRSVPModal();
@@ -29,15 +29,6 @@ export default function MatchesPage() {
           <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
             Partidos
           </h1>
-
-          <p className="font-accent text-2xl sm:text-3xl text-oro-bright mb-6 text-shadow-lg italic">
-            Todos los partidos en el Polwarth Tavern
-          </p>
-
-          <p className="font-body text-lg text-white/90 max-w-2xl mx-auto leading-relaxed">
-            ¡No te pierdas ningún partido del Betis! Todos se ven en el Polwarth
-            Tavern con la peña.
-          </p>
         </div>
       </section>
 
@@ -80,34 +71,6 @@ export default function MatchesPage() {
                 {/* Position Widget - With design wrapper */}
                 <SidebarCard patternClass="pattern-tartan-subtle">
                   <BetisPositionWidget />
-                </SidebarCard>
-
-                {/* Quick Info Card */}
-                <SidebarCard
-                  bgColor="bg-betis-verde-light"
-                  borderColor="border-betis-verde/20"
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <MapPin size={20} className="text-betis-verde-dark" />
-                    <h3 className="font-heading font-bold text-betis-verde-dark uppercase tracking-wide text-sm">
-                      Polwarth Tavern
-                    </h3>
-                  </div>
-                  <p className="font-body text-xs text-gray-700 mb-2">
-                    35 Polwarth Cres, Edinburgh EH11 1HR
-                  </p>
-                  <p className="font-body text-xs text-gray-700 mb-3">
-                    📞 +44 131 221 9906
-                  </p>
-                  <a
-                    href="https://maps.google.com/maps?q=Polwarth+Tavern+Edinburgh"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-betis-verde-dark hover:text-betis-verde font-heading font-bold text-xs transition-colors uppercase tracking-wide"
-                  >
-                    <MapPin size={14} />
-                    Ver en Maps
-                  </a>
                 </SidebarCard>
               </div>
             </div>
