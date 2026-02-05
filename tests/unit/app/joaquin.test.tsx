@@ -92,7 +92,9 @@ describe("Joaquín Page", () => {
         screen.getByText("Ruedas de Prensa Memorables"),
       ).toBeInTheDocument();
       expect(screen.getByText("Campeón con Cachondeo")).toBeInTheDocument();
-      expect(screen.getByText("La Despedida del Leyenda")).toBeInTheDocument();
+      expect(
+        screen.getByText("La Despedida de la Leyenda"),
+      ).toBeInTheDocument();
     });
 
     it("should render category badges for each moment", async () => {
