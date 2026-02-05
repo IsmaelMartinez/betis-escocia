@@ -147,9 +147,9 @@ function JokeCard({ moment }: { moment: JoaquinMoment }) {
         </div>
 
         {/* Title */}
-        <h2 className="font-display text-xl sm:text-2xl font-black text-scotland-navy mb-4 uppercase tracking-tight group-hover:text-betis-verde-dark transition-colors">
+        <h3 className="font-display text-xl sm:text-2xl font-black text-scotland-navy mb-4 uppercase tracking-tight group-hover:text-betis-verde-dark transition-colors">
           {moment.title}
-        </h2>
+        </h3>
 
         {/* Description */}
         <p className="font-body text-gray-700 text-sm sm:text-base leading-relaxed mb-6 flex-1">
