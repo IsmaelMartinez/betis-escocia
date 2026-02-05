@@ -117,9 +117,7 @@ export default function JugadoresHistoricos() {
 
   const groups = useMemo(
     () =>
-      ERA_ORDER.filter(
-        (era) => activeEra === ALL_FILTER || era === activeEra,
-      )
+      ERA_ORDER.filter((era) => activeEra === ALL_FILTER || era === activeEra)
         .map((era) => ({
           era,
           config: ERA_CONFIG[era],
