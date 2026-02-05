@@ -69,9 +69,7 @@ function PlayerCard({ player }: { player: Player }) {
         {player.stats && (
           <div className="mt-2 flex items-center gap-2">
             <BarChart3 className="h-4 w-4 text-gray-400 flex-shrink-0" />
-            <p className="font-heading text-xs text-gray-500">
-              {player.stats}
-            </p>
+            <p className="font-heading text-xs text-gray-500">{player.stats}</p>
           </div>
         )}
 
@@ -118,7 +116,7 @@ export default function JugadoresHistoricos() {
   const [activeEra, setActiveEra] = useState<EraFilter>(ALL_FILTER);
 
   const groups = ERA_ORDER.filter(
-    (era) => activeEra === ALL_FILTER || era === activeEra
+    (era) => activeEra === ALL_FILTER || era === activeEra,
   )
     .map((era) => ({
       era,

@@ -203,8 +203,7 @@ export const LEYENDAS: Player[] = [
     description:
       "El eterno capitán. Joaquín es el jugador con más partidos en la historia del Betis. Su regate, su alegría y su amor por el club lo convierten en el máximo símbolo del beticismo.",
     highlight: "Más de 500 partidos con el Betis",
-    videoSearchQuery:
-      "joaquin+sanchez+betis+mejores+momentos+goles+regates",
+    videoSearchQuery: "joaquin+sanchez+betis+mejores+momentos+goles+regates",
     quote: "Viva er Betis manque pierda",
     stats: "+500 partidos — récord histórico del club",
   },
@@ -227,8 +226,7 @@ export const LEYENDAS: Player[] = [
     description:
       "El jugador que encontró su hogar en el Betis. Canales fue el corazón del equipo campeón de Copa. Su entrega, calidad y liderazgo le convirtieron en uno de los jugadores más queridos de la historia reciente del club.",
     highlight: "Alma del Betis campeón de Copa 2022",
-    videoSearchQuery:
-      "canales+betis+goles+copa+del+rey+2022+mejores+momentos",
+    videoSearchQuery: "canales+betis+goles+copa+del+rey+2022+mejores+momentos",
     quote: "Este escudo se lleva en el corazón",
     stats: "6 temporadas · líder del Betis moderno",
   },
@@ -240,8 +238,7 @@ export const LEYENDAS: Player[] = [
     description:
       "El Panda. Borja conquistó al beticismo con su carisma y sus goles. Un delantero que se entregaba al máximo en cada partido y que vivía el Betis como un aficionado más. Ídolo moderno del Villamarín.",
     highlight: "El Panda: ídolo del beticismo moderno",
-    videoSearchQuery:
-      "borja+iglesias+panda+betis+goles+mejores+momentos",
+    videoSearchQuery: "borja+iglesias+panda+betis+goles+mejores+momentos",
     quote: "El Villamarín te pone los pelos de punta",
     stats: "51 goles con la verdiblanca",
   },
