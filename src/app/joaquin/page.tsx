@@ -122,8 +122,7 @@ const MOMENTS: JoaquinMoment[] = [
 
 function JokeCard({ moment }: { moment: JoaquinMoment }) {
   const config = CATEGORY_CONFIG[moment.category];
-  const textColor =
-    moment.category === "copa" ? "text-scotland-navy" : "text-white";
+  const textColor = config.textColor ?? "text-white";
 
   return (
     <div className="group bg-white rounded-2xl shadow-xl border border-gray-100 hover:border-betis-verde transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 relative overflow-hidden flex flex-col">
