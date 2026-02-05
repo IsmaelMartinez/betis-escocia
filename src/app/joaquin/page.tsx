@@ -35,13 +35,17 @@ interface JoaquinMoment {
 
 const CATEGORY_CONFIG: Record<
   MomentCategory,
-  { label: string; color: string }
+  { label: string; color: string; textColor?: string }
 > = {
   instagram: { label: "Instagram Live", color: "bg-betis-verde" },
   tv: { label: "Televisión", color: "bg-betis-verde-dark" },
   vestuario: { label: "Vestuario", color: "bg-betis-verde" },
   prensa: { label: "Rueda de Prensa", color: "bg-scotland-navy" },
-  copa: { label: "Copa del Rey", color: "bg-betis-oro" },
+  copa: {
+    label: "Copa del Rey",
+    color: "bg-betis-oro",
+    textColor: "text-scotland-navy",
+  },
   despedida: { label: "Despedida", color: "bg-betis-verde-dark" },
 };
 

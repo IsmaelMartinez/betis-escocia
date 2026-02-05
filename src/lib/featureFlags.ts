@@ -10,6 +10,7 @@ export type FeatureName =
   | "show-clasificacion"
   | "show-partidos"
   | "show-nosotros"
+  | "show-jugadores-historicos"
   | "show-clerk-auth"
   | "show-debug-info"
   | "show-rsvp"
@@ -30,6 +31,7 @@ const DEFAULT_FEATURES: Record<FeatureName, boolean> = {
   "show-clasificacion": true, // Core: league standings
   "show-partidos": true, // Core: match schedule and results
   "show-nosotros": true, // Core: About page
+  "show-jugadores-historicos": true, // Core: Historic players
   "show-clerk-auth": false, // Phase 2: user accounts
   "show-debug-info": false,
   "show-rsvp": false, // Phase 2: RSVP functionality
@@ -42,6 +44,7 @@ const ENV_VAR_MAP: Record<FeatureName, string> = {
   "show-clasificacion": "NEXT_PUBLIC_FEATURE_CLASIFICACION",
   "show-partidos": "NEXT_PUBLIC_FEATURE_PARTIDOS",
   "show-nosotros": "NEXT_PUBLIC_FEATURE_NOSOTROS",
+  "show-jugadores-historicos": "NEXT_PUBLIC_FEATURE_JUGADORES_HISTORICOS",
   "show-clerk-auth": "NEXT_PUBLIC_FEATURE_CLERK_AUTH",
   "show-debug-info": "NEXT_PUBLIC_FEATURE_DEBUG_INFO",
   "show-rsvp": "NEXT_PUBLIC_FEATURE_RSVP",
@@ -130,6 +133,12 @@ export function getEnabledNavigationItems(): NavigationItem[] {
       href: "/nosotros",
       nameEn: "About",
       feature: "show-nosotros",
+    },
+    {
+      name: "Leyendas",
+      href: "/jugadores-historicos",
+      nameEn: "Legends",
+      feature: "show-jugadores-historicos",
     },
     {
       name: "Joaquín",
