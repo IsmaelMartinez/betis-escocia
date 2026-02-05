@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Star, Trophy, Heart, Play, Quote, BarChart3 } from "lucide-react";
 import {
@@ -75,7 +75,7 @@ function PlayerCard({ player }: { player: Player }) {
 
         {/* Video Link */}
         <a
-          href={`https://www.youtube.com/results?search_query=${player.videoSearchQuery}`}
+          href={`https://www.youtube.com/results?search_query=${encodeURIComponent(player.videoSearchQuery)}`}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 mt-4 bg-betis-verde hover:bg-betis-verde-dark text-white px-4 py-2.5 rounded-xl font-heading font-bold text-xs uppercase tracking-wide transition-all duration-300 self-start"
@@ -115,15 +115,19 @@ function EraHeader({
 export default function JugadoresHistoricos() {
   const [activeEra, setActiveEra] = useState<EraFilter>(ALL_FILTER);
 
-  const groups = ERA_ORDER.filter(
-    (era) => activeEra === ALL_FILTER || era === activeEra,
-  )
-    .map((era) => ({
-      era,
-      config: ERA_CONFIG[era],
-      players: LEYENDAS.filter((p) => p.era === era),
-    }))
-    .filter((g) => g.players.length > 0);
+  const groups = useMemo(
+    () =>
+      ERA_ORDER.filter(
+        (era) => activeEra === ALL_FILTER || era === activeEra,
+      )
+        .map((era) => ({
+          era,
+          config: ERA_CONFIG[era],
+          players: LEYENDAS.filter((p) => p.era === era),
+        }))
+        .filter((g) => g.players.length > 0),
+    [activeEra],
+  );
 
   return (
     <div className="min-h-screen">
