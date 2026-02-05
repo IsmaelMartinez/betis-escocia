@@ -1,90 +1,132 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { Star, Trophy, Heart } from "lucide-react";
+import { Star, Trophy, Heart, Play, Quote, BarChart3 } from "lucide-react";
+import {
+  LEYENDAS,
+  ERA_CONFIG,
+  ERA_ORDER,
+  type PlayerEra,
+  type Player,
+} from "@/data/leyendas";
 
-interface Player {
-  name: string;
-  position: string;
-  years: string;
-  description: string;
-  highlight: string;
-}
+const ALL_FILTER = "todos" as const;
+type EraFilter = PlayerEra | typeof ALL_FILTER;
 
-const HISTORIC_PLAYERS: Player[] = [
-  {
-    name: "Joaquín Sánchez",
-    position: "Extremo derecho",
-    years: "2000–2006, 2015–2024",
-    description:
-      "El eterno capitán. Joaquín es el jugador con más partidos en la historia del Betis. Su regate, su alegría y su amor por el club lo convierten en el máximo símbolo del beticismo.",
-    highlight: "Más de 500 partidos con el Betis",
-  },
-  {
-    name: "Rafael Gordillo",
-    position: "Lateral izquierdo",
-    years: "1974–1985",
-    description:
-      "Leyenda del fútbol español formado en la cantera bética. Gordillo fue el mejor lateral izquierdo de su generación. Su entrega y calidad en la banda izquierda marcaron una época dorada.",
-    highlight: "75 internacionalidades con España",
-  },
-  {
-    name: "Julio Cardeñosa",
-    position: "Centrocampista",
-    years: "1971–1981",
-    description:
-      "El maestro del centro del campo. Cardeñosa poseía una elegancia y visión de juego únicas. Su famoso fallo ante Brasil en el Mundial del 78 no empañó una carrera extraordinaria con el Betis.",
-    highlight: "Ídolo eterno del Villamarín",
-  },
-  {
-    name: "Rubén Castro",
-    position: "Delantero",
-    years: "2010–2018",
-    description:
-      "Máximo goleador en la historia del Real Betis Balompié. Su instinto de gol y su capacidad para aparecer en los momentos clave le convirtieron en un referente absoluto del club.",
-    highlight: "Máximo goleador histórico del club",
-  },
-  {
-    name: "Denilson",
-    position: "Extremo izquierdo",
-    years: "1998–2000",
-    description:
-      "El brasileño más caro del mundo llegó al Betis y dejó destellos de magia pura. Su fichaje puso al Betis en el mapa mundial y sus regates imposibles siguen en la memoria colectiva.",
-    highlight: "Fichaje récord mundial en 1998",
-  },
-  {
-    name: "Alfonso Pérez",
-    position: "Delantero",
-    years: "2002–2005",
-    description:
-      "Goleador fundamental en una de las mejores épocas del Betis. Alfonso fue pieza clave del equipo que jugó la Champions League y conquistó la Copa del Rey en 2005.",
-    highlight: "Campeón de la Copa del Rey 2005",
-  },
-  {
-    name: "Oliveira",
-    position: "Mediapunta",
-    years: "1997–2002",
-    description:
-      "El brasileño que enamoró al Villamarín con su fútbol elegante. Oliveira combinaba técnica depurada con gol y fue uno de los jugadores más queridos de finales de los 90.",
-    highlight: "Referente de la época dorada brasileña",
-  },
-  {
-    name: "Ricardo",
-    position: "Mediapunta",
-    years: "1998–2004",
-    description:
-      "Otro de los grandes brasileños que vistieron la verdiblanca. Ricardo aportó clase y creatividad al mediocampo bético durante seis temporadas memorables.",
-    highlight: "Clave en la clasificación para Champions",
-  },
-  {
-    name: "Assunção",
-    position: "Centrocampista",
-    years: "2001–2005",
-    description:
-      "El cerebro del mediocampo del Betis de Champions. Assunção era pura calidad con el balón en los pies, combinando pases milimétricos con una llegada goleadora desde segunda línea.",
-    highlight: "Protagonista en la Copa del Rey 2005",
-  },
+const FILTER_OPTIONS: { value: EraFilter; label: string }[] = [
+  { value: ALL_FILTER, label: "Todos" },
+  ...ERA_ORDER.map((era) => ({ value: era, label: ERA_CONFIG[era].title })),
 ];
 
+function PlayerCard({ player }: { player: Player }) {
+  return (
+    <div className="group bg-white rounded-2xl shadow-xl border border-gray-100 hover:border-betis-verde transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 relative overflow-hidden flex flex-col">
+      <div className="absolute top-0 right-0 w-20 h-20 pattern-verdiblanco-diagonal-subtle opacity-20" />
+
+      <div className="h-1 bg-gradient-to-r from-betis-verde via-betis-oro to-betis-verde" />
+
+      <div className="relative p-6 sm:p-8 flex flex-col flex-1">
+        {/* Header */}
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h3 className="font-display text-xl font-black text-scotland-navy uppercase tracking-tight">
+              {player.name}
+            </h3>
+            <p className="font-heading text-sm text-betis-verde font-semibold">
+              {player.position}
+            </p>
+          </div>
+          <span className="inline-block bg-betis-verde text-white px-3 py-1 rounded-full font-heading font-bold text-xs whitespace-nowrap">
+            {player.years}
+          </span>
+        </div>
+
+        {/* Description */}
+        <p className="font-body text-gray-700 text-sm leading-relaxed mb-4 flex-1">
+          {player.description}
+        </p>
+
+        {/* Quote */}
+        {player.quote && (
+          <div className="mb-4 bg-betis-verde-pale rounded-xl px-4 py-3 flex items-start gap-2">
+            <Quote className="h-4 w-4 text-betis-verde mt-0.5 flex-shrink-0" />
+            <p className="font-accent text-sm italic text-betis-verde-dark">
+              &ldquo;{player.quote}&rdquo;
+            </p>
+          </div>
+        )}
+
+        {/* Highlight */}
+        <div className="pt-4 border-t border-gray-100 flex items-center gap-2">
+          <Trophy className="h-4 w-4 text-betis-oro flex-shrink-0" />
+          <p className="font-heading text-sm font-semibold text-betis-verde-dark">
+            {player.highlight}
+          </p>
+        </div>
+
+        {/* Stats */}
+        {player.stats && (
+          <div className="mt-2 flex items-center gap-2">
+            <BarChart3 className="h-4 w-4 text-gray-400 flex-shrink-0" />
+            <p className="font-heading text-xs text-gray-500">
+              {player.stats}
+            </p>
+          </div>
+        )}
+
+        {/* Video Link */}
+        <a
+          href={`https://www.youtube.com/results?search_query=${player.videoSearchQuery}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 mt-4 bg-betis-verde hover:bg-betis-verde-dark text-white px-4 py-2.5 rounded-xl font-heading font-bold text-xs uppercase tracking-wide transition-all duration-300 self-start"
+        >
+          <Play className="h-3.5 w-3.5" />
+          Ver Vídeos
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function EraHeader({
+  title,
+  subtitle,
+  years,
+}: {
+  title: string;
+  subtitle: string;
+  years: string;
+}) {
+  return (
+    <div className="text-center mb-10">
+      <span className="inline-block bg-betis-oro/20 text-betis-verde-dark px-4 py-1 rounded-full font-heading font-bold text-xs uppercase tracking-widest mb-3">
+        {years}
+      </span>
+      <h2 className="font-display text-3xl sm:text-4xl font-black text-scotland-navy uppercase tracking-tight mb-2">
+        {title}
+      </h2>
+      <p className="font-body text-gray-600 text-lg max-w-2xl mx-auto">
+        {subtitle}
+      </p>
+    </div>
+  );
+}
+
 export default function JugadoresHistoricos() {
+  const [activeEra, setActiveEra] = useState<EraFilter>(ALL_FILTER);
+
+  const groups = ERA_ORDER.filter(
+    (era) => activeEra === ALL_FILTER || era === activeEra
+  )
+    .map((era) => ({
+      era,
+      config: ERA_CONFIG[era],
+      players: LEYENDAS.filter((p) => p.era === era),
+    }))
+    .filter((g) => g.players.length > 0);
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -109,53 +151,57 @@ export default function JugadoresHistoricos() {
           <p className="font-accent text-2xl sm:text-3xl text-oro-bright mb-8 text-shadow-lg italic">
             Los jugadores que hicieron historia en el Villamarín
           </p>
+
+          <p className="font-body text-lg text-white/90 max-w-2xl mx-auto leading-relaxed">
+            De los clásicos del 78 a los campeones de Copa del 2022. Un viaje
+            por las leyendas que forjaron la historia del Real Betis Balompié.
+          </p>
         </div>
       </section>
 
-      {/* Players Grid */}
-      <section className="relative py-20 overflow-hidden">
+      {/* Era Filter Pills */}
+      <section className="relative py-6 overflow-hidden">
         <div className="absolute inset-0 bg-canvas-warm" />
-        <div className="absolute inset-0 pattern-tartan-subtle opacity-40" />
-
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {HISTORIC_PLAYERS.map((player) => (
-              <div
-                key={player.name}
-                className="group bg-white rounded-2xl p-8 shadow-xl border border-gray-100 hover:border-betis-verde transition-all duration-300 hover:shadow-2xl transform hover:-translate-y-1 relative overflow-hidden"
+          <div className="flex flex-wrap justify-center gap-2">
+            {FILTER_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setActiveEra(opt.value)}
+                className={`px-4 py-2 rounded-full font-heading font-bold text-sm transition-all duration-200 ${
+                  activeEra === opt.value
+                    ? "bg-betis-verde text-white shadow-lg"
+                    : "bg-white text-gray-600 border border-gray-200 hover:border-betis-verde hover:text-betis-verde"
+                }`}
               >
-                <div className="absolute top-0 right-0 w-20 h-20 pattern-verdiblanco-diagonal-subtle opacity-20" />
-                <div className="relative">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h2 className="font-display text-xl font-black text-scotland-navy uppercase tracking-tight">
-                        {player.name}
-                      </h2>
-                      <p className="font-heading text-sm text-betis-verde font-semibold">
-                        {player.position}
-                      </p>
-                    </div>
-                    <span className="inline-block bg-betis-verde text-white px-3 py-1 rounded-full font-heading font-bold text-xs whitespace-nowrap">
-                      {player.years}
-                    </span>
-                  </div>
-
-                  <p className="font-body text-gray-700 text-sm leading-relaxed mb-4">
-                    {player.description}
-                  </p>
-
-                  <div className="pt-4 border-t border-gray-100 flex items-center gap-2">
-                    <Trophy className="h-4 w-4 text-betis-oro flex-shrink-0" />
-                    <p className="font-heading text-sm font-semibold text-betis-verde-dark">
-                      {player.highlight}
-                    </p>
-                  </div>
-                </div>
-              </div>
+                {opt.label}
+              </button>
             ))}
           </div>
         </div>
       </section>
+
+      {/* Grouped Players */}
+      {groups.map(({ era, config, players }) => (
+        <section key={era} className="relative py-16 overflow-hidden">
+          <div className="absolute inset-0 bg-canvas-warm" />
+          <div className="absolute inset-0 pattern-tartan-subtle opacity-40" />
+
+          <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <EraHeader
+              title={config.title}
+              subtitle={config.subtitle}
+              years={config.years}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {players.map((player) => (
+                <PlayerCard key={player.name} player={player} />
+              ))}
+            </div>
+          </div>
+        </section>
+      ))}
 
       {/* CTA Section */}
       <section className="relative py-20 overflow-hidden">
