@@ -24,7 +24,7 @@
     "prepare": "lefthook install"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.36.2",
+    "@clerk/nextjs": "^6.36.7",
     "@hookform/resolvers": "^5.2.2",
     "@sentry/nextjs": "^10.30.0",
     "@supabase/supabase-js": "^2.87.1",
