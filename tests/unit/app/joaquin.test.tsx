@@ -42,9 +42,7 @@ describe("Joaquín Page", () => {
       render(<JoaquinPage />);
 
       expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
-      expect(
-        screen.getByText("Los Chistes de Joaquín"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Los Chistes de Joaquín")).toBeInTheDocument();
     });
 
     it("should render the hero tagline", async () => {
@@ -60,9 +58,7 @@ describe("Joaquín Page", () => {
       const JoaquinPage = (await import("@/app/joaquin/page")).default;
       render(<JoaquinPage />);
 
-      expect(
-        screen.getByText("El humor de una leyenda"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("El humor de una leyenda")).toBeInTheDocument();
     });
 
     it("should render the intro paragraph about Joaquín", async () => {
@@ -80,9 +76,7 @@ describe("Joaquín Page", () => {
       const JoaquinPage = (await import("@/app/joaquin/page")).default;
       render(<JoaquinPage />);
 
-      expect(
-        screen.getByText("Momentos Memorables"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Momentos Memorables")).toBeInTheDocument();
     });
 
     it("should render all six moment cards", async () => {
@@ -91,8 +85,12 @@ describe("Joaquín Page", () => {
 
       expect(screen.getByText("El Rey del Confinamiento")).toBeInTheDocument();
       expect(screen.getByText("El Hormiguero")).toBeInTheDocument();
-      expect(screen.getByText("Los Cumpleaños del Vestuario")).toBeInTheDocument();
-      expect(screen.getByText("Ruedas de Prensa Memorables")).toBeInTheDocument();
+      expect(
+        screen.getByText("Los Cumpleaños del Vestuario"),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText("Ruedas de Prensa Memorables"),
+      ).toBeInTheDocument();
       expect(screen.getByText("Campeón con Cachondeo")).toBeInTheDocument();
       expect(screen.getByText("La Despedida del Leyenda")).toBeInTheDocument();
     });
@@ -146,9 +144,7 @@ describe("Joaquín Page", () => {
       expect(
         screen.getByText(/Pablo Motos no podía parar de reír/),
       ).toBeInTheDocument();
-      expect(
-        screen.getByText(/Copa del Rey en 2022/),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Copa del Rey en 2022/)).toBeInTheDocument();
     });
   });
 

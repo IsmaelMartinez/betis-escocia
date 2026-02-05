@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Play, Mic, Smartphone, Trophy, Heart, Star, Video } from "lucide-react";
+import {
+  Play,
+  Mic,
+  Smartphone,
+  Trophy,
+  Heart,
+  Star,
+  Video,
+} from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Chistes de Joaquín",
