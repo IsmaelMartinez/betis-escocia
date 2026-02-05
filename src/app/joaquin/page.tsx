@@ -112,7 +112,7 @@ const MOMENTS: JoaquinMoment[] = [
   {
     id: 6,
     category: "despedida",
-    title: "La Despedida del Leyenda",
+    title: "La Despedida de la Leyenda",
     description:
       "Su ceremonia de despedida en el Villamarín en junio de 2023 fue puro Joaquín. 60.000 personas vinieron a decir adiós, y ni en su momento más emotivo pudo evitar hacer reír a todo el estadio. Una carrera que terminó exactamente como debía: entre lágrimas de emoción y carcajadas.",
     videoSearchQuery: "joaquin+sanchez+despedida+betis+villamarin+2023",
