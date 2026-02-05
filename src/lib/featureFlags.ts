@@ -140,6 +140,12 @@ export function getEnabledNavigationItems(): NavigationItem[] {
       nameEn: "Legends",
       feature: "show-jugadores-historicos",
     },
+    {
+      name: "Joaquín",
+      href: "/joaquin",
+      nameEn: "Joaquín",
+      feature: null,
+    },
     { name: "Únete", href: "/unete", nameEn: "Join", feature: "show-unete" },
     {
       name: "Contacto",
@@ -150,7 +156,8 @@ export function getEnabledNavigationItems(): NavigationItem[] {
   ];
 
   return allNavigationItems.filter((item) => {
-    return hasFeature(item.feature!);
+    if (item.feature === null) return true;
+    return hasFeature(item.feature);
   });
 }
 
