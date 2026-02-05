@@ -27,6 +27,7 @@ describe("Feature Flags - Simplified System", () => {
     it("should return default values when no environment variables are set", () => {
       // Enabled by default (core features)
       expect(hasFeature("show-nosotros")).toBe(true);
+      expect(hasFeature("show-jugadores-historicos")).toBe(true);
       expect(hasFeature("show-unete")).toBe(true);
       expect(hasFeature("show-clasificacion")).toBe(true);
 
@@ -85,6 +86,7 @@ describe("Feature Flags - Simplified System", () => {
 
       // Should include items that are enabled by default
       expect(enabledItems.some((item) => item.name === "Nosotros")).toBe(true);
+      expect(enabledItems.some((item) => item.name === "Leyendas")).toBe(true);
       expect(enabledItems.some((item) => item.name === "Únete")).toBe(true);
       expect(enabledItems.some((item) => item.name === "Clasificación")).toBe(
         true,
