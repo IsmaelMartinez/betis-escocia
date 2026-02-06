@@ -5,6 +5,7 @@ export type PlayerEra =
   | "nuevo-betis";
 
 export interface Player {
+  id: string;
   name: string;
   position: string;
   years: string;
@@ -52,6 +53,7 @@ export const ERA_CONFIG: Record<
 export const LEYENDAS: Player[] = [
   // ── CLÁSICOS DEL VILLAMARÍN ──────────────────────────────────────────
   {
+    id: "julio-cardenosa",
     name: "Julio Cardeñosa",
     position: "Centrocampista",
     years: "1971–1981",
@@ -64,6 +66,7 @@ export const LEYENDAS: Player[] = [
     stats: "+300 partidos con el Betis",
   },
   {
+    id: "rafael-gordillo",
     name: "Rafael Gordillo",
     position: "Lateral izquierdo",
     years: "1974–1985",
@@ -78,6 +81,7 @@ export const LEYENDAS: Player[] = [
 
   // ── LA ERA DORADA ────────────────────────────────────────────────────
   {
+    id: "denilson",
     name: "Denilson",
     position: "Extremo izquierdo",
     years: "1998–2000",
@@ -89,6 +93,7 @@ export const LEYENDAS: Player[] = [
     stats: "Récord mundial: 5.000 millones de pesetas",
   },
   {
+    id: "oliveira",
     name: "Oliveira",
     position: "Mediapunta",
     years: "1997–2002",
@@ -101,6 +106,7 @@ export const LEYENDAS: Player[] = [
     stats: "+100 partidos como verdiblanco",
   },
   {
+    id: "ricardo",
     name: "Ricardo",
     position: "Mediapunta",
     years: "1998–2004",
@@ -112,6 +118,7 @@ export const LEYENDAS: Player[] = [
     stats: "52 goles en 6 temporadas",
   },
   {
+    id: "assuncao",
     name: "Assunção",
     position: "Centrocampista",
     years: "2001–2005",
@@ -124,6 +131,7 @@ export const LEYENDAS: Player[] = [
     stats: "Champions League + Copa del Rey 2005",
   },
   {
+    id: "alfonso-perez",
     name: "Alfonso Pérez",
     position: "Delantero",
     years: "2002–2005",
@@ -135,6 +143,7 @@ export const LEYENDAS: Player[] = [
     stats: "Goleador en Champions y Copa del Rey",
   },
   {
+    id: "nono",
     name: "Nono",
     position: "Centrocampista",
     years: "2001–2008",
@@ -147,6 +156,7 @@ export const LEYENDAS: Player[] = [
     stats: "7 temporadas de entrega total",
   },
   {
+    id: "capi",
     name: "Capi",
     position: "Mediapunta",
     years: "2003–2008",
@@ -160,6 +170,7 @@ export const LEYENDAS: Player[] = [
 
   // ── CORAZÓN VERDIBLANCO ──────────────────────────────────────────────
   {
+    id: "ruben-castro",
     name: "Rubén Castro",
     position: "Delantero",
     years: "2010–2018",
@@ -171,6 +182,7 @@ export const LEYENDAS: Player[] = [
     stats: "183 goles — récord absoluto del club",
   },
   {
+    id: "juanito-gutierrez",
     name: "Juanito Gutiérrez",
     position: "Defensa central",
     years: "2001–2011",
@@ -183,6 +195,7 @@ export const LEYENDAS: Player[] = [
     stats: "+300 partidos · 10 temporadas",
   },
   {
+    id: "benat-etxebarria",
     name: "Beñat Etxebarria",
     position: "Centrocampista",
     years: "2009–2014",
@@ -196,6 +209,7 @@ export const LEYENDAS: Player[] = [
 
   // ── EL NUEVO BETIS ───────────────────────────────────────────────────
   {
+    id: "joaquin-sanchez",
     name: "Joaquín Sánchez",
     position: "Extremo derecho",
     years: "2000–2006, 2015–2024",
@@ -208,6 +222,7 @@ export const LEYENDAS: Player[] = [
     stats: "+500 partidos — récord histórico del club",
   },
   {
+    id: "nabil-fekir",
     name: "Nabil Fekir",
     position: "Mediapunta",
     years: "2019–2023",
@@ -219,6 +234,7 @@ export const LEYENDAS: Player[] = [
     stats: "Copa del Rey 2022 · magia francesa",
   },
   {
+    id: "sergio-canales",
     name: "Sergio Canales",
     position: "Centrocampista",
     years: "2018–2024",
@@ -231,6 +247,7 @@ export const LEYENDAS: Player[] = [
     stats: "6 temporadas · líder del Betis moderno",
   },
   {
+    id: "borja-iglesias",
     name: "Borja Iglesias",
     position: "Delantero",
     years: "2019–2024",
