@@ -95,7 +95,9 @@ describe("Jugadores Históricos Page", () => {
     });
 
     it("should render player highlights", () => {
-      expect(screen.getByText("Ídolo eterno del Villamarín")).toBeInTheDocument();
+      expect(
+        screen.getByText("Ídolo eterno del Villamarín"),
+      ).toBeInTheDocument();
       expect(
         screen.getByText("Máximo goleador histórico del club"),
       ).toBeInTheDocument();
@@ -171,9 +173,7 @@ describe("Jugadores Históricos Page", () => {
 
   describe("Era filter", () => {
     it("should render all filter buttons", () => {
-      expect(
-        screen.getByRole("button", { name: "Todos" }),
-      ).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Todos" })).toBeInTheDocument();
       expect(
         screen.getByRole("button", { name: "Clásicos del Villamarín" }),
       ).toBeInTheDocument();
@@ -209,9 +209,7 @@ describe("Jugadores Históricos Page", () => {
       const user = userEvent.setup();
 
       // First filter to one era
-      await user.click(
-        screen.getByRole("button", { name: "La Era Dorada" }),
-      );
+      await user.click(screen.getByRole("button", { name: "La Era Dorada" }));
       expect(screen.queryByText("Julio Cardeñosa")).not.toBeInTheDocument();
 
       // Click Todos to show all
