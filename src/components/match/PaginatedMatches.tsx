@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import MatchCard from '@/components/match/MatchCard';
+import MatchCard from './MatchCard';
 import { ApiErrorMessage, NoRecentMatchesMessage } from '@/components/ErrorMessage';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { MatchCardErrorBoundary } from '@/components/ErrorBoundary';
