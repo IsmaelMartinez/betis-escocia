@@ -7,7 +7,7 @@ import axios from 'axios';
 import { Match } from '@/types/match';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import ShareMatch from '@/components/ShareMatch';
+import ShareMatch from '@/components/match/ShareMatch';
 import BetisLogo from '@/components/BetisLogo';
 import { Suspense } from 'react';
 import { format } from 'date-fns';

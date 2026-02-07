@@ -5,7 +5,7 @@ import { hasFeature } from "@/lib/featureFlags";
 
 // Lazy load widgets that are below the fold for better LCP
 const UpcomingMatchesWidget = dynamic(
-  () => import("@/components/UpcomingMatchesWidget"),
+  () => import("@/components/match/UpcomingMatchesWidget"),
   {
     loading: () => (
       <div className="bg-white rounded-lg shadow-lg p-6 animate-pulse">

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import CompetitionFilter from '@/components/CompetitionFilter';
+import CompetitionFilter from '@/components/match/CompetitionFilter';
 
 describe('CompetitionFilter', () => {
   const mockOnCompetitionChange = vi.fn();

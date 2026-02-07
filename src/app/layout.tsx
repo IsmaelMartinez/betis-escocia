@@ -9,7 +9,7 @@ import {
 import "./globals.css";
 import Layout from "@/components/layout/Layout";
 import OfflineDetector from "@/components/OfflineDetector";
-import BackgroundMatchSync from "@/components/BackgroundMatchSync";
+import BackgroundMatchSync from "@/components/match/BackgroundMatchSync";
 import {
   getFeatureFlagsStatus,
   getEnabledNavigationItems,

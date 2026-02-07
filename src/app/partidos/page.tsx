@@ -2,7 +2,7 @@
 
 import { ApiErrorBoundary } from '@/components/ErrorBoundary';
 import BetisPositionWidget from '@/components/BetisPositionWidget';
-import AllDatabaseMatches from '@/components/AllDatabaseMatches';
+import AllDatabaseMatches from '@/components/match/AllDatabaseMatches';
 import RSVPModal, { useRSVPModal } from '@/components/RSVPModal';
 import SidebarCard from '@/components/SidebarCard';
 import { Calendar } from 'lucide-react';

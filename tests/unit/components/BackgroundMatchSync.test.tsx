@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, act } from '@testing-library/react';
-import BackgroundMatchSync from '@/components/BackgroundMatchSync';
+import BackgroundMatchSync from '@/components/match/BackgroundMatchSync';
 
 // Mock logger
 vi.mock('@/lib/logger', () => ({

@@ -294,7 +294,7 @@ import { PatternBackground, HeroBackground, CulturalCard } from '@/components/pa
 ### MatchTicket Component
 
 ```tsx
-import MatchTicket from "@/components/MatchTicket";
+import MatchTicket from "@/components/match/MatchTicket";
 
 <MatchTicket
   id={1}

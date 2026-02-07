@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import FilteredMatches from '@/components/FilteredMatches';
+import FilteredMatches from '@/components/match/FilteredMatches';
 import type { Match } from '@/types/match';
 
 // Mock dependencies
-vi.mock('@/components/MatchCard', () => ({
+vi.mock('@/components/match/MatchCard', () => ({
   default: vi.fn(({ opponent, competition, status, isUpcoming }) => (
     <div data-testid="match-card">
       <div data-testid="match-opponent">{opponent}</div>
@@ -15,7 +15,7 @@ vi.mock('@/components/MatchCard', () => ({
   ))
 }));
 
-vi.mock('@/components/CompetitionFilter', () => ({
+vi.mock('@/components/match/CompetitionFilter', () => ({
   default: vi.fn(({ competitions, selectedCompetition, onCompetitionChange, matchCounts }) => (
     <div data-testid="competition-filter">
       {competitions.map((comp: any) => (

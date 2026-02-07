@@ -7,7 +7,7 @@ import Home from "../../../src/app/page";
 vi.mock("@/components/HeroCommunity", () => ({
   default: vi.fn(() => <div data-testid="mock-hero-community" />),
 }));
-vi.mock("@/components/UpcomingMatchesWidget", () => ({
+vi.mock("@/components/match/UpcomingMatchesWidget", () => ({
   default: vi.fn(() => <div data-testid="mock-upcoming-matches-widget" />),
 }));
 vi.mock("@/components/ClassificationWidget", () => ({

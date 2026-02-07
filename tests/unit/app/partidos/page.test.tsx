@@ -7,7 +7,7 @@ vi.mock('@/components/ErrorBoundary', () => ({
   ApiErrorBoundary: ({ children }: { children: React.ReactNode }) => <div data-testid="api-error-boundary">{children}</div>,
 }));
 
-vi.mock('@/components/AllDatabaseMatches', () => ({
+vi.mock('@/components/match/AllDatabaseMatches', () => ({
   default: () => <div data-testid="all-database-matches">All Database Matches Component</div>,
 }));
 
