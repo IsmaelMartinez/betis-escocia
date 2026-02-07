@@ -344,12 +344,21 @@ These parts of the architecture are working well and should be preserved:
 3. ~~Create `constants/competitions.ts` from duplicated mappings~~ -> `src/lib/constants/competitions.ts`
 4. ~~Delete unused `mockFactories.ts` and `testHelpers.ts`~~ -> deleted
 
-### Phase 2: Component Organization
+### Phase 2: Component Organization -- DONE
 
-1. Create component subdirectories (`layout/`, `match/`, `rsvp/`, etc.)
-2. Move components in batches, updating imports
-3. Run full test suite after each batch
-4. Update Storybook paths
+1. ~~Create component subdirectories (`layout/`, `match/`, `rsvp/`, etc.)~~
+2. ~~Move components in batches, updating imports~~
+3. ~~Run full test suite after each batch (all 2237 tests passing)~~
+4. ~~Update Storybook paths~~
+
+Components moved:
+- `layout/` — Layout
+- `match/` — MatchCard, MatchTicket, AllDatabaseMatches, BackgroundMatchSync, UpcomingMatches, FilteredMatches, PaginatedMatches, CompetitionFilter, ShareMatch, UpcomingMatchesWidget
+- `rsvp/` — RSVPWidget, RSVPForm, RSVPModal
+- `trivia/` — GameTimer
+- `hero/` — Hero, HeroCommunity, CulturalFusionHero
+- `social/` — FacebookPagePlugin, InstagramEmbed, SocialMediaDashboard, FacebookSDK
+- `widgets/` — ClassificationWidget, BetisPositionWidget, CommunityStats
 
 ### Phase 3: Split Large Components
 
