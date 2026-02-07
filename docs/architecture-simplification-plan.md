@@ -1,8 +1,6 @@
-# ADR-015: Architecture Review & Simplification Plan
+# Architecture Review & Simplification Plan
 
 **Date:** 2025-02-07
-**Status:** Proposed
-**Author:** Architecture Review
 
 ## Context
 
@@ -369,11 +367,7 @@ These parts of the architecture are working well and should be preserved:
 
 ---
 
-## Decision
-
-We propose adopting this plan incrementally, phase by phase. Each phase is independent and can be executed, tested, and merged separately. No phase requires changes to the public API or user-facing behavior.
-
-## Consequences
+## Expected Outcomes
 
 **Positive:**
 - Reduced cognitive load when navigating the codebase
@@ -382,7 +376,7 @@ We propose adopting this plan incrementally, phase by phase. Each phase is indep
 - Clearer separation of concerns in large components
 - Reusable hooks reduce duplication across features
 
-**Negative:**
+**Trade-offs:**
 - Import paths change (mitigated by barrel exports and IDE refactoring)
 - Temporary code churn in PRs
 - Need to update Storybook paths after component moves
