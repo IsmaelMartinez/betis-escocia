@@ -31,7 +31,7 @@ export const ERA_CONFIG: Record<
   clasicos: {
     title: "Clásicos del Villamarín",
     subtitle: "Los pioneros que forjaron la leyenda del Betis",
-    years: "1970s–1980s",
+    years: "1970–1986",
   },
   "era-dorada": {
     title: "La Era Dorada",
@@ -77,6 +77,17 @@ export const LEYENDAS: Player[] = [
     videoSearchQuery: "rafael+gordillo+betis+espana+mejores+momentos",
     quote: "Lo que soy se lo debo al Betis",
     stats: "Copa del Rey 1977 · 75 veces internacional",
+  },
+  {
+    name: "Hipólito Rincón",
+    position: "Delantero",
+    years: "1978–1986",
+    era: "clasicos",
+    description:
+      "Uno de los goleadores más queridos de la historia del Betis. Hipólito Rincón era puro instinto dentro del área, un delantero que vivía para el gol y que formó una dupla letal con Cardeñosa. Su entrega y carácter lo convirtieron en ídolo de la grada.",
+    highlight: "Goleador de referencia en los 80",
+    videoSearchQuery: "hipolito+rincon+betis+goles+mejores+momentos",
+    stats: "+100 goles con el Betis",
   },
 
   // ── LA ERA DORADA ────────────────────────────────────────────────────
@@ -166,6 +177,28 @@ export const LEYENDAS: Player[] = [
     highlight: "Brilló en Champions League y Copa del Rey",
     videoSearchQuery: "capi+betis+goles+mejores+momentos+champions",
     stats: "Magia y gol en la era dorada",
+  },
+  {
+    name: "Finidi George",
+    position: "Extremo derecho",
+    years: "1996–2002",
+    era: "era-dorada",
+    description:
+      "El nigeriano que electrizaba al Villamarín con su velocidad y desborde. Finidi llegó del Ajax como campeón de Europa y aportó clase mundial a la banda derecha bética. Su sonrisa y su fútbol alegre lo hicieron favorito de la afición.",
+    highlight: "Campeón de Europa con el Ajax antes de llegar al Betis",
+    videoSearchQuery: "finidi+george+betis+goles+jugadas+mejores+momentos",
+    stats: "6 temporadas de magia nigeriana",
+  },
+  {
+    name: "Dani",
+    position: "Centrocampista",
+    years: "1999–2003",
+    era: "era-dorada",
+    description:
+      "Daniel García Lara, conocido como Dani, fue un centrocampista con llegada y gol que brilló en el Betis de principios de siglo. Su potencia física y su capacidad para marcar goles desde segunda línea le hicieron imprescindible en el mediocampo verdiblanco.",
+    highlight: "Goles decisivos en la era dorada",
+    videoSearchQuery: "dani+garcia+lara+betis+goles+mejores+momentos",
+    stats: "Potencia y gol desde el mediocampo",
   },
 
   // ── CORAZÓN VERDIBLANCO ──────────────────────────────────────────────
@@ -258,5 +291,27 @@ export const LEYENDAS: Player[] = [
     videoSearchQuery: "borja+iglesias+panda+betis+goles+mejores+momentos",
     quote: "El Villamarín te pone los pelos de punta",
     stats: "51 goles con la verdiblanca",
+  },
+  {
+    name: "Isco Alarcón",
+    position: "Mediapunta",
+    years: "2024–presente",
+    era: "nuevo-betis",
+    description:
+      "El mago de Benalmádena llegó al Betis tras brillar en el Real Madrid y con la selección española. Isco aporta talento puro, control exquisito y una creatividad que ilusiona al Villamarín. Un fichaje de nivel mundial para el proyecto bético.",
+    highlight: "Talento de nivel mundial para el Betis",
+    videoSearchQuery: "isco+alarcon+betis+goles+jugadas+mejores+momentos",
+    stats: "Campeón de Europa con España y el Real Madrid",
+  },
+  {
+    name: "Youssouf Sabaly",
+    position: "Lateral derecho",
+    years: "2018–presente",
+    era: "nuevo-betis",
+    description:
+      "El senegalés se ha convertido en uno de los laterales más fiables de la historia reciente del Betis. Sabaly combina potencia física, velocidad en la banda y una entrega total en cada partido. Pieza fundamental en la conquista de la Copa del Rey 2022.",
+    highlight: "Campeón de la Copa del Rey 2022",
+    videoSearchQuery: "sabaly+betis+mejores+momentos+copa+del+rey",
+    stats: "Copa del Rey 2022 · +150 partidos",
   },
 ];
