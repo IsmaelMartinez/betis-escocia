@@ -42,7 +42,7 @@ test.describe("Joaquín Page Happy Path", () => {
     await page.goto("/joaquin");
 
     await expect(page.getByText("El Rey del Confinamiento")).toBeVisible();
-    await expect(page.getByText("El Hormiguero")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "El Hormiguero" })).toBeVisible();
     await expect(page.getByText("Los Cumpleaños del Vestuario")).toBeVisible();
     await expect(page.getByText("Ruedas de Prensa Memorables")).toBeVisible();
     await expect(page.getByText("Campeón con Cachondeo")).toBeVisible();
@@ -67,7 +67,7 @@ test.describe("Joaquín Page Happy Path", () => {
   test("should render CTA section with navigation links", async ({ page }) => {
     await page.goto("/joaquin");
 
-    await expect(page.getByText("¡Viva er Betis manque pierda!")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "¡Viva er Betis manque pierda!" })).toBeVisible();
 
     const youtubeLink = page.getByRole("link", {
       name: /Más Vídeos en YouTube/,
