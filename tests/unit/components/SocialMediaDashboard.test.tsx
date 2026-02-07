@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import SocialMediaDashboard from '@/components/SocialMediaDashboard';
+import SocialMediaDashboard from '@/components/social/SocialMediaDashboard';
 
 // Mock navigator.clipboard
 const mockWriteText = vi.fn(() => Promise.resolve());
@@ -17,11 +17,11 @@ Object.defineProperty(global, 'navigator', {
 });
 
 // Mock social media components
-vi.mock('@/components/FacebookPagePlugin', () => ({
+vi.mock('@/components/social/FacebookPagePlugin', () => ({
   default: () => <div data-testid="facebook-plugin">Facebook Plugin</div>
 }));
 
-vi.mock('@/components/InstagramEmbed', () => ({
+vi.mock('@/components/social/InstagramEmbed', () => ({
   default: () => <div data-testid="instagram-embed">Instagram Embed</div>
 }));
 

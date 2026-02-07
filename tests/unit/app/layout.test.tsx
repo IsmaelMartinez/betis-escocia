@@ -42,7 +42,7 @@ vi.mock("@clerk/nextjs", () => ({
     <div data-testid="mock-clerk-provider">{children}</div>
   )),
 }));
-vi.mock("@/components/FacebookSDK", () => ({
+vi.mock("@/components/social/FacebookSDK", () => ({
   default: vi.fn(() => <div data-testid="mock-facebook-sdk" />),
 }));
 

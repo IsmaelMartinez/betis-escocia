@@ -18,7 +18,7 @@ import * as Sentry from "@sentry/nextjs";
 import SentryUserContext from "@/components/SentryUserContext";
 
 import { ClerkProvider } from "@clerk/nextjs";
-import FacebookSDK from "@/components/FacebookSDK";
+import FacebookSDK from "@/components/social/FacebookSDK";
 
 // Conditionally import Vercel Analytics/SpeedInsights only in production on Vercel
 const isVercel = process.env.VERCEL === "1";
