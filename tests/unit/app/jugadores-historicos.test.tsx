@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 // Mock Next.js Link component
@@ -134,12 +134,18 @@ describe("Jugadores Históricos Page", () => {
 
     it("should encode video search queries in URLs", () => {
       const videoLinks = screen.getAllByRole("link", { name: /Ver Vídeos/ });
-      // All links should use encodeURIComponent, so no raw '+' in search_query param
+      // All links should use encodeURIComponent, so no raw spaces in search_query param
       videoLinks.forEach((link) => {
         const href = link.getAttribute("href") || "";
         const queryPart = href.split("search_query=")[1];
-        // Encoded '+' becomes '%2B', spaces become '%20' or '+'
         expect(queryPart).toBeDefined();
+        if (!queryPart) {
+          return;
+        }
+        // Ensure the query segment has no whitespace (i.e. spaces are encoded)
+        expect(queryPart).not.toMatch(/\s/);
+        // And it should contain at least one percent-encoded sequence
+        expect(queryPart).toMatch(/%[0-9A-Fa-f]{2}/);
       });
     });
   });

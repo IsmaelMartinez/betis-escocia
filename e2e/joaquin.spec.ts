@@ -4,29 +4,38 @@ test.describe("Joaquín Page Happy Path", () => {
   test("should load successfully and display key elements", async ({
     page,
   }) => {
-    const response = await page.goto("/joaquin");
-    expect(response?.status()).toBe(200);
-
-    await expect(
-      page.locator("h1", { hasText: "Los Chistes de Joaquín" }),
-    ).toBeVisible();
-    await expect(
-      page.getByText("El hombre que convirtió el fútbol en comedia"),
-    ).toBeVisible();
-    await expect(page.getByText("Momentos Memorables")).toBeVisible();
-
-    page.on("console", (msg) => {
+    const consoleListener = (msg: any) => {
       if (msg.type() === "error") {
         console.error(`Console error: ${msg.text()}`);
         expect(msg.type()).not.toBe("error");
       }
-    });
-    page.on("requestfailed", (request) => {
+    };
+
+    const requestFailedListener = (request: any) => {
       console.error(
         `Network request failed: ${request.url()} - ${request.failure()?.errorText}`,
       );
       expect(request.failure()).toBeNull();
-    });
+    };
+
+    page.on("console", consoleListener);
+    page.on("requestfailed", requestFailedListener);
+
+    try {
+      const response = await page.goto("/joaquin");
+      expect(response?.status()).toBe(200);
+
+      await expect(
+        page.locator("h1", { hasText: "Los Chistes de Joaquín" }),
+      ).toBeVisible();
+      await expect(
+        page.getByText("El hombre que convirtió el fútbol en comedia"),
+      ).toBeVisible();
+      await expect(page.getByText("Momentos Memorables")).toBeVisible();
+    } finally {
+      page.off("console", consoleListener);
+      page.off("requestfailed", requestFailedListener);
+    }
   });
 
   test("should render all six moment cards", async ({ page }) => {
