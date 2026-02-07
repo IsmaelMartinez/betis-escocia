@@ -22,28 +22,62 @@ import {
 const ALL_FILTER = "todos" as const;
 type EraFilter = PlayerEra | typeof ALL_FILTER;
 
+function PlayerCardDetails({ player }: { player: Player }) {
+  return (
+    <div className="pt-3 border-t border-gray-100 space-y-3">
+      <p className="font-body text-gray-700 text-sm leading-relaxed">
+        {player.description}
+      </p>
+
+      {player.quote && (
+        <div className="bg-betis-verde-pale rounded-xl px-4 py-3 flex items-start gap-2">
+          <Quote className="h-4 w-4 text-betis-verde mt-0.5 flex-shrink-0" />
+          <p className="font-accent text-sm italic text-betis-verde-dark">
+            &ldquo;{player.quote}&rdquo;
+          </p>
+        </div>
+      )}
+
+      {player.stats && (
+        <div className="flex items-center gap-2">
+          <BarChart3 className="h-4 w-4 text-gray-400 flex-shrink-0" />
+          <p className="font-heading text-xs text-gray-500">
+            {player.stats}
+          </p>
+        </div>
+      )}
+
+      <a
+        href={`https://www.youtube.com/results?search_query=${encodeURIComponent(player.videoSearchQuery)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 bg-betis-verde hover:bg-betis-verde-dark text-white px-4 py-2 rounded-xl font-heading font-bold text-xs uppercase tracking-wide transition-all duration-300"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Play className="h-3.5 w-3.5" />
+        Ver Vídeos
+      </a>
+    </div>
+  );
+}
+
 function PlayerCard({ player }: { player: Player }) {
   const [expanded, setExpanded] = useState(false);
 
+  const toggle = useCallback(() => setExpanded((prev) => !prev), []);
+
   return (
-    <div
-      className="group bg-white rounded-2xl shadow-md border border-gray-100 hover:border-betis-verde/40 transition-all duration-300 hover:shadow-lg relative overflow-hidden flex flex-col cursor-pointer"
-      onClick={() => setExpanded((prev) => !prev)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          setExpanded((prev) => !prev);
-        }
-      }}
-      role="button"
-      tabIndex={0}
-      aria-expanded={expanded}
-    >
+    <div className="group bg-white rounded-2xl shadow-md border border-gray-100 hover:border-betis-verde/40 transition-all duration-300 hover:shadow-lg relative overflow-hidden flex flex-col">
       <div className="h-1 bg-gradient-to-r from-betis-verde via-betis-oro to-betis-verde" />
 
       <div className="p-5 sm:p-6 flex flex-col flex-1">
-        {/* Compact header — always visible */}
-        <div className="flex items-start justify-between gap-3">
+        {/* Compact header — always visible, acts as toggle button */}
+        <button
+          type="button"
+          onClick={toggle}
+          aria-expanded={expanded}
+          className="flex items-start justify-between gap-3 text-left w-full cursor-pointer"
+        >
           <div className="min-w-0">
             <h3 className="font-display text-lg font-black text-scotland-navy uppercase tracking-tight leading-tight">
               {player.name}
@@ -62,7 +96,7 @@ function PlayerCard({ player }: { player: Player }) {
               }`}
             />
           </div>
-        </div>
+        </button>
 
         {/* Highlight — always visible as a quick summary */}
         <div className="mt-3 flex items-center gap-2">
@@ -72,55 +106,12 @@ function PlayerCard({ player }: { player: Player }) {
           </p>
         </div>
 
-        {/* Expandable detail section */}
-        <div
-          className={`grid transition-all duration-300 ease-in-out ${
-            expanded
-              ? "grid-rows-[1fr] opacity-100 mt-4"
-              : "grid-rows-[0fr] opacity-0 mt-0"
-          }`}
-        >
-          <div className="overflow-hidden">
-            <div className="pt-3 border-t border-gray-100 space-y-3">
-              {/* Description */}
-              <p className="font-body text-gray-700 text-sm leading-relaxed">
-                {player.description}
-              </p>
-
-              {/* Quote */}
-              {player.quote && (
-                <div className="bg-betis-verde-pale rounded-xl px-4 py-3 flex items-start gap-2">
-                  <Quote className="h-4 w-4 text-betis-verde mt-0.5 flex-shrink-0" />
-                  <p className="font-accent text-sm italic text-betis-verde-dark">
-                    &ldquo;{player.quote}&rdquo;
-                  </p>
-                </div>
-              )}
-
-              {/* Stats */}
-              {player.stats && (
-                <div className="flex items-center gap-2">
-                  <BarChart3 className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                  <p className="font-heading text-xs text-gray-500">
-                    {player.stats}
-                  </p>
-                </div>
-              )}
-
-              {/* Video Link */}
-              <a
-                href={`https://www.youtube.com/results?search_query=${encodeURIComponent(player.videoSearchQuery)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-betis-verde hover:bg-betis-verde-dark text-white px-4 py-2 rounded-xl font-heading font-bold text-xs uppercase tracking-wide transition-all duration-300"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Play className="h-3.5 w-3.5" />
-                Ver Vídeos
-              </a>
-            </div>
+        {/* Expandable detail section — conditionally rendered */}
+        {expanded && (
+          <div className="mt-4">
+            <PlayerCardDetails player={player} />
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
