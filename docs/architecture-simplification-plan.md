@@ -324,12 +324,12 @@ These parts of the architecture are working well and should be preserved:
 
 ## Implementation Phases
 
-### Phase 1: Quick Wins (low risk, immediate clarity)
+### Phase 1: Quick Wins (low risk, immediate clarity) -- DONE
 
-1. Extract CSV utilities from AdminPageClient
-2. Move contact form constants to `constants/contact.ts`
-3. Create `constants/competitions.ts` from duplicated mappings
-4. Delete or activate unused `mockFactories.ts` and `testHelpers.ts`
+1. ~~Extract CSV utilities from AdminPageClient~~ -> `src/lib/csvExport.ts`
+2. ~~Move contact form constants to `constants/contact.ts`~~ -> `src/lib/constants/contact.ts`
+3. ~~Create `constants/competitions.ts` from duplicated mappings~~ -> `src/lib/constants/competitions.ts`
+4. ~~Delete unused `mockFactories.ts` and `testHelpers.ts`~~ -> deleted
 
 ### Phase 2: Component Organization
 
@@ -355,7 +355,7 @@ These parts of the architecture are working well and should be preserved:
 ### Phase 5: Test Infrastructure Cleanup
 
 1. Centralize mocks into `tests/mocks/` directory
-2. Integrate mockFactories into tests that create fixtures
+2. Create test fixture factories if needed (mockFactories was deleted in Phase 1 as unused)
 3. Expand MSW handlers for all external APIs
 4. Reduce setup overhead in heaviest test files
 
