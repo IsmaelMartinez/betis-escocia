@@ -383,7 +383,7 @@ import CulturalFusionHero from "@/components/hero/CulturalFusionHero";
 
 - `containerClassName` (`string`, optional): Additional classes for the content container. Use this for width and alignment variations. Defaults to `"max-w-6xl text-center"`.
 
-**Storybook:** See `src/components/CulturalFusionHero.stories.tsx` for examples
+**Storybook:** See `src/components/hero/CulturalFusionHero.stories.tsx` for examples
 
 ### FeatureCard
 

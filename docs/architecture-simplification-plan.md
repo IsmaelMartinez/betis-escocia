@@ -12,75 +12,31 @@ The codebase has **solid fundamentals**: consistent API handler patterns (`creat
 
 ---
 
-## Issue 1: Flat Component Directory (77 files at root level)
+## Issue 1: Flat Component Directory — RESOLVED (Phase 2)
 
-**Severity: HIGH** — Hardest part of the codebase to navigate.
+**Severity: HIGH** — Was the hardest part of the codebase to navigate.
 
-### Current State
-
-```
-src/components/
-├── AllDatabaseMatches.tsx
-├── AllDatabaseMatches.stories.tsx
-├── BackgroundMatchSync.tsx
-├── BetisLogo.tsx
-├── ... (73 more files at root level)
-├── admin/          (3 files)
-├── patterns/       (2 files)
-├── ui/             (6 files)
-└── user/           (1 file)
-```
-
-### Proposed Structure
+### Current Structure (after Phase 2)
 
 ```
 src/components/
-├── layout/
-│   ├── Header.tsx
-│   ├── Footer.tsx
-│   ├── NavItems.tsx
-│   ├── UserMenu.tsx
-│   └── Layout.tsx
-├── match/
-│   ├── MatchCard.tsx
-│   ├── MatchTicket.tsx
-│   ├── AllDatabaseMatches.tsx
-│   ├── MatchFilters.tsx
-│   ├── MatchPagination.tsx
-│   ├── UpcomingMatches.tsx
-│   └── [stories alongside components]
-├── rsvp/
-│   ├── RSVPWidget.tsx
-│   ├── RSVPForm.tsx
-│   ├── RSVPModal.tsx
-│   └── [stories]
-├── trivia/
-│   ├── GameTimer.tsx
-│   └── [stories]
-├── hero/
-│   ├── Hero.tsx
-│   ├── HeroCommunity.tsx
-│   └── CulturalFusionHero.tsx
-├── social/
-│   ├── FacebookPagePlugin.tsx
-│   ├── InstagramEmbed.tsx
-│   └── SocialMediaDashboard.tsx
-├── widgets/
-│   ├── ClassificationWidget.tsx
-│   ├── BetisPositionWidget.tsx
-│   └── CommunityStats.tsx
-├── ui/             (existing — keep)
-├── admin/          (existing — keep)
-├── patterns/       (existing — keep)
-└── user/           (existing — keep)
+├── layout/         # Layout
+├── match/          # MatchCard, MatchTicket, AllDatabaseMatches, BackgroundMatchSync,
+│                   # UpcomingMatches, FilteredMatches, PaginatedMatches,
+│                   # CompetitionFilter, ShareMatch, UpcomingMatchesWidget
+├── rsvp/           # RSVPWidget, RSVPForm, RSVPModal
+├── trivia/         # GameTimer
+├── hero/           # Hero, HeroCommunity, CulturalFusionHero
+├── social/         # FacebookPagePlugin, InstagramEmbed, SocialMediaDashboard, FacebookSDK
+├── widgets/        # ClassificationWidget, BetisPositionWidget, CommunityStats
+├── admin/          # (existing)
+├── patterns/       # (existing)
+├── ui/             # (existing)
+├── user/           # (existing)
+└── *.tsx           # ~30 general-purpose components (BetisLogo, ErrorBoundary, etc.)
 ```
 
-### Migration Strategy
-
-1. Create subdirectories and move files in batches (one domain at a time)
-2. Update all imports using a codemod or IDE refactoring
-3. Run full test suite after each batch
-4. Update Storybook story paths as needed
+All stories files live alongside their components. All imports across src/ and tests/ were updated.
 
 ---
 
