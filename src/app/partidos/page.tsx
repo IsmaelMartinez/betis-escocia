@@ -1,9 +1,9 @@
 'use client';
 
 import { ApiErrorBoundary } from '@/components/ErrorBoundary';
-import BetisPositionWidget from '@/components/BetisPositionWidget';
-import AllDatabaseMatches from '@/components/AllDatabaseMatches';
-import RSVPModal, { useRSVPModal } from '@/components/RSVPModal';
+import BetisPositionWidget from '@/components/widgets/BetisPositionWidget';
+import AllDatabaseMatches from '@/components/match/AllDatabaseMatches';
+import RSVPModal, { useRSVPModal } from '@/components/rsvp/RSVPModal';
 import SidebarCard from '@/components/SidebarCard';
 import { Calendar } from 'lucide-react';
 import { hasFeature } from '@/lib/featureFlags';

@@ -10,13 +10,13 @@ import {
   CheckCircle,
   ChevronDown,
 } from "lucide-react";
-import RSVPForm from "@/components/RSVPForm";
+import RSVPForm from "@/components/rsvp/RSVPForm";
 import { getUpcomingMatchesWithRSVPCounts, Match } from "@/lib/supabase";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { DATETIME_FORMAT } from "@/lib/constants/dateFormats";
-import CulturalFusionHero from "@/components/CulturalFusionHero";
+import CulturalFusionHero from "@/components/hero/CulturalFusionHero";
 import FeatureCard from "@/components/FeatureCard";
 
 interface RSVPData {

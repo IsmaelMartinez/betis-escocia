@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useRSVPData } from '@/hooks/useRSVPData';
-import { EventDetails } from '@/components/RSVPWidget';
+import { EventDetails } from '@/components/rsvp/RSVPWidget';
 
 // Mock @clerk/nextjs
 const mockUser = {

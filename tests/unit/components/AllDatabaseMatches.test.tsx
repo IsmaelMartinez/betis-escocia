@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import AllDatabaseMatches from '@/components/AllDatabaseMatches';
+import AllDatabaseMatches from '@/components/match/AllDatabaseMatches';
 
 // Mock the supabase module
 vi.mock('@/lib/supabase', () => ({
@@ -8,7 +8,7 @@ vi.mock('@/lib/supabase', () => ({
 }));
 
 // Mock MatchCard component
-vi.mock('@/components/MatchCard', () => ({
+vi.mock('@/components/match/MatchCard', () => ({
   default: ({ homeTeam, awayTeam, competition }: any) => (
     <div data-testid="match-card">
       <div data-testid="home-team">{homeTeam}</div>

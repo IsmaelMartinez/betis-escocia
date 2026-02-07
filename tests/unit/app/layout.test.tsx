@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import RootLayout from "../../../src/app/layout";
 import { ClerkProvider } from "@clerk/nextjs";
 import * as Sentry from "@sentry/nextjs";
-import Layout from "@/components/Layout";
+import Layout from "@/components/layout/Layout";
 
 // Mock external modules and components
 vi.mock("next/font/google", () => ({
@@ -14,7 +14,7 @@ vi.mock("next/font/google", () => ({
   Source_Sans_3: vi.fn(() => ({ variable: "var(--font-source-sans)" })),
   Playfair_Display: vi.fn(() => ({ variable: "var(--font-playfair)" })),
 }));
-vi.mock("@/components/Layout", () => ({
+vi.mock("@/components/layout/Layout", () => ({
   default: vi.fn(({ children }) => (
     <div data-testid="mock-layout">{children}</div>
   )),
@@ -42,7 +42,7 @@ vi.mock("@clerk/nextjs", () => ({
     <div data-testid="mock-clerk-provider">{children}</div>
   )),
 }));
-vi.mock("@/components/FacebookSDK", () => ({
+vi.mock("@/components/social/FacebookSDK", () => ({
   default: vi.fn(() => <div data-testid="mock-facebook-sdk" />),
 }));
 

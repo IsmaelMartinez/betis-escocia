@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import PaginatedMatches from "@/components/PaginatedMatches";
+import PaginatedMatches from "@/components/match/PaginatedMatches";
 
 // Mock MatchCard component
-vi.mock("@/components/MatchCard", () => ({
+vi.mock("@/components/match/MatchCard", () => ({
   default: ({
     id,
     opponent,

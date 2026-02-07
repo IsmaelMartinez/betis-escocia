@@ -294,7 +294,7 @@ import { PatternBackground, HeroBackground, CulturalCard } from '@/components/pa
 ### MatchTicket Component
 
 ```tsx
-import MatchTicket from "@/components/MatchTicket";
+import MatchTicket from "@/components/match/MatchTicket";
 
 <MatchTicket
   id={1}
@@ -344,7 +344,7 @@ import MatchTicket from "@/components/MatchTicket";
 A reusable hero section component with layered cultural fusion backgrounds.
 
 ```tsx
-import CulturalFusionHero from "@/components/CulturalFusionHero";
+import CulturalFusionHero from "@/components/hero/CulturalFusionHero";
 
 // Default usage (centered, max-width 6xl)
 <CulturalFusionHero>
@@ -383,7 +383,7 @@ import CulturalFusionHero from "@/components/CulturalFusionHero";
 
 - `containerClassName` (`string`, optional): Additional classes for the content container. Use this for width and alignment variations. Defaults to `"max-w-6xl text-center"`.
 
-**Storybook:** See `src/components/CulturalFusionHero.stories.tsx` for examples
+**Storybook:** See `src/components/hero/CulturalFusionHero.stories.tsx` for examples
 
 ### FeatureCard
 

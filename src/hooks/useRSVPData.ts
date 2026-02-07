@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { EventDetails } from '@/components/RSVPWidget';
+import { EventDetails } from '@/components/rsvp/RSVPWidget';
 
 export interface RSVPData {
   status: 'confirmed';

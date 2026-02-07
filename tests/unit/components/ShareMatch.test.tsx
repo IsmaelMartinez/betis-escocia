@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import ShareMatch from "@/components/ShareMatch";
+import ShareMatch from "@/components/match/ShareMatch";
 
 // Mock window.location
 const mockLocation = {

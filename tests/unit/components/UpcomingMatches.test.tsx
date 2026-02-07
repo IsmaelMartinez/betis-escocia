@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import UpcomingMatches from '@/components/UpcomingMatches';
+import UpcomingMatches from '@/components/match/UpcomingMatches';
 import { getUpcomingMatchesWithRSVPCounts } from '@/lib/supabase';
 
 // Mock dependencies
@@ -8,7 +8,7 @@ vi.mock('@/lib/supabase', () => ({
   getUpcomingMatchesWithRSVPCounts: vi.fn()
 }));
 
-vi.mock('@/components/MatchCard', () => ({
+vi.mock('@/components/match/MatchCard', () => ({
   default: vi.fn(({ opponent, competition, rsvpInfo, showRSVP }) => (
     <div data-testid="match-card">
       <div data-testid="match-opponent">{opponent}</div>

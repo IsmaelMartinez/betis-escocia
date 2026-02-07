@@ -12,7 +12,7 @@ import {
 } from "@/components/MessageComponent";
 import { useUser } from "@clerk/nextjs";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import CulturalFusionHero from "@/components/CulturalFusionHero";
+import CulturalFusionHero from "@/components/hero/CulturalFusionHero";
 
 import {
   FORM_TYPES as formTypes,

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import MatchCard from '@/components/MatchCard';
-import CompetitionFilter, { Competition } from '@/components/CompetitionFilter';
+import MatchCard from './MatchCard';
+import CompetitionFilter, { Competition } from './CompetitionFilter';
 import { NoUpcomingMatchesMessage, NoRecentMatchesMessage } from '@/components/ErrorMessage';
 import { MatchCardErrorBoundary } from '@/components/ErrorBoundary';
 import LoadingSpinner from '@/components/LoadingSpinner';

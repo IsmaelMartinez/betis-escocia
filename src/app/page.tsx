@@ -1,11 +1,11 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import HeroCommunity from "@/components/HeroCommunity";
+import HeroCommunity from "@/components/hero/HeroCommunity";
 import { hasFeature } from "@/lib/featureFlags";
 
 // Lazy load widgets that are below the fold for better LCP
 const UpcomingMatchesWidget = dynamic(
-  () => import("@/components/UpcomingMatchesWidget"),
+  () => import("@/components/match/UpcomingMatchesWidget"),
   {
     loading: () => (
       <div className="bg-white rounded-lg shadow-lg p-6 animate-pulse">
@@ -26,7 +26,7 @@ const UpcomingMatchesWidget = dynamic(
 );
 
 const ClassificationWidget = dynamic(
-  () => import("@/components/ClassificationWidget"),
+  () => import("@/components/widgets/ClassificationWidget"),
   {
     loading: () => (
       <div className="bg-white rounded-lg shadow-lg p-6 animate-pulse">

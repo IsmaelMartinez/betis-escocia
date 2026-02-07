@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import UpcomingMatchesWidget from "@/components/UpcomingMatchesWidget";
+import UpcomingMatchesWidget from "@/components/match/UpcomingMatchesWidget";
 import type { Match } from "@/lib/supabase";
 
 // Mock Next.js Link component

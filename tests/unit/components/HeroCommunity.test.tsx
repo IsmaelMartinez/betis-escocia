@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import HeroCommunity from "@/components/HeroCommunity";
+import HeroCommunity from "@/components/hero/HeroCommunity";
 
 // Mock Next.js Link
 vi.mock("next/link", () => ({

@@ -7,15 +7,15 @@ vi.mock('@/components/ErrorBoundary', () => ({
   ApiErrorBoundary: ({ children }: { children: React.ReactNode }) => <div data-testid="api-error-boundary">{children}</div>,
 }));
 
-vi.mock('@/components/AllDatabaseMatches', () => ({
+vi.mock('@/components/match/AllDatabaseMatches', () => ({
   default: () => <div data-testid="all-database-matches">All Database Matches Component</div>,
 }));
 
-vi.mock('@/components/BetisPositionWidget', () => ({
+vi.mock('@/components/widgets/BetisPositionWidget', () => ({
   default: () => <div data-testid="betis-position-widget">Betis Position Widget</div>,
 }));
 
-vi.mock('@/components/RSVPModal', () => ({
+vi.mock('@/components/rsvp/RSVPModal', () => ({
   default: () => <div data-testid="rsvp-modal">RSVP Modal</div>,
   useRSVPModal: () => ({
     isOpen: false,

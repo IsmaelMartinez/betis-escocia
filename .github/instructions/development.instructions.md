@@ -87,4 +87,4 @@ export default async function MyComponent() {
 - **Always start with mobile** breakpoints, scale up.
 - **Betis branding**: `bg-gradient-to-r from-green-600 to-green-700` (#00A651).
 - **Gold accents**: `text-yellow-400` for highlights.
-- **Responsive navigation**: Hamburger menu pattern in `components/Layout.tsx`.
+- **Responsive navigation**: Hamburger menu pattern in `src/components/layout/Layout.tsx`.

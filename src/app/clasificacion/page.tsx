@@ -10,7 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { withFeatureFlag, FeatureWrapper } from "@/lib/featureProtection";
-import CulturalFusionHero from "@/components/CulturalFusionHero";
+import CulturalFusionHero from "@/components/hero/CulturalFusionHero";
 
 export const metadata: Metadata = {
   title: "Clasificación de La Liga",
