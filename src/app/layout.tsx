@@ -7,7 +7,7 @@ import {
   Playfair_Display,
 } from "next/font/google";
 import "./globals.css";
-import Layout from "@/components/Layout";
+import Layout from "@/components/layout/Layout";
 import OfflineDetector from "@/components/OfflineDetector";
 import BackgroundMatchSync from "@/components/BackgroundMatchSync";
 import {
