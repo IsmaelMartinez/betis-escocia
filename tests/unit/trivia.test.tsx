@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
-import GameTimer from '../../src/components/GameTimer';
+import GameTimer from '../../src/components/trivia/GameTimer';
 import React from 'react';
 
 describe('GameTimer', () => {

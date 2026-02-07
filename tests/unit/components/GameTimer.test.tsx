@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor, act } from "@testing-library/react";
-import GameTimer from "@/components/GameTimer";
+import GameTimer from "@/components/trivia/GameTimer";
 
 describe("GameTimer", () => {
   const defaultProps = {
