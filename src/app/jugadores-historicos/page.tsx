@@ -66,15 +66,35 @@ function PlayerCard({ player }: { player: Player }) {
 
   const toggle = useCallback(() => setExpanded((prev) => !prev), []);
 
-  return (
-    <div className="group bg-white rounded-2xl shadow-md border border-gray-100 hover:border-betis-verde/40 transition-all duration-300 hover:shadow-lg relative overflow-hidden flex flex-col">
+  // Special Easter egg treatment for Sabaly
+  const isSabaly = player.id === "youssouf-sabaly";
+
+  const cardContent = (
+    <div
+      className={`group bg-white rounded-2xl shadow-md border border-gray-100 hover:border-betis-verde/40 transition-all duration-300 hover:shadow-lg relative overflow-hidden flex flex-col ${
+        isSabaly ? "cursor-pointer hover:scale-[1.02]" : ""
+      }`}
+    >
       <div className="h-1 bg-gradient-to-r from-betis-verde via-betis-oro to-betis-verde" />
+
+      {/* Special Easter egg badge for Sabaly */}
+      {isSabaly && (
+        <div className="absolute top-3 right-3 z-10">
+          <Heart className="h-5 w-5 text-betis-oro animate-pulse drop-shadow-lg" />
+        </div>
+      )}
 
       <div className="p-5 sm:p-6 flex flex-col flex-1">
         {/* Compact header — always visible, acts as toggle button */}
         <button
           type="button"
-          onClick={toggle}
+          onClick={(e) => {
+            if (isSabaly) {
+              // Prevent toggle when clicking on Sabaly's card - let Link handle it
+              return;
+            }
+            toggle();
+          }}
           aria-expanded={expanded}
           className="flex items-start justify-between gap-3 text-left w-full cursor-pointer"
         >
@@ -90,11 +110,13 @@ function PlayerCard({ player }: { player: Player }) {
             <span className="inline-block bg-betis-verde text-white px-2.5 py-0.5 rounded-full font-heading font-bold text-xs whitespace-nowrap">
               {player.years}
             </span>
-            <ChevronDown
-              className={`h-4 w-4 text-gray-400 transition-transform duration-300 ${
-                expanded ? "rotate-180" : ""
-              }`}
-            />
+            {!isSabaly && (
+              <ChevronDown
+                className={`h-4 w-4 text-gray-400 transition-transform duration-300 ${
+                  expanded ? "rotate-180" : ""
+                }`}
+              />
+            )}
           </div>
         </button>
 
@@ -106,8 +128,17 @@ function PlayerCard({ player }: { player: Player }) {
           </p>
         </div>
 
-        {/* Expandable detail section — conditionally rendered */}
-        {expanded && (
+        {/* Special message for Sabaly */}
+        {isSabaly && (
+          <div className="mt-3 text-center">
+            <p className="text-xs text-betis-oro font-semibold italic">
+              Haz clic para descubrir algo especial...
+            </p>
+          </div>
+        )}
+
+        {/* Expandable detail section — conditionally rendered (not for Sabaly) */}
+        {!isSabaly && expanded && (
           <div className="mt-4">
             <PlayerCardDetails player={player} />
           </div>
@@ -115,6 +146,13 @@ function PlayerCard({ player }: { player: Player }) {
       </div>
     </div>
   );
+
+  // Wrap Sabaly's card with Link for the Easter egg
+  if (isSabaly) {
+    return <Link href={`/jugadores-historicos/${player.id}`}>{cardContent}</Link>;
+  }
+
+  return cardContent;
 }
 
 function EraHeader({
