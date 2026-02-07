@@ -79,6 +79,7 @@ export const LEYENDAS: Player[] = [
     stats: "Copa del Rey 1977 · 75 veces internacional",
   },
   {
+    id: "hipolito-rincon",
     name: "Hipólito Rincón",
     position: "Delantero",
     years: "1978–1986",
@@ -179,6 +180,7 @@ export const LEYENDAS: Player[] = [
     stats: "Magia y gol en la era dorada",
   },
   {
+    id: "finidi-george",
     name: "Finidi George",
     position: "Extremo derecho",
     years: "1996–2002",
@@ -190,6 +192,7 @@ export const LEYENDAS: Player[] = [
     stats: "6 temporadas de magia nigeriana",
   },
   {
+    id: "dani",
     name: "Dani",
     position: "Centrocampista",
     years: "1999–2003",
@@ -293,6 +296,7 @@ export const LEYENDAS: Player[] = [
     stats: "51 goles con la verdiblanca",
   },
   {
+    id: "isco-alarcon",
     name: "Isco Alarcón",
     position: "Mediapunta",
     years: "2024–presente",
@@ -304,6 +308,7 @@ export const LEYENDAS: Player[] = [
     stats: "Campeón de Europa con España y el Real Madrid",
   },
   {
+    id: "youssouf-sabaly",
     name: "Youssouf Sabaly",
     position: "Lateral derecho",
     years: "2018–presente",

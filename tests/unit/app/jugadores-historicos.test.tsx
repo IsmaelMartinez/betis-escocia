@@ -31,6 +31,9 @@ vi.mock("lucide-react", () => ({
   BarChart3: vi.fn(({ className }) => (
     <div data-testid="barchart-icon" className={className} />
   )),
+  ChevronDown: vi.fn(({ className }) => (
+    <div data-testid="chevrondown-icon" className={className} />
+  )),
 }));
 
 describe("Jugadores Históricos Page", () => {
@@ -68,9 +71,9 @@ describe("Jugadores Históricos Page", () => {
   });
 
   describe("Player cards", () => {
-    it("should render all 16 player cards", () => {
-      const videoLinks = screen.getAllByRole("link", { name: /Ver Vídeos/ });
-      expect(videoLinks).toHaveLength(16);
+    it("should render all 21 player cards", () => {
+      const playerNames = screen.getAllByRole("heading", { level: 3 });
+      expect(playerNames).toHaveLength(21);
     });
 
     it("should render player names", () => {
@@ -86,7 +89,7 @@ describe("Jugadores Históricos Page", () => {
       expect(screen.getAllByText("Centrocampista").length).toBeGreaterThan(0);
       expect(screen.getByText("Lateral izquierdo")).toBeInTheDocument();
       expect(screen.getByText("Extremo izquierdo")).toBeInTheDocument();
-      expect(screen.getByText("Extremo derecho")).toBeInTheDocument();
+      expect(screen.getAllByText("Extremo derecho").length).toBeGreaterThan(0);
     });
 
     it("should render player year ranges", () => {
@@ -103,50 +106,47 @@ describe("Jugadores Históricos Page", () => {
       ).toBeInTheDocument();
     });
 
-    it("should render player quotes when available", () => {
+    it("should render player quotes when card is expanded", async () => {
+      const user = userEvent.setup();
+      // Expand Julio Cardeñosa's card (has a quote)
+      await user.click(screen.getByText("Julio Cardeñosa"));
       expect(
         screen.getByText(/El Villamarín fue mi vida entera/),
       ).toBeInTheDocument();
-      expect(
-        screen.getByText(/Viva er Betis manque pierda/),
-      ).toBeInTheDocument();
     });
 
-    it("should render player stats when available", () => {
+    it("should render player stats when card is expanded", async () => {
+      const user = userEvent.setup();
+      // Expand Julio Cardeñosa's card (has stats)
+      await user.click(screen.getByText("Julio Cardeñosa"));
       expect(
         screen.getByText("+300 partidos con el Betis"),
       ).toBeInTheDocument();
-      expect(
-        screen.getByText("183 goles — récord absoluto del club"),
-      ).toBeInTheDocument();
     });
 
-    it("should render video links with correct attributes", () => {
-      const videoLinks = screen.getAllByRole("link", { name: /Ver Vídeos/ });
+    it("should render video links with correct attributes when expanded", async () => {
+      const user = userEvent.setup();
+      await user.click(screen.getByText("Julio Cardeñosa"));
 
-      videoLinks.forEach((link) => {
-        expect(link).toHaveAttribute("href");
-        expect(link.getAttribute("href")).toContain("youtube.com/results");
-        expect(link).toHaveAttribute("target", "_blank");
-        expect(link).toHaveAttribute("rel", "noopener noreferrer");
-      });
+      const videoLink = screen.getByRole("link", { name: /Ver Vídeos/ });
+      expect(videoLink).toHaveAttribute("href");
+      expect(videoLink.getAttribute("href")).toContain("youtube.com/results");
+      expect(videoLink).toHaveAttribute("target", "_blank");
+      expect(videoLink).toHaveAttribute("rel", "noopener noreferrer");
     });
 
-    it("should encode video search queries in URLs", () => {
-      const videoLinks = screen.getAllByRole("link", { name: /Ver Vídeos/ });
-      // All links should use encodeURIComponent, so no raw spaces in search_query param
-      videoLinks.forEach((link) => {
-        const href = link.getAttribute("href") || "";
-        const queryPart = href.split("search_query=")[1];
-        expect(queryPart).toBeDefined();
-        if (!queryPart) {
-          return;
-        }
-        // Ensure the query segment has no whitespace (i.e. spaces are encoded)
-        expect(queryPart).not.toMatch(/\s/);
-        // And it should contain at least one percent-encoded sequence
-        expect(queryPart).toMatch(/%[0-9A-Fa-f]{2}/);
-      });
+    it("should encode video search queries in URLs", async () => {
+      const user = userEvent.setup();
+      await user.click(screen.getByText("Julio Cardeñosa"));
+
+      const videoLink = screen.getByRole("link", { name: /Ver Vídeos/ });
+      const href = videoLink.getAttribute("href") || "";
+      const queryPart = href.split("search_query=")[1];
+      expect(queryPart).toBeDefined();
+      // Ensure the query segment has no whitespace (i.e. spaces are encoded)
+      expect(queryPart).not.toMatch(/\s/);
+      // And it should contain at least one percent-encoded sequence
+      expect(queryPart).toMatch(/%[0-9A-Fa-f]{2}/);
     });
   });
 
@@ -170,7 +170,7 @@ describe("Jugadores Históricos Page", () => {
     });
 
     it("should render era year ranges", () => {
-      expect(screen.getByText("1970s–1980s")).toBeInTheDocument();
+      expect(screen.getByText("1970–1986")).toBeInTheDocument();
       expect(screen.getByText("1997–2008")).toBeInTheDocument();
       expect(screen.getByText("2008–2018")).toBeInTheDocument();
       expect(screen.getByText("2015–2024")).toBeInTheDocument();
@@ -179,34 +179,31 @@ describe("Jugadores Históricos Page", () => {
 
   describe("Era filter", () => {
     it("should render all filter buttons", () => {
-      expect(screen.getByRole("button", { name: "Todos" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /^Todos/ })).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: "Clásicos del Villamarín" }),
+        screen.getByRole("button", { name: /^Clásicos del Villamarín/ }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: "La Era Dorada" }),
+        screen.getByRole("button", { name: /^La Era Dorada/ }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: "Corazón Verdiblanco" }),
+        screen.getByRole("button", { name: /^Corazón Verdiblanco/ }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: "El Nuevo Betis" }),
+        screen.getByRole("button", { name: /^El Nuevo Betis/ }),
       ).toBeInTheDocument();
     });
 
     it("should filter players when an era is selected", async () => {
       const user = userEvent.setup();
 
-      // Click "Clásicos del Villamarín" filter
       await user.click(
-        screen.getByRole("button", { name: "Clásicos del Villamarín" }),
+        screen.getByRole("button", { name: /^Clásicos del Villamarín/ }),
       );
 
-      // Should show clasicos players
       expect(screen.getByText("Julio Cardeñosa")).toBeInTheDocument();
       expect(screen.getByText("Rafael Gordillo")).toBeInTheDocument();
 
-      // Should not show players from other eras
       expect(screen.queryByText("Denilson")).not.toBeInTheDocument();
       expect(screen.queryByText("Joaquín Sánchez")).not.toBeInTheDocument();
     });
@@ -214,12 +211,10 @@ describe("Jugadores Históricos Page", () => {
     it("should show all players when Todos filter is clicked after filtering", async () => {
       const user = userEvent.setup();
 
-      // First filter to one era
-      await user.click(screen.getByRole("button", { name: "La Era Dorada" }));
+      await user.click(screen.getByRole("button", { name: /^La Era Dorada/ }));
       expect(screen.queryByText("Julio Cardeñosa")).not.toBeInTheDocument();
 
-      // Click Todos to show all
-      await user.click(screen.getByRole("button", { name: "Todos" }));
+      await user.click(screen.getByRole("button", { name: /^Todos/ }));
       expect(screen.getByText("Julio Cardeñosa")).toBeInTheDocument();
       expect(screen.getByText("Denilson")).toBeInTheDocument();
       expect(screen.getByText("Joaquín Sánchez")).toBeInTheDocument();
@@ -267,11 +262,15 @@ describe("Jugadores Históricos Page", () => {
       expect(h2s.length).toBeGreaterThan(0);
     });
 
-    it("should have external links with proper attributes", () => {
+    it("should have external links with proper attributes when expanded", async () => {
+      const user = userEvent.setup();
+      await user.click(screen.getByText("Julio Cardeñosa"));
+
       const externalLinks = screen
         .getAllByRole("link")
         .filter((link) => link.getAttribute("target") === "_blank");
 
+      expect(externalLinks.length).toBeGreaterThan(0);
       externalLinks.forEach((link) => {
         expect(link).toHaveAttribute("rel", "noopener noreferrer");
       });
