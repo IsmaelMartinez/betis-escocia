@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/api/supabase';
 import { formatISO } from 'date-fns';
 
 const DEFAULT_MATCH = {

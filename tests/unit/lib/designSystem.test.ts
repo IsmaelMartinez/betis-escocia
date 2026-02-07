@@ -14,7 +14,7 @@ import {
   getButtonClass,
   getCardClass,
   getInputClass,
-} from "@/lib/designSystem";
+} from "@/lib/utils/designSystem";
 
 describe("designSystem", () => {
   describe("brandColors", () => {

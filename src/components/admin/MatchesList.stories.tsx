@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
 import MatchesList from "./MatchesList";
-import { Match } from "@/lib/supabase";
+import { Match } from "@/lib/api/supabase";
 import { fn } from "storybook/test";
 
 const mockMatches: Match[] = [

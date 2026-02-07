@@ -1,9 +1,9 @@
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
-import { getUserContactSubmissions } from '@/lib/supabase';
+import { getUserContactSubmissions } from '@/lib/api/supabase';
 import { MessageSquare, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
-import { hasFeature } from '@/lib/featureFlags';
+import { hasFeature } from '@/lib/features/featureFlags';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { DATE_FORMAT } from '@/lib/constants/dateFormats';

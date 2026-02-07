@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getCurrentUpcomingMatch } from '@/lib/matchUtils';
-import { supabase } from '@/lib/supabase';
+import { getCurrentUpcomingMatch } from '@/lib/utils/matchUtils';
+import { supabase } from '@/lib/api/supabase';
 
 // Mock the entire supabase module
-vi.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/api/supabase', () => ({
   supabase: {
     from: vi.fn(),
   },

@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import { log } from "@/lib/logger";
+import { log } from "@/lib/utils/logger";
 
 // Next.js automatically loads .env.local - no dotenv needed
 export type { SupabaseClient };

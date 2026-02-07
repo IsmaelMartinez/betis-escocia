@@ -11,7 +11,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import RSVPForm from "@/components/rsvp/RSVPForm";
-import { getUpcomingMatchesWithRSVPCounts, Match } from "@/lib/supabase";
+import { getUpcomingMatchesWithRSVPCounts, Match } from "@/lib/api/supabase";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";

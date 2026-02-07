@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
 import DashboardTabs from "./DashboardTabs";
-import { RSVP, ContactSubmission } from "@/lib/supabase";
+import { RSVP, ContactSubmission } from "@/lib/api/supabase";
 import { setMockUser } from "@/lib/clerk/__mocks__/storybook";
 
 // Mock user for component props (expects timestamps)

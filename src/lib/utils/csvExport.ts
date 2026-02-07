@@ -1,6 +1,6 @@
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/api/supabase";
 import { format } from "date-fns";
-import { log } from "@/lib/logger";
+import { log } from "@/lib/utils/logger";
 
 /**
  * Creates and triggers a CSV file download, then cleans up the blob URL.

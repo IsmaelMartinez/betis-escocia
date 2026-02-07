@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ContactSubmissionsList from '@/components/admin/ContactSubmissionsList';
-import type { ContactSubmission } from '@/lib/supabase';
+import type { ContactSubmission } from '@/lib/api/supabase';
 
 // Mock dependencies
 vi.mock('@/components/ui/Card', () => ({

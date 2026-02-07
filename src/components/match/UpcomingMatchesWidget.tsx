@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getUpcomingMatchesWithRSVPCounts, Match } from '@/lib/supabase';
+import { getUpcomingMatchesWithRSVPCounts, Match } from '@/lib/api/supabase';
 import Link from 'next/link';
-import { FeatureWrapper } from '@/lib/featureProtection';
+import { FeatureWrapper } from '@/lib/features/featureProtection';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { DATETIME_FORMAT } from '@/lib/constants/dateFormats';

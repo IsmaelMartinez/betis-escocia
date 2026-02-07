@@ -1,7 +1,7 @@
 'use client';
 
 import { HTMLAttributes, ReactNode } from 'react';
-import { getCardClass, cn } from '@/lib/designSystem';
+import { getCardClass, cn } from '@/lib/utils/designSystem';
 
 interface CardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'className'> {
   readonly variant?: 'base' | 'interactive' | 'elevated' | 'betis';

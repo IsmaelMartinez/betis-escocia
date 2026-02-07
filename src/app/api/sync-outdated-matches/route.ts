@@ -1,8 +1,8 @@
-import { createApiHandler } from '@/lib/apiUtils';
+import { createApiHandler } from '@/lib/api/apiUtils';
 import { FootballDataService, REAL_BETIS_TEAM_ID } from '@/services/footballDataService';
 import axios from 'axios';
-import { supabase } from '@/lib/supabase';
-import { log } from '@/lib/logger';
+import { supabase } from '@/lib/api/supabase';
+import { log } from '@/lib/utils/logger';
 import { subDays } from 'date-fns';
 
 // Module-level singleton to preserve rate-limiting state across requests

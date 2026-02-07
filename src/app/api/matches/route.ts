@@ -1,9 +1,9 @@
-import { createApiHandler } from '@/lib/apiUtils';
+import { createApiHandler } from '@/lib/api/apiUtils';
 import { FootballDataService } from '@/services/footballDataService';
 import axios from 'axios';
 import type { Match, MatchCardProps } from '@/types/match';
 import { z } from 'zod';
-import { log } from '@/lib/logger';
+import { log } from '@/lib/utils/logger';
 
 // Request validation schema
 const matchesQuerySchema = z.object({

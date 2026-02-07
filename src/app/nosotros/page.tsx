@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Heart, Users, Calendar } from "lucide-react";
-import { FeatureWrapper } from "@/lib/featureProtection";
+import { FeatureWrapper } from "@/lib/features/featureProtection";
 import InfoCard from "@/components/InfoCard";
 
 export default function Nosotros() {

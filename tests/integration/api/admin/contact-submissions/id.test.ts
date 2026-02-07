@@ -10,10 +10,10 @@ vi.mock("@clerk/nextjs/server", () => ({
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
 import { PUT } from "@/app/api/admin/contact-submissions/[id]/route";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/api/supabase";
 
 // Mock supabase client
-vi.mock("@/lib/supabase", () => {
+vi.mock("@/lib/api/supabase", () => {
   const mockFrom = vi.fn();
   return {
     supabase: {
@@ -34,7 +34,7 @@ vi.mock("@/lib/supabase", () => {
 });
 
 // Mock logger
-vi.mock("@/lib/logger", () => ({
+vi.mock("@/lib/utils/logger", () => ({
   log: {
     error: vi.fn(),
     warn: vi.fn(),
@@ -44,7 +44,7 @@ vi.mock("@/lib/logger", () => ({
 }));
 
 // Mock API utils
-vi.mock("@/lib/apiUtils", () => ({
+vi.mock("@/lib/api/apiUtils", () => ({
   createApiHandler: vi.fn((config) => {
     return async (request: any, routeContext: any) => {
       try {

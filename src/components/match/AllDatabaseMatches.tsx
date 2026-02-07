@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getAllMatchesWithRSVPCounts, Match } from '@/lib/supabase';
+import { getAllMatchesWithRSVPCounts, Match } from '@/lib/api/supabase';
 import MatchCard, { convertDatabaseMatchToCardProps } from './MatchCard';
 
 interface MatchWithRSVP extends Match {

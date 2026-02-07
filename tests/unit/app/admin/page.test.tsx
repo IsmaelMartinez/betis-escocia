@@ -13,7 +13,7 @@ vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
 }));
 
-vi.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/api/supabase', () => ({
   supabase: {
     from: vi.fn(() => ({
       select: vi.fn(() => ({
@@ -39,7 +39,7 @@ vi.mock('@/lib/featureProtection', () => ({
   FeatureWrapper: vi.fn(({ children }) => children),
 }));
 
-vi.mock('@/lib/logger', () => ({
+vi.mock('@/lib/utils/logger', () => ({
   log: {
     error: vi.fn(),
     info: vi.fn(),
@@ -177,7 +177,7 @@ describe('AdminPage', () => {
     });
 
     it('should render dashboard view by default after loading', async () => {
-      const { supabase } = await import('@/lib/supabase');
+      const { supabase } = await import('@/lib/api/supabase');
       
       // Mock successful data fetching
       const mockSelect = vi.fn(() => ({
@@ -205,7 +205,7 @@ describe('AdminPage', () => {
     });
 
     it('should display error message when data fetching fails', async () => {
-      const { supabase } = await import('@/lib/supabase');
+      const { supabase } = await import('@/lib/api/supabase');
       
       // Mock failed data fetching
       const mockSelect = vi.fn(() => ({
@@ -229,7 +229,7 @@ describe('AdminPage', () => {
 
   describe('Stats Calculation', () => {
     it('should calculate stats correctly from fetched data', async () => {
-      const { supabase } = await import('@/lib/supabase');
+      const { supabase } = await import('@/lib/api/supabase');
       
       const mockRSVPData = [
         { id: 1, name: 'User 1', attendees: 2, created_at: '2025-08-25' },
@@ -280,7 +280,7 @@ describe('AdminPage', () => {
 
   describe('Action Handlers', () => {
     it('should handle refresh action', async () => {
-      const { supabase } = await import('@/lib/supabase');
+      const { supabase } = await import('@/lib/api/supabase');
       
       const mockSelect = vi.fn(() => ({
         order: vi.fn(() => Promise.resolve({
@@ -378,7 +378,7 @@ describe('AdminPage', () => {
     it('should handle authentication token errors', async () => {
       mockGetToken.mockResolvedValue(null);
       
-      const { updateContactSubmissionStatus } = await import('@/lib/supabase');
+      const { updateContactSubmissionStatus } = await import('@/lib/api/supabase');
       vi.mocked(updateContactSubmissionStatus).mockResolvedValue({
         success: false,
         error: 'Authentication failed',
@@ -410,7 +410,7 @@ describe('AdminPage', () => {
 
   describe('Data Export', () => {
     it('should have export functionality available', async () => {
-      const { supabase } = await import('@/lib/supabase');
+      const { supabase } = await import('@/lib/api/supabase');
       
       const mockSelect = vi.fn(() => ({
         order: vi.fn(() => Promise.resolve({

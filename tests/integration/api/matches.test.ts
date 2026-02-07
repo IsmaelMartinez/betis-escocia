@@ -81,7 +81,7 @@ vi.mock('zod', () => ({
 }));
 
 // Mock logger
-vi.mock('@/lib/logger', () => ({
+vi.mock('@/lib/utils/logger', () => ({
   log: {
     info: vi.fn(),
     warn: vi.fn(),

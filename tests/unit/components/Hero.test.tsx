@@ -12,7 +12,7 @@ vi.mock("next/link", () => ({
 }));
 
 // Mock FeatureWrapper to always render children (feature enabled)
-vi.mock("@/lib/featureProtection", () => ({
+vi.mock("@/lib/features/featureProtection", () => ({
   FeatureWrapper: ({ children }: { children: React.ReactNode }) => (
     <>{children}</>
   ),

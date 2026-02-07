@@ -1,9 +1,9 @@
-import { createApiHandler } from '@/lib/apiUtils';
-import { supabase } from '@/lib/supabase';
-import { getCurrentUpcomingMatch } from '@/lib/matchUtils';
+import { createApiHandler } from '@/lib/api/apiUtils';
+import { supabase } from '@/lib/api/supabase';
+import { getCurrentUpcomingMatch } from '@/lib/utils/matchUtils';
 // formatISO not needed for this endpoint
-import { log } from '@/lib/logger';
-import { StandardErrors } from '@/lib/standardErrors';
+import { log } from '@/lib/utils/logger';
+import { StandardErrors } from '@/lib/utils/standardErrors';
 
 async function getRSVPStatus(queryData: { match?: number }, userId?: string, userEmail?: string) {
   const { match: matchId } = queryData;

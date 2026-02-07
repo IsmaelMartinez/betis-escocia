@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { hasFeature } from "@/lib/featureFlags";
+import { hasFeature } from "@/lib/features/featureFlags";
 import AdminPageClient from "./AdminPageClient";
 
 export default function AdminPage() {

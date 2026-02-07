@@ -33,7 +33,7 @@ import { NextRequest } from 'next/server';
 
 // Mock dependencies before imports
 vi.mock('axios');
-vi.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/api/supabase', () => ({
   supabase: {
     from: vi.fn(() => ({
       select: vi.fn(() => ({
@@ -79,7 +79,7 @@ vi.mock('@/services/footballDataService', () => ({
   }))
 }));
 
-vi.mock('@/lib/logger', () => ({
+vi.mock('@/lib/utils/logger', () => ({
   log: {
     info: vi.fn(),
     error: vi.fn(),
@@ -96,7 +96,7 @@ describe('Standings API', () => {
     vi.clearAllMocks();
     
     // Initialize mockSupabase
-    mockSupabase = (await import('@/lib/supabase')).supabase;
+    mockSupabase = (await import('@/lib/api/supabase')).supabase;
     
     // Mock axios.create
     mockAxiosCreate = vi.fn(() => ({}));

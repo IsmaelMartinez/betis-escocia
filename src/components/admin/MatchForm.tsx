@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Match, MatchInsert, MatchUpdate } from '@/lib/supabase';
+import { Match, MatchInsert, MatchUpdate } from '@/lib/api/supabase';
 import { formatISO, parseISO, format } from 'date-fns';
 
 interface MatchFormProps {

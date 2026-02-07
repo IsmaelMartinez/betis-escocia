@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import UpcomingMatchesWidget from "@/components/match/UpcomingMatchesWidget";
-import type { Match } from "@/lib/supabase";
+import type { Match } from "@/lib/api/supabase";
 
 // Mock Next.js Link component
 vi.mock("next/link", () => ({
@@ -13,17 +13,17 @@ vi.mock("next/link", () => ({
 }));
 
 // Mock supabase functions
-vi.mock("@/lib/supabase", () => ({
+vi.mock("@/lib/api/supabase", () => ({
   getUpcomingMatchesWithRSVPCounts: vi.fn(),
 }));
 
 // Mock FeatureWrapper to always render children (feature enabled)
-vi.mock("@/lib/featureProtection", () => ({
+vi.mock("@/lib/features/featureProtection", () => ({
   FeatureWrapper: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
 // Import the mocked function
-import { getUpcomingMatchesWithRSVPCounts } from "@/lib/supabase";
+import { getUpcomingMatchesWithRSVPCounts } from "@/lib/api/supabase";
 
 describe("UpcomingMatchesWidget Component", () => {
   const mockMatches: (Match & {

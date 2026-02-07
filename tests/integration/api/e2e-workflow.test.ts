@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/trivia/route';
 import { getAuth } from '@clerk/nextjs/server';
-import { getUserDailyTriviaScore } from '@/lib/supabase';
+import { getUserDailyTriviaScore } from '@/lib/api/supabase';
 
 // Ensure Response.json (static) exists for NextResponse.json in Vitest env
 type ResponseStatic = typeof globalThis.Response & {
@@ -28,7 +28,7 @@ vi.mock('@clerk/nextjs/server', () => ({
 }));
 
 // Mock Supabase
-vi.mock('@/lib/supabase', () => {
+vi.mock('@/lib/api/supabase', () => {
   // Flattened Supabase mocks to avoid deep nesting and hoisting issues
   const supabaseLimit = vi.fn(async () => ({
     data: [

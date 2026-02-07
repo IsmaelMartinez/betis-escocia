@@ -1,8 +1,8 @@
-import { createApiHandler } from '@/lib/apiUtils';
-import { supabase, createUserTriviaScore, getUserDailyTriviaScore, getAuthenticatedSupabaseClient, type SupabaseClient } from '@/lib/supabase';
+import { createApiHandler } from '@/lib/api/apiUtils';
+import { supabase, createUserTriviaScore, getUserDailyTriviaScore, getAuthenticatedSupabaseClient, type SupabaseClient } from '@/lib/api/supabase';
 import { triviaScoreSchema } from '@/lib/schemas/trivia';
-import { log } from '@/lib/logger';
-import { StandardErrors } from '@/lib/standardErrors';
+import { log } from '@/lib/utils/logger';
+import { StandardErrors } from '@/lib/utils/standardErrors';
 import { 
   checkDailyPlayStatus,
   validateTriviaScore,

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
 import AllDatabaseMatches from "./AllDatabaseMatches";
-import { Match } from "@/lib/supabase";
+import { Match } from "@/lib/api/supabase";
 import { http, HttpResponse } from "msw";
 
 // Mock data for matches

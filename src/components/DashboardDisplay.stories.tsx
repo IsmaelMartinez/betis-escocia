@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
 import DashboardDisplay from "./DashboardDisplay";
-import { RSVP, ContactSubmission } from "@/lib/supabase";
+import { RSVP, ContactSubmission } from "@/lib/api/supabase";
 
 const mockUser = {
   firstName: "John",

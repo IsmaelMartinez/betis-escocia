@@ -9,7 +9,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
-import { withFeatureFlag, FeatureWrapper } from "@/lib/featureProtection";
+import { withFeatureFlag, FeatureWrapper } from "@/lib/features/featureProtection";
 import CulturalFusionHero from "@/components/hero/CulturalFusionHero";
 
 export const metadata: Metadata = {

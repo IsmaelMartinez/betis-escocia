@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Match } from '@/lib/supabase';
+import { Match } from '@/lib/api/supabase';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { DATE_FORMAT, TIME_FORMAT } from '@/lib/constants/dateFormats';

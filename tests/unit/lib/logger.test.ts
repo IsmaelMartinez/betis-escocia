@@ -5,7 +5,7 @@ import {
   type LogContext,
   type LogEntry,
   type LogLevel,
-} from "@/lib/logger";
+} from "@/lib/utils/logger";
 
 // Mock console methods
 const consoleMocks = {

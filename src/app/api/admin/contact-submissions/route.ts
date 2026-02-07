@@ -1,5 +1,5 @@
-import { createApiHandler } from '@/lib/apiUtils';
-import { supabase } from '@/lib/supabase';
+import { createApiHandler } from '@/lib/api/apiUtils';
+import { supabase } from '@/lib/api/supabase';
 
 // GET - List all contact submissions (admin only)
 export const GET = createApiHandler({

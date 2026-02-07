@@ -15,7 +15,7 @@ import Field, {
   ValidatedTextarea,
 } from "@/components/Field";
 import { useUser } from "@clerk/nextjs";
-import { hasFeature } from "@/lib/featureFlags";
+import { hasFeature } from "@/lib/features/featureFlags";
 import { rsvpSchema, type RSVPInput } from "@/lib/schemas/rsvp";
 
 interface RSVPFormProps {

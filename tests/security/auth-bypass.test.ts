@@ -12,7 +12,7 @@ vi.mock('@/lib/adminApiProtection', () => ({
 }));
 
 // Mock Supabase
-vi.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/api/supabase', () => ({
   supabase: { from: vi.fn() },
   getAuthenticatedSupabaseClient: vi.fn(),
 }));

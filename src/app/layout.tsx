@@ -13,7 +13,7 @@ import BackgroundMatchSync from "@/components/match/BackgroundMatchSync";
 import {
   getFeatureFlagsStatus,
   getEnabledNavigationItems,
-} from "@/lib/featureFlags";
+} from "@/lib/features/featureFlags";
 import * as Sentry from "@sentry/nextjs";
 import SentryUserContext from "@/components/SentryUserContext";
 

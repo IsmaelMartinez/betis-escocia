@@ -47,7 +47,7 @@ vi.mock('@/lib/apiUtils', () => ({
 const mockSelect = vi.fn();
 const mockOrder = vi.fn();
 
-vi.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/api/supabase', () => ({
   supabase: {
     from: vi.fn(() => ({
       select: mockSelect,
@@ -109,7 +109,7 @@ describe('Admin Contact Submissions API', () => {
       expect(json.submissions).toHaveLength(2);
       
       // Verify Supabase was called correctly
-      const { supabase } = await import('@/lib/supabase');
+      const { supabase } = await import('@/lib/api/supabase');
       expect(supabase.from).toHaveBeenCalledWith('contact_submissions');
       expect(mockSelect).toHaveBeenCalledWith('*');
       expect(mockOrder).toHaveBeenCalledWith('created_at', { ascending: false });
@@ -170,7 +170,7 @@ describe('Admin Contact Submissions API', () => {
       const request = new NextRequest('http://localhost:3000/api/admin/contact-submissions');
       await GET(request);
 
-      const { supabase } = await import('@/lib/supabase');
+      const { supabase } = await import('@/lib/api/supabase');
       expect(supabase.from).toHaveBeenCalledWith('contact_submissions');
       expect(mockSelect).toHaveBeenCalledWith('*');
     });

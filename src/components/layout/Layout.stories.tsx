@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
 import Layout from "./Layout";
 import { setMockUser } from "@/lib/clerk/__mocks__/storybook";
-import type { NavigationItem } from "@/lib/featureFlags";
+import type { NavigationItem } from "@/lib/features/featureFlags";
 
 const mockNavigationItems: NavigationItem[] = [
   {

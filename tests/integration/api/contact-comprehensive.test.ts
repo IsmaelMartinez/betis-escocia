@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
 // Mock dependencies
-vi.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/api/supabase', () => ({
   supabase: {
     from: vi.fn(() => ({
       insert: vi.fn(() => ({
@@ -31,7 +31,7 @@ vi.mock('@clerk/nextjs/server', () => ({
   }))
 }));
 
-vi.mock('@/lib/logger', () => ({
+vi.mock('@/lib/utils/logger', () => ({
   log: {
     error: vi.fn(),
     warn: vi.fn(),
@@ -56,7 +56,7 @@ describe('Contact API - Comprehensive Tests', () => {
     vi.clearAllMocks();
 
     // Initialize mocks
-    mockSupabase = (await import('@/lib/supabase')).supabase;
+    mockSupabase = (await import('@/lib/api/supabase')).supabase;
     mockGetAuth = vi.mocked((await import('@clerk/nextjs/server')).getAuth);
   });
 
@@ -262,7 +262,7 @@ describe('Contact API - Comprehensive Tests', () => {
     });
 
     it('should log business events for contact submissions', async () => {
-      const { log } = await import('@/lib/logger');
+      const { log } = await import('@/lib/utils/logger');
       
       const { POST } = await import('@/app/api/contact/route');
       

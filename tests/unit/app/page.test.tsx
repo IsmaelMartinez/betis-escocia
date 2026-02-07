@@ -14,7 +14,7 @@ vi.mock("@/components/widgets/ClassificationWidget", () => ({
   default: vi.fn(() => <div data-testid="mock-classification-widget" />),
 }));
 // Mock feature flags to return true (features enabled)
-vi.mock("@/lib/featureFlags", () => ({
+vi.mock("@/lib/features/featureFlags", () => ({
   hasFeature: vi.fn(() => true),
 }));
 

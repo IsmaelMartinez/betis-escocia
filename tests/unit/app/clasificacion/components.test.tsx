@@ -34,7 +34,7 @@ vi.mock("next/link", () => ({
 }));
 
 // Mock feature protection
-vi.mock("@/lib/featureProtection", () => ({
+vi.mock("@/lib/features/featureProtection", () => ({
   FeatureWrapper: ({ children, feature }: any) => (
     <div data-testid={`feature-${feature}`}>{children}</div>
   ),

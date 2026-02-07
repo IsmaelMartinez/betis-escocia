@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from "axios";
 import rateLimit from "axios-rate-limit";
 import type { Match } from "@/types/match";
 import { getYear, isAfter, isBefore, compareDesc, compareAsc } from "date-fns";
-import { log } from "@/lib/logger";
+import { log } from "@/lib/utils/logger";
 
 const API_KEY = process.env.FOOTBALL_DATA_API_KEY;
 const BASE_URL =

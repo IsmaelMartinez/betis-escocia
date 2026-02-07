@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { log } from '@/lib/logger';
+import { log } from '@/lib/utils/logger';
 
 /**
  * BackgroundMatchSync Component

@@ -1,6 +1,6 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import type { User } from "@clerk/nextjs/server";
-import { log } from "@/lib/logger";
+import { log } from "@/lib/utils/logger";
 
 /**
  * Check if the current user has admin role (for use in API routes)

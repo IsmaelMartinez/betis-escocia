@@ -6,7 +6,7 @@ import AllDatabaseMatches from '@/components/match/AllDatabaseMatches';
 import RSVPModal, { useRSVPModal } from '@/components/rsvp/RSVPModal';
 import SidebarCard from '@/components/SidebarCard';
 import { Calendar } from 'lucide-react';
-import { hasFeature } from '@/lib/featureFlags';
+import { hasFeature } from '@/lib/features/featureFlags';
 
 export default function MatchesPage() {
   const { isOpen, openModal, closeModal } = useRSVPModal();

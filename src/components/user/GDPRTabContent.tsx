@@ -8,7 +8,7 @@ import Card, { CardHeader, CardBody } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 
 import MessageComponent from '@/components/MessageComponent';
-import type { RSVP, ContactSubmission } from '@/lib/supabase';
+import type { RSVP, ContactSubmission } from '@/lib/api/supabase';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { DATE_FORMAT } from '@/lib/constants/dateFormats';

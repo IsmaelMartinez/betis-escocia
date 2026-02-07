@@ -11,7 +11,7 @@ vi.mock("next/link", () => ({
 }));
 
 // Mock FeatureWrapper
-vi.mock("@/lib/featureProtection", () => ({
+vi.mock("@/lib/features/featureProtection", () => ({
   FeatureWrapper: ({ children }: any) => children,
 }));
 

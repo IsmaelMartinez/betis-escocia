@@ -1,7 +1,7 @@
-import { createApiHandler, type ApiContext } from '@/lib/apiUtils';
-import { supabase } from '@/lib/supabase';
+import { createApiHandler, type ApiContext } from '@/lib/api/apiUtils';
+import { supabase } from '@/lib/api/supabase';
 import { gdprSchema, type GDPRInput } from '@/lib/schemas/rsvp';
-import { log } from '@/lib/logger';
+import { log } from '@/lib/utils/logger';
 
 async function processGDPRRequest(gdprData: GDPRInput, context: ApiContext) {
   const { requestType } = gdprData;

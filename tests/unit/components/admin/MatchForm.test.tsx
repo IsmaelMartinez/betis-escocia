@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import MatchForm from '@/components/admin/MatchForm';
-import type { Match, MatchInsert, MatchUpdate } from '@/lib/supabase';
+import type { Match, MatchInsert, MatchUpdate } from '@/lib/api/supabase';
 
 // Mock dependencies
 vi.mock('@/lib/security', () => ({

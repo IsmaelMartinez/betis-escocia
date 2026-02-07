@@ -316,31 +316,82 @@ Components moved:
 - `social/` — FacebookPagePlugin, InstagramEmbed, SocialMediaDashboard, FacebookSDK
 - `widgets/` — ClassificationWidget, BetisPositionWidget, CommunityStats
 
-### Phase 3: Split Large Components
+### Phase 3: Hook and Library Organization -- DONE
+
+Organized `src/hooks` and `src/lib` into logical subdirectories for improved discoverability and maintainability.
+
+**New Structure:**
+
+```
+src/hooks/
+└── data/               # Data fetching hooks
+    ├── useRSVPData.ts
+    └── useApiData.ts
+
+src/lib/
+├── api/                # API clients and utilities
+│   ├── apiUtils.ts
+│   └── supabase.ts
+├── auth/               # Authentication & authorization
+│   ├── adminApiProtection.ts
+│   ├── roleUtils.ts
+│   └── withAdminRole.tsx
+├── clerk/              # Clerk mocks (existing)
+├── constants/          # Constants (existing)
+├── features/           # Feature management
+│   ├── featureFlags.ts
+│   └── featureProtection.tsx
+├── schemas/            # Validation schemas (existing)
+├── trivia/             # Trivia utilities (existing)
+└── utils/              # General utilities
+    ├── config.ts
+    ├── csvExport.ts
+    ├── designSystem.ts
+    ├── logger.ts
+    ├── matchUtils.ts
+    └── standardErrors.ts
+```
+
+**Changes:**
+1. Created domain-focused subdirectories in `src/lib/`
+2. Moved all hooks to `src/hooks/data/` (consolidated from `src/hooks/` and `src/lib/hooks/`)
+3. Updated 200+ import paths across src/ and tests/
+4. Updated all vi.mock() and jest.mock() calls in tests
+5. Type-check and lint passing
+
+**Benefits:**
+- Clear separation of concerns (API, auth, features, utils)
+- Easier to find related functionality
+- Reduced cognitive load when navigating codebase
+- Foundation for future modularization
+
+### Phase 4: Split Large Components
 
 1. Extract Layout into Header/Footer/UserMenu
 2. Split AdminPageClient into views + hooks
 3. Simplify RSVPWidget dual-path logic
 4. Extract AllDatabaseMatches filtering/pagination
 
-### Phase 4: Database Module Split
+### Phase 5: Database Module Split
 
-1. Create `lib/supabase/` directory structure
-2. Move operations by feature domain
+1. Create `lib/supabase/` or `lib/api/database/` subdirectory structure
+2. Move operations by feature domain (matches, rsvps, contacts, trivia, classification)
 3. Create `index.ts` re-exports for backward compatibility
 4. Update imports across codebase
+5. Consider CRUD factory pattern to reduce boilerplate
 
-### Phase 5: Test Infrastructure Cleanup
+### Phase 6: Test Infrastructure Cleanup
 
 1. Centralize mocks into `tests/mocks/` directory
-2. Create test fixture factories if needed (mockFactories was deleted in Phase 1 as unused)
+2. Create test fixture factories if needed
 3. Expand MSW handlers for all external APIs
 4. Reduce setup overhead in heaviest test files
+5. Address any test failures from Phase 3 reorganization
 
-### Phase 6: Hook Extraction
+### Phase 7: Hook Extraction (Additional)
 
 1. Extract hooks from components with heavy state logic
-2. Consolidate into `lib/hooks/` directory
+2. Create additional hook categories as needed (ui/, form/, etc.)
 3. Add unit tests for extracted hooks
 
 ---

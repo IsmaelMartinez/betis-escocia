@@ -4,9 +4,9 @@ import React from "react";
 import { Users, Trophy } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { FeatureWrapper } from "@/lib/featureProtection";
+import { FeatureWrapper } from "@/lib/features/featureProtection";
 import type { MatchCardProps } from "@/types/match";
-import type { Match as DatabaseMatch } from "@/lib/supabase";
+import type { Match as DatabaseMatch } from "@/lib/api/supabase";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import {

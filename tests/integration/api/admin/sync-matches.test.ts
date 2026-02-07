@@ -1,14 +1,14 @@
 import { describe, it, expect, vi } from 'vitest';
 import { POST } from '@/app/api/admin/sync-matches/route';
 import { NextRequest, NextResponse } from 'next/server';
-import { checkAdminRole } from '@/lib/adminApiProtection';
-import { supabase } from '@/lib/supabase';
+import { checkAdminRole } from '@/lib/auth/adminApiProtection';
+import { supabase } from '@/lib/api/supabase';
 import { FootballDataService } from '@/services/footballDataService';
 import { Match } from '@/types/match';
 
 // Mock external dependencies
 vi.mock('@/lib/adminApiProtection');
-vi.mock('@/lib/supabase');
+vi.mock('@/lib/api/supabase');
 vi.mock('@/services/footballDataService');
 
 describe('POST /api/admin/sync-matches', () => {

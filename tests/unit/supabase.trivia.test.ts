@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
-import { createUserTriviaScore, getUserDailyTriviaScore, supabase } from '../../src/lib/supabase';
+import { createUserTriviaScore, getUserDailyTriviaScore, supabase } from '../../src/lib/api/supabase';
 
 // Mock the Supabase client
 vi.mock('@supabase/supabase-js', () => ({

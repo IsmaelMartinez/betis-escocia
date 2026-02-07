@@ -1,13 +1,13 @@
-import { createApiHandler } from "@/lib/apiUtils";
+import { createApiHandler } from "@/lib/api/apiUtils";
 import { contactSchema } from "@/lib/schemas/contact";
 import {
   supabase,
   getAuthenticatedSupabaseClient,
   type ContactSubmissionInsert,
-} from "@/lib/supabase";
+} from "@/lib/api/supabase";
 import { getAuth } from "@clerk/nextjs/server";
-import { log } from "@/lib/logger";
-import { StandardErrors } from "@/lib/standardErrors";
+import { log } from "@/lib/utils/logger";
+import { StandardErrors } from "@/lib/utils/standardErrors";
 
 // POST - Submit contact form
 export const POST = createApiHandler({

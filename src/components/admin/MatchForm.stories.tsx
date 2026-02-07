@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
 import MatchForm from "./MatchForm";
-import { Match } from "@/lib/supabase";
+import { Match } from "@/lib/api/supabase";
 import { fn } from "storybook/test";
 
 const mockMatch: Match = {
