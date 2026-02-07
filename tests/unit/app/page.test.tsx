@@ -10,7 +10,7 @@ vi.mock("@/components/hero/HeroCommunity", () => ({
 vi.mock("@/components/match/UpcomingMatchesWidget", () => ({
   default: vi.fn(() => <div data-testid="mock-upcoming-matches-widget" />),
 }));
-vi.mock("@/components/ClassificationWidget", () => ({
+vi.mock("@/components/widgets/ClassificationWidget", () => ({
   default: vi.fn(() => <div data-testid="mock-classification-widget" />),
 }));
 // Mock feature flags to return true (features enabled)

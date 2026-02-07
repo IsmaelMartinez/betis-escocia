@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import CommunityStats from '@/components/CommunityStats';
+import CommunityStats from '@/components/widgets/CommunityStats';
 
 describe('CommunityStats', () => {
   describe('Basic rendering', () => {

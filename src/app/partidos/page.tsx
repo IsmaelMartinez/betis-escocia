@@ -1,7 +1,7 @@
 'use client';
 
 import { ApiErrorBoundary } from '@/components/ErrorBoundary';
-import BetisPositionWidget from '@/components/BetisPositionWidget';
+import BetisPositionWidget from '@/components/widgets/BetisPositionWidget';
 import AllDatabaseMatches from '@/components/match/AllDatabaseMatches';
 import RSVPModal, { useRSVPModal } from '@/components/rsvp/RSVPModal';
 import SidebarCard from '@/components/SidebarCard';

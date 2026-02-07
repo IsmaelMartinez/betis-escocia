@@ -11,7 +11,7 @@ vi.mock('@/components/match/AllDatabaseMatches', () => ({
   default: () => <div data-testid="all-database-matches">All Database Matches Component</div>,
 }));
 
-vi.mock('@/components/BetisPositionWidget', () => ({
+vi.mock('@/components/widgets/BetisPositionWidget', () => ({
   default: () => <div data-testid="betis-position-widget">Betis Position Widget</div>,
 }));
 

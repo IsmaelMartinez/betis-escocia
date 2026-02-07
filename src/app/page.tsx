@@ -26,7 +26,7 @@ const UpcomingMatchesWidget = dynamic(
 );
 
 const ClassificationWidget = dynamic(
-  () => import("@/components/ClassificationWidget"),
+  () => import("@/components/widgets/ClassificationWidget"),
   {
     loading: () => (
       <div className="bg-white rounded-lg shadow-lg p-6 animate-pulse">

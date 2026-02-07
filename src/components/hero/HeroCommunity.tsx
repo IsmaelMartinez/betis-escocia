@@ -24,7 +24,7 @@ const RSVPWidget = dynamic(() => import("../rsvp/RSVPWidget"), {
 });
 
 // Lazy load CommunityStats - not critical for initial render
-const CommunityStats = dynamic(() => import("../CommunityStats"), {
+const CommunityStats = dynamic(() => import("../widgets/CommunityStats"), {
   loading: () => (
     <div className="bg-gray-50 rounded-lg p-6 text-center border border-gray-200 animate-pulse">
       <div className="grid grid-cols-3 gap-4 mb-4">

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
-import BetisPositionWidget from "@/components/BetisPositionWidget";
+import BetisPositionWidget from "@/components/widgets/BetisPositionWidget";
 
 // Mock Next.js Link component
 vi.mock("next/link", () => ({
