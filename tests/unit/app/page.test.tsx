@@ -4,7 +4,7 @@ import { describe, it, expect, vi } from "vitest";
 import Home from "../../../src/app/page";
 
 // Mock components and modules
-vi.mock("@/components/HeroCommunity", () => ({
+vi.mock("@/components/hero/HeroCommunity", () => ({
   default: vi.fn(() => <div data-testid="mock-hero-community" />),
 }));
 vi.mock("@/components/match/UpcomingMatchesWidget", () => ({

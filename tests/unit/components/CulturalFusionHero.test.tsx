@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import CulturalFusionHero from "@/components/CulturalFusionHero";
+import CulturalFusionHero from "@/components/hero/CulturalFusionHero";
 
 describe("CulturalFusionHero Component", () => {
   describe("Basic rendering", () => {

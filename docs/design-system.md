@@ -344,7 +344,7 @@ import MatchTicket from "@/components/match/MatchTicket";
 A reusable hero section component with layered cultural fusion backgrounds.
 
 ```tsx
-import CulturalFusionHero from "@/components/CulturalFusionHero";
+import CulturalFusionHero from "@/components/hero/CulturalFusionHero";
 
 // Default usage (centered, max-width 6xl)
 <CulturalFusionHero>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import HeroCommunity from "@/components/HeroCommunity";
+import HeroCommunity from "@/components/hero/HeroCommunity";
 import { hasFeature } from "@/lib/featureFlags";
 
 // Lazy load widgets that are below the fold for better LCP

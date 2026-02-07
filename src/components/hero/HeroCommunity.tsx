@@ -14,7 +14,7 @@ import dynamic from "next/dynamic";
 import { useState, memo } from "react";
 
 // Lazy load RSVPWidget since it's only shown when expanded
-const RSVPWidget = dynamic(() => import("./rsvp/RSVPWidget"), {
+const RSVPWidget = dynamic(() => import("../rsvp/RSVPWidget"), {
   loading: () => (
     <div className="animate-pulse">
       <div className="h-32 bg-gray-200 rounded"></div>
@@ -24,7 +24,7 @@ const RSVPWidget = dynamic(() => import("./rsvp/RSVPWidget"), {
 });
 
 // Lazy load CommunityStats - not critical for initial render
-const CommunityStats = dynamic(() => import("./CommunityStats"), {
+const CommunityStats = dynamic(() => import("../CommunityStats"), {
   loading: () => (
     <div className="bg-gray-50 rounded-lg p-6 text-center border border-gray-200 animate-pulse">
       <div className="grid grid-cols-3 gap-4 mb-4">
