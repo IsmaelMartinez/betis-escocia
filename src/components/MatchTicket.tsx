@@ -9,6 +9,10 @@ import type { MatchCardProps } from "@/types/match";
 import type { Match as DatabaseMatch } from "@/lib/supabase";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import {
+  getCompetitionRibbon,
+  getCompetitionShortName,
+} from "@/lib/constants/competitions";
 
 /**
  * Variant types for the MatchTicket component
@@ -125,57 +129,7 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
 
   const shortDate = formatShortDate(date);
 
-  // Competition ribbon colors
-  const getCompetitionRibbon = (comp: string): { bg: string; text: string } => {
-    const compLower = comp.toLowerCase();
-    if (compLower.includes("liga") || compLower.includes("primera")) {
-      return {
-        bg: "bg-gradient-to-r from-red-600 to-red-700",
-        text: "text-white",
-      };
-    }
-    if (compLower.includes("champions")) {
-      return {
-        bg: "bg-gradient-to-r from-blue-600 to-blue-800",
-        text: "text-white",
-      };
-    }
-    if (compLower.includes("europa") && !compLower.includes("conference")) {
-      return {
-        bg: "bg-gradient-to-r from-orange-500 to-orange-600",
-        text: "text-white",
-      };
-    }
-    if (compLower.includes("copa")) {
-      return {
-        bg: "bg-gradient-to-r from-betis-oro to-oro-antique",
-        text: "text-scotland-navy",
-      };
-    }
-    return {
-      bg: "bg-gradient-to-r from-betis-verde to-betis-verde-dark",
-      text: "text-white",
-    };
-  };
-
   const ribbon = getCompetitionRibbon(competition);
-
-  // Get competition display name
-  const getCompetitionDisplayName = (comp: string): string => {
-    const compLower = comp.toLowerCase();
-    if (
-      compLower.includes("primera") ||
-      compLower === "laliga santander" ||
-      compLower === "la liga"
-    )
-      return "LaLiga";
-    if (compLower.includes("champions")) return "UCL";
-    if (compLower.includes("europa") && !compLower.includes("conference"))
-      return "UEL";
-    if (compLower.includes("conference")) return "UECL";
-    if (compLower.includes("copa del rey")) return "Copa";
-    return comp.substring(0, 8);
-  };
 
   // Status badge
   const getStatusBadge = () => {
@@ -265,7 +219,7 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
             className="inline-block mr-1 -mt-0.5"
           />
         )}
-        {getCompetitionDisplayName(competition)}
+        {getCompetitionShortName(competition)}
       </div>
 
       {/* Derby badge */}

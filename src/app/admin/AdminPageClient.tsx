@@ -23,6 +23,7 @@ import {
   Plus,
   RotateCcw,
 } from "lucide-react";
+import { exportRSVPs, exportContacts } from "@/lib/csvExport";
 import Card, { CardHeader, CardBody } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -327,72 +328,8 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
     return result;
   };
 
-  // Helper function to download CSV files and prevent memory leaks
-  const downloadCSV = (content: string, filename: string) => {
-    const blob = new Blob([content], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", filename);
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url); // Prevent memory leak
-  };
-
-  const exportRSVPs = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("rsvps")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-
-      const csvContent = [
-        "Name,Email,Attendees,Match Date,Message,WhatsApp Interest,Created At",
-        ...(data || []).map(
-          (rsvp) =>
-            `"${rsvp.name}","${rsvp.email}",${rsvp.attendees},"${rsvp.match_date}","${rsvp.message || ""}",${rsvp.whatsapp_interest},"${rsvp.created_at}"`,
-        ),
-      ].join("\n");
-
-      downloadCSV(csvContent, `rsvps-${format(new Date(), "yyyy-MM-dd")}.csv`);
-    } catch (err) {
-      log.error("Failed to export RSVPs from admin panel", err, {
-        userId: user?.id,
-      });
-    }
-  };
-
-  const exportContacts = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("contact_submissions")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-
-      const csvContent = [
-        "Name,Email,Phone,Type,Subject,Message,Status,Created At",
-        ...(data || []).map(
-          (contact) =>
-            `"${contact.name}","${contact.email}","${contact.phone || ""}","${contact.type}","${contact.subject}","${contact.message}","${contact.status}","${contact.created_at}"`,
-        ),
-      ].join("\n");
-
-      downloadCSV(
-        csvContent,
-        `contacts-${format(new Date(), "yyyy-MM-dd")}.csv`,
-      );
-    } catch (err) {
-      log.error("Failed to export contacts from admin panel", err, {
-        userId: user?.id,
-      });
-    }
-  };
+  const handleExportRSVPs = () => exportRSVPs(user?.id);
+  const handleExportContacts = () => exportContacts(user?.id);
 
   useEffect(() => {
     if (isSignedIn) {
@@ -632,14 +569,14 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
                 <CardBody>
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Button
-                      onClick={exportRSVPs}
+                      onClick={handleExportRSVPs}
                       variant="primary"
                       leftIcon={<Download className="h-4 w-4" />}
                     >
                       Exportar RSVPs (CSV)
                     </Button>
                     <Button
-                      onClick={exportContacts}
+                      onClick={handleExportContacts}
                       variant="secondary"
                       leftIcon={<Download className="h-4 w-4" />}
                     >

@@ -10,6 +10,10 @@ import type { Match as DatabaseMatch } from '@/lib/supabase';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { DATETIME_FORMAT } from '@/lib/constants/dateFormats';
+import {
+  getCompetitionBadge,
+  getCompetitionDisplayName,
+} from '@/lib/constants/competitions';
 
 // Adapter function to convert database match to MatchCardProps
 export function convertDatabaseMatchToCardProps(
@@ -68,69 +72,7 @@ const MatchCard: React.FC<MatchCardProps> = (props) => {
     return format(matchDate, DATETIME_FORMAT, { locale: es });
   };
 
-  // Get competition badge color and style
-  const getCompetitionColor = (comp: string): string => {
-    const compLower = comp.toLowerCase();
-    
-    // La Liga
-    if (compLower.includes('liga') || compLower.includes('primera')) {
-      return 'bg-gradient-to-r from-red-600 to-red-700'; // La Liga red
-    }
-    
-    // Champions League
-    if (compLower.includes('champions')) {
-      return 'bg-gradient-to-r from-blue-600 to-blue-800'; // Champions League blue
-    }
-    
-    // Europa League
-    if (compLower.includes('europa') && !compLower.includes('conference')) {
-      return 'bg-gradient-to-r from-orange-500 to-orange-600'; // Europa League orange
-    }
-    
-    // Conference League
-    if (compLower.includes('conference')) {
-      return 'bg-gradient-to-r from-green-600 to-green-700'; // Conference League green
-    }
-    
-    // Copa del Rey
-    if (compLower.includes('copa')) {
-      return 'bg-gradient-to-r from-yellow-600 to-yellow-700'; // Copa del Rey gold
-    }
-    
-    // Supercopa de España
-    if (compLower.includes('supercopa')) {
-      return 'bg-gradient-to-r from-purple-600 to-purple-700'; // Supercopa purple
-    }
-    
-    // Default - Betis green gradient
-    return 'bg-gradient-to-r from-green-600 to-betis-green';
-  };
-
-  // Get friendly competition name for display
-  const getCompetitionDisplayName = (comp: string): string => {
-    const compLower = comp.toLowerCase();
-    
-    if (compLower.includes('primera') || compLower === 'laliga santander' || compLower === 'la liga') {
-      return 'LaLiga';
-    }
-    if (compLower.includes('champions')) {
-      return 'Champions League';
-    }
-    if (compLower.includes('europa') && !compLower.includes('conference')) {
-      return 'Europa League';
-    }
-    if (compLower.includes('conference')) {
-      return 'Conference League';
-    }
-    if (compLower.includes('copa del rey')) {
-      return 'Copa del Rey';
-    }
-    if (compLower.includes('supercopa')) {
-      return 'Supercopa de España';
-    }
-    
-    return comp; // Return original if no mapping found
-  };
+  const getCompetitionColor = (comp: string): string => getCompetitionBadge(comp);
 
   // Get match status display
   const getStatusInfo = () => {

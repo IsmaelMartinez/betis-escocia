@@ -4,14 +4,7 @@ export const dynamic = "force-dynamic";
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import {
-  Send,
-  MessageSquare,
-  UserPlus,
-  Camera,
-  MessageCircle,
-  HelpCircle,
-} from "lucide-react";
+import { Send, Camera, MessageCircle, HelpCircle } from "lucide-react";
 import {
   FormSuccessMessage,
   FormErrorMessage,
@@ -21,57 +14,20 @@ import { useUser } from "@clerk/nextjs";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import CulturalFusionHero from "@/components/CulturalFusionHero";
 
+import {
+  FORM_TYPES as formTypes,
+  getDefaultSubject,
+} from "@/lib/constants/contact";
+import type { ContactFormType } from "@/lib/constants/contact";
+
 interface ContactFormData {
   name: string;
   email: string;
   phone?: string;
-  type: "general" | "rsvp" | "photo" | "whatsapp" | "feedback";
+  type: ContactFormType["id"];
   subject: string;
   message: string;
 }
-
-const formTypes = [
-  {
-    id: "general" as const,
-    name: "Consulta General",
-    description: "Preguntas generales sobre la peña",
-    icon: MessageSquare,
-    color: "bg-scotland-blue",
-    feature: null, // Always enabled
-  },
-  {
-    id: "rsvp" as const,
-    name: "Eventos y RSVP",
-    description: "Dudas sobre eventos y confirmaciones",
-    icon: UserPlus,
-    color: "bg-betis-verde",
-    feature: null, // Always enabled
-  },
-  {
-    id: "photo" as const,
-    name: "Fotos y Galería",
-    description: "Envío de fotos o problemas con la galería",
-    icon: Camera,
-    color: "bg-pink-500",
-    feature: null, // Always enabled
-  },
-  {
-    id: "whatsapp" as const,
-    name: "Unirse a WhatsApp",
-    description: "Solicitar invitación al grupo de WhatsApp",
-    icon: MessageCircle,
-    color: "bg-betis-verde-dark",
-    feature: null, // Always enabled for now
-  },
-  {
-    id: "feedback" as const,
-    name: "Sugerencias Web",
-    description: "Mejoras y feedback sobre la web",
-    icon: HelpCircle,
-    color: "bg-betis-oro",
-    feature: null, // Always enabled for now
-  },
-];
 
 export default function ContactPage() {
   const { user } = useUser();
@@ -142,20 +98,6 @@ export default function ContactPage() {
     formRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const getDefaultSubject = (type: ContactFormData["type"]): string => {
-    switch (type) {
-      case "rsvp":
-        return "Consulta sobre eventos";
-      case "photo":
-        return "Envío de fotos";
-      case "whatsapp":
-        return "Solicitud de invitación a WhatsApp";
-      case "feedback":
-        return "Sugerencias para la web";
-      default:
-        return "";
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
