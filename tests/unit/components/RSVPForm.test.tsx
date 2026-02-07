@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import RSVPForm from "@/components/RSVPForm";
+import RSVPForm from "@/components/rsvp/RSVPForm";
 import { useUser } from "@clerk/nextjs";
 
 // Mock the dependencies

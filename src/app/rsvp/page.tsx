@@ -10,7 +10,7 @@ import {
   CheckCircle,
   ChevronDown,
 } from "lucide-react";
-import RSVPForm from "@/components/RSVPForm";
+import RSVPForm from "@/components/rsvp/RSVPForm";
 import { getUpcomingMatchesWithRSVPCounts, Match } from "@/lib/supabase";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { format } from "date-fns";

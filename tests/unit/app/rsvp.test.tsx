@@ -8,7 +8,7 @@ vi.mock('next/navigation', () => ({
 }));
 
 // Mock RSVPForm component
-vi.mock('@/components/RSVPForm', () => ({
+vi.mock('@/components/rsvp/RSVPForm', () => ({
   default: ({ onSuccess, selectedMatchId }: { onSuccess: () => void; selectedMatchId?: number }) => (
     <div data-testid="rsvp-form">
       <button onClick={onSuccess} data-testid="mock-submit">Submit RSVP</button>

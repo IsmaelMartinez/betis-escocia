@@ -14,7 +14,7 @@ import dynamic from "next/dynamic";
 import { useState, memo } from "react";
 
 // Lazy load RSVPWidget since it's only shown when expanded
-const RSVPWidget = dynamic(() => import("./RSVPWidget"), {
+const RSVPWidget = dynamic(() => import("./rsvp/RSVPWidget"), {
   loading: () => (
     <div className="animate-pulse">
       <div className="h-32 bg-gray-200 rounded"></div>

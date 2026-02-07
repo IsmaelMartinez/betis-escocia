@@ -15,7 +15,7 @@ vi.mock('@/components/BetisPositionWidget', () => ({
   default: () => <div data-testid="betis-position-widget">Betis Position Widget</div>,
 }));
 
-vi.mock('@/components/RSVPModal', () => ({
+vi.mock('@/components/rsvp/RSVPModal', () => ({
   default: () => <div data-testid="rsvp-modal">RSVP Modal</div>,
   useRSVPModal: () => ({
     isOpen: false,
