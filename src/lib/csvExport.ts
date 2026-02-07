@@ -58,10 +58,7 @@ export async function exportContacts(userId?: string) {
       ),
     ].join("\n");
 
-    downloadCSV(
-      csvContent,
-      `contacts-${format(new Date(), "yyyy-MM-dd")}.csv`,
-    );
+    downloadCSV(csvContent, `contacts-${format(new Date(), "yyyy-MM-dd")}.csv`);
   } catch (err) {
     log.error("Failed to export contacts", err, { userId });
   }

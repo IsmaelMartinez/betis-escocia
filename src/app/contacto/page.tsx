@@ -98,7 +98,6 @@ export default function ContactPage() {
     formRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);

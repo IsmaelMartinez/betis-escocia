@@ -481,7 +481,6 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
                 <Mail className="h-4 w-4 inline mr-2" />
                 Contactos
               </button>
-
             </nav>
           </div>
         </div>
@@ -796,7 +795,6 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
             />
           </>
         )}
-
       </div>
     </div>
   );
