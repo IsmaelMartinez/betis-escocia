@@ -1,45 +1,68 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Calendar } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { FeatureWrapper } from '@/lib/featureProtection';
-import type { MatchCardProps } from '@/types/match';
-import type { Match as DatabaseMatch } from '@/lib/supabase';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
-import { DATETIME_FORMAT } from '@/lib/constants/dateFormats';
+import React from "react";
+import { Calendar } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { FeatureWrapper } from "@/lib/featureProtection";
+import type { MatchCardProps } from "@/types/match";
+import type { Match as DatabaseMatch } from "@/lib/supabase";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { DATETIME_FORMAT } from "@/lib/constants/dateFormats";
+import {
+  getCompetitionBadge,
+  getCompetitionDisplayName,
+} from "@/lib/constants/competitions";
 
 // Adapter function to convert database match to MatchCardProps
 export function convertDatabaseMatchToCardProps(
-  dbMatch: DatabaseMatch, 
+  dbMatch: DatabaseMatch,
   rsvpCount?: number,
   totalAttendees?: number,
-  showRSVP: boolean = true
+  showRSVP: boolean = true,
 ): MatchCardProps {
   const isUpcoming = new Date(dbMatch.date_time) > new Date();
-  
+
   return {
     id: dbMatch.id,
     opponent: dbMatch.opponent,
     date: dbMatch.date_time,
     competition: dbMatch.competition,
-    isHome: dbMatch.home_away === 'home',
-    status: (dbMatch.status as 'SCHEDULED' | 'FINISHED' | 'IN_PLAY' | 'PAUSED' | 'POSTPONED' | 'SUSPENDED' | 'CANCELLED' | 'AWARDED' | 'TIMED') || (isUpcoming ? 'SCHEDULED' : 'FINISHED'),
-    result: dbMatch.result || (isUpcoming ? undefined : 'FINALIZADO'),
+    isHome: dbMatch.home_away === "home",
+    status:
+      (dbMatch.status as
+        | "SCHEDULED"
+        | "FINISHED"
+        | "IN_PLAY"
+        | "PAUSED"
+        | "POSTPONED"
+        | "SUSPENDED"
+        | "CANCELLED"
+        | "AWARDED"
+        | "TIMED") || (isUpcoming ? "SCHEDULED" : "FINISHED"),
+    result: dbMatch.result || (isUpcoming ? undefined : "FINALIZADO"),
     matchday: dbMatch.matchday,
-    score: (dbMatch.home_score !== null && dbMatch.away_score !== null && dbMatch.home_score !== undefined && dbMatch.away_score !== undefined) ? {
-      home: dbMatch.home_score,
-      away: dbMatch.away_score
-    } : undefined,
+    score:
+      dbMatch.home_score !== null &&
+      dbMatch.away_score !== null &&
+      dbMatch.home_score !== undefined &&
+      dbMatch.away_score !== undefined
+        ? {
+            home: dbMatch.home_score,
+            away: dbMatch.away_score,
+          }
+        : undefined,
     // Add RSVP info if available
-    rsvpInfo: (rsvpCount !== undefined && totalAttendees !== undefined) ? {
-      rsvpCount,
-      totalAttendees
-    } : undefined,
+    rsvpInfo:
+      rsvpCount !== undefined && totalAttendees !== undefined
+        ? {
+            rsvpCount,
+            totalAttendees,
+          }
+        : undefined,
     // Control RSVP button visibility
-    showRSVP
+    showRSVP,
   };
 }
 
@@ -57,102 +80,45 @@ const MatchCard: React.FC<MatchCardProps> = (props) => {
     competitionEmblem,
     score,
     rsvpInfo,
-    showRSVP
+    showRSVP,
   } = props;
 
-  const isUpcoming = status === 'SCHEDULED' || status === 'TIMED' || new Date(date) > new Date();
-  
+  const isUpcoming =
+    status === "SCHEDULED" || status === "TIMED" || new Date(date) > new Date();
+
   // Format date with Spanish locale
   const formatDate = (dateString: string): string => {
     const matchDate = new Date(dateString);
     return format(matchDate, DATETIME_FORMAT, { locale: es });
   };
 
-  // Get competition badge color and style
-  const getCompetitionColor = (comp: string): string => {
-    const compLower = comp.toLowerCase();
-    
-    // La Liga
-    if (compLower.includes('liga') || compLower.includes('primera')) {
-      return 'bg-gradient-to-r from-red-600 to-red-700'; // La Liga red
-    }
-    
-    // Champions League
-    if (compLower.includes('champions')) {
-      return 'bg-gradient-to-r from-blue-600 to-blue-800'; // Champions League blue
-    }
-    
-    // Europa League
-    if (compLower.includes('europa') && !compLower.includes('conference')) {
-      return 'bg-gradient-to-r from-orange-500 to-orange-600'; // Europa League orange
-    }
-    
-    // Conference League
-    if (compLower.includes('conference')) {
-      return 'bg-gradient-to-r from-green-600 to-green-700'; // Conference League green
-    }
-    
-    // Copa del Rey
-    if (compLower.includes('copa')) {
-      return 'bg-gradient-to-r from-yellow-600 to-yellow-700'; // Copa del Rey gold
-    }
-    
-    // Supercopa de España
-    if (compLower.includes('supercopa')) {
-      return 'bg-gradient-to-r from-purple-600 to-purple-700'; // Supercopa purple
-    }
-    
-    // Default - Betis green gradient
-    return 'bg-gradient-to-r from-green-600 to-betis-green';
-  };
-
-  // Get friendly competition name for display
-  const getCompetitionDisplayName = (comp: string): string => {
-    const compLower = comp.toLowerCase();
-    
-    if (compLower.includes('primera') || compLower === 'laliga santander' || compLower === 'la liga') {
-      return 'LaLiga';
-    }
-    if (compLower.includes('champions')) {
-      return 'Champions League';
-    }
-    if (compLower.includes('europa') && !compLower.includes('conference')) {
-      return 'Europa League';
-    }
-    if (compLower.includes('conference')) {
-      return 'Conference League';
-    }
-    if (compLower.includes('copa del rey')) {
-      return 'Copa del Rey';
-    }
-    if (compLower.includes('supercopa')) {
-      return 'Supercopa de España';
-    }
-    
-    return comp; // Return original if no mapping found
-  };
+  const getCompetitionColor = (comp: string): string =>
+    getCompetitionBadge(comp);
 
   // Get match status display
   const getStatusInfo = () => {
     switch (status) {
-      case 'IN_PLAY':
-        return { text: 'EN VIVO', color: 'bg-red-500 text-white animate-pulse' };
-      case 'PAUSED':
-        return { text: 'DESCANSO', color: 'bg-orange-500 text-white' };
-      case 'FINISHED':
-        return { text: 'FINALIZADO', color: 'bg-gray-500 text-white' };
-      case 'POSTPONED':
-        return { text: 'APLAZADO', color: 'bg-yellow-500 text-white' };
-      case 'SUSPENDED':
-        return { text: 'SUSPENDIDO', color: 'bg-red-600 text-white' };
-      case 'CANCELLED':
-        return { text: 'CANCELADO', color: 'bg-gray-600 text-white' };
-      case 'AWARDED':
-        return { text: 'OTORGADO', color: 'bg-purple-500 text-white' };
-      case 'SCHEDULED':
-      case 'TIMED':
+      case "IN_PLAY":
+        return {
+          text: "EN VIVO",
+          color: "bg-red-500 text-white animate-pulse",
+        };
+      case "PAUSED":
+        return { text: "DESCANSO", color: "bg-orange-500 text-white" };
+      case "FINISHED":
+        return { text: "FINALIZADO", color: "bg-gray-500 text-white" };
+      case "POSTPONED":
+        return { text: "APLAZADO", color: "bg-yellow-500 text-white" };
+      case "SUSPENDED":
+        return { text: "SUSPENDIDO", color: "bg-red-600 text-white" };
+      case "CANCELLED":
+        return { text: "CANCELADO", color: "bg-gray-600 text-white" };
+      case "AWARDED":
+        return { text: "OTORGADO", color: "bg-purple-500 text-white" };
+      case "SCHEDULED":
+      case "TIMED":
       default:
-        return { text: 'PRÓXIMO', color: 'bg-betis-verde text-white' };
+        return { text: "PRÓXIMO", color: "bg-betis-verde text-white" };
     }
   };
 
@@ -164,82 +130,93 @@ const MatchCard: React.FC<MatchCardProps> = (props) => {
       // Always show local team score first, visitor team score second
       return `${score.home} - ${score.away}`;
     }
-    return result ?? 'VS';
+    return result ?? "VS";
   };
 
   // Determine team display information - always show local (home) team on left, visitor (away) on right
-  const localTeam = isHome ? {
-    name: 'Real Betis',
-    crest: '/images/logo_no_texto.jpg',
-    isBetis: true
-  } : {
-    name: opponent,
-    crest: opponentCrest,
-    isBetis: false
-  };
+  const localTeam = isHome
+    ? {
+        name: "Real Betis",
+        crest: "/images/logo_no_texto.jpg",
+        isBetis: true,
+      }
+    : {
+        name: opponent,
+        crest: opponentCrest,
+        isBetis: false,
+      };
 
-  const visitorTeam = isHome ? {
-    name: opponent,
-    crest: opponentCrest,
-    isBetis: false
-  } : {
-    name: 'Real Betis',
-    crest: '/images/logo_no_texto.jpg',
-    isBetis: true
-  };
-
+  const visitorTeam = isHome
+    ? {
+        name: opponent,
+        crest: opponentCrest,
+        isBetis: false,
+      }
+    : {
+        name: "Real Betis",
+        crest: "/images/logo_no_texto.jpg",
+        isBetis: true,
+      };
 
   return (
     <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-200">
-        {/* Competition header with emblem */}
-        <div className={`${getCompetitionColor(competition)} text-white px-4 py-2 flex items-center justify-between`}>
-          <div className="flex items-center space-x-2">
-            {competitionEmblem && (
-              <Image
-                src={competitionEmblem}
-                alt={`${competition} logo`}
-                width={20}
-                height={20}
-                className="object-contain"
-              />
-            )}
-            <p className="text-sm font-medium">{getCompetitionDisplayName(competition)}</p>
-          </div>
-          {matchday && (
-            <span className="text-xs bg-white/20 px-2 py-1 rounded-full">
-              J{matchday}
-            </span>
+      {/* Competition header with emblem */}
+      <div
+        className={`${getCompetitionColor(competition)} text-white px-4 py-2 flex items-center justify-between`}
+      >
+        <div className="flex items-center space-x-2">
+          {competitionEmblem && (
+            <Image
+              src={competitionEmblem}
+              alt={`${competition} logo`}
+              width={20}
+              height={20}
+              className="object-contain"
+            />
           )}
+          <p className="text-sm font-medium">
+            {getCompetitionDisplayName(competition)}
+          </p>
         </div>
+        {matchday && (
+          <span className="text-xs bg-white/20 px-2 py-1 rounded-full">
+            J{matchday}
+          </span>
+        )}
+      </div>
 
-        <div className="p-4">
-          {/* Match details */}
-          <div className="text-center mb-4">
-            <div className="flex items-center justify-center space-x-4 mb-2">
-              {/* Local Team (always on left) */}
-              <div className="text-right flex-1">
-                <div className="flex items-center justify-end space-x-2">
-                  <p className={`font-bold text-lg ${localTeam.isBetis ? 'text-betis-green' : ''}`}>
-                    {localTeam.name}
-                  </p>
-                </div>
+      <div className="p-4">
+        {/* Match details */}
+        <div className="text-center mb-4">
+          <div className="flex items-center justify-center space-x-4 mb-2">
+            {/* Local Team (always on left) */}
+            <div className="text-right flex-1">
+              <div className="flex items-center justify-end space-x-2">
+                <p
+                  className={`font-bold text-lg ${localTeam.isBetis ? "text-betis-green" : ""}`}
+                >
+                  {localTeam.name}
+                </p>
               </div>
+            </div>
 
-              {/* Score/VS */}
-              <div className="text-2xl font-bold text-gray-400 px-4">
-                {getMatchResult()}
-              </div>
+            {/* Score/VS */}
+            <div className="text-2xl font-bold text-gray-400 px-4">
+              {getMatchResult()}
+            </div>
 
-              {/* Visitor Team (always on right) */}
-              <div className="text-left flex-1">
-                <div className="flex items-center justify-start space-x-2">
-                  <p className={`font-bold text-lg ${visitorTeam.isBetis ? 'text-betis-green' : ''}`}>
-                    {visitorTeam.name}
-                  </p>
-                </div>
+            {/* Visitor Team (always on right) */}
+            <div className="text-left flex-1">
+              <div className="flex items-center justify-start space-x-2">
+                <p
+                  className={`font-bold text-lg ${visitorTeam.isBetis ? "text-betis-green" : ""}`}
+                >
+                  {visitorTeam.name}
+                </p>
               </div>
             </div>
           </div>
+        </div>
 
         {/* Date */}
         <div className="space-y-2 mb-4">
@@ -251,7 +228,9 @@ const MatchCard: React.FC<MatchCardProps> = (props) => {
 
         {/* Match status */}
         <div className="mb-4 text-center">
-          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusInfo.color}`}>
+          <span
+            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusInfo.color}`}
+          >
             {statusInfo.text}
           </span>
         </div>
@@ -263,10 +242,17 @@ const MatchCard: React.FC<MatchCardProps> = (props) => {
               {rsvpInfo && (
                 <div className="flex items-center justify-between mb-3">
                   <div className="text-sm text-gray-600">
-                    <span className="font-medium text-betis-green">{rsvpInfo.rsvpCount}</span> confirmaciones
+                    <span className="font-medium text-betis-green">
+                      {rsvpInfo.rsvpCount}
+                    </span>{" "}
+                    confirmaciones
                     {rsvpInfo.totalAttendees > 0 && (
                       <span className="ml-2">
-                        • <span className="font-medium text-betis-green">{rsvpInfo.totalAttendees}</span> asistentes
+                        •{" "}
+                        <span className="font-medium text-betis-green">
+                          {rsvpInfo.totalAttendees}
+                        </span>{" "}
+                        asistentes
                       </span>
                     )}
                   </div>
@@ -277,7 +263,10 @@ const MatchCard: React.FC<MatchCardProps> = (props) => {
                 href={`/rsvp?match=${id}`}
                 className="block w-full bg-betis-verde hover:bg-betis-verde-dark text-white text-center py-2 px-4 rounded-md font-medium transition-colors text-sm"
               >
-                📝 Confirmar Asistencia{rsvpInfo && rsvpInfo.totalAttendees > 0 ? ` (${rsvpInfo.totalAttendees})` : ''}
+                📝 Confirmar Asistencia
+                {rsvpInfo && rsvpInfo.totalAttendees > 0
+                  ? ` (${rsvpInfo.totalAttendees})`
+                  : ""}
               </Link>
             </div>
           </FeatureWrapper>

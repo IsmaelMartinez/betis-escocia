@@ -116,16 +116,20 @@ The repetitive CRUD pattern could be reduced with a factory:
 // supabase/crud.ts
 export function createCrudOps<T>(tableName: string) {
   return {
-    getAll: (limit?: number) => supabase.from(tableName).select('*')
-      .order('created_at', { ascending: false }).limit(limit ?? 1000),
-    getById: (id: string | number) => supabase.from(tableName)
-      .select('*').eq('id', id).single(),
-    create: (data: Partial<T>) => supabase.from(tableName)
-      .insert([data]).select().single(),
-    update: (id: string | number, data: Partial<T>) => supabase.from(tableName)
-      .update(data).eq('id', id).select().single(),
-    delete: (id: string | number) => supabase.from(tableName)
-      .delete().eq('id', id),
+    getAll: (limit?: number) =>
+      supabase
+        .from(tableName)
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(limit ?? 1000),
+    getById: (id: string | number) =>
+      supabase.from(tableName).select("*").eq("id", id).single(),
+    create: (data: Partial<T>) =>
+      supabase.from(tableName).insert([data]).select().single(),
+    update: (id: string | number, data: Partial<T>) =>
+      supabase.from(tableName).update(data).eq("id", id).select().single(),
+    delete: (id: string | number) =>
+      supabase.from(tableName).delete().eq("id", id),
   };
 }
 ```
@@ -144,13 +148,13 @@ This is optional — the file split alone provides most of the benefit. Only add
 
 **Proposed extraction:**
 
-| Extract to | Lines | What |
-|---|---|---|
-| `hooks/useAdminStats.ts` | ~80 | Stats fetching, refresh, sync logic |
-| `lib/csvExport.ts` | ~70 | `downloadCSV`, `exportRSVPs`, `exportContacts` |
-| `AdminDashboardView.tsx` | ~150 | Dashboard stats & recent activity |
-| `AdminContactsView.tsx` | ~80 | Contact list with filtering |
-| Parent `AdminPageClient.tsx` | ~200 | View routing and shared state |
+| Extract to                   | Lines | What                                           |
+| ---------------------------- | ----- | ---------------------------------------------- |
+| `hooks/useAdminStats.ts`     | ~80   | Stats fetching, refresh, sync logic            |
+| `lib/csvExport.ts`           | ~70   | `downloadCSV`, `exportRSVPs`, `exportContacts` |
+| `AdminDashboardView.tsx`     | ~150  | Dashboard stats & recent activity              |
+| `AdminContactsView.tsx`      | ~80   | Contact list with filtering                    |
+| Parent `AdminPageClient.tsx` | ~200  | View routing and shared state                  |
 
 ### RSVPWidget.tsx (531 lines)
 
@@ -260,13 +264,13 @@ Only 2 hooks exist: `useRSVPData` and `useApiData`.
 
 ### Candidates for Extraction
 
-| Hook | Source Component | Benefit |
-|---|---|---|
-| `useAdminStats` | AdminPageClient | Decouple fetch logic from UI |
-| `useContactForm` | contacto/page | Reusable form state management |
+| Hook              | Source Component   | Benefit                            |
+| ----------------- | ------------------ | ---------------------------------- |
+| `useAdminStats`   | AdminPageClient    | Decouple fetch logic from UI       |
+| `useContactForm`  | contacto/page      | Reusable form state management     |
 | `useMatchFilters` | AllDatabaseMatches | Reusable filter + pagination logic |
-| `usePagination` | AllDatabaseMatches | Generic pagination utility |
-| `useTriviaGame` | trivia/page | Clean game state machine |
+| `usePagination`   | AllDatabaseMatches | Generic pagination utility         |
+| `useTriviaGame`   | trivia/page        | Clean game state machine           |
 
 ### Proposed Location
 
@@ -296,12 +300,21 @@ src/lib/hooks/
 
 ```typescript
 // constants/competitions.ts
-export const COMPETITION_CONFIG: Record<string, { ribbon: string; display: string }> = {
-  'laliga':    { ribbon: 'from-red-600 to-red-700', display: 'LaLiga' },
-  'champions': { ribbon: 'from-blue-600 to-blue-800', display: 'Champions League' },
-  'europa':    { ribbon: 'from-orange-500 to-orange-600', display: 'Europa League' },
-  'conference': { ribbon: 'from-green-600 to-green-700', display: 'Conference League' },
-  'copa':      { ribbon: 'from-yellow-600 to-yellow-700', display: 'Copa del Rey' },
+export const COMPETITION_CONFIG: Record<
+  string,
+  { ribbon: string; display: string }
+> = {
+  laliga: { ribbon: "from-red-600 to-red-700", display: "LaLiga" },
+  champions: {
+    ribbon: "from-blue-600 to-blue-800",
+    display: "Champions League",
+  },
+  europa: { ribbon: "from-orange-500 to-orange-600", display: "Europa League" },
+  conference: {
+    ribbon: "from-green-600 to-green-700",
+    display: "Conference League",
+  },
+  copa: { ribbon: "from-yellow-600 to-yellow-700", display: "Copa del Rey" },
 };
 ```
 
@@ -324,12 +337,12 @@ These parts of the architecture are working well and should be preserved:
 
 ## Implementation Phases
 
-### Phase 1: Quick Wins (low risk, immediate clarity)
+### Phase 1: Quick Wins (low risk, immediate clarity) -- DONE
 
-1. Extract CSV utilities from AdminPageClient
-2. Move contact form constants to `constants/contact.ts`
-3. Create `constants/competitions.ts` from duplicated mappings
-4. Delete or activate unused `mockFactories.ts` and `testHelpers.ts`
+1. ~~Extract CSV utilities from AdminPageClient~~ -> `src/lib/csvExport.ts`
+2. ~~Move contact form constants to `constants/contact.ts`~~ -> `src/lib/constants/contact.ts`
+3. ~~Create `constants/competitions.ts` from duplicated mappings~~ -> `src/lib/constants/competitions.ts`
+4. ~~Delete unused `mockFactories.ts` and `testHelpers.ts`~~ -> deleted
 
 ### Phase 2: Component Organization
 
@@ -355,7 +368,7 @@ These parts of the architecture are working well and should be preserved:
 ### Phase 5: Test Infrastructure Cleanup
 
 1. Centralize mocks into `tests/mocks/` directory
-2. Integrate mockFactories into tests that create fixtures
+2. Create test fixture factories if needed (mockFactories was deleted in Phase 1 as unused)
 3. Expand MSW handlers for all external APIs
 4. Reduce setup overhead in heaviest test files
 
@@ -370,6 +383,7 @@ These parts of the architecture are working well and should be preserved:
 ## Expected Outcomes
 
 **Positive:**
+
 - Reduced cognitive load when navigating the codebase
 - Easier onboarding for new contributors
 - Better test maintainability through centralized mocking
@@ -377,11 +391,13 @@ These parts of the architecture are working well and should be preserved:
 - Reusable hooks reduce duplication across features
 
 **Trade-offs:**
+
 - Import paths change (mitigated by barrel exports and IDE refactoring)
 - Temporary code churn in PRs
 - Need to update Storybook paths after component moves
 
 **Neutral:**
+
 - No performance impact (same code, better organized)
 - No change to user-facing behavior
 - No new dependencies required
