@@ -365,12 +365,33 @@ src/lib/
 - Reduced cognitive load when navigating codebase
 - Foundation for future modularization
 
-### Phase 4: Split Large Components
+### Phase 4: Split Large Components -- IN PROGRESS
 
-1. Extract Layout into Header/Footer/UserMenu
-2. Split AdminPageClient into views + hooks
-3. Simplify RSVPWidget dual-path logic
-4. Extract AllDatabaseMatches filtering/pagination
+**Target components (2,284 lines total):**
+- AdminPageClient.tsx: 803 lines
+- RSVPWidget.tsx: 531 lines
+- AllDatabaseMatches.tsx: 486 lines
+- Layout.tsx: 464 lines
+
+**Planned splits:**
+1. **AdminPageClient** → Extract custom hooks + create view components
+   - ✅ Created `useAdminStats` hook (extracting stats fetching logic)
+   - TODO: Create `useAdminMatches`, `useAdminContacts` hooks
+   - TODO: Create DashboardView, MatchesView, ContactsView components
+   - TODO: Simplify main component to orchestrate views
+2. **Layout** → Extract Header, Footer, UserMenu components
+3. **RSVPWidget** → Simplify dual-path logic (anonymous vs authenticated)
+4. **AllDatabaseMatches** → Extract filtering/pagination into custom hooks
+
+**Initial work (Phase 4.1):**
+- Created `src/app/admin/hooks/useAdminStats.ts` - demonstrates pattern for extracting data fetching logic into reusable hooks
+- Establishes structure for further component decomposition
+
+**Expected benefits:**
+- Smaller, focused components (target: <300 lines each)
+- Reusable hooks for data fetching
+- Easier testing of individual pieces
+- Improved maintainability
 
 ### Phase 5: Database Module Split
 
