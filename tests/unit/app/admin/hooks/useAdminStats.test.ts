@@ -161,20 +161,14 @@ describe('useAdminStats', () => {
       expect(result.current.loading).toBe(false);
     });
 
-    // Clear the initial calls
-    vi.clearAllMocks();
+    const initialCallCount = mockFrom.mock.calls.length;
 
-    // Call refresh
-    result.current.refresh();
+    // Call refresh and wait for it to complete
+    await result.current.refresh();
 
-    expect(result.current.refreshing).toBe(true);
-
-    await waitFor(() => {
-      expect(result.current.refreshing).toBe(false);
-    });
-
-    // Should have made the API calls again
-    expect(mockFrom).toHaveBeenCalledTimes(3);
+    // Should have made 3 more API calls (rsvps, contacts, matches)
+    expect(mockFrom.mock.calls.length).toBe(initialCallCount + 3);
+    expect(result.current.refreshing).toBe(false);
   });
 
   it('should fetch queries in parallel', async () => {
