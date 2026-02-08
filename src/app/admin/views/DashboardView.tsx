@@ -1,155 +1,177 @@
-import { Users, Mail, TrendingUp, Download, RefreshCw, Calendar } from 'lucide-react';
-import Card, { CardHeader, CardBody } from '@/components/ui/Card';
-import Button from '@/components/ui/Button';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
-import { DATE_FORMAT } from '@/lib/constants/dateFormats';
-import type { AdminStats } from '../hooks/useAdminStats';
-import clsx from 'clsx';
+"use client";
+
+import {
+  Users,
+  Mail,
+  TrendingUp,
+  Download,
+  Calendar,
+} from "lucide-react";
+import Card, { CardHeader, CardBody } from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { DATE_FORMAT } from "@/lib/constants/dateFormats";
+import type { AdminStats } from "../hooks/useAdminStats";
+import type { ContactSubmission } from "@/lib/api/supabase";
 
 interface DashboardViewProps {
-  stats: AdminStats | null;
-  loading: boolean;
-  refreshing: boolean;
-  onRefresh: () => void;
-  onExportRSVPs: () => void;
-  onExportContacts: () => void;
-  showPartidos: boolean;
+  readonly stats: AdminStats | null;
+  readonly showPartidos: boolean;
+  readonly onExportRSVPs: () => void;
+  readonly onExportContacts: () => void;
+  readonly onUpdateContactStatus: (
+    id: number,
+    status: ContactSubmission["status"],
+  ) => void;
+  readonly onViewContacts: () => void;
 }
 
-export function DashboardView({
+export default function DashboardView({
   stats,
-  loading,
-  refreshing,
-  onRefresh,
+  showPartidos,
   onExportRSVPs,
   onExportContacts,
-  showPartidos,
+  onUpdateContactStatus,
+  onViewContacts,
 }: DashboardViewProps) {
-  if (loading || !stats) {
-    return null; // Loading state handled by parent
-  }
-
   return (
-    <div className="space-y-6">
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Total RSVPs</h3>
-              <Users className="h-5 w-5 text-betis-verde" />
+    <>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <Card className="hover-lift">
+          <CardBody className="text-center">
+            <div className="mx-auto w-12 h-12 bg-betis-green/10 rounded-lg flex items-center justify-center mb-4">
+              <Users className="h-6 w-6 text-betis-green" />
             </div>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold text-betis-verde">
-              {stats.totalRSVPs}
-            </p>
+            <div className="text-3xl font-black text-betis-black mb-2">
+              {stats?.totalRSVPs}
+            </div>
+            <div className="text-sm text-gray-600">RSVPs Totales</div>
           </CardBody>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Total Attendees
-              </h3>
-              <TrendingUp className="h-5 w-5 text-betis-verde" />
+        <Card className="hover-lift">
+          <CardBody className="text-center">
+            <div className="mx-auto w-12 h-12 bg-betis-green/10 rounded-lg flex items-center justify-center mb-4">
+              <TrendingUp className="h-6 w-6 text-betis-green" />
             </div>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold text-betis-verde">
-              {stats.totalAttendees}
-            </p>
+            <div className="text-3xl font-black text-betis-black mb-2">
+              {stats?.totalAttendees}
+            </div>
+            <div className="text-sm text-gray-600">
+              Asistentes Confirmados
+            </div>
           </CardBody>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Contact Submissions
-              </h3>
-              <Mail className="h-5 w-5 text-betis-verde" />
+        <Card className="hover-lift">
+          <CardBody className="text-center">
+            <div className="mx-auto w-12 h-12 bg-betis-green/10 rounded-lg flex items-center justify-center mb-4">
+              <Mail className="h-6 w-6 text-betis-green" />
             </div>
-          </CardHeader>
-          <CardBody>
-            <p className="text-3xl font-bold text-betis-verde">
-              {stats.totalContacts}
-            </p>
+            <div className="text-3xl font-black text-betis-black mb-2">
+              {stats?.totalContacts}
+            </div>
+            <div className="text-sm text-gray-600">
+              Mensajes de Contacto
+            </div>
           </CardBody>
         </Card>
 
         {showPartidos && (
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Total Matches
-                </h3>
-                <Calendar className="h-5 w-5 text-betis-verde" />
+          <Card className="hover-lift">
+            <CardBody className="text-center">
+              <div className="mx-auto w-12 h-12 bg-betis-green/10 rounded-lg flex items-center justify-center mb-4">
+                <Calendar className="h-6 w-6 text-betis-green" />
               </div>
-            </CardHeader>
-            <CardBody>
-              <p className="text-3xl font-bold text-betis-verde">
-                {stats.totalMatches}
-              </p>
+              <div className="text-3xl font-black text-betis-black mb-2">
+                {stats?.totalMatches}
+              </div>
+              <div className="text-sm text-gray-600">
+                Partidos Guardados
+              </div>
             </CardBody>
           </Card>
         )}
       </div>
 
-      {/* Actions */}
-      <div className="flex gap-4">
-        <Button
-          onClick={onRefresh}
-          disabled={refreshing}
-          variant="secondary"
-          className={clsx(refreshing && 'opacity-50 cursor-not-allowed')}
-        >
-          <RefreshCw
-            className={clsx('h-4 w-4 mr-2', refreshing && 'animate-spin')}
-          />
-          {refreshing ? 'Refreshing...' : 'Refresh Data'}
-        </Button>
-        <Button onClick={onExportRSVPs} variant="secondary">
-          <Download className="h-4 w-4 mr-2" />
-          Export RSVPs
-        </Button>
-        <Button onClick={onExportContacts} variant="secondary">
-          <Download className="h-4 w-4 mr-2" />
-          Export Contacts
-        </Button>
+      {/* Export Actions */}
+      <div className="mb-8">
+        <Card>
+          <CardHeader>
+            <h2 className="text-xl font-bold text-betis-black">
+              Exportar Datos
+            </h2>
+          </CardHeader>
+          <CardBody>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button
+                onClick={onExportRSVPs}
+                variant="primary"
+                leftIcon={<Download className="h-4 w-4" />}
+              >
+                Exportar RSVPs (CSV)
+              </Button>
+              <Button
+                onClick={onExportContacts}
+                variant="secondary"
+                leftIcon={<Download className="h-4 w-4" />}
+              >
+                Exportar Contactos (CSV)
+              </Button>
+            </div>
+          </CardBody>
+        </Card>
       </div>
 
-      {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Recent Data */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Recent RSVPs */}
         <Card>
           <CardHeader>
-            <h3 className="text-lg font-semibold text-gray-900">Recent RSVPs</h3>
+            <h2 className="text-xl font-bold text-betis-black">
+              RSVPs Recientes
+            </h2>
           </CardHeader>
           <CardBody>
-            {stats.recentRSVPs.length === 0 ? (
-              <p className="text-gray-500">No RSVPs yet</p>
+            {stats?.recentRSVPs.length === 0 ? (
+              <p className="text-gray-500 text-center py-4">
+                No hay RSVPs recientes
+              </p>
             ) : (
-              <div className="space-y-3">
-                {stats.recentRSVPs.map((rsvp) => (
+              <div className="space-y-4">
+                {stats?.recentRSVPs.map((rsvp) => (
                   <div
                     key={rsvp.id}
-                    className="flex justify-between items-center border-b border-gray-200 pb-2"
+                    className="border-l-4 border-betis-green bg-gray-50 p-4 rounded-r-lg"
                   >
-                    <div>
-                      <p className="font-medium text-gray-900">{rsvp.name}</p>
-                      <p className="text-sm text-gray-500">
-                        {rsvp.attendees} {rsvp.attendees === 1 ? 'person' : 'people'}
-                      </p>
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="font-semibold text-betis-black">
+                        {rsvp.name}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {format(new Date(rsvp.created_at), DATE_FORMAT, {
+                          locale: es,
+                        })}
+                      </div>
                     </div>
-                    <p className="text-sm text-gray-500">
-                      {format(new Date(rsvp.created_at), DATE_FORMAT, {
+                    <div className="text-sm text-gray-600 mb-1">
+                      {rsvp.email}
+                    </div>
+                    <div className="text-sm">
+                      <span className="font-medium">Asistentes:</span>{" "}
+                      {rsvp.attendees} |
+                      <span className="font-medium"> Partido:</span>{" "}
+                      {format(new Date(rsvp.match_date), DATE_FORMAT, {
                         locale: es,
                       })}
-                    </p>
+                    </div>
+                    {rsvp.message && (
+                      <div className="text-sm text-gray-600 mt-2 italic">
+                        &ldquo;{rsvp.message}&rdquo;
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -160,43 +182,70 @@ export function DashboardView({
         {/* Recent Contacts */}
         <Card>
           <CardHeader>
-            <h3 className="text-lg font-semibold text-gray-900">
-              Recent Contact Submissions
-            </h3>
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold text-betis-black">
+                Contactos Recientes
+              </h2>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onViewContacts}
+              >
+                Ver Todos
+              </Button>
+            </div>
           </CardHeader>
           <CardBody>
-            {stats.recentContacts.length === 0 ? (
-              <p className="text-gray-500">No contact submissions yet</p>
+            {stats?.recentContacts.length === 0 ? (
+              <p className="text-gray-500 text-center py-4">
+                No hay contactos recientes
+              </p>
             ) : (
-              <div className="space-y-3">
-                {stats.recentContacts.map((contact) => (
+              <div className="space-y-4">
+                {stats?.recentContacts.map((contact) => (
                   <div
                     key={contact.id}
-                    className="flex justify-between items-center border-b border-gray-200 pb-2"
+                    className="border-l-4 border-betis-green bg-gray-50 p-4 rounded-r-lg"
                   >
-                    <div>
-                      <p className="font-medium text-gray-900">{contact.name}</p>
-                      <p className="text-sm text-gray-500">{contact.subject}</p>
-                    </div>
-                    <div className="text-right">
-                      <span
-                        className={clsx(
-                          'inline-block px-2 py-1 text-xs font-medium rounded',
-                          contact.status === 'new' &&
-                            'bg-blue-100 text-blue-800',
-                          contact.status === 'in progress' &&
-                            'bg-yellow-100 text-yellow-800',
-                          contact.status === 'resolved' &&
-                            'bg-green-100 text-green-800'
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="font-semibold text-betis-black">
+                        {contact.name}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {format(
+                          new Date(contact.created_at),
+                          DATE_FORMAT,
+                          { locale: es },
                         )}
+                      </div>
+                    </div>
+                    <div className="text-sm text-gray-600 mb-1">
+                      {contact.email}
+                    </div>
+                    <div className="text-sm mb-2">
+                      <select
+                        value={contact.status}
+                        onChange={(e) =>
+                          onUpdateContactStatus(
+                            contact.id,
+                            e.target.value as ContactSubmission["status"],
+                          )
+                        }
+                        className="inline-block bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-medium mr-2 focus:outline-none focus:ring-2 focus:ring-betis-green"
                       >
-                        {contact.status}
+                        <option value="new">New</option>
+                        <option value="in progress">In Progress</option>
+                        <option value="resolved">Resolved</option>
+                      </select>
+                      <span className="inline-block bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs font-medium">
+                        {contact.type}
                       </span>
-                      <p className="text-sm text-gray-500 mt-1">
-                        {format(new Date(contact.created_at), DATE_FORMAT, {
-                          locale: es,
-                        })}
-                      </p>
+                    </div>
+                    <div className="text-sm font-medium text-gray-700 mb-1">
+                      {contact.subject}
+                    </div>
+                    <div className="text-sm text-gray-600 truncate">
+                      {contact.message}
                     </div>
                   </div>
                 ))}
@@ -205,6 +254,6 @@ export function DashboardView({
           </CardBody>
         </Card>
       </div>
-    </div>
+    </>
   );
 }

@@ -1,10 +1,18 @@
-import { useState, useCallback } from 'react';
-import { type Match, getMatches, createMatch, updateMatch, deleteMatch } from '@/lib/api/supabase';
+import { useState, useCallback, useEffect } from 'react';
+import {
+  type Match,
+  type MatchInsert,
+  type MatchUpdate,
+  getMatches,
+  createMatch,
+  updateMatch,
+  deleteMatch,
+} from '@/lib/api/supabase';
 import { log } from '@/lib/utils/logger';
 
 export function useAdminMatches() {
   const [matches, setMatches] = useState<Match[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
@@ -28,64 +36,28 @@ export function useAdminMatches() {
     }
   }, []);
 
-  const handleCreateMatch = useCallback(async (matchData: Omit<Match, 'id'>) => {
-    try {
-      setError(null);
-      const { data, error: createError } = await createMatch(matchData);
-
-      if (createError) {
-        throw createError;
-      }
-
-      // Refresh matches list
+  const handleCreateMatch = useCallback(async (matchData: MatchInsert) => {
+    const result = await createMatch(matchData);
+    if (result.success) {
       await fetchMatches();
-      return { success: true };
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to create match';
-      setError(errorMessage);
-      log.error('Failed to create match:', { error: err });
-      return { success: false, error: errorMessage };
     }
+    return result;
   }, [fetchMatches]);
 
-  const handleUpdateMatch = useCallback(async (id: number, matchData: Partial<Match>) => {
-    try {
-      setError(null);
-      const { data, error: updateError } = await updateMatch(id, matchData);
-
-      if (updateError) {
-        throw updateError;
-      }
-
-      // Refresh matches list
+  const handleUpdateMatch = useCallback(async (id: number, matchData: MatchUpdate) => {
+    const result = await updateMatch(id, matchData);
+    if (result.success) {
       await fetchMatches();
-      return { success: true };
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to update match';
-      setError(errorMessage);
-      log.error('Failed to update match:', { error: err });
-      return { success: false, error: errorMessage };
     }
+    return result;
   }, [fetchMatches]);
 
   const handleDeleteMatch = useCallback(async (id: number) => {
-    try {
-      setError(null);
-      const { error: deleteError } = await deleteMatch(id);
-
-      if (deleteError) {
-        throw deleteError;
-      }
-
-      // Refresh matches list
+    const result = await deleteMatch(id);
+    if (result.success) {
       await fetchMatches();
-      return { success: true };
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to delete match';
-      setError(errorMessage);
-      log.error('Failed to delete match:', { error: err });
-      return { success: false, error: errorMessage };
     }
+    return result;
   }, [fetchMatches]);
 
   const syncMatches = useCallback(async () => {
@@ -95,27 +67,64 @@ export function useAdminMatches() {
     try {
       const response = await fetch('/api/admin/sync-matches', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to sync matches');
+      const result = await response.json();
+
+      if (result.success) {
+        setSyncMessage(result.message);
+        await fetchMatches();
+      } else {
+        setSyncMessage(`Error: ${result.message}`);
       }
-
-      const data = await response.json();
-      setSyncMessage(
-        `Successfully synchronized ${data.synchronizedCount || 0} matches`,
-      );
-
-      // Refresh matches list
-      await fetchMatches();
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to sync matches';
-      setError(errorMessage);
       log.error('Failed to sync matches:', { error: err });
+      setSyncMessage('Error al sincronizar partidos');
     } finally {
       setSyncing(false);
     }
   }, [fetchMatches]);
+
+  const handleSyncMatchFromTable = useCallback(async (
+    matchId: number,
+  ): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const response = await fetch(`/api/admin/sync-match/${matchId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await fetchMatches();
+        return { success: true };
+      } else {
+        return { success: false, error: result.message };
+      }
+    } catch (err) {
+      log.error('Failed to sync individual match from admin table', err, {
+        matchId,
+      });
+      return { success: false, error: 'Error al sincronizar el partido' };
+    }
+  }, [fetchMatches]);
+
+  // Auto-clear sync message after 5 seconds
+  useEffect(() => {
+    if (syncMessage) {
+      const timerId = setTimeout(() => {
+        setSyncMessage(null);
+      }, 5000);
+
+      return () => clearTimeout(timerId);
+    }
+  }, [syncMessage]);
 
   return {
     matches,
@@ -128,5 +137,6 @@ export function useAdminMatches() {
     handleUpdateMatch,
     handleDeleteMatch,
     syncMatches,
+    handleSyncMatchFromTable,
   };
 }

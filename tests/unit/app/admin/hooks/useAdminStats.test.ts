@@ -1,13 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useAdminStats } from '@/app/admin/hooks/useAdminStats';
-import { supabase } from '@/lib/api/supabase';
+import { supabase, getMatches } from '@/lib/api/supabase';
 
 // Mock supabase
 vi.mock('@/lib/api/supabase', () => ({
   supabase: {
     from: vi.fn(),
   },
+  getMatches: vi.fn(),
 }));
 
 // Mock logger
@@ -38,8 +39,7 @@ describe('useAdminStats', () => {
     vi.clearAllMocks();
   });
 
-  it('should fetch stats on mount', async () => {
-    // Mock successful responses
+  it('should not fetch stats when isSignedIn is false', async () => {
     const mockFrom = vi.fn(() => ({
       select: vi.fn(() => ({
         order: vi.fn(() => Promise.resolve({ data: [], error: null })),
@@ -47,35 +47,47 @@ describe('useAdminStats', () => {
     }));
 
     (supabase.from as any) = mockFrom;
+    vi.mocked(getMatches).mockResolvedValue([]);
 
-    const { result } = renderHook(() => useAdminStats());
+    const { result } = renderHook(() => useAdminStats(false));
 
+    // Should remain loading since fetch is never called
     expect(result.current.loading).toBe(true);
+    expect(mockFrom).not.toHaveBeenCalled();
+    expect(getMatches).not.toHaveBeenCalled();
+  });
+
+  it('should fetch stats when isSignedIn is true', async () => {
+    const mockFrom = vi.fn(() => ({
+      select: vi.fn(() => ({
+        order: vi.fn(() => Promise.resolve({ data: [], error: null })),
+      })),
+    }));
+
+    (supabase.from as any) = mockFrom;
+    vi.mocked(getMatches).mockResolvedValue([]);
+
+    const { result } = renderHook(() => useAdminStats(true));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
     });
 
-    // Should have called supabase.from 3 times (rsvps, contacts, matches)
-    expect(mockFrom).toHaveBeenCalledTimes(3);
+    // Should have called supabase.from 2 times (rsvps, contacts) and getMatches once
+    expect(mockFrom).toHaveBeenCalledTimes(2);
     expect(mockFrom).toHaveBeenCalledWith('rsvps');
     expect(mockFrom).toHaveBeenCalledWith('contact_submissions');
-    expect(mockFrom).toHaveBeenCalledWith('matches');
+    expect(getMatches).toHaveBeenCalledTimes(1);
   });
 
   it('should calculate stats correctly', async () => {
-    // Mock successful responses with data
-    let callCount = 0;
     const mockFrom = vi.fn((table: string) => ({
       select: vi.fn(() => ({
         order: vi.fn(() => {
-          callCount++;
           if (table === 'rsvps') {
             return Promise.resolve({ data: mockRsvps, error: null });
           } else if (table === 'contact_submissions') {
             return Promise.resolve({ data: mockContacts, error: null });
-          } else if (table === 'matches') {
-            return Promise.resolve({ data: mockMatches, error: null });
           }
           return Promise.resolve({ data: [], error: null });
         }),
@@ -83,8 +95,9 @@ describe('useAdminStats', () => {
     }));
 
     (supabase.from as any) = mockFrom;
+    vi.mocked(getMatches).mockResolvedValue(mockMatches as any);
 
-    const { result } = renderHook(() => useAdminStats());
+    const { result } = renderHook(() => useAdminStats(true));
 
     await waitFor(() => {
       expect(result.current.stats).not.toBeNull();
@@ -113,8 +126,9 @@ describe('useAdminStats', () => {
     }));
 
     (supabase.from as any) = mockFrom;
+    vi.mocked(getMatches).mockResolvedValue([]);
 
-    const { result } = renderHook(() => useAdminStats());
+    const { result } = renderHook(() => useAdminStats(true));
 
     await waitFor(() => {
       expect(result.current.stats).not.toBeNull();
@@ -125,7 +139,7 @@ describe('useAdminStats', () => {
     expect(result.current.stats?.recentContacts.every((c: any) => c.status === 'new')).toBe(true);
   });
 
-  it('should handle errors gracefully', async () => {
+  it('should handle errors gracefully with Spanish error message', async () => {
     const mockError = new Error('Database error');
     const mockFrom = vi.fn(() => ({
       select: vi.fn(() => ({
@@ -134,14 +148,15 @@ describe('useAdminStats', () => {
     }));
 
     (supabase.from as any) = mockFrom;
+    vi.mocked(getMatches).mockResolvedValue([]);
 
-    const { result } = renderHook(() => useAdminStats());
+    const { result } = renderHook(() => useAdminStats(true));
 
     await waitFor(() => {
       expect(result.current.error).not.toBeNull();
     });
 
-    expect(result.current.error).toBe('Database error');
+    expect(result.current.error).toBe('Error al cargar las estadísticas del panel de administración');
     expect(result.current.loading).toBe(false);
     expect(result.current.stats).toBeNull();
   });
@@ -154,8 +169,9 @@ describe('useAdminStats', () => {
     }));
 
     (supabase.from as any) = mockFrom;
+    vi.mocked(getMatches).mockResolvedValue([]);
 
-    const { result } = renderHook(() => useAdminStats());
+    const { result } = renderHook(() => useAdminStats(true));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -166,8 +182,8 @@ describe('useAdminStats', () => {
     // Call refresh and wait for it to complete
     await result.current.refresh();
 
-    // Should have made 3 more API calls (rsvps, contacts, matches)
-    expect(mockFrom.mock.calls.length).toBe(initialCallCount + 3);
+    // Should have made 2 more supabase calls (rsvps, contacts) and 1 more getMatches call
+    expect(mockFrom.mock.calls.length).toBe(initialCallCount + 2);
     expect(result.current.refreshing).toBe(false);
   });
 
@@ -184,17 +200,20 @@ describe('useAdminStats', () => {
     }));
 
     (supabase.from as any) = mockFrom;
+    vi.mocked(getMatches).mockImplementation(async () => {
+      executionOrder.push('matches_via_getMatches');
+      return [];
+    });
 
-    renderHook(() => useAdminStats());
+    renderHook(() => useAdminStats(true));
 
     await waitFor(() => {
       expect(executionOrder.length).toBe(3);
     });
 
     // All three queries should have been initiated together (parallel execution)
-    // In parallel execution, all calls happen before any resolves
     expect(executionOrder).toContain('rsvps');
     expect(executionOrder).toContain('contact_submissions');
-    expect(executionOrder).toContain('matches');
+    expect(executionOrder).toContain('matches_via_getMatches');
   });
 });

@@ -3,15 +3,18 @@ import { supabase, type ContactSubmission, updateContactSubmissionStatus } from 
 import { log } from '@/lib/utils/logger';
 
 interface UseAdminContactsOptions {
-  filterStatus?: ContactSubmission['status'][];
   userId?: string;
   getToken?: () => Promise<string | null>;
 }
 
-export function useAdminContacts({ filterStatus, userId, getToken }: UseAdminContactsOptions = {}) {
+export function useAdminContacts({ userId, getToken }: UseAdminContactsOptions = {}) {
   const [allContactSubmissions, setAllContactSubmissions] = useState<ContactSubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [contactFilterStatus, setContactFilterStatus] = useState<
+    ContactSubmission['status'][]
+  >(['new', 'in progress']);
 
   const fetchContacts = useCallback(async () => {
     try {
@@ -36,61 +39,72 @@ export function useAdminContacts({ filterStatus, userId, getToken }: UseAdminCon
   const handleUpdateContactStatus = useCallback(
     async (id: number, status: ContactSubmission['status']) => {
       if (!userId || !getToken) {
-        setError('User authentication required');
-        return { success: false, error: 'User authentication required' };
+        setError('User not authenticated.');
+        return;
       }
 
+      setRefreshing(true);
       try {
-        setError(null);
         const clerkToken = await getToken();
 
         if (!clerkToken) {
-          throw new Error('Authentication token not available');
+          setError('Authentication token not available.');
+          setRefreshing(false);
+          return;
         }
 
-        const { data, error: updateError } = await updateContactSubmissionStatus(
+        const result = await updateContactSubmissionStatus(
           id,
           status,
           userId,
           clerkToken
         );
 
-        if (updateError) {
-          throw updateError;
+        if (result.success) {
+          // Update local state optimistically
+          setAllContactSubmissions((prev) =>
+            prev.map((contact) =>
+              contact.id === id ? { ...contact, status } : contact
+            )
+          );
+        } else {
+          setError(result.error || 'Error al actualizar el estado del contacto');
         }
-
-        // Update local state
-        setAllContactSubmissions((prev) =>
-          prev.map((contact) =>
-            contact.id === id ? { ...contact, status } : contact
-          )
-        );
-
-        return { success: true };
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : 'Failed to update contact status';
-        setError(errorMessage);
-        log.error('Failed to update contact status:', { error: err });
-        return { success: false, error: errorMessage };
+        log.error('Failed to update contact status in admin panel', err, {
+          contactId: id,
+          newStatus: status,
+          userId,
+        });
+        setError('Error al actualizar el estado del contacto');
+      } finally {
+        setRefreshing(false);
       }
     },
     [userId, getToken]
   );
 
-  // Filter contacts based on status
-  const filteredContacts = filterStatus
-    ? allContactSubmissions.filter((contact) =>
-        filterStatus.includes(contact.status)
-      )
-    : allContactSubmissions;
+  const handleContactFilterChange = useCallback((status: ContactSubmission['status']) => {
+    setContactFilterStatus((prev) =>
+      prev.includes(status)
+        ? prev.filter((s) => s !== status)
+        : [...prev, status]
+    );
+  }, []);
+
+  const filteredContacts = allContactSubmissions.filter((contact) =>
+    contactFilterStatus.includes(contact.status)
+  );
 
   return {
     allContactSubmissions,
     filteredContacts,
+    contactFilterStatus,
     loading,
     error,
+    refreshing,
     fetchContacts,
     handleUpdateContactStatus,
+    handleContactFilterChange,
   };
 }

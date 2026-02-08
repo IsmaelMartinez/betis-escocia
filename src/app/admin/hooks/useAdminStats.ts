@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { supabase, type RSVP, type ContactSubmission } from '@/lib/api/supabase';
+import { supabase, type RSVP, type ContactSubmission, getMatches } from '@/lib/api/supabase';
 import { log } from '@/lib/utils/logger';
 
 export interface AdminStats {
@@ -13,7 +13,7 @@ export interface AdminStats {
   recentContacts: ContactSubmission[];
 }
 
-export function useAdminStats() {
+export function useAdminStats(isSignedIn?: boolean) {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,8 +23,7 @@ export function useAdminStats() {
     try {
       setError(null);
 
-      // Fetch RSVPs, contacts, and matches in parallel to minimize latency
-      const [rsvpsResult, contactsResult, matchesResult] = await Promise.all([
+      const [rsvpsResult, contactsResult, matchesData] = await Promise.all([
         supabase
           .from('rsvps')
           .select('*')
@@ -33,26 +32,20 @@ export function useAdminStats() {
           .from('contact_submissions')
           .select('*')
           .order('created_at', { ascending: false }),
-        supabase
-          .from('matches')
-          .select('*')
-          .order('date_time', { ascending: false }),
+        getMatches(),
       ]);
 
       const { data: rsvps, error: rsvpError } = rsvpsResult;
       const { data: contacts, error: contactError } = contactsResult;
-      const { data: matches, error: matchError } = matchesResult;
 
       if (rsvpError) throw rsvpError;
       if (contactError) throw contactError;
-      if (matchError) throw matchError;
 
       const totalRSVPs = rsvps?.length || 0;
       const totalAttendees = rsvps?.reduce((sum, rsvp) => sum + (rsvp.attendees || 0), 0) || 0;
       const totalContacts = contacts?.length || 0;
-      const totalMatches = matches?.length || 0;
+      const totalMatches = matchesData?.length || 0;
 
-      // Filter to only show new contacts in the dashboard (preserves original behavior)
       const newContacts = (contacts || []).filter(
         (contact) => contact.status === 'new'
       );
@@ -66,11 +59,8 @@ export function useAdminStats() {
         recentContacts: newContacts.slice(0, 5),
       });
     } catch (err: unknown) {
-      const errorMessage =
-        (err as { message?: string } | null | undefined)?.message ??
-        'Failed to load admin statistics';
-      setError(errorMessage);
       log.error('Failed to fetch admin stats:', err);
+      setError('Error al cargar las estadísticas del panel de administración');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -82,10 +72,11 @@ export function useAdminStats() {
     await fetchStats();
   }, [fetchStats]);
 
-  // Automatically fetch stats on mount
   useEffect(() => {
-    fetchStats();
-  }, [fetchStats]);
+    if (isSignedIn) {
+      fetchStats();
+    }
+  }, [isSignedIn, fetchStats]);
 
   return {
     stats,
@@ -93,5 +84,6 @@ export function useAdminStats() {
     error,
     refreshing,
     refresh,
+    fetchStats,
   };
 }
