@@ -1,7 +1,7 @@
 'use client';
 
 import { SignUp } from '@clerk/nextjs';
-import { hasFeature } from '@/lib/featureFlags';
+import { hasFeature } from '@/lib/features/featureFlags';
 import Link from 'next/link';
 
 export default function SignUpPage() {

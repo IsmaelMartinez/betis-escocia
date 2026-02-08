@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getUpcomingMatchesWithRSVPCounts, Match } from '@/lib/supabase';
+import { getUpcomingMatchesWithRSVPCounts, Match } from '@/lib/api/supabase';
 import MatchCard, { convertDatabaseMatchToCardProps } from './MatchCard';
 import Link from 'next/link';
 

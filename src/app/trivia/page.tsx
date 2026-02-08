@@ -3,11 +3,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { TriviaQuestion } from '@/lib/supabase';
+import { TriviaQuestion } from '@/lib/api/supabase';
 import ErrorMessage from '@/components/ErrorMessage';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useUser, useAuth } from '@clerk/nextjs';
-import { log } from '@/lib/logger';
+import { log } from '@/lib/utils/logger';
 
 // Simplified state machine type
 type GameState = 'idle' | 'loading' | 'playing' | 'feedback' | 'completed' | 'error';

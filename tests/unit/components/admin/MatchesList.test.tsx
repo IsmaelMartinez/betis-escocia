@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import MatchesList from '@/components/admin/MatchesList';
-import { Match } from '@/lib/supabase';
+import { Match } from '@/lib/api/supabase';
 
 // Mock date-fns
 vi.mock('date-fns', () => ({

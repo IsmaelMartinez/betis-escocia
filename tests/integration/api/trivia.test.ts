@@ -60,7 +60,7 @@ vi.mock('@/lib/apiUtils', () => ({
 }));
 
 // Mock Supabase trivia functions
-vi.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/api/supabase', () => ({
   getTriviaQuestions: vi.fn(() => Promise.resolve({
     success: true,
     questions: [
@@ -81,7 +81,7 @@ vi.mock('@/lib/supabase', () => ({
 }));
 
 // Mock logger
-vi.mock('@/lib/logger', () => ({
+vi.mock('@/lib/utils/logger', () => ({
   log: {
     business: vi.fn(),
     error: vi.fn(),
@@ -96,7 +96,7 @@ describe('Trivia API', () => {
 
   describe('Trivia Functionality', () => {
     it('should handle trivia operations correctly', async () => {
-      const { getTriviaQuestions } = await import('@/lib/supabase');
+      const { getTriviaQuestions } = await import('@/lib/api/supabase');
       
       expect(getTriviaQuestions).toBeDefined();
       expect(typeof getTriviaQuestions).toBe('function');
@@ -110,7 +110,7 @@ describe('Trivia API', () => {
     });
 
     it('should handle score submission', async () => {
-      const { saveTriviaScore } = await import('@/lib/supabase');
+      const { saveTriviaScore } = await import('@/lib/api/supabase');
       
       expect(saveTriviaScore).toBeDefined();
       expect(typeof saveTriviaScore).toBe('function');

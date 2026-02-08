@@ -71,7 +71,7 @@ vi.mock('@/lib/apiUtils', () => ({
 }));
 
 // Mock Supabase
-vi.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/api/supabase', () => ({
   supabase: {
     from: vi.fn(() => ({
       select: vi.fn(() => ({
@@ -106,7 +106,7 @@ vi.mock('@/lib/schemas/rsvp', () => ({
 }));
 
 // Mock logger
-vi.mock('@/lib/logger', () => ({
+vi.mock('@/lib/utils/logger', () => ({
   log: {
     business: vi.fn(),
     error: vi.fn(),

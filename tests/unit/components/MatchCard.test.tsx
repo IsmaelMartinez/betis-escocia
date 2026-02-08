@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import MatchCard, { convertDatabaseMatchToCardProps } from '@/components/match/MatchCard';
-import type { Match as DatabaseMatch } from '@/lib/supabase';
+import type { Match as DatabaseMatch } from '@/lib/api/supabase';
 
 // Mock dependencies
 vi.mock('next/image', () => ({

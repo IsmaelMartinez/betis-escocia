@@ -1,6 +1,6 @@
-import { getUserDailyTriviaScore, type SupabaseClient } from '@/lib/supabase';
-import { log } from '@/lib/logger';
-import { StandardErrors } from '@/lib/standardErrors';
+import { getUserDailyTriviaScore, type SupabaseClient } from '@/lib/api/supabase';
+import { log } from '@/lib/utils/logger';
+import { StandardErrors } from '@/lib/utils/standardErrors';
 
 // Type definitions for trivia utilities
 export type TriviaQuestion = {

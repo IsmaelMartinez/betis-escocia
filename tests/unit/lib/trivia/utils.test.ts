@@ -15,12 +15,12 @@ import {
 } from '@/lib/trivia/utils';
 
 // Mock dependencies
-vi.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/api/supabase', () => ({
   getUserDailyTriviaScore: vi.fn(),
   SupabaseClient: {}
 }));
 
-vi.mock('@/lib/logger', () => ({
+vi.mock('@/lib/utils/logger', () => ({
   log: {
     error: vi.fn(),
     info: vi.fn(),
@@ -42,8 +42,8 @@ vi.mock('@/lib/standardErrors', () => ({
   }
 }));
 
-import { getUserDailyTriviaScore } from '@/lib/supabase';
-import { log } from '@/lib/logger';
+import { getUserDailyTriviaScore } from '@/lib/api/supabase';
+import { log } from '@/lib/utils/logger';
 
 describe('Trivia Utils', () => {
   beforeEach(() => {

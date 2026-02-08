@@ -5,14 +5,14 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError, ZodSchema } from "zod";
-import { checkAdminRole } from "@/lib/adminApiProtection";
+import { checkAdminRole } from "@/lib/auth/adminApiProtection";
 import { getAuth } from "@clerk/nextjs/server";
 import {
   getAuthenticatedSupabaseClient,
   supabase,
   type SupabaseClient,
-} from "@/lib/supabase";
-import { log } from "@/lib/logger";
+} from "@/lib/api/supabase";
+import { log } from "@/lib/utils/logger";
 
 // Authentication types
 export type AuthRequirement = "admin" | "user" | "optional" | "none";

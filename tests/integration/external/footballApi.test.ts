@@ -12,7 +12,7 @@ import axios, { type AxiosInstance } from "axios";
 import { type Match } from "@/types/match";
 
 // Mock logger
-vi.mock("@/lib/logger", () => ({
+vi.mock("@/lib/utils/logger", () => ({
   log: {
     debug: vi.fn(),
     info: vi.fn(),
@@ -90,7 +90,7 @@ describe("FootballDataService Integration Tests", () => {
     mockAxiosInstance.patch.mockClear();
 
     // Get the logger spy
-    const { log } = await import("@/lib/logger");
+    const { log } = await import("@/lib/utils/logger");
     logErrorSpy = log.error;
 
     // Re-import the module to get a fresh instance with mocks applied

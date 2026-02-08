@@ -3,7 +3,7 @@
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { POST } from './route';
 import { auth } from '@clerk/nextjs/server';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/api/supabase';
 import { NextRequest } from 'next/server';
 
 // Mock Clerk's auth() helper

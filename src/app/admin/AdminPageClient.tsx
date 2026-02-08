@@ -12,7 +12,7 @@ import {
   deleteMatch,
   getMatches,
   updateContactSubmissionStatus,
-} from "@/lib/supabase";
+} from "@/lib/api/supabase";
 import {
   Users,
   Mail,
@@ -23,18 +23,18 @@ import {
   Plus,
   RotateCcw,
 } from "lucide-react";
-import { exportRSVPs, exportContacts } from "@/lib/csvExport";
+import { exportRSVPs, exportContacts } from "@/lib/utils/csvExport";
 import Card, { CardHeader, CardBody } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import MessageComponent from "@/components/MessageComponent";
 import dynamicImport from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { withAdminRole } from "@/lib/withAdminRole";
+import { withAdminRole } from "@/lib/auth/withAdminRole";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { DATE_FORMAT } from "@/lib/constants/dateFormats";
-import { log } from "@/lib/logger";
+import { log } from "@/lib/utils/logger";
 import clsx from "clsx";
 
 // Lazy load heavy admin components to reduce initial bundle size

@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import AllDatabaseMatches from '@/components/match/AllDatabaseMatches';
 
 // Mock the supabase module
-vi.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/api/supabase', () => ({
   getAllMatchesWithRSVPCounts: vi.fn(),
 }));
 
@@ -26,7 +26,7 @@ vi.mock('@/components/match/MatchCard', () => ({
   }))
 }));
 
-import { getAllMatchesWithRSVPCounts } from '@/lib/supabase';
+import { getAllMatchesWithRSVPCounts } from '@/lib/api/supabase';
 
 // Mock data
 const mockMatches = [

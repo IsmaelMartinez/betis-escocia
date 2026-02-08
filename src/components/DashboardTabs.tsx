@@ -6,7 +6,7 @@ import DashboardDisplay from '@/components/DashboardDisplay';
 import GDPRTabContent from '@/components/user/GDPRTabContent';
 import { User, PieChart } from 'lucide-react';
 import { useAuth } from '@clerk/nextjs';
-import { RSVP, ContactSubmission } from '@/lib/supabase';
+import { RSVP, ContactSubmission } from '@/lib/api/supabase';
 
 interface Counts {
   rsvpCount: number;

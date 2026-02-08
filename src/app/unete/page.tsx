@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { MapPin, Clock, Users } from "lucide-react";
-import { FeatureWrapper } from "@/lib/featureProtection";
+import { FeatureWrapper } from "@/lib/features/featureProtection";
 
 export default function Unete() {
   return (

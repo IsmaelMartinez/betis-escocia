@@ -23,7 +23,7 @@ vi.mock('@/components/LoadingSpinner', () => ({
 }));
 
 // Mock Supabase functions
-vi.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/api/supabase', () => ({
   getUpcomingMatchesWithRSVPCounts: vi.fn(),
 }));
 
@@ -44,7 +44,7 @@ describe('RSVP Page', () => {
     vi.clearAllMocks();
     
     // Initialize Supabase mock
-    const supabaseModule = await import('@/lib/supabase');
+    const supabaseModule = await import('@/lib/api/supabase');
     mockGetUpcomingMatches = vi.mocked(supabaseModule.getUpcomingMatchesWithRSVPCounts);
     
     // Default search params mock

@@ -19,8 +19,8 @@ import {
 } from "@/components/MessageComponent";
 import Field, { ValidatedInput, ValidatedTextarea } from "@/components/Field";
 import { useUser } from "@clerk/nextjs";
-import { hasFeature } from "@/lib/featureFlags";
-import { useRSVPData } from "@/hooks/useRSVPData";
+import { hasFeature } from "@/lib/features/featureFlags";
+import { useRSVPData } from "@/hooks/data/useRSVPData";
 import { rsvpSchema, type RSVPInput } from "@/lib/schemas/rsvp";
 
 export interface EventDetails {

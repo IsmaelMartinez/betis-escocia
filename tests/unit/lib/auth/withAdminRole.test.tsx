@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { withAdminRole } from '@/lib/withAdminRole';
+import { withAdminRole } from '@/lib/auth/withAdminRole';
 
 // Mock Clerk hooks
 const mockUseAuth = vi.fn();

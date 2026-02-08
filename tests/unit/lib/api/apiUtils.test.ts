@@ -12,10 +12,10 @@ import {
   createCrudHandlers,
   type AuthRequirement,
   type ApiContext,
-} from "@/lib/apiUtils";
+} from "@/lib/api/apiUtils";
 
 // Mock dependencies
-vi.mock("@/lib/adminApiProtection", () => ({
+vi.mock("@/lib/auth/adminApiProtection", () => ({
   checkAdminRole: vi.fn(),
 }));
 
@@ -23,12 +23,12 @@ vi.mock("@clerk/nextjs/server", () => ({
   getAuth: vi.fn(),
 }));
 
-vi.mock("@/lib/supabase", () => ({
+vi.mock("@/lib/api/supabase", () => ({
   getAuthenticatedSupabaseClient: vi.fn(),
   supabase: {},
 }));
 
-vi.mock("@/lib/logger", () => ({
+vi.mock("@/lib/utils/logger", () => ({
   log: {
     error: vi.fn(),
     warn: vi.fn(),
@@ -37,10 +37,10 @@ vi.mock("@/lib/logger", () => ({
   },
 }));
 
-import { checkAdminRole } from "@/lib/adminApiProtection";
+import { checkAdminRole } from "@/lib/auth/adminApiProtection";
 import { getAuth } from "@clerk/nextjs/server";
-import { getAuthenticatedSupabaseClient, supabase } from "@/lib/supabase";
-import { log } from "@/lib/logger";
+import { getAuthenticatedSupabaseClient, supabase } from "@/lib/api/supabase";
+import { log } from "@/lib/utils/logger";
 
 const mockCheckAdminRole = checkAdminRole as any;
 const mockGetAuth = getAuth as any;

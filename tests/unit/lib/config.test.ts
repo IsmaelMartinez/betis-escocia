@@ -4,7 +4,7 @@ import {
   isDevelopment, 
   isProduction, 
   getBaseUrl 
-} from '@/lib/config';
+} from '@/lib/utils/config';
 
 describe('config', () => {
   beforeEach(() => {

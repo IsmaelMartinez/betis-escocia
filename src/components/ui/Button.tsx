@@ -1,7 +1,7 @@
 'use client';
 
 import { ButtonHTMLAttributes, ReactNode } from 'react';
-import { getButtonClass } from '@/lib/designSystem';
+import { getButtonClass } from '@/lib/utils/designSystem';
 
 interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'> {
   readonly variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';

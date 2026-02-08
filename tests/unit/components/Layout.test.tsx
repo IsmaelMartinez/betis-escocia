@@ -26,7 +26,7 @@ vi.mock("@clerk/nextjs", () => ({
 }));
 
 // Mock feature flags
-vi.mock("@/lib/featureFlags", () => ({
+vi.mock("@/lib/features/featureFlags", () => ({
   hasFeature: vi.fn(() => false),
 }));
 

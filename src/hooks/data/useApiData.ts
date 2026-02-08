@@ -8,7 +8,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { log } from "@/lib/logger";
+import { log } from "@/lib/utils/logger";
 
 export interface UseApiDataOptions extends RequestInit {
   // Automatic refetch interval in milliseconds

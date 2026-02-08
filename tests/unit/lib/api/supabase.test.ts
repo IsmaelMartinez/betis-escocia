@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // Mock logger
-vi.mock("@/lib/logger", () => ({
+vi.mock("@/lib/utils/logger", () => ({
   log: {
     debug: vi.fn(),
     info: vi.fn(),
@@ -76,8 +76,8 @@ import {
   type Match,
   type MatchInsert,
   type MatchUpdate,
-} from "@/lib/supabase";
-import { log } from "@/lib/logger";
+} from "@/lib/api/supabase";
+import { log } from "@/lib/utils/logger";
 
 import { createClient } from "@supabase/supabase-js";
 const mockCreateClient = createClient as ReturnType<typeof vi.fn>;

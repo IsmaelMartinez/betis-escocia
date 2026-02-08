@@ -40,7 +40,7 @@ vi.mock('@/lib/constants/dateFormats', () => ({
 }));
 
 // Mock supabase types
-vi.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/api/supabase', () => ({
   RSVP: {},
   ContactSubmission: {},
 }));

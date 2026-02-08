@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { hasFeature, type FeatureName } from '@/lib/featureFlags';
+import { hasFeature, type FeatureName } from '@/lib/features/featureFlags';
 
 /**
  * Higher-order component to protect routes based on feature flags

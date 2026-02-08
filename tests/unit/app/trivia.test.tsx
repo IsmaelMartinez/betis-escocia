@@ -43,7 +43,7 @@ vi.mock("@/components/TriviaScoreDisplay", () => ({
 }));
 
 // Mock logger
-vi.mock("@/lib/logger", () => ({
+vi.mock("@/lib/utils/logger", () => ({
   log: {
     warn: vi.fn(),
     error: vi.fn(),

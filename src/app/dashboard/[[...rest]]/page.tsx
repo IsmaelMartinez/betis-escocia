@@ -1,7 +1,7 @@
 import { currentUser, auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
-import { getUserRSVPs, getUserContactSubmissions, getUserSubmissionCounts } from '@/lib/supabase';
-import { hasFeature } from '@/lib/featureFlags';
+import { getUserRSVPs, getUserContactSubmissions, getUserSubmissionCounts } from '@/lib/api/supabase';
+import { hasFeature } from '@/lib/features/featureFlags';
 import DashboardTabs from '@/components/DashboardTabs';
 
 export default async function DashboardPage() {

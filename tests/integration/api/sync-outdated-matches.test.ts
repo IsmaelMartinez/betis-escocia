@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 
 // Mock logger
-vi.mock('@/lib/logger', () => ({
+vi.mock('@/lib/utils/logger', () => ({
   log: {
     info: vi.fn(),
     warn: vi.fn(),
@@ -20,7 +20,7 @@ const mockOr = vi.fn(() => ({ not: mockNot }));
 const mockLt = vi.fn(() => ({ or: mockOr }));
 const mockSelect = vi.fn(() => ({ lt: mockLt }));
 
-vi.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/api/supabase', () => ({
   supabase: {
     from: vi.fn(() => ({
       select: mockSelect,

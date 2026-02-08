@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import UpcomingMatches from '@/components/match/UpcomingMatches';
-import { getUpcomingMatchesWithRSVPCounts } from '@/lib/supabase';
+import { getUpcomingMatchesWithRSVPCounts } from '@/lib/api/supabase';
 
 // Mock dependencies
-vi.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/api/supabase', () => ({
   getUpcomingMatchesWithRSVPCounts: vi.fn()
 }));
 

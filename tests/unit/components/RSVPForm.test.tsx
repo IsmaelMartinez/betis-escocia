@@ -8,7 +8,7 @@ vi.mock("@clerk/nextjs", () => ({
   useUser: vi.fn(),
 }));
 
-vi.mock("@/lib/featureFlags", () => ({
+vi.mock("@/lib/features/featureFlags", () => ({
   hasFeature: vi.fn(() => false), // Default to disabled
 }));
 

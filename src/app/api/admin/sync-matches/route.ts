@@ -1,9 +1,9 @@
-import { createApiHandler } from '@/lib/apiUtils';
+import { createApiHandler } from '@/lib/api/apiUtils';
 import { FootballDataService } from '@/services/footballDataService';
 import axios from 'axios';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/api/supabase';
 import { getYear } from 'date-fns';
-import { log } from '@/lib/logger';
+import { log } from '@/lib/utils/logger';
 
 /**
  * Determine match result label based on Betis home/away and score

@@ -1,8 +1,8 @@
-import { createApiHandler } from '@/lib/apiUtils';
+import { createApiHandler } from '@/lib/api/apiUtils';
 import { FootballDataService, StandingEntry } from '@/services/footballDataService';
 import axios from 'axios';
-import { supabase } from '@/lib/supabase';
-import { log } from '@/lib/logger';
+import { supabase } from '@/lib/api/supabase';
+import { log } from '@/lib/utils/logger';
 
 export const dynamic = 'force-dynamic';
 

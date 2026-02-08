@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
 import ContactSubmissionsList from "./ContactSubmissionsList";
-import { ContactSubmission } from "@/lib/supabase";
+import { ContactSubmission } from "@/lib/api/supabase";
 import { fn } from "storybook/test";
 
 const mockSubmissions: ContactSubmission[] = [

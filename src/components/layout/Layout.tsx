@@ -18,7 +18,7 @@ import {
   Trophy,
 } from "lucide-react";
 import BetisLogo from "@/components/BetisLogo";
-import { type NavigationItem } from "@/lib/featureFlags";
+import { type NavigationItem } from "@/lib/features/featureFlags";
 import { useUser, useClerk } from "@clerk/nextjs";
 
 interface DebugInfo {

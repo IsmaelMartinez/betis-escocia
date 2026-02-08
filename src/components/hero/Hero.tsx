@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { MapPin, Calendar, Users, Heart } from "lucide-react";
-import { FeatureWrapper } from "@/lib/featureProtection";
+import { FeatureWrapper } from "@/lib/features/featureProtection";
 
 export default function Hero() {
   return (

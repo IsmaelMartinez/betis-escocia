@@ -22,7 +22,7 @@ vi.mock('axios', () => ({
   }
 }));
 
-vi.mock('@/lib/logger', () => ({
+vi.mock('@/lib/utils/logger', () => ({
   log: {
     info: vi.fn(),
     warn: vi.fn(),
@@ -519,7 +519,7 @@ describe('Matches API - Comprehensive Tests', () => {
 
   describe('Logging and Monitoring', () => {
     it('should log successful API calls', async () => {
-      const { log } = await import('@/lib/logger');
+      const { log } = await import('@/lib/utils/logger');
 
       const { GET } = await import('@/app/api/matches/route');
       const request = new NextRequest('http://localhost:3000/api/matches?type=upcoming&live=true');
@@ -538,7 +538,7 @@ describe('Matches API - Comprehensive Tests', () => {
     });
 
     it('should log API failures with appropriate warnings', async () => {
-      const { log } = await import('@/lib/logger');
+      const { log } = await import('@/lib/utils/logger');
       const apiError = new Error('API service unavailable');
       
       mockGetUpcomingBetisMatchesForCards.mockRejectedValue(apiError);

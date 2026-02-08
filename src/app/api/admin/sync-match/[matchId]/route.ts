@@ -1,7 +1,7 @@
-import { createApiHandler } from '@/lib/apiUtils';
+import { createApiHandler } from '@/lib/api/apiUtils';
 import { FootballDataService } from '@/services/footballDataService';
 import axios from 'axios';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/api/supabase';
 
 export const POST = createApiHandler({
   auth: 'admin',

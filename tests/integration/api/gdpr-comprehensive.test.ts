@@ -9,12 +9,12 @@ const mockSupabase = {
   }
 };
 
-vi.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/api/supabase', () => ({
   supabase: mockSupabase,
   getAuthenticatedSupabaseClient: vi.fn(() => mockSupabase)
 }));
 
-vi.mock('@/lib/logger', () => ({
+vi.mock('@/lib/utils/logger', () => ({
   log: {
     error: vi.fn(),
     warn: vi.fn(),
@@ -296,7 +296,7 @@ describe('GDPR API - Comprehensive Tests', () => {
     });
 
     it('should log business events for deletion requests', async () => {
-      const { log } = await import('@/lib/logger');
+      const { log } = await import('@/lib/utils/logger');
 
       const { POST } = await import('@/app/api/gdpr/route');
       const request = new NextRequest('http://localhost:3000/api/gdpr', {
@@ -626,7 +626,7 @@ describe('GDPR API - Comprehensive Tests', () => {
     });
 
     it('should sanitize sensitive data in logs', async () => {
-      const { log } = await import('@/lib/logger');
+      const { log } = await import('@/lib/utils/logger');
 
       const { POST } = await import('@/app/api/gdpr/route');
       const request = new NextRequest('http://localhost:3000/api/gdpr', {
@@ -671,7 +671,7 @@ describe('GDPR API - Comprehensive Tests', () => {
 
   describe('Compliance and Audit Trail', () => {
     it('should maintain audit trail for deletion requests', async () => {
-      const { log } = await import('@/lib/logger');
+      const { log } = await import('@/lib/utils/logger');
 
       const { POST } = await import('@/app/api/gdpr/route');
       const request = new NextRequest('http://localhost:3000/api/gdpr', {
@@ -695,7 +695,7 @@ describe('GDPR API - Comprehensive Tests', () => {
     });
 
     it('should log errors with sufficient detail for compliance', async () => {
-      const { log } = await import('@/lib/logger');
+      const { log } = await import('@/lib/utils/logger');
       
       mockSupabase.from.mockImplementation((table) => {
         if (table === 'rsvps') {

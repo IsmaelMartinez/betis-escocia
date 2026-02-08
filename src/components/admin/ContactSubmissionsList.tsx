@@ -1,5 +1,5 @@
 import React from 'react';
-import { ContactSubmission } from '@/lib/supabase';
+import { ContactSubmission } from '@/lib/api/supabase';
 import Card, { CardBody } from '@/components/ui/Card';
 import MessageComponent from '@/components/MessageComponent';
 import LoadingSpinner from '@/components/LoadingSpinner';
