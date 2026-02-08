@@ -31,11 +31,15 @@ vi.mock('@/lib/api/supabase', () => ({
   updateContactSubmissionStatus: vi.fn(),
 }));
 
-vi.mock('@/lib/withAdminRole', () => ({
+vi.mock('@/lib/auth/withAdminRole', () => ({
   withAdminRole: vi.fn((Component) => Component),
 }));
 
-vi.mock('@/lib/featureProtection', () => ({
+vi.mock('@/lib/features/featureFlags', () => ({
+  hasFeature: vi.fn(() => true),
+}));
+
+vi.mock('@/lib/features/featureProtection', () => ({
   FeatureWrapper: vi.fn(({ children }) => children),
 }));
 

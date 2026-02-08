@@ -10,7 +10,7 @@ import Card, {
 } from '@/components/ui/Card';
 
 // Mock the design system
-vi.mock('@/lib/designSystem', () => ({
+vi.mock('@/lib/utils/designSystem', () => ({
   getCardClass: vi.fn((variant: string) => `card card-${variant}`),
   cn: vi.fn((...classes) => classes.filter(Boolean).join(' ')),
 }));

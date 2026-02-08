@@ -3,8 +3,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import Button, { PrimaryButton, SecondaryButton, OutlineButton, GhostButton } from '@/components/ui/Button';
 
 // Mock the design system
-vi.mock('@/lib/designSystem', () => ({
-  getButtonClass: vi.fn((variant: string, size: string) => 
+vi.mock('@/lib/utils/designSystem', () => ({
+  getButtonClass: vi.fn((variant: string, size: string) =>
     `btn btn-${variant} btn-${size}`
   ),
 }));
