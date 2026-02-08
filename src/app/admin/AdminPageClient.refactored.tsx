@@ -92,13 +92,20 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
   };
 
   const handleSaveMatch = async (matchData: Partial<Match>) => {
+    let result;
     if (matchFormMode === "create") {
-      await matchesHook.handleCreateMatch(matchData as Omit<Match, 'id'>);
+      result = await matchesHook.handleCreateMatch(matchData as Omit<Match, 'id'>);
     } else if (matchFormMode === "edit" && editingMatch) {
-      await matchesHook.handleUpdateMatch(editingMatch.id, matchData);
+      result = await matchesHook.handleUpdateMatch(editingMatch.id, matchData);
+    } else {
+      return { success: false, error: 'Invalid form mode' };
     }
-    setMatchFormMode("list");
-    setEditingMatch(undefined);
+
+    if (result?.success) {
+      setMatchFormMode("list");
+      setEditingMatch(undefined);
+    }
+    return result || { success: false, error: 'Unknown error' };
   };
 
   const handleCancelMatchForm = () => {
@@ -239,6 +246,8 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
           filterStatus={contactFilterStatus}
           onFilterStatusChange={setContactFilterStatus}
           onUpdateStatus={handleUpdateContactStatus}
+          isLoading={contactsHook.loading}
+          error={contactsHook.error}
         />
       )}
     </div>
