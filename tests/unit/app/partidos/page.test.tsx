@@ -37,7 +37,7 @@ vi.mock('lucide-react', () => ({
 
 // Mock feature flags - default RSVP to false (disabled by default)
 const mockHasFeature = vi.fn(() => false);
-vi.mock('@/lib/featureFlags', () => ({
+vi.mock('@/lib/features/featureFlags', () => ({
   hasFeature: (...args: unknown[]) => mockHasFeature(...args),
 }));
 
