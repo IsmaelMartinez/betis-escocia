@@ -55,14 +55,13 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
     }
   }, [isLoaded, isSignedIn, router]);
 
-  // Initial data fetch
+  // Initial data fetch (stats fetches automatically on mount)
   useEffect(() => {
     if (isLoaded && isSignedIn) {
-      statsHook.fetchStats();
       matchesHook.fetchMatches();
       contactsHook.fetchContacts();
     }
-  }, [isLoaded, isSignedIn]);
+  }, [isLoaded, isSignedIn, matchesHook, contactsHook]);
 
   // Export handlers
   const handleExportRSVPs = async () => {
