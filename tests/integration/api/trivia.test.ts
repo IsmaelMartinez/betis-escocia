@@ -10,7 +10,7 @@ vi.mock('@clerk/nextjs/server', () => ({
 }));
 
 // Mock API utils
-vi.mock('@/lib/apiUtils', () => ({
+vi.mock('@/lib/api/apiUtils', () => ({
   createApiHandler: vi.fn((config) => {
     return async (request: any) => {
       try {
@@ -117,7 +117,7 @@ describe('Trivia API', () => {
     });
 
     it('should provide createApiHandler structure', async () => {
-      const { createApiHandler } = await import('@/lib/apiUtils');
+      const { createApiHandler } = await import('@/lib/api/apiUtils');
       
       expect(createApiHandler).toBeDefined();
       expect(typeof createApiHandler).toBe('function');

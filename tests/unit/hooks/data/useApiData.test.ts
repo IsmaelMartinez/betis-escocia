@@ -12,7 +12,7 @@ Object.defineProperty(globalThis, 'fetch', {
 });
 
 // Import after mocking
-const { useApiData } = await import('@/lib/hooks/useApiData');
+const { useApiData } = await import('@/hooks/data/useApiData');
 
 describe('useApiData', () => {
   beforeEach(() => {

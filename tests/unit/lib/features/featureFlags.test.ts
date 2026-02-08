@@ -4,7 +4,7 @@ import {
   getEnabledNavigationItems,
   getFeatureFlagsStatus,
   clearFeatureCache,
-} from "../../../src/lib/featureFlags";
+} from "../../../src/lib/features/featureFlags";
 
 // Mock environment variables
 const mockEnv: Record<string, string | undefined> = {};
