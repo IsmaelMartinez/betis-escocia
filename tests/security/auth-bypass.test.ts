@@ -7,7 +7,7 @@ vi.mock('@clerk/nextjs/server', () => ({
 }));
 
 // Mock admin API protection
-vi.mock('@/lib/adminApiProtection', () => ({
+vi.mock('@/lib/auth/adminApiProtection', () => ({
   checkAdminRole: vi.fn(),
 }));
 
@@ -23,7 +23,7 @@ describe('Authentication Bypass Security Tests', () => {
 
   beforeAll(async () => {
     mockGetAuth = vi.mocked((await import('@clerk/nextjs/server')).getAuth);
-    mockCheckAdminRole = vi.mocked((await import('@/lib/adminApiProtection')).checkAdminRole);
+    mockCheckAdminRole = vi.mocked((await import('@/lib/auth/adminApiProtection')).checkAdminRole);
   });
 
   beforeEach(() => {

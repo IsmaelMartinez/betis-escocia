@@ -7,7 +7,7 @@ const mockValidateInputLength = vi.fn();
 const mockValidateEmail = vi.fn();
 const mockSanitizeInput = vi.fn();
 
-vi.mock('@/lib/adminApiProtection', () => ({
+vi.mock('@/lib/auth/adminApiProtection', () => ({
   checkAdminRole: () => mockCheckAdminRole()
 }));
 
