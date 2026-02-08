@@ -11,7 +11,7 @@ vi.mock('@clerk/nextjs/server', () => ({
 }));
 
 // Mock API utils
-vi.mock('@/lib/apiUtils', () => ({
+vi.mock('@/lib/api/apiUtils', () => ({
   createApiHandler: vi.fn((config) => {
     return async (request: any) => {
       try {

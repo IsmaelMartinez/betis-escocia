@@ -12,6 +12,8 @@ interface ContactsViewProps {
   filterStatus: ContactSubmission['status'][];
   onFilterStatusChange: (status: ContactSubmission['status'][]) => void;
   onUpdateStatus: (id: number, status: ContactSubmission['status']) => Promise<void>;
+  isLoading: boolean;
+  error: string | null;
 }
 
 export function ContactsView({
@@ -19,6 +21,8 @@ export function ContactsView({
   filterStatus,
   onFilterStatusChange,
   onUpdateStatus,
+  isLoading,
+  error,
 }: ContactsViewProps) {
   return (
     <div className="space-y-6">
@@ -52,6 +56,8 @@ export function ContactsView({
       <ContactSubmissionsList
         submissions={contacts}
         onUpdateStatus={onUpdateStatus}
+        isLoading={isLoading}
+        error={error}
       />
     </div>
   );

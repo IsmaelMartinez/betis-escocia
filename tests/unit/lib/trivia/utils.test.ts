@@ -234,12 +234,12 @@ describe('Trivia Utils', () => {
 
   describe('handleTriviaAuthError', () => {
     it('should throw authentication error with user ID', () => {
-      expect(() => handleTriviaAuthError('user123')).toThrow('Authentication required for trivia');
+      expect(() => handleTriviaAuthError('user123')).toThrow('Se requiere autenticación para jugar');
       expect(log.warn).toHaveBeenCalledWith('Trivia authentication required', { userId: 'user123' });
     });
 
     it('should throw authentication error without user ID', () => {
-      expect(() => handleTriviaAuthError()).toThrow('Authentication required for trivia');
+      expect(() => handleTriviaAuthError()).toThrow('Se requiere autenticación para jugar');
       expect(log.warn).toHaveBeenCalledWith('Trivia authentication required', { userId: 'none' });
     });
   });
@@ -354,63 +354,63 @@ describe('Trivia Utils', () => {
 
     it('should handle database connection errors', () => {
       const dbError = new Error('Connection timeout occurred');
-      
+
       const result = handleTriviaError(dbError, baseContext, operation);
 
       expect(result.type).toBe('DATABASE_ERROR');
       expect(result.statusCode).toBe(503);
-      expect(result.userMessage).toBe('Database connection failed');
+      expect(result.userMessage).toBe('Error de conexión con la base de datos');
       expect(result.message).toContain('Database connection failed during score_submission');
     });
 
     it('should handle authentication errors', () => {
       const authError = new Error('Unauthorized access token');
-      
+
       const result = handleTriviaError(authError, baseContext, operation);
 
       expect(result.type).toBe('AUTHENTICATION_ERROR');
       expect(result.statusCode).toBe(401);
-      expect(result.userMessage).toBe('Authentication required for trivia');
+      expect(result.userMessage).toBe('Se requiere autenticación para jugar');
     });
 
     it('should handle rate limiting errors', () => {
       const rateLimitError = new Error('Too many requests from this IP');
-      
+
       const result = handleTriviaError(rateLimitError, baseContext, operation);
 
       expect(result.type).toBe('RATE_LIMIT_ERROR');
       expect(result.statusCode).toBe(429);
-      expect(result.userMessage).toBe('Rate limit exceeded');
+      expect(result.userMessage).toBe('Demasiadas solicitudes, intenta de nuevo más tarde');
     });
 
     it('should handle validation errors', () => {
       const validationError = new Error('Invalid score format provided');
-      
+
       const result = handleTriviaError(validationError, baseContext, operation);
 
       expect(result.type).toBe('VALIDATION_ERROR');
       expect(result.statusCode).toBe(400);
-      expect(result.userMessage).toBe('Score validation failed');
+      expect(result.userMessage).toBe('Puntuación inválida');
     });
 
     it('should handle business logic errors', () => {
       const businessError = new Error('User has already played today');
-      
+
       const result = handleTriviaError(businessError, baseContext, operation);
 
       expect(result.type).toBe('BUSINESS_LOGIC_ERROR');
       expect(result.statusCode).toBe(409);
-      expect(result.userMessage).toBe('You have already played today');
+      expect(result.userMessage).toBe('Ya has jugado hoy. Vuelve mañana para una nueva partida');
     });
 
     it('should handle unexpected errors', () => {
       const unexpectedError = new Error('Some unknown error');
-      
+
       const result = handleTriviaError(unexpectedError, baseContext, operation);
 
       expect(result.type).toBe('UNEXPECTED_ERROR');
       expect(result.statusCode).toBe(500);
-      expect(result.userMessage).toBe('An unexpected error occurred');
+      expect(result.userMessage).toBe('Error inesperado en el sistema de trivia');
     });
 
     it('should handle non-Error objects', () => {

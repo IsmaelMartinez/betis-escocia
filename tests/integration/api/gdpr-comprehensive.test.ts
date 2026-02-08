@@ -29,7 +29,7 @@ vi.mock('@clerk/nextjs/server', () => ({
   getAuth: mockGetAuth
 }));
 
-vi.mock('@/lib/adminApiProtection', () => ({
+vi.mock('@/lib/auth/adminApiProtection', () => ({
   checkAdminRole: vi.fn(() => Promise.resolve({
     user: { id: 'test-user-123' },
     isAdmin: true,

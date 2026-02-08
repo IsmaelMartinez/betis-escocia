@@ -23,8 +23,8 @@ interface MatchesViewProps {
   onSyncMatches: () => void;
   onCreateNew: () => void;
   onEdit: (match: Match) => void;
-  onDelete: (id: number) => Promise<void>;
-  onSaveMatch: (matchData: Partial<Match>) => Promise<void>;
+  onDelete: (id: number) => Promise<{ success: boolean; error?: string }>;
+  onSaveMatch: (matchData: Partial<Match>) => Promise<{ success: boolean; error?: string }>;
   onCancelForm: () => void;
 }
 
@@ -44,10 +44,10 @@ export function MatchesView({
   if (matchFormMode === 'create' || matchFormMode === 'edit') {
     return (
       <MatchForm
-        mode={matchFormMode}
         match={editingMatch}
-        onSave={onSaveMatch}
+        onSubmit={onSaveMatch}
         onCancel={onCancelForm}
+        onDelete={editingMatch ? async () => onDelete(editingMatch.id) : undefined}
       />
     );
   }

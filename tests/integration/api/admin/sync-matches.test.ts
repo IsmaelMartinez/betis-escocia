@@ -7,7 +7,7 @@ import { FootballDataService } from '@/services/footballDataService';
 import { Match } from '@/types/match';
 
 // Mock external dependencies
-vi.mock('@/lib/adminApiProtection');
+vi.mock('@/lib/auth/adminApiProtection');
 vi.mock('@/lib/api/supabase');
 vi.mock('@/services/footballDataService');
 

@@ -6,8 +6,8 @@ import {
   withFeatureFlag,
   useFeatureFlag,
   FeatureWrapper,
-} from "../../../src/lib/featureProtection";
-import { hasFeature } from "../../../src/lib/featureFlags";
+} from "../../../src/lib/features/featureProtection";
+import { hasFeature } from "../../../src/lib/features/featureFlags";
 
 // Mock next/navigation
 vi.mock("next/navigation", () => ({
@@ -15,7 +15,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 // Mock featureFlags
-vi.mock("../../../src/lib/featureFlags", () => ({
+vi.mock("../../../src/lib/features/featureFlags", () => ({
   hasFeature: vi.fn(),
 }));
 
