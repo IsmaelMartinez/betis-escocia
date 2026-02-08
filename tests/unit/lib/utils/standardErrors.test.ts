@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { StandardErrors, createStandardError, getErrorMessage } from '../../../../src/lib/utils/standardErrors';
+import { StandardErrors, createStandardError, getErrorMessage } from '@/lib/utils/standardErrors';
 
 describe('StandardErrors', () => {
   describe('StandardErrors constants', () => {
