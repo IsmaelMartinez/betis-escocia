@@ -107,7 +107,7 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
   };
 
   const handleDeleteMatch = async (id: number) => {
-    await matchesHook.handleDeleteMatch(id);
+    return await matchesHook.handleDeleteMatch(id);
   };
 
   // Contact handlers
