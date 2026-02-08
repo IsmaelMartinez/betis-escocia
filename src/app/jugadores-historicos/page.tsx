@@ -10,7 +10,6 @@ import {
   Quote,
   BarChart3,
   ChevronDown,
-  X,
 } from "lucide-react";
 import {
   LEYENDAS,
@@ -62,112 +61,23 @@ function PlayerCardDetails({ player }: { player: Player }) {
   );
 }
 
-function SabalyDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  if (!isOpen) return null;
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <div
-        className="relative max-w-2xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-10 bg-white/90 hover:bg-white rounded-full p-2 transition-colors shadow-lg"
-          aria-label="Cerrar"
-        >
-          <X className="w-5 h-5 text-gray-700" />
-        </button>
-
-        {/* Header */}
-        <div className="bg-gradient-to-r from-betis-verde to-betis-verde-dark p-6 text-center">
-          <Heart className="w-12 h-12 text-betis-oro mx-auto mb-3 animate-pulse" />
-          <h2 className="font-display text-2xl md:text-3xl font-black text-white uppercase">
-            Youssouf Sabaly
-          </h2>
-          <p className="text-betis-oro font-semibold mt-2">
-            Copa del Rey 2022
-          </p>
-        </div>
-
-        {/* Image */}
-        <div className="relative aspect-[4/3] bg-gray-100">
-          <img
-            src="https://pbs.twimg.com/media/GtQeO7oXUAENh2u?format=jpg&name=large"
-            alt="Youssouf Sabaly con la bufanda de La Peña Bética Edimburgo"
-            className="w-full h-full object-cover"
-          />
-        </div>
-
-        {/* Message */}
-        <div className="p-6 text-center bg-gradient-to-b from-white to-betis-verde-pale">
-          <p className="font-accent text-xl md:text-2xl italic text-betis-verde-dark mb-2">
-            "Siempre uno de los nuestros"
-          </p>
-          <p className="text-sm text-gray-600 flex items-center justify-center gap-2">
-            <span>🏴󠁧󠁢󠁳󠁣󠁴󠁿</span>
-            La Peña Bética Edimburgo
-            <span>💚</span>
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function PlayerCard({ player }: { player: Player }) {
   const [expanded, setExpanded] = useState(false);
-  const [showSabalyDialog, setShowSabalyDialog] = useState(false);
 
   const toggle = useCallback(() => setExpanded((prev) => !prev), []);
 
-  // Special Easter egg treatment for Sabaly
-  const isSabaly = player.id === "youssouf-sabaly";
-
   return (
-    <>
-      {isSabaly && (
-        <SabalyDialog
-          isOpen={showSabalyDialog}
-          onClose={() => setShowSabalyDialog(false)}
-        />
-      )}
+    <div className="group bg-white rounded-2xl shadow-md border border-gray-100 hover:border-betis-verde/40 transition-all duration-300 hover:shadow-lg relative overflow-hidden flex flex-col">
+      <div className="h-1 bg-gradient-to-r from-betis-verde via-betis-oro to-betis-verde" />
 
-      <div
-        className={`group bg-white rounded-2xl shadow-md border border-gray-100 hover:border-betis-verde/40 transition-all duration-300 hover:shadow-lg relative overflow-hidden flex flex-col ${
-          isSabaly ? "cursor-pointer hover:scale-[1.02]" : ""
-        }`}
-        onClick={isSabaly ? () => setShowSabalyDialog(true) : undefined}
-      >
-        <div className="h-1 bg-gradient-to-r from-betis-verde via-betis-oro to-betis-verde" />
-
-        {/* Special Easter egg badge for Sabaly */}
-        {isSabaly && (
-          <div className="absolute top-3 right-3 z-10">
-            <Heart className="h-5 w-5 text-betis-oro animate-pulse drop-shadow-lg" />
-          </div>
-        )}
-
-        <div className="p-5 sm:p-6 flex flex-col flex-1">
-          {/* Compact header — always visible, acts as toggle button */}
-          <button
-            type="button"
-            onClick={(e) => {
-              if (isSabaly) {
-                // Let the parent div handle the click for dialog
-                e.stopPropagation();
-                setShowSabalyDialog(true);
-                return;
-              }
-              toggle();
-            }}
-            aria-expanded={expanded}
-            className="flex items-start justify-between gap-3 text-left w-full cursor-pointer"
-          >
+      <div className="p-5 sm:p-6 flex flex-col flex-1">
+        {/* Compact header — always visible, acts as toggle button */}
+        <button
+          type="button"
+          onClick={toggle}
+          aria-expanded={expanded}
+          className="flex items-start justify-between gap-3 text-left w-full cursor-pointer"
+        >
           <div className="min-w-0">
             <h3 className="font-display text-lg font-black text-scotland-navy uppercase tracking-tight leading-tight">
               {player.name}
@@ -180,13 +90,11 @@ function PlayerCard({ player }: { player: Player }) {
             <span className="inline-block bg-betis-verde text-white px-2.5 py-0.5 rounded-full font-heading font-bold text-xs whitespace-nowrap">
               {player.years}
             </span>
-            {!isSabaly && (
-              <ChevronDown
-                className={`h-4 w-4 text-gray-400 transition-transform duration-300 ${
-                  expanded ? "rotate-180" : ""
-                }`}
-              />
-            )}
+            <ChevronDown
+              className={`h-4 w-4 text-gray-400 transition-transform duration-300 ${
+                expanded ? "rotate-180" : ""
+              }`}
+            />
           </div>
         </button>
 
@@ -198,24 +106,14 @@ function PlayerCard({ player }: { player: Player }) {
           </p>
         </div>
 
-        {/* Special message for Sabaly */}
-        {isSabaly && (
-          <div className="mt-3 text-center">
-            <p className="text-xs text-betis-oro font-semibold italic">
-              Haz clic para descubrir algo especial...
-            </p>
-          </div>
-        )}
-
-        {/* Expandable detail section — conditionally rendered (not for Sabaly) */}
-        {!isSabaly && expanded && (
+        {/* Expandable detail section — conditionally rendered */}
+        {expanded && (
           <div className="mt-4">
             <PlayerCardDetails player={player} />
           </div>
         )}
       </div>
     </div>
-    </>
   );
 }
 
