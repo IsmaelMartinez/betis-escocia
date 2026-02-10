@@ -311,7 +311,7 @@ export const LEYENDAS: Player[] = [
     id: "youssouf-sabaly",
     name: "Youssouf Sabaly",
     position: "Lateral derecho",
-    years: "2018–presente",
+    years: "2018–2024",
     era: "nuevo-betis",
     description:
       "El senegalés se ha convertido en uno de los laterales más fiables de la historia reciente del Betis. Sabaly combina potencia física, velocidad en la banda y una entrega total en cada partido. Pieza fundamental en la conquista de la Copa del Rey 2022.",
