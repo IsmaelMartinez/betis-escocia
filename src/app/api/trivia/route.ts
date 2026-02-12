@@ -14,6 +14,7 @@ import {
   type TriviaQuestion,
   type TriviaErrorContext
 } from '@/lib/trivia/utils';
+import type { ClientTriviaQuestion } from '@/types/trivia';
 
 /**
  * Fisher-Yates (Knuth) shuffle for uniform randomness.
@@ -27,12 +28,6 @@ function fisherYatesShuffle<T>(array: T[]): T[] {
   }
   return shuffled;
 }
-
-// Client-safe question type (is_correct stripped from answers)
-type ClientTriviaQuestion = Omit<TriviaQuestion, 'trivia_answers'> & {
-  correct_answer_id: string | null;
-  trivia_answers: Array<{ id: string; answer_text: string }>;
-};
 
 type TriviaGetResponse = ClientTriviaQuestion[] | {
   message: string;
@@ -139,11 +134,20 @@ async function getTriviaQuestions(
       );
     }
 
-    // Shuffle answers within each question and strip is_correct from responses
+    // Shuffle answers within each question and strip is_correct from responses.
     // The correct_answer_id is included per question so the client can show
     // feedback after selection, without exposing correctness on each answer.
+    // TODO: For stronger anti-cheat, move to server-side answer validation
+    // where correct_answer_id is not sent to the client at all, and each
+    // answer is verified via a POST round-trip.
     const questionsWithShuffledAnswers = questions.map(question => {
       const correctAnswer = question.trivia_answers.find(a => a.is_correct);
+      if (!correctAnswer) {
+        logTriviaEvent('warn', 'Question has no correct answer marked', {
+          questionId: question.id,
+          questionText: question.question_text,
+        }, context);
+      }
       return {
         ...question,
         correct_answer_id: correctAnswer?.id ?? null,
@@ -154,20 +158,20 @@ async function getTriviaQuestions(
     });
 
     // Log business event for questions retrieved
-    logTriviaBusinessEvent('questions_retrieved', { 
+    logTriviaBusinessEvent('questions_retrieved', {
       questionCount: questionsWithShuffledAnswers.length,
-      randomizationMethod: 'database_order_by_random'
+      randomizationMethod: 'fisher_yates_shuffle'
     }, { userId });
 
     logTriviaEvent('info', 'Successfully retrieved random trivia questions with shuffled answers', {
       userId,
       questionCount: questionsWithShuffledAnswers.length,
-      randomizationMethod: 'database_level'
+      randomizationMethod: 'fisher_yates_shuffle'
     }, context);
 
-    tracker.complete(true, { 
+    tracker.complete(true, {
       questionCount: questionsWithShuffledAnswers.length,
-      randomizationMethod: 'database_order_by_random'
+      randomizationMethod: 'fisher_yates_shuffle'
     });
     return questionsWithShuffledAnswers;
 

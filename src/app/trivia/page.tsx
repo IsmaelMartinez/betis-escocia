@@ -4,19 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import ErrorMessage from '@/components/ErrorMessage';
-
-// Client-safe trivia question type (is_correct stripped from answers by the API)
-interface TriviaQuestion {
-  id: string;
-  question_text: string;
-  category: string;
-  difficulty: string;
-  correct_answer_id: string | null;
-  trivia_answers: Array<{
-    id: string;
-    answer_text: string;
-  }>;
-}
+import type { ClientTriviaQuestion } from '@/types/trivia';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useUser, useAuth } from '@clerk/nextjs';
 import { log } from '@/lib/utils/logger';
@@ -26,7 +14,7 @@ type GameState = 'idle' | 'loading' | 'playing' | 'feedback' | 'completed' | 'er
 
 // Consolidated data structure
 interface CurrentData {
-  questions: TriviaQuestion[];
+  questions: ClientTriviaQuestion[];
   questionIndex: number;
   score: number;
   selectedAnswer: string | null;
@@ -130,7 +118,7 @@ export default function TriviaPage() {
         setCurrentData(prev => ({ 
           ...prev, 
           score: apiResponse.data.score,
-          questions: Array(MAX_QUESTIONS).fill({} as TriviaQuestion)
+          questions: Array(MAX_QUESTIONS).fill({} as ClientTriviaQuestion)
         }));
         setGameState('completed');
         return;
@@ -173,7 +161,7 @@ export default function TriviaPage() {
             setCurrentData(prev => ({
               ...prev,
               score: apiResponse.data.score,
-              questions: Array(MAX_QUESTIONS).fill({} as TriviaQuestion)
+              questions: Array(MAX_QUESTIONS).fill({} as ClientTriviaQuestion)
             }));
             setGameState('completed');
             return;

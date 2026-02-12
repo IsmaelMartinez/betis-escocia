@@ -159,7 +159,7 @@ describe('Contact Schema', () => {
           } catch (error) {
             expect(error).toBeInstanceOf(ZodError);
           const zodError = error as ZodError;
-          expect(zodError.issues?.[0]?.message).toBe('Formato de teléfono inválido');
+          expect(zodError.issues?.[0]?.message).toBe('Formato de teléfono inválido (mínimo 9 dígitos)');
           }
         });
       });
