@@ -285,6 +285,17 @@ export async function deleteMatch(id: number) {
   return { success: true };
 }
 
+/** Calculate RSVP totals from a match's rsvps relation */
+function calculateRsvpTotals(rsvps?: { attendees: number }[]): {
+  rsvp_count: number;
+  total_attendees: number;
+} {
+  const rsvpCount = rsvps?.length || 0;
+  const totalAttendees =
+    rsvps?.reduce((sum, rsvp) => sum + rsvp.attendees, 0) || 0;
+  return { rsvp_count: rsvpCount, total_attendees: totalAttendees };
+}
+
 // Get match with RSVP counts
 export async function getMatchWithRSVPCounts(id: number) {
   const { data, error } = await supabase
@@ -308,18 +319,9 @@ export async function getMatchWithRSVPCounts(id: number) {
     return null;
   }
 
-  // Calculate totals
-  const rsvpCount = data.rsvps?.length || 0;
-  const totalAttendees =
-    data.rsvps?.reduce(
-      (sum: number, rsvp: { attendees: number }) => sum + rsvp.attendees,
-      0,
-    ) || 0;
-
   return {
     ...data,
-    rsvp_count: rsvpCount,
-    total_attendees: totalAttendees,
+    ...calculateRsvpTotals(data.rsvps),
   };
 }
 
@@ -375,20 +377,10 @@ export async function getUpcomingMatchesWithRSVPCounts(limit = 2) {
     return [];
   }
 
-  return data.map((match) => {
-    const rsvpCount = match.rsvps?.length || 0;
-    const totalAttendees =
-      match.rsvps?.reduce(
-        (sum: number, rsvp: { attendees: number }) => sum + rsvp.attendees,
-        0,
-      ) || 0;
-
-    return {
-      ...match,
-      rsvp_count: rsvpCount,
-      total_attendees: totalAttendees,
-    };
-  });
+  return data.map((match) => ({
+    ...match,
+    ...calculateRsvpTotals(match.rsvps),
+  }));
 }
 
 // User-specific database operations for authenticated users
@@ -752,20 +744,10 @@ export async function getAllMatchesWithRSVPCounts(limit?: number) {
     return [];
   }
 
-  return data.map((match) => {
-    const rsvpCount = match.rsvps?.length || 0;
-    const totalAttendees =
-      match.rsvps?.reduce(
-        (sum: number, rsvp: { attendees: number }) => sum + rsvp.attendees,
-        0,
-      ) || 0;
-
-    return {
-      ...match,
-      rsvp_count: rsvpCount,
-      total_attendees: totalAttendees,
-    };
-  });
+  return data.map((match) => ({
+    ...match,
+    ...calculateRsvpTotals(match.rsvps),
+  }));
 }
 
 // Notification Preferences types

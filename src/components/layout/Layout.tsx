@@ -125,6 +125,9 @@ export default function Layout({
                         <button
                           onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                           className="flex items-center gap-2 px-3 py-2 text-white hover:text-betis-oro transition-colors rounded-lg hover:bg-white/10"
+                          aria-expanded={isUserMenuOpen}
+                          aria-haspopup="true"
+                          aria-label="Menú de usuario"
                         >
                           <User size={18} />
                           <span className="font-heading font-medium text-sm">
@@ -415,6 +418,7 @@ export default function Layout({
                     rel="noopener noreferrer"
                     className="p-2 bg-white/5 hover:bg-betis-verde/20 text-gray-300 hover:text-betis-verde rounded-lg transition-all"
                     title={social.label}
+                    aria-label={social.label}
                   >
                     <social.icon size={20} />
                   </a>
@@ -449,7 +453,7 @@ export default function Layout({
         <div className="fixed bottom-4 right-4 bg-gray-900 text-white p-3 rounded-lg text-xs max-w-xs z-50 shadow-lg">
           <div className="font-bold text-betis-oro mb-1">Feature Flags</div>
           <div className="text-gray-300">Env: {debugInfo.environment}</div>
-          <div className="text-green-400">
+          <div className="text-betis-oro">
             On: {debugInfo.enabledFeatures.join(", ")}
           </div>
           {debugInfo.disabledFeatures.length > 0 && (

@@ -13,6 +13,7 @@ export const contactSchema = z.object({
     .trim(),
   phone: z.string()
     .regex(/^[+]?[\d\s-()]{9,15}$/, 'Formato de teléfono inválido')
+    .refine(val => !val || (val.replace(/\D/g, '').length >= 9), 'El teléfono debe tener al menos 9 dígitos')
     .optional()
     .or(z.literal('')),
   type: z.enum(['rsvp', 'general', 'photo', 'whatsapp', 'feedback'])

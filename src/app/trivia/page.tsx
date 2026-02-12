@@ -3,8 +3,20 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { TriviaQuestion } from '@/lib/api/supabase';
 import ErrorMessage from '@/components/ErrorMessage';
+
+// Client-safe trivia question type (is_correct stripped from answers by the API)
+interface TriviaQuestion {
+  id: string;
+  question_text: string;
+  category: string;
+  difficulty: string;
+  correct_answer_id: string | null;
+  trivia_answers: Array<{
+    id: string;
+    answer_text: string;
+  }>;
+}
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useUser, useAuth } from '@clerk/nextjs';
 import { log } from '@/lib/utils/logger';
@@ -201,9 +213,10 @@ export default function TriviaPage() {
     }
   }, [currentData.score, currentData.questionIndex, currentData.questions.length, QUESTION_DURATION, saveScore]);
 
-  const handleAnswerClick = (answerId: string, isCorrect: boolean) => {
+  const handleAnswerClick = (answerId: string) => {
     if (currentData.selectedAnswer) return; // Prevent multiple answers
 
+    const isCorrect = currentQuestion.correct_answer_id === answerId;
     setCurrentData(prev => ({ ...prev, selectedAnswer: answerId }));
     setGameState('feedback');
 
@@ -328,7 +341,7 @@ export default function TriviaPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {currentQuestion.trivia_answers.map(answer => {
             const isSelected = currentData.selectedAnswer === answer.id;
-            const isCorrect = answer.is_correct;
+            const isCorrect = currentQuestion.correct_answer_id === answer.id;
             let buttonClass = "w-full py-3 px-4 rounded-lg text-left transition-colors duration-300";
 
             if (gameState === 'feedback' && isSelected) {
@@ -343,7 +356,7 @@ export default function TriviaPage() {
               <button
                 key={answer.id}
                 className={buttonClass}
-                onClick={() => handleAnswerClick(answer.id, isCorrect)}
+                onClick={() => handleAnswerClick(answer.id)}
                 disabled={currentData.selectedAnswer !== null}
               >
                 {answer.answer_text}

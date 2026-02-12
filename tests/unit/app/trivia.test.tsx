@@ -62,21 +62,23 @@ describe("TriviaPage", () => {
     {
       id: "1",
       question_text: "¿En qué año se fundó el Real Betis?",
+      correct_answer_id: "1b",
       trivia_answers: [
-        { id: "1a", answer_text: "1905", is_correct: false },
-        { id: "1b", answer_text: "1907", is_correct: true },
-        { id: "1c", answer_text: "1910", is_correct: false },
-        { id: "1d", answer_text: "1912", is_correct: false },
+        { id: "1a", answer_text: "1905" },
+        { id: "1b", answer_text: "1907" },
+        { id: "1c", answer_text: "1910" },
+        { id: "1d", answer_text: "1912" },
       ],
     },
     {
       id: "2",
       question_text: "¿Cuál es la capital de Escocia?",
+      correct_answer_id: "2b",
       trivia_answers: [
-        { id: "2a", answer_text: "Glasgow", is_correct: false },
-        { id: "2b", answer_text: "Edinburgh", is_correct: true },
-        { id: "2c", answer_text: "Aberdeen", is_correct: false },
-        { id: "2d", answer_text: "Dundee", is_correct: false },
+        { id: "2a", answer_text: "Glasgow" },
+        { id: "2b", answer_text: "Edinburgh" },
+        { id: "2c", answer_text: "Aberdeen" },
+        { id: "2d", answer_text: "Dundee" },
       ],
     },
   ];
