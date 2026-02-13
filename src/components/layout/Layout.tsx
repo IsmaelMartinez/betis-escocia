@@ -127,7 +127,6 @@ export default function Layout({
                           className="flex items-center gap-2 px-3 py-2 text-white hover:text-betis-oro transition-colors rounded-lg hover:bg-white/10"
                           aria-expanded={isUserMenuOpen}
                           aria-haspopup="true"
-                          aria-label="Menú de usuario"
                         >
                           <User size={18} />
                           <span className="font-heading font-medium text-sm">

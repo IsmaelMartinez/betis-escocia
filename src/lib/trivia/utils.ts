@@ -15,6 +15,19 @@ export type TriviaQuestion = {
   }>;
 };
 
+// Client-safe question type (is_correct and correct_answer_id stripped)
+// Correctness is evaluated server-side via the verify-answer action.
+export type ClientTriviaQuestion = {
+  id: string;
+  question_text: string;
+  category: string;
+  difficulty: string;
+  trivia_answers: Array<{
+    id: string;
+    answer_text: string;
+  }>;
+};
+
 export type DailyPlayCheckResult = {
   hasPlayedToday: boolean;
   existingScore?: number;

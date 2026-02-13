@@ -11,6 +11,7 @@ import {
   TriviaPerformanceTracker,
   TriviaError,
   logTriviaEvent,
+  type ClientTriviaQuestion,
   type TriviaQuestion,
   type TriviaErrorContext
 } from '@/lib/trivia/utils';
@@ -27,12 +28,6 @@ function fisherYatesShuffle<T>(array: T[]): T[] {
   }
   return shuffled;
 }
-
-// Client-safe question type (is_correct stripped from answers)
-type ClientTriviaQuestion = Omit<TriviaQuestion, 'trivia_answers'> & {
-  correct_answer_id: string | null;
-  trivia_answers: Array<{ id: string; answer_text: string }>;
-};
 
 type TriviaGetResponse = ClientTriviaQuestion[] | {
   message: string;
@@ -139,35 +134,40 @@ async function getTriviaQuestions(
       );
     }
 
-    // Shuffle answers within each question and strip is_correct from responses
-    // The correct_answer_id is included per question so the client can show
-    // feedback after selection, without exposing correctness on each answer.
+    // Shuffle answers within each question and strip is_correct from responses.
+    // Do not include any correctness indicator in the payload to avoid enabling
+    // client-side cheating; correctness is evaluated server-side via verify-answer.
     const questionsWithShuffledAnswers = questions.map(question => {
-      const correctAnswer = question.trivia_answers.find(a => a.is_correct);
+      const { trivia_answers, ...restOfQuestion } = question;
+      const correctAnswer = trivia_answers.find(a => a.is_correct);
+
+      if (!correctAnswer) {
+        log.warn('Trivia question is missing a correct answer', { questionId: question.id });
+      }
+
       return {
-        ...question,
-        correct_answer_id: correctAnswer?.id ?? null,
-        trivia_answers: fisherYatesShuffle(question.trivia_answers).map(
+        ...restOfQuestion,
+        trivia_answers: fisherYatesShuffle(trivia_answers).map(
           ({ is_correct: _is_correct, ...answer }) => answer
         ),
       };
     });
 
     // Log business event for questions retrieved
-    logTriviaBusinessEvent('questions_retrieved', { 
+    logTriviaBusinessEvent('questions_retrieved', {
       questionCount: questionsWithShuffledAnswers.length,
-      randomizationMethod: 'database_order_by_random'
+      randomizationMethod: 'client_side_fisher_yates'
     }, { userId });
 
     logTriviaEvent('info', 'Successfully retrieved random trivia questions with shuffled answers', {
       userId,
       questionCount: questionsWithShuffledAnswers.length,
-      randomizationMethod: 'database_level'
+      randomizationMethod: 'client_side_fisher_yates'
     }, context);
 
-    tracker.complete(true, { 
+    tracker.complete(true, {
       questionCount: questionsWithShuffledAnswers.length,
-      randomizationMethod: 'database_order_by_random'
+      randomizationMethod: 'client_side_fisher_yates'
     });
     return questionsWithShuffledAnswers;
 
@@ -431,6 +431,46 @@ export const GET = createApiHandler({
             throw handleTriviaError(tokenError, triviaContext, 'token_retrieval');
           }
           
+        case 'verify-answer': {
+          // Verify a single answer server-side (no correctness sent to client upfront)
+          const questionId = searchParams.get('questionId');
+          const answerId = searchParams.get('answerId');
+
+          if (!questionId || !answerId) {
+            throw new TriviaError(
+              'VALIDATION_ERROR',
+              'Missing questionId or answerId for answer verification',
+              'Se requieren questionId y answerId',
+              400,
+              triviaContext
+            );
+          }
+
+          const { data: answerRows, error: verifyError } = await supabase
+            .from('trivia_answers')
+            .select('id, is_correct')
+            .eq('question_id', questionId);
+
+          if (verifyError || !answerRows) {
+            throw new TriviaError(
+              'DATABASE_ERROR',
+              `Failed to verify answer: ${verifyError?.message}`,
+              StandardErrors.TRIVIA.QUESTIONS_FETCH_ERROR,
+              500,
+              triviaContext
+            );
+          }
+
+          const selectedAnswer = answerRows.find(a => a.id === answerId);
+          const correctAnswer = answerRows.find(a => a.is_correct);
+
+          tracker.complete(true, { action });
+          return {
+            correct: selectedAnswer?.is_correct ?? false,
+            correctAnswerId: correctAnswer?.id ?? null,
+          };
+        }
+
         case 'total':
           // Get user's total accumulated trivia score (requires authentication)
           if (!userId || !authenticatedSupabase) {

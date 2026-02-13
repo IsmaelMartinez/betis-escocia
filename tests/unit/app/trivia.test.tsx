@@ -62,7 +62,6 @@ describe("TriviaPage", () => {
     {
       id: "1",
       question_text: "¿En qué año se fundó el Real Betis?",
-      correct_answer_id: "1b",
       trivia_answers: [
         { id: "1a", answer_text: "1905" },
         { id: "1b", answer_text: "1907" },
@@ -73,7 +72,6 @@ describe("TriviaPage", () => {
     {
       id: "2",
       question_text: "¿Cuál es la capital de Escocia?",
-      correct_answer_id: "2b",
       trivia_answers: [
         { id: "2a", answer_text: "Glasgow" },
         { id: "2b", answer_text: "Edinburgh" },
@@ -249,14 +247,26 @@ describe("TriviaPage", () => {
         fireEvent.click(screen.getByText("Comenzar Trivia"));
       });
 
-      // Wait for question to appear and click correct answer
+      // Wait for question to appear
       await waitFor(() => {
         expect(screen.getByText("1907")).toBeInTheDocument();
       });
 
+      // Mock the verify-answer API call (correct answer)
+      global.fetch = vi.fn(() =>
+        Promise.resolve({
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              success: true,
+              data: { correct: true, correctAnswerId: "1b" },
+            }),
+        }),
+      ) as any;
+
       fireEvent.click(screen.getByText("1907"));
 
-      // Should show feedback immediately
+      // Should show feedback after server verification
       await waitFor(() => {
         const correctButton = screen.getByText("1907");
         expect(correctButton.className).toContain("bg-betis-verde");
@@ -272,10 +282,23 @@ describe("TriviaPage", () => {
         fireEvent.click(screen.getByText("Comenzar Trivia"));
       });
 
-      // Click incorrect answer
       await waitFor(() => {
-        fireEvent.click(screen.getByText("1905"));
+        expect(screen.getByText("1905")).toBeInTheDocument();
       });
+
+      // Mock the verify-answer API call (incorrect answer)
+      global.fetch = vi.fn(() =>
+        Promise.resolve({
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              success: true,
+              data: { correct: false, correctAnswerId: "1b" },
+            }),
+        }),
+      ) as any;
+
+      fireEvent.click(screen.getByText("1905"));
 
       // Should show feedback - incorrect answer in red, correct in green
       await waitFor(() => {
@@ -295,10 +318,24 @@ describe("TriviaPage", () => {
         fireEvent.click(screen.getByText("Comenzar Trivia"));
       });
 
-      // Click first answer
       await waitFor(() => {
-        fireEvent.click(screen.getByText("1907"));
+        expect(screen.getByText("1907")).toBeInTheDocument();
       });
+
+      // Mock verify-answer for the click
+      global.fetch = vi.fn(() =>
+        Promise.resolve({
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              success: true,
+              data: { correct: true, correctAnswerId: "1b" },
+            }),
+        }),
+      ) as any;
+
+      // Click first answer
+      fireEvent.click(screen.getByText("1907"));
 
       // Try to click another answer - should be disabled
       await waitFor(() => {

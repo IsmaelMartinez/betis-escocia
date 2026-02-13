@@ -5,18 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import ErrorMessage from '@/components/ErrorMessage';
 
-// Client-safe trivia question type (is_correct stripped from answers by the API)
-interface TriviaQuestion {
-  id: string;
-  question_text: string;
-  category: string;
-  difficulty: string;
-  correct_answer_id: string | null;
-  trivia_answers: Array<{
-    id: string;
-    answer_text: string;
-  }>;
-}
+import type { ClientTriviaQuestion } from '@/lib/trivia/utils';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useUser, useAuth } from '@clerk/nextjs';
 import { log } from '@/lib/utils/logger';
@@ -26,10 +15,11 @@ type GameState = 'idle' | 'loading' | 'playing' | 'feedback' | 'completed' | 'er
 
 // Consolidated data structure
 interface CurrentData {
-  questions: TriviaQuestion[];
+  questions: ClientTriviaQuestion[];
   questionIndex: number;
   score: number;
   selectedAnswer: string | null;
+  correctAnswerId: string | null;
   timeLeft: number;
   scoreSubmitted: boolean;
 }
@@ -46,6 +36,7 @@ export default function TriviaPage() {
     questionIndex: 0,
     score: 0,
     selectedAnswer: null,
+    correctAnswerId: null,
     timeLeft: 15,
     scoreSubmitted: false,
   });
@@ -130,7 +121,7 @@ export default function TriviaPage() {
         setCurrentData(prev => ({ 
           ...prev, 
           score: apiResponse.data.score,
-          questions: Array(MAX_QUESTIONS).fill({} as TriviaQuestion)
+          questions: Array(MAX_QUESTIONS).fill({} as ClientTriviaQuestion)
         }));
         setGameState('completed');
         return;
@@ -173,7 +164,7 @@ export default function TriviaPage() {
             setCurrentData(prev => ({
               ...prev,
               score: apiResponse.data.score,
-              questions: Array(MAX_QUESTIONS).fill({} as TriviaQuestion)
+              questions: Array(MAX_QUESTIONS).fill({} as ClientTriviaQuestion)
             }));
             setGameState('completed');
             return;
@@ -202,6 +193,7 @@ export default function TriviaPage() {
         questionIndex: prev.questionIndex + 1,
         score: newScore,
         selectedAnswer: null,
+        correctAnswerId: null,
         timeLeft: QUESTION_DURATION
       }));
       setGameState('playing');
@@ -213,14 +205,26 @@ export default function TriviaPage() {
     }
   }, [currentData.score, currentData.questionIndex, currentData.questions.length, QUESTION_DURATION, saveScore]);
 
-  const handleAnswerClick = (answerId: string) => {
+  const handleAnswerClick = async (answerId: string) => {
     if (currentData.selectedAnswer) return; // Prevent multiple answers
 
-    const isCorrect = currentQuestion.correct_answer_id === answerId;
     setCurrentData(prev => ({ ...prev, selectedAnswer: answerId }));
     setGameState('feedback');
 
-    setTimeout(() => goToNextQuestion(isCorrect), 2000); // Show feedback for 2 seconds
+    try {
+      const res = await fetch(
+        `/api/trivia?action=verify-answer&questionId=${currentQuestion.id}&answerId=${answerId}`
+      );
+      const json = await res.json();
+      const result = json.success ? json.data : json;
+      const isCorrect = result.correct === true;
+
+      setCurrentData(prev => ({ ...prev, correctAnswerId: result.correctAnswerId ?? null }));
+      setTimeout(() => goToNextQuestion(isCorrect), 2000);
+    } catch {
+      // On verification failure, treat as incorrect and move on
+      setTimeout(() => goToNextQuestion(false), 2000);
+    }
   };
 
 
@@ -341,12 +345,12 @@ export default function TriviaPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {currentQuestion.trivia_answers.map(answer => {
             const isSelected = currentData.selectedAnswer === answer.id;
-            const isCorrect = currentQuestion.correct_answer_id === answer.id;
+            const isCorrect = currentData.correctAnswerId === answer.id;
             let buttonClass = "w-full py-3 px-4 rounded-lg text-left transition-colors duration-300";
 
-            if (gameState === 'feedback' && isSelected) {
+            if (gameState === 'feedback' && currentData.correctAnswerId && isSelected) {
               buttonClass += isCorrect ? " bg-betis-verde text-white" : " bg-red-500 text-white";
-            } else if (gameState === 'feedback' && isCorrect) {
+            } else if (gameState === 'feedback' && currentData.correctAnswerId && isCorrect) {
               buttonClass += " bg-betis-verde-light"; // Highlight correct answer even if not selected
             } else {
               buttonClass += " bg-gray-200 hover:bg-gray-300";
