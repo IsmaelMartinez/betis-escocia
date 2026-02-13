@@ -12,7 +12,7 @@ export const contactSchema = z.object({
     .toLowerCase()
     .trim(),
   phone: z.string()
-    .regex(/^[+]?[\d\s-()]{9,15}$/, 'Formato de teléfono inválido')
+    .regex(/^(?=(?:\D*\d){9})[+]?[\d\s-()]{9,15}$/, 'Formato de teléfono inválido (mínimo 9 dígitos)')
     .optional()
     .or(z.literal('')),
   type: z.enum(['rsvp', 'general', 'photo', 'whatsapp', 'feedback'])

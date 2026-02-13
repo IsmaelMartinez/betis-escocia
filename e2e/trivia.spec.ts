@@ -35,7 +35,8 @@ test.describe('Trivia Page', () => {
       
       if (route.request().method() === 'GET') {
         if (action === 'questions') {
-          // Return 5 questions for the new simplified game format
+          // Return 5 questions matching the client-safe API format
+          // (is_correct stripped from answers, correct_answer_id on question)
           route.fulfill({
             status: 200,
             contentType: 'application/json',
@@ -45,11 +46,12 @@ test.describe('Trivia Page', () => {
                 question_text: '¿Cuál es el estadio del Real Betis?',
                 category: 'betis',
                 difficulty: 'easy',
+                correct_answer_id: 'a1',
                 trivia_answers: [
-                  { id: 'a1', answer_text: 'Benito Villamarín', is_correct: true },
-                  { id: 'a2', answer_text: 'Ramón Sánchez-Pizjuán', is_correct: false },
-                  { id: 'a3', answer_text: 'Camp Nou', is_correct: false },
-                  { id: 'a4', answer_text: 'Santiago Bernabéu', is_correct: false },
+                  { id: 'a1', answer_text: 'Benito Villamarín' },
+                  { id: 'a2', answer_text: 'Ramón Sánchez-Pizjuán' },
+                  { id: 'a3', answer_text: 'Camp Nou' },
+                  { id: 'a4', answer_text: 'Santiago Bernabéu' },
                 ],
               },
               {
@@ -57,11 +59,12 @@ test.describe('Trivia Page', () => {
                 question_text: '¿Qué río atraviesa Glasgow?',
                 category: 'scotland',
                 difficulty: 'medium',
+                correct_answer_id: 'b1',
                 trivia_answers: [
-                  { id: 'b1', answer_text: 'Clyde', is_correct: true },
-                  { id: 'b2', answer_text: 'Támesis', is_correct: false },
-                  { id: 'b3', answer_text: 'Sena', is_correct: false },
-                  { id: 'b4', answer_text: 'Danubio', is_correct: false },
+                  { id: 'b1', answer_text: 'Clyde' },
+                  { id: 'b2', answer_text: 'Támesis' },
+                  { id: 'b3', answer_text: 'Sena' },
+                  { id: 'b4', answer_text: 'Danubio' },
                 ],
               },
               {
@@ -69,11 +72,12 @@ test.describe('Trivia Page', () => {
                 question_text: '¿En qué año se fundó el Real Betis Balompié?',
                 category: 'betis',
                 difficulty: 'hard',
+                correct_answer_id: 'c1',
                 trivia_answers: [
-                  { id: 'c1', answer_text: '1907', is_correct: true },
-                  { id: 'c2', answer_text: '1900', is_correct: false },
-                  { id: 'c3', answer_text: '1910', is_correct: false },
-                  { id: 'c4', answer_text: '1914', is_correct: false },
+                  { id: 'c1', answer_text: '1907' },
+                  { id: 'c2', answer_text: '1900' },
+                  { id: 'c3', answer_text: '1910' },
+                  { id: 'c4', answer_text: '1914' },
                 ],
               },
               {
@@ -81,11 +85,12 @@ test.describe('Trivia Page', () => {
                 question_text: '¿Cuál es el himno del Real Betis?',
                 category: 'betis',
                 difficulty: 'medium',
+                correct_answer_id: 'd1',
                 trivia_answers: [
-                  { id: 'd1', answer_text: 'Himno del Centenario', is_correct: true },
-                  { id: 'd2', answer_text: 'Viva el Betis manque pierda', is_correct: false },
-                  { id: 'd3', answer_text: 'Que viva er Betis', is_correct: false },
-                  { id: 'd4', answer_text: 'Verde y Blanco', is_correct: false },
+                  { id: 'd1', answer_text: 'Himno del Centenario' },
+                  { id: 'd2', answer_text: 'Viva el Betis manque pierda' },
+                  { id: 'd3', answer_text: 'Que viva er Betis' },
+                  { id: 'd4', answer_text: 'Verde y Blanco' },
                 ],
               },
               {
@@ -93,11 +98,12 @@ test.describe('Trivia Page', () => {
                 question_text: '¿Cuál es la capital de Escocia?',
                 category: 'scotland',
                 difficulty: 'easy',
+                correct_answer_id: 'e1',
                 trivia_answers: [
-                  { id: 'e1', answer_text: 'Edimburgo', is_correct: true },
-                  { id: 'e2', answer_text: 'Glasgow', is_correct: false },
-                  { id: 'e3', answer_text: 'Aberdeen', is_correct: false },
-                  { id: 'e4', answer_text: 'Dundee', is_correct: false },
+                  { id: 'e1', answer_text: 'Edimburgo' },
+                  { id: 'e2', answer_text: 'Glasgow' },
+                  { id: 'e3', answer_text: 'Aberdeen' },
+                  { id: 'e4', answer_text: 'Dundee' },
                 ],
               },
             ]),

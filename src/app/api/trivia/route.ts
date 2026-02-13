@@ -3,7 +3,7 @@ import { supabase, createUserTriviaScore, getUserDailyTriviaScore, getAuthentica
 import { triviaScoreSchema } from '@/lib/schemas/trivia';
 import { log } from '@/lib/utils/logger';
 import { StandardErrors } from '@/lib/utils/standardErrors';
-import { 
+import {
   checkDailyPlayStatus,
   validateTriviaScore,
   logTriviaBusinessEvent,
@@ -14,10 +14,22 @@ import {
   type TriviaQuestion,
   type TriviaErrorContext
 } from '@/lib/trivia/utils';
+import type { ClientTriviaQuestion } from '@/types/trivia';
 
-// Define response types (TriviaQuestion now imported from utils)
+/**
+ * Fisher-Yates (Knuth) shuffle for uniform randomness.
+ * The naive .sort(() => 0.5 - Math.random()) is biased.
+ */
+function fisherYatesShuffle<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
 
-type TriviaGetResponse = TriviaQuestion[] | {
+type TriviaGetResponse = ClientTriviaQuestion[] | {
   message: string;
   score: number;
 };
@@ -96,8 +108,8 @@ async function getTriviaQuestions(
       .limit(25); // Fetch 25 for better randomness
     
     // Client-side randomization until database function is available
-    const questions = allQuestions 
-      ? allQuestions.sort(() => 0.5 - Math.random()).slice(0, 5)
+    const questions = allQuestions
+      ? fisherYatesShuffle(allQuestions).slice(0, 5)
       : null;
 
     tracker.logDbQuery('fetch_questions', performance.now() - questionsStart);
@@ -122,27 +134,44 @@ async function getTriviaQuestions(
       );
     }
 
-    // Shuffle answers within each question (questions already randomized by database)
-    const questionsWithShuffledAnswers = questions.map(question => ({
-      ...question,
-      trivia_answers: [...question.trivia_answers].sort(() => 0.5 - Math.random())
-    }));
+    // Shuffle answers within each question and strip is_correct from responses.
+    // The correct_answer_id is included per question so the client can show
+    // feedback after selection, without exposing correctness on each answer.
+    // TODO: For stronger anti-cheat, move to server-side answer validation
+    // where correct_answer_id is not sent to the client at all, and each
+    // answer is verified via a POST round-trip.
+    const questionsWithShuffledAnswers = questions.map(question => {
+      const correctAnswer = question.trivia_answers.find(a => a.is_correct);
+      if (!correctAnswer) {
+        logTriviaEvent('warn', 'Question has no correct answer marked', {
+          questionId: question.id,
+          questionText: question.question_text,
+        }, context);
+      }
+      return {
+        ...question,
+        correct_answer_id: correctAnswer?.id ?? null,
+        trivia_answers: fisherYatesShuffle(question.trivia_answers).map(
+          ({ is_correct: _is_correct, ...answer }) => answer
+        ),
+      };
+    });
 
     // Log business event for questions retrieved
-    logTriviaBusinessEvent('questions_retrieved', { 
+    logTriviaBusinessEvent('questions_retrieved', {
       questionCount: questionsWithShuffledAnswers.length,
-      randomizationMethod: 'database_order_by_random'
+      randomizationMethod: 'fisher_yates_shuffle'
     }, { userId });
 
     logTriviaEvent('info', 'Successfully retrieved random trivia questions with shuffled answers', {
       userId,
       questionCount: questionsWithShuffledAnswers.length,
-      randomizationMethod: 'database_level'
+      randomizationMethod: 'fisher_yates_shuffle'
     }, context);
 
-    tracker.complete(true, { 
+    tracker.complete(true, {
       questionCount: questionsWithShuffledAnswers.length,
-      randomizationMethod: 'database_order_by_random'
+      randomizationMethod: 'fisher_yates_shuffle'
     });
     return questionsWithShuffledAnswers;
 

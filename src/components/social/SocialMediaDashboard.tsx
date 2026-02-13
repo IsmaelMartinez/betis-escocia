@@ -102,7 +102,7 @@ export default function SocialMediaDashboard({
             {hashtags.map((tag) => (
               <button
                 key={tag}
-                className="inline-block bg-betis-green text-white px-3 py-1 rounded-full text-sm font-medium hover:bg-betis-verde-dark transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                className="inline-block bg-betis-green text-white px-3 py-1 rounded-full text-sm font-medium hover:bg-betis-verde-dark transition-colors focus:outline-none focus:ring-2 focus:ring-betis-verde focus:ring-offset-2"
                 onClick={() => handleHashtagClick(tag)}
                 onKeyDown={(e) => handleHashtagKeyDown(e, tag)}
                 title="Click to copy"
@@ -175,7 +175,7 @@ export default function SocialMediaDashboard({
       </div>
 
       {/* Community Engagement CTA */}
-      <div className="bg-gradient-to-r from-betis-green to-green-600 rounded-lg p-8 text-white text-center">
+      <div className="bg-gradient-to-r from-betis-green to-betis-verde-dark rounded-lg p-8 text-white text-center">
         <h3 className="text-2xl font-bold mb-4">Join Our Digital Community!</h3>
         <p className="text-lg mb-6 opacity-90">
           Share your match day experiences, connect with fellow béticos, and stay updated with all things Peña Bética Escocesa

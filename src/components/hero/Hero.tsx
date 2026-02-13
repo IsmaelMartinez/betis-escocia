@@ -150,6 +150,7 @@ export default function Hero() {
                 href="https://www.facebook.com/groups/beticosenescocia/"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Facebook"
                 className="group bg-betis-black/80 hover:bg-blue-600 p-6 rounded-2xl transition-all duration-500 hover:scale-125 shadow-2xl border-2 border-transparent hover:border-blue-400"
               >
                 <svg
@@ -164,6 +165,7 @@ export default function Hero() {
                 href="https://www.instagram.com/rbetisescocia/"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Instagram"
                 className="group bg-betis-black/80 hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 p-6 rounded-2xl transition-all duration-500 hover:scale-125 shadow-2xl border-2 border-transparent hover:border-pink-400"
               >
                 <svg
@@ -178,6 +180,7 @@ export default function Hero() {
                 href="https://www.youtube.com/beticosenescocia"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="YouTube"
                 className="group bg-betis-black/80 hover:bg-red-600 p-6 rounded-2xl transition-all duration-500 hover:scale-125 shadow-2xl border-2 border-transparent hover:border-red-400"
               >
                 <svg
