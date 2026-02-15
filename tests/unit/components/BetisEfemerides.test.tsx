@@ -46,9 +46,7 @@ describe("BetisEfemerides", () => {
     it("renders the component with efemérides content", () => {
       render(<BetisEfemerides />);
 
-      expect(
-        screen.getByText("El Betis campeón de Liga"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("El Betis campeón de Liga")).toBeInTheDocument();
       expect(
         screen.getByText("EL BETIS CAMPEÓN DE LIGA. Hazaña irrepetible."),
       ).toBeInTheDocument();
@@ -139,9 +137,7 @@ describe("BetisEfemerides", () => {
 
       render(<BetisEfemerides />);
 
-      expect(
-        screen.getByText("Día de reflexión bética"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Día de reflexión bética")).toBeInTheDocument();
       expect(screen.queryByText("0")).not.toBeInTheDocument();
     });
   });
