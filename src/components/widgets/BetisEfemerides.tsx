@@ -9,21 +9,7 @@ import {
 } from "@/data/efemerides";
 
 function formatDateSpanish(date: Date): string {
-  const months = [
-    "enero",
-    "febrero",
-    "marzo",
-    "abril",
-    "mayo",
-    "junio",
-    "julio",
-    "agosto",
-    "septiembre",
-    "octubre",
-    "noviembre",
-    "diciembre",
-  ];
-  return `${date.getDate()} de ${months[date.getMonth()]}`;
+  return new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "long" }).format(date);
 }
 
 function EfemerideCard({ efemeride }: { efemeride: Efemeride }) {
@@ -106,14 +92,14 @@ export default function BetisEfemerides() {
       <div className="relative px-6 py-5">
         <div className="space-y-6">
           {efemerides.map((efemeride, index) => (
-            <EfemerideCard key={index} efemeride={efemeride} />
+            <EfemerideCard key={`${efemeride.year}-${efemeride.title}`} efemeride={efemeride} />
           ))}
         </div>
 
         {/* Footer tagline */}
         <div className="mt-5 pt-4 border-t border-gray-100">
           <p className="font-body text-xs text-gray-400 italic text-center">
-            Historia del Real Betis Balompie &middot; Manque pierda
+            Historia del Real Betis Balompié &middot; Manque pierda
           </p>
         </div>
       </div>
