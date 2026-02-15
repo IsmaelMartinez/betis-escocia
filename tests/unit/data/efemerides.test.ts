@@ -42,6 +42,7 @@ describe("efemerides data", () => {
         "fundacion",
         "anecdota",
         "europa",
+        "escocia",
       ];
 
       Object.values(EFEMERIDES).forEach((events) => {
@@ -57,9 +58,19 @@ describe("efemerides data", () => {
       expect(EFEMERIDES_FALLBACKS.length).toBeGreaterThan(0);
     });
 
+    it("has one fallback per month", () => {
+      expect(EFEMERIDES_FALLBACKS.length).toBe(12);
+    });
+
     it("fallbacks have year 0", () => {
       EFEMERIDES_FALLBACKS.forEach((fallback) => {
         expect(fallback.year).toBe(0);
+      });
+    });
+
+    it("fallbacks are Scotland-themed", () => {
+      EFEMERIDES_FALLBACKS.forEach((fallback) => {
+        expect(fallback.category).toBe("escocia");
       });
     });
   });
@@ -82,22 +93,33 @@ describe("efemerides data", () => {
       expect(result[0].title).toContain("Copa del Rey");
     });
 
-    it("returns a fallback for a date without data", () => {
-      // Find a date without entries by trying dates
-      const date = new Date(2024, 0, 5); // January 5 - unlikely to have data
+    it("returns a monthly Scotland fallback for a date without data", () => {
+      const date = new Date(2024, 0, 5); // January 5 - no specific efeméride
       const result = getEfemeridesForDate(date);
 
       expect(result.length).toBe(1);
-      // Fallback should have year 0
       expect(result[0].year).toBe(0);
+      expect(result[0].category).toBe("escocia");
     });
 
-    it("returns consistent fallback for the same date", () => {
-      const date = new Date(2024, 0, 5);
-      const result1 = getEfemeridesForDate(date);
-      const result2 = getEfemeridesForDate(date);
+    it("returns the correct monthly fallback for the given month", () => {
+      const janDate = new Date(2024, 0, 5); // January
+      const augDate = new Date(2024, 7, 20); // August
 
-      expect(result1[0].title).toBe(result2[0].title);
+      const janResult = getEfemeridesForDate(janDate);
+      const augResult = getEfemeridesForDate(augDate);
+
+      expect(janResult[0].title).toContain("Enero");
+      expect(augResult[0].title).toContain("Agosto");
+    });
+
+    it("returns Scotland events for Scotland-specific dates", () => {
+      const date = new Date(2024, 0, 25); // January 25 - Burns Night
+      const result = getEfemeridesForDate(date);
+
+      expect(result.length).toBeGreaterThan(0);
+      expect(result[0].category).toBe("escocia");
+      expect(result[0].title).toContain("Robert Burns");
     });
   });
 
@@ -125,6 +147,10 @@ describe("efemerides data", () => {
     it("returns globe for europa", () => {
       expect(getCategoryEmoji("europa")).toBe("🌍");
     });
+
+    it("returns Scotland flag for escocia", () => {
+      expect(getCategoryEmoji("escocia")).toBe("🏴󠁧󠁢󠁳󠁣󠁴󠁿");
+    });
   });
 
   describe("getCategoryLabel", () => {
@@ -135,6 +161,7 @@ describe("efemerides data", () => {
       expect(getCategoryLabel("fundacion")).toBe("Fundación");
       expect(getCategoryLabel("anecdota")).toBe("Bético");
       expect(getCategoryLabel("europa")).toBe("Europa");
+      expect(getCategoryLabel("escocia")).toBe("Escocia");
     });
   });
 });

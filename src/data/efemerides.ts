@@ -15,34 +15,97 @@ export interface Efemeride {
   /** Descripción chanante del evento */
   description: string;
   /** Categoría temática */
-  category: "titulo" | "gol" | "fichaje" | "fundacion" | "anecdota" | "europa";
+  category: "titulo" | "gol" | "fichaje" | "fundacion" | "anecdota" | "europa" | "escocia";
 }
 
 /**
- * Fallbacks chanantes para días sin efemérides registradas.
- * Se elige uno aleatoriamente.
+ * Fallbacks mensuales temáticos sobre Escocia para días sin efemérides registradas.
+ * Se elige según el mes (índice 0-11).
  */
 export const EFEMERIDES_FALLBACKS: Efemeride[] = [
   {
     year: 0,
-    title: "Día de reflexión bética",
+    title: "Enero escocés: mes de Hogmanay y whisky caliente",
     description:
-      "No consta ninguna efeméride oficial para hoy, pero seguro que algún bético en algún lugar del mundo está llorando de emoción recordando aquel gol de Oliveira. O simplemente llorando. Somos del Betis, lo normal.",
-    category: "anecdota",
+      "Enero en Escocia empieza con resaca de Hogmanay y la promesa de días más largos. El bético en Edimburgo sobrevive al frío con recuerdos del Villamarín y la esperanza del mercado de invierno. Si Escocia inventó el whisky para combatir este frío, el bético inventó el 'manque pierda' para combatir todo lo demás.",
+    category: "escocia",
   },
   {
     year: 0,
-    title: "El Betis descansó (el Betis nunca descansa)",
+    title: "Febrero en Escocia: frío, poesía y valentía",
     description:
-      "La historia no registra nada bético para hoy. Imposible. Probablemente se perdió el documento en alguna mudanza del Villamarín. O se lo comió una cabra. En cualquier caso, hoy es un buen día para ser del Betis. Como todos.",
-    category: "anecdota",
+      "Febrero en Edimburgo es oscuro, frío y ventoso. Perfecto para reflexionar sobre la vida, el fútbol y por qué uno eligió ser del Betis. Los escoceses tienen un dicho: 'What's fur ye'll no go by ye' (lo que es para ti no te pasará de largo). Muy bético. Muy sabio.",
+    category: "escocia",
   },
   {
     year: 0,
-    title: "Jornada de manque pierda",
+    title: "Marzo escocés: despierta la primavera (más o menos)",
     description:
-      "No hay efeméride para hoy, pero eso no significa que no pasara nada. Significa que el cronista oficial estaba en el bar celebrando algo. O ahogando penas. Con el Betis nunca se sabe, pero siempre se siente.",
-    category: "anecdota",
+      "En Escocia, marzo significa que los días se alargan y el viento solo te tira al suelo el 80% de las veces. Los narcisos aparecen en los parques de Edimburgo como señal de esperanza. Como cuando el Betis encadena dos victorias seguidas: inesperado pero bienvenido.",
+    category: "escocia",
+  },
+  {
+    year: 0,
+    title: "Abril en Escocia: los castillos despiertan",
+    description:
+      "Abril trae algo parecido al buen tiempo a Escocia. Los turistas empiezan a llegar, los castillos se llenan y Arthur's Seat se llena de valientes. El bético en Edimburgo sale del hibernaje invernal y empieza a planificar dónde ver los partidos de final de temporada.",
+    category: "escocia",
+  },
+  {
+    year: 0,
+    title: "Mayo escocés: luz eterna y fin de liga",
+    description:
+      "En mayo, Edimburgo tiene casi 17 horas de luz. El sol no se pone hasta las 21:30. Perfecto para ver los últimos partidos de la temporada con luz natural. Los escoceses salen a pasear como si acabaran de descubrir que existe el sol. Porque básicamente es así.",
+    category: "escocia",
+  },
+  {
+    year: 0,
+    title: "Junio en Escocia: solsticio y noches blancas",
+    description:
+      "El solsticio de verano convierte Edimburgo en una ciudad que casi no duerme. Amanece a las 4:30 y oscurece a las 22:00. Los escoceses aprovechan cada rayo de sol como si fuera el último. Porque probablemente lo es hasta septiembre.",
+    category: "escocia",
+  },
+  {
+    year: 0,
+    title: "Julio escocés: Highland Games y pretemporada",
+    description:
+      "Julio en Escocia es tiempo de Highland Games, lanzamiento de tronco y gaita a todo volumen. Mientras el Betis hace pretemporada, los escoceses compiten en deportes que requieren llevar falda y lanzar objetos pesados. Cada cultura tiene sus cosas.",
+    category: "escocia",
+  },
+  {
+    year: 0,
+    title: "Agosto en Edimburgo: la ciudad se transforma",
+    description:
+      "Agosto es EL mes de Edimburgo. El Festival Fringe llena cada rincón de teatro, comedia y arte callejero. La ciudad triplica su población. Encontrar mesa en un pub es más difícil que encontrar entradas para un Betis-Sevilla. Y eso ya es decir.",
+    category: "escocia",
+  },
+  {
+    year: 0,
+    title: "Septiembre escocés: otoño y fase de grupos",
+    description:
+      "Septiembre en Escocia huele a hojas mojadas y empieza la cuenta atrás hacia el invierno. Las Highlands se tiñen de naranja y rojo. El bético en Edimburgo vuelve a la rutina con la liga en marcha y la esperanza intacta. Como cada septiembre desde 1907.",
+    category: "escocia",
+  },
+  {
+    year: 0,
+    title: "Octubre en Escocia: oscurece pero no nos rendimos",
+    description:
+      "El cambio de hora golpea fuerte en Escocia. A las 16:30 ya es de noche. Los escoceses no se quejan: encienden la chimenea, sirven un dram de whisky y siguen adelante. El bético en Edimburgo hace lo mismo pero con aceitunas y retransmisiones de LaLiga.",
+    category: "escocia",
+  },
+  {
+    year: 0,
+    title: "Noviembre escocés: St Andrew's se acerca",
+    description:
+      "Noviembre en Escocia es frío, húmedo y ventoso. O sea, noviembre normal. Pero se acerca St Andrew's Day y con él la celebración de todo lo escocés. El bético en Edimburgo ya es medio escocés a estas alturas: se queja del tiempo pero no se iría a ningún lado.",
+    category: "escocia",
+  },
+  {
+    year: 0,
+    title: "Diciembre: Edimburgo se ilumina",
+    description:
+      "El mercadillo navideño de Edimburgo transforma la ciudad en un cuento de Dickens con luces, noria y el castillo de fondo. Hogmanay se acerca y los escoceses preparan la fiesta más grande del año. El bético brinda con cava... o con Irn-Bru. Aquí ya todo vale.",
+    category: "escocia",
   },
 ];
 
@@ -422,6 +485,250 @@ export const EFEMERIDES: Record<string, Efemeride[]> = {
       category: "europa",
     },
   ],
+
+  // =====================
+  // === ESCOCIA ===
+  // =====================
+
+  // === ENERO (Escocia) ===
+  "01-14": [
+    {
+      year: 1872,
+      title: "Muere Greyfriars Bobby",
+      description:
+        "El perrito más fiel de Edimburgo pasa a mejor vida tras 14 años vigilando la tumba de su dueño. Si un Skye Terrier puede ser así de leal, imagina un bético. Nosotros llevamos desde 1907 sin movernos del lado de nuestro equipo. Bobby nos entiende.",
+      category: "escocia",
+    },
+  ],
+  "01-19": [
+    {
+      year: 1736,
+      title: "Nace James Watt en Greenock",
+      description:
+        "Nace el hombre que perfeccionó la máquina de vapor y arrancó la Revolución Industrial. Sin Watt no hay trenes, no hay fábricas, no hay modernidad. Escocia inventó el futuro, básicamente. Y el Betis lo adoptó con su estilo propio.",
+      category: "escocia",
+    },
+  ],
+  "01-25": [
+    {
+      year: 1759,
+      title: "Nace Robert Burns en Alloway",
+      description:
+        "Nace el poeta nacional de Escocia. Cada 25 de enero, los escoceses cenan haggis, recitan poesía y brindan con whisky. Burns Night es como una Feria de Abril pero con más lana y menos sevillanas. Igual de intensa.",
+      category: "escocia",
+    },
+  ],
+
+  // === FEBRERO (Escocia) ===
+  "02-08": [
+    {
+      year: 1587,
+      title: "Ejecución de María Estuardo",
+      description:
+        "Mary Queen of Scots es ejecutada en el castillo de Fotheringhay. Reina de Escocia, reina de Francia, prisionera de Inglaterra. Una vida más dramática que una temporada del Betis en los 2000. Y eso es decir mucho.",
+      category: "escocia",
+    },
+  ],
+
+  // === MARZO (Escocia) ===
+  "03-03": [
+    {
+      year: 1847,
+      title: "Nace Alexander Graham Bell en Edimburgo",
+      description:
+        "En la capital escocesa nace el inventor del teléfono. Sin Bell, no podríamos llamar a casa para decir 'HEMOS GANADO' o 'hemos perdido otra vez'. Edimburgo: ciudad de inventores, poetas y ahora también de béticos.",
+      category: "escocia",
+    },
+  ],
+  "03-04": [
+    {
+      year: 1890,
+      title: "Se inaugura el Forth Bridge",
+      description:
+        "Se abre al tráfico el puente ferroviario más icónico del mundo. 54.000 toneladas de acero cruzando el Firth of Forth. Una obra maestra de ingeniería victoriana que todavía funciona perfectamente. Como Joaquín, pero en puente.",
+      category: "escocia",
+    },
+  ],
+  "03-13": [
+    {
+      year: 1873,
+      title: "Se funda la Scottish Football Association",
+      description:
+        "Nace la SFA, la segunda federación de fútbol más antigua del mundo. Escocia no solo inventó el golf, el whisky y la penicilina. También ayudó a inventar el fútbol moderno. Algo tenían que hacer con tanta lluvia.",
+      category: "escocia",
+    },
+  ],
+  "03-24": [
+    {
+      year: 1603,
+      title: "Jacobo VI une las coronas de Escocia e Inglaterra",
+      description:
+        "Jacobo VI de Escocia se convierte en Jacobo I de Inglaterra tras la muerte de Isabel I. Un escocés en el trono inglés. Es como si un bético dirigiera el Sevilla FC. Técnicamente posible, humanamente impensable.",
+      category: "escocia",
+    },
+  ],
+
+  // === ABRIL (Escocia) ===
+  "04-06": [
+    {
+      year: 1320,
+      title: "Declaración de Arbroath",
+      description:
+        "Los nobles escoceses envían una carta al Papa declarando la independencia de Escocia. 'No es por la gloria ni por las riquezas, sino por la libertad'. Básicamente, el primer 'manque pierda' de la historia. Con latín y sellos de cera.",
+      category: "escocia",
+    },
+  ],
+  "04-16": [
+    {
+      year: 1746,
+      title: "Batalla de Culloden",
+      description:
+        "La última batalla campal en suelo británico. Los jacobitas caen derrotados en 40 minutos. El fin de una era para las Highlands. Triste, heroico, inevitable. Como perder un derbi en el minuto 93. Pero con espadas.",
+      category: "escocia",
+    },
+  ],
+
+  // === MAYO (Escocia) ===
+  "05-22": [
+    {
+      year: 1859,
+      title: "Nace Arthur Conan Doyle en Edimburgo",
+      description:
+        "Nace en Edimburgo el creador de Sherlock Holmes. El detective más famoso del mundo es producto de la mente de un escocés. 'Elemental, querido Watson' nunca lo dijo Holmes, pero sí lo dice todo bético cuando le preguntan por qué sufre: es elemental.",
+      category: "escocia",
+    },
+  ],
+
+  // === JUNIO (Escocia) ===
+  "06-05": [
+    {
+      year: 1723,
+      title: "Nace Adam Smith en Kirkcaldy",
+      description:
+        "El padre de la economía moderna nace en un pueblo de Fife. Su libro 'La riqueza de las naciones' cambió el mundo. Si Smith viera el mercado de fichajes actual, probablemente escribiría un segundo tomo. Titulado 'La locura de las naciones'.",
+      category: "escocia",
+    },
+  ],
+  "06-11": [
+    {
+      year: 1978,
+      title: "Golazo de Archie Gemmill vs Países Bajos",
+      description:
+        "Mundial de Argentina. Escocia 3-2 Países Bajos. Gemmill recoge el balón, se va de tres holandeses y la clava. Uno de los goles más bonitos de la historia de los Mundiales. Escocia perdió la clasificación igualmente. Muy bético todo.",
+      category: "escocia",
+    },
+  ],
+  "06-24": [
+    {
+      year: 1314,
+      title: "Batalla de Bannockburn",
+      description:
+        "Robert the Bruce derrota al ejército inglés de Eduardo II en la batalla más importante de la historia escocesa. Independencia asegurada. Braveheart pero de verdad. Y sin Mel Gibson, que eso siempre es una mejora.",
+      category: "escocia",
+    },
+  ],
+
+  // === JULIO (Escocia) ===
+  "07-05": [
+    {
+      year: 1996,
+      title: "Nace la oveja Dolly en Edimburgo",
+      description:
+        "En el Instituto Roslin de Edimburgo nace el primer mamífero clonado de la historia. Dolly la oveja. Escocia clonó una oveja antes de que nadie supiera qué era clonar. Si pudieran clonar a Joaquín, el Betis lo habría pedido primero.",
+      category: "escocia",
+    },
+  ],
+
+  // === AGOSTO (Escocia) ===
+  "08-13": [
+    {
+      year: 1947,
+      title: "Primer Festival de Edimburgo",
+      description:
+        "Comienza el Edinburgh International Festival, que convertiría la ciudad en la capital mundial de las artes cada agosto. Teatro, música, comedia. Edimburgo en agosto es como Sevilla en Feria pero con impermeables y más Shakespeare.",
+      category: "escocia",
+    },
+  ],
+  "08-25": [
+    {
+      year: 1930,
+      title: "Nace Sean Connery en Edimburgo",
+      description:
+        "En Fountainbridge, Edimburgo, nace Thomas Sean Connery. El mejor James Bond. El mejor escocés del cine. El hombre que demostró que se puede ser de Edimburgo y tener más estilo que toda una ciudad entera. Shaken, not shtirred.",
+      category: "escocia",
+    },
+  ],
+
+  // === SEPTIEMBRE (Escocia) ===
+  "09-04": [
+    {
+      year: 1964,
+      title: "Se inaugura el Forth Road Bridge",
+      description:
+        "Se abre el puente colgante sobre el Firth of Forth, complementando al puente ferroviario de 1890. Dos puentes icónicos uno al lado del otro. Escocia y sus puentes: conectando orillas desde siempre. Como el Betis conecta Sevilla con Edimburgo.",
+      category: "escocia",
+    },
+  ],
+  "09-09": [
+    {
+      year: 1513,
+      title: "Batalla de Flodden",
+      description:
+        "La peor derrota militar de Escocia. El rey Jacobo IV muere junto a miles de escoceses enfrentándose a Inglaterra. Un desastre absoluto. Escocia perdió su rey, su ejército y su optimismo. Lo recuperaron todo. Son escoceses. Son casi béticos.",
+      category: "escocia",
+    },
+  ],
+  "09-18": [
+    {
+      year: 2014,
+      title: "Referéndum de independencia de Escocia",
+      description:
+        "Escocia vota sobre su independencia del Reino Unido. 55% dice no, 45% dice sí. Un país dividido pero democrático. La noche más larga en Edimburgo desde... bueno, desde cualquier noche de invierno en Edimburgo, que aquí oscurece a las 15:30.",
+      category: "escocia",
+    },
+  ],
+
+  // === OCTUBRE (Escocia) ===
+  "10-09": [
+    {
+      year: 2004,
+      title: "Se inaugura el Parlamento escocés en Holyrood",
+      description:
+        "El edificio del Parlamento escocés abre sus puertas en Holyrood, Edimburgo. Diseñado por Enric Miralles, un catalán. Un catalán diseñando el símbolo de la democracia escocesa. La globalización tiene cosas bonitas.",
+      category: "escocia",
+    },
+  ],
+  "10-31": [
+    {
+      year: 0,
+      title: "Samhain: Halloween nació en Escocia",
+      description:
+        "La fiesta de Halloween tiene raíces en el festival gaélico de Samhain, celebrado en Escocia e Irlanda. Robert Burns le dedicó un poema en 1785. Antes de que los americanos lo llenaran de caramelos, los escoceses ya se disfrazaban. Con más frío y más dignidad.",
+      category: "escocia",
+    },
+  ],
+
+  // === NOVIEMBRE (Escocia) ===
+  "11-30": [
+    {
+      year: 1872,
+      title: "St Andrew's Day y el primer partido internacional de fútbol",
+      description:
+        "Día nacional de Escocia, San Andrés. Y en 1872, Escocia e Inglaterra juegan el PRIMER partido internacional de fútbol de la historia en Glasgow. Empate 0-0. Así empezó todo. Sin VAR, sin césped artificial, sin excusas. Fútbol puro.",
+      category: "escocia",
+    },
+  ],
+
+  // === DICIEMBRE (Escocia) ===
+  "12-06": [
+    {
+      year: 1768,
+      title: "Primera edición de la Encyclopaedia Britannica en Edimburgo",
+      description:
+        "Se publica en Edimburgo la primera enciclopedia moderna. Todo el saber humano en tres volúmenes. Los escoceses no solo inventaron cosas: las documentaron, las explicaron y las vendieron. El marketing también se inventó aquí, probablemente.",
+      category: "escocia",
+    },
+  ],
 };
 
 /**
@@ -439,13 +746,8 @@ export function getEfemeridesForDate(date: Date = new Date()): Efemeride[] {
     return events;
   }
 
-  // Fallback: pick a "random" one based on the day of year for consistency
-  const dayOfYear = Math.floor(
-    (date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) /
-      (1000 * 60 * 60 * 24),
-  );
-  const fallbackIndex = dayOfYear % EFEMERIDES_FALLBACKS.length;
-  return [EFEMERIDES_FALLBACKS[fallbackIndex]];
+  // Fallback: show Scotland-themed content for the current month
+  return [EFEMERIDES_FALLBACKS[date.getMonth()]];
 }
 
 /**
@@ -459,6 +761,7 @@ export function getCategoryEmoji(category: Efemeride["category"]): string {
     fundacion: "🏛️",
     anecdota: "📖",
     europa: "🌍",
+    escocia: "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
   };
   return emojis[category];
 }
@@ -474,6 +777,7 @@ export function getCategoryLabel(category: Efemeride["category"]): string {
     fundacion: "Fundación",
     anecdota: "Bético",
     europa: "Europa",
+    escocia: "Escocia",
   };
   return labels[category];
 }

@@ -21,6 +21,7 @@ vi.mock("@/data/efemerides", () => ({
       fundacion: "🏛️",
       anecdota: "📖",
       europa: "🌍",
+      escocia: "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
     };
     return emojis[category] || "📖";
   }),
@@ -32,6 +33,7 @@ vi.mock("@/data/efemerides", () => ({
       fundacion: "Fundación",
       anecdota: "Bético",
       europa: "Europa",
+      escocia: "Escocia",
     };
     return labels[category] || "Bético";
   }),
@@ -84,7 +86,7 @@ describe("BetisEfemerides", () => {
       const region = screen.getByRole("region");
       expect(region).toHaveAttribute(
         "aria-label",
-        "Tal día como hoy en la historia del Betis",
+        "Tal día como hoy en la historia del Betis y de Escocia",
       );
     });
 

@@ -65,7 +65,7 @@ export default function BetisEfemerides() {
     <div
       className="relative bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
       role="region"
-      aria-label="Tal día como hoy en la historia del Betis"
+      aria-label="Tal día como hoy en la historia del Betis y de Escocia"
     >
       {/* Decorative pattern corner */}
       <div className="absolute top-0 right-0 w-24 h-24 pattern-verdiblanco-diagonal-subtle opacity-20" />
@@ -99,7 +99,7 @@ export default function BetisEfemerides() {
         {/* Footer tagline */}
         <div className="mt-5 pt-4 border-t border-gray-100">
           <p className="font-body text-xs text-gray-400 italic text-center">
-            Historia del Real Betis Balompié &middot; Manque pierda
+            Historia del Real Betis Balompié y de Escocia &middot; Manque pierda
           </p>
         </div>
       </div>
