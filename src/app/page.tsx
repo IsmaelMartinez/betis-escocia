@@ -3,6 +3,23 @@ import dynamic from "next/dynamic";
 import HeroCommunity from "@/components/hero/HeroCommunity";
 import { hasFeature } from "@/lib/features/featureFlags";
 
+const BetisEfemerides = dynamic(
+  () => import("@/components/widgets/BetisEfemerides"),
+  {
+    loading: () => (
+      <div className="bg-white rounded-2xl shadow-xl p-6 animate-pulse">
+        <div className="h-16 bg-betis-verde/20 rounded-xl mb-4"></div>
+        <div className="space-y-3">
+          <div className="h-4 bg-gray-200 rounded w-24"></div>
+          <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+          <div className="h-4 bg-gray-200 rounded w-full"></div>
+          <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+        </div>
+      </div>
+    ),
+  },
+);
+
 // Lazy load widgets that are below the fold for better LCP
 const UpcomingMatchesWidget = dynamic(
   () => import("@/components/match/UpcomingMatchesWidget"),
@@ -49,6 +66,7 @@ export default function Home() {
   const showPartidos = hasFeature("show-partidos");
   const showClasificacion = hasFeature("show-clasificacion");
   const showRsvp = hasFeature("show-rsvp");
+  const showEfemerides = hasFeature("show-efemerides");
 
   return (
     <>
@@ -87,6 +105,26 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Efemérides - Tal día como hoy en la historia del Betis */}
+      {showEfemerides && (
+        <section className="relative py-16 overflow-hidden">
+          {/* Background layers */}
+          <div className="absolute inset-0 bg-betis-verde-pale" />
+          <div className="absolute inset-0 pattern-verdiblanco-whisper opacity-30" />
+
+          <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Section header */}
+            <div className="mb-8 text-center">
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black text-scotland-navy mb-3 uppercase tracking-tight">
+                Tal Día Como Hoy
+              </h2>
+              <div className="h-1 w-24 bg-gradient-to-r from-betis-verde via-betis-oro to-betis-verde mx-auto rounded-full" />
+            </div>
+            <BetisEfemerides />
+          </div>
+        </section>
+      )}
 
       {/* Join Us CTA - El Tercio Nuevo: Layered cultural fusion */}
       <section className="relative py-24 overflow-hidden">

@@ -15,7 +15,8 @@ export type FeatureName =
   | "show-debug-info"
   | "show-rsvp"
   | "show-unete"
-  | "show-contacto";
+  | "show-contacto"
+  | "show-efemerides";
 
 // Navigation item interface
 export interface NavigationItem {
@@ -37,6 +38,7 @@ const DEFAULT_FEATURES: Record<FeatureName, boolean> = {
   "show-rsvp": false, // Phase 2: RSVP functionality
   "show-unete": true, // Core: Join page
   "show-contacto": false, // Phase 2: contact form
+  "show-efemerides": true, // Core: Betis history efemérides
 };
 
 // Environment variable mapping
@@ -50,6 +52,7 @@ const ENV_VAR_MAP: Record<FeatureName, string> = {
   "show-rsvp": "NEXT_PUBLIC_FEATURE_RSVP",
   "show-unete": "NEXT_PUBLIC_FEATURE_UNETE",
   "show-contacto": "NEXT_PUBLIC_FEATURE_CONTACTO",
+  "show-efemerides": "NEXT_PUBLIC_FEATURE_EFEMERIDES",
 };
 
 // Cache for resolved features (only used in production for performance)
