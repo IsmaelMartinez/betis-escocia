@@ -7,6 +7,13 @@ updates:
     open-pull-requests-limit: 5
     groups:
       all-minor-and-patch:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "next"
+          - "react"
+          - "react-dom"
         update-types:
           - "minor"
           - "patch"
