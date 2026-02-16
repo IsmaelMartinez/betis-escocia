@@ -47,7 +47,7 @@ npm run dev  # Open http://localhost:3000
 
 ### Core Stack
 
-- **Next.js 15** with App Router and TypeScript
+- **Next.js 16** with App Router and TypeScript
 - **Supabase** for database with Row Level Security
 - **Clerk** for authentication with role-based permissions
 - **Environment Variables** for secure rollout feature flags
@@ -222,7 +222,7 @@ test("admin can access dashboard", async ({ page }) => {
 #### Component Development (Storybook)
 
 - **Location**: Alongside components as `*.stories.tsx`
-- **Version**: Storybook v9 with Vitest integration
+- **Version**: Storybook v10 with Vitest integration
 - **Pattern**: Isolated component development and documentation
 
 ```typescript

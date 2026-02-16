@@ -287,7 +287,7 @@ test.beforeEach(async ({ page }) => {
 
 ### Configuration
 
-- **Version**: Storybook v9 with Vitest addon
+- **Version**: Storybook v10 with Vitest addon
 - **Framework**: `@storybook/nextjs-vite`
 - **Location**: Stories alongside components as `*.stories.tsx`
 

@@ -320,7 +320,7 @@ npm test -- --reporter=verbose
 
 ## Additional Resources
 
-- **Next.js 15 Docs**: https://nextjs.org/docs
+- **Next.js 16 Docs**: https://nextjs.org/docs
 - **React 19 Features**: https://react.dev/blog/2024/12/05/react-19
 - **Supabase Docs**: https://supabase.com/docs
 - **Clerk Docs**: https://clerk.com/docs
