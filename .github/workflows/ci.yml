@@ -110,26 +110,33 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-  # Deploy to production only if all tests pass
-  deploy:
-    name: Deploy to Production
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read        # Read repository contents
-      deployments: write    # Write deployment status
-    needs: [test]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    environment: production
-    steps:
-      - uses: actions/checkout@v4
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
-      - name: Deployment successful
-        run: |
-          echo "✅ Tests passed and deployment completed!"
-          echo "🔗 Production URL: https://betis-escocia.vercel.app"
+  # NOTE: Production deployment is currently handled by Vercel's automatic GitHub
+  # integration. The CI pipeline runs tests and quality checks, but does not
+  # perform production deploys while this job is commented out.
+  #
+  # TODO: Configure Vercel secrets (VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID),
+  # disable Vercel's automatic Git integration so deploys are gated by CI, and
+  # uncomment the deploy job below. See issue #329.
+  #
+  # deploy:
+  #   name: Deploy to Production
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read        # Read repository contents
+  #     deployments: write    # Write deployment status
+  #   needs: [test]
+  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  #   environment: production
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Deploy to Vercel
+  #       uses: amondnet/vercel-action@v25
+  #       with:
+  #         vercel-token: ${{ secrets.VERCEL_TOKEN }}
+  #         vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+  #         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+  #         vercel-args: '--prod'
+  #     - name: Deployment successful
+  #       run: |
+  #         echo "Tests passed and deployment completed!"
+  #         echo "Production URL: https://betis-escocia.vercel.app"
