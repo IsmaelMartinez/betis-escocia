@@ -235,4 +235,4 @@ ORDER BY n_distinct DESC;
 
 **Last Updated**: September 2025  
 **Schema Version**: v2.0  
-**Compatible with**: Next.js 15, Supabase, Clerk Auth
+**Compatible with**: Next.js 16, Supabase, Clerk Auth

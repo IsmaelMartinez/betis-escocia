@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Real Betis supporters club website in Edinburgh with mobile-first design, serving match viewing parties at Polwarth Tavern. Built on Next.js 15 with TypeScript, featuring secure-by-default architecture using feature flags.
+Real Betis supporters club website in Edinburgh with mobile-first design, serving match viewing parties at Polwarth Tavern. Built on Next.js 16 with TypeScript, featuring secure-by-default architecture using feature flags.
 
 ## Essential Commands
 
@@ -54,16 +54,28 @@ LEFTHOOK=0 git commit -m "message"
 
 Hooks are configured in `lefthook.yml` and install automatically via the `prepare` script.
 
+### Branch Protection & Deployment
+
+- **Branch protection**: `main` requires PRs — never push directly
+- **Deployment**: Vercel's GitHub integration auto-deploys on merge to main (CI deploy job commented out pending secret configuration, see issue #329)
+- **Dependabot**: Configured in `.github/dependabot.yml` with grouped minor/patch updates; `next`, `react`, `react-dom` excluded from grouping for isolated review
+
+### npm Gotchas
+
+- **Lockfile corruption**: If dependency installs go wrong (e.g., installing then reverting a major version), reset both `package.json` and `package-lock.json` from main and reinstall cleanly rather than trying to fix incrementally
+- **`--legacy-peer-deps`**: Avoid — causes missing transitive dependencies. Use `overrides` in `package.json` for peer dep conflicts instead
+- **Peer dep overrides**: The `overrides` field in `package.json` resolves peer dependency mismatches (e.g., `"eslint": "^10.0.0"` for typescript-eslint compatibility)
+
 ## Architecture Overview
 
 ### Core Technology Stack
 
-- **Frontend**: Next.js 15 App Router, React 19, TypeScript
+- **Frontend**: Next.js 16 App Router, React 19, TypeScript
 - **Styling**: Tailwind CSS 4 with custom Betis branding
 - **Database**: Supabase (PostgreSQL) with Row Level Security
 - **Authentication**: Clerk with role-based permissions
 - **Feature Flags**: Environment variables for feature rollouts
-- **Testing**: Vitest + Playwright + Storybook v10
+- **Testing**: Vitest 4 + Playwright + Storybook v10
 
 ### Key Directories
 
@@ -118,7 +130,7 @@ sql/                    # Database migrations & scripts
 ### Storybook Integration
 
 - **Purpose**: Component development, documentation, and testing
-- **Version**: v9.1.1 with Vitest addon integration
+- **Version**: v10 with Vitest addon integration
 - **Pattern**: Create `.stories.tsx` files alongside components
 - **Import updates**: Use `import { within, userEvent } from 'storybook/test'`
 

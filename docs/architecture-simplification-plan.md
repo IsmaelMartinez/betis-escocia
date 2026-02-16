@@ -4,7 +4,7 @@
 
 ## Context
 
-A comprehensive review of the betis-escocia codebase was performed to identify opportunities for simplification and improvement. The project is a Next.js 15 application (~17K lines of source, ~40K lines of tests, 166 source files) serving as a Real Betis supporters club website in Edinburgh.
+A comprehensive review of the betis-escocia codebase was performed to identify opportunities for simplification and improvement. The project is a Next.js 16 application (~17K lines of source, ~40K lines of tests, 166 source files) serving as a Real Betis supporters club website in Edinburgh.
 
 ## Overall Assessment
 
