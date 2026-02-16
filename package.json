@@ -68,7 +68,7 @@
     "eslint": "^9",
     "eslint-config-next": "^16.0.10",
     "eslint-plugin-storybook": "^10.1.11",
-    "jsdom": "^27.3.0",
+    "jsdom": "^28.1.0",
     "lefthook": "^2.0.3",
     "lighthouse": "^13.0.1",
     "msw": "^2.12.4",
