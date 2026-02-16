@@ -5,6 +5,9 @@
   "engines": {
     "node": "^22.12.0 || >=24"
   },
+  "overrides": {
+    "eslint": "^10.0.0"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -65,7 +68,7 @@
     "@vitest/coverage-v8": "^4.0.15",
     "@vitest/ui": "^4.0.15",
     "c8": "^10.1.3",
-    "eslint": "^9",
+    "eslint": "^10.0.0",
     "eslint-config-next": "^16.0.10",
     "eslint-plugin-storybook": "^10.1.11",
     "jsdom": "^28.1.0",
