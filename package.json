@@ -5,6 +5,9 @@
   "engines": {
     "node": "^22.12.0 || >=24"
   },
+  "overrides": {
+    "eslint": "^10.0.0"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
