@@ -110,8 +110,13 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-  # TODO: Configure Vercel secrets (VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID)
-  # and disable Vercel's automatic Git integration so deploys are gated by CI.
+  # NOTE: Production deployment is currently handled by Vercel's automatic GitHub
+  # integration. The CI pipeline runs tests and quality checks, but does not
+  # perform production deploys while this job is commented out.
+  #
+  # TODO: Configure Vercel secrets (VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID),
+  # disable Vercel's automatic Git integration so deploys are gated by CI, and
+  # uncomment the deploy job below. See issue #329.
   #
   # deploy:
   #   name: Deploy to Production
