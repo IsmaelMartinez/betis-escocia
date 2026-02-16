@@ -71,7 +71,7 @@
     "jsdom": "^27.3.0",
     "lefthook": "^2.0.3",
     "lighthouse": "^13.0.1",
-    "msw": "^2.12.4",
+    "msw": "^2.12.10",
     "msw-storybook-addon": "^2.0.6",
     "pg": "^8.16.3",
     "playwright": "^1.57.0",
