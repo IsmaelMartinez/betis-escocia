@@ -6,7 +6,9 @@
     "node": "^22.12.0 || >=24"
   },
   "overrides": {
-    "eslint": "^10.0.0"
+    "eslint": "^10.0.0",
+    "glob": "^10.4.5",
+    "rimraf": "^5.0.10"
   },
   "scripts": {
     "dev": "next dev --turbopack",
@@ -90,9 +92,5 @@
     "@rollup/rollup-linux-x64-gnu": "^4.53.3",
     "@tailwindcss/oxide-linux-x64-gnu": "^4.1.18",
     "lightningcss-linux-x64-gnu": "^1.30.2"
-  },
-  "overrides": {
-    "glob": "^10.4.5",
-    "rimraf": "^5.0.10"
   }
 }
