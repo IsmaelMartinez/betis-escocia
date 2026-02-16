@@ -110,26 +110,28 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-  # Deploy to production only if all tests pass
-  deploy:
-    name: Deploy to Production
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read        # Read repository contents
-      deployments: write    # Write deployment status
-    needs: [test]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    environment: production
-    steps:
-      - uses: actions/checkout@v4
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
-      - name: Deployment successful
-        run: |
-          echo "✅ Tests passed and deployment completed!"
-          echo "🔗 Production URL: https://betis-escocia.vercel.app"
+  # TODO: Configure Vercel secrets (VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID)
+  # and disable Vercel's automatic Git integration so deploys are gated by CI.
+  #
+  # deploy:
+  #   name: Deploy to Production
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read        # Read repository contents
+  #     deployments: write    # Write deployment status
+  #   needs: [test]
+  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  #   environment: production
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Deploy to Vercel
+  #       uses: amondnet/vercel-action@v25
+  #       with:
+  #         vercel-token: ${{ secrets.VERCEL_TOKEN }}
+  #         vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+  #         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+  #         vercel-args: '--prod'
+  #     - name: Deployment successful
+  #       run: |
+  #         echo "Tests passed and deployment completed!"
+  #         echo "Production URL: https://betis-escocia.vercel.app"
