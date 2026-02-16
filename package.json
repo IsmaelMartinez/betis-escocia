@@ -47,7 +47,7 @@
     "@eslint/eslintrc": "^3",
     "@next/bundle-analyzer": "^16.1.1",
     "@playwright/test": "^1.57.0",
-    "@storybook/addon-docs": "^10.1.11",
+    "@storybook/addon-docs": "^10.2.8",
     "@storybook/addon-onboarding": "^10.1.11",
     "@storybook/addon-vitest": "^10.1.11",
     "@storybook/nextjs": "^10.1.11",
