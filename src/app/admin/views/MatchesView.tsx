@@ -1,87 +1,52 @@
-import { Plus, RotateCcw, RefreshCw } from 'lucide-react';
-import Button from '@/components/ui/Button';
-import dynamicImport from 'next/dynamic';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import type { Match } from '@/lib/api/supabase';
-import clsx from 'clsx';
+"use client";
+
+import { Plus } from "lucide-react";
+import Button from "@/components/ui/Button";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import dynamicImport from "next/dynamic";
+import type { Match } from "@/lib/api/supabase";
 
 const MatchesList = dynamicImport(
-  () => import('@/components/admin/MatchesList'),
-  { loading: () => <LoadingSpinner /> }
+  () => import("@/components/admin/MatchesList"),
+  { loading: () => <LoadingSpinner /> },
 );
 
-const MatchForm = dynamicImport(() => import('@/components/admin/MatchForm'), {
-  loading: () => <LoadingSpinner />,
-});
-
 interface MatchesViewProps {
-  matches: Match[];
-  syncing: boolean;
-  syncMessage: string | null;
-  matchFormMode: 'list' | 'create' | 'edit';
-  editingMatch?: Match;
-  onSyncMatches: () => void;
-  onCreateNew: () => void;
-  onEdit: (match: Match) => void;
-  onDelete: (id: number) => Promise<{ success: boolean; error?: string }>;
-  onSaveMatch: (matchData: Partial<Match>) => Promise<{ success: boolean; error?: string }>;
-  onCancelForm: () => void;
+  readonly matches: Match[];
+  readonly onEdit: (match: Match) => void;
+  readonly onDelete: (matchId: number) => Promise<{ success: boolean; error?: string }>;
+  readonly onSync: (matchId: number) => Promise<{ success: boolean; error?: string }>;
+  readonly isLoading: boolean;
+  readonly onCreateNew: () => void;
 }
 
-export function MatchesView({
+export default function MatchesView({
   matches,
-  syncing,
-  syncMessage,
-  matchFormMode,
-  editingMatch,
-  onSyncMatches,
-  onCreateNew,
   onEdit,
   onDelete,
-  onSaveMatch,
-  onCancelForm,
+  onSync,
+  isLoading,
+  onCreateNew,
 }: MatchesViewProps) {
-  if (matchFormMode === 'create' || matchFormMode === 'edit') {
-    return (
-      <MatchForm
-        match={editingMatch}
-        onSubmit={onSaveMatch}
-        onCancel={onCancelForm}
-        onDelete={editingMatch ? async () => onDelete(editingMatch.id) : undefined}
-      />
-    );
-  }
-
   return (
-    <div className="space-y-6">
-      {/* Actions */}
-      <div className="flex gap-4 items-center">
-        <Button onClick={onCreateNew}>
-          <Plus className="h-4 w-4 mr-2" />
-          Create New Match
-        </Button>
+    <>
+      <div className="mb-6 flex justify-between items-center">
         <Button
-          onClick={onSyncMatches}
-          disabled={syncing}
-          variant="secondary"
-          className={clsx(syncing && 'opacity-50 cursor-not-allowed')}
+          onClick={onCreateNew}
+          variant="primary"
+          leftIcon={<Plus className="h-4 w-4" />}
         >
-          <RefreshCw
-            className={clsx('h-4 w-4 mr-2', syncing && 'animate-spin')}
-          />
-          {syncing ? 'Syncing...' : 'Sync from API'}
+          Crear Nuevo Partido
         </Button>
-        {syncMessage && (
-          <span className="text-sm text-green-600">{syncMessage}</span>
-        )}
       </div>
 
-      {/* Matches List */}
       <MatchesList
         matches={matches}
         onEdit={onEdit}
         onDelete={onDelete}
+        onSync={onSync}
+        isLoading={isLoading}
       />
-    </div>
+    </>
   );
 }
