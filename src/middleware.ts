@@ -1,19 +1,34 @@
 import { NextResponse } from "next/server";
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import createMiddleware from "next-intl/middleware";
+import { routing } from "@/i18n/routing";
 
-// Define route matchers
+// Create the next-intl middleware
+const intlMiddleware = createMiddleware(routing);
+
+// Define route matchers (with locale prefix patterns)
 const isPublicRoute = createRouteMatcher([
   "/",
-  "/rsvp",
-  "/contacto",
-  "/clasificacion",
-  "/partidos",
-  "/partidos/(.*)",
-  "/nosotros",
-  "/unete",
-  "/gdpr",
-  "/sign-in(.*)",
-  "/sign-up(.*)",
+  "/:locale",
+  "/:locale/rsvp",
+  "/:locale/contacto",
+  "/:locale/contact",
+  "/:locale/clasificacion",
+  "/:locale/standings",
+  "/:locale/partidos",
+  "/:locale/matches",
+  "/:locale/partidos/(.*)",
+  "/:locale/matches/(.*)",
+  "/:locale/nosotros",
+  "/:locale/about",
+  "/:locale/unete",
+  "/:locale/join",
+  "/:locale/gdpr",
+  "/:locale/jugadores-historicos",
+  "/:locale/legends",
+  "/:locale/joaquin",
+  "/:locale/sign-in(.*)",
+  "/:locale/sign-up(.*)",
   "/api/contact",
   "/api/rsvp",
   "/api/matches",
@@ -22,17 +37,22 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 // Protected routes that require authentication
-const isProtectedRoute = createRouteMatcher(["/dashboard(.*)"]);
+const isProtectedRoute = createRouteMatcher([
+  "/:locale/dashboard(.*)",
+]);
 
-const isAdminRoute = createRouteMatcher(["/admin(.*)", "/api/admin(.*)"]);
+const isAdminRoute = createRouteMatcher([
+  "/:locale/admin(.*)",
+  "/api/admin(.*)",
+]);
 
 export default clerkMiddleware(async (auth, request) => {
-  // Continue with standard response (security headers now handled by next.config.js)
-  const response = NextResponse.next();
+  // Run next-intl middleware first to handle locale detection and routing
+  const intlResponse = intlMiddleware(request);
 
   // Skip authentication for public routes
   if (isPublicRoute(request)) {
-    return response;
+    return intlResponse;
   }
 
   // Get user info
@@ -41,25 +61,21 @@ export default clerkMiddleware(async (auth, request) => {
   // Protected routes (dashboard, etc.) - require authentication
   if (isProtectedRoute(request)) {
     if (!userId) {
-      // Redirect to sign-in page
       return NextResponse.redirect(new URL("/sign-in", request.url));
     }
-    return response;
+    return intlResponse;
   }
 
-  // Admin route protection - require authentication only
-  // Role checking is handled by individual route handlers and HOCs
+  // Admin route protection
   if (isAdminRoute(request)) {
     if (!userId) {
-      // Redirect to sign-in page
       return NextResponse.redirect(new URL("/sign-in", request.url));
     }
-
-    return response;
+    return intlResponse;
   }
 
   // Default: allow access for non-matched routes
-  return response;
+  return intlResponse;
 });
 
 export const config = {

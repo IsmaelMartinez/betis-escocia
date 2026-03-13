@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import {
   Menu,
   X,
@@ -20,6 +19,9 @@ import {
 import BetisLogo from "@/components/BetisLogo";
 import { type NavigationItem } from "@/lib/features/featureFlags";
 import { useUser, useClerk } from "@clerk/nextjs";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 interface DebugInfo {
   features: Record<string, boolean>;
@@ -32,18 +34,46 @@ interface LayoutProps {
   readonly children: React.ReactNode;
   readonly debugInfo: DebugInfo | null;
   readonly navigationItems: NavigationItem[];
+  readonly locale?: string;
 }
+
+// Map Spanish nav item names to translation keys
+const NAV_KEY_MAP: Record<string, string> = {
+  RSVP: "rsvp",
+  Partidos: "partidos",
+  Clasificación: "clasificacion",
+  Nosotros: "nosotros",
+  Leyendas: "leyendas",
+  Joaquín: "joaquin",
+  Únete: "unete",
+  Contacto: "contacto",
+};
+
+// Map Spanish nav hrefs to internal pathnames for locale-aware links
+const NAV_HREF_MAP: Record<string, string> = {
+  "/rsvp": "/rsvp",
+  "/partidos": "/partidos",
+  "/clasificacion": "/clasificacion",
+  "/nosotros": "/nosotros",
+  "/jugadores-historicos": "/jugadores-historicos",
+  "/joaquin": "/joaquin",
+  "/unete": "/unete",
+  "/contacto": "/contacto",
+};
 
 export default function Layout({
   children,
   debugInfo,
   navigationItems,
+  locale,
 }: LayoutProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
+  const t = useTranslations("layout");
+  const tNav = useTranslations("nav");
   // Derive auth enabled from debugInfo features (passed from server) to avoid hydration mismatch
   const isAuthEnabled = debugInfo?.features?.["show-clerk-auth"] ?? false;
 
@@ -65,9 +95,9 @@ export default function Layout({
             <div className="flex items-center gap-2">
               <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-betis-oro" />
               <span className="font-mono hidden sm:inline">
-                Polwarth Tavern, Edinburgh
+                {t("location")}
               </span>
-              <span className="font-mono sm:hidden">Edinburgh</span>
+              <span className="font-mono sm:hidden">{t("locationShort")}</span>
             </div>
           </div>
         </div>
@@ -92,30 +122,40 @@ export default function Layout({
                 </div>
                 <div>
                   <p className="font-display text-lg sm:text-xl font-black text-white tracking-tight leading-none">
-                    NO BUSQUES MÁS
+                    {t("motto1")}
                   </p>
                   <p className="font-accent text-betis-oro text-xs sm:text-sm italic">
-                    que no hay
+                    {t("motto2")}
                   </p>
                 </div>
               </Link>
 
               {/* Desktop Navigation - scoreboard style */}
               <div className="hidden md:flex items-center gap-1">
-                {navigationItems.map((item, index) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="relative px-4 py-2 text-white hover:text-betis-oro transition-colors duration-200 font-heading font-semibold uppercase tracking-wide text-sm group"
-                  >
-                    <span className="relative z-10">{item.name}</span>
-                    <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors rounded" />
-                    {/* Separator dot */}
-                    {index < navigationItems.length - 1 && (
-                      <span className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-1 bg-betis-oro/50 rounded-full" />
-                    )}
-                  </Link>
-                ))}
+                {navigationItems.map((item, index) => {
+                  const navKey = NAV_KEY_MAP[item.name];
+                  const navLabel = navKey ? tNav(navKey) : item.name;
+                  const navHref = NAV_HREF_MAP[item.href] || item.href;
+                  return (
+                    <Link
+                      key={item.name}
+                      href={navHref as any}
+                      className="relative px-4 py-2 text-white hover:text-betis-oro transition-colors duration-200 font-heading font-semibold uppercase tracking-wide text-sm group"
+                    >
+                      <span className="relative z-10">{navLabel}</span>
+                      <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors rounded" />
+                      {/* Separator dot */}
+                      {index < navigationItems.length - 1 && (
+                        <span className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-1 bg-betis-oro/50 rounded-full" />
+                      )}
+                    </Link>
+                  );
+                })}
+
+                {/* Language Switcher */}
+                <div className="ml-2 pl-2 border-l border-white/20">
+                  <LanguageSwitcher />
+                </div>
 
                 {/* Auth section */}
                 {isAuthEnabled && isLoaded && (
@@ -127,11 +167,11 @@ export default function Layout({
                           className="flex items-center gap-2 px-3 py-2 text-white hover:text-betis-oro transition-colors rounded-lg hover:bg-white/10"
                           aria-expanded={isUserMenuOpen}
                           aria-haspopup="true"
-                          aria-label="Menú de usuario"
+                          aria-label={t("userMenu")}
                         >
                           <User size={18} />
                           <span className="font-heading font-medium text-sm">
-                            {user.firstName || "Usuario"}
+                            {user.firstName || t("user")}
                           </span>
                         </button>
 
@@ -169,7 +209,7 @@ export default function Layout({
                               className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
                             >
                               <LogOut size={16} />
-                              Cerrar Sesión
+                              {t("signOut")}
                             </button>
                           </div>
                         )}
@@ -181,14 +221,14 @@ export default function Layout({
                           className="flex items-center gap-1 px-3 py-2 text-white hover:text-betis-oro transition-colors font-heading font-medium text-sm"
                         >
                           <LogIn size={16} />
-                          <span className="hidden lg:inline">Iniciar</span>
+                          <span className="hidden lg:inline">{t("signIn")}</span>
                         </Link>
                         <Link
                           href="/sign-up"
                           className="flex items-center gap-1 bg-betis-oro text-scotland-navy px-4 py-2 rounded-lg hover:bg-oro-antique transition-colors font-heading font-bold text-sm"
                         >
                           <UserPlus size={16} />
-                          <span>Registro</span>
+                          <span>{t("register")}</span>
                         </Link>
                       </div>
                     )}
@@ -212,16 +252,26 @@ export default function Layout({
         {isMenuOpen && (
           <div className="md:hidden bg-scotland-navy border-t border-white/10">
             <div className="px-4 py-4 space-y-1">
-              {navigationItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="block px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-xl transition-all duration-200 font-heading font-semibold text-lg uppercase tracking-wide"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
+              {navigationItems.map((item) => {
+                const navKey = NAV_KEY_MAP[item.name];
+                const navLabel = navKey ? tNav(navKey) : item.name;
+                const navHref = NAV_HREF_MAP[item.href] || item.href;
+                return (
+                  <Link
+                    key={item.name}
+                    href={navHref as any}
+                    className="block px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-xl transition-all duration-200 font-heading font-semibold text-lg uppercase tracking-wide"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {navLabel}
+                  </Link>
+                );
+              })}
+
+              {/* Mobile Language Switcher */}
+              <div className="px-4 py-3">
+                <LanguageSwitcher />
+              </div>
 
               {isAuthEnabled && isLoaded && (
                 <div className="border-t border-white/10 pt-4 mt-4">
@@ -261,7 +311,7 @@ export default function Layout({
                         className="flex items-center gap-3 w-full px-4 py-3 text-white hover:text-red-400 hover:bg-white/10 rounded-xl transition-all font-heading font-semibold"
                       >
                         <LogOut size={20} />
-                        Cerrar Sesión
+                        {t("signOut")}
                       </button>
                     </div>
                   ) : (
@@ -272,7 +322,7 @@ export default function Layout({
                         onClick={() => setIsMenuOpen(false)}
                       >
                         <LogIn size={20} />
-                        Iniciar Sesión
+                        {t("signInFull")}
                       </Link>
                       <Link
                         href="/sign-up"
@@ -280,7 +330,7 @@ export default function Layout({
                         onClick={() => setIsMenuOpen(false)}
                       >
                         <UserPlus size={20} />
-                        Registro
+                        {t("register")}
                       </Link>
                     </div>
                   )}
@@ -316,22 +366,21 @@ export default function Layout({
                   className="bg-white rounded-full p-0.5"
                 />
                 <h3 className="font-display text-xl font-black text-betis-oro">
-                  No busques más
+                  {t("motto1")}
                 </h3>
               </div>
               <p className="font-accent text-betis-oro italic mb-3">
-                que no hay
+                {t("motto2")}
               </p>
               <p className="font-body text-gray-300 text-sm leading-relaxed">
-                La peña del Real Betis en Edimburgo. Más de 15 años compartiendo
-                la pasión bética en Escocia.
+                {t("footerAbout")}
               </p>
             </div>
 
             {/* Location */}
             <div>
               <h3 className="font-heading font-bold text-lg mb-4 text-betis-oro uppercase tracking-wide">
-                Dónde estamos
+                {t("footerLocation")}
               </h3>
               <div className="space-y-3 text-sm text-gray-300">
                 <div className="flex items-start gap-2">
@@ -353,7 +402,7 @@ export default function Layout({
             {/* Links */}
             <div>
               <h3 className="font-heading font-bold text-lg mb-4 text-betis-oro uppercase tracking-wide">
-                Enlaces
+                {t("footerLinks")}
               </h3>
               <div className="space-y-2 text-sm">
                 {[
@@ -386,7 +435,7 @@ export default function Layout({
             {/* Social */}
             <div>
               <h3 className="font-heading font-bold text-lg mb-4 text-betis-oro uppercase tracking-wide">
-                Síguenos
+                {t("footerFollow")}
               </h3>
               <div className="flex flex-wrap gap-3">
                 {[
@@ -434,13 +483,13 @@ export default function Layout({
                   href="/contacto"
                   className="text-gray-400 hover:text-betis-verde transition-colors font-body text-sm"
                 >
-                  Contacto
+                  {t("footerContact")}
                 </Link>
               )}
               <p className="text-gray-400 text-sm font-body text-center">
-                © 2025 Peña Bética Escocesa.{" "}
+                {t("footerCopyright")}{" "}
                 <span className="text-betis-oro">
-                  ¡Viva er Betis manque pierda!
+                  {t("footerSlogan")}
                 </span>
               </p>
             </div>

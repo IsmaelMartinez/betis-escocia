@@ -75,12 +75,11 @@ describe("Layout Component", () => {
         </Layout>,
       );
 
-      // Check for main navigation elements (now uppercase in display font)
-      expect(screen.getByText("NO BUSQUES MÁS")).toBeInTheDocument();
-      expect(screen.getByText("RSVP")).toBeInTheDocument();
-      expect(screen.getByText("Únete")).toBeInTheDocument();
-      // Contacto appears in both nav and footer, so check for at least one
-      expect(screen.getAllByText("Contacto").length).toBeGreaterThan(0);
+      // Translation mock returns keys as-is
+      expect(screen.getAllByText("motto1").length).toBeGreaterThan(0);
+      expect(screen.getAllByText("rsvp").length).toBeGreaterThan(0);
+      expect(screen.getAllByText("unete").length).toBeGreaterThan(0);
+      expect(screen.getAllByText("contacto").length).toBeGreaterThan(0);
     });
 
     it("should have proper HTML structure", () => {
@@ -123,7 +122,8 @@ describe("Layout Component", () => {
         </Layout>,
       );
 
-      const logoLink = screen.getByText("NO BUSQUES MÁS").closest("a");
+      const mottoElements = screen.getAllByText("motto1");
+      const logoLink = mottoElements[0].closest("a");
       expect(logoLink).toHaveAttribute("href", "/");
     });
   });
@@ -207,7 +207,7 @@ describe("Layout Component", () => {
         </Layout>,
       );
 
-      expect(screen.getByText("NO BUSQUES MÁS")).toBeInTheDocument();
+      expect(screen.getAllByText("motto1").length).toBeGreaterThan(0);
     });
   });
 
@@ -269,7 +269,7 @@ describe("Layout Component", () => {
 
       // Should show user name (auth is controlled by feature flag which is mocked as false)
       // So we just verify the component renders correctly
-      expect(screen.getByText("NO BUSQUES MÁS")).toBeInTheDocument();
+      expect(screen.getAllByText("motto1").length).toBeGreaterThan(0);
     });
 
     it("should handle admin user state", async () => {
@@ -295,7 +295,7 @@ describe("Layout Component", () => {
 
       // Auth is controlled by feature flag which is mocked as false
       // So we just verify the component renders correctly
-      expect(screen.getByText("NO BUSQUES MÁS")).toBeInTheDocument();
+      expect(screen.getAllByText("motto1").length).toBeGreaterThan(0);
     });
 
     it("should handle sign out functionality", async () => {
@@ -330,7 +330,7 @@ describe("Layout Component", () => {
       );
 
       // Should render without errors
-      expect(screen.getByText("NO BUSQUES MÁS")).toBeInTheDocument();
+      expect(screen.getAllByText("motto1").length).toBeGreaterThan(0);
     });
   });
 
@@ -353,7 +353,7 @@ describe("Layout Component", () => {
       );
 
       // Should render without errors
-      expect(screen.getByText("NO BUSQUES MÁS")).toBeInTheDocument();
+      expect(screen.getAllByText("motto1").length).toBeGreaterThan(0);
     });
 
     it("should handle null debug info", () => {
@@ -364,7 +364,7 @@ describe("Layout Component", () => {
       );
 
       // Should render without errors
-      expect(screen.getByText("NO BUSQUES MÁS")).toBeInTheDocument();
+      expect(screen.getAllByText("motto1").length).toBeGreaterThan(0);
     });
   });
 
@@ -385,7 +385,7 @@ describe("Layout Component", () => {
       );
 
       // Should still render basic structure
-      expect(screen.getByText("NO BUSQUES MÁS")).toBeInTheDocument();
+      expect(screen.getAllByText("motto1").length).toBeGreaterThan(0);
     });
   });
 
@@ -416,7 +416,7 @@ describe("Layout Component", () => {
 
       // Auth is controlled by feature flag which is mocked as false
       // So we just verify the component renders correctly
-      expect(screen.getByText("NO BUSQUES MÁS")).toBeInTheDocument();
+      expect(screen.getAllByText("motto1").length).toBeGreaterThan(0);
     });
   });
 
