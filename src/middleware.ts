@@ -37,9 +37,7 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 // Protected routes that require authentication
-const isProtectedRoute = createRouteMatcher([
-  "/:locale/dashboard(.*)",
-]);
+const isProtectedRoute = createRouteMatcher(["/:locale/dashboard(.*)"]);
 
 const isAdminRoute = createRouteMatcher([
   "/:locale/admin(.*)",

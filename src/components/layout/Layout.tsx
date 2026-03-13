@@ -221,7 +221,9 @@ export default function Layout({
                           className="flex items-center gap-1 px-3 py-2 text-white hover:text-betis-oro transition-colors font-heading font-medium text-sm"
                         >
                           <LogIn size={16} />
-                          <span className="hidden lg:inline">{t("signIn")}</span>
+                          <span className="hidden lg:inline">
+                            {t("signIn")}
+                          </span>
                         </Link>
                         <Link
                           href="/sign-up"
@@ -488,9 +490,7 @@ export default function Layout({
               )}
               <p className="text-gray-400 text-sm font-body text-center">
                 {t("footerCopyright")}{" "}
-                <span className="text-betis-oro">
-                  {t("footerSlogan")}
-                </span>
+                <span className="text-betis-oro">{t("footerSlogan")}</span>
               </p>
             </div>
           </div>
