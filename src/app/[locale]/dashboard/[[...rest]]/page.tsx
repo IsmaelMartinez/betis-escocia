@@ -1,21 +1,25 @@
-import { currentUser, auth } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
-import { getUserRSVPs, getUserContactSubmissions, getUserSubmissionCounts } from '@/lib/api/supabase';
-import { hasFeature } from '@/lib/features/featureFlags';
-import DashboardTabs from '@/components/DashboardTabs';
+import { currentUser, auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import {
+  getUserRSVPs,
+  getUserContactSubmissions,
+  getUserSubmissionCounts,
+} from "@/lib/api/supabase";
+import { hasFeature } from "@/lib/features/featureFlags";
+import DashboardTabs from "@/components/DashboardTabs";
 
 export default async function DashboardPage() {
   // Check if authentication is enabled
-  const isAuthEnabled = hasFeature('show-clerk-auth');
-  
+  const isAuthEnabled = hasFeature("show-clerk-auth");
+
   if (!isAuthEnabled) {
-    redirect('/');
+    redirect("/");
   }
-  
+
   const user = await currentUser();
-  
+
   if (!user) {
-    redirect('/sign-in');
+    redirect("/sign-in");
   }
 
   await auth();
@@ -27,13 +31,18 @@ export default async function DashboardPage() {
     getUserSubmissionCounts(user.id),
   ]);
 
-  const userName = user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName || 'Usuario';
+  const userName =
+    user.firstName && user.lastName
+      ? `${user.firstName} ${user.lastName}`
+      : user.firstName || "Usuario";
 
   const serializableUser = {
     id: user.id,
     firstName: user.firstName,
     lastName: user.lastName,
-    emailAddresses: user.emailAddresses.map(ea => ({ emailAddress: ea.emailAddress })),
+    emailAddresses: user.emailAddresses.map((ea) => ({
+      emailAddress: ea.emailAddress,
+    })),
     createdAt: user.createdAt,
     lastSignInAt: user.lastSignInAt,
   };

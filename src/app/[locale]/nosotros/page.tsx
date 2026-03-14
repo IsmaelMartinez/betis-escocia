@@ -52,17 +52,15 @@ export default function Nosotros() {
                 Betis.
               </p>
               <p className="text-sm">
-                Esa coincidencia fue el inicio de una gran amistad bética y
-                la primera peña oficial del Real Betis en Reino Unido.
+                Esa coincidencia fue el inicio de una gran amistad bética y la
+                primera peña oficial del Real Betis en Reino Unido.
               </p>
               <div className="pt-4 border-t border-gray-100">
                 <p className="text-sm italic text-betis-verde-dark">
                   "La idea vino tomando algo en un pub. Simplemente lo
                   decidieron así."
                 </p>
-                <p className="text-xs text-gray-600 mt-2">
-                  — LaLiga oficial
-                </p>
+                <p className="text-xs text-gray-600 mt-2">— LaLiga oficial</p>
               </div>
             </InfoCard>
 
@@ -74,8 +72,8 @@ export default function Nosotros() {
               patternClass="pattern-tartan-subtle"
             >
               <p className="text-sm">
-                Desde 2010, hemos acogido a béticos de toda España que viven
-                en Escocia, estudiantes de intercambio, turistas de paso...{" "}
+                Desde 2010, hemos acogido a béticos de toda España que viven en
+                Escocia, estudiantes de intercambio, turistas de paso...{" "}
                 <strong className="text-betis-verde-dark">
                   todos son bienvenidos
                 </strong>
@@ -88,8 +86,7 @@ export default function Nosotros() {
               </p>
               <div className="pt-4 border-t border-gray-100">
                 <p className="text-sm font-semibold text-betis-verde-dark">
-                  Reconocidos por LaLiga como "bastión" del betismo en
-                  Escocia
+                  Reconocidos por LaLiga como "bastión" del betismo en Escocia
                 </p>
               </div>
             </InfoCard>
