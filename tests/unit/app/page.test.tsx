@@ -64,18 +64,14 @@ describe("Home page", () => {
   it("renders contact info section with correct details", async () => {
     await renderHome();
     // Find the "Ubicación" section and query within it
-    const locationSection = screen
-      .getByText("locationTitle")
-      .closest("div");
+    const locationSection = screen.getByText("locationTitle").closest("div");
     expect(locationSection).toBeInTheDocument();
     expect(
       within(locationSection!).getByText("locationDetails"),
     ).toBeInTheDocument();
 
     // Find the "Ambiente" section and query within it
-    const ambienteSection = screen
-      .getByText("atmosphereTitle")
-      .closest("div");
+    const ambienteSection = screen.getByText("atmosphereTitle").closest("div");
     expect(ambienteSection).toBeInTheDocument();
     expect(
       within(ambienteSection!).getByText("atmosphereDetails"),

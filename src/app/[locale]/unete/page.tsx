@@ -94,9 +94,7 @@ export default async function Unete({
                 <h2 className="font-display text-2xl font-black text-scotland-navy mb-4 uppercase tracking-tight">
                   {t("step2Title")}
                 </h2>
-                <p className="font-body text-gray-700 mb-6">
-                  {t("step2Text")}
-                </p>
+                <p className="font-body text-gray-700 mb-6">{t("step2Text")}</p>
                 <div className="space-y-3">
                   <a
                     href="https://www.facebook.com/groups/beticosenescocia/"

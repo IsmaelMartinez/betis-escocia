@@ -177,9 +177,7 @@ export default async function Home({
               href="/unete"
               className="group bg-oro-bright hover:bg-oro-antique text-scotland-navy px-12 py-6 rounded-2xl font-display font-black text-xl shadow-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-[0_0_30px_rgba(255,215,0,0.4)] uppercase tracking-wide"
             >
-              <span className="flex items-center gap-3">
-                {t("joinFamily")}
-              </span>
+              <span className="flex items-center gap-3">{t("joinFamily")}</span>
             </Link>
 
             <a

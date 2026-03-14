@@ -177,9 +177,7 @@ describe("Contact Page", () => {
 
       expect(screen.getByDisplayValue("Juan Pérez")).toBeInTheDocument();
       expect(screen.getByDisplayValue("juan@example.com")).toBeInTheDocument();
-      expect(
-        screen.getByText(/connectedAs/),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/connectedAs/)).toBeInTheDocument();
     });
 
     it("handles user with only first name", () => {
@@ -405,9 +403,7 @@ describe("Contact Page", () => {
 
       await waitFor(() => {
         expect(screen.getByTestId("error-message")).toBeInTheDocument();
-        expect(
-          screen.getByText("connectionError"),
-        ).toBeInTheDocument();
+        expect(screen.getByText("connectionError")).toBeInTheDocument();
       });
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(

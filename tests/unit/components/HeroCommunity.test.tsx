@@ -97,12 +97,8 @@ describe("HeroCommunity", () => {
     it("renders feature card descriptions", () => {
       render(<HeroCommunity {...defaultProps} />);
 
-      expect(
-        screen.getByText("familyDesc"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText("humorDesc"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("familyDesc")).toBeInTheDocument();
+      expect(screen.getByText("humorDesc")).toBeInTheDocument();
     });
 
     it("renders feature card icons", () => {

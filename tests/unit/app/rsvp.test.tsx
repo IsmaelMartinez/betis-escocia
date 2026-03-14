@@ -109,9 +109,7 @@ describe("RSVP Page", () => {
       expect(
         screen.getAllByText(/35 Polwarth Cres, Edinburgh/).length,
       ).toBeGreaterThanOrEqual(1);
-      expect(
-        screen.getAllByText(/arrival/).length,
-      ).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText(/arrival/).length).toBeGreaterThanOrEqual(1);
     });
 
     it("should render the RSVP form by default", async () => {

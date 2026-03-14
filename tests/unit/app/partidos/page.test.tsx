@@ -85,9 +85,7 @@ describe("MatchesPage", () => {
       render(<MatchesPage />);
 
       expect(screen.queryByText("nextMatch")).not.toBeInTheDocument();
-      expect(
-        screen.queryByText("comingToPolwarth"),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText("comingToPolwarth")).not.toBeInTheDocument();
       expect(
         screen.queryByRole("button", { name: /confirmAttendance/i }),
       ).not.toBeInTheDocument();
@@ -98,9 +96,7 @@ describe("MatchesPage", () => {
       render(<MatchesPage />);
 
       expect(screen.getByText("nextMatch")).toBeInTheDocument();
-      expect(
-        screen.getByText("comingToPolwarth"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("comingToPolwarth")).toBeInTheDocument();
       expect(
         screen.getByRole("button", { name: /confirmAttendance/i }),
       ).toBeInTheDocument();

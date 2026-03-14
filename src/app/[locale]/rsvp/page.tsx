@@ -126,7 +126,9 @@ function RSVPPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return format(date, DATETIME_FORMAT, { locale: locale === "en" ? enGB : es });
+    return format(date, DATETIME_FORMAT, {
+      locale: locale === "en" ? enGB : es,
+    });
   };
 
   // Default data while loading
@@ -165,7 +167,9 @@ function RSVPPage() {
                     onClick={() => setShowMatchSelector(!showMatchSelector)}
                     className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
                   >
-                    <span className="text-sm font-medium">{t("changeMatch")}</span>
+                    <span className="text-sm font-medium">
+                      {t("changeMatch")}
+                    </span>
                     <ChevronDown
                       className={`h-4 w-4 transition-transform ${showMatchSelector ? "rotate-180" : ""}`}
                     />
