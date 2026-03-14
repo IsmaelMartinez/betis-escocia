@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import ContactPage from "../../../src/app/contacto/page";
+import ContactPage from "../../../src/app/[locale]/contacto/page";
 import { useUser } from "@clerk/nextjs";
 
 // Mock the dependencies
@@ -35,15 +35,7 @@ vi.mock("@/components/LoadingSpinner", () => ({
   )),
 }));
 
-vi.mock("next/link", () => ({
-  default: vi.fn(({ href, className, children }) => (
-    <a href={href} className={className} data-testid="link">
-      {children}
-    </a>
-  )),
-}));
-
-// Mock lucide-react icons
+// lucide-react icons mock
 vi.mock("lucide-react", () => ({
   Send: vi.fn(({ className }) => (
     <div data-testid="send-icon" className={className} />
@@ -98,10 +90,8 @@ describe("Contact Page", () => {
 
       render(<ContactPage />);
 
-      expect(screen.getByText("Contacto")).toBeInTheDocument();
-      expect(
-        screen.getByText("¿Tienes alguna pregunta? Estamos aquí para ayudarte"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("title")).toBeInTheDocument();
+      expect(screen.getByText("subtitle")).toBeInTheDocument();
     });
 
     it("renders contact type selection buttons", () => {
@@ -113,13 +103,12 @@ describe("Contact Page", () => {
 
       render(<ContactPage />);
 
-      expect(screen.getByText("¿Qué necesitas?")).toBeInTheDocument();
-      expect(screen.getAllByText("Consulta General").length).toBeGreaterThan(0);
-      expect(screen.getByText("Eventos y RSVP")).toBeInTheDocument();
-      // No shop/collectibles button expected
-      expect(screen.getByText("Fotos y Galería")).toBeInTheDocument();
-      expect(screen.getByText("Unirse a WhatsApp")).toBeInTheDocument();
-      expect(screen.getByText("Sugerencias Web")).toBeInTheDocument();
+      expect(screen.getByText("whatDoYouNeed")).toBeInTheDocument();
+      expect(screen.getAllByText("typeGeneral").length).toBeGreaterThan(0);
+      expect(screen.getByText("typeRsvp")).toBeInTheDocument();
+      expect(screen.getByText("typePhoto")).toBeInTheDocument();
+      expect(screen.getByText("typeWhatsapp")).toBeInTheDocument();
+      expect(screen.getByText("typeFeedback")).toBeInTheDocument();
     });
 
     it("renders contact form", () => {
@@ -131,12 +120,12 @@ describe("Contact Page", () => {
 
       render(<ContactPage />);
 
-      expect(screen.getByLabelText("Nombre completo *")).toBeInTheDocument();
-      expect(screen.getByLabelText("Email *")).toBeInTheDocument();
-      expect(screen.getByLabelText("Teléfono (opcional)")).toBeInTheDocument();
-      expect(screen.getByLabelText("Asunto *")).toBeInTheDocument();
-      expect(screen.getByLabelText("Mensaje *")).toBeInTheDocument();
-      expect(screen.getByText("Enviar Mensaje")).toBeInTheDocument();
+      expect(screen.getByLabelText("nameLabel")).toBeInTheDocument();
+      expect(screen.getByLabelText("emailLabel")).toBeInTheDocument();
+      expect(screen.getByLabelText("phoneLabel")).toBeInTheDocument();
+      expect(screen.getByLabelText("subjectLabel")).toBeInTheDocument();
+      expect(screen.getByLabelText("messageLabel")).toBeInTheDocument();
+      expect(screen.getByText("sendButton")).toBeInTheDocument();
     });
 
     it("renders FAQ section", () => {
@@ -148,14 +137,10 @@ describe("Contact Page", () => {
 
       render(<ContactPage />);
 
-      expect(screen.getByText("Preguntas Frecuentes")).toBeInTheDocument();
-      expect(
-        screen.getByText("¿Cómo puedo unirme a la peña?"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText("¿Tengo que confirmar asistencia?"),
-      ).toBeInTheDocument();
-      expect(screen.getByText("¿Puedo traer amigos?")).toBeInTheDocument();
+      expect(screen.getByText("faqTitle")).toBeInTheDocument();
+      expect(screen.getByText("faq1Question")).toBeInTheDocument();
+      expect(screen.getByText("faq2Question")).toBeInTheDocument();
+      expect(screen.getByText("faq3Question")).toBeInTheDocument();
     });
 
     it("renders alternative contact methods", () => {
@@ -167,10 +152,10 @@ describe("Contact Page", () => {
 
       render(<ContactPage />);
 
-      expect(screen.getByText("Otras formas de contacto")).toBeInTheDocument();
+      expect(screen.getByText("otherContactTitle")).toBeInTheDocument();
       expect(screen.getByText("Facebook")).toBeInTheDocument();
       expect(screen.getByText("Instagram")).toBeInTheDocument();
-      expect(screen.getByText("En persona")).toBeInTheDocument();
+      expect(screen.getByText("inPerson")).toBeInTheDocument();
     });
   });
 
@@ -192,9 +177,7 @@ describe("Contact Page", () => {
 
       expect(screen.getByDisplayValue("Juan Pérez")).toBeInTheDocument();
       expect(screen.getByDisplayValue("juan@example.com")).toBeInTheDocument();
-      expect(
-        screen.getByText("✓ Conectado como Juan Pérez"),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/connectedAs/)).toBeInTheDocument();
     });
 
     it("handles user with only first name", () => {
@@ -231,7 +214,7 @@ describe("Contact Page", () => {
       render(<ContactPage />);
 
       expect(screen.getByDisplayValue("Juan Pérez")).toBeInTheDocument();
-      expect(screen.getByLabelText("Email *")).toHaveValue(""); // Email field should be empty
+      expect(screen.getByLabelText("emailLabel")).toHaveValue(""); // Email field should be empty
     });
   });
 
@@ -247,9 +230,9 @@ describe("Contact Page", () => {
     it("updates form data when typing in fields", async () => {
       render(<ContactPage />);
 
-      const nameInput = screen.getByLabelText("Nombre completo *");
-      const emailInput = screen.getByLabelText("Email *");
-      const messageInput = screen.getByLabelText("Mensaje *");
+      const nameInput = screen.getByLabelText("nameLabel");
+      const emailInput = screen.getByLabelText("emailLabel");
+      const messageInput = screen.getByLabelText("messageLabel");
 
       fireEvent.change(nameInput, { target: { value: "Test User" } });
       fireEvent.change(emailInput, { target: { value: "test@example.com" } });
@@ -263,12 +246,12 @@ describe("Contact Page", () => {
     it("changes form type and updates subject", async () => {
       render(<ContactPage />);
 
-      const rsvpButton = screen.getByRole("button", { name: /Eventos y RSVP/ });
+      const rsvpButton = screen.getByRole("button", { name: /typeRsvp/ });
       fireEvent.click(rsvpButton);
 
       await waitFor(() => {
-        const subjectInput = screen.getByLabelText("Asunto *");
-        expect(subjectInput).toHaveValue("Consulta sobre eventos");
+        const subjectInput = screen.getByLabelText("subjectLabel");
+        expect(subjectInput).toHaveValue("defaultSubjectRsvp");
       });
     });
 
@@ -276,12 +259,12 @@ describe("Contact Page", () => {
       render(<ContactPage />);
 
       const whatsappButton = screen.getByRole("button", {
-        name: /Unirse a WhatsApp/,
+        name: /typeWhatsapp/,
       });
       fireEvent.click(whatsappButton);
 
       await waitFor(() => {
-        expect(screen.getByText(/Solicitud de WhatsApp:/)).toBeInTheDocument();
+        expect(screen.getByText("whatsappNote")).toBeInTheDocument();
       });
     });
 
@@ -289,12 +272,12 @@ describe("Contact Page", () => {
       render(<ContactPage />);
 
       const galleryButton = screen.getByRole("button", {
-        name: /Fotos y Galería/,
+        name: /typePhoto/,
       });
       fireEvent.click(galleryButton);
 
       await waitFor(() => {
-        expect(screen.getByText(/Envío de fotos:/)).toBeInTheDocument();
+        expect(screen.getByText("photoNote")).toBeInTheDocument();
       });
     });
   });
@@ -318,21 +301,21 @@ describe("Contact Page", () => {
       render(<ContactPage />);
 
       // Fill form
-      fireEvent.change(screen.getByLabelText("Nombre completo *"), {
+      fireEvent.change(screen.getByLabelText("nameLabel"), {
         target: { value: "Test User" },
       });
-      fireEvent.change(screen.getByLabelText("Email *"), {
+      fireEvent.change(screen.getByLabelText("emailLabel"), {
         target: { value: "test@example.com" },
       });
-      fireEvent.change(screen.getByLabelText("Asunto *"), {
+      fireEvent.change(screen.getByLabelText("subjectLabel"), {
         target: { value: "Test Subject" },
       });
-      fireEvent.change(screen.getByLabelText("Mensaje *"), {
+      fireEvent.change(screen.getByLabelText("messageLabel"), {
         target: { value: "Test message" },
       });
 
       // Submit form
-      const submitButton = screen.getByText("Enviar Mensaje");
+      const submitButton = screen.getByText("sendButton");
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -367,21 +350,21 @@ describe("Contact Page", () => {
       render(<ContactPage />);
 
       // Fill form
-      fireEvent.change(screen.getByLabelText("Nombre completo *"), {
+      fireEvent.change(screen.getByLabelText("nameLabel"), {
         target: { value: "Test User" },
       });
-      fireEvent.change(screen.getByLabelText("Email *"), {
+      fireEvent.change(screen.getByLabelText("emailLabel"), {
         target: { value: "test@example.com" },
       });
-      fireEvent.change(screen.getByLabelText("Asunto *"), {
+      fireEvent.change(screen.getByLabelText("subjectLabel"), {
         target: { value: "Test Subject" },
       });
-      fireEvent.change(screen.getByLabelText("Mensaje *"), {
+      fireEvent.change(screen.getByLabelText("messageLabel"), {
         target: { value: "Test message" },
       });
 
       // Submit form
-      const submitButton = screen.getByText("Enviar Mensaje");
+      const submitButton = screen.getByText("sendButton");
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -401,28 +384,26 @@ describe("Contact Page", () => {
       render(<ContactPage />);
 
       // Fill form
-      fireEvent.change(screen.getByLabelText("Nombre completo *"), {
+      fireEvent.change(screen.getByLabelText("nameLabel"), {
         target: { value: "Test User" },
       });
-      fireEvent.change(screen.getByLabelText("Email *"), {
+      fireEvent.change(screen.getByLabelText("emailLabel"), {
         target: { value: "test@example.com" },
       });
-      fireEvent.change(screen.getByLabelText("Asunto *"), {
+      fireEvent.change(screen.getByLabelText("subjectLabel"), {
         target: { value: "Test Subject" },
       });
-      fireEvent.change(screen.getByLabelText("Mensaje *"), {
+      fireEvent.change(screen.getByLabelText("messageLabel"), {
         target: { value: "Test message" },
       });
 
       // Submit form
-      const submitButton = screen.getByText("Enviar Mensaje");
+      const submitButton = screen.getByText("sendButton");
       fireEvent.click(submitButton);
 
       await waitFor(() => {
         expect(screen.getByTestId("error-message")).toBeInTheDocument();
-        expect(
-          screen.getByText("Error de conexión. Inténtalo de nuevo."),
-        ).toBeInTheDocument();
+        expect(screen.getByText("connectionError")).toBeInTheDocument();
       });
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -439,21 +420,21 @@ describe("Contact Page", () => {
       render(<ContactPage />);
 
       // Fill form
-      fireEvent.change(screen.getByLabelText("Nombre completo *"), {
+      fireEvent.change(screen.getByLabelText("nameLabel"), {
         target: { value: "Test User" },
       });
-      fireEvent.change(screen.getByLabelText("Email *"), {
+      fireEvent.change(screen.getByLabelText("emailLabel"), {
         target: { value: "test@example.com" },
       });
-      fireEvent.change(screen.getByLabelText("Asunto *"), {
+      fireEvent.change(screen.getByLabelText("subjectLabel"), {
         target: { value: "Test Subject" },
       });
-      fireEvent.change(screen.getByLabelText("Mensaje *"), {
+      fireEvent.change(screen.getByLabelText("messageLabel"), {
         target: { value: "Test message" },
       });
 
       // Submit form
-      const submitButton = screen.getByText("Enviar Mensaje");
+      const submitButton = screen.getByText("sendButton");
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -472,24 +453,24 @@ describe("Contact Page", () => {
       render(<ContactPage />);
 
       // Fill form with all required fields
-      fireEvent.change(screen.getByLabelText("Nombre completo *"), {
+      fireEvent.change(screen.getByLabelText("nameLabel"), {
         target: { value: "Test User" },
       });
-      fireEvent.change(screen.getByLabelText("Email *"), {
+      fireEvent.change(screen.getByLabelText("emailLabel"), {
         target: { value: "test@example.com" },
       });
-      fireEvent.change(screen.getByLabelText("Teléfono (opcional)"), {
+      fireEvent.change(screen.getByLabelText("phoneLabel"), {
         target: { value: "123456789" },
       });
-      fireEvent.change(screen.getByLabelText("Asunto *"), {
+      fireEvent.change(screen.getByLabelText("subjectLabel"), {
         target: { value: "Test Subject" },
       });
-      fireEvent.change(screen.getByLabelText("Mensaje *"), {
+      fireEvent.change(screen.getByLabelText("messageLabel"), {
         target: { value: "Test message" },
       });
 
       // Submit form
-      const submitButton = screen.getByText("Enviar Mensaje");
+      const submitButton = screen.getByText("sendButton");
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -498,9 +479,9 @@ describe("Contact Page", () => {
 
       // Check that specific fields are reset (phone, subject, message)
       // Name and email may be preserved for authenticated users
-      expect(screen.getByLabelText("Teléfono (opcional)")).toHaveValue("");
-      expect(screen.getByLabelText("Asunto *")).toHaveValue("");
-      expect(screen.getByLabelText("Mensaje *")).toHaveValue("");
+      expect(screen.getByLabelText("phoneLabel")).toHaveValue("");
+      expect(screen.getByLabelText("subjectLabel")).toHaveValue("");
+      expect(screen.getByLabelText("messageLabel")).toHaveValue("");
     });
   });
 
@@ -516,9 +497,9 @@ describe("Contact Page", () => {
     it("renders external social media links", () => {
       render(<ContactPage />);
 
-      const facebookLink = screen.getByText("Ir al grupo");
-      const instagramLink = screen.getByText("Seguir");
-      const mapLink = screen.getByText("Ver mapa");
+      const facebookLink = screen.getByText("goToGroup");
+      const instagramLink = screen.getByText("follow");
+      const mapLink = screen.getByText("viewMap");
 
       expect(facebookLink).toBeInTheDocument();
       expect(instagramLink).toBeInTheDocument();
@@ -540,20 +521,20 @@ describe("Contact Page", () => {
 
       const testCases = [
         {
-          buttonSelector: { name: /Eventos y RSVP/ },
-          expectedSubject: "Consulta sobre eventos",
+          buttonSelector: { name: /typeRsvp/ },
+          expectedSubject: "defaultSubjectRsvp",
         },
         {
-          buttonSelector: { name: /Fotos y Galería/ },
-          expectedSubject: "Envío de fotos",
+          buttonSelector: { name: /typePhoto/ },
+          expectedSubject: "defaultSubjectPhoto",
         },
         {
-          buttonSelector: { name: /Unirse a WhatsApp/ },
-          expectedSubject: "Solicitud de invitación a WhatsApp",
+          buttonSelector: { name: /typeWhatsapp/ },
+          expectedSubject: "defaultSubjectWhatsapp",
         },
         {
-          buttonSelector: { name: /Sugerencias Web/ },
-          expectedSubject: "Sugerencias para la web",
+          buttonSelector: { name: /typeFeedback/ },
+          expectedSubject: "defaultSubjectFeedback",
         },
       ];
 
@@ -562,7 +543,7 @@ describe("Contact Page", () => {
         fireEvent.click(button);
 
         await waitFor(() => {
-          const subjectInput = screen.getByLabelText("Asunto *");
+          const subjectInput = screen.getByLabelText("subjectLabel");
           expect(subjectInput).toHaveValue(expectedSubject);
         });
       }
@@ -572,16 +553,16 @@ describe("Contact Page", () => {
       render(<ContactPage />);
 
       // Click on a type with subject, then back to general
-      fireEvent.click(screen.getByRole("button", { name: /Eventos y RSVP/ }));
+      fireEvent.click(screen.getByRole("button", { name: /typeRsvp/ }));
       await waitFor(() => {
-        expect(screen.getByLabelText("Asunto *")).toHaveValue(
-          "Consulta sobre eventos",
+        expect(screen.getByLabelText("subjectLabel")).toHaveValue(
+          "defaultSubjectRsvp",
         );
       });
 
-      fireEvent.click(screen.getByRole("button", { name: /Consulta General/ }));
+      fireEvent.click(screen.getByRole("button", { name: /typeGeneral/ }));
       await waitFor(() => {
-        expect(screen.getByLabelText("Asunto *")).toHaveValue("");
+        expect(screen.getByLabelText("subjectLabel")).toHaveValue("");
       });
     });
   });

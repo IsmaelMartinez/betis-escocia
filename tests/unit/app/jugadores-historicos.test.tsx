@@ -39,7 +39,7 @@ vi.mock("lucide-react", () => ({
 describe("Jugadores Históricos Page", () => {
   beforeEach(async () => {
     const JugadoresHistoricos = (
-      await import("@/app/jugadores-historicos/page")
+      await import("@/app/[locale]/jugadores-historicos/page")
     ).default;
     render(<JugadoresHistoricos />);
   });
@@ -179,7 +179,9 @@ describe("Jugadores Históricos Page", () => {
 
   describe("Era filter", () => {
     it("should render all filter buttons", () => {
-      expect(screen.getByRole("button", { name: /^Todos/ })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /^Todos/ }),
+      ).toBeInTheDocument();
       expect(
         screen.getByRole("button", { name: /^Clásicos del Villamarín/ }),
       ).toBeInTheDocument();
@@ -240,7 +242,7 @@ describe("Jugadores Históricos Page", () => {
     it("should use branded design patterns", async () => {
       // Re-render to get container reference
       const JugadoresHistoricos = (
-        await import("@/app/jugadores-historicos/page")
+        await import("@/app/[locale]/jugadores-historicos/page")
       ).default;
       const { container } = render(<JugadoresHistoricos />);
 

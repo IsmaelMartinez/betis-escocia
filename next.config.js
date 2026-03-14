@@ -1,3 +1,6 @@
+const createNextIntlPlugin = require("next-intl/plugin");
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
+
 /** @type {import('next').NextConfig} */
 
 // Content Security Policy configuration
@@ -138,26 +141,30 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
 
-module.exports = withBundleAnalyzer(withSentryConfig(nextConfig, {
-  // For all available options, see: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+module.exports = withNextIntl(
+  withBundleAnalyzer(
+    withSentryConfig(nextConfig, {
+      // For all available options, see: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
-  // Upload a larger amount of data to Sentry
-  widenClientFileUpload: true,
+      // Upload a larger amount of data to Sentry
+      widenClientFileUpload: true,
 
-  // Transpiles SDK to be compatible with older browsers.
-  // Remove this if you only support modern browsers
-  transpileClientSDK: true,
+      // Transpiles SDK to be compatible with older browsers.
+      // Remove this if you only support modern browsers
+      transpileClientSDK: true,
 
-  // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
-  // This can't be configured when a custom `server.dev.url` is set in the Sentry config.
-  tunnelRoute: "/monitoring-tunnel",
+      // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
+      // This can't be configured when a custom `server.dev.url` is set in the Sentry config.
+      tunnelRoute: "/monitoring-tunnel",
 
-  // Hides source maps from generated client bundles.
-  hideSourceMaps: true,
+      // Hides source maps from generated client bundles.
+      hideSourceMaps: true,
 
-  // Automatically tree-shake Sentry SDKs to optimize bundle size.
-  autoInstrumentServerFunctions: true,
-  autoInstrumentClientFunctions: true,
+      // Automatically tree-shake Sentry SDKs to optimize bundle size.
+      autoInstrumentServerFunctions: true,
+      autoInstrumentClientFunctions: true,
 
-  // For all available options, see: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-}));
+      // For all available options, see: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+    }),
+  ),
+);

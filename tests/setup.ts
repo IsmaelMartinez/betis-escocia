@@ -91,5 +91,71 @@ afterEach(() => {
   server.resetHandlers();
 });
 
+// Mock next-intl for test environment
+vi.mock("next-intl", () => ({
+  useTranslations: () => {
+    const t = (key: string, params?: Record<string, any>) => {
+      if (params) {
+        return Object.entries(params).reduce(
+          (str, [k, v]) => str.replace(`{${k}}`, String(v)),
+          key,
+        );
+      }
+      return key;
+    };
+    t.raw = (key: string) => key;
+    return t;
+  },
+  useLocale: () => "es",
+  NextIntlClientProvider: ({ children }: any) => children,
+  hasLocale: () => true,
+}));
+
+vi.mock("next-intl/middleware", () => ({
+  default: vi.fn(() => vi.fn(() => new Response())),
+}));
+
+vi.mock("next-intl/server", () => ({
+  getTranslations: () => {
+    const t = (key: string, params?: Record<string, any>) => {
+      if (params) {
+        return Object.entries(params).reduce(
+          (str, [k, v]) => str.replace(`{${k}}`, String(v)),
+          key,
+        );
+      }
+      return key;
+    };
+    t.raw = (key: string) => key;
+    return t;
+  },
+  setRequestLocale: () => {},
+  getMessages: () => ({}),
+  getRequestConfig: (fn: any) => fn,
+}));
+
+vi.mock("@/i18n/navigation", () => ({
+  Link: ({ children, href, ...props }: any) => {
+    const React = require("react");
+    return React.createElement("a", { href, ...props }, children);
+  },
+  usePathname: () => "/",
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
+  }),
+  redirect: vi.fn(),
+  getPathname: vi.fn(),
+}));
+
+vi.mock("@/i18n/routing", () => ({
+  routing: {
+    locales: ["es", "en"],
+    defaultLocale: "es",
+    pathnames: {},
+  },
+}));
+
 // Test environment setup complete
 // Feature flags are now environment variable-based and don't require special test setup
