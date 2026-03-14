@@ -7,8 +7,10 @@ import RSVPModal, { useRSVPModal } from "@/components/rsvp/RSVPModal";
 import SidebarCard from "@/components/SidebarCard";
 import { Calendar } from "lucide-react";
 import { hasFeature } from "@/lib/features/featureFlags";
+import { useTranslations } from "next-intl";
 
 export default function MatchesPage() {
+  const t = useTranslations("matches");
   const { isOpen, openModal, closeModal } = useRSVPModal();
   const isRSVPEnabled = hasFeature("show-rsvp");
   return (
@@ -22,7 +24,7 @@ export default function MatchesPage() {
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
-            Partidos
+            {t("title")}
           </h1>
         </div>
       </section>
@@ -51,16 +53,16 @@ export default function MatchesPage() {
                       <Calendar className="h-6 w-6 text-white" />
                     </div>
                     <h3 className="font-heading text-lg font-bold text-scotland-navy mb-2 text-center uppercase tracking-wide">
-                      Próximo Partido
+                      {t("nextMatch")}
                     </h3>
                     <p className="font-body text-sm text-gray-600 mb-4 text-center">
-                      ¿Vienes al Polwarth Tavern?
+                      {t("comingToPolwarth")}
                     </p>
                     <button
                       onClick={openModal}
                       className="w-full bg-betis-verde hover:bg-betis-verde-dark text-white font-heading font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl uppercase tracking-wide text-sm"
                     >
-                      ✅ Confirmar Asistencia
+                      {`✅ ${t("confirmAttendance")}`}
                     </button>
                   </SidebarCard>
                 )}
@@ -82,13 +84,12 @@ export default function MatchesPage() {
           onClose={closeModal}
           event={{
             id: undefined,
-            title: "Próximo Partido del Betis",
+            title: t("nextBetisMatch"),
             date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             location: "Polwarth Tavern, Edinburgh",
-            description:
-              "Confirma tu asistencia para ver el partido con la peña",
+            description: t("confirmForMatch"),
           }}
-          modalTitle="¿Vienes al próximo partido?"
+          modalTitle={t("comingToNextMatch")}
         />
       )}
     </div>

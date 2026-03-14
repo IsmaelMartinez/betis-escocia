@@ -61,13 +61,13 @@ describe("MatchesPage", () => {
 
       const heading = screen.getByRole("heading", { level: 1 });
       expect(heading).toBeInTheDocument();
-      expect(heading).toHaveTextContent("Partidos");
+      expect(heading).toHaveTextContent("title");
     });
 
     it("should render hero section with heading", () => {
       render(<MatchesPage />);
 
-      expect(screen.getByText("Partidos")).toBeInTheDocument();
+      expect(screen.getByText("title")).toBeInTheDocument();
     });
 
     it("should render main components", () => {
@@ -84,12 +84,12 @@ describe("MatchesPage", () => {
       mockHasFeature.mockReturnValue(false);
       render(<MatchesPage />);
 
-      expect(screen.queryByText("Próximo Partido")).not.toBeInTheDocument();
+      expect(screen.queryByText("nextMatch")).not.toBeInTheDocument();
       expect(
-        screen.queryByText("¿Vienes al Polwarth Tavern?"),
+        screen.queryByText("comingToPolwarth"),
       ).not.toBeInTheDocument();
       expect(
-        screen.queryByRole("button", { name: /Confirmar Asistencia/i }),
+        screen.queryByRole("button", { name: /confirmAttendance/i }),
       ).not.toBeInTheDocument();
     });
 
@@ -97,12 +97,12 @@ describe("MatchesPage", () => {
       mockHasFeature.mockReturnValue(true);
       render(<MatchesPage />);
 
-      expect(screen.getByText("Próximo Partido")).toBeInTheDocument();
+      expect(screen.getByText("nextMatch")).toBeInTheDocument();
       expect(
-        screen.getByText("¿Vienes al Polwarth Tavern?"),
+        screen.getByText("comingToPolwarth"),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: /Confirmar Asistencia/i }),
+        screen.getByRole("button", { name: /confirmAttendance/i }),
       ).toBeInTheDocument();
     });
 
@@ -180,7 +180,7 @@ describe("MatchesPage", () => {
     it("should use typography system classes", () => {
       render(<MatchesPage />);
 
-      const heading = screen.getByText("Partidos");
+      const heading = screen.getByText("title");
       expect(heading).toHaveClass("font-display");
     });
 
@@ -199,7 +199,7 @@ describe("MatchesPage", () => {
       render(<MatchesPage />);
 
       const mainHeading = screen.getByRole("heading", { level: 1 });
-      expect(mainHeading).toHaveTextContent("Partidos");
+      expect(mainHeading).toHaveTextContent("title");
 
       const headings = screen.getAllByRole("heading");
       expect(headings.length).toBeGreaterThan(0);

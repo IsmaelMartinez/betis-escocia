@@ -3,7 +3,8 @@
 export const dynamic = "force-dynamic";
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { Send, Camera, MessageCircle, HelpCircle } from "lucide-react";
 import {
   FormSuccessMessage,
@@ -14,10 +15,7 @@ import { useUser } from "@clerk/nextjs";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import CulturalFusionHero from "@/components/hero/CulturalFusionHero";
 
-import {
-  FORM_TYPES as formTypes,
-  getDefaultSubject,
-} from "@/lib/constants/contact";
+import { FORM_TYPES as formTypes } from "@/lib/constants/contact";
 import type { ContactFormType } from "@/lib/constants/contact";
 
 interface ContactFormData {
@@ -30,6 +28,7 @@ interface ContactFormData {
 }
 
 export default function ContactPage() {
+  const t = useTranslations("contact");
   const { user } = useUser();
   const formRef = useRef<HTMLDivElement>(null);
   const [isContactFeatureEnabled] = useState(true);
@@ -56,6 +55,32 @@ export default function ContactPage() {
     "idle" | "success" | "error"
   >("idle");
   const [errorMessage, setErrorMessage] = useState("");
+
+  const getTypeName = (id: string) => {
+    const key = `type${id.charAt(0).toUpperCase() + id.slice(1)}` as any;
+    return t(key);
+  };
+  const getTypeDesc = (id: string) => {
+    const key = `type${id.charAt(0).toUpperCase() + id.slice(1)}Desc` as any;
+    return t(key);
+  };
+
+  const getTranslatedDefaultSubject = (
+    type: ContactFormData["type"],
+  ): string => {
+    switch (type) {
+      case "rsvp":
+        return t("defaultSubjectRsvp");
+      case "photo":
+        return t("defaultSubjectPhoto");
+      case "whatsapp":
+        return t("defaultSubjectWhatsapp");
+      case "feedback":
+        return t("defaultSubjectFeedback");
+      default:
+        return "";
+    }
+  };
 
   // Feature always enabled; no flag checks needed
 
@@ -92,7 +117,7 @@ export default function ContactPage() {
     setFormData((prev) => ({
       ...prev,
       type,
-      subject: getDefaultSubject(type),
+      subject: getTranslatedDefaultSubject(type),
     }));
     // Scroll to form when type changes
     formRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -126,12 +151,12 @@ export default function ContactPage() {
         }));
       } else {
         setSubmitStatus("error");
-        setErrorMessage(result.error ?? "Error al enviar el mensaje");
+        setErrorMessage(result.error ?? t("errorMessage"));
       }
     } catch (err) {
       console.error("Contact form error:", err);
       setSubmitStatus("error");
-      setErrorMessage("Error de conexión. Inténtalo de nuevo.");
+      setErrorMessage(t("connectionError"));
     } finally {
       setIsSubmitting(false);
     }
@@ -146,7 +171,7 @@ export default function ContactPage() {
   if (loadingFeatureFlag) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <LoadingSpinner size="lg" label="Cargando página de contacto..." />
+        <LoadingSpinner size="lg" label={t("loadingPage")} />
       </div>
     );
   }
@@ -156,20 +181,18 @@ export default function ContactPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8 text-center">
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Página No Disponible
+            {t("pageUnavailable")}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            La página de contacto está deshabilitada en este momento.
+            {t("pageDisabled")}
           </p>
           <div className="bg-white p-8 rounded-lg shadow-md">
-            <p className="text-gray-700 mb-4">
-              Por favor, inténtalo de nuevo más tarde.
-            </p>
+            <p className="text-gray-700 mb-4">{t("tryLater")}</p>
             <Link
               href="/"
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-betis-verde hover:bg-betis-verde-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-betis-verde"
             >
-              Volver al Inicio
+              {t("backHome")}
             </Link>
           </div>
         </div>
@@ -184,16 +207,16 @@ export default function ContactPage() {
         <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8">
           <Send size={20} className="text-oro-bright" />
           <span className="text-white font-heading font-medium text-sm tracking-wide">
-            Ponte en contacto
+            {t("badge")}
           </span>
         </div>
 
         <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
-          Contacto
+          {t("title")}
         </h1>
 
         <p className="font-accent text-2xl sm:text-3xl text-oro-bright mb-8 text-shadow-lg italic">
-          ¿Tienes alguna pregunta? Estamos aquí para ayudarte
+          {t("subtitle")}
         </p>
       </CulturalFusionHero>
 
@@ -204,7 +227,7 @@ export default function ContactPage() {
 
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="font-display text-4xl font-black text-center mb-12 text-scotland-navy uppercase tracking-tight">
-            ¿Qué necesitas?
+            {t("whatDoYouNeed")}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -232,10 +255,10 @@ export default function ContactPage() {
                       <Icon className="h-7 w-7 text-white" />
                     </div>
                     <h3 className="font-heading text-xl font-bold mb-2 text-scotland-navy uppercase tracking-wide">
-                      {type.name}
+                      {getTypeName(type.id)}
                     </h3>
                     <p className="font-body text-gray-700 text-sm">
-                      {type.description}
+                      {getTypeDesc(type.id)}
                     </p>
                   </div>
                 </button>
@@ -258,28 +281,26 @@ export default function ContactPage() {
                 </div>
               )}
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                {selectedType?.name ?? "Formulario de Contacto"}
+                {selectedType ? getTypeName(selectedType.id) : t("formTitle")}
               </h3>
               <p className="text-gray-600">
-                {selectedType?.description ??
-                  "Completa el formulario y te responderemos pronto"}
+                {selectedType
+                  ? getTypeDesc(selectedType.id)
+                  : t("formDescription")}
               </p>
             </div>
 
             {submitStatus === "success" && (
               <FormSuccessMessage
-                title="¡Mensaje enviado!"
-                message="Te responderemos pronto."
+                title={t("successTitle")}
+                message={t("successMessage")}
                 className="mb-6"
               />
             )}
 
             {submitStatus === "error" && (
               <FormErrorMessage
-                message={
-                  errorMessage ||
-                  "Error al enviar el mensaje. Inténtalo de nuevo."
-                }
+                message={errorMessage || t("errorMessage")}
                 className="mb-6"
               />
             )}
@@ -290,10 +311,10 @@ export default function ContactPage() {
                 {user && (
                   <div className="text-center mt-4 p-3 bg-betis-verde-light border border-betis-verde/20 rounded-lg col-span-full">
                     <p className="text-sm text-betis-verde-dark">
-                      ✓ Conectado como {user.firstName} {user.lastName}
+                      {t("connectedAs")} {user.firstName} {user.lastName}
                     </p>
                     <p className="text-xs text-betis-verde mt-1">
-                      Tus datos se han rellenado automáticamente
+                      {t("autoFilled")}
                     </p>
                   </div>
                 )}
@@ -302,7 +323,7 @@ export default function ContactPage() {
                     htmlFor="name"
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
-                    Nombre completo *
+                    {t("nameLabel")}
                   </label>
                   <input
                     type="text"
@@ -312,7 +333,7 @@ export default function ContactPage() {
                     value={formData.name}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-verde focus:border-transparent"
-                    placeholder="Tu nombre y apellido"
+                    placeholder={t("namePlaceholder")}
                     data-testid="contact-name"
                   />
                 </div>
@@ -322,7 +343,7 @@ export default function ContactPage() {
                     htmlFor="email"
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
-                    Email *
+                    {t("emailLabel")}
                   </label>
                   <input
                     type="email"
@@ -332,7 +353,7 @@ export default function ContactPage() {
                     value={formData.email}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-verde focus:border-transparent"
-                    placeholder="tu@email.com"
+                    placeholder={t("emailPlaceholder")}
                     data-testid="contact-email"
                   />
                 </div>
@@ -344,7 +365,7 @@ export default function ContactPage() {
                   htmlFor="phone"
                   className="block text-sm font-medium text-gray-700 mb-2"
                 >
-                  Teléfono (opcional)
+                  {t("phoneLabel")}
                 </label>
                 <input
                   type="tel"
@@ -353,7 +374,7 @@ export default function ContactPage() {
                   value={formData.phone}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-verde focus:border-transparent"
-                  placeholder="+44 o +34 número"
+                  placeholder={t("phonePlaceholder")}
                 />
               </div>
 
@@ -363,7 +384,7 @@ export default function ContactPage() {
                   htmlFor="subject"
                   className="block text-sm font-medium text-gray-700 mb-2"
                 >
-                  Asunto *
+                  {t("subjectLabel")}
                 </label>
                 <input
                   type="text"
@@ -373,7 +394,7 @@ export default function ContactPage() {
                   value={formData.subject}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-verde focus:border-transparent"
-                  placeholder="Breve resumen de tu consulta"
+                  placeholder={t("subjectPlaceholder")}
                   data-testid="contact-subject"
                 />
               </div>
@@ -384,7 +405,7 @@ export default function ContactPage() {
                   htmlFor="message"
                   className="block text-sm font-medium text-gray-700 mb-2"
                 >
-                  Mensaje *
+                  {t("messageLabel")}
                 </label>
                 <textarea
                   id="message"
@@ -394,7 +415,7 @@ export default function ContactPage() {
                   value={formData.message}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-betis-verde focus:border-transparent"
-                  placeholder="Cuéntanos en detalle lo que necesitas..."
+                  placeholder={t("messagePlaceholder")}
                   data-testid="contact-message"
                 />
               </div>
@@ -402,22 +423,23 @@ export default function ContactPage() {
               {/* Special instructions based on type */}
               {formData.type === "whatsapp" && (
                 <div className="bg-betis-verde-light border border-betis-verde/20 rounded-lg p-4">
-                  <p className="text-betis-verde-dark text-sm">
-                    📱 <strong>Solicitud de WhatsApp:</strong> Incluye tu número
-                    de móvil en el mensaje para poder añadirte al grupo. El
-                    grupo se usa para avisar de cambios de horario y eventos
-                    especiales.
-                  </p>
+                  <p
+                    className="text-betis-verde-dark text-sm"
+                    dangerouslySetInnerHTML={{
+                      __html: t.raw("whatsappNote"),
+                    }}
+                  />
                 </div>
               )}
 
               {formData.type === "photo" && (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <p className="text-blue-800 text-sm">
-                    📸 <strong>Envío de fotos:</strong> Puedes adjuntar fotos
-                    directamente en la galería o enviárnoslas por email.
-                    Menciona si quieres que se publiquen en redes sociales.
-                  </p>
+                  <p
+                    className="text-blue-800 text-sm"
+                    dangerouslySetInnerHTML={{
+                      __html: t.raw("photoNote"),
+                    }}
+                  />
                 </div>
               )}
 
@@ -430,13 +452,13 @@ export default function ContactPage() {
               >
                 {isSubmitting ? (
                   <FormLoadingMessage
-                    message="Enviando mensaje..."
+                    message={t("sending")}
                     className="text-white"
                   />
                 ) : (
                   <>
                     <Send className="h-5 w-5 inline mr-2" />
-                    Enviar Mensaje
+                    {t("sendButton")}
                   </>
                 )}
               </button>
@@ -452,61 +474,46 @@ export default function ContactPage() {
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="font-display text-4xl font-black text-center mb-12 text-scotland-navy uppercase tracking-tight">
-            Preguntas Frecuentes
+            {t("faqTitle")}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-6">
               <div>
                 <h3 className="font-heading text-lg font-bold mb-3 text-betis-verde-dark">
-                  ¿Cómo puedo unirme a la peña?
+                  {t("faq1Question")}
                 </h3>
-                <p className="font-body text-gray-700">
-                  Simplemente ven a The Polwarth Tavern cualquier día que juegue
-                  el Betis. No hace falta ser socio, solo ganas de pasarlo bien.
-                </p>
+                <p className="font-body text-gray-700">{t("faq1Answer")}</p>
               </div>
 
               <div>
                 <h3 className="font-heading text-lg font-bold mb-3 text-betis-verde-dark">
-                  ¿Tengo que confirmar asistencia?
+                  {t("faq2Question")}
                 </h3>
-                <p className="font-body text-gray-700">
-                  No es obligatorio, pero nos ayuda a reservar mesa. Usa el
-                  formulario RSVP si sabes que vas a venir.
-                </p>
+                <p className="font-body text-gray-700">{t("faq2Answer")}</p>
               </div>
 
               <div>
                 <h3 className="font-heading text-lg font-bold mb-3 text-betis-verde-dark">
-                  ¿Puedo traer amigos?
+                  {t("faq3Question")}
                 </h3>
-                <p className="font-body text-gray-700">
-                  ¡Por supuesto! Cuantos más seamos, mejor ambiente. Solo
-                  menciona cuántos sois en el RSVP.
-                </p>
+                <p className="font-body text-gray-700">{t("faq3Answer")}</p>
               </div>
             </div>
 
             <div className="space-y-6">
               <div>
                 <h3 className="font-heading text-lg font-bold mb-3 text-betis-verde-dark">
-                  ¿Puedo enviar fotos?
+                  {t("faq4Question")}
                 </h3>
-                <p className="font-body text-gray-700">
-                  Sí, usa la galería online o escríbenos. Nos encanta ver fotos
-                  de béticos animando al Betis.
-                </p>
+                <p className="font-body text-gray-700">{t("faq4Answer")}</p>
               </div>
 
               <div>
                 <h3 className="font-heading text-lg font-bold mb-3 text-betis-verde-dark">
-                  ¿Hay grupo de WhatsApp?
+                  {t("faq5Question")}
                 </h3>
-                <p className="font-body text-gray-700">
-                  Sí, úsalo para solicitar invitación. Te añadimos para avisos
-                  importantes y coordinación de eventos.
-                </p>
+                <p className="font-body text-gray-700">{t("faq5Answer")}</p>
               </div>
             </div>
           </div>
@@ -520,7 +527,7 @@ export default function ContactPage() {
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-display text-4xl font-black mb-12 text-white uppercase tracking-tight">
-            Otras formas de contacto
+            {t("otherContactTitle")}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -530,7 +537,7 @@ export default function ContactPage() {
                 Facebook
               </h3>
               <p className="font-body mb-6 text-white/90">
-                Grupo oficial en Facebook
+                {t("facebookGroup")}
               </p>
               <a
                 href="https://www.facebook.com/groups/beticosenescocia/"
@@ -538,7 +545,7 @@ export default function ContactPage() {
                 rel="noopener noreferrer"
                 className="inline-block bg-white text-betis-verde px-6 py-3 rounded-xl font-heading font-bold hover:bg-oro-bright hover:text-scotland-navy transition-all duration-300 transform hover:scale-105 shadow-lg uppercase tracking-wide text-sm"
               >
-                Ir al grupo
+                {t("goToGroup")}
               </a>
             </div>
 
@@ -548,7 +555,7 @@ export default function ContactPage() {
                 Instagram
               </h3>
               <p className="font-body mb-6 text-white/90">
-                Síguenos @rbetisescocia
+                {t("instagramFollow")}
               </p>
               <a
                 href="https://www.instagram.com/rbetisescocia/"
@@ -556,17 +563,17 @@ export default function ContactPage() {
                 rel="noopener noreferrer"
                 className="inline-block bg-white text-betis-verde px-6 py-3 rounded-xl font-heading font-bold hover:bg-oro-bright hover:text-scotland-navy transition-all duration-300 transform hover:scale-105 shadow-lg uppercase tracking-wide text-sm"
               >
-                Seguir
+                {t("follow")}
               </a>
             </div>
 
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition-all duration-300">
               <HelpCircle className="h-14 w-14 mx-auto mb-4" />
               <h3 className="font-heading text-xl font-bold mb-3 text-white uppercase tracking-wide">
-                En persona
+                {t("inPerson")}
               </h3>
               <p className="font-body mb-6 text-white/90">
-                The Polwarth Tavern, Edinburgh
+                {t("inPersonLocation")}
               </p>
               <a
                 href="https://maps.google.com/maps?q=The+Polwarth+Tavern+Edinburgh"
@@ -574,7 +581,7 @@ export default function ContactPage() {
                 rel="noopener noreferrer"
                 className="inline-block bg-white text-betis-verde px-6 py-3 rounded-xl font-heading font-bold hover:bg-oro-bright hover:text-scotland-navy transition-all duration-300 transform hover:scale-105 shadow-lg uppercase tracking-wide text-sm"
               >
-                Ver mapa
+                {t("viewMap")}
               </a>
             </div>
           </div>

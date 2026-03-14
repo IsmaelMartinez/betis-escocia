@@ -51,36 +51,37 @@ describe("Home page", () => {
 
   it('renders the "Join Us" section with correct text and links', async () => {
     await renderHome();
-    // Text is split across lines with <br /> so we check for parts
-    expect(screen.getByText(/¿Estás de visita/i)).toBeInTheDocument();
-    expect(screen.getByText(/en Escocia\?/i)).toBeInTheDocument();
+    // Both titles are within the same <h2> element separated by <br />
+    expect(screen.getByText(/visitingTitle1/)).toBeInTheDocument();
+    expect(screen.getByText(/visitingTitle2/)).toBeInTheDocument();
+    expect(screen.getByText("visitingSubtitle")).toBeInTheDocument();
+    expect(screen.getByText("visitingDesc")).toBeInTheDocument();
     expect(
-      screen.getByText("¡Ven a ver los partidos con nosotros!"),
+      screen.getByRole("link", { name: "joinFamily" }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Todos los béticos son bienvenidos/i),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Únete/i })).toBeInTheDocument();
   });
 
   it("renders contact info section with correct details", async () => {
     await renderHome();
     // Find the "Ubicación" section and query within it
-    const locationSection = screen.getByText("📍 Ubicación").closest("div");
+    const locationSection = screen
+      .getByText("locationTitle")
+      .closest("div");
     expect(locationSection).toBeInTheDocument();
     expect(
-      within(locationSection!).getByText(/Polwarth Tavern/i),
+      within(locationSection!).getByText("locationDetails"),
     ).toBeInTheDocument();
 
     // Find the "Ambiente" section and query within it
-    const ambienteSection = screen.getByText("💚 Ambiente").closest("div");
+    const ambienteSection = screen
+      .getByText("atmosphereTitle")
+      .closest("div");
     expect(ambienteSection).toBeInTheDocument();
-    // Query for the paragraph element that contains the text "100% bético"
     expect(
-      within(ambienteSection!).getByText(/100% bético/i, { selector: "p" }),
+      within(ambienteSection!).getByText("atmosphereDetails"),
     ).toBeInTheDocument();
 
-    expect(screen.getByText("⏰ Horarios")).toBeInTheDocument();
-    expect(screen.getByText(/15 min antes del partido/i)).toBeInTheDocument();
+    expect(screen.getByText("scheduleTitle")).toBeInTheDocument();
+    expect(screen.getByText("scheduleDetails")).toBeInTheDocument();
   });
 });

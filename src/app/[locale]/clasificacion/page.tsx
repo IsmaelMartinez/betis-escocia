@@ -7,7 +7,8 @@ import axios from "axios";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import {
   withFeatureFlag,
@@ -141,6 +142,7 @@ function StandingRow({
 
 // Main standings content component
 async function StandingsContent() {
+  const t = await getTranslations("standings");
   const service = new FootballDataService(axios.create());
   const standings = await service.getLaLigaStandings();
 
@@ -157,23 +159,23 @@ async function StandingsContent() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
           <div className="text-center md:text-left flex-1">
             <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
-              Clasificación
+              {t("title")}
             </h1>
             <p className="font-accent text-2xl sm:text-3xl text-oro-bright text-shadow-lg italic">
-              La Liga
+              {t("laLiga")}
             </p>
           </div>
 
           {betisEntry && (
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-center">
               <div className="font-heading text-sm text-oro-bright mb-2 uppercase tracking-wide">
-                Posición Betis
+                {t("betisPosition")}
               </div>
               <div className="font-display text-5xl font-black text-white mb-2">
                 {betisEntry.position}º
               </div>
               <div className="font-body text-lg text-white/90">
-                {betisEntry.points} puntos
+                {betisEntry.points} {t("points")}
               </div>
             </div>
           )}
@@ -184,31 +186,31 @@ async function StandingsContent() {
         {/* Competition Legend */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 mb-8 p-6">
           <h3 className="font-heading text-lg font-bold text-scotland-navy mb-4 uppercase tracking-wide">
-            Leyenda de Competiciones
+            {t("competitionLegend")}
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="flex items-center space-x-2">
               <span className="w-3 h-3 bg-betis-verde rounded-full"></span>
               <span className="font-body text-sm text-gray-700">
-                Champions League (1-4)
+                {t("championsLeague")}
               </span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="w-3 h-3 bg-scotland-navy rounded-full"></span>
               <span className="font-body text-sm text-gray-700">
-                Europa League (5-6)
+                {t("europaLeague")}
               </span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="w-3 h-3 bg-orange-500 rounded-full"></span>
               <span className="font-body text-sm text-gray-700">
-                Conference League (7)
+                {t("conferenceLeague")}
               </span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="w-3 h-3 bg-red-500 rounded-full"></span>
               <span className="font-body text-sm text-gray-700">
-                Descenso (18-20)
+                {t("relegation")}
               </span>
             </div>
           </div>
@@ -221,31 +223,31 @@ async function StandingsContent() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Pos
+                    {t("pos")}
                   </th>
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Equipo
+                    {t("team")}
                   </th>
                   <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Pts
+                    {t("pts")}
                   </th>
                   <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
-                    PJ
+                    {t("played")}
                   </th>
                   <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
-                    G
+                    {t("won")}
                   </th>
                   <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
-                    E
+                    {t("draw")}
                   </th>
                   <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
-                    P
+                    {t("lost")}
                   </th>
                   <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
-                    DG
+                    {t("goalDiff")}
                   </th>
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
-                    Forma
+                    {t("form")}
                   </th>
                 </tr>
               </thead>
@@ -269,7 +271,7 @@ async function StandingsContent() {
               href="/partidos"
               className="inline-flex items-center justify-center px-8 py-4 bg-betis-verde text-white font-heading font-bold rounded-xl hover:bg-betis-verde-dark transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl uppercase tracking-wide"
             >
-              Ver Partidos del Betis
+              {t("viewMatches")}
             </Link>
           </FeatureWrapper>
         </div>

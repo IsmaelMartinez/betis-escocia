@@ -1,14 +1,6 @@
+import React from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-
-// Mock Next.js Link component
-vi.mock("next/link", () => ({
-  default: ({ href, children, ...props }: any) => (
-    <a href={href} {...props}>
-      {children}
-    </a>
-  ),
-}));
 
 // Mock FeatureWrapper to always render children (feature enabled)
 vi.mock("@/lib/features/featureProtection", () => ({
@@ -30,105 +22,76 @@ vi.mock("lucide-react", () => ({
   )),
 }));
 
+async function renderNosotrosPage() {
+  const NosotrosPage = (await import("@/app/[locale]/nosotros/page")).default;
+  const params = Promise.resolve({ locale: "es" });
+  const Component = await NosotrosPage({ params });
+  return render(Component as React.ReactElement);
+}
+
 describe("Nosotros Page", () => {
   describe("Basic rendering", () => {
     it("should render the main heading", async () => {
-      const NosotrosPage = (await import("@/app/[locale]/nosotros/page"))
-        .default;
-      render(<NosotrosPage />);
+      await renderNosotrosPage();
 
       expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
-      expect(screen.getByText("Nosotros")).toBeInTheDocument();
+      expect(screen.getByText("title")).toBeInTheDocument();
     });
 
     it("should render the hero section tagline", async () => {
-      const NosotrosPage = (await import("@/app/[locale]/nosotros/page"))
-        .default;
-      render(<NosotrosPage />);
+      await renderNosotrosPage();
 
-      expect(
-        screen.getByText("Más que una peña, somos familia"),
-      ).toBeInTheDocument();
-      expect(screen.getByText(/💚 Nuestra Historia/)).toBeInTheDocument();
+      expect(screen.getByText("subtitle")).toBeInTheDocument();
+      expect(screen.getByText("badge")).toBeInTheDocument();
     });
   });
 
   describe("Three main cards", () => {
     it("should render all three card headings", async () => {
-      const NosotrosPage = (await import("@/app/[locale]/nosotros/page"))
-        .default;
-      render(<NosotrosPage />);
+      await renderNosotrosPage();
 
-      expect(screen.getByText("Nuestros Orígenes")).toBeInTheDocument();
-      expect(screen.getByText("Nuestra Familia")).toBeInTheDocument();
-      expect(screen.getByText("Nuestro Legado")).toBeInTheDocument();
+      expect(screen.getByText("originsTitle")).toBeInTheDocument();
+      expect(screen.getByText("familyTitle")).toBeInTheDocument();
+      expect(screen.getByText("legacyTitle")).toBeInTheDocument();
     });
 
     it("should render founding story in card 1", async () => {
-      const NosotrosPage = (await import("@/app/[locale]/nosotros/page"))
-        .default;
-      render(<NosotrosPage />);
+      await renderNosotrosPage();
 
-      expect(screen.getByText(/4 de diciembre de 2010/)).toBeInTheDocument();
-      expect(
-        screen.getByText(/Juan Morata y José María Conde/),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText(/primera peña oficial del Real Betis en Reino Unido/),
-      ).toBeInTheDocument();
+      expect(screen.getByText("originsDate")).toBeInTheDocument();
+      expect(screen.getByText("originsText1")).toBeInTheDocument();
+      expect(screen.getByText("originsText2")).toBeInTheDocument();
     });
 
     it("should render LaLiga quote in card 1", async () => {
-      const NosotrosPage = (await import("@/app/[locale]/nosotros/page"))
-        .default;
-      render(<NosotrosPage />);
+      await renderNosotrosPage();
 
-      expect(
-        screen.getByText(
-          /La idea vino tomando algo en un pub. Simplemente lo decidieron así/,
-        ),
-      ).toBeInTheDocument();
-      expect(screen.getByText("— LaLiga oficial")).toBeInTheDocument();
+      expect(screen.getByText("originsQuote")).toBeInTheDocument();
+      expect(screen.getByText("originsSource")).toBeInTheDocument();
     });
 
     it("should render community description in card 2", async () => {
-      const NosotrosPage = (await import("@/app/[locale]/nosotros/page"))
-        .default;
-      render(<NosotrosPage />);
+      await renderNosotrosPage();
 
-      expect(screen.getByText(/todos son bienvenidos/)).toBeInTheDocument();
-      expect(
-        screen.getByText(
-          /Reconocidos por LaLiga como "bastión" del betismo en Escocia/,
-        ),
-      ).toBeInTheDocument();
+      expect(screen.getByText("familyText1")).toBeInTheDocument();
+      expect(screen.getByText("familyRecognition")).toBeInTheDocument();
     });
 
     it("should render condensed timeline in card 3", async () => {
-      const NosotrosPage = (await import("@/app/[locale]/nosotros/page"))
-        .default;
-      render(<NosotrosPage />);
+      await renderNosotrosPage();
 
       // Check for the 3 key milestones
       expect(screen.getByText("2010")).toBeInTheDocument();
       expect(screen.getByText("2015")).toBeInTheDocument();
       expect(screen.getByText("2018")).toBeInTheDocument();
 
-      expect(
-        screen.getByText(/Primera peña oficial del Betis en Reino Unido/),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText(/Nuevo hogar en Polwarth Tavern/),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText(/Reconocimiento oficial de LaLiga/),
-      ).toBeInTheDocument();
+      expect(screen.getByText("legacy2010")).toBeInTheDocument();
+      expect(screen.getByText("legacy2015")).toBeInTheDocument();
+      expect(screen.getByText("legacy2018")).toBeInTheDocument();
     });
 
     it("should render icons for all cards", async () => {
-      const NosotrosPage = (await import("@/app/[locale]/nosotros/page"))
-        .default;
-      render(<NosotrosPage />);
+      await renderNosotrosPage();
 
       expect(screen.getAllByTestId("heart-icon").length).toBeGreaterThan(0);
       expect(screen.getAllByTestId("users-icon").length).toBeGreaterThan(0);
@@ -138,29 +101,19 @@ describe("Nosotros Page", () => {
 
   describe("Call to action section", () => {
     it("should render CTA heading and text", async () => {
-      const NosotrosPage = (await import("@/app/[locale]/nosotros/page"))
-        .default;
-      render(<NosotrosPage />);
+      await renderNosotrosPage();
 
-      expect(
-        screen.getByText(/¿Quieres ser parte de nuestra historia?/),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText(
-          /Tu historia también puede formar parte de la nuestra/,
-        ),
-      ).toBeInTheDocument();
+      expect(screen.getByText("ctaTitle")).toBeInTheDocument();
+      expect(screen.getByText("ctaText")).toBeInTheDocument();
     });
 
     it("should render navigation links", async () => {
-      const NosotrosPage = (await import("@/app/[locale]/nosotros/page"))
-        .default;
-      render(<NosotrosPage />);
+      await renderNosotrosPage();
 
       const uneteLink = screen.getByRole("link", {
-        name: /Únete a Nosotros/,
+        name: /ctaJoin/,
       });
-      const partidosLink = screen.getByRole("link", { name: /Ver Partidos/ });
+      const partidosLink = screen.getByRole("link", { name: /ctaMatches/ });
 
       expect(uneteLink).toHaveAttribute("href", "/unete");
       expect(partidosLink).toHaveAttribute("href", "/partidos");
@@ -169,9 +122,7 @@ describe("Nosotros Page", () => {
 
   describe("Design system consistency", () => {
     it("should use cultural fusion design patterns", async () => {
-      const NosotrosPage = (await import("@/app/[locale]/nosotros/page"))
-        .default;
-      const { container } = render(<NosotrosPage />);
+      const { container } = await renderNosotrosPage();
 
       // Check for design system classes
       expect(container.querySelector(".bg-hero-fusion")).toBeInTheDocument();
@@ -184,20 +135,16 @@ describe("Nosotros Page", () => {
     });
 
     it("should use typography system classes", async () => {
-      const NosotrosPage = (await import("@/app/[locale]/nosotros/page"))
-        .default;
-      render(<NosotrosPage />);
+      await renderNosotrosPage();
 
-      const heading = screen.getByText("Nosotros");
+      const heading = screen.getByText("title");
       expect(heading).toHaveClass("font-display");
     });
   });
 
   describe("Accessibility", () => {
     it("should have proper heading hierarchy", async () => {
-      const NosotrosPage = (await import("@/app/[locale]/nosotros/page"))
-        .default;
-      render(<NosotrosPage />);
+      await renderNosotrosPage();
 
       const headings = screen.getAllByRole("heading");
       expect(headings.length).toBeGreaterThan(0);
@@ -205,13 +152,11 @@ describe("Nosotros Page", () => {
       // Should have a main heading (h1)
       const h1 = screen.getByRole("heading", { level: 1 });
       expect(h1).toBeInTheDocument();
-      expect(h1).toHaveTextContent("Nosotros");
+      expect(h1).toHaveTextContent("title");
     });
 
     it("should have proper link structure", async () => {
-      const NosotrosPage = (await import("@/app/[locale]/nosotros/page"))
-        .default;
-      render(<NosotrosPage />);
+      await renderNosotrosPage();
 
       const links = screen.getAllByRole("link");
       expect(links.length).toBeGreaterThan(0);

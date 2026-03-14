@@ -2,15 +2,6 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import HeroCommunity from "@/components/hero/HeroCommunity";
 
-// Mock Next.js Link
-vi.mock("next/link", () => ({
-  default: vi.fn(({ href, className, children }) => (
-    <a href={href} className={className} data-testid="next-link">
-      {children}
-    </a>
-  )),
-}));
-
 // Default props for tests (features enabled)
 const defaultProps = {
   showPartidos: true,
@@ -70,10 +61,9 @@ describe("HeroCommunity", () => {
     it("renders main heading", () => {
       render(<HeroCommunity {...defaultProps} />);
 
-      expect(screen.getByText("MÁS QUE")).toBeInTheDocument();
-      expect(screen.getByText("UNA PEÑA")).toBeInTheDocument();
-      // Note: "Una Familia" is the new tagline styling
-      expect(screen.getByText("Una Familia")).toBeInTheDocument();
+      expect(screen.getByText("headline1")).toBeInTheDocument();
+      expect(screen.getByText("headline2")).toBeInTheDocument();
+      expect(screen.getByText("headline3")).toBeInTheDocument();
     });
   });
 
@@ -81,17 +71,16 @@ describe("HeroCommunity", () => {
     it("renders community description", () => {
       render(<HeroCommunity {...defaultProps} />);
 
-      expect(screen.getByText(/Más de 15 años/)).toBeInTheDocument();
-      expect(screen.getByText("amigos de verdad")).toBeInTheDocument();
-      expect(screen.getByText("ya eres de los nuestros")).toBeInTheDocument();
+      expect(screen.getByText("descriptionPart1")).toBeInTheDocument();
+      expect(screen.getByText("descriptionPart2")).toBeInTheDocument();
     });
 
     it("highlights key information", () => {
       render(<HeroCommunity {...defaultProps} />);
 
-      // Check for highlighted text within the description
+      // Check for description text rendered via dangerouslySetInnerHTML
       const descriptionSection = screen
-        .getByText(/Más de 15 años/)
+        .getByText("descriptionPart1")
         .closest("div");
       expect(descriptionSection).toBeInTheDocument();
     });
@@ -101,18 +90,18 @@ describe("HeroCommunity", () => {
     it("renders feature cards with correct titles", () => {
       render(<HeroCommunity {...defaultProps} />);
 
-      expect(screen.getByText("Ambiente Familiar")).toBeInTheDocument();
-      expect(screen.getByText("Siempre con Humor")).toBeInTheDocument();
+      expect(screen.getByText("familyTitle")).toBeInTheDocument();
+      expect(screen.getByText("humorTitle")).toBeInTheDocument();
     });
 
     it("renders feature card descriptions", () => {
       render(<HeroCommunity {...defaultProps} />);
 
       expect(
-        screen.getByText("Niños bienvenidos, ambiente relajado y acogedor"),
+        screen.getByText("familyDesc"),
       ).toBeInTheDocument();
       expect(
-        screen.getByText("Ganemos o perdamos, aquí se ríe y se disfruta"),
+        screen.getByText("humorDesc"),
       ).toBeInTheDocument();
     });
 
@@ -126,8 +115,8 @@ describe("HeroCommunity", () => {
     it("applies hover and transition classes to feature cards", () => {
       render(<HeroCommunity {...defaultProps} />);
 
-      const ambienteCard = screen.getByText("Ambiente Familiar").closest("div");
-      const humorCard = screen.getByText("Siempre con Humor").closest("div");
+      const ambienteCard = screen.getByText("familyTitle").closest("div");
+      const humorCard = screen.getByText("humorTitle").closest("div");
 
       expect(ambienteCard).toHaveClass(
         "group",
@@ -146,13 +135,13 @@ describe("HeroCommunity", () => {
     it("renders CTA button", () => {
       render(<HeroCommunity {...defaultProps} />);
 
-      expect(screen.getByText("ÚNETE A LA FAMILIA")).toBeInTheDocument();
+      expect(screen.getByText("joinCta")).toBeInTheDocument();
     });
 
     it("renders CTA button with correct link", () => {
       render(<HeroCommunity {...defaultProps} />);
 
-      const ctaLink = screen.getByText("ÚNETE A LA FAMILIA").closest("a");
+      const ctaLink = screen.getByText("joinCta").closest("a");
       expect(ctaLink).toHaveAttribute("href", "/unete");
     });
 
@@ -165,8 +154,8 @@ describe("HeroCommunity", () => {
     it("renders VER PARTIDOS secondary CTA", () => {
       render(<HeroCommunity {...defaultProps} />);
 
-      expect(screen.getByText("VER PARTIDOS")).toBeInTheDocument();
-      const partidosLink = screen.getByText("VER PARTIDOS").closest("a");
+      expect(screen.getByText("matchesCta")).toBeInTheDocument();
+      const partidosLink = screen.getByText("matchesCta").closest("a");
       expect(partidosLink).toHaveAttribute("href", "/partidos");
     });
   });
@@ -176,14 +165,14 @@ describe("HeroCommunity", () => {
     it("renders RSVP section title", () => {
       render(<HeroCommunity {...defaultProps} />);
 
-      expect(screen.getByText("Confirmar Asistencia")).toBeInTheDocument();
+      expect(screen.getByText("confirmAttendance")).toBeInTheDocument();
     });
 
     it("renders RSVP expandable button", () => {
       render(<HeroCommunity {...defaultProps} />);
 
       const rsvpButton = screen.getByRole("button", {
-        name: /confirmar asistencia/i,
+        name: /confirmAttendance/i,
       });
       expect(rsvpButton).toBeInTheDocument();
       expect(rsvpButton).toHaveClass(
@@ -214,7 +203,7 @@ describe("HeroCommunity", () => {
     it("uses grid layout for main content", () => {
       render(<HeroCommunity {...defaultProps} />);
 
-      const mainGrid = screen.getByText("MÁS QUE").closest(".grid");
+      const mainGrid = screen.getByText("headline1").closest(".grid");
       expect(mainGrid).toHaveClass("lg:grid-cols-2", "gap-12", "lg:gap-20");
     });
 
@@ -257,7 +246,7 @@ describe("HeroCommunity", () => {
       render(<HeroCommunity {...defaultProps} />);
 
       const h1 = screen.getByRole("heading", { level: 1 });
-      expect(h1.textContent).toContain("MÁS QUE");
+      expect(h1.textContent).toContain("headline1");
     });
 
     it("includes proper link accessibility", () => {
@@ -284,8 +273,8 @@ describe("HeroCommunity", () => {
     it("includes animation classes on feature cards", () => {
       render(<HeroCommunity {...defaultProps} />);
 
-      const ambienteCard = screen.getByText("Ambiente Familiar").closest("div");
-      const humorCard = screen.getByText("Siempre con Humor").closest("div");
+      const ambienteCard = screen.getByText("familyTitle").closest("div");
+      const humorCard = screen.getByText("humorTitle").closest("div");
 
       // Cards have transition classes for hover effects
       expect(ambienteCard).toHaveClass("transition-all");
@@ -324,20 +313,20 @@ describe("HeroCommunity", () => {
     it("renders tagline badge", () => {
       render(<HeroCommunity {...defaultProps} />);
 
-      expect(screen.getByText(/Desde Sevilla a Edimburgo/)).toBeInTheDocument();
+      expect(screen.getByText("tagline")).toBeInTheDocument();
     });
 
     it("uses display font classes for main heading", () => {
       render(<HeroCommunity {...defaultProps} />);
 
-      const heading = screen.getByText("MÁS QUE");
+      const heading = screen.getByText("headline1");
       expect(heading).toHaveClass("font-display");
     });
 
     it("uses accent font class for tagline", () => {
       render(<HeroCommunity {...defaultProps} />);
 
-      const tagline = screen.getByText("Una Familia");
+      const tagline = screen.getByText("headline3");
       expect(tagline).toHaveClass("font-accent");
     });
   });

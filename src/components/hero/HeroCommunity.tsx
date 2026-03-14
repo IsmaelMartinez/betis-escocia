@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import {
   Heart,
   Coffee,
@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useState, memo } from "react";
+import { useTranslations } from "next-intl";
 
 // Lazy load RSVPWidget since it's only shown when expanded
 const RSVPWidget = dynamic(() => import("../rsvp/RSVPWidget"), {
@@ -53,6 +54,7 @@ interface HeroCommunityProps {
 
 function HeroCommunity({ showPartidos, showRsvp }: HeroCommunityProps) {
   const [isRSVPExpanded, setIsRSVPExpanded] = useState(false);
+  const t = useTranslations("home");
 
   return (
     <section className="relative min-h-screen overflow-hidden">
@@ -85,66 +87,54 @@ function HeroCommunity({ showPartidos, showRsvp }: HeroCommunityProps) {
             {/* Tagline badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-betis-verde-light border border-betis-verde/20 mb-6">
               <span className="text-sm font-medium text-betis-verde-dark">
-                🏴󠁧󠁢󠁳󠁣󠁴󠁿 Desde Sevilla a Edimburgo
+                {t("tagline")}
               </span>
             </div>
 
             {/* Main headline - using display font */}
             <h1 className="mb-6 lg:mb-8 leading-none">
               <span className="block font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-scotland-navy tracking-tight">
-                MÁS QUE
+                {t("headline1")}
               </span>
               <span className="block font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-betis-verde tracking-tight">
-                UNA PEÑA
+                {t("headline2")}
               </span>
               <span className="block font-accent text-2xl sm:text-3xl md:text-4xl text-oro-antique mt-4 italic">
-                Una Familia
+                {t("headline3")}
               </span>
             </h1>
 
             {/* Description card with verdiblanco edge */}
             <div className="relative bg-canvas-warm rounded-xl p-6 lg:p-8 mb-8 shadow-lg border border-gray-100 pattern-verdiblanco-edge-left">
-              <p className="font-body text-lg lg:text-xl leading-relaxed text-gray-700 mb-4">
-                <strong className="text-betis-verde font-heading">
-                  Más de 15 años
-                </strong>{" "}
-                compartiendo la pasión por el Betis desde Edimburgo. Aquí
-                encontrarás{" "}
-                <strong className="text-betis-verde font-heading">
-                  amigos de verdad
-                </strong>
-                , momentos únicos y el cariño de una comunidad que te acoge como
-                en casa.
-              </p>
-              <p className="font-body text-base lg:text-lg text-gray-600">
-                Ya seas de Sevilla, de cualquier parte de España, o incluso
-                escocés... si llevas el Betis en el corazón,{" "}
-                <strong className="text-betis-verde">
-                  ya eres de los nuestros
-                </strong>
-                .
-              </p>
+              <p
+                className="font-body text-lg lg:text-xl leading-relaxed text-gray-700 mb-4"
+                dangerouslySetInnerHTML={{ __html: t.raw("descriptionPart1") }}
+              />
+              <p
+                className="font-body text-base lg:text-lg text-gray-600"
+                dangerouslySetInnerHTML={{ __html: t.raw("descriptionPart2") }}
+              />
             </div>
 
             {/* Feature cards with cultural pattern */}
-            <h2 className="sr-only">Características de la peña</h2>
+            <h2 className="sr-only">{t("features")}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6 mb-8">
               <div className="group pattern-card-cultural rounded-xl p-6 border border-gray-100 hover:border-betis-verde hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 <Coffee className="h-8 w-8 text-betis-verde mb-4 group-hover:scale-110 transition-transform duration-300" />
                 <h3 className="font-heading font-bold text-scotland-navy mb-2 text-lg uppercase tracking-wide">
-                  Ambiente Familiar
+                  {t("familyTitle")}
                 </h3>
                 <p className="font-body text-sm text-gray-600">
-                  Niños bienvenidos, ambiente relajado y acogedor
+                  {t("familyDesc")}
                 </p>
               </div>
               <div className="group pattern-card-cultural rounded-xl p-6 border border-gray-100 hover:border-betis-verde hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 <Smile className="h-8 w-8 text-betis-verde mb-4 group-hover:scale-110 transition-transform duration-300" />
                 <h3 className="font-heading font-bold text-scotland-navy mb-2 text-lg uppercase tracking-wide">
-                  Siempre con Humor
+                  {t("humorTitle")}
                 </h3>
                 <p className="font-body text-sm text-gray-600">
-                  Ganemos o perdamos, aquí se ríe y se disfruta
+                  {t("humorDesc")}
                 </p>
               </div>
             </div>
@@ -156,7 +146,7 @@ function HeroCommunity({ showPartidos, showRsvp }: HeroCommunityProps) {
                 className="group bg-betis-verde-dark hover:bg-betis-verde text-white px-8 py-4 rounded-xl font-heading font-bold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-betis flex items-center justify-center"
               >
                 <Heart className="mr-3 h-5 w-5 group-hover:animate-pulse" />
-                ÚNETE A LA FAMILIA
+                {t("joinCta")}
               </Link>
               {showPartidos && (
                 <Link
@@ -164,7 +154,7 @@ function HeroCommunity({ showPartidos, showRsvp }: HeroCommunityProps) {
                   className="group bg-white hover:bg-betis-verde-pale text-betis-verde-dark border-2 border-betis-verde-dark px-8 py-4 rounded-xl font-heading font-bold text-lg transition-all duration-300 flex items-center justify-center"
                 >
                   <Calendar className="mr-3 h-5 w-5" />
-                  VER PARTIDOS
+                  {t("matchesCta")}
                 </Link>
               )}
             </div>
@@ -197,7 +187,7 @@ function HeroCommunity({ showPartidos, showRsvp }: HeroCommunityProps) {
                   >
                     <h3 className="font-heading text-lg font-bold text-scotland-navy uppercase tracking-wide flex items-center gap-2">
                       <Users className="h-5 w-5 text-betis-verde" />
-                      Confirmar Asistencia
+                      {t("confirmAttendance")}
                     </h3>
                     {isRSVPExpanded ? (
                       <ChevronUp className="h-5 w-5 text-betis-verde" />
@@ -211,11 +201,10 @@ function HeroCommunity({ showPartidos, showRsvp }: HeroCommunityProps) {
                       <RSVPWidget
                         event={{
                           id: undefined,
-                          title: "Real Betis - Próximo Partido",
+                          title: t("nextMatchTitle"),
                           date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
                           location: "Edinburgh",
-                          description:
-                            "Únete a la peña para el próximo partido del Betis",
+                          description: t("nextMatchDesc"),
                         }}
                         displayMode="inline"
                         className="border-none shadow-none"

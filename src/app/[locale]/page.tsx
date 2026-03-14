@@ -1,8 +1,8 @@
 import dynamic from "next/dynamic";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import HeroCommunity from "@/components/hero/HeroCommunity";
 import { hasFeature } from "@/lib/features/featureFlags";
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 
 const BetisEfemerides = dynamic(
   () => import("@/components/widgets/BetisEfemerides"),
@@ -69,6 +69,7 @@ export default async function Home({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations("home");
 
   // Get feature flags on server to pass to client components
   const showPartidos = hasFeature("show-partidos");
@@ -97,7 +98,7 @@ export default async function Home({
                   {/* Section header with display typography */}
                   <div className="mb-8 text-center lg:text-left">
                     <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-black text-scotland-navy mb-3 uppercase tracking-tight">
-                      Próximos Partidos
+                      {t("upcomingMatches")}
                     </h2>
                     <div className="h-1 w-32 bg-gradient-to-r from-betis-verde via-betis-oro to-scotland-navy mx-auto lg:mx-0 rounded-full" />
                   </div>
@@ -125,7 +126,7 @@ export default async function Home({
             {/* Section header */}
             <div className="mb-8 text-center">
               <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black text-scotland-navy mb-3 uppercase tracking-tight">
-                Tal Día Como Hoy
+                {t("todayInHistory")}
               </h2>
               <div className="h-1 w-24 bg-gradient-to-r from-betis-verde via-betis-oro to-betis-verde mx-auto rounded-full" />
             </div>
@@ -151,24 +152,23 @@ export default async function Home({
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8">
             <span className="text-white font-heading font-medium text-sm tracking-wide">
-              🏴󠁧󠁢󠁳󠁣󠁴󠁿 Bienvenidos a Escocia
+              {t("welcomeBadge")}
             </span>
           </div>
 
           {/* Display typography - massive impact */}
           <h2 className="font-display text-4xl sm:text-5xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight leading-none">
-            ¿Estás de visita
+            {t("visitingTitle1")}
             <br />
-            en Escocia?
+            {t("visitingTitle2")}
           </h2>
 
           <p className="font-accent text-2xl sm:text-3xl lg:text-4xl mb-6 text-oro-bright text-shadow-lg italic">
-            ¡Ven a ver los partidos con nosotros!
+            {t("visitingSubtitle")}
           </p>
 
           <p className="font-body text-lg sm:text-xl lg:text-2xl mb-12 max-w-3xl mx-auto text-white/95 leading-relaxed text-shadow-lg">
-            Todos los béticos son bienvenidos. No importa de dónde vengas, aquí
-            tienes una familia que comparte tu pasión por el Betis.
+            {t("visitingDesc")}
           </p>
 
           {/* CTA Buttons - enhanced with new styling */}
@@ -178,7 +178,7 @@ export default async function Home({
               className="group bg-oro-bright hover:bg-oro-antique text-scotland-navy px-12 py-6 rounded-2xl font-display font-black text-xl shadow-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-[0_0_30px_rgba(255,215,0,0.4)] uppercase tracking-wide"
             >
               <span className="flex items-center gap-3">
-                💬 Únete a la Familia
+                {t("joinFamily")}
               </span>
             </Link>
 
@@ -188,7 +188,7 @@ export default async function Home({
               rel="noopener noreferrer"
               className="group bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white hover:border-white px-10 py-5 rounded-2xl font-heading font-bold text-lg text-white hover:text-betis-verde transition-all duration-300 transform hover:scale-105"
             >
-              <span className="flex items-center gap-2">📘 Facebook</span>
+              <span className="flex items-center gap-2">{t("facebook")}</span>
             </a>
           </div>
 
@@ -198,43 +198,36 @@ export default async function Home({
             <div className="group relative bg-white/10 backdrop-blur-md rounded-2xl p-7 border border-white/20 hover:bg-white/20 hover:border-oro-bright transition-all duration-300 overflow-hidden">
               <div className="absolute top-0 right-0 w-16 h-16 pattern-verdiblanco-diagonal-subtle opacity-20" />
               <h3 className="font-heading text-xl font-bold mb-4 text-oro-bright uppercase tracking-wide flex items-center gap-2">
-                📍 Ubicación
+                {t("locationTitle")}
               </h3>
-              <p className="font-body text-base text-white/90 leading-relaxed">
-                Polwarth Tavern
-                <br />
-                Edinburgh EH11 1HR
-              </p>
+              <p
+                className="font-body text-base text-white/90 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: t.raw("locationDetails") }}
+              />
             </div>
 
             {/* Schedule Card */}
             <div className="group relative bg-white/10 backdrop-blur-md rounded-2xl p-7 border border-white/20 hover:bg-white/20 hover:border-oro-bright transition-all duration-300 overflow-hidden">
               <div className="absolute top-0 right-0 w-16 h-16 pattern-tartan-subtle opacity-30" />
               <h3 className="font-heading text-xl font-bold mb-4 text-oro-bright uppercase tracking-wide flex items-center gap-2">
-                ⏰ Horarios
+                {t("scheduleTitle")}
               </h3>
-              <p className="font-body text-base text-white/90 leading-relaxed">
-                15 min antes del partido
-                <br />
-                Todos los eventos
-                <br />
-                Fútbol · Reuniones · Celebraciones
-              </p>
+              <p
+                className="font-body text-base text-white/90 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: t.raw("scheduleDetails") }}
+              />
             </div>
 
             {/* Atmosphere Card */}
             <div className="group relative bg-white/10 backdrop-blur-md rounded-2xl p-7 border border-white/20 hover:bg-white/20 hover:border-oro-bright transition-all duration-300 overflow-hidden">
               <div className="absolute top-0 right-0 w-16 h-16 pattern-verdiblanco-diagonal-subtle opacity-20" />
               <h3 className="font-heading text-xl font-bold mb-4 text-oro-bright uppercase tracking-wide flex items-center gap-2">
-                💚 Ambiente
+                {t("atmosphereTitle")}
               </h3>
-              <p className="font-body text-base text-white/90 leading-relaxed">
-                100% bético
-                <br />
-                Familiar y acogedor
-                <br />
-                Cervezas frías garantizadas
-              </p>
+              <p
+                className="font-body text-base text-white/90 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: t.raw("atmosphereDetails") }}
+              />
             </div>
           </div>
         </div>

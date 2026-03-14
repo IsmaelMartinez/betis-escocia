@@ -15,7 +15,9 @@ import { getUpcomingMatchesWithRSVPCounts, Match } from "@/lib/api/supabase";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { enGB } from "date-fns/locale";
 import { DATETIME_FORMAT } from "@/lib/constants/dateFormats";
+import { useTranslations, useLocale } from "next-intl";
 import CulturalFusionHero from "@/components/hero/CulturalFusionHero";
 import FeatureCard from "@/components/FeatureCard";
 
@@ -36,6 +38,8 @@ interface MatchWithRSVP extends Match {
 }
 
 function RSVPPage() {
+  const t = useTranslations("rsvp");
+  const locale = useLocale();
   const [showForm, setShowForm] = useState(true); // Show form by default
   const [rsvpData, setRSVPData] = useState<RSVPData | null>(null);
   const [availableMatches, setAvailableMatches] = useState<MatchWithRSVP[]>([]);
@@ -122,7 +126,7 @@ function RSVPPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return format(date, DATETIME_FORMAT, { locale: es });
+    return format(date, DATETIME_FORMAT, { locale: locale === "en" ? enGB : es });
   };
 
   // Default data while loading
@@ -137,10 +141,10 @@ function RSVPPage() {
       {/* Hero Section - Cultural Fusion Design */}
       <CulturalFusionHero>
         <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
-          ¿Vienes al Polwarth?
+          {t("heroTitle")}
         </h1>
         <p className="font-accent text-2xl sm:text-3xl text-oro-bright text-shadow-lg italic">
-          Confirma tu asistencia para el próximo partido
+          {t("heroSubtitle")}
         </p>
       </CulturalFusionHero>
 
@@ -153,7 +157,7 @@ function RSVPPage() {
           <div className="bg-betis-verde rounded-3xl p-8 text-white text-center mb-8 shadow-xl">
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-display text-3xl font-black uppercase tracking-tight">
-                Próximo Partido
+                {t("nextMatch")}
               </h2>
               {availableMatches.length > 1 && (
                 <div className="relative">
@@ -161,7 +165,7 @@ function RSVPPage() {
                     onClick={() => setShowMatchSelector(!showMatchSelector)}
                     className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
                   >
-                    <span className="text-sm font-medium">Cambiar partido</span>
+                    <span className="text-sm font-medium">{t("changeMatch")}</span>
                     <ChevronDown
                       className={`h-4 w-4 transition-transform ${showMatchSelector ? "rotate-180" : ""}`}
                     />
@@ -180,7 +184,7 @@ function RSVPPage() {
                           </div>
                           <div className="text-gray-500 text-sm">
                             {format(new Date(match.date_time), "dd MMM HH:mm", {
-                              locale: es,
+                              locale: locale === "en" ? enGB : es,
                             })}{" "}
                             • {match.competition}
                           </div>
@@ -220,7 +224,7 @@ function RSVPPage() {
                 <p className="text-sm opacity-90">
                   35 Polwarth Cres, Edinburgh
                 </p>
-                <p className="text-sm opacity-90">Llegada: 19:30</p>
+                <p className="text-sm opacity-90">{t("arrival")}: 19:30</p>
               </div>
             </div>
           </div>
@@ -229,7 +233,7 @@ function RSVPPage() {
           <div className="text-center mb-12">
             <div className="inline-flex items-center bg-betis-verde-light text-betis-verde-dark px-8 py-4 rounded-full font-heading font-bold text-xl mb-6 shadow-lg uppercase tracking-wide">
               <Users className="h-6 w-6 mr-2" />
-              {rsvpData?.totalAttendees ?? 0} béticos confirmados
+              {t("confirmedCount", { count: rsvpData?.totalAttendees ?? 0 })}
             </div>
 
             {!showForm ? (
@@ -237,7 +241,7 @@ function RSVPPage() {
                 onClick={() => setShowForm(true)}
                 className="bg-betis-verde hover:bg-betis-verde-dark text-white px-10 py-5 rounded-2xl font-display font-black text-xl transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-[0_0_30px_rgba(72,187,120,0.4)] uppercase tracking-tight"
               >
-                ✋ ¡Confirmar Asistencia! ({rsvpData?.totalAttendees ?? 0})
+                {t("confirmButton")} ({rsvpData?.totalAttendees ?? 0})
               </button>
             ) : (
               <div className="max-w-2xl mx-auto">
@@ -259,25 +263,25 @@ function RSVPPage() {
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="font-display text-4xl sm:text-5xl font-black text-scotland-navy mb-6 uppercase tracking-tight">
-              ¿Por qué confirmar tu asistencia?
+              {t("whyTitle")}
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <FeatureCard
               icon={Users}
-              title="Reservamos Mesa"
-              description="Con tu confirmación, podemos reservar una mesa grande para que todos estemos juntos viendo el partido."
+              title={t("reserveTitle")}
+              description={t("reserveDesc")}
             />
             <FeatureCard
               icon={Clock}
-              title="Llegada Puntual"
-              description="Sabemos cuántos venís y podemos avisar si hay que llegar antes para conseguir sitio en partidos importantes."
+              title={t("punctualTitle")}
+              description={t("punctualDesc")}
             />
             <FeatureCard
               icon={CheckCircle}
-              title="Ambiente Bético"
-              description="Cuantos más seamos, mejor ambiente. Tu presencia hace que la experiencia sea más especial para todos."
+              title={t("atmosphereTitle")}
+              description={t("atmosphereDesc")}
             />
           </div>
         </div>
@@ -290,27 +294,27 @@ function RSVPPage() {
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-display text-4xl font-black mb-12 text-white uppercase tracking-tight">
-            ¿Dudas sobre el partido?
+            {t("doubtsTitle")}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
               <h3 className="font-heading text-2xl font-bold mb-6 text-white uppercase tracking-wide">
-                Polwarth Tavern
+                {t("venueTitle")}
               </h3>
               <div className="space-y-3 font-body text-lg text-white/90">
-                <p>📍 35 Polwarth Cres, Edinburgh EH11 1HR</p>
-                <p>🕕 Llegada recomendada: 15 min antes</p>
-                <p>🍺 Bar completo con ambiente bético</p>
+                <p>{t("venueDetails1")}</p>
+                <p>{t("venueDetails2")}</p>
+                <p>{t("venueDetails3")}</p>
               </div>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
               <h3 className="font-heading text-2xl font-bold mb-6 text-white uppercase tracking-wide">
-                Organización
+                {t("orgTitle")}
               </h3>
               <div className="space-y-3 font-body text-lg text-white/90">
-                <p>📱 WhatsApp: Pregunta por el grupo</p>
-                <p>📧 Contacto a través de este formulario</p>
-                <p>🌐 Redes sociales: Síguenos en nuestras redes</p>
+                <p>{t("orgDetails1")}</p>
+                <p>{t("orgDetails2")}</p>
+                <p>{t("orgDetails3")}</p>
               </div>
             </div>
           </div>

@@ -44,6 +44,7 @@ vi.mock("date-fns", () => ({
 
 vi.mock("date-fns/locale", () => ({
   es: "es-locale",
+  enGB: "en-locale",
 }));
 
 describe("RSVP Page", () => {
@@ -85,17 +86,15 @@ describe("RSVP Page", () => {
       const RSVPPage = (await import("@/app/[locale]/rsvp/page")).default;
       render(<RSVPPage />);
 
-      expect(screen.getByText("¿Vienes al Polwarth?")).toBeInTheDocument();
-      expect(
-        screen.getByText("Confirma tu asistencia para el próximo partido"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("heroTitle")).toBeInTheDocument();
+      expect(screen.getByText("heroSubtitle")).toBeInTheDocument();
     });
 
     it("should render the next match information", async () => {
       const RSVPPage = (await import("@/app/[locale]/rsvp/page")).default;
       render(<RSVPPage />);
 
-      expect(screen.getByText("Próximo Partido")).toBeInTheDocument();
+      expect(screen.getByText("nextMatch")).toBeInTheDocument();
       expect(screen.getByText("Real Betis")).toBeInTheDocument();
       expect(screen.getByText("VS")).toBeInTheDocument();
     });
@@ -110,7 +109,9 @@ describe("RSVP Page", () => {
       expect(
         screen.getAllByText(/35 Polwarth Cres, Edinburgh/).length,
       ).toBeGreaterThanOrEqual(1);
-      expect(screen.getAllByText(/Llegada/).length).toBeGreaterThanOrEqual(1);
+      expect(
+        screen.getAllByText(/arrival/).length,
+      ).toBeGreaterThanOrEqual(1);
     });
 
     it("should render the RSVP form by default", async () => {
@@ -124,12 +125,10 @@ describe("RSVP Page", () => {
       const RSVPPage = (await import("@/app/[locale]/rsvp/page")).default;
       render(<RSVPPage />);
 
-      expect(
-        screen.getByText("¿Por qué confirmar tu asistencia?"),
-      ).toBeInTheDocument();
-      expect(screen.getByText("Reservamos Mesa")).toBeInTheDocument();
-      expect(screen.getByText("Llegada Puntual")).toBeInTheDocument();
-      expect(screen.getByText("Ambiente Bético")).toBeInTheDocument();
+      expect(screen.getByText("whyTitle")).toBeInTheDocument();
+      expect(screen.getByText("reserveTitle")).toBeInTheDocument();
+      expect(screen.getByText("punctualTitle")).toBeInTheDocument();
+      expect(screen.getByText("atmosphereTitle")).toBeInTheDocument();
     });
   });
 
@@ -165,7 +164,7 @@ describe("RSVP Page", () => {
       render(<RSVPPage />);
 
       await waitFor(() => {
-        expect(screen.queryByText("Cambiar partido")).not.toBeInTheDocument();
+        expect(screen.queryByText("changeMatch")).not.toBeInTheDocument();
       });
     });
 
@@ -193,7 +192,7 @@ describe("RSVP Page", () => {
       render(<RSVPPage />);
 
       await waitFor(() => {
-        expect(screen.getByText("Cambiar partido")).toBeInTheDocument();
+        expect(screen.getByText("changeMatch")).toBeInTheDocument();
       });
     });
 
@@ -221,7 +220,7 @@ describe("RSVP Page", () => {
       render(<RSVPPage />);
 
       await waitFor(() => {
-        const changeButton = screen.getByText("Cambiar partido");
+        const changeButton = screen.getByText("changeMatch");
         fireEvent.click(changeButton);
       });
 
@@ -312,7 +311,7 @@ describe("RSVP Page", () => {
       render(<RSVPPage />);
 
       await waitFor(() => {
-        expect(screen.getByText("12 béticos confirmados")).toBeInTheDocument();
+        expect(screen.getByText("confirmedCount")).toBeInTheDocument();
       });
     });
   });
@@ -326,7 +325,7 @@ describe("RSVP Page", () => {
       fireEvent.click(screen.getByTestId("mock-submit"));
 
       await waitFor(() => {
-        expect(screen.getByText(/¡Confirmar Asistencia!/)).toBeInTheDocument();
+        expect(screen.getByText(/confirmButton/)).toBeInTheDocument();
       });
     });
 
@@ -338,7 +337,7 @@ describe("RSVP Page", () => {
       fireEvent.click(screen.getByTestId("mock-submit"));
 
       await waitFor(() => {
-        const confirmButton = screen.getByText(/¡Confirmar Asistencia!/);
+        const confirmButton = screen.getByText(/confirmButton/);
         fireEvent.click(confirmButton);
       });
 
@@ -384,7 +383,7 @@ describe("RSVP Page", () => {
       render(<RSVPPage />);
 
       // Should handle invalid match ID gracefully and still render
-      expect(screen.getByText("¿Vienes al Polwarth?")).toBeInTheDocument();
+      expect(screen.getByText("heroTitle")).toBeInTheDocument();
     });
 
     it("should update URL when match is selected", async () => {
@@ -422,7 +421,7 @@ describe("RSVP Page", () => {
       render(<RSVPPage />);
 
       await waitFor(async () => {
-        const changeButton = screen.getByText("Cambiar partido");
+        const changeButton = screen.getByText("changeMatch");
         fireEvent.click(changeButton);
 
         await waitFor(() => {
@@ -492,7 +491,7 @@ describe("RSVP Page", () => {
 
       // Should have main heading
       expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-        "¿Vienes al Polwarth?",
+        "heroTitle",
       );
     });
 
@@ -531,18 +530,10 @@ describe("RSVP Page", () => {
       const RSVPPage = (await import("@/app/[locale]/rsvp/page")).default;
       render(<RSVPPage />);
 
-      // Check for informative text
-      expect(
-        screen.getByText(
-          /Con tu confirmación, podemos reservar una mesa grande/,
-        ),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText(/Sabemos cuántos venís y podemos avisar/),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText(/Cuantos más seamos, mejor ambiente/),
-      ).toBeInTheDocument();
+      // Check for informative text (now rendered as translation keys by mock)
+      expect(screen.getByText("reserveDesc")).toBeInTheDocument();
+      expect(screen.getByText("punctualDesc")).toBeInTheDocument();
+      expect(screen.getByText("atmosphereDesc")).toBeInTheDocument();
     });
   });
 

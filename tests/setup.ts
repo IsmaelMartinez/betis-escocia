@@ -93,7 +93,19 @@ afterEach(() => {
 
 // Mock next-intl for test environment
 vi.mock("next-intl", () => ({
-  useTranslations: () => (key: string) => key,
+  useTranslations: () => {
+    const t = (key: string, params?: Record<string, any>) => {
+      if (params) {
+        return Object.entries(params).reduce(
+          (str, [k, v]) => str.replace(`{${k}}`, String(v)),
+          key,
+        );
+      }
+      return key;
+    };
+    t.raw = (key: string) => key;
+    return t;
+  },
   useLocale: () => "es",
   NextIntlClientProvider: ({ children }: any) => children,
   hasLocale: () => true,
@@ -104,7 +116,19 @@ vi.mock("next-intl/middleware", () => ({
 }));
 
 vi.mock("next-intl/server", () => ({
-  getTranslations: () => (key: string) => key,
+  getTranslations: () => {
+    const t = (key: string, params?: Record<string, any>) => {
+      if (params) {
+        return Object.entries(params).reduce(
+          (str, [k, v]) => str.replace(`{${k}}`, String(v)),
+          key,
+        );
+      }
+      return key;
+    };
+    t.raw = (key: string) => key;
+    return t;
+  },
   setRequestLocale: () => {},
   getMessages: () => ({}),
   getRequestConfig: (fn: any) => fn,
