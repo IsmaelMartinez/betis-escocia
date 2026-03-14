@@ -4,7 +4,7 @@ import {
   getPositionBadge,
   formatForm,
   getFormResultStyle,
-} from "@/app/clasificacion/utils";
+} from "@/app/[locale]/clasificacion/utils";
 
 describe("Clasificacion Utils", () => {
   describe("getPositionStyle", () => {

@@ -105,7 +105,7 @@ vi.mock('@/lib/constants/dateFormats', () => ({
 }));
 
 // Import the component after all mocks
-import AdminPage from '@/app/admin/page';
+import AdminPage from '@/app/[locale]/admin/page';
 
 describe('AdminPage', () => {
   const mockPush = vi.fn();

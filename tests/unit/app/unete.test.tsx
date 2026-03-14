@@ -31,7 +31,7 @@ vi.mock("lucide-react", () => ({
 describe("Unete Page", () => {
   describe("Basic rendering", () => {
     it("should render the main heading", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
+      const UnetePage = (await import("@/app/[locale]/unete/page")).default;
       render(<UnetePage />);
 
       const h1 = screen.getByRole("heading", { level: 1 });
@@ -40,7 +40,7 @@ describe("Unete Page", () => {
     });
 
     it("should render tagline", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
+      const UnetePage = (await import("@/app/[locale]/unete/page")).default;
       render(<UnetePage />);
 
       expect(
@@ -51,7 +51,7 @@ describe("Unete Page", () => {
 
   describe("Three main cards", () => {
     it("should render all three card headings", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
+      const UnetePage = (await import("@/app/[locale]/unete/page")).default;
       render(<UnetePage />);
 
       expect(screen.getByText("1. Aparece")).toBeInTheDocument();
@@ -60,7 +60,7 @@ describe("Unete Page", () => {
     });
 
     it("should render location information in card 1", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
+      const UnetePage = (await import("@/app/[locale]/unete/page")).default;
       render(<UnetePage />);
 
       expect(screen.getByText("Polwarth Tavern")).toBeInTheDocument();
@@ -72,7 +72,7 @@ describe("Unete Page", () => {
     });
 
     it("should render social media links in card 2", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
+      const UnetePage = (await import("@/app/[locale]/unete/page")).default;
       render(<UnetePage />);
 
       const facebookLink = screen.getByRole("link", { name: /Facebook/ });
@@ -89,7 +89,7 @@ describe("Unete Page", () => {
     });
 
     it("should render benefits list in card 3", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
+      const UnetePage = (await import("@/app/[locale]/unete/page")).default;
       render(<UnetePage />);
 
       expect(screen.getByText(/Sin cuotas ni gastos/)).toBeInTheDocument();
@@ -103,7 +103,7 @@ describe("Unete Page", () => {
 
   describe("Visitor information section", () => {
     it("should render visitor welcome message", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
+      const UnetePage = (await import("@/app/[locale]/unete/page")).default;
       render(<UnetePage />);
 
       expect(screen.getByText(/¿De visita en Escocia?/)).toBeInTheDocument();
@@ -115,7 +115,7 @@ describe("Unete Page", () => {
 
   describe("Links and CTAs", () => {
     it("should render Google Maps link", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
+      const UnetePage = (await import("@/app/[locale]/unete/page")).default;
       render(<UnetePage />);
 
       const mapsLink = screen.getByRole("link", { name: /Abrir en Maps/ });
@@ -126,7 +126,7 @@ describe("Unete Page", () => {
     });
 
     it("should render Ver Próximos Partidos CTA", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
+      const UnetePage = (await import("@/app/[locale]/unete/page")).default;
       render(<UnetePage />);
 
       const ctaLink = screen.getByRole("link", {
@@ -138,7 +138,7 @@ describe("Unete Page", () => {
 
   describe("Accessibility", () => {
     it("should have proper heading structure", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
+      const UnetePage = (await import("@/app/[locale]/unete/page")).default;
       render(<UnetePage />);
 
       const headings = screen.getAllByRole("heading");
@@ -150,7 +150,7 @@ describe("Unete Page", () => {
     });
 
     it("should have external links with proper attributes", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
+      const UnetePage = (await import("@/app/[locale]/unete/page")).default;
       render(<UnetePage />);
 
       const externalLinks = screen.getAllByRole("link", {
@@ -165,7 +165,7 @@ describe("Unete Page", () => {
 
   describe("Design system consistency", () => {
     it("should use cultural fusion design patterns", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
+      const UnetePage = (await import("@/app/[locale]/unete/page")).default;
       const { container } = render(<UnetePage />);
 
       // Check for design system classes
@@ -179,7 +179,7 @@ describe("Unete Page", () => {
     });
 
     it("should render icons from Lucide React", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
+      const UnetePage = (await import("@/app/[locale]/unete/page")).default;
       render(<UnetePage />);
 
       expect(screen.getAllByTestId("map-pin-icon").length).toBeGreaterThan(0);

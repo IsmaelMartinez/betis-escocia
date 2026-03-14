@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { useAdminStats } from '@/app/admin/hooks/useAdminStats';
+import { useAdminStats } from '@/app/[locale]/admin/hooks/useAdminStats';
 import { supabase } from '@/lib/api/supabase';
 
 // Mock supabase

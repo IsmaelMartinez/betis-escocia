@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import MatchesPage from '@/app/partidos/page';
+import MatchesPage from '@/app/[locale]/partidos/page';
 
 // Mock the child components
 vi.mock('@/components/ErrorBoundary', () => ({

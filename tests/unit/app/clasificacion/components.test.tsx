@@ -46,7 +46,7 @@ import {
   getPositionBadge,
   formatForm,
   getFormResultStyle,
-} from "@/app/clasificacion/utils";
+} from "@/app/[locale]/clasificacion/utils";
 
 // Create a standalone StandingRow component for testing
 function StandingRow({ entry, isBetis }: { entry: any; isBetis: boolean }) {
