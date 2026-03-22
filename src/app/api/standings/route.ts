@@ -67,26 +67,41 @@ async function getStandings(): Promise<StandingsResponse> {
   }
 
   // Fetch fresh data from API
-  const service = new FootballDataService(axios.create());
-  const standings = await service.getLaLigaStandings();
-  
-  if (!standings) {
-    throw new Error('No se pudieron obtener las clasificaciones');
+  try {
+    const service = new FootballDataService(axios.create());
+    const standings = await service.getLaLigaStandings();
+
+    if (!standings) {
+      throw new Error('No se pudieron obtener las clasificaciones');
+    }
+
+    // Cache the fresh data
+    await setCachedStandings(standings);
+
+    log.info('Successfully fetched fresh standings data', undefined, {
+      teamCount: standings.table?.length || 0,
+      source: 'football-data-api'
+    });
+
+    return {
+      standings: standings,
+      lastUpdated: new Date().toISOString(),
+      source: 'api',
+    };
+  } catch (error) {
+    // Fall back to stale cache rather than returning an error
+    if (cachedData && cachedData.data) {
+      log.error('API fetch failed, returning stale cache', error as Error, {
+        cacheAge: Math.round(((new Date().getTime() - new Date(cachedData.last_updated).getTime()) / (1000 * 60 * 60)) * 100) / 100,
+      });
+      return {
+        standings: cachedData.data,
+        lastUpdated: cachedData.last_updated,
+        source: 'cache' as const,
+      };
+    }
+    throw error;
   }
-
-  // Cache the fresh data
-  await setCachedStandings(standings);
-
-  log.info('Successfully fetched fresh standings data', undefined, {
-    teamCount: standings.table?.length || 0,
-    source: 'football-data-api'
-  });
-
-  return {
-    standings: standings,
-    lastUpdated: new Date().toISOString(),
-    source: 'api',
-  };
 }
 
 export const GET = createApiHandler({
