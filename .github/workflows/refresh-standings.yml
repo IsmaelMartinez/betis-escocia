@@ -1,0 +1,28 @@
+name: Refresh Standings
+
+on:
+  schedule:
+    # Run daily at 6 AM UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+permissions: {}
+
+jobs:
+  refresh-standings:
+    name: Refresh La Liga Standings
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refresh standings cache
+        run: |
+          set -euo pipefail
+          HTTP_CODE=$(curl -s -o response.json -w "%{http_code}" "https://betis-escocia.vercel.app/api/standings?forceRefresh=true")
+          BODY=$(cat response.json)
+          SOURCE=$(echo "$BODY" | jq -r '.data.source // "unknown"')
+          echo "HTTP status: $HTTP_CODE"
+          echo "Data source: $SOURCE"
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "::error::Standings refresh failed with HTTP $HTTP_CODE"
+            exit 1
+          fi
+          echo "Standings refreshed successfully (source: $SOURCE)"
