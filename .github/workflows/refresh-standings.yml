@@ -6,6 +6,8 @@ on:
     - cron: '0 6 * * *'
   workflow_dispatch: # Allow manual trigger
 
+permissions: {}
+
 jobs:
   refresh-standings:
     name: Refresh La Liga Standings
@@ -13,10 +15,10 @@ jobs:
     steps:
       - name: Refresh standings cache
         run: |
-          RESPONSE=$(curl -s -w "\n%{http_code}" https://betis-escocia.vercel.app/api/standings)
-          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-          BODY=$(echo "$RESPONSE" | head -n -1)
-          SOURCE=$(echo "$BODY" | jq -r '.source // "unknown"')
+          set -euo pipefail
+          HTTP_CODE=$(curl -s -o response.json -w "%{http_code}" "https://betis-escocia.vercel.app/api/standings?forceRefresh=true")
+          BODY=$(cat response.json)
+          SOURCE=$(echo "$BODY" | jq -r '.data.source // "unknown"')
           echo "HTTP status: $HTTP_CODE"
           echo "Data source: $SOURCE"
           if [ "$HTTP_CODE" -ne 200 ]; then
