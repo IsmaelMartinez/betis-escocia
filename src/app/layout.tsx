@@ -207,8 +207,7 @@ export default function RootLayout({
         <ClerkProvider
           signInUrl="/sign-in"
           signUpUrl="/sign-up"
-          signInFallbackRedirectUrl="/dashboard"
-          afterSignUpUrl="/dashboard"
+          afterSignOutUrl="/"
         >
           <SentryUserContext />
           <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
