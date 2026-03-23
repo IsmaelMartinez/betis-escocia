@@ -44,7 +44,7 @@
     "next": "^16.0.10",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "react-hook-form": "^7.70.0",
+    "react-hook-form": "^7.72.0",
     "zod": "^4.1.13"
   },
   "devDependencies": {
@@ -89,7 +89,7 @@
     "wait-on": "^9.0.3"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "^4.53.3",
+    "@rollup/rollup-linux-x64-gnu": "^4.60.0",
     "@tailwindcss/oxide-linux-x64-gnu": "^4.1.18",
     "lightningcss-linux-x64-gnu": "^1.30.2"
   }
