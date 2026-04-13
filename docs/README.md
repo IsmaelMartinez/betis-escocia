@@ -4,6 +4,7 @@ Welcome to the Peña Bética Escocesa website documentation.
 
 ## Quick Start
 
+- **[Roadmap](roadmap.md)** - Project roadmap with priorities, status, and future plans
 - **[Developer Guide](developer-guide.md)** - Complete development guide with setup, architecture, and workflows
 - **[Testing Guide](testing-guide.md)** - Testing strategies, patterns, and best practices
 
