@@ -12,11 +12,11 @@ This document tracks planned work for the Betis Escocia project, organized into 
 
 These packages are pinned below latest major versions and need explicit migration:
 
-| Package | Current | Latest | Risk | Notes |
-|---|---|---|---|---|
-| `lucide-react` | 0.577.0 | 1.x | Medium | Icon library used across the site. v1 renamed/reorganized icons. Audit all imports before upgrading. |
-| `typescript` | 5.9.x | 6.x | Medium | TS 6 introduces new strictness rules. Run `tsc --noEmit` after upgrade to assess impact. |
-| `undici` | 7.x | 8.x | Low | Dev dependency only. May affect MSW/test mocking. Test suite is the main validation. |
+| Package        | Current | Latest | Risk   | Notes                                                                                                |
+| -------------- | ------- | ------ | ------ | ---------------------------------------------------------------------------------------------------- |
+| `lucide-react` | 0.577.0 | 1.x    | Medium | Icon library used across the site. v1 renamed/reorganized icons. Audit all imports before upgrading. |
+| `typescript`   | 5.9.x   | 6.x    | Medium | TS 6 introduces new strictness rules. Run `tsc --noEmit` after upgrade to assess impact.             |
+| `undici`       | 7.x     | 8.x    | Low    | Dev dependency only. May affect MSW/test mocking. Test suite is the main validation.                 |
 
 ### Security & Audit
 
@@ -34,12 +34,12 @@ From the [architecture simplification plan](architecture-simplification-plan.md)
 
 Target components totaling ~2,284 lines:
 
-| Component | Lines | Status | Plan |
-|---|---|---|---|
-| `AdminPageClient.tsx` | ~800 | Started | Extract `useAdminStats` hook (done). Next: `useAdminMatches`, `useAdminContacts` hooks + view components. |
-| `RSVPWidget.tsx` | ~530 | Planned | Simplify dual-path logic (anonymous vs authenticated). Split into Connected/Standalone/Base. |
-| `AllDatabaseMatches.tsx` | ~490 | Planned | Extract filtering/pagination into custom hooks. |
-| `Layout.tsx` | ~460 | Planned | Extract Header, Footer, UserMenu components. |
+| Component                | Lines | Status  | Plan                                                                                                      |
+| ------------------------ | ----- | ------- | --------------------------------------------------------------------------------------------------------- |
+| `AdminPageClient.tsx`    | ~800  | Started | Extract `useAdminStats` hook (done). Next: `useAdminMatches`, `useAdminContacts` hooks + view components. |
+| `RSVPWidget.tsx`         | ~530  | Planned | Simplify dual-path logic (anonymous vs authenticated). Split into Connected/Standalone/Base.              |
+| `AllDatabaseMatches.tsx` | ~490  | Planned | Extract filtering/pagination into custom hooks.                                                           |
+| `Layout.tsx`             | ~460  | Planned | Extract Header, Footer, UserMenu components.                                                              |
 
 ### Phase 5: Database Module Split
 
@@ -76,14 +76,15 @@ Extract remaining business logic from components into reusable hooks:
 
 Features currently behind feature flags, disabled by default:
 
-| Feature | Flag | Status | What's Needed |
-|---|---|---|---|
-| **RSVP** | `show-rsvp` | Built, disabled | Enable when Polwarth Tavern match viewings resume. UI and API are complete. |
-| **Contacto** | `show-contacto` | Built, disabled | Contact form with Supabase backend. Ready to enable when moderation workflow is in place. |
+| Feature        | Flag              | Status          | What's Needed                                                                               |
+| -------------- | ----------------- | --------------- | ------------------------------------------------------------------------------------------- |
+| **RSVP**       | `show-rsvp`       | Built, disabled | Enable when Polwarth Tavern match viewings resume. UI and API are complete.                 |
+| **Contacto**   | `show-contacto`   | Built, disabled | Contact form with Supabase backend. Ready to enable when moderation workflow is in place.   |
 | **Clerk Auth** | `show-clerk-auth` | Built, disabled | User accounts and login. Enable when user-facing features (RSVP auth, profiles) are needed. |
-| **Debug Info** | `show-debug-info` | Built, disabled | Developer-only. Enable per-environment via env vars. |
+| **Debug Info** | `show-debug-info` | Built, disabled | Developer-only. Enable per-environment via env vars.                                        |
 
 Previously mentioned features no longer in the flag system:
+
 - **Galeria** (`show-galeria`) - Not currently in feature flags. Would need to be re-added if pursued.
 - **Redes Sociales** (`show-redes-sociales`) - Same as above.
 
