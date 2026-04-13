@@ -17,9 +17,9 @@ Sentry.init({
 
   // In client-side Sentry, you can also set up a `beforeSend` hook to
   // filter out sensitive data or add additional context.
-  beforeSend(event) {
+  beforeSend(event: Sentry.ErrorEvent) {
     // Check if it's a production environment
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === "production") {
       // You can add custom logic here to filter out sensitive data
       // For example, if you have a field named 'password' in your event data, you can remove it:
       // if (event.request && event.request.data && event.request.data.password) {
