@@ -1,16 +1,16 @@
 // Football-Data.org API type definitions
 // Based on the actual API response structure from Football-Data.org
 
-export type MatchStatus = 
-  | 'SCHEDULED' 
-  | 'TIMED'
-  | 'IN_PLAY' 
-  | 'PAUSED' 
-  | 'FINISHED' 
-  | 'SUSPENDED' 
-  | 'POSTPONED' 
-  | 'CANCELLED'
-  | 'AWARDED';
+export type MatchStatus =
+  | "SCHEDULED"
+  | "TIMED"
+  | "IN_PLAY"
+  | "PAUSED"
+  | "FINISHED"
+  | "SUSPENDED"
+  | "POSTPONED"
+  | "CANCELLED"
+  | "AWARDED";
 
 export interface Team {
   id: number;
@@ -37,8 +37,8 @@ export interface Season {
 }
 
 export interface Score {
-  winner?: 'HOME_TEAM' | 'AWAY_TEAM' | 'DRAW';
-  duration: 'REGULAR' | 'EXTRA_TIME' | 'PENALTY_SHOOTOUT';
+  winner?: "HOME_TEAM" | "AWAY_TEAM" | "DRAW";
+  duration: "REGULAR" | "EXTRA_TIME" | "PENALTY_SHOOTOUT";
   fullTime: {
     home: number | null;
     away: number | null;
@@ -192,7 +192,7 @@ export type MatchFilters = {
   dateFrom?: string;
   dateTo?: string;
   competition?: string[];
-  homeAway?: 'home' | 'away' | 'all';
+  homeAway?: "home" | "away" | "all";
   limit?: number;
   offset?: number;
 };

@@ -19,7 +19,9 @@ vi.mock("@/lib/api/supabase", () => ({
 
 // Mock FeatureWrapper to always render children (feature enabled)
 vi.mock("@/lib/features/featureProtection", () => ({
-  FeatureWrapper: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  FeatureWrapper: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
 }));
 
 // Import the mocked function

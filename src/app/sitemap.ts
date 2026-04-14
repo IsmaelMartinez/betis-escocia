@@ -1,5 +1,8 @@
 import { MetadataRoute } from "next";
-import { getEnabledNavigationItems, hasFeature } from "@/lib/features/featureFlags";
+import {
+  getEnabledNavigationItems,
+  hasFeature,
+} from "@/lib/features/featureFlags";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://betis-escocia.vercel.app";

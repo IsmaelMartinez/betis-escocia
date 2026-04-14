@@ -1,14 +1,14 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import UpcomingMatches from '@/components/match/UpcomingMatches';
-import { getUpcomingMatches } from '@/lib/api/supabase';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import UpcomingMatches from "@/components/match/UpcomingMatches";
+import { getUpcomingMatches } from "@/lib/api/supabase";
 
 // Mock dependencies
-vi.mock('@/lib/api/supabase', () => ({
-  getUpcomingMatches: vi.fn()
+vi.mock("@/lib/api/supabase", () => ({
+  getUpcomingMatches: vi.fn(),
 }));
 
-vi.mock('@/components/match/MatchCard', () => ({
+vi.mock("@/components/match/MatchCard", () => ({
   default: vi.fn(({ opponent, competition }) => (
     <div data-testid="match-card">
       <div data-testid="match-opponent">{opponent}</div>
@@ -20,107 +20,107 @@ vi.mock('@/components/match/MatchCard', () => ({
     opponent: match.opponent,
     competition: match.competition,
     date: match.date_time,
-    isHome: match.home_away === 'home',
-    status: match.status || 'SCHEDULED',
-  }))
+    isHome: match.home_away === "home",
+    status: match.status || "SCHEDULED",
+  })),
 }));
 
-vi.mock('next/link', () => ({
+vi.mock("next/link", () => ({
   default: vi.fn(({ href, className, children }) => (
     <a href={href} className={className} data-testid="link">
       {children}
     </a>
-  ))
+  )),
 }));
 
-describe('UpcomingMatches', () => {
+describe("UpcomingMatches", () => {
   const mockGetUpcomingMatches = vi.mocked(getUpcomingMatches);
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     // Mock console.error to avoid noise in tests
-    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   const mockMatchesData = [
     {
       id: 1,
-      date_time: '2024-01-15T20:00:00Z',
-      opponent: 'Real Madrid',
-      competition: 'LaLiga',
-      home_away: 'home' as const,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
+      date_time: "2024-01-15T20:00:00Z",
+      opponent: "Real Madrid",
+      competition: "LaLiga",
+      home_away: "home" as const,
+      created_at: "2024-01-01T00:00:00Z",
+      updated_at: "2024-01-01T00:00:00Z",
     },
     {
       id: 2,
-      date_time: '2024-01-22T18:30:00Z',
-      opponent: 'Barcelona',
-      competition: 'Copa del Rey',
-      home_away: 'away' as const,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
+      date_time: "2024-01-22T18:30:00Z",
+      opponent: "Barcelona",
+      competition: "Copa del Rey",
+      home_away: "away" as const,
+      created_at: "2024-01-01T00:00:00Z",
+      updated_at: "2024-01-01T00:00:00Z",
     },
     {
       id: 3,
-      date_time: '2024-01-30T21:00:00Z',
-      opponent: 'Sevilla FC',
-      competition: 'LaLiga',
-      home_away: 'home' as const,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
-    }
+      date_time: "2024-01-30T21:00:00Z",
+      opponent: "Sevilla FC",
+      competition: "LaLiga",
+      home_away: "home" as const,
+      created_at: "2024-01-01T00:00:00Z",
+      updated_at: "2024-01-01T00:00:00Z",
+    },
   ];
 
-  describe('Loading state', () => {
-    it('shows loading skeleton while fetching matches', () => {
+  describe("Loading state", () => {
+    it("shows loading skeleton while fetching matches", () => {
       // Return a promise that never resolves to keep loading state
       mockGetUpcomingMatches.mockImplementation(() => new Promise(() => {}));
 
       render(<UpcomingMatches />);
 
-      expect(screen.getByText('Próximos Partidos')).toBeInTheDocument();
+      expect(screen.getByText("Próximos Partidos")).toBeInTheDocument();
       // Check for multiple loading skeletons
-      expect(screen.getAllByRole('generic').length).toBeGreaterThan(1);
+      expect(screen.getAllByRole("generic").length).toBeGreaterThan(1);
     });
 
-    it('shows correct number of loading skeletons based on limit', () => {
+    it("shows correct number of loading skeletons based on limit", () => {
       mockGetUpcomingMatches.mockImplementation(() => new Promise(() => {}));
 
       render(<UpcomingMatches limit={5} />);
 
       // There should be loading skeleton cards
-      const loadingCards = screen.getAllByRole('generic').filter(element =>
-        element.className.includes('animate-pulse')
-      );
+      const loadingCards = screen
+        .getAllByRole("generic")
+        .filter((element) => element.className.includes("animate-pulse"));
       expect(loadingCards.length).toBeGreaterThan(0);
     });
 
-    it('shows loading skeleton without title when showTitle is false', () => {
+    it("shows loading skeleton without title when showTitle is false", () => {
       mockGetUpcomingMatches.mockImplementation(() => new Promise(() => {}));
 
       render(<UpcomingMatches showTitle={false} />);
 
-      expect(screen.queryByText('Próximos Partidos')).not.toBeInTheDocument();
+      expect(screen.queryByText("Próximos Partidos")).not.toBeInTheDocument();
     });
   });
 
-  describe('Success state', () => {
-    it('renders matches successfully', async () => {
+  describe("Success state", () => {
+    it("renders matches successfully", async () => {
       mockGetUpcomingMatches.mockResolvedValue(mockMatchesData);
 
       render(<UpcomingMatches />);
 
       await waitFor(() => {
-        expect(screen.getAllByTestId('match-card')).toHaveLength(3);
+        expect(screen.getAllByTestId("match-card")).toHaveLength(3);
       });
 
-      expect(screen.getByText('Próximos Partidos')).toBeInTheDocument();
-      expect(screen.getByText('Ver todos →')).toBeInTheDocument();
+      expect(screen.getByText("Próximos Partidos")).toBeInTheDocument();
+      expect(screen.getByText("Ver todos →")).toBeInTheDocument();
     });
 
-    it('limits matches correctly', async () => {
+    it("limits matches correctly", async () => {
       mockGetUpcomingMatches.mockResolvedValue(mockMatchesData);
 
       render(<UpcomingMatches limit={2} />);
@@ -130,156 +130,185 @@ describe('UpcomingMatches', () => {
       });
     });
 
-    it('renders without view all link when showViewAllLink is false', async () => {
+    it("renders without view all link when showViewAllLink is false", async () => {
       mockGetUpcomingMatches.mockResolvedValue(mockMatchesData);
 
       render(<UpcomingMatches showViewAllLink={false} />);
 
       await waitFor(() => {
-        expect(screen.queryByText('Ver todos →')).not.toBeInTheDocument();
-        expect(screen.queryByText('Ver todos los partidos')).not.toBeInTheDocument();
+        expect(screen.queryByText("Ver todos →")).not.toBeInTheDocument();
+        expect(
+          screen.queryByText("Ver todos los partidos"),
+        ).not.toBeInTheDocument();
       });
     });
 
-    it('applies custom className', async () => {
+    it("applies custom className", async () => {
       mockGetUpcomingMatches.mockResolvedValue(mockMatchesData);
 
-      const { container } = render(<UpcomingMatches className="custom-class" />);
+      const { container } = render(
+        <UpcomingMatches className="custom-class" />,
+      );
 
       await waitFor(() => {
-        expect(container.firstChild).toHaveClass('custom-class');
+        expect(container.firstChild).toHaveClass("custom-class");
       });
     });
 
-    it('shows mobile view all button', async () => {
+    it("shows mobile view all button", async () => {
       mockGetUpcomingMatches.mockResolvedValue(mockMatchesData);
 
       render(<UpcomingMatches />);
 
       await waitFor(() => {
-        expect(screen.getByText('Ver todos los partidos')).toBeInTheDocument();
+        expect(screen.getByText("Ver todos los partidos")).toBeInTheDocument();
       });
     });
   });
 
-  describe('Empty state', () => {
-    it('shows empty state when no matches are available', async () => {
+  describe("Empty state", () => {
+    it("shows empty state when no matches are available", async () => {
       mockGetUpcomingMatches.mockResolvedValue([]);
 
       render(<UpcomingMatches />);
 
       await waitFor(() => {
-        expect(screen.getByText('No hay partidos programados')).toBeInTheDocument();
-        expect(screen.getByText('📅')).toBeInTheDocument();
-        expect(screen.getByText('Actualmente no hay próximos partidos del Betis programados.')).toBeInTheDocument();
+        expect(
+          screen.getByText("No hay partidos programados"),
+        ).toBeInTheDocument();
+        expect(screen.getByText("📅")).toBeInTheDocument();
+        expect(
+          screen.getByText(
+            "Actualmente no hay próximos partidos del Betis programados.",
+          ),
+        ).toBeInTheDocument();
       });
     });
 
-    it('shows empty state when data is null', async () => {
+    it("shows empty state when data is null", async () => {
       mockGetUpcomingMatches.mockResolvedValue(null);
 
       render(<UpcomingMatches />);
 
       await waitFor(() => {
-        expect(screen.getByText('No hay partidos programados')).toBeInTheDocument();
+        expect(
+          screen.getByText("No hay partidos programados"),
+        ).toBeInTheDocument();
       });
     });
 
-    it('shows view all link in empty state', async () => {
+    it("shows view all link in empty state", async () => {
       mockGetUpcomingMatches.mockResolvedValue([]);
 
       render(<UpcomingMatches />);
 
       await waitFor(() => {
-        expect(screen.getByText('Ver historial de partidos →')).toBeInTheDocument();
+        expect(
+          screen.getByText("Ver historial de partidos →"),
+        ).toBeInTheDocument();
       });
     });
 
-    it('hides view all link in empty state when showViewAllLink is false', async () => {
+    it("hides view all link in empty state when showViewAllLink is false", async () => {
       mockGetUpcomingMatches.mockResolvedValue([]);
 
       render(<UpcomingMatches showViewAllLink={false} />);
 
       await waitFor(() => {
-        expect(screen.queryByText('Ver historial de partidos →')).not.toBeInTheDocument();
+        expect(
+          screen.queryByText("Ver historial de partidos →"),
+        ).not.toBeInTheDocument();
       });
     });
 
-    it('shows empty state with title when showTitle is true', async () => {
+    it("shows empty state with title when showTitle is true", async () => {
       mockGetUpcomingMatches.mockResolvedValue([]);
 
       render(<UpcomingMatches showTitle={true} />);
 
       await waitFor(() => {
-        expect(screen.getByText('Próximos Partidos')).toBeInTheDocument();
-        expect(screen.getByText('No hay partidos programados')).toBeInTheDocument();
+        expect(screen.getByText("Próximos Partidos")).toBeInTheDocument();
+        expect(
+          screen.getByText("No hay partidos programados"),
+        ).toBeInTheDocument();
       });
     });
   });
 
-  describe('Error state', () => {
-    it('shows error state when API call fails', async () => {
-      const errorMessage = 'Network error';
+  describe("Error state", () => {
+    it("shows error state when API call fails", async () => {
+      const errorMessage = "Network error";
       mockGetUpcomingMatches.mockRejectedValue(new Error(errorMessage));
 
       render(<UpcomingMatches />);
 
       await waitFor(() => {
-        expect(screen.getByText('Error al cargar partidos')).toBeInTheDocument();
-        expect(screen.getByText('Error al cargar los próximos partidos')).toBeInTheDocument();
-        expect(screen.getByText('⚠️')).toBeInTheDocument();
-        expect(screen.getByText('Reintentar')).toBeInTheDocument();
+        expect(
+          screen.getByText("Error al cargar partidos"),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByText("Error al cargar los próximos partidos"),
+        ).toBeInTheDocument();
+        expect(screen.getByText("⚠️")).toBeInTheDocument();
+        expect(screen.getByText("Reintentar")).toBeInTheDocument();
       });
     });
 
-    it('allows retry on error', async () => {
-      mockGetUpcomingMatches.mockRejectedValueOnce(new Error('Network error'));
+    it("allows retry on error", async () => {
+      mockGetUpcomingMatches.mockRejectedValueOnce(new Error("Network error"));
 
       // Mock window.location.reload
       const mockReload = vi.fn();
-      Object.defineProperty(window, 'location', {
+      Object.defineProperty(window, "location", {
         value: { reload: mockReload },
-        writable: true
+        writable: true,
       });
 
       render(<UpcomingMatches />);
 
       await waitFor(() => {
-        expect(screen.getByText('Reintentar')).toBeInTheDocument();
+        expect(screen.getByText("Reintentar")).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText('Reintentar'));
+      fireEvent.click(screen.getByText("Reintentar"));
       expect(mockReload).toHaveBeenCalled();
     });
 
-    it('shows error state with title when showTitle is true', async () => {
-      mockGetUpcomingMatches.mockRejectedValue(new Error('API Error'));
+    it("shows error state with title when showTitle is true", async () => {
+      mockGetUpcomingMatches.mockRejectedValue(new Error("API Error"));
 
       render(<UpcomingMatches showTitle={true} />);
 
       await waitFor(() => {
-        expect(screen.getByText('Próximos Partidos')).toBeInTheDocument();
-        expect(screen.getByText('Error al cargar partidos')).toBeInTheDocument();
+        expect(screen.getByText("Próximos Partidos")).toBeInTheDocument();
+        expect(
+          screen.getByText("Error al cargar partidos"),
+        ).toBeInTheDocument();
       });
     });
 
-    it('logs error to console', async () => {
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      const error = new Error('Test error');
+    it("logs error to console", async () => {
+      const consoleSpy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
+      const error = new Error("Test error");
       mockGetUpcomingMatches.mockRejectedValue(error);
 
       render(<UpcomingMatches />);
 
       await waitFor(() => {
-        expect(consoleSpy).toHaveBeenCalledWith('Error fetching upcoming matches:', error);
+        expect(consoleSpy).toHaveBeenCalledWith(
+          "Error fetching upcoming matches:",
+          error,
+        );
       });
 
       consoleSpy.mockRestore();
     });
   });
 
-  describe('Component props', () => {
-    it('passes correct limit to API call', async () => {
+  describe("Component props", () => {
+    it("passes correct limit to API call", async () => {
       mockGetUpcomingMatches.mockResolvedValue(mockMatchesData);
 
       render(<UpcomingMatches limit={5} />);
@@ -289,7 +318,7 @@ describe('UpcomingMatches', () => {
       });
     });
 
-    it('uses default limit when not provided', async () => {
+    it("uses default limit when not provided", async () => {
       mockGetUpcomingMatches.mockResolvedValue(mockMatchesData);
 
       render(<UpcomingMatches />);
@@ -299,7 +328,7 @@ describe('UpcomingMatches', () => {
       });
     });
 
-    it('re-fetches when limit changes', async () => {
+    it("re-fetches when limit changes", async () => {
       mockGetUpcomingMatches.mockResolvedValue(mockMatchesData);
 
       const { rerender } = render(<UpcomingMatches limit={3} />);
@@ -317,32 +346,36 @@ describe('UpcomingMatches', () => {
     });
   });
 
-  describe('Match card integration', () => {
-    it('passes correct props to MatchCard component', async () => {
+  describe("Match card integration", () => {
+    it("passes correct props to MatchCard component", async () => {
       mockGetUpcomingMatches.mockResolvedValue([mockMatchesData[0]]);
 
       render(<UpcomingMatches />);
 
       await waitFor(() => {
-        expect(screen.getByTestId('match-opponent')).toHaveTextContent('Real Madrid');
-        expect(screen.getByTestId('match-competition')).toHaveTextContent('LaLiga');
+        expect(screen.getByTestId("match-opponent")).toHaveTextContent(
+          "Real Madrid",
+        );
+        expect(screen.getByTestId("match-competition")).toHaveTextContent(
+          "LaLiga",
+        );
       });
     });
 
-    it('renders multiple matches correctly', async () => {
+    it("renders multiple matches correctly", async () => {
       mockGetUpcomingMatches.mockResolvedValue(mockMatchesData);
 
       render(<UpcomingMatches />);
 
       await waitFor(() => {
-        const matchCards = screen.getAllByTestId('match-card');
+        const matchCards = screen.getAllByTestId("match-card");
         expect(matchCards).toHaveLength(3);
 
-        const opponents = screen.getAllByTestId('match-opponent');
-        const opponentNames = opponents.map(el => el.textContent);
-        expect(opponentNames).toContain('Real Madrid');
-        expect(opponentNames).toContain('Barcelona');
-        expect(opponentNames).toContain('Sevilla FC');
+        const opponents = screen.getAllByTestId("match-opponent");
+        const opponentNames = opponents.map((el) => el.textContent);
+        expect(opponentNames).toContain("Real Madrid");
+        expect(opponentNames).toContain("Barcelona");
+        expect(opponentNames).toContain("Sevilla FC");
       });
     });
   });

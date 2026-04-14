@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import Link from 'next/link';
+import { useEffect } from "react";
+import Link from "next/link";
 
 export default function Error({
   error,
@@ -12,7 +12,7 @@ export default function Error({
 }) {
   useEffect(() => {
     // Log the error to an error reporting service
-    console.error('Application error:', error);
+    console.error("Application error:", error);
   }, [error]);
 
   return (
@@ -27,7 +27,7 @@ export default function Error({
             Ha ocurrido un error inesperado. Por favor, intenta de nuevo.
           </p>
         </div>
-        
+
         <div className="space-y-4">
           <button
             onClick={() => reset()}
@@ -35,7 +35,7 @@ export default function Error({
           >
             Intentar de nuevo
           </button>
-          
+
           <Link
             href="/"
             className="inline-block bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors"

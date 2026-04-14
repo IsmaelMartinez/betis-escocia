@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { ApiErrorBoundary } from '@/components/ErrorBoundary';
-import BetisPositionWidget from '@/components/widgets/BetisPositionWidget';
-import AllDatabaseMatches from '@/components/match/AllDatabaseMatches';
-import SidebarCard from '@/components/SidebarCard';
+import { ApiErrorBoundary } from "@/components/ErrorBoundary";
+import BetisPositionWidget from "@/components/widgets/BetisPositionWidget";
+import AllDatabaseMatches from "@/components/match/AllDatabaseMatches";
+import SidebarCard from "@/components/SidebarCard";
 
 export default function MatchesPage() {
   return (

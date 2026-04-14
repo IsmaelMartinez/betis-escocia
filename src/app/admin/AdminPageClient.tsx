@@ -9,12 +9,7 @@ import {
   deleteMatch,
   getMatches,
 } from "@/lib/api/supabase";
-import {
-  RefreshCw,
-  Calendar,
-  Plus,
-  RotateCcw,
-} from "lucide-react";
+import { RefreshCw, Calendar, Plus, RotateCcw } from "lucide-react";
 import Card, { CardBody } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import LoadingSpinner from "@/components/LoadingSpinner";

@@ -44,9 +44,7 @@ export const CenteredContent: Story = {
     children: (
       <>
         <h1 className={HEADING_CLASSES}>Clasificación</h1>
-        <p className={`${TAGLINE_CLASSES} mb-8`}>
-          La tabla de La Liga
-        </p>
+        <p className={`${TAGLINE_CLASSES} mb-8`}>La tabla de La Liga</p>
       </>
     ),
   },

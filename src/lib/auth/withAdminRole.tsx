@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useAuth, useUser } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import { useAuth, useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 /**
  * Higher-order component that protects routes requiring admin role
  */
 export function withAdminRole<T extends object>(
-  WrappedComponent: React.ComponentType<T>
+  WrappedComponent: React.ComponentType<T>,
 ) {
   return function AdminProtectedComponent(props: T) {
     const { isLoaded, isSignedIn } = useAuth();
@@ -18,16 +18,16 @@ export function withAdminRole<T extends object>(
 
     useEffect(() => {
       if (isLoaded && !isSignedIn) {
-        router.push('/sign-in');
+        router.push("/sign-in");
       }
     }, [isLoaded, isSignedIn, router]);
 
     // Check if user has admin role (fallback protection)
     const userRole = user?.publicMetadata?.role;
-    
+
     useEffect(() => {
-      if (isLoaded && isSignedIn && userRole !== 'admin') {
-        router.push('/');
+      if (isLoaded && isSignedIn && userRole !== "admin") {
+        router.push("/");
       }
     }, [isLoaded, isSignedIn, userRole, router]);
 
@@ -46,7 +46,7 @@ export function withAdminRole<T extends object>(
     }
 
     // Show loading while redirecting non-admin users
-    if (userRole !== 'admin') {
+    if (userRole !== "admin") {
       return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <LoadingSpinner size="lg" label="Verificando permisos..." />

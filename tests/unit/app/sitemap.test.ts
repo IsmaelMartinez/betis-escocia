@@ -1,6 +1,9 @@
 import sitemap from "../../../src/app/sitemap";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { getEnabledNavigationItems, hasFeature } from "@/lib/features/featureFlags";
+import {
+  getEnabledNavigationItems,
+  hasFeature,
+} from "@/lib/features/featureFlags";
 
 // Mock the featureFlags module
 vi.mock("@/lib/features/featureFlags", () => ({
@@ -50,7 +53,12 @@ describe("sitemap", () => {
     vi.mocked(getEnabledNavigationItems).mockReturnValue([
       { href: "/", name: "Home", nameEn: "Home", feature: null }, // Should be filtered out as it's a static page
       { href: "/unete", name: "Únete", nameEn: "Join Us", feature: null },
-      { href: "/nosotros", name: "Nosotros", nameEn: "About", feature: "show-nosotros" },
+      {
+        href: "/nosotros",
+        name: "Nosotros",
+        nameEn: "About",
+        feature: "show-nosotros",
+      },
     ]);
 
     const result = sitemap();

@@ -69,7 +69,10 @@ describe("featureProtection", () => {
 
     it("should check the correct feature flag", () => {
       mockHasFeature.mockReturnValue(true);
-      const ProtectedComponent = withFeatureFlag(TestComponent, "show-nosotros");
+      const ProtectedComponent = withFeatureFlag(
+        TestComponent,
+        "show-nosotros",
+      );
 
       render(<ProtectedComponent />);
 

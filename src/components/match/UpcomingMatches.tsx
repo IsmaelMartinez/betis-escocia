@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { getUpcomingMatches, Match } from '@/lib/api/supabase';
-import MatchCard, { convertDatabaseMatchToCardProps } from './MatchCard';
-import Link from 'next/link';
+import { useState, useEffect } from "react";
+import { getUpcomingMatches, Match } from "@/lib/api/supabase";
+import MatchCard, { convertDatabaseMatchToCardProps } from "./MatchCard";
+import Link from "next/link";
 
 interface UpcomingMatchesProps {
   limit?: number;
@@ -16,7 +16,7 @@ export default function UpcomingMatches({
   limit = 3,
   showTitle = true,
   showViewAllLink = true,
-  className = ''
+  className = "",
 }: UpcomingMatchesProps) {
   const [matches, setMatches] = useState<Match[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -36,8 +36,8 @@ export default function UpcomingMatches({
           setMatches([]);
         }
       } catch (err) {
-        console.error('Error fetching upcoming matches:', err);
-        setError('Error al cargar los próximos partidos');
+        console.error("Error fetching upcoming matches:", err);
+        setError("Error al cargar los próximos partidos");
       } finally {
         setIsLoading(false);
       }
@@ -52,7 +52,9 @@ export default function UpcomingMatches({
       <div className={`${className}`}>
         {showTitle && (
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Próximos Partidos</h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Próximos Partidos
+            </h2>
           </div>
         )}
 
@@ -93,13 +95,17 @@ export default function UpcomingMatches({
       <div className={`${className}`}>
         {showTitle && (
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Próximos Partidos</h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Próximos Partidos
+            </h2>
           </div>
         )}
 
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
           <div className="text-red-600 text-lg mb-2">⚠️</div>
-          <h3 className="text-lg font-medium text-red-800 mb-2">Error al cargar partidos</h3>
+          <h3 className="text-lg font-medium text-red-800 mb-2">
+            Error al cargar partidos
+          </h3>
           <p className="text-red-600 mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
@@ -118,13 +124,17 @@ export default function UpcomingMatches({
       <div className={`${className}`}>
         {showTitle && (
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Próximos Partidos</h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Próximos Partidos
+            </h2>
           </div>
         )}
 
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
           <div className="text-gray-400 text-4xl mb-4">📅</div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No hay partidos programados</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No hay partidos programados
+          </h3>
           <p className="text-gray-600 mb-4">
             Actualmente no hay próximos partidos del Betis programados.
           </p>
@@ -146,7 +156,9 @@ export default function UpcomingMatches({
     <div className={`${className}`}>
       {showTitle && (
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Próximos Partidos</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Próximos Partidos
+          </h2>
           {showViewAllLink && matches.length > 0 && (
             <Link
               href="/partidos"
@@ -162,12 +174,7 @@ export default function UpcomingMatches({
         {matches.map((match) => {
           const cardProps = convertDatabaseMatchToCardProps(match);
 
-          return (
-            <MatchCard
-              key={match.id}
-              {...cardProps}
-            />
-          );
+          return <MatchCard key={match.id} {...cardProps} />;
         })}
       </div>
 
