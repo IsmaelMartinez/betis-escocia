@@ -41,8 +41,6 @@ const meta: Meta<typeof MatchCard> = {
     opponentCrest: { control: "text" },
     competitionEmblem: { control: "text" },
     score: { control: "object" },
-    rsvpInfo: { control: "object" },
-    showRSVP: { control: "boolean" },
   },
 };
 
@@ -60,7 +58,6 @@ export const Default: Story = {
     isHome: true,
     status: "SCHEDULED" as MatchStatus,
     matchday: 30,
-    showRSVP: true,
   },
 };
 
@@ -77,7 +74,6 @@ export const CompletedMatch: Story = {
     result: "WIN",
     matchday: 29,
     score: { home: 1, away: 2 }, // Betis (away) won 2-1
-    showRSVP: false,
   },
 };
 
@@ -92,7 +88,6 @@ export const PostponedMatch: Story = {
     isHome: true,
     status: "POSTPONED" as MatchStatus,
     matchday: 1,
-    showRSVP: true,
   },
 };
 
@@ -106,25 +101,5 @@ export const LiveMatch: Story = {
     status: "IN_PLAY" as MatchStatus,
     matchday: 31,
     score: { home: 0, away: 0 },
-    showRSVP: true,
-  },
-};
-
-export const MatchWithRSVP: Story = {
-  args: {
-    ...commonArgs,
-    opponent: "Girona FC",
-    date: new Date(
-      new Date().getTime() + 3 * 24 * 60 * 60 * 1000,
-    ).toISOString(), // 3 days from now
-    competition: "LaLiga",
-    isHome: false,
-    status: "SCHEDULED" as MatchStatus,
-    matchday: 32,
-    rsvpInfo: {
-      rsvpCount: 15,
-      totalAttendees: 25,
-    },
-    showRSVP: true,
   },
 };

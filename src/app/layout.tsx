@@ -75,7 +75,7 @@ export const metadata: Metadata = {
     template: "%s | Peña Bética Escocesa",
   },
   description:
-    "La peña del Real Betis en Edimburgo, Escocia. Más de 15 años compartiendo la pasión bética en el Polwarth Tavern. Eventos, RSVP, galería y comunidad familiar.",
+    "La peña del Real Betis en Edimburgo, Escocia. Más de 15 años compartiendo la pasión bética en el Polwarth Tavern.",
   keywords: [
     "Real Betis",
     "Edinburgh",

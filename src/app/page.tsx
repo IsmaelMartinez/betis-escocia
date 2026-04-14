@@ -65,12 +65,11 @@ export default function Home() {
   // Get feature flags on server to pass to client components
   const showPartidos = hasFeature("show-partidos");
   const showClasificacion = hasFeature("show-clasificacion");
-  const showRsvp = hasFeature("show-rsvp");
   const showEfemerides = hasFeature("show-efemerides");
 
   return (
     <>
-      <HeroCommunity showPartidos={showPartidos} showRsvp={showRsvp} />
+      <HeroCommunity showPartidos={showPartidos} />
 
       {/* Upcoming Matches and Classification Widgets */}
       {/* El Tercio Nuevo: Warm canvas + subtle tartan texture */}

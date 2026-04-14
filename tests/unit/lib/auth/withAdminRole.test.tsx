@@ -1,24 +1,24 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { withAdminRole } from '@/lib/auth/withAdminRole';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { withAdminRole } from "@/lib/auth/withAdminRole";
 
 // Mock Clerk hooks
 const mockUseAuth = vi.fn();
 const mockUseUser = vi.fn();
 const mockPush = vi.fn();
 
-vi.mock('@clerk/nextjs', () => ({
+vi.mock("@clerk/nextjs", () => ({
   useAuth: () => mockUseAuth(),
   useUser: () => mockUseUser(),
 }));
 
-vi.mock('next/navigation', () => ({
+vi.mock("next/navigation", () => ({
   useRouter: () => ({
     push: mockPush,
   }),
 }));
 
-vi.mock('@/components/LoadingSpinner', () => ({
+vi.mock("@/components/LoadingSpinner", () => ({
   default: ({ size, label }: { size: string; label: string }) => (
     <div data-testid="loading-spinner">
       Loading: {label} (size: {size})
@@ -31,12 +31,12 @@ const TestComponent = ({ message }: { message: string }) => (
   <div data-testid="test-component">{message}</div>
 );
 
-describe('withAdminRole', () => {
+describe("withAdminRole", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should show loading spinner while Clerk is loading', () => {
+  it("should show loading spinner while Clerk is loading", () => {
     mockUseAuth.mockReturnValue({
       isLoaded: false,
       isSignedIn: false,
@@ -48,11 +48,13 @@ describe('withAdminRole', () => {
     const WrappedComponent = withAdminRole(TestComponent);
     render(<WrappedComponent message="test" />);
 
-    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
-    expect(screen.getByText('Loading: Verificando permisos... (size: lg)')).toBeInTheDocument();
+    expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
+    expect(
+      screen.getByText("Loading: Verificando permisos... (size: lg)"),
+    ).toBeInTheDocument();
   });
 
-  it('should redirect to sign-in when not authenticated', () => {
+  it("should redirect to sign-in when not authenticated", () => {
     mockUseAuth.mockReturnValue({
       isLoaded: true,
       isSignedIn: false,
@@ -64,20 +66,20 @@ describe('withAdminRole', () => {
     const WrappedComponent = withAdminRole(TestComponent);
     render(<WrappedComponent message="test" />);
 
-    expect(mockPush).toHaveBeenCalledWith('/sign-in');
-    expect(screen.queryByTestId('test-component')).not.toBeInTheDocument();
+    expect(mockPush).toHaveBeenCalledWith("/sign-in");
+    expect(screen.queryByTestId("test-component")).not.toBeInTheDocument();
   });
 
-  it('should redirect to dashboard when user is not admin', () => {
+  it("should redirect to home when user is not admin", () => {
     mockUseAuth.mockReturnValue({
       isLoaded: true,
       isSignedIn: true,
     });
     mockUseUser.mockReturnValue({
       user: {
-        id: 'user_123',
+        id: "user_123",
         publicMetadata: {
-          role: 'user',
+          role: "user",
         },
       },
     });
@@ -85,21 +87,23 @@ describe('withAdminRole', () => {
     const WrappedComponent = withAdminRole(TestComponent);
     render(<WrappedComponent message="test" />);
 
-    expect(mockPush).toHaveBeenCalledWith('/dashboard');
-    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
-    expect(screen.getByText('Loading: Verificando permisos... (size: lg)')).toBeInTheDocument();
+    expect(mockPush).toHaveBeenCalledWith("/");
+    expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
+    expect(
+      screen.getByText("Loading: Verificando permisos... (size: lg)"),
+    ).toBeInTheDocument();
   });
 
-  it('should redirect to dashboard when user has moderator role', () => {
+  it("should redirect to home when user has moderator role", () => {
     mockUseAuth.mockReturnValue({
       isLoaded: true,
       isSignedIn: true,
     });
     mockUseUser.mockReturnValue({
       user: {
-        id: 'user_123',
+        id: "user_123",
         publicMetadata: {
-          role: 'moderator',
+          role: "moderator",
         },
       },
     });
@@ -107,20 +111,20 @@ describe('withAdminRole', () => {
     const WrappedComponent = withAdminRole(TestComponent);
     render(<WrappedComponent message="test" />);
 
-    expect(mockPush).toHaveBeenCalledWith('/dashboard');
-    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
+    expect(mockPush).toHaveBeenCalledWith("/");
+    expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
   });
 
-  it('should render wrapped component when user is admin', () => {
+  it("should render wrapped component when user is admin", () => {
     mockUseAuth.mockReturnValue({
       isLoaded: true,
       isSignedIn: true,
     });
     mockUseUser.mockReturnValue({
       user: {
-        id: 'user_123',
+        id: "user_123",
         publicMetadata: {
-          role: 'admin',
+          role: "admin",
         },
       },
     });
@@ -128,19 +132,19 @@ describe('withAdminRole', () => {
     const WrappedComponent = withAdminRole(TestComponent);
     render(<WrappedComponent message="Hello Admin!" />);
 
-    expect(screen.getByTestId('test-component')).toBeInTheDocument();
-    expect(screen.getByText('Hello Admin!')).toBeInTheDocument();
+    expect(screen.getByTestId("test-component")).toBeInTheDocument();
+    expect(screen.getByText("Hello Admin!")).toBeInTheDocument();
     expect(mockPush).not.toHaveBeenCalled();
   });
 
-  it('should handle user with no publicMetadata', () => {
+  it("should handle user with no publicMetadata", () => {
     mockUseAuth.mockReturnValue({
       isLoaded: true,
       isSignedIn: true,
     });
     mockUseUser.mockReturnValue({
       user: {
-        id: 'user_123',
+        id: "user_123",
         publicMetadata: null,
       },
     });
@@ -148,18 +152,18 @@ describe('withAdminRole', () => {
     const WrappedComponent = withAdminRole(TestComponent);
     render(<WrappedComponent message="test" />);
 
-    expect(mockPush).toHaveBeenCalledWith('/dashboard');
-    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
+    expect(mockPush).toHaveBeenCalledWith("/");
+    expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
   });
 
-  it('should handle user with empty publicMetadata', () => {
+  it("should handle user with empty publicMetadata", () => {
     mockUseAuth.mockReturnValue({
       isLoaded: true,
       isSignedIn: true,
     });
     mockUseUser.mockReturnValue({
       user: {
-        id: 'user_123',
+        id: "user_123",
         publicMetadata: {},
       },
     });
@@ -167,11 +171,11 @@ describe('withAdminRole', () => {
     const WrappedComponent = withAdminRole(TestComponent);
     render(<WrappedComponent message="test" />);
 
-    expect(mockPush).toHaveBeenCalledWith('/dashboard');
-    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
+    expect(mockPush).toHaveBeenCalledWith("/");
+    expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
   });
 
-  it('should handle null user object', () => {
+  it("should handle null user object", () => {
     mockUseAuth.mockReturnValue({
       isLoaded: true,
       isSignedIn: true,
@@ -183,25 +187,31 @@ describe('withAdminRole', () => {
     const WrappedComponent = withAdminRole(TestComponent);
     render(<WrappedComponent message="test" />);
 
-    expect(mockPush).toHaveBeenCalledWith('/dashboard');
-    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
+    expect(mockPush).toHaveBeenCalledWith("/");
+    expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
   });
 
-  it('should pass through all props to wrapped component', () => {
+  it("should pass through all props to wrapped component", () => {
     mockUseAuth.mockReturnValue({
       isLoaded: true,
       isSignedIn: true,
     });
     mockUseUser.mockReturnValue({
       user: {
-        id: 'user_123',
+        id: "user_123",
         publicMetadata: {
-          role: 'admin',
+          role: "admin",
         },
       },
     });
 
-    const TestComponentWithProps = ({ message, count }: { message: string; count: number }) => (
+    const TestComponentWithProps = ({
+      message,
+      count,
+    }: {
+      message: string;
+      count: number;
+    }) => (
       <div data-testid="test-component">
         {message} - Count: {count}
       </div>
@@ -210,10 +220,10 @@ describe('withAdminRole', () => {
     const WrappedComponent = withAdminRole(TestComponentWithProps);
     render(<WrappedComponent message="Hello" count={42} />);
 
-    expect(screen.getByText('Hello - Count: 42')).toBeInTheDocument();
+    expect(screen.getByText("Hello - Count: 42")).toBeInTheDocument();
   });
 
-  it('should work with TypeScript generics properly', () => {
+  it("should work with TypeScript generics properly", () => {
     interface CustomProps {
       title: string;
       isActive: boolean;
@@ -231,9 +241,9 @@ describe('withAdminRole', () => {
     });
     mockUseUser.mockReturnValue({
       user: {
-        id: 'user_123',
+        id: "user_123",
         publicMetadata: {
-          role: 'admin',
+          role: "admin",
         },
       },
     });
@@ -241,10 +251,10 @@ describe('withAdminRole', () => {
     const WrappedCustomComponent = withAdminRole(CustomComponent);
     render(<WrappedCustomComponent title="Test Title" isActive={true} />);
 
-    expect(screen.getByText('Test Title - Active: true')).toBeInTheDocument();
+    expect(screen.getByText("Test Title - Active: true")).toBeInTheDocument();
   });
 
-  it('should handle rapid state changes correctly', () => {
+  it("should handle rapid state changes correctly", () => {
     // First render: loading
     mockUseAuth.mockReturnValue({
       isLoaded: false,
@@ -257,7 +267,7 @@ describe('withAdminRole', () => {
     const WrappedComponent = withAdminRole(TestComponent);
     const { rerender } = render(<WrappedComponent message="test" />);
 
-    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
+    expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
 
     // Second render: loaded but not signed in
     mockUseAuth.mockReturnValue({
@@ -266,7 +276,7 @@ describe('withAdminRole', () => {
     });
 
     rerender(<WrappedComponent message="test" />);
-    expect(mockPush).toHaveBeenCalledWith('/sign-in');
+    expect(mockPush).toHaveBeenCalledWith("/sign-in");
 
     // Third render: signed in but not admin
     mockUseAuth.mockReturnValue({
@@ -275,32 +285,32 @@ describe('withAdminRole', () => {
     });
     mockUseUser.mockReturnValue({
       user: {
-        id: 'user_123',
+        id: "user_123",
         publicMetadata: {
-          role: 'user',
+          role: "user",
         },
       },
     });
 
     rerender(<WrappedComponent message="test" />);
-    expect(mockPush).toHaveBeenCalledWith('/dashboard');
+    expect(mockPush).toHaveBeenCalledWith("/");
 
     // Fourth render: admin user
     mockUseUser.mockReturnValue({
       user: {
-        id: 'user_123',
+        id: "user_123",
         publicMetadata: {
-          role: 'admin',
+          role: "admin",
         },
       },
     });
 
     rerender(<WrappedComponent message="Hello Admin!" />);
-    expect(screen.getByTestId('test-component')).toBeInTheDocument();
-    expect(screen.getByText('Hello Admin!')).toBeInTheDocument();
+    expect(screen.getByTestId("test-component")).toBeInTheDocument();
+    expect(screen.getByText("Hello Admin!")).toBeInTheDocument();
   });
 
-  it('should return null when not signed in (after redirect)', () => {
+  it("should return null when not signed in (after redirect)", () => {
     mockUseAuth.mockReturnValue({
       isLoaded: true,
       isSignedIn: false,

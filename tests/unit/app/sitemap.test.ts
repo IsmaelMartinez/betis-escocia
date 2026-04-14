@@ -1,6 +1,9 @@
 import sitemap from "../../../src/app/sitemap";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { getEnabledNavigationItems, hasFeature } from "@/lib/features/featureFlags";
+import {
+  getEnabledNavigationItems,
+  hasFeature,
+} from "@/lib/features/featureFlags";
 
 // Mock the featureFlags module
 vi.mock("@/lib/features/featureFlags", () => ({
@@ -50,7 +53,12 @@ describe("sitemap", () => {
     vi.mocked(getEnabledNavigationItems).mockReturnValue([
       { href: "/", name: "Home", nameEn: "Home", feature: null }, // Should be filtered out as it's a static page
       { href: "/unete", name: "Únete", nameEn: "Join Us", feature: null },
-      { href: "/contacto", name: "Contacto", nameEn: "Contact", feature: null },
+      {
+        href: "/nosotros",
+        name: "Nosotros",
+        nameEn: "About",
+        feature: "show-nosotros",
+      },
     ]);
 
     const result = sitemap();
@@ -76,10 +84,10 @@ describe("sitemap", () => {
           priority: 0.9,
         },
         {
-          url: `${baseUrl}/contacto`,
+          url: `${baseUrl}/nosotros`,
           lastModified: mockDate,
           changeFrequency: "monthly",
-          priority: 0.9,
+          priority: 0.8,
         },
       ]),
     );
@@ -90,22 +98,22 @@ describe("sitemap", () => {
     vi.mocked(getEnabledNavigationItems).mockReturnValue([
       { href: "/unete", name: "Únete", nameEn: "Join Us", feature: null },
       {
-        href: "/contacto",
-        name: "Contacto",
-        nameEn: "Contact",
-        feature: "show-contacto",
+        href: "/nosotros",
+        name: "Nosotros",
+        nameEn: "About",
+        feature: "show-nosotros",
       },
     ]);
 
     const result = sitemap();
 
     const unetePage = result.find((page) => page.url === `${baseUrl}/unete`);
-    const contactoPage = result.find(
-      (page) => page.url === `${baseUrl}/contacto`,
+    const nosotrosPage = result.find(
+      (page) => page.url === `${baseUrl}/nosotros`,
     );
 
     expect(unetePage?.priority).toBe(0.9);
-    expect(contactoPage?.priority).toBe(0.9);
+    expect(nosotrosPage?.priority).toBe(0.8);
   });
 
   it("should exclude /partidos from sitemap when show-partidos feature is disabled", () => {

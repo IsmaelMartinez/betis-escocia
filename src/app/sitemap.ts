@@ -1,5 +1,8 @@
 import { MetadataRoute } from "next";
-import { getEnabledNavigationItems, hasFeature } from "@/lib/features/featureFlags";
+import {
+  getEnabledNavigationItems,
+  hasFeature,
+} from "@/lib/features/featureFlags";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://betis-escocia.vercel.app";
@@ -22,7 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}${item.href}`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
-      priority: item.href === "/unete" || item.href === "/contacto" ? 0.9 : 0.8,
+      priority: item.href === "/unete" ? 0.9 : 0.8,
     }));
 
   // Special pages with different priorities (only if feature enabled)

@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function NotFound() {
   return (
@@ -13,7 +13,7 @@ export default function NotFound() {
             Lo sentimos, la página que buscas no existe o ha sido movida.
           </p>
         </div>
-        
+
         <div className="space-y-4">
           <Link
             href="/"
@@ -21,10 +21,6 @@ export default function NotFound() {
           >
             Volver al inicio
           </Link>
-          
-          <div className="text-sm text-gray-500">
-            <p>¿Necesitas ayuda? <Link href="/contacto" className="text-betis-green hover:underline">Contáctanos</Link></p>
-          </div>
         </div>
       </div>
     </div>

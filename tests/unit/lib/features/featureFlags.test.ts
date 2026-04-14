@@ -1,10 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import {
   hasFeature,
   getEnabledNavigationItems,
   getFeatureFlagsStatus,
   clearFeatureCache,
 } from "@/lib/features/featureFlags";
+import { vi } from "vitest";
 
 // Mock environment variables
 const mockEnv: Record<string, string | undefined> = {};
@@ -30,11 +31,9 @@ describe("Feature Flags - Simplified System", () => {
       expect(hasFeature("show-jugadores-historicos")).toBe(true);
       expect(hasFeature("show-unete")).toBe(true);
       expect(hasFeature("show-clasificacion")).toBe(true);
+      expect(hasFeature("show-partidos")).toBe(true);
 
       // Disabled by default (Phase 2 or optional features)
-      expect(hasFeature("show-rsvp")).toBe(false);
-      expect(hasFeature("show-contacto")).toBe(false);
-      expect(hasFeature("show-partidos")).toBe(true);
       expect(hasFeature("show-clerk-auth")).toBe(false);
       expect(hasFeature("show-debug-info")).toBe(false);
     });
@@ -42,39 +41,31 @@ describe("Feature Flags - Simplified System", () => {
 
   describe("Environment Variable Overrides", () => {
     it('should override defaults when environment variables are set to "true"', () => {
-      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = "true";
       mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = "true";
       clearFeatureCache();
 
-      expect(hasFeature("show-rsvp")).toBe(true);
       expect(hasFeature("show-debug-info")).toBe(true);
     });
 
     it('should override defaults when environment variables are set to "false"', () => {
-      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = "false";
       mockEnv.NEXT_PUBLIC_FEATURE_CLASIFICACION = "false";
       clearFeatureCache();
 
-      expect(hasFeature("show-rsvp")).toBe(false);
       expect(hasFeature("show-clasificacion")).toBe(false);
     });
 
     it("should be case insensitive for environment variables", () => {
-      mockEnv.NEXT_PUBLIC_FEATURE_CONTACTO = "TRUE";
       mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = "True";
       clearFeatureCache();
 
-      expect(hasFeature("show-contacto")).toBe(true);
       expect(hasFeature("show-debug-info")).toBe(true);
     });
 
     it('should default to false for any non-"true" value', () => {
-      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = "yes";
       mockEnv.NEXT_PUBLIC_FEATURE_CLASIFICACION = "1";
       mockEnv.NEXT_PUBLIC_FEATURE_PARTIDOS = "enabled";
       clearFeatureCache();
 
-      expect(hasFeature("show-rsvp")).toBe(false);
       expect(hasFeature("show-clasificacion")).toBe(false);
       expect(hasFeature("show-partidos")).toBe(false);
     });
@@ -92,31 +83,16 @@ describe("Feature Flags - Simplified System", () => {
         true,
       );
 
-      // Should include Partidos (now enabled by default)
+      // Should include Partidos (enabled by default)
       expect(enabledItems.some((item) => item.name === "Partidos")).toBe(true);
-
-      // Should NOT include Phase 2 items (disabled by default)
-      expect(enabledItems.some((item) => item.name === "RSVP")).toBe(false);
-      expect(enabledItems.some((item) => item.name === "Contacto")).toBe(false);
-    });
-
-    it("should include items when enabled via environment variables", () => {
-      mockEnv.NEXT_PUBLIC_FEATURE_CONTACTO = "true";
-      clearFeatureCache();
-
-      const enabledItems = getEnabledNavigationItems();
-
-      expect(enabledItems.some((item) => item.name === "Contacto")).toBe(true);
     });
 
     it("should exclude items when disabled via environment variables", () => {
-      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = "false";
       mockEnv.NEXT_PUBLIC_FEATURE_PARTIDOS = "false";
       clearFeatureCache();
 
       const enabledItems = getEnabledNavigationItems();
 
-      expect(enabledItems.some((item) => item.name === "RSVP")).toBe(false);
       expect(enabledItems.some((item) => item.name === "Partidos")).toBe(false);
     });
   });
@@ -149,23 +125,23 @@ describe("Feature Flags - Simplified System", () => {
 
   describe("Cache Management", () => {
     it("should cache feature flag results", () => {
-      // First call resolves and caches (RSVP is now false by default)
-      expect(hasFeature("show-rsvp")).toBe(false);
+      // First call resolves and caches (debug-info is false by default)
+      expect(hasFeature("show-debug-info")).toBe(false);
 
       // Change environment variable after first call
-      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = "true";
+      mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = "true";
 
       // Should still return cached result
-      expect(hasFeature("show-rsvp")).toBe(false);
+      expect(hasFeature("show-debug-info")).toBe(false);
     });
 
     it("should clear cache and re-evaluate after clearFeatureCache", () => {
-      expect(hasFeature("show-rsvp")).toBe(false);
+      expect(hasFeature("show-debug-info")).toBe(false);
 
-      mockEnv.NEXT_PUBLIC_FEATURE_RSVP = "true"; // Set to true to test cache clearing
+      mockEnv.NEXT_PUBLIC_FEATURE_DEBUG_INFO = "true"; // Set to true to test cache clearing
       clearFeatureCache();
 
-      expect(hasFeature("show-rsvp")).toBe(true); // Should now be true after cache clear
+      expect(hasFeature("show-debug-info")).toBe(true); // Should now be true after cache clear
     });
   });
 });

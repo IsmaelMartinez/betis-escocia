@@ -106,12 +106,7 @@ const meta: Meta<typeof AllDatabaseMatches> = {
     msw: {
       handlers: [
         http.get("/api/standings", () => {
-          const matchesWithRsvp = mockMatches.map((match) => ({
-            ...match,
-            rsvp_count: Math.floor(Math.random() * 20),
-            total_attendees: Math.floor(Math.random() * 50),
-          }));
-          return HttpResponse.json(matchesWithRsvp);
+          return HttpResponse.json(mockMatches);
         }),
       ],
     },

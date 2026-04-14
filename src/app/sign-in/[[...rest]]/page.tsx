@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { SignIn } from '@clerk/nextjs';
+import { SignIn } from "@clerk/nextjs";
 
 export default function SignInPage() {
   return (
@@ -11,36 +11,38 @@ export default function SignInPage() {
             Acceso a la Peña Bética
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Inicia sesión para acceder a tu historial y dashboard personal
+            Inicia sesión para jugar al trivia
           </p>
         </div>
         <div className="bg-white p-8 rounded-lg shadow-md">
-          <SignIn 
+          <SignIn
             appearance={{
               elements: {
-                formButtonPrimary: 'bg-betis-green hover:bg-betis-green/90 text-white',
-                card: 'shadow-none',
-                headerTitle: 'text-betis-black',
-                headerSubtitle: 'text-gray-600',
-                socialButtonsBlockButton: 'border-gray-300 hover:bg-gray-50',
-                socialButtonsBlockButtonText: 'text-gray-700',
-                formFieldLabel: 'text-betis-black',
-                formFieldInput: 'border-gray-300 focus:border-betis-green focus:ring-betis-green',
-                footerActionLink: 'text-betis-green hover:text-betis-green/90',
-                dividerLine: 'bg-gray-300',
-                dividerText: 'text-gray-500',
+                formButtonPrimary:
+                  "bg-betis-green hover:bg-betis-green/90 text-white",
+                card: "shadow-none",
+                headerTitle: "text-betis-black",
+                headerSubtitle: "text-gray-600",
+                socialButtonsBlockButton: "border-gray-300 hover:bg-gray-50",
+                socialButtonsBlockButtonText: "text-gray-700",
+                formFieldLabel: "text-betis-black",
+                formFieldInput:
+                  "border-gray-300 focus:border-betis-green focus:ring-betis-green",
+                footerActionLink: "text-betis-green hover:text-betis-green/90",
+                dividerLine: "bg-gray-300",
+                dividerText: "text-gray-500",
               },
               variables: {
-                colorPrimary: '#00A651',
-                colorText: '#1f2937',
-                colorTextSecondary: '#6b7280',
-                colorBackground: '#ffffff',
-                colorInputBackground: '#ffffff',
-                colorInputText: '#1f2937',
-                borderRadius: '0.375rem',
-              }
+                colorPrimary: "#00A651",
+                colorText: "#1f2937",
+                colorTextSecondary: "#6b7280",
+                colorBackground: "#ffffff",
+                colorInputBackground: "#ffffff",
+                colorInputText: "#1f2937",
+                borderRadius: "0.375rem",
+              },
             }}
-            fallbackRedirectUrl="/dashboard"
+            fallbackRedirectUrl="/"
           />
         </div>
       </div>
