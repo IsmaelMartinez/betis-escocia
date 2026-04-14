@@ -28,29 +28,26 @@ These packages are pinned below latest major versions and need explicit migratio
 
 ## Mid-Term: Architecture Simplification (In Progress)
 
-From the [architecture simplification plan](architecture-simplification-plan.md). Phases 1-3 are complete.
+From the [architecture simplification plan](architecture-simplification-plan.md). Phases 1-3 are complete. The RSVP/Contacto/Dashboard/GDPR surface area was removed in commit 90bbbf2 rather than refactored, so several originally-planned Phase 4-7 splits no longer apply.
 
 ### Phase 4: Split Large Components (In Progress)
 
-Target components totaling ~2,284 lines:
+Target components remaining after the RSVP/Contacto/Dashboard cleanup:
 
-| Component                | Lines | Status  | Plan                                                                                                      |
-| ------------------------ | ----- | ------- | --------------------------------------------------------------------------------------------------------- |
-| `AdminPageClient.tsx`    | ~800  | Started | Extract `useAdminStats` hook (done). Next: `useAdminMatches`, `useAdminContacts` hooks + view components. |
-| `RSVPWidget.tsx`         | ~530  | Planned | Simplify dual-path logic (anonymous vs authenticated). Split into Connected/Standalone/Base.              |
-| `AllDatabaseMatches.tsx` | ~490  | Planned | Extract filtering/pagination into custom hooks.                                                           |
-| `Layout.tsx`             | ~460  | Planned | Extract Header, Footer, UserMenu components.                                                              |
+| Component                | Lines | Status     | Plan                                                                |
+| ------------------------ | ----- | ---------- | ------------------------------------------------------------------- |
+| `AllDatabaseMatches.tsx` | ~490  | Planned    | Extract filtering/pagination into custom hooks.                     |
+| `Layout.tsx`             | ~460  | Planned    | Extract Header, Footer, UserMenu components.                        |
+| `AdminPageClient.tsx`    | —     | Simplified | Trimmed to matches-only orchestration; RSVP/Contacto views removed. |
 
 ### Phase 5: Database Module Split
 
-Split monolithic `supabase.ts` (~790 lines) into domain modules:
+Split monolithic `supabase.ts` into domain modules. After the recent cleanup the file is smaller, but a split still improves locality:
 
 ```
 src/lib/api/supabase/
 ├── client.ts           # Client initialization
 ├── matches.ts          # Match CRUD
-├── rsvps.ts            # RSVP operations
-├── contacts.ts         # Contact operations
 ├── trivia.ts           # Trivia operations
 ├── classification.ts   # Classification cache
 └── index.ts            # Re-exports
@@ -60,13 +57,12 @@ src/lib/api/supabase/
 
 - Centralize mocks into `tests/mocks/` (Supabase, Clerk, navigation)
 - Expand MSW handlers for all external APIs (currently only 1 endpoint)
-- Reduce setup overhead in test files with heavy mocking (~360 `vi.mock()` calls across the suite)
+- Reduce setup overhead in test files with heavy mocking
 
 ### Phase 7: Hook Extraction
 
 Extract remaining business logic from components into reusable hooks:
 
-- `useContactForm` (from contacto/page)
 - `useMatchFilters` / `usePagination` (from AllDatabaseMatches)
 - `useTriviaGame` (from trivia/page)
 
@@ -76,17 +72,10 @@ Extract remaining business logic from components into reusable hooks:
 
 Features currently behind feature flags, disabled by default:
 
-| Feature        | Flag              | Status          | What's Needed                                                                               |
-| -------------- | ----------------- | --------------- | ------------------------------------------------------------------------------------------- |
-| **RSVP**       | `show-rsvp`       | Built, disabled | Enable when Polwarth Tavern match viewings resume. UI and API are complete.                 |
-| **Contacto**   | `show-contacto`   | Built, disabled | Contact form with Supabase backend. Ready to enable when moderation workflow is in place.   |
-| **Clerk Auth** | `show-clerk-auth` | Built, disabled | User accounts and login. Enable when user-facing features (RSVP auth, profiles) are needed. |
-| **Debug Info** | `show-debug-info` | Built, disabled | Developer-only. Enable per-environment via env vars.                                        |
-
-Previously mentioned features no longer in the flag system:
-
-- **Galeria** (`show-galeria`) - Not currently in feature flags. Would need to be re-added if pursued.
-- **Redes Sociales** (`show-redes-sociales`) - Same as above.
+| Feature        | Flag              | Status          | What's Needed                                                                                      |
+| -------------- | ----------------- | --------------- | -------------------------------------------------------------------------------------------------- |
+| **Clerk Auth** | `show-clerk-auth` | Built, disabled | User accounts and login. Enable when user-facing features (profiles, auth-gated flows) are needed. |
+| **Debug Info** | `show-debug-info` | Built, disabled | Developer-only. Enable per-environment via env vars.                                               |
 
 ---
 

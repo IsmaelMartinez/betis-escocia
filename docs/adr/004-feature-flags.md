@@ -20,42 +20,42 @@ After evaluating Flagsmith (too complex for our needs), we settled on simple env
 ## Implementation
 
 ```typescript
-// src/lib/featureFlags.ts
-import { hasFeature } from "@/lib/featureFlags";
+// src/lib/features/featureFlags.ts
+import { hasFeature } from "@/lib/features/featureFlags";
 
 // Synchronous check
-if (hasFeature("show-rsvp")) {
+if (hasFeature("show-clerk-auth")) {
   // Feature enabled
 }
 ```
 
 ## Default Feature States
 
+Source of truth: `src/lib/features/featureFlags.ts`.
+
 ### Enabled by Default (Core Features)
 
 - `show-nosotros` - About page
 - `show-unete` - Join functionality
 - `show-clasificacion` - League standings
+- `show-partidos` - Match schedule and results
+- `show-jugadores-historicos` - Legends page
+- `show-efemerides` - Betis history efemérides
 
 ### Disabled by Default (Set `=true` to Enable)
 
-- `show-rsvp` - RSVP functionality
-- `show-contacto` - Contact form
-- `show-partidos` - Match information
 - `show-clerk-auth` - Authentication UI
 - `show-debug-info` - Debug panel
 
 ## Environment Variable Examples
 
 ```bash
-# Enable Phase 2 features
-NEXT_PUBLIC_FEATURE_RSVP=true
-NEXT_PUBLIC_FEATURE_CONTACTO=true
+# Enable authenticated flows + debug panel
 NEXT_PUBLIC_FEATURE_CLERK_AUTH=true
 NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
 ```
 
 ## References
 
-- `src/lib/featureFlags.ts`
+- `src/lib/features/featureFlags.ts`
 - `docs/feature-flags-deployment.md`

@@ -2,7 +2,7 @@
 
 ## Status
 
-Deferred
+Superseded (2026-04-14) — the features this was designed for (RSVP and contact form submissions) were removed in commit 90bbbf2, so there's no longer an admin surface that needs real-time notifications. Keep this record for context if either feature is reintroduced.
 
 ## Context
 
