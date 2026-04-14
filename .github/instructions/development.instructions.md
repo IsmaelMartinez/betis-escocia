@@ -29,7 +29,7 @@ Key development files:
 
 - **Pattern**: `await hasFeature('flag-name')` or `await getValue('flag-name')`
 - **Location**: `src/lib/flagsmith/` directory
-- **Core features always enabled**: RSVP, Join, Contact (no flags needed)
+- **Core features always enabled**: Nosotros, Únete (Join), Clasificación, Partidos, Jugadores Históricos, Efemérides
 
 #### Authentication Flow (Clerk + Supabase)
 > See [CLAUDE.md](../../CLAUDE.md) for complete authentication patterns

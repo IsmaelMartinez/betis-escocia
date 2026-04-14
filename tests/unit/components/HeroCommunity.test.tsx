@@ -170,37 +170,6 @@ describe("HeroCommunity", () => {
     });
   });
 
-  // RSVP section tests are skipped because show-rsvp feature flag is disabled by default
-  describe.skip("RSVP section (requires show-rsvp feature flag)", () => {
-    it("renders RSVP section title", () => {
-      render(<HeroCommunity {...defaultProps} />);
-
-      expect(screen.getByText("Confirmar Asistencia")).toBeInTheDocument();
-    });
-
-    it("renders RSVP expandable button", () => {
-      render(<HeroCommunity {...defaultProps} />);
-
-      const rsvpButton = screen.getByRole("button", {
-        name: /confirmar asistencia/i,
-      });
-      expect(rsvpButton).toBeInTheDocument();
-      expect(rsvpButton).toHaveClass(
-        "w-full",
-        "flex",
-        "items-center",
-        "justify-between",
-      );
-    });
-
-    it("renders chevron down icon when collapsed", () => {
-      render(<HeroCommunity {...defaultProps} />);
-
-      const chevronDown = screen.getByTestId("chevron-down-icon");
-      expect(chevronDown).toBeInTheDocument();
-    });
-  });
-
   describe("CommunityStats integration", () => {
     it("renders dynamically loaded CommunityStats component", () => {
       render(<HeroCommunity {...defaultProps} />);
