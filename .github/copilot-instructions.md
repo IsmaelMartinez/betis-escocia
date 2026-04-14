@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Real Betis supporters club website in Edinburgh with mobile-first design, serving match viewing parties at Polwarth Tavern. Built on Next.js 15 with TypeScript, featuring secure-by-default architecture using environment variable-based feature flags.
+Real Betis supporters club website in Edinburgh with mobile-first design, serving match viewing parties at Polwarth Tavern. Built on Next.js 16 with TypeScript, featuring secure-by-default architecture using environment variable-based feature flags.
 
 **📖 For comprehensive project details, architecture decisions, and implementation guides, see [CLAUDE.md](../CLAUDE.md) - it contains up-to-date information about technologies, patterns, and development practices.**
 
@@ -52,7 +52,7 @@ When completing PRDs and their associated tasks:
    - Move `tasks-prd-[feature].md` to `docs/historical/completed-tasks/`
    - Move `prd-[feature].md` to `docs/historical/implemented-features/`
    - Update `docs/historical/documentation-reorganization.md` with the move
-   - **Learning**: Storybook v9 migration PRDs and tasks have been moved to these historical directories.
+   - **Learning**: Migration PRDs (e.g. Storybook) have been moved to these historical directories.
 7. **README Updates**: Update main README.md if the feature affects user-facing functionality
 8. **Merge Documentation**: Merge any research/comparison docs into existing documentation (e.g., feature flag comparisons into main environment variable feature flag docs)
 
@@ -63,9 +63,9 @@ This workflow ensures completed work is properly archived while keeping active p
 ### Core Architecture
 
 - `src/middleware.ts` - Route protection and security headers
-- `src/lib/featureConfig.ts` - Environment variable feature flag system
-- `src/lib/supabase.ts` - Database client and type definitions
-- `src/lib/adminApiProtection.ts` - API security utilities
+- `src/lib/features/featureFlags.ts` - Environment variable feature flag system
+- `src/lib/api/supabase.ts` - Database client and type definitions
+- `src/lib/auth/adminApiProtection.ts` - API security utilities
 
 ### Testing Infrastructure
 
@@ -101,7 +101,7 @@ This workflow ensures completed work is properly archived while keeping active p
 - **[CLAUDE.md](../CLAUDE.md)**: Primary project reference with complete architecture, patterns, and development practices
 - **Database schema**: See `sql/` directory for migrations
 - **Documentation**: Comprehensive ADRs in `docs/adr/`
-- **Environment variable feature flags**: Complete guide in ADR `docs/adr/004-flagsmith-feature-flags.md`
+- **Environment variable feature flags**: Complete guide in ADR `docs/adr/004-feature-flags.md`
 
 ### Model Context Protocol (MCP) Servers
 
@@ -114,7 +114,7 @@ This project utilizes Model Context Protocol (MCP) servers to extend the Gemini 
 
 - **Admin dashboard**: `/admin` (requires admin role)
 - **API endpoints**: Follow RESTful patterns in `src/app/api/`
-- **Environment variable feature flag implementation**: `src/lib/featureConfig.ts`
+- **Environment variable feature flag implementation**: `src/lib/features/featureFlags.ts`
 - **Trivia game**: Full implementation details in [CLAUDE.md](../CLAUDE.md)
 
 ---

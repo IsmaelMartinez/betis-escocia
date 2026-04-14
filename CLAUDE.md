@@ -103,7 +103,7 @@ sql/                    # Database migrations & scripts
 - **Simple approach**: Environment variable-based flags, cached in production only
 - **Usage**: `hasFeature('flag-name')` (synchronous)
 - **Configuration**: Set `NEXT_PUBLIC_FEATURE_*=true` to enable disabled-by-default features, or `=false` to disable core features
-- **Location**: `src/lib/featureFlags.ts`
+- **Location**: `src/lib/features/featureFlags.ts`
 - **Enabled by default**: Nosotros, Únete (Join), Clasificación (standings), Partidos (matches), Jugadores Históricos (legends), Efemérides
 - **Disabled by default**: Clerk Auth, Debug Info
 - **Development mode**: No caching - changes to `.env.local` apply immediately
@@ -113,7 +113,7 @@ sql/                    # Database migrations & scripts
 ### Authentication Flow (Clerk + Supabase)
 
 - **Dual mode**: Anonymous submissions + authenticated user management
-- **API Protection**: Use `checkAdminRole()` from `@/lib/adminApiProtection`
+- **API Protection**: Use `checkAdminRole()` from `@/lib/auth/adminApiProtection`
 - **Role hierarchy**: `admin` > `moderator` > `user` (in `publicMetadata.role`)
 - **Database integration**: `getAuthenticatedSupabaseClient(clerkToken)` for RLS
 - **Documentation**: See `docs/adr/001-clerk-authentication.md`
@@ -123,7 +123,7 @@ sql/                    # Database migrations & scripts
 - **RLS enabled**: Always use authenticated client for user data
 - **User data**: Anonymous and authenticated submissions stored separately
 - **Cache strategy**: Use `classification_cache` table for external API data
-- **Location**: `src/lib/supabase.ts` for client and types
+- **Location**: `src/lib/api/supabase.ts` for client and types
 
 ## Component Development
 
@@ -201,7 +201,7 @@ See `docs/design-system.md` for:
 ### Secure Component Pattern
 
 ```typescript
-import { hasFeature } from "@/lib/featureFlags";
+import { hasFeature } from "@/lib/features/featureFlags";
 
 export default function MyComponent() {
   const isEnabled = hasFeature("my-feature-flag");
@@ -255,7 +255,7 @@ export const POST = createApiHandler({
 ### Legacy Protected Route Pattern
 
 ```typescript
-import { checkAdminRole } from "@/lib/adminApiProtection";
+import { checkAdminRole } from "@/lib/auth/adminApiProtection";
 import { getAuth } from "@clerk/nextjs/server";
 
 export async function POST(request: NextRequest) {
@@ -333,9 +333,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 // Mocking with Vitest
-vi.mock('@/lib/featureFlags', () => ({
+vi.mock('@/lib/features/featureFlags', () => ({
   hasFeature: vi.fn(() => true),
-  getFeatureFlags: vi.fn(() => ({ showClasificacion: true })),
 }));
 
 // Component testing
@@ -492,9 +491,8 @@ Required environment variables:
 
 Optional feature flags (only for disabled/experimental features):
 
-- `NEXT_PUBLIC_FEATURE_GALERIA=false`
-- `NEXT_PUBLIC_FEATURE_REDES_SOCIALES=false`
-- `NEXT_PUBLIC_FEATURE_DEBUG_INFO=false`
+- `NEXT_PUBLIC_FEATURE_CLERK_AUTH=true` (enables authenticated user flows)
+- `NEXT_PUBLIC_FEATURE_DEBUG_INFO=true` (shows the feature flag debug panel)
 
 Optional debugging:
 

@@ -29,7 +29,7 @@ Key testing files:
 - **Unit tests**: Vitest in `tests/unit/`
 - **Integration tests**: API routes in `tests/integration/`  
 - **E2E tests**: Playwright with Clerk auth pre-setup
-- **Component tests**: Storybook v9 with Vitest addon
+- **Component tests**: Storybook v10 with Vitest addon
 
 ### Vitest Configuration and ES Module Handling
 

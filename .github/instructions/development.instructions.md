@@ -20,27 +20,27 @@ This document outlines the guidelines and patterns for the code development work
 
 Key development files:
 
-- `src/lib/flagsmith/`: Feature flag management system
-- `src/lib/adminApiProtection.ts`: API security utilities
-- `src/lib/supabase.ts`: Database client and type definitions
+- `src/lib/features/featureFlags.ts`: Environment variable feature flag system
+- `src/lib/auth/adminApiProtection.ts`: API security utilities
+- `src/lib/api/supabase.ts`: Database client and type definitions
 
 ## Guidelines
 
 ### Critical Architecture Patterns
 
-#### Feature Flag System (Flagsmith)
+#### Feature Flag System (Environment Variables)
 
 > See [CLAUDE.md](../../CLAUDE.md) for complete implementation details
 
-- **Pattern**: `await hasFeature('flag-name')` or `await getValue('flag-name')`
-- **Location**: `src/lib/flagsmith/` directory
-- **Core features always enabled**: Nosotros, Únete (Join), Clasificación, Partidos, Jugadores Históricos, Efemérides
+- **Pattern**: `hasFeature('flag-name')` (synchronous)
+- **Location**: `src/lib/features/featureFlags.ts`
+- **Core features enabled by default**: Nosotros, Únete (Join), Clasificación, Partidos, Jugadores Históricos, Efemérides
 
 #### Authentication Flow (Clerk + Supabase)
 
 > See [CLAUDE.md](../../CLAUDE.md) for complete authentication patterns
 
-- **API protection**: Use `checkAdminRole()` from `@/lib/adminApiProtection`
+- **API protection**: Use `checkAdminRole()` from `@/lib/auth/adminApiProtection`
 - **Role hierarchy**: `admin` > `moderator` > `user`
 - **Database**: Use `getAuthenticatedSupabaseClient(clerkToken)` for RLS
 
@@ -49,7 +49,7 @@ Key development files:
 ```typescript
 // Standard protected API route structure
 import { getAuth, currentUser } from "@clerk/nextjs/server";
-import { checkAdminRole } from "@/lib/adminApiProtection";
+import { checkAdminRole } from "@/lib/auth/adminApiProtection";
 
 export async function POST(request: NextRequest) {
   const { user, isAdmin, error } = await checkAdminRole();
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
 
 - **RLS enabled**: Always use authenticated client for user data
 - **Cache strategy**: Use `classification_cache` table for external API data
-- **Client location**: `src/lib/supabase.ts`
+- **Client location**: `src/lib/api/supabase.ts`
 
 ### Component & Page Patterns
 
@@ -78,15 +78,15 @@ export async function POST(request: NextRequest) {
 - **Component Development**: Create stories (`.stories.tsx`) for each component to showcase its different states and variations.
 - **UI Testing**: Leverage Storybook's integration with Vitest (`@storybook/addon-vitest`) for comprehensive component testing, including visual regression testing and interaction testing.
 - **Usage**: Run `npm run storybook` to start the Storybook development server.
-- **Reference**: For more details on Storybook v9 migration and usage, consult `docs/adr/010-storybook-v9-migration.md` and `docs/storybook-guide.md`.
+- **Reference**: See ADR `docs/adr/009-storybook.md` and the Storybook workflow notes in `docs/storybook/`.
 
 #### Secure Component Pattern
 
 ```tsx
-import { hasFeature } from "@/lib/flagsmith";
+import { hasFeature } from "@/lib/features/featureFlags";
 
-export default async function MyComponent() {
-  const isEnabled = await hasFeature("my-feature-flag");
+export default function MyComponent() {
+  const isEnabled = hasFeature("my-feature-flag");
   if (!isEnabled) return null;
 
   return <div>Feature content</div>;
@@ -96,6 +96,6 @@ export default async function MyComponent() {
 #### Mobile-First Styling
 
 - **Always start with mobile** breakpoints, scale up.
-- **Betis branding**: `bg-gradient-to-r from-green-600 to-green-700` (#00A651).
-- **Gold accents**: `text-yellow-400` for highlights.
+- **Betis branding**: Use branded classes like `bg-betis-verde` / `bg-betis-verde-dark` (never generic Tailwind greens). See `docs/design-system.md` for the full palette.
+- **Gold accents**: `text-betis-oro` for highlights on dark backgrounds.
 - **Responsive navigation**: Hamburger menu pattern in `src/components/layout/Layout.tsx`.

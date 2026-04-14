@@ -42,7 +42,8 @@ The consolidated schema file is organized into logical sections:
 
 1. **Extensions** - PostgreSQL extensions (uuid-ossp, pgcrypto)
 2. **Tables** - All tables with complete column definitions
-   - Core tables (matches, rsvps, contact_submissions)
+   - Core tables (matches)
+   - Legacy tables retained in schema but no longer used by the application (rsvps, contact_submissions — removed from the app in commit 90bbbf2; their scripts live in `legacy/`)
    - Trivia system (trivia_questions, trivia_answers, user_trivia_scores)
    - Caching (classification_cache)
    - Soylenti/News (betis_news, players, news_players)

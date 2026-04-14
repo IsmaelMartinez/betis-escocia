@@ -49,17 +49,6 @@ test.describe("Site Navigation", () => {
     await expect(
       page.getByRole("heading", { name: /únete/i }).first(),
     ).toBeVisible();
-
-    // Navigate to Contact page (Contacto)
-    await page
-      .getByRole("link", { name: /contacto/i })
-      .first()
-      .click();
-    await page.waitForURL("**/contacto");
-    await expect(page.url()).toContain("/contacto");
-    await expect(
-      page.getByRole("heading", { name: /contacto/i }).first(),
-    ).toBeVisible();
   });
 
   test("should have working logo link to home", async ({ page }) => {
@@ -85,7 +74,7 @@ test.describe("Site Navigation", () => {
       // Navigation links should be visible in mobile menu
       await expect(page.getByRole("link", { name: /nosotros/i })).toBeVisible();
       await expect(page.getByRole("link", { name: /partidos/i })).toBeVisible();
-      await expect(page.getByRole("link", { name: /contacto/i })).toBeVisible();
+      await expect(page.getByRole("link", { name: /únete/i })).toBeVisible();
     }
   });
 
@@ -160,7 +149,7 @@ test.describe("Site Navigation", () => {
       "/nosotros",
       "/partidos",
       "/clasificacion",
-      "/contacto",
+      "/unete",
     ];
 
     for (const link of navigationLinks) {

@@ -16,6 +16,8 @@ The project uses environment variables for simple feature flag control. This doc
 
 ### Available Feature Flags
 
+Source of truth: `src/lib/features/featureFlags.ts`.
+
 #### Enabled by Default (Core Features)
 
 These features are enabled by default and don't require environment variables. Set `NEXT_PUBLIC_FEATURE_*=false` to disable:
@@ -23,14 +25,14 @@ These features are enabled by default and don't require environment variables. S
 - `show-nosotros` - About page (`NEXT_PUBLIC_FEATURE_NOSOTROS`)
 - `show-unete` - Join functionality (`NEXT_PUBLIC_FEATURE_UNETE`)
 - `show-clasificacion` - League standings (`NEXT_PUBLIC_FEATURE_CLASIFICACION`)
+- `show-partidos` - Match schedule and results (`NEXT_PUBLIC_FEATURE_PARTIDOS`)
+- `show-jugadores-historicos` - Legends page (`NEXT_PUBLIC_FEATURE_JUGADORES_HISTORICOS`)
+- `show-efemerides` - Betis history efemérides (`NEXT_PUBLIC_FEATURE_EFEMERIDES`)
 
 #### Disabled by Default (Require Environment Variable to Enable)
 
 These features are disabled by default and require `NEXT_PUBLIC_FEATURE_*=true` to enable:
 
-- `show-rsvp` - RSVP functionality (`NEXT_PUBLIC_FEATURE_RSVP=true`)
-- `show-contacto` - Contact form (`NEXT_PUBLIC_FEATURE_CONTACTO=true`)
-- `show-partidos` - Match information (`NEXT_PUBLIC_FEATURE_PARTIDOS=true`)
 - `show-clerk-auth` - Authentication UI (`NEXT_PUBLIC_FEATURE_CLERK_AUTH=true`)
 - `show-debug-info` - Debug info panel (`NEXT_PUBLIC_FEATURE_DEBUG_INFO=true`)
 
@@ -39,21 +41,15 @@ These features are disabled by default and require `NEXT_PUBLIC_FEATURE_*=true` 
 ### Development Environment
 
 ```bash
-# Enable features you're working on + debug info
-NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
+# Enable authentication + debug panel while working locally
 NEXT_PUBLIC_FEATURE_CLERK_AUTH=true
-NEXT_PUBLIC_FEATURE_RSVP=true
-NEXT_PUBLIC_FEATURE_CONTACTO=true
+NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
 ```
 
-### Production Environment (Full Features)
+### Production Environment
 
 ```bash
-# Enable all Phase 2 features for production
-# (clasificacion is already enabled by default)
-NEXT_PUBLIC_FEATURE_RSVP=true
-NEXT_PUBLIC_FEATURE_CONTACTO=true
-NEXT_PUBLIC_FEATURE_PARTIDOS=true
+# Enable authenticated user flows in production
 NEXT_PUBLIC_FEATURE_CLERK_AUTH=true
 # Note: Don't enable debug info in production
 ```
@@ -61,11 +57,7 @@ NEXT_PUBLIC_FEATURE_CLERK_AUTH=true
 ### Staging Environment
 
 ```bash
-# Enable all features including debug for testing
-# (clasificacion is already enabled by default)
-NEXT_PUBLIC_FEATURE_RSVP=true
-NEXT_PUBLIC_FEATURE_CONTACTO=true
-NEXT_PUBLIC_FEATURE_PARTIDOS=true
+# Enable auth + debug for testing in staging
 NEXT_PUBLIC_FEATURE_CLERK_AUTH=true
 NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
 ```
@@ -73,11 +65,11 @@ NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
 ## Usage in Code
 
 ```typescript
-import { hasFeature } from "@/lib/featureFlags";
+import { hasFeature } from "@/lib/features/featureFlags";
 
 // Synchronous feature check
-const isRsvpEnabled = hasFeature("show-rsvp");
-if (!isRsvpEnabled) return null;
+const isClerkAuthEnabled = hasFeature("show-clerk-auth");
+if (!isClerkAuthEnabled) return null;
 
 // Navigation filtering
 const enabledItems = getEnabledNavigationItems();

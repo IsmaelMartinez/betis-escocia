@@ -16,7 +16,7 @@ Concise documentation of key architectural decisions.
 | [008](./008-testing-strategy.md)               | Testing (Vitest + Playwright)   | ✅ Accepted |
 | [009](./009-storybook.md)                      | Storybook                       | ✅ Accepted |
 | [010](./010-error-monitoring.md)               | Sentry Error Monitoring         | ✅ Accepted |
-| [011](./011-admin-notifications.md)            | Admin Notifications (OneSignal) | ✅ Accepted |
+| [011](./011-admin-notifications.md)            | Admin Notifications (OneSignal) | ⚠️ Superseded |
 | [012](./012-libraries.md)                      | Core Libraries                  | ✅ Accepted |
 | [013](./013-security.md)                       | Security Architecture           | ✅ Accepted |
 | [014](./014-database-migrations.md)            | Database Migration Naming       | ✅ Accepted |

@@ -26,7 +26,7 @@ This document outlines the guidelines and patterns for debugging and problem-sol
 - **Don't mock Clerk incorrectly** - use `getAuth()` and `currentUser()` consistently.
 - **Avoid hardcoded role checks** - use `checkAdminRole()` utility.
 - **Don't forget RLS** - user data requires authenticated Supabase client.
-- **Test environment isolation** - use separate Flagsmith environments.
+- **Test environment isolation** - set feature flag env vars per environment (see `docs/feature-flags-deployment.md`).
 - **Always use latest stable versions** - research current library versions before implementation to ensure security, performance, and access to newest features.
 - **Verify library version compatibility** - ensure that all libraries, especially those related to styling (e.g., Tailwind CSS, PostCSS) and build processes (e.g., Next.js, Storybook), are compatible with each other to avoid integration issues and unexpected behavior.
 

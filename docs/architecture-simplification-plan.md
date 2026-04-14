@@ -1,6 +1,8 @@
 # Architecture Review & Simplification Plan
 
-**Date:** 2025-02-07
+**Date:** 2025-02-07 (original); status notes updated 2026-04-14
+
+> **Status update (2026-04-14):** The RSVP/Contacto/Dashboard/GDPR surface area referenced throughout this plan was **removed** in commit 90bbbf2 rather than refactored. Sections that describe splitting `RSVPWidget`, extracting `useContactForm`, or adding `useAdminContacts` are no longer applicable. The overall direction (component subdirectories, hook extraction, database module split, test infra cleanup) still stands for the remaining code.
 
 ## Context
 
@@ -365,23 +367,14 @@ src/lib/
 - Reduced cognitive load when navigating codebase
 - Foundation for future modularization
 
-### Phase 4: Split Large Components -- IN PROGRESS
+### Phase 4: Split Large Components -- PARTIALLY SUPERSEDED
 
-**Target components (2,284 lines total):**
-- AdminPageClient.tsx: 803 lines
-- RSVPWidget.tsx: 531 lines
-- AllDatabaseMatches.tsx: 486 lines
-- Layout.tsx: 464 lines
+Several Phase 4 targets were eliminated by the RSVP/Contacto/Dashboard cleanup (commit 90bbbf2), not refactored. What remains:
 
-**Planned splits:**
-1. **AdminPageClient** → Extract custom hooks + create view components
-   - ✅ Created `useAdminStats` hook (extracting stats fetching logic)
-   - TODO: Create `useAdminMatches`, `useAdminContacts` hooks
-   - TODO: Create DashboardView, MatchesView, ContactsView components
-   - TODO: Simplify main component to orchestrate views
-2. **Layout** → Extract Header, Footer, UserMenu components
-3. **RSVPWidget** → Simplify dual-path logic (anonymous vs authenticated)
-4. **AllDatabaseMatches** → Extract filtering/pagination into custom hooks
+- **AllDatabaseMatches.tsx (~486 lines)** → Extract filtering/pagination into custom hooks (still planned)
+- **Layout.tsx (~464 lines)** → Extract Header, Footer, UserMenu components (still planned)
+- ~~AdminPageClient split~~ → Obsolete: component was trimmed to matches-only orchestration; `useAdminContacts`, `ContactsView`, `DashboardView` are removed
+- ~~RSVPWidget split~~ → Obsolete: entire component deleted
 
 **Initial work (Phase 4.1):**
 - Created `src/app/admin/hooks/useAdminStats.ts` - demonstrates pattern for extracting data fetching logic into reusable hooks
@@ -396,7 +389,7 @@ src/lib/
 ### Phase 5: Database Module Split
 
 1. Create `lib/supabase/` or `lib/api/database/` subdirectory structure
-2. Move operations by feature domain (matches, rsvps, contacts, trivia, classification)
+2. Move operations by remaining feature domain (matches, trivia, classification)
 3. Create `index.ts` re-exports for backward compatibility
 4. Update imports across codebase
 5. Consider CRUD factory pattern to reduce boilerplate

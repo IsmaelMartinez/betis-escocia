@@ -49,9 +49,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 // Mock external dependencies - feature flags are now synchronous
-vi.mock('@/lib/featureFlags', () => ({
+vi.mock('@/lib/features/featureFlags', () => ({
   hasFeature: vi.fn(() => true),
-  getFeatureFlags: vi.fn(() => ({ showClasificacion: true })),
 }));
 
 vi.mock('@clerk/nextjs/server', () => ({
@@ -78,21 +77,21 @@ describe('MyComponent', () => {
 
 ```typescript
 import { describe, it, expect, vi } from "vitest";
-import { POST } from "@/app/api/rsvp/route";
+import { POST } from "@/app/api/trivia/route";
 
 // Mock authentication
-vi.mock("@/lib/adminApiProtection", () => ({
+vi.mock("@/lib/auth/adminApiProtection", () => ({
   checkAdminRole: vi.fn(() =>
     Promise.resolve({
-      user: { id: "admin_123" },
-      isAdmin: true,
+      user: { id: "user_123" },
+      isAdmin: false,
       error: null,
     }),
   ),
 }));
 
 // Mock database
-vi.mock("@/lib/supabase", () => ({
+vi.mock("@/lib/api/supabase", () => ({
   getAuthenticatedSupabaseClient: vi.fn(() => ({
     from: vi.fn(() => ({
       insert: vi.fn(() => Promise.resolve({ data: {}, error: null })),
@@ -100,12 +99,15 @@ vi.mock("@/lib/supabase", () => ({
   })),
 }));
 
-describe("/api/rsvp", () => {
-  it("creates RSVP successfully", async () => {
-    const request = new Request("http://localhost:3000/api/rsvp", {
-      method: "POST",
-      body: JSON.stringify({ matchId: "123", attending: true }),
-    });
+describe("/api/trivia", () => {
+  it("submits a score successfully", async () => {
+    const request = new Request(
+      "http://localhost:3000/api/trivia?action=submit",
+      {
+        method: "POST",
+        body: JSON.stringify({ score: 4 }),
+      },
+    );
 
     const response = await POST(request);
     expect(response.status).toBe(200);
@@ -118,15 +120,11 @@ describe("/api/rsvp", () => {
 #### Feature Flag Mocking
 
 ```typescript
-vi.mock("@/lib/featureFlags", () => ({
+vi.mock("@/lib/features/featureFlags", () => ({
   hasFeature: vi.fn((flag: string) => {
     const enabledFlags = ["show-clasificacion", "show-partidos"];
     return enabledFlags.includes(flag);
   }),
-  getFeatureFlags: vi.fn(() => ({
-    showClasificacion: true,
-    showPartidos: true,
-  })),
 }));
 ```
 
@@ -154,7 +152,7 @@ vi.mock("@clerk/nextjs/server", () => ({
 #### Supabase Mocking
 
 ```typescript
-vi.mock("@/lib/supabase", () => ({
+vi.mock("@/lib/api/supabase", () => ({
   getAuthenticatedSupabaseClient: vi.fn(() => ({
     from: vi.fn((table: string) => ({
       select: vi.fn(() =>
@@ -273,13 +271,12 @@ test("requires notification permission for admin alerts", async ({
 #### Feature Flag Mocking in E2E
 
 ```typescript
-// Feature flags are environment variables, so mock via env setup
+// Feature flags are environment variables, so set them in playwright.config.ts
+// (see the `launchOptions.env` block). At test time they're read statically by
+// the app, so there's no runtime mock to install per-test.
 test.beforeEach(async ({ page }) => {
-  // Set feature flags via environment (handled in global setup)
-  // Feature flags are resolved at build time
-    'show-rsvp': true,
-    'show-trivia-game': false
-  });
+  // e.g. navigate to a feature-flagged page after env has been configured
+  await page.goto("/admin");
 });
 ```
 
@@ -346,7 +343,7 @@ export const Secondary: Story = {
 export const FeatureEnabled: Story = {
   parameters: {
     mockFeatureFlags: {
-      'show-rsvp': true,
+      'show-clerk-auth': true,
     },
   },
   render: (args) => <MyComponent {...args} />,
@@ -355,7 +352,7 @@ export const FeatureEnabled: Story = {
 export const FeatureDisabled: Story = {
   parameters: {
     mockFeatureFlags: {
-      'show-rsvp': false,
+      'show-clerk-auth': false,
     },
   },
   render: (args) => <MyComponent {...args} />,
@@ -491,7 +488,7 @@ await page.click('[data-testid="submit-rsvp"]');
 
 ```typescript
 // Ensure mocks are hoisted
-vi.mock("@/lib/featureFlags", () => ({
+vi.mock("@/lib/features/featureFlags", () => ({
   hasFeature: vi.fn(),
 }));
 
