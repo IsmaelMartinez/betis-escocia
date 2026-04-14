@@ -42,10 +42,6 @@ export default function Error({
           >
             Volver al inicio
           </Link>
-          
-          <div className="text-sm text-gray-500 mt-4">
-            <p>Si el problema persiste, <Link href="/contacto" className="text-betis-green hover:underline">contáctanos</Link></p>
-          </div>
         </div>
       </div>
     </div>

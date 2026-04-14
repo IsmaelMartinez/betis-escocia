@@ -11,6 +11,5 @@ describe('NotFound component', () => {
     expect(screen.getByText('Página no encontrada')).toBeInTheDocument();
     expect(screen.getByText('Lo sentimos, la página que buscas no existe o ha sido movida.')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Volver al inicio/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Contáctanos/i })).toBeInTheDocument();
   });
 });

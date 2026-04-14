@@ -6,11 +6,11 @@ import type { Match as DatabaseMatch } from '@/lib/api/supabase';
 // Mock dependencies
 vi.mock('next/image', () => ({
   default: vi.fn(({ src, alt, width, height, className }) => (
-    <img 
-      src={src} 
-      alt={alt} 
-      width={width} 
-      height={height} 
+    <img
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
       className={className}
       data-testid="match-image"
     />
@@ -47,11 +47,6 @@ describe('MatchCard', () => {
     isHome: true,
     status: 'SCHEDULED' as const,
     matchday: 10,
-    rsvpInfo: {
-      rsvpCount: 15,
-      totalAttendees: 25
-    },
-    showRSVP: true
   };
 
   const mockFinishedMatch = {
@@ -63,7 +58,6 @@ describe('MatchCard', () => {
     status: 'FINISHED' as const,
     score: { home: 2, away: 1 },
     matchday: 8,
-    showRSVP: false
   };
 
   describe('Basic rendering', () => {
@@ -192,42 +186,11 @@ describe('MatchCard', () => {
     });
   });
 
-
-  describe('RSVP functionality', () => {
-    
-
-    it('does not show RSVP section when showRSVP is false', () => {
-      const noRsvpMatch = { ...mockUpcomingMatch, showRSVP: false };
-      render(<MatchCard {...noRsvpMatch} />);
-
-      expect(screen.queryByText('confirmaciones')).not.toBeInTheDocument();
-      expect(screen.queryByText('📝 Confirmar Asistencia')).not.toBeInTheDocument();
-    });
-
-    it('shows RSVP button without count when no attendees', () => {
-      const matchWithoutAttendees = { 
-        ...mockUpcomingMatch, 
-        rsvpInfo: { rsvpCount: 5, totalAttendees: 0 } 
-      };
-      render(<MatchCard {...matchWithoutAttendees} />);
-
-      expect(screen.getByText('📝 Confirmar Asistencia')).toBeInTheDocument();
-      expect(screen.queryByText('📝 Confirmar Asistencia (0)')).not.toBeInTheDocument();
-    });
-
-    it('does not show RSVP section for finished matches', () => {
-      render(<MatchCard {...mockFinishedMatch} />);
-
-      expect(screen.queryByText('confirmaciones')).not.toBeInTheDocument();
-      expect(screen.queryByText('📝 Confirmar Asistencia')).not.toBeInTheDocument();
-    });
-  });
-
   describe('Competition images', () => {
     it('displays competition emblem when provided', () => {
-      const matchWithEmblem = { 
-        ...mockUpcomingMatch, 
-        competitionEmblem: '/images/laliga.png' 
+      const matchWithEmblem = {
+        ...mockUpcomingMatch,
+        competitionEmblem: '/images/laliga.png'
       };
       render(<MatchCard {...matchWithEmblem} />);
 
@@ -253,9 +216,9 @@ describe('MatchCard', () => {
     });
 
     it('handles very long opponent names', () => {
-      const matchWithLongName = { 
-        ...mockUpcomingMatch, 
-        opponent: 'Real Club Deportivo de la Coruña Athletic Club' 
+      const matchWithLongName = {
+        ...mockUpcomingMatch,
+        opponent: 'Real Club Deportivo de la Coruña Athletic Club'
       };
       render(<MatchCard {...matchWithLongName} />);
 
@@ -263,9 +226,9 @@ describe('MatchCard', () => {
     });
 
     it('handles unknown competition names', () => {
-      const matchWithUnknownCompetition = { 
-        ...mockUpcomingMatch, 
-        competition: 'Unknown Competition Name' 
+      const matchWithUnknownCompetition = {
+        ...mockUpcomingMatch,
+        competition: 'Unknown Competition Name'
       };
       render(<MatchCard {...matchWithUnknownCompetition} />);
 
@@ -291,7 +254,7 @@ describe('convertDatabaseMatchToCardProps', () => {
   };
 
   it('converts database match to card props correctly', () => {
-    const result = convertDatabaseMatchToCardProps(mockDbMatch, 10, 20, true);
+    const result = convertDatabaseMatchToCardProps(mockDbMatch);
 
     expect(result).toEqual({
       id: 1,
@@ -303,11 +266,6 @@ describe('convertDatabaseMatchToCardProps', () => {
       result: undefined,
       matchday: 15,
       score: undefined,
-      rsvpInfo: {
-        rsvpCount: 10,
-        totalAttendees: 20
-      },
-      showRSVP: true
     });
   });
 
@@ -349,13 +307,6 @@ describe('convertDatabaseMatchToCardProps', () => {
     const result = convertDatabaseMatchToCardProps(matchWithNullScores);
 
     expect(result.score).toBeUndefined();
-  });
-
-  it('handles undefined RSVP data', () => {
-    const result = convertDatabaseMatchToCardProps(mockDbMatch);
-
-    expect(result.rsvpInfo).toBeUndefined();
-    expect(result.showRSVP).toBe(true); // default value
   });
 
   it('sets default status based on date when status is missing', () => {

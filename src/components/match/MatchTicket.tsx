@@ -1,10 +1,8 @@
 "use client";
 
 import React from "react";
-import { Users, Trophy } from "lucide-react";
+import { Trophy } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { FeatureWrapper } from "@/lib/features/featureProtection";
 import type { MatchCardProps } from "@/types/match";
 import type { Match as DatabaseMatch } from "@/lib/api/supabase";
 import { format } from "date-fns";
@@ -30,9 +28,6 @@ export interface MatchTicketProps extends MatchCardProps {
  */
 export function convertDatabaseMatchToTicketProps(
   dbMatch: DatabaseMatch,
-  rsvpCount?: number,
-  totalAttendees?: number,
-  showRSVP: boolean = true,
 ): MatchTicketProps {
   const isUpcoming = new Date(dbMatch.date_time) > new Date();
   const isDerby = dbMatch.opponent.toLowerCase().includes("sevilla");
@@ -66,14 +61,6 @@ export function convertDatabaseMatchToTicketProps(
             away: dbMatch.away_score,
           }
         : undefined,
-    rsvpInfo:
-      rsvpCount !== undefined && totalAttendees !== undefined
-        ? {
-            rsvpCount,
-            totalAttendees,
-          }
-        : undefined,
-    showRSVP,
     variant:
       dbMatch.status === "IN_PLAY" || dbMatch.status === "PAUSED"
         ? "live"
@@ -96,7 +83,6 @@ export function convertDatabaseMatchToTicketProps(
  */
 const MatchTicket: React.FC<MatchTicketProps> = (props) => {
   const {
-    id,
     opponent,
     date,
     competition,
@@ -104,11 +90,8 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
     result,
     status,
     matchday,
-    opponentCrest,
     competitionEmblem,
     score,
-    rsvpInfo,
-    showRSVP,
     priority = "normal",
   } = props;
 
@@ -168,12 +151,12 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
 
   // Team info
   const localTeam = isHome
-    ? { name: "Real Betis", crest: "/images/logo_no_texto.jpg", isBetis: true }
-    : { name: opponent, crest: opponentCrest, isBetis: false };
+    ? { name: "Real Betis", isBetis: true }
+    : { name: opponent, isBetis: false };
 
   const visitorTeam = isHome
-    ? { name: opponent, crest: opponentCrest, isBetis: false }
-    : { name: "Real Betis", crest: "/images/logo_no_texto.jpg", isBetis: true };
+    ? { name: opponent, isBetis: false }
+    : { name: "Real Betis", isBetis: true };
 
   // Priority styling
   const priorityClasses = {
@@ -185,7 +168,7 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
   return (
     <div
       className={`
-      relative bg-white rounded-xl overflow-hidden 
+      relative bg-white rounded-xl overflow-hidden
       transition-all duration-300 hover:shadow-xl hover:-translate-y-1
       ${priorityClasses[priority]}
     `}
@@ -286,54 +269,6 @@ const MatchTicket: React.FC<MatchTicketProps> = (props) => {
             </div>
           )}
         </div>
-
-        {/* RSVP section for upcoming matches */}
-        {isUpcoming && showRSVP && (
-          <FeatureWrapper feature="show-rsvp">
-            <div className="border-t border-gray-100 pt-4 mt-4">
-              {rsvpInfo && (
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Users className="w-4 h-4 text-betis-verde" />
-                    <span>
-                      <span className="font-bold text-betis-verde">
-                        {rsvpInfo.rsvpCount}
-                      </span>{" "}
-                      confirmaciones
-                    </span>
-                    {rsvpInfo.totalAttendees > 0 && (
-                      <span className="text-gray-400">
-                        •{" "}
-                        <span className="font-bold text-betis-verde">
-                          {rsvpInfo.totalAttendees}
-                        </span>{" "}
-                        asistentes
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              <Link
-                href={`/rsvp?match=${id}`}
-                className="
-                  block w-full text-center py-3 px-4 rounded-lg
-                  bg-betis-verde hover:bg-betis-verde-dark
-                  text-white font-bold text-sm
-                  transition-colors duration-200
-                  focus:outline-none focus:ring-2 focus:ring-betis-verde focus:ring-offset-2
-                "
-              >
-                📝 Confirmar Asistencia
-                {rsvpInfo && rsvpInfo.totalAttendees > 0 && (
-                  <span className="ml-1 opacity-80">
-                    ({rsvpInfo.totalAttendees})
-                  </span>
-                )}
-              </Link>
-            </div>
-          </FeatureWrapper>
-        )}
       </div>
 
       {/* Bottom edge decoration for upcoming matches */}

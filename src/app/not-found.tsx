@@ -21,10 +21,6 @@ export default function NotFound() {
           >
             Volver al inicio
           </Link>
-          
-          <div className="text-sm text-gray-500">
-            <p>¿Necesitas ayuda? <Link href="/contacto" className="text-betis-green hover:underline">Contáctanos</Link></p>
-          </div>
         </div>
       </div>
     </div>

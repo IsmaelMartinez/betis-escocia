@@ -23,18 +23,6 @@ export const StandardErrors = {
   DATABASE_ERROR: 'Error de base de datos',
   DATABASE_CONNECTION_ERROR: 'Error de conexión a la base de datos',
   
-  // Specific Business Logic Errors
-  RSVP: {
-    MATCH_NOT_FOUND: 'Partido no encontrado',
-    ALREADY_CONFIRMED: 'Ya has confirmado tu asistencia para este partido',
-    DATA_ERROR: 'Error al obtener datos de confirmaciones',
-  },
-  
-  CONTACT: {
-    PROCESSING_ERROR: 'Error interno del servidor al procesar tu mensaje',
-    STATS_ERROR: 'Error al obtener estadísticas de contacto',
-  },
-  
   VOTING: {
     NOT_ACTIVE: 'La votación no está activa en este momento',
     PERIOD_ENDED: 'El período de votación ha terminado',
@@ -68,12 +56,6 @@ export const StandardErrors = {
     AGGREGATION_ERROR: 'Error al calcular puntuaciones totales',
     TOKEN_INVALID: 'Token de autenticación inválido',
     UNEXPECTED_ERROR: 'Error inesperado en el sistema de trivia',
-  },
-  
-  GDPR: {
-    VERIFICATION_ERROR: 'Error verificando registros',
-    DELETION_ERROR: 'Error eliminando registros',
-    INVALID_REQUEST_TYPE: 'Tipo de petición inválido',
   },
   
   STANDINGS: {

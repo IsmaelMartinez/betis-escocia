@@ -7,8 +7,6 @@ import {
   type ErrorResponse,
   type SuccessResponse,
   // Test that all exports are available
-  contactSchema,
-  rsvpSchema,
   triviaScoreSchema,
   userUpdateSchema
 } from '@/lib/schemas/index';
@@ -18,8 +16,6 @@ describe('Schemas Index', () => {
   describe('Export Availability', () => {
     it('should export all schema modules correctly', () => {
       // Test that main schema exports are available
-      expect(contactSchema).toBeDefined();
-      expect(rsvpSchema).toBeDefined();
       expect(triviaScoreSchema).toBeDefined();
       expect(userUpdateSchema).toBeDefined();
     });

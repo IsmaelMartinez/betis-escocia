@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getUpcomingMatchesWithRSVPCounts, Match } from '@/lib/api/supabase';
+import { getUpcomingMatches, Match } from '@/lib/api/supabase';
 import Link from 'next/link';
-import { FeatureWrapper } from '@/lib/features/featureProtection';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { DATETIME_FORMAT } from '@/lib/constants/dateFormats';
@@ -12,15 +11,10 @@ interface UpcomingMatchesWidgetProps {
   className?: string;
 }
 
-interface MatchWithRSVP extends Match {
-  rsvp_count: number;
-  total_attendees: number;
-}
-
-export default function UpcomingMatchesWidget({ 
-  className = '' 
+export default function UpcomingMatchesWidget({
+  className = ''
 }: UpcomingMatchesWidgetProps) {
-  const [matches, setMatches] = useState<MatchWithRSVP[]>([]);
+  const [matches, setMatches] = useState<Match[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,12 +23,12 @@ export default function UpcomingMatchesWidget({
       try {
         setIsLoading(true);
         setError(null);
-        
+
         // Only get next 2 matches for the widget
-        const data = await getUpcomingMatchesWithRSVPCounts(2);
-        
+        const data = await getUpcomingMatches(2);
+
         if (data) {
-          setMatches(data as MatchWithRSVP[]);
+          setMatches(data);
         } else {
           setMatches([]);
         }
@@ -57,7 +51,7 @@ export default function UpcomingMatchesWidget({
           <h2 className="text-xl font-bold text-gray-900">Próximos Partidos</h2>
           <div className="h-4 w-20 bg-gray-300 rounded animate-pulse"></div>
         </div>
-        
+
         <div className="space-y-4">
           {Array.from({ length: 2 }).map((_, index) => (
             <div key={index} className="border border-gray-200 rounded-lg p-4 animate-pulse">
@@ -115,7 +109,7 @@ export default function UpcomingMatchesWidget({
             Ver todos →
           </Link>
         </div>
-        
+
         <div className="text-center py-8">
           <div className="text-gray-400 text-2xl mb-3">📅</div>
           <h3 className="font-medium text-gray-900 mb-2">No hay partidos programados</h3>
@@ -145,16 +139,14 @@ export default function UpcomingMatchesWidget({
           Ver todos →
         </Link>
       </div>
-      
+
       <div className={`${matches.length > 1 ? 'grid grid-cols-1 md:grid-cols-2 gap-4' : 'space-y-4'}`}>
         {matches.map((match) => {
-          // Convert to simplified card format for widget
           const matchDate = new Date(match.date_time);
-          const isUpcoming = matchDate > new Date();
-          
+
           return (
-            <div 
-              key={match.id} 
+            <div
+              key={match.id}
               className="border border-gray-200 rounded-lg p-4 hover:border-betis-verde transition-colors"
             >
               {/* Competition and date */}
@@ -168,7 +160,7 @@ export default function UpcomingMatchesWidget({
               </div>
 
               {/* Teams */}
-              <div className="flex items-center justify-center space-x-4 mb-3">
+              <div className="flex items-center justify-center space-x-4">
                 <div className="text-right flex-1">
                   <p className={`font-semibold text-sm ${
                     match.home_away === 'home' ? 'text-betis-verde' : 'text-gray-900'
@@ -179,11 +171,11 @@ export default function UpcomingMatchesWidget({
                     {match.home_away === 'home' ? 'Local' : 'Visitante'}
                   </p>
                 </div>
-                
+
                 <div className="text-lg font-bold text-gray-400 px-2">
                   VS
                 </div>
-                
+
                 <div className="text-left flex-1">
                   <p className={`font-semibold text-sm ${
                     match.home_away === 'away' ? 'text-betis-verde' : 'text-gray-900'
@@ -195,39 +187,11 @@ export default function UpcomingMatchesWidget({
                   </p>
                 </div>
               </div>
-
-
-              {/* RSVP info and action for upcoming matches */}
-              {isUpcoming && (
-                <FeatureWrapper feature="show-rsvp">
-                  <div className="border-t border-gray-100 pt-3">
-                    {match.rsvp_count > 0 && (
-                      <div className="text-center mb-2">
-                        <span className="text-xs text-gray-600">
-                          <span className="font-medium text-betis-verde">{match.rsvp_count}</span> confirmaciones
-                          {match.total_attendees > 0 && (
-                            <span className="ml-2">
-                              • <span className="font-medium text-betis-verde">{match.total_attendees}</span> asistentes
-                            </span>
-                          )}
-                        </span>
-                      </div>
-                    )}
-
-                    <Link
-                      href={`/rsvp?match=${match.id}`}
-                      className="block w-full bg-betis-verde hover:bg-betis-verde-dark text-white text-center py-2 px-3 rounded text-xs font-medium transition-colors"
-                    >
-                      📝 Confirmar Asistencia
-                    </Link>
-                  </div>
-                </FeatureWrapper>
-              )}
             </div>
           );
         })}
       </div>
-      
+
       {/* Footer link */}
       <div className="mt-6 text-center">
         <Link

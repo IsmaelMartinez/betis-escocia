@@ -15,36 +15,13 @@ vi.mock('@/components/widgets/BetisPositionWidget', () => ({
   default: () => <div data-testid="betis-position-widget">Betis Position Widget</div>,
 }));
 
-vi.mock('@/components/rsvp/RSVPModal', () => ({
-  default: () => <div data-testid="rsvp-modal">RSVP Modal</div>,
-  useRSVPModal: () => ({
-    isOpen: false,
-    openModal: vi.fn(),
-    closeModal: vi.fn(),
-  }),
-}));
-
 vi.mock('@/components/SidebarCard', () => ({
   default: ({ children }: { children: React.ReactNode }) => <div data-testid="sidebar-card">{children}</div>,
-}));
-
-// Mock Lucide React icons
-vi.mock('lucide-react', () => ({
-  Calendar: vi.fn(({ className }: { className?: string }) => (
-    <div data-testid="calendar-icon" className={className} />
-  )),
-}));
-
-// Mock feature flags - default RSVP to false (disabled by default)
-const mockHasFeature = vi.fn(() => false);
-vi.mock('@/lib/features/featureFlags', () => ({
-  hasFeature: (...args: unknown[]) => mockHasFeature(...args),
 }));
 
 describe('MatchesPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockHasFeature.mockReturnValue(false);
   });
 
   describe('Basic rendering', () => {
@@ -72,38 +49,6 @@ describe('MatchesPage', () => {
   });
 
   describe('Sidebar content', () => {
-    it('should not render RSVP card when show-rsvp flag is disabled', () => {
-      mockHasFeature.mockReturnValue(false);
-      render(<MatchesPage />);
-
-      expect(screen.queryByText('Próximo Partido')).not.toBeInTheDocument();
-      expect(screen.queryByText('¿Vienes al Polwarth Tavern?')).not.toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: /Confirmar Asistencia/i })).not.toBeInTheDocument();
-    });
-
-    it('should render RSVP card when show-rsvp flag is enabled', () => {
-      mockHasFeature.mockReturnValue(true);
-      render(<MatchesPage />);
-
-      expect(screen.getByText('Próximo Partido')).toBeInTheDocument();
-      expect(screen.getByText('¿Vienes al Polwarth Tavern?')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Confirmar Asistencia/i })).toBeInTheDocument();
-    });
-
-    it('should render RSVPModal when show-rsvp flag is enabled', () => {
-      mockHasFeature.mockReturnValue(true);
-      render(<MatchesPage />);
-
-      expect(screen.getByTestId('rsvp-modal')).toBeInTheDocument();
-    });
-
-    it('should not render RSVPModal when show-rsvp flag is disabled', () => {
-      mockHasFeature.mockReturnValue(false);
-      render(<MatchesPage />);
-
-      expect(screen.queryByTestId('rsvp-modal')).not.toBeInTheDocument();
-    });
-
     it('should have sticky positioning for sidebar', () => {
       render(<MatchesPage />);
 
@@ -170,15 +115,6 @@ describe('MatchesPage', () => {
 
       const headings = screen.getAllByRole('heading');
       expect(headings.length).toBeGreaterThan(0);
-    });
-  });
-
-  describe('Icons', () => {
-    it('should render Calendar icon when RSVP is enabled', () => {
-      mockHasFeature.mockReturnValue(true);
-      render(<MatchesPage />);
-
-      expect(screen.getAllByTestId('calendar-icon').length).toBeGreaterThan(0);
     });
   });
 });

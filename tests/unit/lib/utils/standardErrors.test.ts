@@ -26,17 +26,6 @@ describe('StandardErrors', () => {
       expect(StandardErrors.DATABASE_CONNECTION_ERROR).toBe('Error de conexión a la base de datos');
     });
 
-    it('should have RSVP specific errors', () => {
-      expect(StandardErrors.RSVP.MATCH_NOT_FOUND).toBe('Partido no encontrado');
-      expect(StandardErrors.RSVP.ALREADY_CONFIRMED).toBe('Ya has confirmado tu asistencia para este partido');
-      expect(StandardErrors.RSVP.DATA_ERROR).toBe('Error al obtener datos de confirmaciones');
-    });
-
-    it('should have contact specific errors', () => {
-      expect(StandardErrors.CONTACT.PROCESSING_ERROR).toBe('Error interno del servidor al procesar tu mensaje');
-      expect(StandardErrors.CONTACT.STATS_ERROR).toBe('Error al obtener estadísticas de contacto');
-    });
-
     it('should have voting specific errors', () => {
       expect(StandardErrors.VOTING.NOT_ACTIVE).toBe('La votación no está activa en este momento');
       expect(StandardErrors.VOTING.PERIOD_ENDED).toBe('El período de votación ha terminado');
@@ -61,12 +50,6 @@ describe('StandardErrors', () => {
       expect(StandardErrors.TRIVIA.SAVE_SCORE_ERROR).toBe('Error al guardar la puntuación');
       expect(StandardErrors.TRIVIA.FETCH_SCORE_ERROR).toBe('Error al obtener puntuación total');
       expect(StandardErrors.TRIVIA.AUTHENTICATION_REQUIRED).toBe('Se requiere autenticación para jugar');
-    });
-
-    it('should have GDPR specific errors', () => {
-      expect(StandardErrors.GDPR.VERIFICATION_ERROR).toBe('Error verificando registros');
-      expect(StandardErrors.GDPR.DELETION_ERROR).toBe('Error eliminando registros');
-      expect(StandardErrors.GDPR.INVALID_REQUEST_TYPE).toBe('Tipo de petición inválido');
     });
 
     it('should have standings specific errors', () => {
@@ -234,11 +217,9 @@ describe('StandardErrors', () => {
     });
 
     it('should handle nested error objects', () => {
-      const rsvpError = createStandardError(StandardErrors.RSVP.MATCH_NOT_FOUND, 404);
       const votingError = createStandardError(StandardErrors.VOTING.ALREADY_VOTED, 400);
       const triviaError = createStandardError(StandardErrors.TRIVIA.ALREADY_PLAYED, 409);
 
-      expect(getErrorMessage(rsvpError)).toBe('Partido no encontrado');
       expect(getErrorMessage(votingError)).toBe('Ya has votado anteriormente. Solo se permite un voto por persona');
       expect(getErrorMessage(triviaError)).toBe('Ya has jugado hoy. Vuelve mañana para una nueva partida');
     });
@@ -250,21 +231,18 @@ describe('StandardErrors', () => {
       // which prevents accidental modification and ensures type safety
       expect(typeof StandardErrors).toBe('object');
       expect(Object.isFrozen(StandardErrors)).toBe(false); // const assertion doesn't freeze
-      
+
       // But the structure should be accessible
       expect(StandardErrors.UNAUTHORIZED).toBeDefined();
-      expect(StandardErrors.RSVP.MATCH_NOT_FOUND).toBeDefined();
       expect(StandardErrors.VOTING.ALREADY_VOTED).toBeDefined();
     });
 
     it('should work with TypeScript type checking', () => {
       // These should compile without errors in TypeScript
       const message1: string = StandardErrors.NOT_FOUND;
-      const message2: string = StandardErrors.RSVP.DATA_ERROR;
       const message3: string = StandardErrors.VOTING.INVALID_ACTION;
 
       expect(message1).toBe('Recurso no encontrado');
-      expect(message2).toBe('Error al obtener datos de confirmaciones');
       expect(message3).toBe('Acción no válida');
     });
   });

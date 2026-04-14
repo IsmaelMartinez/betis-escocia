@@ -14,7 +14,6 @@ vi.mock("next/link", () => ({
 // Default props for tests (features enabled)
 const defaultProps = {
   showPartidos: true,
-  showRsvp: true,
 };
 
 // Mock Lucide React icons

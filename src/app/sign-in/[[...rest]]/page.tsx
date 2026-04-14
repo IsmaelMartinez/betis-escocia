@@ -11,7 +11,7 @@ export default function SignInPage() {
             Acceso a la Peña Bética
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Inicia sesión para acceder a tu historial y dashboard personal
+            Inicia sesión para jugar al trivia
           </p>
         </div>
         <div className="bg-white p-8 rounded-lg shadow-md">
@@ -40,7 +40,7 @@ export default function SignInPage() {
                 borderRadius: '0.375rem',
               }
             }}
-            fallbackRedirectUrl="/dashboard"
+            fallbackRedirectUrl="/"
           />
         </div>
       </div>

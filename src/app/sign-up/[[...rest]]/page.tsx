@@ -51,7 +51,7 @@ export default function SignUpPage() {
             Únete a la Peña Bética
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Crea tu cuenta para acceder a tu historial de reservas y mensajes
+            Crea tu cuenta para jugar al trivia
           </p>
         </div>
         <div className="bg-white p-8 rounded-lg shadow-md">
@@ -80,7 +80,7 @@ export default function SignUpPage() {
                 borderRadius: '0.375rem',
               }
             }}
-            fallbackRedirectUrl="/dashboard"
+            fallbackRedirectUrl="/"
           />
         </div>
       </div>

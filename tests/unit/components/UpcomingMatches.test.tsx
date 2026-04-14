@@ -1,37 +1,27 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import UpcomingMatches from '@/components/match/UpcomingMatches';
-import { getUpcomingMatchesWithRSVPCounts } from '@/lib/api/supabase';
+import { getUpcomingMatches } from '@/lib/api/supabase';
 
 // Mock dependencies
 vi.mock('@/lib/api/supabase', () => ({
-  getUpcomingMatchesWithRSVPCounts: vi.fn()
+  getUpcomingMatches: vi.fn()
 }));
 
 vi.mock('@/components/match/MatchCard', () => ({
-  default: vi.fn(({ opponent, competition, rsvpInfo, showRSVP }) => (
+  default: vi.fn(({ opponent, competition }) => (
     <div data-testid="match-card">
       <div data-testid="match-opponent">{opponent}</div>
       <div data-testid="match-competition">{competition}</div>
-      {rsvpInfo && (
-        <div data-testid="rsvp-info">
-          RSVP: {rsvpInfo.rsvpCount} / {rsvpInfo.totalAttendees}
-        </div>
-      )}
-      {showRSVP && <div data-testid="show-rsvp">RSVP Available</div>}
     </div>
   )),
-  convertDatabaseMatchToCardProps: vi.fn((match, rsvpCount, totalAttendees, showRSVP) => ({
+  convertDatabaseMatchToCardProps: vi.fn((match) => ({
     id: match.id,
     opponent: match.opponent,
     competition: match.competition,
     date: match.date_time,
     isHome: match.home_away === 'home',
-    rsvpInfo: rsvpCount !== undefined && totalAttendees !== undefined ? {
-      rsvpCount,
-      totalAttendees
-    } : undefined,
-    showRSVP
+    status: match.status || 'SCHEDULED',
   }))
 }));
 
@@ -44,11 +34,11 @@ vi.mock('next/link', () => ({
 }));
 
 describe('UpcomingMatches', () => {
-  const mockGetUpcomingMatches = vi.mocked(getUpcomingMatchesWithRSVPCounts);
+  const mockGetUpcomingMatches = vi.mocked(getUpcomingMatches);
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Mock console.error to avoid noise in tests
     vi.spyOn(console, 'error').mockImplementation(() => {});
   });
@@ -60,8 +50,6 @@ describe('UpcomingMatches', () => {
       opponent: 'Real Madrid',
       competition: 'LaLiga',
       home_away: 'home' as const,
-      rsvp_count: 15,
-      total_attendees: 25,
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z'
     },
@@ -71,8 +59,6 @@ describe('UpcomingMatches', () => {
       opponent: 'Barcelona',
       competition: 'Copa del Rey',
       home_away: 'away' as const,
-      rsvp_count: 8,
-      total_attendees: 12,
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z'
     },
@@ -82,8 +68,6 @@ describe('UpcomingMatches', () => {
       opponent: 'Sevilla FC',
       competition: 'LaLiga',
       home_away: 'home' as const,
-      rsvp_count: 20,
-      total_attendees: 30,
       created_at: '2024-01-01T00:00:00Z',
       updated_at: '2024-01-01T00:00:00Z'
     }
@@ -106,8 +90,8 @@ describe('UpcomingMatches', () => {
 
       render(<UpcomingMatches limit={5} />);
 
-      // There should be 5 loading skeleton cards
-      const loadingCards = screen.getAllByRole('generic').filter(element => 
+      // There should be loading skeleton cards
+      const loadingCards = screen.getAllByRole('generic').filter(element =>
         element.className.includes('animate-pulse')
       );
       expect(loadingCards.length).toBeGreaterThan(0);
@@ -145,29 +129,6 @@ describe('UpcomingMatches', () => {
         expect(mockGetUpcomingMatches).toHaveBeenCalledWith(2);
       });
     });
-
-    it('shows RSVP for first match only', async () => {
-      mockGetUpcomingMatches.mockResolvedValue(mockMatchesData);
-
-      render(<UpcomingMatches />);
-
-      await waitFor(() => {
-        const rsvpElements = screen.getAllByTestId('show-rsvp');
-        expect(rsvpElements).toHaveLength(1); // Only first match should show RSVP
-      });
-    });
-
-    it('displays RSVP information correctly', async () => {
-      mockGetUpcomingMatches.mockResolvedValue(mockMatchesData);
-
-      render(<UpcomingMatches />);
-
-      await waitFor(() => {
-        expect(screen.getByText('RSVP: 15 / 25')).toBeInTheDocument();
-      });
-    });
-
-    
 
     it('renders without view all link when showViewAllLink is false', async () => {
       mockGetUpcomingMatches.mockResolvedValue(mockMatchesData);
@@ -273,7 +234,7 @@ describe('UpcomingMatches', () => {
 
     it('allows retry on error', async () => {
       mockGetUpcomingMatches.mockRejectedValueOnce(new Error('Network error'));
-      
+
       // Mock window.location.reload
       const mockReload = vi.fn();
       Object.defineProperty(window, 'location', {
@@ -365,8 +326,6 @@ describe('UpcomingMatches', () => {
       await waitFor(() => {
         expect(screen.getByTestId('match-opponent')).toHaveTextContent('Real Madrid');
         expect(screen.getByTestId('match-competition')).toHaveTextContent('LaLiga');
-        expect(screen.getByTestId('rsvp-info')).toHaveTextContent('RSVP: 15 / 25');
-        expect(screen.getByTestId('show-rsvp')).toBeInTheDocument();
       });
     });
 
@@ -378,7 +337,7 @@ describe('UpcomingMatches', () => {
       await waitFor(() => {
         const matchCards = screen.getAllByTestId('match-card');
         expect(matchCards).toHaveLength(3);
-        
+
         const opponents = screen.getAllByTestId('match-opponent');
         const opponentNames = opponents.map(el => el.textContent);
         expect(opponentNames).toContain('Real Madrid');

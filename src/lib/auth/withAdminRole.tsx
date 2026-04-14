@@ -27,7 +27,7 @@ export function withAdminRole<T extends object>(
     
     useEffect(() => {
       if (isLoaded && isSignedIn && userRole !== 'admin') {
-        router.push('/dashboard');
+        router.push('/');
       }
     }, [isLoaded, isSignedIn, userRole, router]);
 

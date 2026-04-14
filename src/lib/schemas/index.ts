@@ -1,6 +1,4 @@
 // Main exports for all schemas
-export * from './contact';
-export * from './rsvp';
 export * from './trivia';
 export * from './admin';
 

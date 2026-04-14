@@ -148,14 +148,6 @@ export default function Layout({
                               </Link>
                             )}
                             <Link
-                              href="/dashboard"
-                              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-betis-verde-pale hover:text-betis-verde transition-colors"
-                              onClick={() => setIsUserMenuOpen(false)}
-                            >
-                              <User size={16} />
-                              Dashboard
-                            </Link>
-                            <Link
                               href="/trivia"
                               className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-betis-verde-pale hover:text-betis-verde transition-colors"
                               onClick={() => setIsUserMenuOpen(false)}
@@ -237,14 +229,6 @@ export default function Layout({
                           Admin
                         </Link>
                       )}
-                      <Link
-                        href="/dashboard"
-                        className="flex items-center gap-3 px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-xl transition-all font-heading font-semibold"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <User size={20} />
-                        Dashboard
-                      </Link>
                       <Link
                         href="/trivia"
                         className="flex items-center gap-3 px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-xl transition-all font-heading font-semibold"
@@ -428,15 +412,7 @@ export default function Layout({
           </div>
 
           <div className="border-t border-white/10 mt-10 pt-8">
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-              {navigationItems.some((item) => item.href === "/contacto") && (
-                <Link
-                  href="/contacto"
-                  className="text-gray-400 hover:text-betis-verde transition-colors font-body text-sm"
-                >
-                  Contacto
-                </Link>
-              )}
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
               <p className="text-gray-400 text-sm font-body text-center">
                 © 2025 Peña Bética Escocesa.{" "}
                 <span className="text-betis-oro">

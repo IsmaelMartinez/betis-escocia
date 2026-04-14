@@ -43,9 +43,9 @@ export const CenteredContent: Story = {
     containerClassName: "max-w-4xl text-center",
     children: (
       <>
-        <h1 className={HEADING_CLASSES}>Contacto</h1>
+        <h1 className={HEADING_CLASSES}>Clasificación</h1>
         <p className={`${TAGLINE_CLASSES} mb-8`}>
-          ¿Tienes alguna pregunta? Estamos aquí para ayudarte
+          La tabla de La Liga
         </p>
       </>
     ),
@@ -80,9 +80,9 @@ export const WideContent: Story = {
     containerClassName: "max-w-6xl text-center",
     children: (
       <>
-        <h1 className={HEADING_CLASSES}>¿Vienes al Polwarth?</h1>
+        <h1 className={HEADING_CLASSES}>Únete a la Familia</h1>
         <p className={TAGLINE_CLASSES}>
-          Confirma tu asistencia para el próximo partido
+          Más de 15 años compartiendo la pasión bética en Edimburgo
         </p>
       </>
     ),
@@ -95,14 +95,14 @@ export const WithBadge: Story = {
     children: (
       <>
         <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8">
-          <span className="text-oro-bright">✉️</span>
+          <span className="text-oro-bright">💚</span>
           <span className="text-white font-heading font-medium text-sm tracking-wide">
-            Ponte en contacto
+            Desde Sevilla a Edimburgo
           </span>
         </div>
-        <h1 className={HEADING_CLASSES}>Contacto</h1>
+        <h1 className={HEADING_CLASSES}>Peña Bética</h1>
         <p className={`${TAGLINE_CLASSES} mb-8`}>
-          ¿Tienes alguna pregunta? Estamos aquí para ayudarte
+          La familia bética en Escocia
         </p>
       </>
     ),

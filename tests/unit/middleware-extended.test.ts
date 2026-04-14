@@ -16,12 +16,12 @@ vi.mock('next/server', async () => {
 
 // Simple middleware utilities for testing
 const isProtectedRoute = (pathname: string): boolean => {
-  const protectedPaths = ['/admin', '/dashboard'];
+  const protectedPaths = ['/admin'];
   return protectedPaths.some(path => pathname.startsWith(path));
 };
 
 const isPublicRoute = (pathname: string): boolean => {
-  const publicPaths = ['/', '/nosotros', '/contacto', '/sign-in', '/sign-up'];
+  const publicPaths = ['/', '/nosotros', '/partidos', '/sign-in', '/sign-up'];
   return publicPaths.includes(pathname);
 };
 
@@ -51,15 +51,13 @@ describe('Middleware Utilities', () => {
   it('should identify protected routes', () => {
     expect(isProtectedRoute('/admin')).toBe(true);
     expect(isProtectedRoute('/admin/users')).toBe(true);
-    expect(isProtectedRoute('/dashboard')).toBe(true);
-    expect(isProtectedRoute('/dashboard/profile')).toBe(true);
     expect(isProtectedRoute('/public')).toBe(false);
   });
 
   it('should identify public routes', () => {
     expect(isPublicRoute('/')).toBe(true);
     expect(isPublicRoute('/nosotros')).toBe(true);
-    expect(isPublicRoute('/contacto')).toBe(true);
+    expect(isPublicRoute('/partidos')).toBe(true);
     expect(isPublicRoute('/sign-in')).toBe(true);
     expect(isPublicRoute('/admin')).toBe(false);
   });

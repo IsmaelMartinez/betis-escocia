@@ -68,7 +68,7 @@ describe('withAdminRole', () => {
     expect(screen.queryByTestId('test-component')).not.toBeInTheDocument();
   });
 
-  it('should redirect to dashboard when user is not admin', () => {
+  it('should redirect to home when user is not admin', () => {
     mockUseAuth.mockReturnValue({
       isLoaded: true,
       isSignedIn: true,
@@ -85,12 +85,12 @@ describe('withAdminRole', () => {
     const WrappedComponent = withAdminRole(TestComponent);
     render(<WrappedComponent message="test" />);
 
-    expect(mockPush).toHaveBeenCalledWith('/dashboard');
+    expect(mockPush).toHaveBeenCalledWith('/');
     expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
     expect(screen.getByText('Loading: Verificando permisos... (size: lg)')).toBeInTheDocument();
   });
 
-  it('should redirect to dashboard when user has moderator role', () => {
+  it('should redirect to home when user has moderator role', () => {
     mockUseAuth.mockReturnValue({
       isLoaded: true,
       isSignedIn: true,
@@ -107,7 +107,7 @@ describe('withAdminRole', () => {
     const WrappedComponent = withAdminRole(TestComponent);
     render(<WrappedComponent message="test" />);
 
-    expect(mockPush).toHaveBeenCalledWith('/dashboard');
+    expect(mockPush).toHaveBeenCalledWith('/');
     expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
   });
 
@@ -148,7 +148,7 @@ describe('withAdminRole', () => {
     const WrappedComponent = withAdminRole(TestComponent);
     render(<WrappedComponent message="test" />);
 
-    expect(mockPush).toHaveBeenCalledWith('/dashboard');
+    expect(mockPush).toHaveBeenCalledWith('/');
     expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
   });
 
@@ -167,7 +167,7 @@ describe('withAdminRole', () => {
     const WrappedComponent = withAdminRole(TestComponent);
     render(<WrappedComponent message="test" />);
 
-    expect(mockPush).toHaveBeenCalledWith('/dashboard');
+    expect(mockPush).toHaveBeenCalledWith('/');
     expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
   });
 
@@ -183,7 +183,7 @@ describe('withAdminRole', () => {
     const WrappedComponent = withAdminRole(TestComponent);
     render(<WrappedComponent message="test" />);
 
-    expect(mockPush).toHaveBeenCalledWith('/dashboard');
+    expect(mockPush).toHaveBeenCalledWith('/');
     expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
   });
 
@@ -283,7 +283,7 @@ describe('withAdminRole', () => {
     });
 
     rerender(<WrappedComponent message="test" />);
-    expect(mockPush).toHaveBeenCalledWith('/dashboard');
+    expect(mockPush).toHaveBeenCalledWith('/');
 
     // Fourth render: admin user
     mockUseUser.mockReturnValue({

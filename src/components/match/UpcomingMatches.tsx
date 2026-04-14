@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getUpcomingMatchesWithRSVPCounts, Match } from '@/lib/api/supabase';
+import { getUpcomingMatches, Match } from '@/lib/api/supabase';
 import MatchCard, { convertDatabaseMatchToCardProps } from './MatchCard';
 import Link from 'next/link';
 
@@ -12,18 +12,13 @@ interface UpcomingMatchesProps {
   className?: string;
 }
 
-interface MatchWithRSVP extends Match {
-  rsvp_count: number;
-  total_attendees: number;
-}
-
-export default function UpcomingMatches({ 
-  limit = 3, 
-  showTitle = true, 
+export default function UpcomingMatches({
+  limit = 3,
+  showTitle = true,
   showViewAllLink = true,
   className = ''
 }: UpcomingMatchesProps) {
-  const [matches, setMatches] = useState<MatchWithRSVP[]>([]);
+  const [matches, setMatches] = useState<Match[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,11 +27,11 @@ export default function UpcomingMatches({
       try {
         setIsLoading(true);
         setError(null);
-        
-        const data = await getUpcomingMatchesWithRSVPCounts(limit);
-        
+
+        const data = await getUpcomingMatches(limit);
+
         if (data) {
-          setMatches(data as MatchWithRSVP[]);
+          setMatches(data);
         } else {
           setMatches([]);
         }
@@ -60,10 +55,10 @@ export default function UpcomingMatches({
             <h2 className="text-2xl font-bold text-gray-900">Próximos Partidos</h2>
           </div>
         )}
-        
+
         <div className="space-y-4">
           {Array.from({ length: limit }).map((_, index) => (
-            <div 
+            <div
               key={index}
               className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden animate-pulse"
             >
@@ -101,7 +96,7 @@ export default function UpcomingMatches({
             <h2 className="text-2xl font-bold text-gray-900">Próximos Partidos</h2>
           </div>
         )}
-        
+
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
           <div className="text-red-600 text-lg mb-2">⚠️</div>
           <h3 className="text-lg font-medium text-red-800 mb-2">Error al cargar partidos</h3>
@@ -126,7 +121,7 @@ export default function UpcomingMatches({
             <h2 className="text-2xl font-bold text-gray-900">Próximos Partidos</h2>
           </div>
         )}
-        
+
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
           <div className="text-gray-400 text-4xl mb-4">📅</div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">No hay partidos programados</h3>
@@ -162,28 +157,20 @@ export default function UpcomingMatches({
           )}
         </div>
       )}
-      
+
       <div className="space-y-6">
-        {matches.map((match, index) => {
-          // Only show RSVP link for the first (next) upcoming match
-          const showRSVP = index === 0;
-          
-          const cardProps = convertDatabaseMatchToCardProps(
-            match, 
-            match.rsvp_count, 
-            match.total_attendees,
-            showRSVP
-          );
-          
+        {matches.map((match) => {
+          const cardProps = convertDatabaseMatchToCardProps(match);
+
           return (
-            <MatchCard 
+            <MatchCard
               key={match.id}
               {...cardProps}
             />
           );
         })}
       </div>
-      
+
       {/* View all link at bottom for mobile */}
       {showViewAllLink && matches.length > 0 && (
         <div className="mt-6 text-center md:hidden">
