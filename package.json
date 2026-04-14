@@ -83,7 +83,7 @@
     "storybook": "^10.1.11",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
-    "typescript": "^5",
+    "typescript": "^6",
     "undici": "^7.16.0",
     "vitest": "^4.0.15",
     "wait-on": "^9.0.3"
