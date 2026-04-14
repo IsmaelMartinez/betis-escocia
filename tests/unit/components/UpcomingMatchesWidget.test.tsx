@@ -19,7 +19,9 @@ vi.mock("@/lib/api/supabase", () => ({
 
 // Mock FeatureWrapper to always render children (feature enabled)
 vi.mock("@/lib/features/featureProtection", () => ({
-  FeatureWrapper: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  FeatureWrapper: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
 }));
 
 // Import the mocked function
@@ -100,9 +102,7 @@ describe("UpcomingMatchesWidget Component", () => {
       render(<UpcomingMatchesWidget />);
 
       await waitFor(() => {
-        expect(
-          screen.getByText("errorLoading"),
-        ).toBeInTheDocument();
+        expect(screen.getByText("errorLoading")).toBeInTheDocument();
       });
 
       expect(screen.getByText("retry")).toBeInTheDocument();
@@ -130,12 +130,8 @@ describe("UpcomingMatchesWidget Component", () => {
       render(<UpcomingMatchesWidget />);
 
       await waitFor(() => {
-        expect(
-          screen.getByText("noScheduled"),
-        ).toBeInTheDocument();
-        expect(
-          screen.getByText("willBeAnnounced"),
-        ).toBeInTheDocument();
+        expect(screen.getByText("noScheduled")).toBeInTheDocument();
+        expect(screen.getByText("willBeAnnounced")).toBeInTheDocument();
       });
     });
 
@@ -159,9 +155,7 @@ describe("UpcomingMatchesWidget Component", () => {
       render(<UpcomingMatchesWidget />);
 
       await waitFor(() => {
-        expect(
-          screen.getByText("noScheduled"),
-        ).toBeInTheDocument();
+        expect(screen.getByText("noScheduled")).toBeInTheDocument();
       });
     });
   });

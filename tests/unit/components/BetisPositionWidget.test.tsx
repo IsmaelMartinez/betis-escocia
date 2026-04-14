@@ -73,9 +73,7 @@ describe("BetisPositionWidget Component", () => {
       render(<BetisPositionWidget />);
 
       await waitFor(() => {
-        expect(
-          screen.getByText("couldNotLoad"),
-        ).toBeInTheDocument();
+        expect(screen.getByText("couldNotLoad")).toBeInTheDocument();
       });
     });
 
@@ -110,9 +108,7 @@ describe("BetisPositionWidget Component", () => {
       render(<BetisPositionWidget />);
 
       await waitFor(() => {
-        expect(
-          screen.getByText("couldNotLoad"),
-        ).toBeInTheDocument();
+        expect(screen.getByText("couldNotLoad")).toBeInTheDocument();
       });
     });
   });

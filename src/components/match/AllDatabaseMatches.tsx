@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
-import { getAllMatchesWithRSVPCounts, Match } from '@/lib/api/supabase';
-import MatchCard, { convertDatabaseMatchToCardProps } from './MatchCard';
+import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
+import { getAllMatchesWithRSVPCounts, Match } from "@/lib/api/supabase";
+import MatchCard, { convertDatabaseMatchToCardProps } from "./MatchCard";
 
 interface MatchWithRSVP extends Match {
   rsvp_count: number;
@@ -14,13 +14,15 @@ interface AllDatabaseMatchesProps {
   className?: string;
 }
 
-export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatchesProps) {
-  const t = useTranslations('allDatabaseMatches');
+export default function AllDatabaseMatches({
+  className = "",
+}: AllDatabaseMatchesProps) {
+  const t = useTranslations("allDatabaseMatches");
   const [matches, setMatches] = useState<MatchWithRSVP[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('upcoming');
-  const [competitionFilter, setCompetitionFilter] = useState<string>('all');
+  const [filter, setFilter] = useState<"all" | "upcoming" | "past">("upcoming");
+  const [competitionFilter, setCompetitionFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [matchesPerPage] = useState(6);
 
@@ -38,8 +40,8 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
           setMatches([]);
         }
       } catch (err) {
-        console.error('Error fetching all matches:', err);
-        setError(t('errorLoading'));
+        console.error("Error fetching all matches:", err);
+        setError(t("errorLoading"));
       } finally {
         setIsLoading(false);
       }
@@ -49,171 +51,210 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
   }, [t]);
 
   // Filter matches based on current filter
-  const filteredMatches = matches.filter(match => {
+  const filteredMatches = matches.filter((match) => {
     const now = new Date();
     const matchDate = new Date(match.date_time);
-    
+
     const passesTimeFilter = (() => {
       switch (filter) {
-        case 'upcoming':
+        case "upcoming":
           return matchDate > now;
-        case 'past':
+        case "past":
           return matchDate <= now;
         default:
           return true;
       }
     })();
 
-    const passesCompetitionFilter = competitionFilter === 'all' || match.competition === competitionFilter;
+    const passesCompetitionFilter =
+      competitionFilter === "all" || match.competition === competitionFilter;
 
     return passesTimeFilter && passesCompetitionFilter;
   });
 
   // Calculate counts for filter buttons
   const allMatches = matches;
-  const upcomingMatches = matches.filter(m => new Date(m.date_time) > new Date());
-  const pastMatches = matches.filter(m => new Date(m.date_time) <= new Date());
-  
+  const upcomingMatches = matches.filter(
+    (m) => new Date(m.date_time) > new Date(),
+  );
+  const pastMatches = matches.filter(
+    (m) => new Date(m.date_time) <= new Date(),
+  );
+
   // Get available competitions from all matches
-  const availableCompetitions = Array.from(new Set(matches.map(m => m.competition))).sort();
-  
+  const availableCompetitions = Array.from(
+    new Set(matches.map((m) => m.competition)),
+  ).sort();
+
   // Reset to first page when filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [filter, competitionFilter]);
 
   // Get the actual count based on what will be displayed (considering limits)
-  const getDisplayCount = (filterType: 'all' | 'upcoming' | 'past'): number => {
-    const targetMatches = filterType === 'all' ? allMatches : 
-                         filterType === 'upcoming' ? upcomingMatches : pastMatches;
-    
+  const getDisplayCount = (filterType: "all" | "upcoming" | "past"): number => {
+    const targetMatches =
+      filterType === "all"
+        ? allMatches
+        : filterType === "upcoming"
+          ? upcomingMatches
+          : pastMatches;
+
     // Apply competition filter
-    const competitionFilteredMatches = competitionFilter === 'all' 
-      ? targetMatches 
-      : targetMatches.filter(m => m.competition === competitionFilter);
-    
+    const competitionFilteredMatches =
+      competitionFilter === "all"
+        ? targetMatches
+        : targetMatches.filter((m) => m.competition === competitionFilter);
+
     // Group by competition and apply same logic as processedMatchesByCompetition
-    const grouped = competitionFilteredMatches.reduce((acc, match) => {
-      if (!acc[match.competition]) {
-        acc[match.competition] = [];
-      }
-      acc[match.competition].push(match);
-      return acc;
-    }, {} as Record<string, MatchWithRSVP[]>);
-    
+    const grouped = competitionFilteredMatches.reduce(
+      (acc, match) => {
+        if (!acc[match.competition]) {
+          acc[match.competition] = [];
+        }
+        acc[match.competition].push(match);
+        return acc;
+      },
+      {} as Record<string, MatchWithRSVP[]>,
+    );
+
     let totalCount = 0;
     Object.entries(grouped).forEach(([, competitionMatches]) => {
       const now = new Date();
-      const compUpcoming = competitionMatches.filter(match => new Date(match.date_time) > now);
-      const compPast = competitionMatches.filter(match => new Date(match.date_time) <= now);
-      
-      if (filterType === 'upcoming') {
+      const compUpcoming = competitionMatches.filter(
+        (match) => new Date(match.date_time) > now,
+      );
+      const compPast = competitionMatches.filter(
+        (match) => new Date(match.date_time) <= now,
+      );
+
+      if (filterType === "upcoming") {
         // For upcoming filter, only count if there are upcoming matches
         if (compUpcoming.length > 0) {
           totalCount += compUpcoming.length;
         }
-      } else if (filterType === 'past') {
+      } else if (filterType === "past") {
         totalCount += compPast.length;
       } else {
         // For 'all' filter
         totalCount += compUpcoming.length + compPast.length;
       }
     });
-    
+
     return totalCount;
   };
 
   // Group matches by competition and apply proper sorting and limits
-  const matchesByCompetition = filteredMatches.reduce((acc, match) => {
-    if (!acc[match.competition]) {
-      acc[match.competition] = [];
-    }
-    acc[match.competition].push(match);
-    return acc;
-  }, {} as Record<string, MatchWithRSVP[]>);
+  const matchesByCompetition = filteredMatches.reduce(
+    (acc, match) => {
+      if (!acc[match.competition]) {
+        acc[match.competition] = [];
+      }
+      acc[match.competition].push(match);
+      return acc;
+    },
+    {} as Record<string, MatchWithRSVP[]>,
+  );
 
   // Sort and limit matches within each competition
-  const processedMatchesByCompetition = Object.entries(matchesByCompetition).reduce((acc, [competition, competitionMatches]) => {
-    const now = new Date();
-    
-    // Separate upcoming and past matches
-    const upcomingMatches = competitionMatches.filter(match => new Date(match.date_time) > now);
-    const pastMatches = competitionMatches.filter(match => new Date(match.date_time) <= now);
-    
-    // Sort upcoming matches (earliest first) and past matches (most recent first)
-    const sortedUpcoming = upcomingMatches.sort((a, b) => 
-      new Date(a.date_time).getTime() - new Date(b.date_time).getTime()
-    );
-    const sortedPast = pastMatches.sort((a, b) => 
-      new Date(b.date_time).getTime() - new Date(a.date_time).getTime()
-    );
-    
-    let finalMatches: MatchWithRSVP[] = [];
-    
-    if (filter === 'upcoming') {
-      // For upcoming matches, only show competitions that have upcoming matches
-      if (sortedUpcoming.length > 0) {
-        finalMatches = sortedUpcoming;
+  const processedMatchesByCompetition = Object.entries(
+    matchesByCompetition,
+  ).reduce(
+    (acc, [competition, competitionMatches]) => {
+      const now = new Date();
+
+      // Separate upcoming and past matches
+      const upcomingMatches = competitionMatches.filter(
+        (match) => new Date(match.date_time) > now,
+      );
+      const pastMatches = competitionMatches.filter(
+        (match) => new Date(match.date_time) <= now,
+      );
+
+      // Sort upcoming matches (earliest first) and past matches (most recent first)
+      const sortedUpcoming = upcomingMatches.sort(
+        (a, b) =>
+          new Date(a.date_time).getTime() - new Date(b.date_time).getTime(),
+      );
+      const sortedPast = pastMatches.sort(
+        (a, b) =>
+          new Date(b.date_time).getTime() - new Date(a.date_time).getTime(),
+      );
+
+      let finalMatches: MatchWithRSVP[] = [];
+
+      if (filter === "upcoming") {
+        // For upcoming matches, only show competitions that have upcoming matches
+        if (sortedUpcoming.length > 0) {
+          finalMatches = sortedUpcoming;
+        }
+      } else if (filter === "past") {
+        finalMatches = sortedPast;
+      } else {
+        // For 'all' filter, show all upcoming + all past matches
+        finalMatches = [...sortedUpcoming, ...sortedPast];
       }
-    } else if (filter === 'past') {
-      finalMatches = sortedPast;
-    } else {
-      // For 'all' filter, show all upcoming + all past matches
-      finalMatches = [...sortedUpcoming, ...sortedPast];
-    }
-    
-    // Only add to result if there are matches to show
-    if (finalMatches.length > 0) {
-      acc[competition] = finalMatches;
-    }
-    
-    return acc;
-  }, {} as Record<string, MatchWithRSVP[]>);
+
+      // Only add to result if there are matches to show
+      if (finalMatches.length > 0) {
+        acc[competition] = finalMatches;
+      }
+
+      return acc;
+    },
+    {} as Record<string, MatchWithRSVP[]>,
+  );
 
   // Apply pagination to processedMatchesByCompetition
-  const allProcessedMatches = Object.values(processedMatchesByCompetition).flat();
+  const allProcessedMatches = Object.values(
+    processedMatchesByCompetition,
+  ).flat();
   const totalMatches = allProcessedMatches.length;
   const totalPages = Math.ceil(totalMatches / matchesPerPage);
   const startIndex = (currentPage - 1) * matchesPerPage;
   const endIndex = startIndex + matchesPerPage;
-  
+
   // Paginate matches while maintaining competition grouping
   const paginatedMatches = allProcessedMatches.slice(startIndex, endIndex);
-  
+
   // Re-group paginated matches by competition
-  const paginatedMatchesByCompetition = paginatedMatches.reduce((acc, match) => {
-    if (!acc[match.competition]) {
-      acc[match.competition] = [];
-    }
-    acc[match.competition].push(match);
-    return acc;
-  }, {} as Record<string, MatchWithRSVP[]>);
+  const paginatedMatchesByCompetition = paginatedMatches.reduce(
+    (acc, match) => {
+      if (!acc[match.competition]) {
+        acc[match.competition] = [];
+      }
+      acc[match.competition].push(match);
+      return acc;
+    },
+    {} as Record<string, MatchWithRSVP[]>,
+  );
 
   // Pagination component
   const PaginationComponent = () => {
     if (totalPages <= 1) return null;
-    
+
     const pageNumbers = [];
     const maxVisiblePages = 5;
-    
+
     let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
     const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-    
+
     if (endPage - startPage + 1 < maxVisiblePages) {
       startPage = Math.max(1, endPage - maxVisiblePages + 1);
     }
-    
+
     for (let i = startPage; i <= endPage; i++) {
       pageNumbers.push(i);
     }
-    
+
     return (
       <div className="mt-8 px-4">
         {/* Info text - centered on mobile */}
         <div className="text-sm text-gray-600 text-center mb-4 md:mb-0">
-          {t('showing')} {startIndex + 1}-{Math.min(endIndex, totalMatches)} {t('of')} {totalMatches} {t('matches')}
+          {t("showing")} {startIndex + 1}-{Math.min(endIndex, totalMatches)}{" "}
+          {t("of")} {totalMatches} {t("matches")}
         </div>
-        
+
         {/* Pagination controls */}
         <div className="flex items-center justify-center space-x-1 sm:space-x-2 overflow-x-auto">
           {/* Previous page button */}
@@ -222,14 +263,14 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
             disabled={currentPage === 1}
             className={`px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               currentPage === 1
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
             }`}
           >
-            <span className="hidden sm:inline">{t('previous')}</span>
+            <span className="hidden sm:inline">{t("previous")}</span>
             <span className="sm:hidden">←</span>
           </button>
-          
+
           {/* Page numbers - responsive */}
           {startPage > 1 && (
             <>
@@ -239,27 +280,31 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
               >
                 1
               </button>
-              {startPage > 2 && <span className="text-gray-500 text-xs sm:text-sm">...</span>}
+              {startPage > 2 && (
+                <span className="text-gray-500 text-xs sm:text-sm">...</span>
+              )}
             </>
           )}
-          
-          {pageNumbers.map(pageNumber => (
+
+          {pageNumbers.map((pageNumber) => (
             <button
               key={pageNumber}
               onClick={() => setCurrentPage(pageNumber)}
               className={`px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm font-medium transition-colors ${
                 pageNumber === currentPage
-                  ? 'bg-betis-green text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  ? "bg-betis-green text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
             >
               {pageNumber}
             </button>
           ))}
-          
+
           {endPage < totalPages && (
             <>
-              {endPage < totalPages - 1 && <span className="text-gray-500 text-xs sm:text-sm">...</span>}
+              {endPage < totalPages - 1 && (
+                <span className="text-gray-500 text-xs sm:text-sm">...</span>
+              )}
               <button
                 onClick={() => setCurrentPage(totalPages)}
                 className="px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300"
@@ -268,18 +313,18 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
               </button>
             </>
           )}
-          
+
           {/* Next page button */}
           <button
             onClick={() => setCurrentPage(currentPage + 1)}
             disabled={currentPage === totalPages}
             className={`px-2 sm:px-3 py-1 rounded-md text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               currentPage === totalPages
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
             }`}
           >
-            <span className="hidden sm:inline">{t('next')}</span>
+            <span className="hidden sm:inline">{t("next")}</span>
             <span className="sm:hidden">→</span>
           </button>
         </div>
@@ -292,12 +337,12 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
     return (
       <div className={`${className}`}>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">{t('title')}</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t("title")}</h2>
         </div>
 
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, index) => (
-            <div 
+            <div
               key={index}
               className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden animate-pulse"
             >
@@ -327,18 +372,20 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
     return (
       <div className={`${className}`}>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">{t('title')}</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t("title")}</h2>
         </div>
 
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
           <div className="text-red-600 text-lg mb-2">⚠️</div>
-          <h3 className="text-lg font-medium text-red-800 mb-2">{t('errorTitle')}</h3>
+          <h3 className="text-lg font-medium text-red-800 mb-2">
+            {t("errorTitle")}
+          </h3>
           <p className="text-red-600 mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
             className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
           >
-            {t('retry')}
+            {t("retry")}
           </button>
         </div>
       </div>
@@ -350,15 +397,15 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
     return (
       <div className={`${className}`}>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">{t('title')}</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t("title")}</h2>
         </div>
 
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
           <div className="text-gray-400 text-4xl mb-4">📅</div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">{t('noMatchesInDb')}</h3>
-          <p className="text-gray-600 mb-4">
-            {t('notAddedYet')}
-          </p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            {t("noMatchesInDb")}
+          </h3>
+          <p className="text-gray-600 mb-4">{t("notAddedYet")}</p>
         </div>
       </div>
     );
@@ -368,66 +415,72 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
     <div className={`${className}`}>
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          {t('title')}
+          {t("title")}
           <span className="text-lg font-normal text-gray-600 ml-2">
-            ({getDisplayCount(filter)} {filter === 'all' ? t('total') : filter === 'upcoming' ? t('upcoming') : t('past')})
+            ({getDisplayCount(filter)}{" "}
+            {filter === "all"
+              ? t("total")
+              : filter === "upcoming"
+                ? t("upcoming")
+                : t("past")}
+            )
           </span>
         </h2>
 
         {/* Filter buttons - responsive */}
         <div className="flex flex-wrap gap-2 mb-4">
           <button
-            onClick={() => setFilter('all')}
+            onClick={() => setFilter("all")}
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-              filter === 'all'
-                ? 'bg-betis-green text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              filter === "all"
+                ? "bg-betis-green text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
             }`}
           >
-            {t('filterAll')} ({getDisplayCount('all')})
+            {t("filterAll")} ({getDisplayCount("all")})
           </button>
           <button
-            onClick={() => setFilter('upcoming')}
+            onClick={() => setFilter("upcoming")}
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-              filter === 'upcoming'
-                ? 'bg-betis-green text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              filter === "upcoming"
+                ? "bg-betis-green text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
             }`}
           >
-            {t('filterUpcoming')} ({getDisplayCount('upcoming')})
+            {t("filterUpcoming")} ({getDisplayCount("upcoming")})
           </button>
           <button
-            onClick={() => setFilter('past')}
+            onClick={() => setFilter("past")}
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-              filter === 'past'
-                ? 'bg-betis-green text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              filter === "past"
+                ? "bg-betis-green text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
             }`}
           >
-            {t('filterPast')} ({getDisplayCount('past')})
+            {t("filterPast")} ({getDisplayCount("past")})
           </button>
         </div>
 
         {/* Competition Filter buttons - responsive */}
         <div className="flex flex-wrap gap-2">
           <button
-            onClick={() => setCompetitionFilter('all')}
+            onClick={() => setCompetitionFilter("all")}
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-              competitionFilter === 'all'
-                ? 'bg-betis-green text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              competitionFilter === "all"
+                ? "bg-betis-green text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
             }`}
           >
-            {t('competitionAll')}
+            {t("competitionAll")}
           </button>
           {availableCompetitions.map((competition) => (
             <button
               key={competition}
               onClick={() => setCompetitionFilter(competition)}
               className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                competitionFilter === competition 
-                  ? 'bg-betis-green text-white' 
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                competitionFilter === competition
+                  ? "bg-betis-green text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
             >
               {competition}
@@ -435,54 +488,56 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
           ))}
         </div>
       </div>
-  
-  {filteredMatches.length === 0 ? (
-    <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
-      <div className="text-gray-400 text-4xl mb-4">📅</div>
-      <h3 className="text-lg font-medium text-gray-900 mb-2">
-        {filter === 'upcoming' ? t('noUpcoming') : t('noPast')}
-      </h3>
-      <p className="text-gray-600">
-        {filter === 'upcoming'
-          ? t('noUpcomingDesc')
-          : t('noPastDesc')
-        }
-      </p>
-    </div>
-  ) : (
-    <>
-      <div className="space-y-8">
-        {Object.entries(paginatedMatchesByCompetition).map(([competition, competitionMatches]) => {
-          return (
-            <div key={competition} className="bg-white rounded-lg shadow-md p-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                🏆 {competition}
-                <span className="ml-2 text-sm font-normal text-gray-600">
-                  ({competitionMatches.length} {t('matchesInPage')})
-                </span>
-              </h3>
-              
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-                {competitionMatches.map((match) => {
-                  const cardProps = convertDatabaseMatchToCardProps(match, match.rsvp_count, match.total_attendees, true);
-                  
-                  return (
-                    <MatchCard 
-                      key={match.id}
-                      {...cardProps}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      
-      {/* Pagination Component */}
-      <PaginationComponent />
-    </>
-  )}
+
+      {filteredMatches.length === 0 ? (
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
+          <div className="text-gray-400 text-4xl mb-4">📅</div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            {filter === "upcoming" ? t("noUpcoming") : t("noPast")}
+          </h3>
+          <p className="text-gray-600">
+            {filter === "upcoming" ? t("noUpcomingDesc") : t("noPastDesc")}
+          </p>
+        </div>
+      ) : (
+        <>
+          <div className="space-y-8">
+            {Object.entries(paginatedMatchesByCompetition).map(
+              ([competition, competitionMatches]) => {
+                return (
+                  <div
+                    key={competition}
+                    className="bg-white rounded-lg shadow-md p-6"
+                  >
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                      🏆 {competition}
+                      <span className="ml-2 text-sm font-normal text-gray-600">
+                        ({competitionMatches.length} {t("matchesInPage")})
+                      </span>
+                    </h3>
+
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+                      {competitionMatches.map((match) => {
+                        const cardProps = convertDatabaseMatchToCardProps(
+                          match,
+                          match.rsvp_count,
+                          match.total_attendees,
+                          true,
+                        );
+
+                        return <MatchCard key={match.id} {...cardProps} />;
+                      })}
+                    </div>
+                  </div>
+                );
+              },
+            )}
+          </div>
+
+          {/* Pagination Component */}
+          <PaginationComponent />
+        </>
+      )}
     </div>
   );
 }

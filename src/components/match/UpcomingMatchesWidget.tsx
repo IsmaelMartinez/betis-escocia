@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { getUpcomingMatchesWithRSVPCounts, Match } from '@/lib/api/supabase';
-import { Link } from '@/i18n/navigation';
-import { useLocale, useTranslations } from 'next-intl';
-import { FeatureWrapper } from '@/lib/features/featureProtection';
-import { format } from 'date-fns';
-import { es, enGB } from 'date-fns/locale';
-import { DATETIME_FORMAT } from '@/lib/constants/dateFormats';
+import { useState, useEffect } from "react";
+import { getUpcomingMatchesWithRSVPCounts, Match } from "@/lib/api/supabase";
+import { Link } from "@/i18n/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { FeatureWrapper } from "@/lib/features/featureProtection";
+import { format } from "date-fns";
+import { es, enGB } from "date-fns/locale";
+import { DATETIME_FORMAT } from "@/lib/constants/dateFormats";
 
 interface UpcomingMatchesWidgetProps {
   className?: string;
@@ -19,11 +19,11 @@ interface MatchWithRSVP extends Match {
 }
 
 export default function UpcomingMatchesWidget({
-  className = ''
+  className = "",
 }: UpcomingMatchesWidgetProps) {
-  const t = useTranslations('upcomingMatchesWidget');
+  const t = useTranslations("upcomingMatchesWidget");
   const locale = useLocale();
-  const dateFnsLocale = locale === 'en' ? enGB : es;
+  const dateFnsLocale = locale === "en" ? enGB : es;
   const [matches, setMatches] = useState<MatchWithRSVP[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,8 +43,8 @@ export default function UpcomingMatchesWidget({
           setMatches([]);
         }
       } catch (err) {
-        console.error('Error fetching upcoming matches widget:', err);
-        setError(t('errorLoading'));
+        console.error("Error fetching upcoming matches widget:", err);
+        setError(t("errorLoading"));
       } finally {
         setIsLoading(false);
       }
@@ -59,13 +59,16 @@ export default function UpcomingMatchesWidget({
     return (
       <div className={`bg-white rounded-lg shadow-lg p-6 ${className}`}>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900">{t('title')}</h2>
+          <h2 className="text-xl font-bold text-gray-900">{t("title")}</h2>
           <div className="h-4 w-20 bg-gray-300 rounded animate-pulse"></div>
         </div>
-        
+
         <div className="space-y-4">
           {Array.from({ length: 2 }).map((_, index) => (
-            <div key={index} className="border border-gray-200 rounded-lg p-4 animate-pulse">
+            <div
+              key={index}
+              className="border border-gray-200 rounded-lg p-4 animate-pulse"
+            >
               <div className="flex items-center justify-between mb-3">
                 <div className="h-4 bg-gray-300 rounded w-24"></div>
                 <div className="h-4 bg-gray-300 rounded w-16"></div>
@@ -92,7 +95,7 @@ export default function UpcomingMatchesWidget({
   if (error) {
     return (
       <div className={`bg-white rounded-lg shadow-lg p-6 ${className}`}>
-        <h2 className="text-xl font-bold text-gray-900 mb-4">{t('title')}</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-4">{t("title")}</h2>
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
           <div className="text-red-600 text-sm mb-2">⚠️</div>
           <p className="text-red-600 text-sm mb-3">{error}</p>
@@ -100,7 +103,7 @@ export default function UpcomingMatchesWidget({
             onClick={() => window.location.reload()}
             className="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded font-medium transition-colors"
           >
-            {t('retry')}
+            {t("retry")}
           </button>
         </div>
       </div>
@@ -112,26 +115,24 @@ export default function UpcomingMatchesWidget({
     return (
       <div className={`bg-white rounded-lg shadow-lg p-6 ${className}`}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-900">{t('title')}</h2>
+          <h2 className="text-xl font-bold text-gray-900">{t("title")}</h2>
           <Link
             href="/partidos"
             className="text-betis-verde hover:text-betis-verde-dark font-semibold text-sm underline underline-offset-2"
           >
-            {t('viewAll')}
+            {t("viewAll")}
           </Link>
         </div>
 
         <div className="text-center py-8">
           <div className="text-gray-400 text-2xl mb-3">📅</div>
-          <h3 className="font-medium text-gray-900 mb-2">{t('noScheduled')}</h3>
-          <p className="text-gray-600 text-sm mb-4">
-            {t('willBeAnnounced')}
-          </p>
+          <h3 className="font-medium text-gray-900 mb-2">{t("noScheduled")}</h3>
+          <p className="text-gray-600 text-sm mb-4">{t("willBeAnnounced")}</p>
           <Link
             href="/partidos"
             className="text-betis-verde hover:text-betis-verde-dark font-semibold text-sm underline underline-offset-2"
           >
-            {t('viewHistory')}
+            {t("viewHistory")}
           </Link>
         </div>
       </div>
@@ -142,24 +143,26 @@ export default function UpcomingMatchesWidget({
   return (
     <div className={`bg-white rounded-lg shadow-lg p-6 ${className}`}>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-gray-900">{t('title')}</h2>
+        <h2 className="text-xl font-bold text-gray-900">{t("title")}</h2>
         <Link
           href="/partidos"
           className="text-betis-verde hover:text-betis-verde-dark font-semibold text-sm flex items-center underline underline-offset-2"
         >
-          {t('viewAll')}
+          {t("viewAll")}
         </Link>
       </div>
-      
-      <div className={`${matches.length > 1 ? 'grid grid-cols-1 md:grid-cols-2 gap-4' : 'space-y-4'}`}>
+
+      <div
+        className={`${matches.length > 1 ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "space-y-4"}`}
+      >
         {matches.map((match) => {
           // Convert to simplified card format for widget
           const matchDate = new Date(match.date_time);
           const isUpcoming = matchDate > new Date();
-          
+
           return (
-            <div 
-              key={match.id} 
+            <div
+              key={match.id}
               className="border border-gray-200 rounded-lg p-4 hover:border-betis-verde transition-colors"
             >
               {/* Competition and date */}
@@ -168,39 +171,46 @@ export default function UpcomingMatchesWidget({
                   {match.competition}
                 </span>
                 <span className="text-xs text-gray-500">
-                  {format(matchDate, DATETIME_FORMAT, { locale: dateFnsLocale })}
+                  {format(matchDate, DATETIME_FORMAT, {
+                    locale: dateFnsLocale,
+                  })}
                 </span>
               </div>
 
               {/* Teams */}
               <div className="flex items-center justify-center space-x-4 mb-3">
                 <div className="text-right flex-1">
-                  <p className={`font-semibold text-sm ${
-                    match.home_away === 'home' ? 'text-betis-verde' : 'text-gray-900'
-                  }`}>
-                    {match.home_away === 'home' ? 'Real Betis' : match.opponent}
+                  <p
+                    className={`font-semibold text-sm ${
+                      match.home_away === "home"
+                        ? "text-betis-verde"
+                        : "text-gray-900"
+                    }`}
+                  >
+                    {match.home_away === "home" ? "Real Betis" : match.opponent}
                   </p>
                   <p className="text-xs text-gray-500">
-                    {match.home_away === 'home' ? t('home') : t('away')}
+                    {match.home_away === "home" ? t("home") : t("away")}
                   </p>
                 </div>
 
-                <div className="text-lg font-bold text-gray-400 px-2">
-                  VS
-                </div>
+                <div className="text-lg font-bold text-gray-400 px-2">VS</div>
 
                 <div className="text-left flex-1">
-                  <p className={`font-semibold text-sm ${
-                    match.home_away === 'away' ? 'text-betis-verde' : 'text-gray-900'
-                  }`}>
-                    {match.home_away === 'away' ? 'Real Betis' : match.opponent}
+                  <p
+                    className={`font-semibold text-sm ${
+                      match.home_away === "away"
+                        ? "text-betis-verde"
+                        : "text-gray-900"
+                    }`}
+                  >
+                    {match.home_away === "away" ? "Real Betis" : match.opponent}
                   </p>
                   <p className="text-xs text-gray-500">
-                    {match.home_away === 'away' ? t('away') : t('home')}
+                    {match.home_away === "away" ? t("away") : t("home")}
                   </p>
                 </div>
               </div>
-
 
               {/* RSVP info and action for upcoming matches */}
               {isUpcoming && (
@@ -209,10 +219,17 @@ export default function UpcomingMatchesWidget({
                     {match.rsvp_count > 0 && (
                       <div className="text-center mb-2">
                         <span className="text-xs text-gray-600">
-                          <span className="font-medium text-betis-verde">{match.rsvp_count}</span> {t('confirmations')}
+                          <span className="font-medium text-betis-verde">
+                            {match.rsvp_count}
+                          </span>{" "}
+                          {t("confirmations")}
                           {match.total_attendees > 0 && (
                             <span className="ml-2">
-                              • <span className="font-medium text-betis-verde">{match.total_attendees}</span> {t('attendees')}
+                              •{" "}
+                              <span className="font-medium text-betis-verde">
+                                {match.total_attendees}
+                              </span>{" "}
+                              {t("attendees")}
                             </span>
                           )}
                         </span>
@@ -223,7 +240,7 @@ export default function UpcomingMatchesWidget({
                       href={`/rsvp?match=${match.id}` as never}
                       className="block w-full bg-betis-verde hover:bg-betis-verde-dark text-white text-center py-2 px-3 rounded text-xs font-medium transition-colors"
                     >
-                      📝 {t('confirmAttendance')}
+                      📝 {t("confirmAttendance")}
                     </Link>
                   </div>
                 </FeatureWrapper>
@@ -232,14 +249,14 @@ export default function UpcomingMatchesWidget({
           );
         })}
       </div>
-      
+
       {/* Footer link */}
       <div className="mt-6 text-center">
         <Link
           href="/partidos"
           className="text-betis-verde hover:text-betis-verde-dark font-semibold text-sm underline underline-offset-2"
         >
-          {t('viewAllMatches')}
+          {t("viewAllMatches")}
         </Link>
       </div>
     </div>

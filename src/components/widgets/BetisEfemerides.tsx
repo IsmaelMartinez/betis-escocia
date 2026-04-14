@@ -108,7 +108,10 @@ export default function BetisEfemerides() {
       <div className="relative px-6 py-5">
         <div className="space-y-6">
           {efemerides.map((efemeride) => (
-            <EfemerideCard key={`${efemeride.year}-${efemeride.title}`} efemeride={efemeride} />
+            <EfemerideCard
+              key={`${efemeride.year}-${efemeride.title}`}
+              efemeride={efemeride}
+            />
           ))}
         </div>
 

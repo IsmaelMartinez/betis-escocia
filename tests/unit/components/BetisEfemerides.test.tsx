@@ -84,10 +84,7 @@ describe("BetisEfemerides", () => {
       render(<BetisEfemerides />);
 
       const region = screen.getByRole("region");
-      expect(region).toHaveAttribute(
-        "aria-label",
-        "ariaLabel",
-      );
+      expect(region).toHaveAttribute("aria-label", "ariaLabel");
     });
 
     it("renders category emoji as decorative", () => {

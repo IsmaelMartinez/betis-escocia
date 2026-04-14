@@ -143,9 +143,7 @@ describe("ClassificationWidget Component", () => {
       render(<ClassificationWidget />);
 
       await waitFor(() => {
-        expect(
-          screen.getByText(/errorLoading/),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/errorLoading/)).toBeInTheDocument();
       });
 
       expect(screen.getByText("retry")).toBeInTheDocument();
@@ -173,9 +171,7 @@ describe("ClassificationWidget Component", () => {
 
       await waitFor(() => {
         // In mock environment, component shows generic error message
-        expect(
-          screen.getByText(/errorLoading/),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/errorLoading/)).toBeInTheDocument();
       });
     });
   });
@@ -360,9 +356,7 @@ describe("ClassificationWidget Component", () => {
 
       await waitFor(() => {
         // Component should show error state in mock environment
-        expect(
-          screen.getByText(/errorLoading/),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/errorLoading/)).toBeInTheDocument();
       });
     });
 
@@ -376,9 +370,7 @@ describe("ClassificationWidget Component", () => {
 
       await waitFor(() => {
         // In mock environment, component shows generic error message
-        expect(
-          screen.getByText(/errorLoading/),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/errorLoading/)).toBeInTheDocument();
       });
     });
   });
