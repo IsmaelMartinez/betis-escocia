@@ -34,11 +34,11 @@ From the [architecture simplification plan](architecture-simplification-plan.md)
 
 Target components remaining after the RSVP/Contacto/Dashboard cleanup:
 
-| Component                | Lines | Status  | Plan                                                                       |
-| ------------------------ | ----- | ------- | -------------------------------------------------------------------------- |
-| `AllDatabaseMatches.tsx` | ~490  | Planned | Extract filtering/pagination into custom hooks.                            |
-| `Layout.tsx`             | ~460  | Planned | Extract Header, Footer, UserMenu components.                               |
-| `AdminPageClient.tsx`    | —     | Simplified | Trimmed to matches-only orchestration; RSVP/Contacto views removed.      |
+| Component                | Lines | Status     | Plan                                                                |
+| ------------------------ | ----- | ---------- | ------------------------------------------------------------------- |
+| `AllDatabaseMatches.tsx` | ~490  | Planned    | Extract filtering/pagination into custom hooks.                     |
+| `Layout.tsx`             | ~460  | Planned    | Extract Header, Footer, UserMenu components.                        |
+| `AdminPageClient.tsx`    | —     | Simplified | Trimmed to matches-only orchestration; RSVP/Contacto views removed. |
 
 ### Phase 5: Database Module Split
 
@@ -72,10 +72,10 @@ Extract remaining business logic from components into reusable hooks:
 
 Features currently behind feature flags, disabled by default:
 
-| Feature        | Flag              | Status          | What's Needed                                                                               |
-| -------------- | ----------------- | --------------- | ------------------------------------------------------------------------------------------- |
+| Feature        | Flag              | Status          | What's Needed                                                                                      |
+| -------------- | ----------------- | --------------- | -------------------------------------------------------------------------------------------------- |
 | **Clerk Auth** | `show-clerk-auth` | Built, disabled | User accounts and login. Enable when user-facing features (profiles, auth-gated flows) are needed. |
-| **Debug Info** | `show-debug-info` | Built, disabled | Developer-only. Enable per-environment via env vars.                                        |
+| **Debug Info** | `show-debug-info` | Built, disabled | Developer-only. Enable per-environment via env vars.                                               |
 
 ---
 

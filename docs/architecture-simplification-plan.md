@@ -310,6 +310,7 @@ These parts of the architecture are working well and should be preserved:
 4. ~~Update Storybook paths~~
 
 Components moved:
+
 - `layout/` — Layout
 - `match/` — MatchCard, MatchTicket, AllDatabaseMatches, BackgroundMatchSync, UpcomingMatches, FilteredMatches, PaginatedMatches, CompetitionFilter, ShareMatch, UpcomingMatchesWidget
 - `rsvp/` — RSVPWidget, RSVPForm, RSVPModal
@@ -355,6 +356,7 @@ src/lib/
 ```
 
 **Changes:**
+
 1. Created domain-focused subdirectories in `src/lib/`
 2. Moved all hooks to `src/hooks/data/` (consolidated from `src/hooks/` and `src/lib/hooks/`)
 3. Updated 200+ import paths across src/ and tests/
@@ -362,6 +364,7 @@ src/lib/
 5. Type-check and lint passing
 
 **Benefits:**
+
 - Clear separation of concerns (API, auth, features, utils)
 - Easier to find related functionality
 - Reduced cognitive load when navigating codebase
@@ -377,10 +380,12 @@ Several Phase 4 targets were eliminated by the RSVP/Contacto/Dashboard cleanup (
 - ~~RSVPWidget split~~ → Obsolete: entire component deleted
 
 **Initial work (Phase 4.1):**
+
 - Created `src/app/admin/hooks/useAdminStats.ts` - demonstrates pattern for extracting data fetching logic into reusable hooks
 - Establishes structure for further component decomposition
 
 **Expected benefits:**
+
 - Smaller, focused components (target: <300 lines each)
 - Reusable hooks for data fetching
 - Easier testing of individual pieces

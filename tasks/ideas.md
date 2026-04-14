@@ -4,14 +4,14 @@ This document is a brainstorming space for future features. Current and in-progr
 
 ## 📋 **Quick Status Overview** (Last updated: 2026-04-14)
 
-| Category           | Status                             |
-| ------------------ | ---------------------------------- |
-| Games              | ✅ Daily Trivia live               |
-| Community Profiles | ❌ Not started                      |
-| La Porra           | ❌ Idea only                        |
-| E-commerce         | ❌ Idea only                        |
-| Voting System      | ❌ Idea only                        |
-| i18n               | ❌ Idea only                        |
+| Category           | Status               |
+| ------------------ | -------------------- |
+| Games              | ✅ Daily Trivia live |
+| Community Profiles | ❌ Not started       |
+| La Porra           | ❌ Idea only         |
+| E-commerce         | ❌ Idea only         |
+| Voting System      | ❌ Idea only         |
+| i18n               | ❌ Idea only         |
 
 The RSVP, Contact, Dashboard, GDPR, and OneSignal admin-notification surfaces that previously appeared here were removed from the codebase in commit 90bbbf2. If any of them come back in the future, re-introduce them as fresh ideas below.
 
