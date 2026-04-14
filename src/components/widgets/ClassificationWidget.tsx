@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { Trophy, TrendingUp, TrendingDown } from 'lucide-react';
 
 // Import types from footballDataService
@@ -33,6 +34,7 @@ function getPositionBadge(position: number): { text: string; color: string } | n
 }
 
 export default function ClassificationWidget({ className = '', initialStandings = null, simulateLoading = false }: ClassificationWidgetProps) {
+  const t = useTranslations('classificationWidget');
   const [standings, setStandings] = useState<StandingEntry[] | null>(initialStandings);
   const [betisEntry, setBetisEntry] = useState<StandingEntry | null>(null);
   const [isLoading, setIsLoading] = useState(simulateLoading || initialStandings === null);
@@ -71,28 +73,28 @@ export default function ClassificationWidget({ className = '', initialStandings 
             const betis = data.standings.table.find((entry: StandingEntry) => entry.team.id === 90);
             setBetisEntry(betis || null);
           } else {
-            setError('No se pudieron cargar las clasificaciones');
+            setError(t('errorCouldNotLoad'));
           }
         } else {
-          setError(apiResponse.error || 'No se pudieron cargar las clasificaciones');
+          setError(apiResponse.error || t('errorCouldNotLoad'));
         }
       } catch (err) {
         console.error('Error fetching standings:', err);
-        setError('Error al cargar la clasificación');
+        setError(t('errorLoading'));
       } finally {
         setIsLoading(false);
       }
     }
 
     fetchStandings();
-  }, [initialStandings, simulateLoading]);
+  }, [initialStandings, simulateLoading, t]);
 
   // Loading state
   if (isLoading) {
     return (
       <div className={`bg-white rounded-lg shadow-lg p-6 ${className}`}>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900">Clasificación</h2>
+          <h2 className="text-xl font-bold text-gray-900">{t('title')}</h2>
           <div className="h-4 w-20 bg-gray-300 rounded animate-pulse"></div>
         </div>
         
@@ -114,7 +116,7 @@ export default function ClassificationWidget({ className = '', initialStandings 
   if (error) {
     return (
       <div className={`bg-white rounded-lg shadow-lg p-6 ${className}`}>
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Clasificación</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-4">{t('title')}</h2>
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
           <div className="text-red-600 text-sm mb-2">⚠️</div>
           <p className="text-red-600 text-sm mb-3">{error}</p>
@@ -122,7 +124,7 @@ export default function ClassificationWidget({ className = '', initialStandings 
             onClick={() => window.location.reload()}
             className="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded font-medium transition-colors"
           >
-            Reintentar
+            {t('retry')}
           </button>
         </div>
       </div>
@@ -133,11 +135,11 @@ export default function ClassificationWidget({ className = '', initialStandings 
   if (!standings || !betisEntry) {
     return (
       <div className={`bg-white rounded-lg shadow-lg p-6 ${className}`}>
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Clasificación</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-4">{t('title')}</h2>
         <div className="text-center py-8">
           <div className="text-gray-400 text-2xl mb-3">📊</div>
           <p className="text-gray-600 text-sm">
-            No hay datos de clasificación disponibles
+            {t('noData')}
           </p>
         </div>
       </div>
@@ -157,7 +159,7 @@ export default function ClassificationWidget({ className = '', initialStandings 
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-gray-900 flex items-center">
           <Trophy className="h-5 w-5 mr-2 text-betis-oro" />
-          Clasificación
+          {t('title')}
         </h2>
       </div>
 
@@ -174,8 +176,8 @@ export default function ClassificationWidget({ className = '', initialStandings 
               unoptimized
             />
             <div>
-              <div className="font-bold text-lg">{betisEntry.position}º posición</div>
-              <div className="text-white text-sm">{betisEntry.points} puntos</div>
+              <div className="font-bold text-lg">{betisEntry.position}º {t('position')}</div>
+              <div className="text-white text-sm">{betisEntry.points} {t('points')}</div>
             </div>
           </div>
           {positionBadge && (
@@ -246,7 +248,7 @@ export default function ClassificationWidget({ className = '', initialStandings 
           href="/clasificacion"
           className="text-betis-verde hover:text-betis-verde-dark font-semibold text-sm underline underline-offset-2"
         >
-          Ver tabla completa →
+          {t('viewFullTable')}
         </Link>
       </div>
     </div>

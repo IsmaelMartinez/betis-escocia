@@ -31,21 +31,21 @@ describe('CommunityStats', () => {
       render(<CommunityStats />);
 
       expect(screen.getByText('150+')).toBeInTheDocument();
-      expect(screen.getByText('MIEMBROS')).toBeInTheDocument();
+      expect(screen.getByText('members')).toBeInTheDocument();
     });
 
     it('shows years statistics', () => {
       render(<CommunityStats />);
 
       expect(screen.getByText('15')).toBeInTheDocument();
-      expect(screen.getByText('AÑOS')).toBeInTheDocument();
+      expect(screen.getByText('years')).toBeInTheDocument();
     });
 
     it('shows memories statistics', () => {
       render(<CommunityStats />);
 
       expect(screen.getByText('∞')).toBeInTheDocument();
-      expect(screen.getByText('RECUERDOS')).toBeInTheDocument();
+      expect(screen.getByText('memories')).toBeInTheDocument();
     });
   });
 
@@ -66,9 +66,9 @@ describe('CommunityStats', () => {
     it('applies correct styling to statistic labels', () => {
       render(<CommunityStats />);
 
-      const membersLabel = screen.getByText('MIEMBROS');
-      const yearsLabel = screen.getByText('AÑOS');
-      const memoriesLabel = screen.getByText('RECUERDOS');
+      const membersLabel = screen.getByText('members');
+      const yearsLabel = screen.getByText('years');
+      const memoriesLabel = screen.getByText('memories');
 
       // Check that all stat labels have correct styling
       [membersLabel, yearsLabel, memoriesLabel].forEach(element => {
@@ -86,13 +86,13 @@ describe('CommunityStats', () => {
     it('displays the community quote', () => {
       render(<CommunityStats />);
 
-      expect(screen.getByText(/Como estar en casa pero viendo el Betis/)).toBeInTheDocument();
+      expect(screen.getByText(/quote/)).toBeInTheDocument();
     });
 
     it('applies correct styling to the quote', () => {
       render(<CommunityStats />);
 
-      const quote = screen.getByText(/Como estar en casa pero viendo el Betis/);
+      const quote = screen.getByText(/quote/);
       expect(quote).toHaveClass('text-sm', 'text-gray-600', 'italic');
     });
   });
@@ -107,11 +107,11 @@ describe('CommunityStats', () => {
       
       // Statistics should be readable by screen readers
       expect(screen.getByText('150+')).toBeInTheDocument();
-      expect(screen.getByText('MIEMBROS')).toBeInTheDocument();
+      expect(screen.getByText('members')).toBeInTheDocument();
       expect(screen.getByText('15')).toBeInTheDocument();
-      expect(screen.getByText('AÑOS')).toBeInTheDocument();
+      expect(screen.getByText('years')).toBeInTheDocument();
       expect(screen.getByText('∞')).toBeInTheDocument();
-      expect(screen.getByText('RECUERDOS')).toBeInTheDocument();
+      expect(screen.getByText('memories')).toBeInTheDocument();
     });
 
     it('properly associates statistic values with their labels', () => {
@@ -150,9 +150,9 @@ describe('CommunityStats', () => {
 
       const mainContainer = container.firstChild as HTMLElement;
       const quote = mainContainer.querySelector('p.text-sm.text-gray-600.italic');
-      
+
       expect(quote).toBeInTheDocument();
-      expect(quote?.textContent).toMatch(/Como estar en casa pero viendo el Betis/);
+      expect(quote?.textContent).toMatch(/quote/);
     });
   });
 

@@ -84,11 +84,11 @@ describe('AllDatabaseMatches', () => {
 
     it('should show main title', async () => {
       mockGetAllMatches.mockResolvedValue([]);
-      
+
       render(<AllDatabaseMatches />);
-      
+
       await waitFor(() => {
-        expect(screen.getByText('Todos los Partidos')).toBeInTheDocument();
+        expect(screen.getByText('title')).toBeInTheDocument();
       });
     });
   });
@@ -96,21 +96,21 @@ describe('AllDatabaseMatches', () => {
   describe('Data Display', () => {
     it('should display matches after successful data fetch', async () => {
       mockGetAllMatches.mockResolvedValue(mockMatches);
-      
+
       render(<AllDatabaseMatches />);
-      
+
       await waitFor(() => {
-        expect(screen.getByText('Todos los Partidos')).toBeInTheDocument();
+        expect(screen.getByText('title')).toBeInTheDocument();
       });
     });
 
     it('should show empty state when no matches are available', async () => {
       mockGetAllMatches.mockResolvedValue([]);
-      
+
       render(<AllDatabaseMatches />);
-      
+
       await waitFor(() => {
-        expect(screen.getByText('No hay partidos en la base de datos')).toBeInTheDocument();
+        expect(screen.getByText('noMatchesInDb')).toBeInTheDocument();
       });
     });
   });

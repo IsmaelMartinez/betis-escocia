@@ -57,7 +57,7 @@ describe("BetisEfemerides", () => {
     it("renders the category badge", () => {
       render(<BetisEfemerides />);
 
-      expect(screen.getByText("Título")).toBeInTheDocument();
+      expect(screen.getByText("categoryTitulo")).toBeInTheDocument();
     });
 
     it("renders the year when present", () => {
@@ -69,13 +69,13 @@ describe("BetisEfemerides", () => {
     it("renders the header section", () => {
       render(<BetisEfemerides />);
 
-      expect(screen.getByText("Tal día como hoy")).toBeInTheDocument();
+      expect(screen.getByText("header")).toBeInTheDocument();
     });
 
     it("renders the footer tagline", () => {
       render(<BetisEfemerides />);
 
-      expect(screen.getByText(/Manque pierda/)).toBeInTheDocument();
+      expect(screen.getByText(/footerTagline/)).toBeInTheDocument();
     });
   });
 
@@ -86,7 +86,7 @@ describe("BetisEfemerides", () => {
       const region = screen.getByRole("region");
       expect(region).toHaveAttribute(
         "aria-label",
-        "Tal día como hoy en la historia del Betis y de Escocia",
+        "ariaLabel",
       );
     });
 

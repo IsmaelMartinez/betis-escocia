@@ -184,7 +184,7 @@ export default function Layout({
                                 onClick={() => setIsUserMenuOpen(false)}
                               >
                                 <Trophy size={16} />
-                                Admin
+                                {t("admin")}
                               </Link>
                             )}
                             <Link
@@ -193,7 +193,7 @@ export default function Layout({
                               onClick={() => setIsUserMenuOpen(false)}
                             >
                               <User size={16} />
-                              Dashboard
+                              {t("dashboard")}
                             </Link>
                             <Link
                               href="/trivia"
@@ -201,7 +201,7 @@ export default function Layout({
                               onClick={() => setIsUserMenuOpen(false)}
                             >
                               <Calendar size={16} />
-                              Trivia
+                              {t("trivia")}
                             </Link>
                             <div className="border-t border-gray-100 my-1" />
                             <button
@@ -286,7 +286,7 @@ export default function Layout({
                           onClick={() => setIsMenuOpen(false)}
                         >
                           <Trophy size={20} />
-                          Admin
+                          {t("admin")}
                         </Link>
                       )}
                       <Link
@@ -295,7 +295,7 @@ export default function Layout({
                         onClick={() => setIsMenuOpen(false)}
                       >
                         <User size={20} />
-                        Dashboard
+                        {t("dashboard")}
                       </Link>
                       <Link
                         href="/trivia"
@@ -303,7 +303,7 @@ export default function Layout({
                         onClick={() => setIsMenuOpen(false)}
                       >
                         <Calendar size={20} />
-                        Trivia
+                        {t("trivia")}
                       </Link>
                       <button
                         onClick={() => {

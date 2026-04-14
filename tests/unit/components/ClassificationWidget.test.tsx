@@ -120,7 +120,7 @@ describe("ClassificationWidget Component", () => {
     it("renders loading skeleton", () => {
       render(<ClassificationWidget simulateLoading={true} />);
 
-      expect(screen.getByText("Clasificación")).toBeInTheDocument();
+      expect(screen.getByText("title")).toBeInTheDocument();
       expect(
         screen
           .getAllByRole("generic")
@@ -144,11 +144,11 @@ describe("ClassificationWidget Component", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(/Error al cargar la clasificación/),
+          screen.getByText(/errorLoading/),
         ).toBeInTheDocument();
       });
 
-      expect(screen.getByText("Reintentar")).toBeInTheDocument();
+      expect(screen.getByText("retry")).toBeInTheDocument();
     });
 
     it("handles reload button click", async () => {
@@ -157,7 +157,7 @@ describe("ClassificationWidget Component", () => {
       render(<ClassificationWidget />);
 
       await waitFor(() => {
-        const retryButton = screen.getByText("Reintentar");
+        const retryButton = screen.getByText("retry");
         fireEvent.click(retryButton);
         expect(window.location.reload).toHaveBeenCalled();
       });
@@ -174,7 +174,7 @@ describe("ClassificationWidget Component", () => {
       await waitFor(() => {
         // In mock environment, component shows generic error message
         expect(
-          screen.getByText(/Error al cargar la clasificación/),
+          screen.getByText(/errorLoading/),
         ).toBeInTheDocument();
       });
     });
@@ -198,16 +198,16 @@ describe("ClassificationWidget Component", () => {
     it("renders with provided initial standings", () => {
       render(<ClassificationWidget initialStandings={mockStandings} />);
 
-      expect(screen.getByText("Clasificación")).toBeInTheDocument();
+      expect(screen.getByText("title")).toBeInTheDocument();
       expect(screen.getByTestId("trophy-icon")).toBeInTheDocument();
-      expect(screen.getByText("2º posición")).toBeInTheDocument();
-      expect(screen.getByText("22 puntos")).toBeInTheDocument();
+      expect(screen.getByText("2º position")).toBeInTheDocument();
+      expect(screen.getByText("22 points")).toBeInTheDocument();
     });
 
     it("highlights Betis position correctly", () => {
       render(<ClassificationWidget initialStandings={mockStandings} />);
 
-      const betisHighlight = screen.getByText("2º posición").closest("div");
+      const betisHighlight = screen.getByText("2º position").closest("div");
       // The parent div of Betis position should have bg-betis-verde-dark class (darker for better contrast)
       const betisContainer = betisHighlight?.closest("div.bg-betis-verde-dark");
       expect(betisContainer).toBeTruthy();
@@ -254,7 +254,7 @@ describe("ClassificationWidget Component", () => {
     it('renders "Ver tabla completa" link', () => {
       render(<ClassificationWidget initialStandings={mockStandings} />);
 
-      const link = screen.getByText("Ver tabla completa →");
+      const link = screen.getByText("viewFullTable");
       expect(link).toHaveAttribute("href", "/clasificacion");
     });
   });
@@ -361,7 +361,7 @@ describe("ClassificationWidget Component", () => {
       await waitFor(() => {
         // Component should show error state in mock environment
         expect(
-          screen.getByText(/Error al cargar la clasificación/),
+          screen.getByText(/errorLoading/),
         ).toBeInTheDocument();
       });
     });
@@ -377,7 +377,7 @@ describe("ClassificationWidget Component", () => {
       await waitFor(() => {
         // In mock environment, component shows generic error message
         expect(
-          screen.getByText(/Error al cargar la clasificación/),
+          screen.getByText(/errorLoading/),
         ).toBeInTheDocument();
       });
     });
@@ -387,7 +387,7 @@ describe("ClassificationWidget Component", () => {
     it("has proper heading structure", () => {
       render(<ClassificationWidget initialStandings={mockStandings} />);
 
-      const heading = screen.getByText("Clasificación");
+      const heading = screen.getByText("title");
       expect(heading).toHaveClass("text-xl", "font-bold");
     });
 

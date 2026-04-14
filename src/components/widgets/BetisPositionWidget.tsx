@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 
 interface BetisPosition {
   position: number;
@@ -15,6 +16,7 @@ interface BetisPosition {
 }
 
 export default function BetisPositionWidget() {
+  const t = useTranslations('betisPositionWidget');
   const [betisData, setBetisData] = useState<BetisPosition | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,13 +26,13 @@ export default function BetisPositionWidget() {
       try {
         const response = await fetch('/api/standings');
         if (!response.ok) {
-          throw new Error('Error al obtener la clasificación');
+          throw new Error(t('errorFetching'));
         }
-        
+
         const apiResponse = await response.json();
         const data = apiResponse.success ? apiResponse.data : apiResponse;
         const standings = data.standings;
-        
+
         if (standings && standings.table) {
           const betisEntry = standings.table.find((team: { team: { id: number } }) => team.team.id === 90);
           if (betisEntry) {
@@ -47,14 +49,14 @@ export default function BetisPositionWidget() {
           }
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
+        setError(err instanceof Error ? err.message : t('errorUnknown'));
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchBetisPosition();
-  }, []);
+  }, [t]);
 
   if (isLoading) {
     return (
@@ -71,13 +73,13 @@ export default function BetisPositionWidget() {
   if (error) {
     return (
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-        <h3 className="font-semibold text-gray-900 mb-2">Clasificación del Betis</h3>
-        <p className="text-sm text-gray-600">No se pudo cargar la información</p>
-        <Link 
+        <h3 className="font-semibold text-gray-900 mb-2">{t('title')}</h3>
+        <p className="text-sm text-gray-600">{t('couldNotLoad')}</p>
+        <Link
           href="/clasificacion"
           className="text-betis-verde hover:text-betis-verde-dark text-sm font-medium"
         >
-          Ver clasificación completa →
+          {t('viewFullStandings')}
         </Link>
       </div>
     );
@@ -99,15 +101,15 @@ export default function BetisPositionWidget() {
 
   // Helper function to get position context
   const getPositionContext = (position: number): { text: string; color: string } => {
-    if (position <= 4) return { text: 'Champions League', color: 'text-betis-verde' };
-    if (position <= 6) return { text: 'Europa League', color: 'text-scotland-blue' };
-    if (position <= 7) return { text: 'Conference League', color: 'text-orange-600' };
-    if (position >= 18) return { text: 'Zona de descenso', color: 'text-red-600' };
-    return { text: 'Zona media', color: 'text-gray-600' };
+    if (position <= 4) return { text: t('championsLeague'), color: 'text-betis-verde' };
+    if (position <= 6) return { text: t('europaLeague'), color: 'text-scotland-blue' };
+    if (position <= 7) return { text: t('conferenceLeague'), color: 'text-orange-600' };
+    if (position >= 18) return { text: t('relegationZone'), color: 'text-red-600' };
+    return { text: t('midZone'), color: 'text-gray-600' };
   };
 
   // Form can be "W,D,L,W,D" or "WDLWD" - handle both formats
-  const formResults = betisData.form.includes(',') 
+  const formResults = betisData.form.includes(',')
     ? betisData.form.split(',').filter(r => r.trim()).slice(-5)
     : betisData.form.split('').slice(-5);
   const positionContext = getPositionContext(betisData.position);
@@ -115,33 +117,33 @@ export default function BetisPositionWidget() {
   return (
     <div className="bg-betis-verde-pale border border-betis-verde/20 rounded-lg p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-gray-900">Posición en La Liga</h3>
-        <Link 
+        <h3 className="font-semibold text-gray-900">{t('leaguePosition')}</h3>
+        <Link
           href="/clasificacion"
           className="text-betis-verde hover:text-betis-verde-dark text-sm font-medium"
         >
-          Ver tabla completa →
+          {t('viewFullTable')}
         </Link>
       </div>
-      
+
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div className="text-center">
           <div className="text-3xl font-bold text-betis-verde-dark">
             {betisData.position}º
           </div>
-          <div className="text-sm text-gray-600">Posición</div>
+          <div className="text-sm text-gray-600">{t('position')}</div>
           <div className={`text-xs ${positionContext.color} font-medium`}>
             {positionContext.text}
           </div>
         </div>
-        
+
         <div className="text-center">
           <div className="text-3xl font-bold text-betis-verde-dark">
             {betisData.points}
           </div>
-          <div className="text-sm text-gray-600">Puntos</div>
+          <div className="text-sm text-gray-600">{t('points')}</div>
           <div className="text-xs text-gray-500">
-            {betisData.playedGames} jugados
+            {betisData.playedGames} {t('played')}
           </div>
         </div>
       </div>
@@ -149,21 +151,21 @@ export default function BetisPositionWidget() {
       <div className="grid grid-cols-3 gap-2 mb-4 text-xs">
         <div className="text-center bg-white rounded p-2">
           <div className="font-bold text-betis-verde">{betisData.won}</div>
-          <div className="text-gray-600">G</div>
+          <div className="text-gray-600">{t('won')}</div>
         </div>
         <div className="text-center bg-white rounded p-2">
           <div className="font-bold text-betis-oro-dark">{betisData.draw}</div>
-          <div className="text-gray-600">E</div>
+          <div className="text-gray-600">{t('draw')}</div>
         </div>
         <div className="text-center bg-white rounded p-2">
           <div className="font-bold text-red-600">{betisData.lost}</div>
-          <div className="text-gray-600">P</div>
+          <div className="text-gray-600">{t('lost')}</div>
         </div>
       </div>
 
       {formResults.length > 0 && (
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600">Últimos 5:</span>
+          <span className="text-sm text-gray-600">{t('lastFive')}</span>
           <div className="flex space-x-1">
             {formResults.map((result, index) => (
               <span

@@ -74,7 +74,7 @@ describe("BetisPositionWidget Component", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText("No se pudo cargar la información"),
+          screen.getByText("couldNotLoad"),
         ).toBeInTheDocument();
       });
     });
@@ -85,7 +85,7 @@ describe("BetisPositionWidget Component", () => {
       render(<BetisPositionWidget />);
 
       await waitFor(() => {
-        const link = screen.getByText("Ver clasificación completa →");
+        const link = screen.getByText("viewFullStandings");
         expect(link).toHaveAttribute("href", "/clasificacion");
       });
     });
@@ -96,7 +96,7 @@ describe("BetisPositionWidget Component", () => {
       render(<BetisPositionWidget />);
 
       await waitFor(() => {
-        expect(screen.getByText("Clasificación del Betis")).toBeInTheDocument();
+        expect(screen.getByText("title")).toBeInTheDocument();
       });
     });
 
@@ -111,7 +111,7 @@ describe("BetisPositionWidget Component", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText("No se pudo cargar la información"),
+          screen.getByText("couldNotLoad"),
         ).toBeInTheDocument();
       });
     });
@@ -173,7 +173,7 @@ describe("BetisPositionWidget Component", () => {
       render(<BetisPositionWidget />);
 
       await waitFor(() => {
-        const heading = screen.getByText("Clasificación del Betis");
+        const heading = screen.getByText("title");
         expect(heading).toHaveClass("font-semibold");
       });
     });

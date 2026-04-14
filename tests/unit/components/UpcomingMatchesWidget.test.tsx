@@ -71,7 +71,7 @@ describe("UpcomingMatchesWidget Component", () => {
 
       render(<UpcomingMatchesWidget />);
 
-      expect(screen.getByText("Próximos Partidos")).toBeInTheDocument();
+      expect(screen.getByText("title")).toBeInTheDocument();
       expect(
         screen
           .getAllByRole("generic")
@@ -101,11 +101,11 @@ describe("UpcomingMatchesWidget Component", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText("Error al cargar los próximos partidos"),
+          screen.getByText("errorLoading"),
         ).toBeInTheDocument();
       });
 
-      expect(screen.getByText("Reintentar")).toBeInTheDocument();
+      expect(screen.getByText("retry")).toBeInTheDocument();
     });
 
     it("handles reload button click", async () => {
@@ -116,7 +116,7 @@ describe("UpcomingMatchesWidget Component", () => {
       render(<UpcomingMatchesWidget />);
 
       await waitFor(() => {
-        const retryButton = screen.getByText("Reintentar");
+        const retryButton = screen.getByText("retry");
         fireEvent.click(retryButton);
         expect(window.location.reload).toHaveBeenCalled();
       });
@@ -131,12 +131,10 @@ describe("UpcomingMatchesWidget Component", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText("No hay partidos programados"),
+          screen.getByText("noScheduled"),
         ).toBeInTheDocument();
         expect(
-          screen.getByText(
-            "Próximamente se anunciarán los siguientes partidos.",
-          ),
+          screen.getByText("willBeAnnounced"),
         ).toBeInTheDocument();
       });
     });
@@ -147,8 +145,8 @@ describe("UpcomingMatchesWidget Component", () => {
       render(<UpcomingMatchesWidget />);
 
       await waitFor(() => {
-        const verTodosLink = screen.getByText("Ver todos →");
-        const verHistorialLink = screen.getByText("Ver historial →");
+        const verTodosLink = screen.getByText("viewAll");
+        const verHistorialLink = screen.getByText("viewHistory");
 
         expect(verTodosLink).toHaveAttribute("href", "/partidos");
         expect(verHistorialLink).toHaveAttribute("href", "/partidos");
@@ -162,7 +160,7 @@ describe("UpcomingMatchesWidget Component", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText("No hay partidos programados"),
+          screen.getByText("noScheduled"),
         ).toBeInTheDocument();
       });
     });
@@ -192,10 +190,10 @@ describe("UpcomingMatchesWidget Component", () => {
       render(<UpcomingMatchesWidget />);
 
       await waitFor(() => {
-        // First match (home): Betis shows 'Local', Valencia shows 'Local' (component bug)
-        // Second match (away): Betis shows 'Visitante', Real Sociedad shows 'Visitante'
-        expect(screen.getAllByText("Local")).toHaveLength(2); // Both teams in home match
-        expect(screen.getAllByText("Visitante")).toHaveLength(2); // Both teams in away match
+        // First match (home): Betis shows 'home', Valencia shows 'home' (component bug)
+        // Second match (away): Betis shows 'away', Real Sociedad shows 'away'
+        expect(screen.getAllByText("home")).toHaveLength(2); // Both teams in home match
+        expect(screen.getAllByText("away")).toHaveLength(2); // Both teams in away match
       });
     });
 
@@ -224,10 +222,10 @@ describe("UpcomingMatchesWidget Component", () => {
       await waitFor(() => {
         expect(screen.getAllByText("15")).toHaveLength(1); // rsvp_count for first match
         expect(screen.getAllByText("8")).toHaveLength(1); // rsvp_count for second match
-        expect(screen.getAllByText("confirmaciones")).toHaveLength(2); // Both matches show confirmaciones
+        expect(screen.getAllByText("confirmations")).toHaveLength(2); // Both matches show confirmaciones
         expect(screen.getAllByText("12")).toHaveLength(1); // total_attendees for first match
         expect(screen.getAllByText("5")).toHaveLength(1); // total_attendees for second match
-        expect(screen.getAllByText(/asistentes/)).toHaveLength(2); // Both matches show asistentes (using regex)
+        expect(screen.getAllByText(/attendees/)).toHaveLength(2); // Both matches show attendees (using regex)
       });
     });
 
@@ -239,7 +237,7 @@ describe("UpcomingMatchesWidget Component", () => {
       render(<UpcomingMatchesWidget />);
 
       await waitFor(() => {
-        const rsvpButtons = screen.getAllByText("📝 Confirmar Asistencia");
+        const rsvpButtons = screen.getAllByText("📝 confirmAttendance");
         expect(rsvpButtons).toHaveLength(2); // Both matches are upcoming
 
         expect(rsvpButtons[0].closest("a")).toHaveAttribute(
@@ -295,7 +293,7 @@ describe("UpcomingMatchesWidget Component", () => {
       });
     });
 
-    it('renders "Ver todos los partidos" link', async () => {
+    it('renders "viewAllMatches" link', async () => {
       vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(
         mockMatches,
       );
@@ -303,17 +301,14 @@ describe("UpcomingMatchesWidget Component", () => {
       render(<UpcomingMatchesWidget />);
 
       await waitFor(() => {
-        // Check for the link that should appear at the bottom
-        const links = screen.getAllByText(/Ver todos/);
-        expect(links.length).toBeGreaterThan(0);
-        const bottomLink = links.find((link) =>
-          link.textContent?.includes("partidos"),
-        );
-        expect(bottomLink).toBeTruthy();
+        // Check for the bottom link that uses the viewAllMatches key
+        const bottomLink = screen.getByText("viewAllMatches");
+        expect(bottomLink).toBeInTheDocument();
+        expect(bottomLink).toHaveAttribute("href", "/partidos");
       });
     });
 
-    it('shows header "Ver todos" link', async () => {
+    it('shows header "viewAll" link', async () => {
       vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(
         mockMatches,
       );
@@ -321,7 +316,7 @@ describe("UpcomingMatchesWidget Component", () => {
       render(<UpcomingMatchesWidget />);
 
       await waitFor(() => {
-        const headerLinks = screen.getAllByText("Ver todos →");
+        const headerLinks = screen.getAllByText("viewAll");
         expect(headerLinks.length).toBeGreaterThan(0);
         expect(headerLinks[0]).toHaveAttribute("href", "/partidos");
       });
@@ -344,9 +339,9 @@ describe("UpcomingMatchesWidget Component", () => {
 
       await waitFor(() => {
         // Should still show RSVP buttons but no counts
-        const rsvpButtons = screen.getAllByText("📝 Confirmar Asistencia");
+        const rsvpButtons = screen.getAllByText("📝 confirmAttendance");
         expect(rsvpButtons.length).toBeGreaterThanOrEqual(1);
-        expect(screen.queryByText("confirmaciones")).not.toBeInTheDocument();
+        expect(screen.queryByText("confirmations")).not.toBeInTheDocument();
       });
     });
 
@@ -365,7 +360,7 @@ describe("UpcomingMatchesWidget Component", () => {
 
       await waitFor(() => {
         // Should not show RSVP counts section if rsvp_count is 0
-        expect(screen.queryByText("confirmaciones")).not.toBeInTheDocument();
+        expect(screen.queryByText("confirmations")).not.toBeInTheDocument();
       });
     });
 
@@ -383,7 +378,7 @@ describe("UpcomingMatchesWidget Component", () => {
 
       await waitFor(() => {
         expect(
-          screen.queryByText("📝 Confirmar Asistencia"),
+          screen.queryByText("📝 confirmAttendance"),
         ).not.toBeInTheDocument();
         expect(screen.getByText("Valencia CF")).toBeInTheDocument();
       });
@@ -442,7 +437,7 @@ describe("UpcomingMatchesWidget Component", () => {
       render(<UpcomingMatchesWidget />);
 
       await waitFor(() => {
-        const heading = screen.getByText("Próximos Partidos");
+        const heading = screen.getByText("title");
         expect(heading).toHaveClass("text-xl", "font-bold");
       });
     });
@@ -455,7 +450,7 @@ describe("UpcomingMatchesWidget Component", () => {
       render(<UpcomingMatchesWidget />);
 
       await waitFor(() => {
-        const rsvpButtons = screen.getAllByText("📝 Confirmar Asistencia");
+        const rsvpButtons = screen.getAllByText("📝 confirmAttendance");
         rsvpButtons.forEach((button) => {
           expect(button).toHaveClass("bg-betis-verde", "text-white");
         });

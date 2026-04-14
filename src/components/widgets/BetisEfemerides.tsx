@@ -1,20 +1,34 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import {
   getEfemeridesForDate,
   getCategoryEmoji,
-  getCategoryLabel,
   type Efemeride,
 } from "@/data/efemerides";
 
-function formatDateSpanish(date: Date): string {
-  return new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "long" }).format(date);
+function formatLocalizedDate(date: Date, locale: string): string {
+  const intlLocale = locale === "en" ? "en-GB" : "es-ES";
+  return new Intl.DateTimeFormat(intlLocale, {
+    day: "numeric",
+    month: "long",
+  }).format(date);
 }
 
 function EfemerideCard({ efemeride }: { efemeride: Efemeride }) {
+  const t = useTranslations("efemerides");
   const emoji = getCategoryEmoji(efemeride.category);
-  const label = getCategoryLabel(efemeride.category);
+  const categoryKeyMap: Record<Efemeride["category"], string> = {
+    titulo: "categoryTitulo",
+    gol: "categoryGol",
+    fichaje: "categoryFichaje",
+    fundacion: "categoryFundacion",
+    anecdota: "categoryAnecdota",
+    europa: "categoryEuropa",
+    escocia: "categoryEscocia",
+  };
+  const label = t(categoryKeyMap[efemeride.category]);
 
   return (
     <div className="relative">
@@ -48,14 +62,16 @@ function EfemerideCard({ efemeride }: { efemeride: Efemeride }) {
 }
 
 export default function BetisEfemerides() {
+  const t = useTranslations("efemerides");
+  const locale = useLocale();
   const [efemerides, setEfemerides] = useState<Efemeride[]>([]);
   const [dateStr, setDateStr] = useState("");
 
   useEffect(() => {
     const today = new Date();
     setEfemerides(getEfemeridesForDate(today));
-    setDateStr(formatDateSpanish(today));
-  }, []);
+    setDateStr(formatLocalizedDate(today, locale));
+  }, [locale]);
 
   if (efemerides.length === 0) {
     return null;
@@ -65,7 +81,7 @@ export default function BetisEfemerides() {
     <div
       className="relative bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
       role="region"
-      aria-label="Tal día como hoy en la historia del Betis y de Escocia"
+      aria-label={t("ariaLabel")}
     >
       {/* Decorative pattern corner */}
       <div className="absolute top-0 right-0 w-24 h-24 pattern-verdiblanco-diagonal-subtle opacity-20" />
@@ -76,7 +92,7 @@ export default function BetisEfemerides() {
         <div className="flex items-center justify-between">
           <div>
             <p className="font-accent text-xs sm:text-sm text-white/80 uppercase tracking-widest">
-              Tal día como hoy
+              {t("header")}
             </p>
             <p className="font-display text-lg sm:text-xl font-black text-white uppercase tracking-tight">
               {dateStr}
@@ -91,7 +107,7 @@ export default function BetisEfemerides() {
       {/* Content */}
       <div className="relative px-6 py-5">
         <div className="space-y-6">
-          {efemerides.map((efemeride, index) => (
+          {efemerides.map((efemeride) => (
             <EfemerideCard key={`${efemeride.year}-${efemeride.title}`} efemeride={efemeride} />
           ))}
         </div>
@@ -99,7 +115,7 @@ export default function BetisEfemerides() {
         {/* Footer tagline */}
         <div className="mt-5 pt-4 border-t border-gray-100">
           <p className="font-body text-xs text-gray-400 italic text-center">
-            Historia del Real Betis Balompié y de Escocia &middot; Manque pierda
+            {t("footerTagline")}
           </p>
         </div>
       </div>

@@ -16,11 +16,21 @@ import {
 } from "@/lib/features/featureProtection";
 import CulturalFusionHero from "@/components/hero/CulturalFusionHero";
 
-export const metadata: Metadata = {
-  title: "Clasificación de La Liga",
-  description:
-    "Clasificación actual de La Liga Santander con la posición del Real Betis. Puntos, partidos jugados y estadísticas completas.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({
+    locale,
+    namespace: "clasificacionMetadata",
+  });
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
 import {
   getPositionStyle,
@@ -143,11 +153,12 @@ function StandingRow({
 // Main standings content component
 async function StandingsContent() {
   const t = await getTranslations("standings");
+  const tMetadata = await getTranslations("clasificacionMetadata");
   const service = new FootballDataService(axios.create());
   const standings = await service.getLaLigaStandings();
 
   if (!standings) {
-    throw new Error("No se pudieron cargar las clasificaciones de La Liga");
+    throw new Error(tMetadata("errorLoading"));
   }
 
   const betisEntry = standings.table.find((entry) => entry.team.id === 90);

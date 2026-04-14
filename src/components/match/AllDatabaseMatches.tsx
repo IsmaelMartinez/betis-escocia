@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { getAllMatchesWithRSVPCounts, Match } from '@/lib/api/supabase';
 import MatchCard, { convertDatabaseMatchToCardProps } from './MatchCard';
 
@@ -14,6 +15,7 @@ interface AllDatabaseMatchesProps {
 }
 
 export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatchesProps) {
+  const t = useTranslations('allDatabaseMatches');
   const [matches, setMatches] = useState<MatchWithRSVP[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,9 +29,9 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
       try {
         setIsLoading(true);
         setError(null);
-        
+
         const data = await getAllMatchesWithRSVPCounts();
-        
+
         if (data) {
           setMatches(data as MatchWithRSVP[]);
         } else {
@@ -37,14 +39,14 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
         }
       } catch (err) {
         console.error('Error fetching all matches:', err);
-        setError('Error al cargar todos los partidos');
+        setError(t('errorLoading'));
       } finally {
         setIsLoading(false);
       }
     }
 
     fetchAllMatches();
-  }, []);
+  }, [t]);
 
   // Filter matches based on current filter
   const filteredMatches = matches.filter(match => {
@@ -209,7 +211,7 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
       <div className="mt-8 px-4">
         {/* Info text - centered on mobile */}
         <div className="text-sm text-gray-600 text-center mb-4 md:mb-0">
-          Mostrando {startIndex + 1}-{Math.min(endIndex, totalMatches)} de {totalMatches} partidos
+          {t('showing')} {startIndex + 1}-{Math.min(endIndex, totalMatches)} {t('of')} {totalMatches} {t('matches')}
         </div>
         
         {/* Pagination controls */}
@@ -224,7 +226,7 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            <span className="hidden sm:inline">← Anterior</span>
+            <span className="hidden sm:inline">{t('previous')}</span>
             <span className="sm:hidden">←</span>
           </button>
           
@@ -277,7 +279,7 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            <span className="hidden sm:inline">Siguiente →</span>
+            <span className="hidden sm:inline">{t('next')}</span>
             <span className="sm:hidden">→</span>
           </button>
         </div>
@@ -290,9 +292,9 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
     return (
       <div className={`${className}`}>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Todos los Partidos</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t('title')}</h2>
         </div>
-        
+
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, index) => (
             <div 
@@ -325,18 +327,18 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
     return (
       <div className={`${className}`}>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Todos los Partidos</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t('title')}</h2>
         </div>
-        
+
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
           <div className="text-red-600 text-lg mb-2">⚠️</div>
-          <h3 className="text-lg font-medium text-red-800 mb-2">Error al cargar partidos</h3>
+          <h3 className="text-lg font-medium text-red-800 mb-2">{t('errorTitle')}</h3>
           <p className="text-red-600 mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
             className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
           >
-            Reintentar
+            {t('retry')}
           </button>
         </div>
       </div>
@@ -348,14 +350,14 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
     return (
       <div className={`${className}`}>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Todos los Partidos</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t('title')}</h2>
         </div>
-        
+
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
           <div className="text-gray-400 text-4xl mb-4">📅</div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No hay partidos en la base de datos</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">{t('noMatchesInDb')}</h3>
           <p className="text-gray-600 mb-4">
-            Aún no se han añadido partidos a la base de datos.
+            {t('notAddedYet')}
           </p>
         </div>
       </div>
@@ -366,43 +368,43 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
     <div className={`${className}`}>
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Todos los Partidos 
+          {t('title')}
           <span className="text-lg font-normal text-gray-600 ml-2">
-            ({getDisplayCount(filter)} {filter === 'all' ? 'total' : filter === 'upcoming' ? 'próximos' : 'pasados'})
+            ({getDisplayCount(filter)} {filter === 'all' ? t('total') : filter === 'upcoming' ? t('upcoming') : t('past')})
           </span>
         </h2>
-        
+
         {/* Filter buttons - responsive */}
         <div className="flex flex-wrap gap-2 mb-4">
           <button
             onClick={() => setFilter('all')}
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-              filter === 'all' 
-                ? 'bg-betis-green text-white' 
+              filter === 'all'
+                ? 'bg-betis-green text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            Todos ({getDisplayCount('all')})
+            {t('filterAll')} ({getDisplayCount('all')})
           </button>
           <button
             onClick={() => setFilter('upcoming')}
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-              filter === 'upcoming' 
-                ? 'bg-betis-green text-white' 
+              filter === 'upcoming'
+                ? 'bg-betis-green text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            Próximos ({getDisplayCount('upcoming')})
+            {t('filterUpcoming')} ({getDisplayCount('upcoming')})
           </button>
           <button
             onClick={() => setFilter('past')}
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-              filter === 'past' 
-                ? 'bg-betis-green text-white' 
+              filter === 'past'
+                ? 'bg-betis-green text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            Pasados ({getDisplayCount('past')})
+            {t('filterPast')} ({getDisplayCount('past')})
           </button>
         </div>
 
@@ -411,12 +413,12 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
           <button
             onClick={() => setCompetitionFilter('all')}
             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-              competitionFilter === 'all' 
-                ? 'bg-betis-green text-white' 
+              competitionFilter === 'all'
+                ? 'bg-betis-green text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            Todas
+            {t('competitionAll')}
           </button>
           {availableCompetitions.map((competition) => (
             <button
@@ -438,12 +440,12 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
     <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
       <div className="text-gray-400 text-4xl mb-4">📅</div>
       <h3 className="text-lg font-medium text-gray-900 mb-2">
-        No hay partidos {filter === 'upcoming' ? 'próximos' : 'pasados'}
+        {filter === 'upcoming' ? t('noUpcoming') : t('noPast')}
       </h3>
       <p className="text-gray-600">
-        {filter === 'upcoming' 
-          ? 'No hay próximos partidos programados.' 
-          : 'No hay partidos pasados registrados.'
+        {filter === 'upcoming'
+          ? t('noUpcomingDesc')
+          : t('noPastDesc')
         }
       </p>
     </div>
@@ -456,7 +458,7 @@ export default function AllDatabaseMatches({ className = '' }: AllDatabaseMatche
               <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                 🏆 {competition}
                 <span className="ml-2 text-sm font-normal text-gray-600">
-                  ({competitionMatches.length} partidos en esta página)
+                  ({competitionMatches.length} {t('matchesInPage')})
                 </span>
               </h3>
               
