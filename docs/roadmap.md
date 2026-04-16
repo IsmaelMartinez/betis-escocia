@@ -37,7 +37,7 @@ Target components remaining after the RSVP/Contacto/Dashboard cleanup:
 | Component                | Lines | Status     | Plan                                                                |
 | ------------------------ | ----- | ---------- | ------------------------------------------------------------------- |
 | `AllDatabaseMatches.tsx` | ~490  | Planned    | Extract filtering/pagination into custom hooks.                     |
-| `Layout.tsx`             | ~460  | Planned    | Extract Header, Footer, UserMenu components.                        |
+| `Layout.tsx`             | 36    | Done       | Split into Header, Footer, UserMenu, DebugInfoPanel.                |
 | `AdminPageClient.tsx`    | —     | Simplified | Trimmed to matches-only orchestration; RSVP/Contacto views removed. |
 
 ### Phase 5: Database Module Split
