@@ -2,14 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import {
-  User,
-  LogIn,
-  LogOut,
-  UserPlus,
-  Calendar,
-  Trophy,
-} from "lucide-react";
+import { User, LogIn, LogOut, UserPlus, Calendar, Trophy } from "lucide-react";
 import { useUser, useClerk } from "@clerk/nextjs";
 
 interface UserMenuProps {

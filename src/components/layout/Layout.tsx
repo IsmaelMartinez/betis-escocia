@@ -21,10 +21,7 @@ export default function Layout({
 
   return (
     <div className="min-h-screen bg-canvas-warm flex flex-col">
-      <Header
-        navigationItems={navigationItems}
-        isAuthEnabled={isAuthEnabled}
-      />
+      <Header navigationItems={navigationItems} isAuthEnabled={isAuthEnabled} />
 
       <main className="flex-1">{children}</main>
 
