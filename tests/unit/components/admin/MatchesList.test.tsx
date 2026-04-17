@@ -222,9 +222,12 @@ describe('MatchesList', () => {
     fireEvent.click(deleteButtons[0]);
 
     expect(global.confirm).toHaveBeenCalledWith('¿Estás seguro de que quieres eliminar el partido contra Valencia CF?');
-    
+
     await waitFor(() => {
       expect(mockOnDelete).toHaveBeenCalledWith(1);
+    });
+    await waitFor(() => {
+      expect(deleteButtons[0]).not.toBeDisabled();
     });
   });
 
@@ -262,6 +265,9 @@ describe('MatchesList', () => {
     await waitFor(() => {
       expect(global.alert).toHaveBeenCalledWith('Error al eliminar: Database error');
     });
+    await waitFor(() => {
+      expect(deleteButtons[0]).not.toBeDisabled();
+    });
   });
 
   it('should call onSync when sync button is clicked and confirmed', async () => {
@@ -280,9 +286,12 @@ describe('MatchesList', () => {
     fireEvent.click(syncButtons[0]); // First match has external_id
 
     expect(global.confirm).toHaveBeenCalledWith('¿Estás seguro de que quieres sincronizar el partido contra Valencia CF?');
-    
+
     await waitFor(() => {
       expect(mockOnSync).toHaveBeenCalledWith(12345);
+    });
+    await waitFor(() => {
+      expect(syncButtons[0]).not.toBeDisabled();
     });
   });
 
@@ -316,6 +325,9 @@ describe('MatchesList', () => {
 
     await waitFor(() => {
       expect(global.alert).toHaveBeenCalledWith('Error al sincronizar: API error');
+    });
+    await waitFor(() => {
+      expect(syncButtons[0]).not.toBeDisabled();
     });
   });
 
@@ -409,6 +421,12 @@ describe('MatchesList', () => {
     await waitFor(() => {
       expect(deleteButtons[0]).toBeDisabled();
     });
+    // Wait for the async operation's finally block to complete so no state
+    // updates remain pending after the test ends (React 19 + jsdom teardown
+    // otherwise logs an unhandled rejection from dispatchSetState).
+    await waitFor(() => {
+      expect(deleteButtons[0]).not.toBeDisabled();
+    });
   });
 
   it('should disable sync button while syncing', async () => {
@@ -429,6 +447,9 @@ describe('MatchesList', () => {
     // Button should be disabled during sync
     await waitFor(() => {
       expect(syncButtons[0]).toBeDisabled();
+    });
+    await waitFor(() => {
+      expect(syncButtons[0]).not.toBeDisabled();
     });
   });
 });
