@@ -3,10 +3,7 @@ import DebugInfoPanel, {
 } from "@/components/layout/DebugInfoPanel";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
-import {
-  hasFeature,
-  type NavigationItem,
-} from "@/lib/features/featureFlags";
+import { hasFeature, type NavigationItem } from "@/lib/features/featureFlags";
 
 interface LayoutProps {
   readonly children: React.ReactNode;
