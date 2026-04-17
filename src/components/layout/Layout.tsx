@@ -3,7 +3,10 @@ import DebugInfoPanel, {
 } from "@/components/layout/DebugInfoPanel";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
-import { type NavigationItem } from "@/lib/features/featureFlags";
+import {
+  hasFeature,
+  type NavigationItem,
+} from "@/lib/features/featureFlags";
 
 interface LayoutProps {
   readonly children: React.ReactNode;
@@ -16,8 +19,7 @@ export default function Layout({
   debugInfo,
   navigationItems,
 }: LayoutProps) {
-  // Derive auth enabled from debugInfo features (passed from server) to avoid hydration mismatch
-  const isAuthEnabled = debugInfo?.features?.["show-clerk-auth"] ?? false;
+  const isAuthEnabled = hasFeature("show-clerk-auth");
 
   return (
     <div className="min-h-screen bg-canvas-warm flex flex-col">

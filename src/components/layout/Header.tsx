@@ -48,7 +48,7 @@ export default function Header({
                   width={40}
                   height={40}
                   className="bg-white rounded-full p-1 relative"
-                  priority={true}
+                  priority
                 />
               </div>
               <div>
@@ -86,6 +86,8 @@ export default function Header({
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="md:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
               aria-label="Toggle mobile menu"
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-nav"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -95,7 +97,10 @@ export default function Header({
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden bg-scotland-navy border-t border-white/10">
+        <div
+          id="mobile-nav"
+          className="md:hidden bg-scotland-navy border-t border-white/10"
+        >
           <div className="px-4 py-4 space-y-1">
             {navigationItems.map((item) => (
               <Link
