@@ -16,6 +16,20 @@ const isAdminRoute = createRouteMatcher([
   "/api/admin(.*)",
 ]);
 
+// Extract the locale prefix from the incoming pathname so that redirects
+// (e.g. to /sign-in) keep the user on the language they were browsing in.
+function getLocalePrefix(pathname: string) {
+  const firstSegment = pathname.split("/")[1];
+  if ((routing.locales as readonly string[]).includes(firstSegment)) {
+    return `/${firstSegment}`;
+  }
+  return "";
+}
+
+function signInUrl(request: Request, pathname: string) {
+  return new URL(`${getLocalePrefix(pathname)}/sign-in`, request.url);
+}
+
 export default clerkMiddleware(async (auth, request) => {
   const { pathname } = request.nextUrl;
 
@@ -24,7 +38,7 @@ export default clerkMiddleware(async (auth, request) => {
     if (isAdminRoute(request)) {
       const { userId } = await auth();
       if (!userId) {
-        return NextResponse.redirect(new URL("/sign-in", request.url));
+        return NextResponse.redirect(signInUrl(request, pathname));
       }
     }
     return NextResponse.next();
@@ -34,7 +48,7 @@ export default clerkMiddleware(async (auth, request) => {
   if (isProtectedRoute(request) || isAdminRoute(request)) {
     const { userId } = await auth();
     if (!userId) {
-      return NextResponse.redirect(new URL("/sign-in", request.url));
+      return NextResponse.redirect(signInUrl(request, pathname));
     }
   }
 
