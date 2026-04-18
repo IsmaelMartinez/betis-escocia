@@ -1,7 +1,11 @@
 import { createApiHandler } from "@/lib/api/apiUtils";
 import { supabase, type RSVP } from "@/lib/api/supabase";
 import { getCurrentUpcomingMatch } from "@/lib/utils/matchUtils";
-import { createRsvpSchema, rsvpSchema, type RSVPInput } from "@/lib/schemas/rsvp";
+import {
+  createRsvpSchema,
+  rsvpSchema,
+  type RSVPInput,
+} from "@/lib/schemas/rsvp";
 import { formatISO } from "date-fns";
 import { log } from "@/lib/utils/logger";
 import { StandardErrors } from "@/lib/utils/standardErrors";

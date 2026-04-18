@@ -24,11 +24,7 @@ const defaultT: ValidationTranslator = (key) => {
 
 export function createContactSchema(t: ValidationTranslator = defaultT) {
   return z.object({
-    name: z
-      .string()
-      .min(2, t("nameMin"))
-      .max(50, t("nameMax"))
-      .trim(),
+    name: z.string().min(2, t("nameMin")).max(50, t("nameMax")).trim(),
     email: z
       .string()
       .email(t("emailInvalid"))

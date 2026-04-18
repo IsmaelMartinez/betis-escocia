@@ -1,8 +1,14 @@
-import { createApiHandler } from '@/lib/api/apiUtils';
-import { supabase, createUserTriviaScore, getUserDailyTriviaScore, getAuthenticatedSupabaseClient, type SupabaseClient } from '@/lib/api/supabase';
-import { createTriviaScoreSchema } from '@/lib/schemas/trivia';
-import { log } from '@/lib/utils/logger';
-import { StandardErrors } from '@/lib/utils/standardErrors';
+import { createApiHandler } from "@/lib/api/apiUtils";
+import {
+  supabase,
+  createUserTriviaScore,
+  getUserDailyTriviaScore,
+  getAuthenticatedSupabaseClient,
+  type SupabaseClient,
+} from "@/lib/api/supabase";
+import { createTriviaScoreSchema } from "@/lib/schemas/trivia";
+import { log } from "@/lib/utils/logger";
+import { StandardErrors } from "@/lib/utils/standardErrors";
 import {
   checkDailyPlayStatus,
   validateTriviaScore,
@@ -12,9 +18,9 @@ import {
   TriviaError,
   logTriviaEvent,
   type TriviaQuestion,
-  type TriviaErrorContext
-} from '@/lib/trivia/utils';
-import type { ClientTriviaQuestion } from '@/types/trivia';
+  type TriviaErrorContext,
+} from "@/lib/trivia/utils";
+import type { ClientTriviaQuestion } from "@/types/trivia";
 
 /**
  * Fisher-Yates (Knuth) shuffle for uniform randomness.
@@ -29,10 +35,12 @@ function fisherYatesShuffle<T>(array: T[]): T[] {
   return shuffled;
 }
 
-type TriviaGetResponse = ClientTriviaQuestion[] | {
-  message: string;
-  score: number;
-};
+type TriviaGetResponse =
+  | ClientTriviaQuestion[]
+  | {
+      message: string;
+      score: number;
+    };
 
 type TriviaPostResponse = {
   message: string;
@@ -47,54 +55,83 @@ type TriviaTotalScoreResponse = {
 };
 
 async function getTriviaQuestions(
-  userId?: string, 
+  userId?: string,
   authenticatedSupabase?: SupabaseClient,
-  context: TriviaErrorContext = {}
+  context: TriviaErrorContext = {},
 ): Promise<TriviaGetResponse> {
-  const tracker = new TriviaPerformanceTracker('getTriviaQuestions', { ...context, userId, action: 'questions' });
-  
+  const tracker = new TriviaPerformanceTracker("getTriviaQuestions", {
+    ...context,
+    userId,
+    action: "questions",
+  });
+
   try {
-    logTriviaEvent('info', 'Starting trivia questions retrieval', { userId }, context);
+    logTriviaEvent(
+      "info",
+      "Starting trivia questions retrieval",
+      { userId },
+      context,
+    );
 
     // If user is authenticated, check if they have already played today using shared utility
     if (userId && authenticatedSupabase) {
       const dailyCheckStart = performance.now();
-      const dailyCheck = await checkDailyPlayStatus(userId, authenticatedSupabase);
-      tracker.logDbQuery('daily_play_check', performance.now() - dailyCheckStart);
+      const dailyCheck = await checkDailyPlayStatus(
+        userId,
+        authenticatedSupabase,
+      );
+      tracker.logDbQuery(
+        "daily_play_check",
+        performance.now() - dailyCheckStart,
+      );
 
       if (dailyCheck.error) {
         throw new TriviaError(
-          'DATABASE_ERROR',
+          "DATABASE_ERROR",
           `Daily play check failed: ${dailyCheck.error}`,
           StandardErrors.TRIVIA.DAILY_SCORE_ERROR,
           500,
-          { ...context, userId }
+          { ...context, userId },
         );
       }
 
       if (dailyCheck.hasPlayedToday && dailyCheck.existingScore !== undefined) {
-        logTriviaEvent('info', 'User has already played today', { 
-          userId, 
-          existingScore: dailyCheck.existingScore 
-        }, context);
-        
-        tracker.complete(true, { alreadyPlayed: true, score: dailyCheck.existingScore });
-        
-        return { 
-          message: 'You have already played today.', 
-          score: dailyCheck.existingScore 
+        logTriviaEvent(
+          "info",
+          "User has already played today",
+          {
+            userId,
+            existingScore: dailyCheck.existingScore,
+          },
+          context,
+        );
+
+        tracker.complete(true, {
+          alreadyPlayed: true,
+          score: dailyCheck.existingScore,
+        });
+
+        return {
+          message: "You have already played today.",
+          score: dailyCheck.existingScore,
         };
       }
     }
 
     // Fetch trivia questions (database-level randomization for optimal variety)
-    logTriviaEvent('info', 'Fetching random trivia questions from database', { limit: 5 }, context);
-    
+    logTriviaEvent(
+      "info",
+      "Fetching random trivia questions from database",
+      { limit: 5 },
+      context,
+    );
+
     const questionsStart = performance.now();
     // Temporary fallback: Fetch more questions and shuffle client-side until RPC function is created
     const { data: allQuestions, error } = await supabase
-      .from('trivia_questions')
-      .select(`
+      .from("trivia_questions")
+      .select(
+        `
         id,
         question_text,
         category,
@@ -104,33 +141,34 @@ async function getTriviaQuestions(
           answer_text,
           is_correct
         )
-      `)
+      `,
+      )
       .limit(25); // Fetch 25 for better randomness
-    
+
     // Client-side randomization until database function is available
     const questions = allQuestions
       ? fisherYatesShuffle(allQuestions).slice(0, 5)
       : null;
 
-    tracker.logDbQuery('fetch_questions', performance.now() - questionsStart);
+    tracker.logDbQuery("fetch_questions", performance.now() - questionsStart);
 
     if (error) {
       throw new TriviaError(
-        'DATABASE_ERROR',
+        "DATABASE_ERROR",
         `Failed to fetch trivia questions: ${error.message}`,
         StandardErrors.TRIVIA.QUESTIONS_FETCH_ERROR,
         500,
-        { ...context, userId, dbError: error }
+        { ...context, userId, dbError: error },
       );
     }
 
     if (!questions || questions.length === 0) {
       throw new TriviaError(
-        'BUSINESS_LOGIC_ERROR',
-        'No trivia questions available in database',
+        "BUSINESS_LOGIC_ERROR",
+        "No trivia questions available in database",
         StandardErrors.TRIVIA.QUESTIONS_NOT_AVAILABLE,
         503,
-        { ...context, userId }
+        { ...context, userId },
       );
     }
 
@@ -140,228 +178,329 @@ async function getTriviaQuestions(
     // TODO: For stronger anti-cheat, move to server-side answer validation
     // where correct_answer_id is not sent to the client at all, and each
     // answer is verified via a POST round-trip.
-    const questionsWithShuffledAnswers = questions.map(question => {
-      const correctAnswer = question.trivia_answers.find(a => a.is_correct);
+    const questionsWithShuffledAnswers = questions.map((question) => {
+      const correctAnswer = question.trivia_answers.find((a) => a.is_correct);
       if (!correctAnswer) {
-        logTriviaEvent('warn', 'Question has no correct answer marked', {
-          questionId: question.id,
-          questionText: question.question_text,
-        }, context);
+        logTriviaEvent(
+          "warn",
+          "Question has no correct answer marked",
+          {
+            questionId: question.id,
+            questionText: question.question_text,
+          },
+          context,
+        );
       }
       return {
         ...question,
         correct_answer_id: correctAnswer?.id ?? null,
         trivia_answers: fisherYatesShuffle(question.trivia_answers).map(
-          ({ is_correct: _is_correct, ...answer }) => answer
+          ({ is_correct: _is_correct, ...answer }) => answer,
         ),
       };
     });
 
     // Log business event for questions retrieved
-    logTriviaBusinessEvent('questions_retrieved', {
-      questionCount: questionsWithShuffledAnswers.length,
-      randomizationMethod: 'fisher_yates_shuffle'
-    }, { userId });
+    logTriviaBusinessEvent(
+      "questions_retrieved",
+      {
+        questionCount: questionsWithShuffledAnswers.length,
+        randomizationMethod: "fisher_yates_shuffle",
+      },
+      { userId },
+    );
 
-    logTriviaEvent('info', 'Successfully retrieved random trivia questions with shuffled answers', {
-      userId,
-      questionCount: questionsWithShuffledAnswers.length,
-      randomizationMethod: 'fisher_yates_shuffle'
-    }, context);
+    logTriviaEvent(
+      "info",
+      "Successfully retrieved random trivia questions with shuffled answers",
+      {
+        userId,
+        questionCount: questionsWithShuffledAnswers.length,
+        randomizationMethod: "fisher_yates_shuffle",
+      },
+      context,
+    );
 
     tracker.complete(true, {
       questionCount: questionsWithShuffledAnswers.length,
-      randomizationMethod: 'fisher_yates_shuffle'
+      randomizationMethod: "fisher_yates_shuffle",
     });
     return questionsWithShuffledAnswers;
-
   } catch (error) {
-    const triviaError = handleTriviaError(error, { ...context, userId }, 'getTriviaQuestions');
-    
-    logTriviaEvent('error', 'Failed to get trivia questions', {
-      error: triviaError.message,
-      type: triviaError.type,
-      statusCode: triviaError.statusCode
-    }, triviaError.context);
-    
+    const triviaError = handleTriviaError(
+      error,
+      { ...context, userId },
+      "getTriviaQuestions",
+    );
+
+    logTriviaEvent(
+      "error",
+      "Failed to get trivia questions",
+      {
+        error: triviaError.message,
+        type: triviaError.type,
+        statusCode: triviaError.statusCode,
+      },
+      triviaError.context,
+    );
+
     tracker.complete(false, { error: triviaError.type });
     throw triviaError;
   }
 }
 
 async function saveTriviaScore(
-  scoreData: { score: number }, 
-  userId: string, 
+  scoreData: { score: number },
+  userId: string,
   authenticatedSupabase: SupabaseClient,
-  context: TriviaErrorContext = {}
+  context: TriviaErrorContext = {},
 ): Promise<TriviaPostResponse> {
-  const tracker = new TriviaPerformanceTracker('saveTriviaScore', { ...context, userId, action: 'submit' });
-  
+  const tracker = new TriviaPerformanceTracker("saveTriviaScore", {
+    ...context,
+    userId,
+    action: "submit",
+  });
+
   try {
     const { score } = scoreData;
-    
-    logTriviaEvent('info', 'Starting trivia score submission', { userId, score }, context);
+
+    logTriviaEvent(
+      "info",
+      "Starting trivia score submission",
+      { userId, score },
+      context,
+    );
 
     // Validate score using shared utility
     const scoreValidation = validateTriviaScore(score);
     if (!scoreValidation.isValid) {
       throw new TriviaError(
-        'VALIDATION_ERROR',
+        "VALIDATION_ERROR",
         `Invalid trivia score attempted: ${scoreValidation.error}`,
         StandardErrors.TRIVIA.SCORE_VALIDATION_ERROR,
         400,
-        { ...context, userId, score, validationError: scoreValidation.error }
+        { ...context, userId, score, validationError: scoreValidation.error },
       );
     }
 
     // Use shared utility to check if user has already submitted a score today
     const dailyCheckStart = performance.now();
-    const dailyCheck = await checkDailyPlayStatus(userId, authenticatedSupabase);
-    tracker.logDbQuery('daily_play_check_before_save', performance.now() - dailyCheckStart);
+    const dailyCheck = await checkDailyPlayStatus(
+      userId,
+      authenticatedSupabase,
+    );
+    tracker.logDbQuery(
+      "daily_play_check_before_save",
+      performance.now() - dailyCheckStart,
+    );
 
     if (dailyCheck.error) {
       throw new TriviaError(
-        'DATABASE_ERROR',
+        "DATABASE_ERROR",
         `Failed to check existing daily trivia score before saving: ${dailyCheck.error}`,
         StandardErrors.TRIVIA.DAILY_SCORE_ERROR,
         500,
-        { ...context, userId, score }
+        { ...context, userId, score },
       );
     }
 
     if (dailyCheck.hasPlayedToday) {
       throw new TriviaError(
-        'BUSINESS_LOGIC_ERROR',
-        'User attempted to submit score after already playing today',
+        "BUSINESS_LOGIC_ERROR",
+        "User attempted to submit score after already playing today",
         StandardErrors.TRIVIA.ALREADY_PLAYED,
         409,
-        { ...context, userId, score, existingScore: dailyCheck.existingScore }
+        { ...context, userId, score, existingScore: dailyCheck.existingScore },
       );
     }
 
     // Save the score to database
-    logTriviaEvent('info', 'Saving trivia score to database', { userId, score }, context);
-    
+    logTriviaEvent(
+      "info",
+      "Saving trivia score to database",
+      { userId, score },
+      context,
+    );
+
     const saveStart = performance.now();
     const { success, error } = await createUserTriviaScore(
-      { user_id: userId, daily_score: score }, 
-      authenticatedSupabase
+      { user_id: userId, daily_score: score },
+      authenticatedSupabase,
     );
-    tracker.logDbQuery('save_score', performance.now() - saveStart);
+    tracker.logDbQuery("save_score", performance.now() - saveStart);
 
     if (!success) {
       throw new TriviaError(
-        'DATABASE_ERROR',
+        "DATABASE_ERROR",
         `Failed to save trivia score: ${error}`,
         StandardErrors.TRIVIA.SAVE_SCORE_ERROR,
         500,
-        { ...context, userId, score, dbError: error }
+        { ...context, userId, score, dbError: error },
       );
     }
 
     // Use shared utility for business event logging
-    logTriviaBusinessEvent('score_saved', { score }, { userId });
+    logTriviaBusinessEvent("score_saved", { score }, { userId });
 
-    logTriviaEvent('info', 'Successfully saved trivia score', { userId, score }, context);
-    
+    logTriviaEvent(
+      "info",
+      "Successfully saved trivia score",
+      { userId, score },
+      context,
+    );
+
     tracker.complete(true, { score });
-    return { message: 'Score saved successfully!' };
-
+    return { message: "Score saved successfully!" };
   } catch (error) {
-    const triviaError = handleTriviaError(error, { ...context, userId }, 'saveTriviaScore');
-    
-    logTriviaEvent('error', 'Failed to save trivia score', {
-      error: triviaError.message,
-      type: triviaError.type,
-      statusCode: triviaError.statusCode,
-      score: scoreData.score
-    }, triviaError.context);
-    
-    tracker.complete(false, { error: triviaError.type, score: scoreData.score });
+    const triviaError = handleTriviaError(
+      error,
+      { ...context, userId },
+      "saveTriviaScore",
+    );
+
+    logTriviaEvent(
+      "error",
+      "Failed to save trivia score",
+      {
+        error: triviaError.message,
+        type: triviaError.type,
+        statusCode: triviaError.statusCode,
+        score: scoreData.score,
+      },
+      triviaError.context,
+    );
+
+    tracker.complete(false, {
+      error: triviaError.type,
+      score: scoreData.score,
+    });
     throw triviaError;
   }
 }
 
-async function getUserTriviaScore(userId: string, clerkToken: string): Promise<TriviaScoreResponse> {
+async function getUserTriviaScore(
+  userId: string,
+  clerkToken: string,
+): Promise<TriviaScoreResponse> {
   const authenticatedSupabase = getAuthenticatedSupabaseClient(clerkToken);
 
-  const { success, data: existingScore, error: scoreError } = await getUserDailyTriviaScore(userId, authenticatedSupabase);
+  const {
+    success,
+    data: existingScore,
+    error: scoreError,
+  } = await getUserDailyTriviaScore(userId, authenticatedSupabase);
 
   if (!success) {
-    log.error('Failed to check daily trivia score', scoreError, { userId });
-    throw new Error('Failed to check daily score');
+    log.error("Failed to check daily trivia score", scoreError, { userId });
+    throw new Error("Failed to check daily score");
   }
 
   const score = existingScore?.daily_score || 0;
-  
-  log.info('Retrieved user trivia score', { userId }, { score });
+
+  log.info("Retrieved user trivia score", { userId }, { score });
 
   return { score };
 }
 
 async function getUserTotalTriviaScore(
-  userId: string, 
+  userId: string,
   authenticatedSupabase: SupabaseClient,
-  context: TriviaErrorContext = {}
+  context: TriviaErrorContext = {},
 ): Promise<TriviaTotalScoreResponse> {
-  const tracker = new TriviaPerformanceTracker('getUserTotalTriviaScore', { ...context, userId, action: 'total' });
-  
+  const tracker = new TriviaPerformanceTracker("getUserTotalTriviaScore", {
+    ...context,
+    userId,
+    action: "total",
+  });
+
   try {
-    logTriviaEvent('info', 'Starting total trivia score retrieval', { userId }, context);
+    logTriviaEvent(
+      "info",
+      "Starting total trivia score retrieval",
+      { userId },
+      context,
+    );
 
     // Fetch all user scores and calculate client-side (more reliable than PostgREST aggregation)
     const queryStart = performance.now();
     const { data: allUserScores, error } = await authenticatedSupabase
-      .from('user_trivia_scores')
-      .select('daily_score')
-      .eq('user_id', userId);
-    
-    tracker.logDbQuery('get_total_scores', performance.now() - queryStart);
+      .from("user_trivia_scores")
+      .select("daily_score")
+      .eq("user_id", userId);
+
+    tracker.logDbQuery("get_total_scores", performance.now() - queryStart);
 
     if (error) {
       // Handle common "no data found" errors gracefully
-      if (error.code === 'PGRST116' || error.code === 'PGRST301') {
+      if (error.code === "PGRST116" || error.code === "PGRST301") {
         // No records found - return zero score for new users
-        logTriviaEvent('info', 'No trivia scores found for user (new user)', { 
-          userId, 
-          errorCode: error.code 
-        }, context);
-        
-        tracker.complete(true, { totalScore: 0, gameCount: 0, method: 'no_data' });
+        logTriviaEvent(
+          "info",
+          "No trivia scores found for user (new user)",
+          {
+            userId,
+            errorCode: error.code,
+          },
+          context,
+        );
+
+        tracker.complete(true, {
+          totalScore: 0,
+          gameCount: 0,
+          method: "no_data",
+        });
         return { totalScore: 0 };
       }
-      
+
       // Handle actual database errors
       throw new TriviaError(
-        'DATABASE_ERROR',
+        "DATABASE_ERROR",
         `Failed to fetch user scores: ${error.message}`,
         StandardErrors.TRIVIA.AGGREGATION_ERROR,
         500,
-        { ...context, userId, dbError: error.message, errorCode: error.code }
+        { ...context, userId, dbError: error.message, errorCode: error.code },
       );
     }
-    
-    const totalScore = allUserScores?.reduce((sum: number, entry: { daily_score: number }) => sum + entry.daily_score, 0) || 0;
-    const gameCount = allUserScores?.length || 0;
-    
-    logTriviaEvent('info', 'Successfully retrieved total score', { 
-      userId, 
-      totalScore,
-      gameCount
-    }, context);
-    
-    tracker.complete(true, { totalScore, gameCount, method: 'client_side' });
-    return { totalScore };
 
+    const totalScore =
+      allUserScores?.reduce(
+        (sum: number, entry: { daily_score: number }) =>
+          sum + entry.daily_score,
+        0,
+      ) || 0;
+    const gameCount = allUserScores?.length || 0;
+
+    logTriviaEvent(
+      "info",
+      "Successfully retrieved total score",
+      {
+        userId,
+        totalScore,
+        gameCount,
+      },
+      context,
+    );
+
+    tracker.complete(true, { totalScore, gameCount, method: "client_side" });
+    return { totalScore };
   } catch (error) {
-    const triviaError = handleTriviaError(error, { ...context, userId }, 'getUserTotalTriviaScore');
-    
-    logTriviaEvent('error', 'Failed to get total trivia score', {
-      error: triviaError.message,
-      type: triviaError.type,
-      statusCode: triviaError.statusCode
-    }, triviaError.context);
-    
+    const triviaError = handleTriviaError(
+      error,
+      { ...context, userId },
+      "getUserTotalTriviaScore",
+    );
+
+    logTriviaEvent(
+      "error",
+      "Failed to get total trivia score",
+      {
+        error: triviaError.message,
+        type: triviaError.type,
+        statusCode: triviaError.statusCode,
+      },
+      triviaError.context,
+    );
+
     tracker.complete(false, { error: triviaError.type });
     throw triviaError;
   }
@@ -369,193 +508,250 @@ async function getUserTotalTriviaScore(
 
 // GET - Consolidated endpoint with query parameter routing and comprehensive error handling
 export const GET = createApiHandler({
-  auth: 'optional', // Supports both authenticated and anonymous users
+  auth: "optional", // Supports both authenticated and anonymous users
   handler: async (_, context) => {
     const { userId, authenticatedSupabase, request } = context;
     const { searchParams } = new URL(request.url);
-    const action = searchParams.get('action') || 'questions';
-    
+    const action = searchParams.get("action") || "questions";
+
     // Build comprehensive context for error handling and logging
     const triviaContext: TriviaErrorContext = {
       userId,
       action,
-      requestId: request.headers.get('x-request-id') || `req_${Date.now()}`,
-      userAgent: request.headers.get('user-agent') || undefined,
-      timestamp: new Date().toISOString()
+      requestId: request.headers.get("x-request-id") || `req_${Date.now()}`,
+      userAgent: request.headers.get("user-agent") || undefined,
+      timestamp: new Date().toISOString(),
     };
 
-    const tracker = new TriviaPerformanceTracker(`GET_${action}`, triviaContext);
-    
+    const tracker = new TriviaPerformanceTracker(
+      `GET_${action}`,
+      triviaContext,
+    );
+
     try {
-      logTriviaEvent('info', `Processing GET request for action: ${action}`, { 
-        action, 
-        userId: userId || 'anonymous',
-        hasAuthentication: !!userId
-      }, triviaContext);
+      logTriviaEvent(
+        "info",
+        `Processing GET request for action: ${action}`,
+        {
+          action,
+          userId: userId || "anonymous",
+          hasAuthentication: !!userId,
+        },
+        triviaContext,
+      );
 
       // Route based on action parameter with enhanced error handling
       switch (action) {
-        case 'questions':
+        case "questions":
           // Get trivia questions (default behavior)
-          const result = await getTriviaQuestions(userId, authenticatedSupabase, triviaContext);
-          tracker.complete(true, { action, questionCount: Array.isArray(result) ? result.length : 0 });
+          const result = await getTriviaQuestions(
+            userId,
+            authenticatedSupabase,
+            triviaContext,
+          );
+          tracker.complete(true, {
+            action,
+            questionCount: Array.isArray(result) ? result.length : 0,
+          });
           return result;
-          
-        case 'score':
+
+        case "score":
           // Get user's daily trivia score (requires authentication)
           if (!userId) {
             throw new TriviaError(
-              'AUTHENTICATION_ERROR',
-              'Authentication required for score retrieval',
+              "AUTHENTICATION_ERROR",
+              "Authentication required for score retrieval",
               StandardErrors.TRIVIA.AUTHENTICATION_REQUIRED,
               401,
-              triviaContext
+              triviaContext,
             );
           }
-          
+
           try {
-            const { getAuth } = await import('@clerk/nextjs/server');
+            const { getAuth } = await import("@clerk/nextjs/server");
             const { getToken } = getAuth(request);
-            const clerkToken = await getToken({ template: 'supabase' });
-            
+            const clerkToken = await getToken({ template: "supabase" });
+
             if (!clerkToken) {
               throw new TriviaError(
-                'AUTHENTICATION_ERROR',
-                'Failed to retrieve authentication token',
+                "AUTHENTICATION_ERROR",
+                "Failed to retrieve authentication token",
                 StandardErrors.TRIVIA.TOKEN_INVALID,
                 401,
-                triviaContext
+                triviaContext,
               );
             }
-            
+
             const scoreResult = await getUserTriviaScore(userId, clerkToken);
             tracker.complete(true, { action, score: scoreResult.score });
             return scoreResult;
           } catch (tokenError) {
-            throw handleTriviaError(tokenError, triviaContext, 'token_retrieval');
+            throw handleTriviaError(
+              tokenError,
+              triviaContext,
+              "token_retrieval",
+            );
           }
-          
-        case 'total':
+
+        case "total":
           // Get user's total accumulated trivia score (requires authentication)
           if (!userId || !authenticatedSupabase) {
             throw new TriviaError(
-              'AUTHENTICATION_ERROR',
-              'Authentication required for total score retrieval',
+              "AUTHENTICATION_ERROR",
+              "Authentication required for total score retrieval",
               StandardErrors.TRIVIA.AUTHENTICATION_REQUIRED,
               401,
-              triviaContext
+              triviaContext,
             );
           }
-          
-          const totalResult = await getUserTotalTriviaScore(userId, authenticatedSupabase, triviaContext);
-          tracker.complete(true, { action, totalScore: totalResult.totalScore });
+
+          const totalResult = await getUserTotalTriviaScore(
+            userId,
+            authenticatedSupabase,
+            triviaContext,
+          );
+          tracker.complete(true, {
+            action,
+            totalScore: totalResult.totalScore,
+          });
           return totalResult;
-          
+
         default:
           throw new TriviaError(
-            'VALIDATION_ERROR',
+            "VALIDATION_ERROR",
             `Invalid action parameter: ${action}`,
             StandardErrors.TRIVIA.INVALID_ACTION,
             400,
-            { ...triviaContext, invalidAction: action }
+            { ...triviaContext, invalidAction: action },
           );
       }
     } catch (error) {
-      const triviaError = handleTriviaError(error, triviaContext, `GET_${action}`);
-      
-      logTriviaEvent('error', `Failed GET request for action: ${action}`, {
+      const triviaError = handleTriviaError(
+        error,
+        triviaContext,
+        `GET_${action}`,
+      );
+
+      logTriviaEvent(
+        "error",
+        `Failed GET request for action: ${action}`,
+        {
+          action,
+          error: triviaError.message,
+          type: triviaError.type,
+          statusCode: triviaError.statusCode,
+          userId: userId || "anonymous",
+        },
+        triviaError.context,
+      );
+
+      tracker.complete(false, {
         action,
-        error: triviaError.message,
-        type: triviaError.type,
+        error: triviaError.type,
         statusCode: triviaError.statusCode,
-        userId: userId || 'anonymous'
-      }, triviaError.context);
-      
-      tracker.complete(false, { 
-        action, 
-        error: triviaError.type, 
-        statusCode: triviaError.statusCode 
       });
-      
+
       throw triviaError;
     }
-  }
+  },
 });
 
 // POST - Consolidated endpoint for score submission with comprehensive error handling
 export const POST = createApiHandler({
-  auth: 'user', // Requires authentication
+  auth: "user", // Requires authentication
   i18nSchema: (t) => createTriviaScoreSchema(t),
   handler: async (validatedData, context) => {
     const { userId, authenticatedSupabase, request } = context;
     const { searchParams } = new URL(request.url);
-    const action = searchParams.get('action') || 'submit';
-    
+    const action = searchParams.get("action") || "submit";
+
     // Build comprehensive context for error handling and logging
     const triviaContext: TriviaErrorContext = {
       userId,
       action,
-      requestId: request.headers.get('x-request-id') || `req_${Date.now()}`,
-      userAgent: request.headers.get('user-agent') || undefined,
-      timestamp: new Date().toISOString()
+      requestId: request.headers.get("x-request-id") || `req_${Date.now()}`,
+      userAgent: request.headers.get("user-agent") || undefined,
+      timestamp: new Date().toISOString(),
     };
 
-    const tracker = new TriviaPerformanceTracker(`POST_${action}`, triviaContext);
-    
+    const tracker = new TriviaPerformanceTracker(
+      `POST_${action}`,
+      triviaContext,
+    );
+
     if (!authenticatedSupabase) {
       throw new TriviaError(
-        'AUTHENTICATION_ERROR',
-        'Authenticated Supabase client not available',
+        "AUTHENTICATION_ERROR",
+        "Authenticated Supabase client not available",
         StandardErrors.TRIVIA.AUTHENTICATION_REQUIRED,
         401,
-        triviaContext
+        triviaContext,
       );
     }
 
     try {
-      logTriviaEvent('info', `Processing POST request for action: ${action}`, { 
-        action, 
-        userId,
-        score: validatedData.score
-      }, triviaContext);
+      logTriviaEvent(
+        "info",
+        `Processing POST request for action: ${action}`,
+        {
+          action,
+          userId,
+          score: validatedData.score,
+        },
+        triviaContext,
+      );
 
       // Route based on action parameter with enhanced error handling
       switch (action) {
-        case 'submit':
+        case "submit":
           // Submit trivia score (default behavior)
-          const result = await saveTriviaScore(validatedData, userId!, authenticatedSupabase, triviaContext);
+          const result = await saveTriviaScore(
+            validatedData,
+            userId!,
+            authenticatedSupabase,
+            triviaContext,
+          );
           tracker.complete(true, { action, score: validatedData.score });
           return result;
-          
+
         default:
           throw new TriviaError(
-            'VALIDATION_ERROR',
+            "VALIDATION_ERROR",
             `Invalid action parameter for POST: ${action}`,
             StandardErrors.TRIVIA.INVALID_ACTION,
             400,
-            { ...triviaContext, invalidAction: action }
+            { ...triviaContext, invalidAction: action },
           );
       }
     } catch (error) {
-      const triviaError = handleTriviaError(error, triviaContext, `POST_${action}`);
-      
-      logTriviaEvent('error', `Failed POST request for action: ${action}`, {
+      const triviaError = handleTriviaError(
+        error,
+        triviaContext,
+        `POST_${action}`,
+      );
+
+      logTriviaEvent(
+        "error",
+        `Failed POST request for action: ${action}`,
+        {
+          action,
+          error: triviaError.message,
+          type: triviaError.type,
+          statusCode: triviaError.statusCode,
+          userId,
+          score: validatedData.score,
+        },
+        triviaError.context,
+      );
+
+      tracker.complete(false, {
         action,
-        error: triviaError.message,
-        type: triviaError.type,
+        error: triviaError.type,
         statusCode: triviaError.statusCode,
-        userId,
-        score: validatedData.score
-      }, triviaError.context);
-      
-      tracker.complete(false, { 
-        action, 
-        error: triviaError.type, 
-        statusCode: triviaError.statusCode,
-        score: validatedData.score
+        score: validatedData.score,
       });
-      
+
       throw triviaError;
     }
-  }
+  },
 });

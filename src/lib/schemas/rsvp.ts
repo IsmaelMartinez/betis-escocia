@@ -19,11 +19,7 @@ const defaultT: ValidationTranslator = (key) => {
 
 export function createRsvpSchema(t: ValidationTranslator = defaultT) {
   return z.object({
-    name: z
-      .string()
-      .min(2, t("nameMin"))
-      .max(50, t("nameMax"))
-      .trim(),
+    name: z.string().min(2, t("nameMin")).max(50, t("nameMax")).trim(),
     email: z
       .string()
       .email(t("emailInvalid"))
@@ -35,11 +31,7 @@ export function createRsvpSchema(t: ValidationTranslator = defaultT) {
       .int(t("attendeesInt"))
       .min(1, t("attendeesMin"))
       .max(10, t("attendeesMax")),
-    message: z
-      .string()
-      .max(500, t("rsvpMessageMax"))
-      .trim()
-      .optional(),
+    message: z.string().max(500, t("rsvpMessageMax")).trim().optional(),
     whatsappInterest: z.boolean(),
     matchId: z.number().int().positive().optional(),
     userId: z.string().optional(),

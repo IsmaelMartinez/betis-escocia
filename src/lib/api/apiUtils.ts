@@ -24,7 +24,10 @@ import type { ValidationTranslator } from "@/lib/schemas/contact";
  */
 function detectLocale(request: NextRequest): string {
   const fromMiddleware = request.headers.get("x-next-intl-locale");
-  if (fromMiddleware && (routing.locales as readonly string[]).includes(fromMiddleware)) {
+  if (
+    fromMiddleware &&
+    (routing.locales as readonly string[]).includes(fromMiddleware)
+  ) {
     return fromMiddleware;
   }
   const accept = request.headers.get("accept-language") ?? "";
