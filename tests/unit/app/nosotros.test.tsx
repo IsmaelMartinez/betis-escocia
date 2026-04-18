@@ -12,7 +12,9 @@ vi.mock("next/link", () => ({
 
 // Mock FeatureWrapper to always render children (feature enabled)
 vi.mock("@/lib/features/featureProtection", () => ({
-  FeatureWrapper: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  FeatureWrapper: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
 }));
 
 // Mock Lucide React icons
@@ -31,9 +33,7 @@ vi.mock("lucide-react", () => ({
 describe("Nosotros Page", () => {
   describe("Basic rendering", () => {
     it("should render the main heading", async () => {
-      const { NosotrosContent } = await import(
-        "@/app/[locale]/nosotros/page"
-      );
+      const { NosotrosContent } = await import("@/app/[locale]/nosotros/page");
       render(<NosotrosContent />);
 
       expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
@@ -41,9 +41,7 @@ describe("Nosotros Page", () => {
     });
 
     it("should render the hero section tagline", async () => {
-      const { NosotrosContent } = await import(
-        "@/app/[locale]/nosotros/page"
-      );
+      const { NosotrosContent } = await import("@/app/[locale]/nosotros/page");
       render(<NosotrosContent />);
 
       expect(
@@ -55,9 +53,7 @@ describe("Nosotros Page", () => {
 
   describe("Three main cards", () => {
     it("should render all three card headings", async () => {
-      const { NosotrosContent } = await import(
-        "@/app/[locale]/nosotros/page"
-      );
+      const { NosotrosContent } = await import("@/app/[locale]/nosotros/page");
       render(<NosotrosContent />);
 
       expect(screen.getByText("Nuestros Orígenes")).toBeInTheDocument();
@@ -66,9 +62,7 @@ describe("Nosotros Page", () => {
     });
 
     it("should render founding story in card 1", async () => {
-      const { NosotrosContent } = await import(
-        "@/app/[locale]/nosotros/page"
-      );
+      const { NosotrosContent } = await import("@/app/[locale]/nosotros/page");
       render(<NosotrosContent />);
 
       expect(screen.getByText(/4 de diciembre de 2010/)).toBeInTheDocument();
@@ -81,9 +75,7 @@ describe("Nosotros Page", () => {
     });
 
     it("should render LaLiga quote in card 1", async () => {
-      const { NosotrosContent } = await import(
-        "@/app/[locale]/nosotros/page"
-      );
+      const { NosotrosContent } = await import("@/app/[locale]/nosotros/page");
       render(<NosotrosContent />);
 
       expect(
@@ -95,9 +87,7 @@ describe("Nosotros Page", () => {
     });
 
     it("should render community description in card 2", async () => {
-      const { NosotrosContent } = await import(
-        "@/app/[locale]/nosotros/page"
-      );
+      const { NosotrosContent } = await import("@/app/[locale]/nosotros/page");
       render(<NosotrosContent />);
 
       expect(screen.getByText(/todos son bienvenidos/)).toBeInTheDocument();
@@ -109,9 +99,7 @@ describe("Nosotros Page", () => {
     });
 
     it("should render condensed timeline in card 3", async () => {
-      const { NosotrosContent } = await import(
-        "@/app/[locale]/nosotros/page"
-      );
+      const { NosotrosContent } = await import("@/app/[locale]/nosotros/page");
       render(<NosotrosContent />);
 
       // Check for the 3 key milestones
@@ -122,16 +110,16 @@ describe("Nosotros Page", () => {
       expect(
         screen.getByText(/Primera peña oficial del Betis en Reino Unido/),
       ).toBeInTheDocument();
-      expect(screen.getByText(/Nuevo hogar en Polwarth Tavern/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Nuevo hogar en Polwarth Tavern/),
+      ).toBeInTheDocument();
       expect(
         screen.getByText(/Reconocimiento oficial de LaLiga/),
       ).toBeInTheDocument();
     });
 
     it("should render icons for all cards", async () => {
-      const { NosotrosContent } = await import(
-        "@/app/[locale]/nosotros/page"
-      );
+      const { NosotrosContent } = await import("@/app/[locale]/nosotros/page");
       render(<NosotrosContent />);
 
       expect(screen.getAllByTestId("heart-icon").length).toBeGreaterThan(0);
@@ -142,23 +130,21 @@ describe("Nosotros Page", () => {
 
   describe("Call to action section", () => {
     it("should render CTA heading and text", async () => {
-      const { NosotrosContent } = await import(
-        "@/app/[locale]/nosotros/page"
-      );
+      const { NosotrosContent } = await import("@/app/[locale]/nosotros/page");
       render(<NosotrosContent />);
 
       expect(
         screen.getByText(/¿Quieres ser parte de nuestra historia?/),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Tu historia también puede formar parte de la nuestra/),
+        screen.getByText(
+          /Tu historia también puede formar parte de la nuestra/,
+        ),
       ).toBeInTheDocument();
     });
 
     it("should render navigation links", async () => {
-      const { NosotrosContent } = await import(
-        "@/app/[locale]/nosotros/page"
-      );
+      const { NosotrosContent } = await import("@/app/[locale]/nosotros/page");
       render(<NosotrosContent />);
 
       const uneteLink = screen.getByRole("link", {
@@ -173,9 +159,7 @@ describe("Nosotros Page", () => {
 
   describe("Design system consistency", () => {
     it("should use cultural fusion design patterns", async () => {
-      const { NosotrosContent } = await import(
-        "@/app/[locale]/nosotros/page"
-      );
+      const { NosotrosContent } = await import("@/app/[locale]/nosotros/page");
       const { container } = render(<NosotrosContent />);
 
       // Check for design system classes
@@ -189,9 +173,7 @@ describe("Nosotros Page", () => {
     });
 
     it("should use typography system classes", async () => {
-      const { NosotrosContent } = await import(
-        "@/app/[locale]/nosotros/page"
-      );
+      const { NosotrosContent } = await import("@/app/[locale]/nosotros/page");
       render(<NosotrosContent />);
 
       const heading = screen.getByText("Nosotros");
@@ -201,9 +183,7 @@ describe("Nosotros Page", () => {
 
   describe("Accessibility", () => {
     it("should have proper heading hierarchy", async () => {
-      const { NosotrosContent } = await import(
-        "@/app/[locale]/nosotros/page"
-      );
+      const { NosotrosContent } = await import("@/app/[locale]/nosotros/page");
       render(<NosotrosContent />);
 
       const headings = screen.getAllByRole("heading");
@@ -216,9 +196,7 @@ describe("Nosotros Page", () => {
     });
 
     it("should have proper link structure", async () => {
-      const { NosotrosContent } = await import(
-        "@/app/[locale]/nosotros/page"
-      );
+      const { NosotrosContent } = await import("@/app/[locale]/nosotros/page");
       render(<NosotrosContent />);
 
       const links = screen.getAllByRole("link");

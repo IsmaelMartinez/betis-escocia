@@ -92,10 +92,7 @@ export default function TriviaPage() {
         log.error("Failed to save trivia score", error, {
           finalScore,
         });
-
-        if (!error) {
-          setError(t("saveError"));
-        }
+        setError(t("saveError"));
       }
     },
     [currentData.scoreSubmitted, getToken, t],

@@ -66,7 +66,9 @@ describe("RootLayout", () => {
     );
   });
 
-  const renderLayout = async (children: React.ReactNode = <p>Test Children</p>) => {
+  const renderLayout = async (
+    children: React.ReactNode = <p>Test Children</p>,
+  ) => {
     const element = await RootLayout({
       children,
       params: Promise.resolve({ locale: "es" }),

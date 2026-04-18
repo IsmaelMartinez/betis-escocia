@@ -39,9 +39,8 @@ describe("Joaquín Page", () => {
   let renderResult: RenderResult;
 
   beforeEach(async () => {
-    const { JoaquinContent: JoaquinPage } = await import(
-      "@/app/[locale]/joaquin/page",
-    );
+    const { JoaquinContent: JoaquinPage } =
+      await import("@/app/[locale]/joaquin/page");
     renderResult = render(<JoaquinPage />);
   });
 

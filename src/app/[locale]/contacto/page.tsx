@@ -247,9 +247,7 @@ export default function ContactPage() {
                 </div>
               )}
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                {selectedType
-                  ? t(selectedType.nameKey)
-                  : t("formDefaultTitle")}
+                {selectedType ? t(selectedType.nameKey) : t("formDefaultTitle")}
               </h3>
               <p className="text-gray-600">
                 {selectedType

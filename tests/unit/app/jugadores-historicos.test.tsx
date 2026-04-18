@@ -179,7 +179,9 @@ describe("Jugadores Históricos Page", () => {
 
   describe("Era filter", () => {
     it("should render all filter buttons", () => {
-      expect(screen.getByRole("button", { name: /^Todos/ })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /^Todos/ }),
+      ).toBeInTheDocument();
       expect(
         screen.getByRole("button", { name: /^Clásicos del Villamarín/ }),
       ).toBeInTheDocument();

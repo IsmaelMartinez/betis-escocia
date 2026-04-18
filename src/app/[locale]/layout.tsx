@@ -124,7 +124,11 @@ export async function generateMetadata({
     },
     icons: {
       icon: [
-        { url: "/images/logo_no_texto.jpg", sizes: "32x32", type: "image/jpeg" },
+        {
+          url: "/images/logo_no_texto.jpg",
+          sizes: "32x32",
+          type: "image/jpeg",
+        },
         {
           url: "/images/logo_no_texto.jpg",
           sizes: "192x192",

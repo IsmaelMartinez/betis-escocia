@@ -433,9 +433,7 @@ export default function Layout({
 
       {debugInfo && (
         <div className="fixed bottom-4 right-4 bg-gray-900 text-white p-3 rounded-lg text-xs max-w-xs z-50 shadow-lg">
-          <div className="font-bold text-betis-oro mb-1">
-            {t("debugLabel")}
-          </div>
+          <div className="font-bold text-betis-oro mb-1">{t("debugLabel")}</div>
           <div className="text-gray-300">
             {t("debugEnvironment", { env: debugInfo.environment ?? "" })}
           </div>

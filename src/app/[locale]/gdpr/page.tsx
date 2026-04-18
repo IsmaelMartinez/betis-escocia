@@ -6,6 +6,7 @@ import { useAuth } from "@clerk/nextjs";
 import { useTranslations } from "next-intl";
 import { Shield, Mail } from "lucide-react";
 import Card, { CardBody } from "@/components/ui/Card";
+import { Link } from "@/i18n/navigation";
 
 export default function GDPRPage() {
   const { isSignedIn } = useAuth();
@@ -46,15 +47,13 @@ export default function GDPRPage() {
                 {t("cardHeading")}
               </h3>
               <p className="text-sm text-gray-600 mb-4">{t("cardBody")}</p>
-              <p className="text-xs text-gray-500 mb-4">
-                {t("retentionNote")}
-              </p>
-              <a
+              <p className="text-xs text-gray-500 mb-4">{t("retentionNote")}</p>
+              <Link
                 href="/contacto"
                 className="text-betis-green hover:text-betis-green-dark font-medium"
               >
                 {t("contactLink")}
-              </a>
+              </Link>
             </CardBody>
           </Card>
         </div>

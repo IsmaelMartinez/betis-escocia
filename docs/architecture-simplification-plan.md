@@ -308,6 +308,7 @@ These parts of the architecture are working well and should be preserved:
 4. ~~Update Storybook paths~~
 
 Components moved:
+
 - `layout/` — Layout
 - `match/` — MatchCard, MatchTicket, AllDatabaseMatches, BackgroundMatchSync, UpcomingMatches, FilteredMatches, PaginatedMatches, CompetitionFilter, ShareMatch, UpcomingMatchesWidget
 - `rsvp/` — RSVPWidget, RSVPForm, RSVPModal
@@ -353,6 +354,7 @@ src/lib/
 ```
 
 **Changes:**
+
 1. Created domain-focused subdirectories in `src/lib/`
 2. Moved all hooks to `src/hooks/data/` (consolidated from `src/hooks/` and `src/lib/hooks/`)
 3. Updated 200+ import paths across src/ and tests/
@@ -360,6 +362,7 @@ src/lib/
 5. Type-check and lint passing
 
 **Benefits:**
+
 - Clear separation of concerns (API, auth, features, utils)
 - Easier to find related functionality
 - Reduced cognitive load when navigating codebase
@@ -368,12 +371,14 @@ src/lib/
 ### Phase 4: Split Large Components -- IN PROGRESS
 
 **Target components (2,284 lines total):**
+
 - AdminPageClient.tsx: 803 lines
 - RSVPWidget.tsx: 531 lines
 - AllDatabaseMatches.tsx: 486 lines
 - Layout.tsx: 464 lines
 
 **Planned splits:**
+
 1. **AdminPageClient** → Extract custom hooks + create view components
    - ✅ Created `useAdminStats` hook (extracting stats fetching logic)
    - TODO: Create `useAdminMatches`, `useAdminContacts` hooks
@@ -384,10 +389,12 @@ src/lib/
 4. **AllDatabaseMatches** → Extract filtering/pagination into custom hooks
 
 **Initial work (Phase 4.1):**
+
 - Created `src/app/admin/hooks/useAdminStats.ts` - demonstrates pattern for extracting data fetching logic into reusable hooks
 - Establishes structure for further component decomposition
 
 **Expected benefits:**
+
 - Smaller, focused components (target: <300 lines each)
 - Reusable hooks for data fetching
 - Easier testing of individual pieces
@@ -447,7 +454,7 @@ src/lib/
 
 ### Context
 
-Up to this point the site mixed hardcoded Spanish UI with a minor amount of English (Clerk auth, some admin labels). The codebase already carried i18n *intent* — `openGraph.alternateLocale: "en_GB"`, `nameEn` fields on navigation items — but no library was installed. A comprehensive audit identified ~800–1000 hardcoded user-facing strings across 17 page routes, five Zod schemas with Spanish error messages, and Spanish route paths.
+Up to this point the site mixed hardcoded Spanish UI with a minor amount of English (Clerk auth, some admin labels). The codebase already carried i18n _intent_ — `openGraph.alternateLocale: "en_GB"`, `nameEn` fields on navigation items — but no library was installed. A comprehensive audit identified ~800–1000 hardcoded user-facing strings across 17 page routes, five Zod schemas with Spanish error messages, and Spanish route paths.
 
 ### Decisions
 
