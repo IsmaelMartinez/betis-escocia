@@ -1,33 +1,43 @@
 import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { redirect, Link } from "@/i18n/navigation";
 import { getUserContactSubmissions } from "@/lib/api/supabase";
 import { MessageSquare, ExternalLink } from "lucide-react";
-import Link from "next/link";
 import { hasFeature } from "@/lib/features/featureFlags";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, enGB } from "date-fns/locale";
 import { DATE_FORMAT } from "@/lib/constants/dateFormats";
 
-export default async function UserContactSubmissionsPage() {
+type Props = {
+  params: Promise<{ locale: string }>;
+};
+
+export default async function UserContactSubmissionsPage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const isAuthEnabled = hasFeature("show-clerk-auth");
 
   if (!isAuthEnabled) {
-    redirect("/");
+    redirect({ href: "/", locale });
   }
 
   const user = await currentUser();
 
   if (!user) {
-    redirect("/sign-in");
+    redirect({ href: "/sign-in", locale });
+    return null;
   }
 
   const contactSubmissions = await getUserContactSubmissions(user.id);
+  const t = await getTranslations("Dashboard");
+  const dateFnsLocale = locale === "en" ? enGB : es;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-black text-betis-black mb-6">
-          Mis Mensajes de Contacto
+          {t("myContactSubmissionsTitle")}
         </h1>
 
         {contactSubmissions && contactSubmissions.length > 0 ? (
@@ -66,7 +76,7 @@ export default async function UserContactSubmissionsPage() {
                       </span>
                       <p className="text-xs text-gray-400 mt-1">
                         {format(new Date(submission.created_at), DATE_FORMAT, {
-                          locale: es,
+                          locale: dateFnsLocale,
                         })}
                       </p>
                     </div>
@@ -78,14 +88,12 @@ export default async function UserContactSubmissionsPage() {
         ) : (
           <div className="text-center py-8 bg-white rounded-lg shadow-md p-6">
             <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500">
-              No has enviado ningún mensaje de contacto aún.
-            </p>
+            <p className="text-gray-500">{t("emptyState")}</p>
             <Link
               href="/contacto"
               className="text-betis-green hover:text-betis-green/80 text-sm font-medium inline-flex items-center mt-2"
             >
-              Enviar un mensaje <ExternalLink className="h-3 w-3 ml-1" />
+              {t("sendMessage")} <ExternalLink className="h-3 w-3 ml-1" />
             </Link>
           </div>
         )}

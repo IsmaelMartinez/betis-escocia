@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import ErrorMessage from "@/components/ErrorMessage";
 import type { ClientTriviaQuestion } from "@/types/trivia";
 import LoadingSpinner from "@/components/LoadingSpinner";

@@ -8,7 +8,12 @@ import {
 } from "next/font/google";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import {
+  getMessages,
+  getTranslations,
+  setRequestLocale,
+} from "next-intl/server";
+import { routing } from "@/i18n/routing";
 import "../globals.css";
 import Layout from "@/components/layout/Layout";
 import OfflineDetector from "@/components/OfflineDetector";
@@ -19,7 +24,6 @@ import {
 } from "@/lib/features/featureFlags";
 import * as Sentry from "@sentry/nextjs";
 import SentryUserContext from "@/components/SentryUserContext";
-import { routing } from "@/i18n/routing";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import FacebookSDK from "@/components/social/FacebookSDK";
@@ -198,6 +202,8 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   const debugInfo = getFeatureFlagsStatus();
   const navigationItems = getEnabledNavigationItems();
+  const messages = await getMessages();
+  const localePrefix = locale === routing.defaultLocale ? "" : `/${locale}`;
 
   return (
     <html lang={locale}>
@@ -218,15 +224,15 @@ export default async function LocaleLayout({ children, params }: Props) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${displayFont.variable} ${bodyFont.variable} ${accentFont.variable} antialiased`}
       >
-        <NextIntlClientProvider>
+        <NextIntlClientProvider messages={messages}>
           <FacebookSDK />
 
           <OfflineDetector />
           <BackgroundMatchSync />
           <ClerkProvider
-            signInUrl="/sign-in"
-            signUpUrl="/sign-up"
-            afterSignOutUrl="/"
+            signInUrl={`${localePrefix}/sign-in`}
+            signUpUrl={`${localePrefix}/sign-up`}
+            afterSignOutUrl={localePrefix || "/"}
           >
             <SentryUserContext />
             <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>

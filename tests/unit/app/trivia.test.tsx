@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { useUser, useAuth } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 
 // Mock Clerk hooks
 vi.mock("@clerk/nextjs", () => ({
@@ -9,10 +9,37 @@ vi.mock("@clerk/nextjs", () => ({
   useAuth: vi.fn(),
 }));
 
-// Mock Next router
-vi.mock("next/navigation", () => ({
-  useRouter: vi.fn(),
-}));
+// Override the global @/i18n/navigation mock with a controllable router so we
+// can assert on push() calls. The global mock in tests/setup.ts creates a
+// fresh push per useRouter() call.
+vi.mock("@/i18n/navigation", () => {
+  const push = vi.fn();
+  return {
+    Link: ({
+      href,
+      children,
+      ...rest
+    }: {
+      href: string;
+      children: React.ReactNode;
+    } & React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
+      <a href={href} {...rest}>
+        {children}
+      </a>
+    ),
+    redirect: vi.fn(),
+    usePathname: () => "/",
+    useRouter: () => ({
+      push,
+      replace: vi.fn(),
+      prefetch: vi.fn(),
+      back: vi.fn(),
+      forward: vi.fn(),
+      refresh: vi.fn(),
+    }),
+    getPathname: ({ href }: { href: string }) => href,
+  };
+});
 
 // Mock Link component
 vi.mock("next/link", () => ({
@@ -52,11 +79,10 @@ vi.mock("@/lib/utils/logger", () => ({
 }));
 
 describe("TriviaPage", () => {
-  const mockPush = vi.fn();
   const mockGetToken = vi.fn();
   const mockUseUser = useUser as any;
   const mockUseAuth = useAuth as any;
-  const mockUseRouter = useRouter as any;
+  const { push: mockPush } = useRouter();
 
   const mockQuestions = [
     {
@@ -85,10 +111,6 @@ describe("TriviaPage", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-
-    mockUseRouter.mockReturnValue({
-      push: mockPush,
-    });
 
     mockGetToken.mockResolvedValue("mock-token");
 
