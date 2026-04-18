@@ -269,7 +269,7 @@ describe("RSVP Schema", () => {
           expect(error).toBeInstanceOf(ZodError);
           const zodError = error as ZodError;
           expect(zodError.issues?.[0]?.message).toBe(
-            "Either id or email must be provided",
+            "Debes proporcionar un id o un email",
           );
         }
       });
@@ -311,7 +311,7 @@ describe("RSVP Schema", () => {
           expect(error).toBeInstanceOf(ZodError);
           const zodError = error as ZodError;
           expect(zodError.issues?.[0]?.message).toBe(
-            "Request type is required",
+            "El tipo de solicitud es obligatorio",
           );
         }
       });
@@ -325,7 +325,7 @@ describe("RSVP Schema", () => {
           expect(error).toBeInstanceOf(ZodError);
           const zodError = error as ZodError;
           expect(zodError.issues?.[0]?.message).toBe(
-            "Request type is required",
+            "El tipo de solicitud es obligatorio",
           );
         }
       });

@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError, ZodSchema } from "zod";
+import { getTranslations } from "next-intl/server";
 import { checkAdminRole } from "@/lib/auth/adminApiProtection";
 import { getAuth } from "@clerk/nextjs/server";
 import {
@@ -12,7 +13,29 @@ import {
   supabase,
   type SupabaseClient,
 } from "@/lib/api/supabase";
+import { routing } from "@/i18n/routing";
 import { log } from "@/lib/utils/logger";
+import type { ValidationTranslator } from "@/lib/schemas/contact";
+
+/**
+ * Resolve the active locale for an API request. Prefers the `x-next-intl-locale`
+ * header (set by middleware for page routes; absent for API routes) and falls
+ * back to the first parseable language from `Accept-Language`.
+ */
+function detectLocale(request: NextRequest): string {
+  const fromMiddleware = request.headers.get("x-next-intl-locale");
+  if (fromMiddleware && (routing.locales as readonly string[]).includes(fromMiddleware)) {
+    return fromMiddleware;
+  }
+  const accept = request.headers.get("accept-language") ?? "";
+  for (const tag of accept.split(",")) {
+    const primary = tag.trim().split(/[-;]/)[0].toLowerCase();
+    if ((routing.locales as readonly string[]).includes(primary)) {
+      return primary;
+    }
+  }
+  return routing.defaultLocale;
+}
 
 // Authentication types
 export type AuthRequirement = "admin" | "user" | "optional" | "none";
@@ -35,6 +58,12 @@ export interface ApiContext {
 export interface ApiHandlerConfig<TInput = unknown, TOutput = unknown> {
   auth?: AuthRequirement;
   schema?: ZodSchema<TInput>;
+  /**
+   * Locale-aware schema factory. When provided, takes precedence over `schema`
+   * and is invoked per-request with a translator for the `Validation`
+   * namespace so validation errors are returned in the caller's language.
+   */
+  i18nSchema?: (t: ValidationTranslator) => ZodSchema<TInput>;
   handler: (data: TInput, context: ApiContext) => Promise<TOutput>;
 }
 
@@ -88,25 +117,20 @@ export function createErrorResponse(
 }
 
 /**
- * Handle Zod validation errors with Spanish user-friendly messages
+ * Handle Zod validation errors, preferring the schema's own (localised)
+ * `issue.message`. Falls back to a generic prefix when the issue has no
+ * explicit message.
  */
-export function handleZodError(error: ZodError): NextResponse<ApiResponse> {
+export function handleZodError(
+  error: ZodError,
+  topLevelMessage: string = "Datos de entrada inválidos",
+): NextResponse<ApiResponse> {
   const errorMessages = error.issues.map((issue) => {
-    // Map common Zod error codes to Spanish messages
     const path = issue.path.join(".");
-    switch (issue.code) {
-      case "too_small":
-        return `${path}: El valor es demasiado corto`;
-      case "too_big":
-        return `${path}: El valor es demasiado largo`;
-      case "invalid_type":
-        return `${path}: Tipo de dato inválido`;
-      default:
-        return issue.message;
-    }
+    return path ? `${path}: ${issue.message}` : issue.message;
   });
 
-  return createErrorResponse("Datos de entrada inválidos", 400, errorMessages);
+  return createErrorResponse(topLevelMessage, 400, errorMessages);
 }
 
 /**
@@ -226,16 +250,33 @@ export function createApiHandler<TInput = unknown, TOutput = unknown>(
         context.params = routeContext.params;
       }
 
+      // Resolve per-request translator + schema (if the route opted into
+      // localised validation). This is lazy — we only pay the translation
+      // cost when the route actually declares i18nSchema.
+      let activeSchema = config.schema;
+      let parseError = "Error al procesar datos de entrada";
+      let badRequest = "Datos de entrada inválidos";
+      if (config.i18nSchema) {
+        const locale = detectLocale(request);
+        const tValidation = await getTranslations({
+          locale,
+          namespace: "Validation",
+        });
+        activeSchema = config.i18nSchema((key) => tValidation(key));
+        parseError = tValidation("parseError");
+        badRequest = tValidation("badRequest");
+      }
+
       // Parse and validate request data
       let validatedData: TInput;
 
-      if (config.schema) {
+      if (activeSchema) {
         try {
           if (request.method === "GET") {
             // Parse query parameters for GET requests
             const url = new URL(request.url);
             const queryParams = Object.fromEntries(url.searchParams.entries());
-            validatedData = config.schema.parse(queryParams);
+            validatedData = activeSchema.parse(queryParams);
           } else if (
             request.method === "POST" ||
             request.method === "PUT" ||
@@ -244,15 +285,15 @@ export function createApiHandler<TInput = unknown, TOutput = unknown>(
           ) {
             // Parse request body for other methods
             const body = await request.json();
-            validatedData = config.schema.parse(body);
+            validatedData = activeSchema.parse(body);
           } else {
             validatedData = {} as TInput;
           }
         } catch (error) {
           if (error instanceof ZodError) {
-            return handleZodError(error);
+            return handleZodError(error, badRequest);
           }
-          return createErrorResponse("Error al procesar datos de entrada", 400);
+          return createErrorResponse(parseError, 400);
         }
       } else {
         validatedData = {} as TInput;

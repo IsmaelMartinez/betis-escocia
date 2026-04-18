@@ -1,7 +1,7 @@
 import { createApiHandler } from "@/lib/api/apiUtils";
 import { supabase, type RSVP } from "@/lib/api/supabase";
 import { getCurrentUpcomingMatch } from "@/lib/utils/matchUtils";
-import { rsvpSchema, type RSVPInput } from "@/lib/schemas/rsvp";
+import { createRsvpSchema, rsvpSchema, type RSVPInput } from "@/lib/schemas/rsvp";
 import { formatISO } from "date-fns";
 import { log } from "@/lib/utils/logger";
 import { StandardErrors } from "@/lib/utils/standardErrors";
@@ -281,7 +281,7 @@ async function createRSVP(rsvpData: RSVPInput) {
 // POST - Submit new RSVP
 export const POST = createApiHandler({
   auth: "none",
-  schema: rsvpSchema,
+  i18nSchema: (t) => createRsvpSchema(t),
   handler: async (validatedData) => {
     return await createRSVP(validatedData);
   },

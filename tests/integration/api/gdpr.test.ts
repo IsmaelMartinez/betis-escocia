@@ -28,10 +28,12 @@ vi.mock('@/lib/api/apiUtils', () => ({
         }
 
         let validatedData;
-        
-        if (config.schema && request.method === 'POST') {
+
+        const schema =
+          config.schema ?? (config.i18nSchema ? config.i18nSchema((k: string) => k) : null);
+        if (schema && request.method === 'POST') {
           const body = await request.json();
-          validatedData = config.schema.parse(body);
+          validatedData = schema.parse(body);
         } else {
           validatedData = {};
         }
@@ -87,8 +89,8 @@ vi.mock('@/lib/api/supabase', () => ({
 }));
 
 // Mock GDPR schema
-vi.mock('@/lib/schemas/rsvp', () => ({
-  gdprSchema: {
+vi.mock('@/lib/schemas/rsvp', () => {
+  const schema = {
     parse: vi.fn((data) => {
       if (!data.requestType) {
         const error = new Error('Validation failed') as any;
@@ -102,8 +104,12 @@ vi.mock('@/lib/schemas/rsvp', () => ({
       }
       return data;
     })
-  }
-}));
+  };
+  return {
+    gdprSchema: schema,
+    createGdprSchema: vi.fn(() => schema),
+  };
+});
 
 // Mock logger
 vi.mock('@/lib/utils/logger', () => ({

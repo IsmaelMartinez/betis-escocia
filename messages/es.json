@@ -345,6 +345,28 @@
     "description": "La página que buscas no existe o ha sido movida.",
     "backHome": "Volver al inicio"
   },
+  "Validation": {
+    "nameMin": "Nombre debe tener al menos 2 caracteres",
+    "nameMax": "Nombre no puede exceder 50 caracteres",
+    "emailInvalid": "Formato de email inválido",
+    "emailMax": "Email demasiado largo",
+    "phoneInvalid": "Formato de teléfono inválido (mínimo 9 dígitos)",
+    "subjectMin": "Asunto debe tener al menos 3 caracteres",
+    "subjectMax": "Asunto no puede exceder 100 caracteres",
+    "messageMin": "Mensaje debe tener al menos 5 caracteres",
+    "messageMax": "Mensaje no puede exceder 1000 caracteres",
+    "rsvpMessageMax": "Mensaje no puede exceder 500 caracteres",
+    "attendeesInt": "Número de asistentes debe ser un entero",
+    "attendeesMin": "Número de asistentes debe ser al menos 1",
+    "attendeesMax": "Número de asistentes no puede exceder 10",
+    "rsvpDeleteIdOrEmail": "Debes proporcionar un id o un email",
+    "gdprRequestTypeRequired": "El tipo de solicitud es obligatorio",
+    "triviaScoreMin": "La puntuación debe ser mayor o igual a 0",
+    "triviaScoreMax": "La puntuación no puede exceder 100",
+    "triviaScoreInt": "La puntuación debe ser un número entero",
+    "badRequest": "Datos de entrada inválidos",
+    "parseError": "Error al procesar datos de entrada"
+  },
   "SignIn": {
     "title": "Acceso a la Peña Bética",
     "subtitle": "Inicia sesión para acceder a tu historial y dashboard personal"

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { User, Mail, MessageSquare, Users } from "lucide-react";
 import {
   FormSuccessMessage,
@@ -16,7 +17,7 @@ import Field, {
 } from "@/components/Field";
 import { useUser } from "@clerk/nextjs";
 import { hasFeature } from "@/lib/features/featureFlags";
-import { rsvpSchema, type RSVPInput } from "@/lib/schemas/rsvp";
+import { createRsvpSchema, type RSVPInput } from "@/lib/schemas/rsvp";
 
 interface RSVPFormProps {
   readonly onSuccess?: () => void;
@@ -29,6 +30,11 @@ export default function RSVPForm({
 }: RSVPFormProps) {
   const { user } = useUser();
   const isAuthEnabled = hasFeature("show-clerk-auth");
+  const tValidation = useTranslations("Validation");
+  const schema = useMemo(
+    () => createRsvpSchema((key) => tValidation(key)),
+    [tValidation],
+  );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<
@@ -43,7 +49,7 @@ export default function RSVPForm({
     setValue,
     reset,
   } = useForm<RSVPInput>({
-    resolver: zodResolver(rsvpSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       name: "",
       email: "",

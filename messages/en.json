@@ -345,6 +345,28 @@
     "description": "The page you're looking for doesn't exist or has been moved.",
     "backHome": "Back to home"
   },
+  "Validation": {
+    "nameMin": "Name must be at least 2 characters",
+    "nameMax": "Name cannot exceed 50 characters",
+    "emailInvalid": "Invalid email format",
+    "emailMax": "Email is too long",
+    "phoneInvalid": "Invalid phone format (minimum 9 digits)",
+    "subjectMin": "Subject must be at least 3 characters",
+    "subjectMax": "Subject cannot exceed 100 characters",
+    "messageMin": "Message must be at least 5 characters",
+    "messageMax": "Message cannot exceed 1000 characters",
+    "rsvpMessageMax": "Message cannot exceed 500 characters",
+    "attendeesInt": "Number of attendees must be an integer",
+    "attendeesMin": "Number of attendees must be at least 1",
+    "attendeesMax": "Number of attendees cannot exceed 10",
+    "rsvpDeleteIdOrEmail": "You must provide an id or an email",
+    "gdprRequestTypeRequired": "Request type is required",
+    "triviaScoreMin": "Score must be greater than or equal to 0",
+    "triviaScoreMax": "Score cannot exceed 100",
+    "triviaScoreInt": "Score must be an integer",
+    "badRequest": "Invalid input",
+    "parseError": "Could not parse input data"
+  },
   "SignIn": {
     "title": "Sign in to Peña Bética",
     "subtitle": "Sign in to access your history and personal dashboard"

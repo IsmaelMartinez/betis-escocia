@@ -1,6 +1,6 @@
 import { createApiHandler, type ApiContext } from '@/lib/api/apiUtils';
 import { supabase } from '@/lib/api/supabase';
-import { gdprSchema, type GDPRInput } from '@/lib/schemas/rsvp';
+import { createGdprSchema, type GDPRInput } from '@/lib/schemas/rsvp';
 import { log } from '@/lib/utils/logger';
 
 async function processGDPRRequest(gdprData: GDPRInput, context: ApiContext) {
@@ -85,7 +85,7 @@ async function processGDPRRequest(gdprData: GDPRInput, context: ApiContext) {
 // POST - Process GDPR request
 export const POST = createApiHandler({
   auth: 'user', // Requires authentication
-  schema: gdprSchema,
+  i18nSchema: (t) => createGdprSchema(t),
   handler: async (validatedData, context) => {
     return await processGDPRRequest(validatedData, context);
   }

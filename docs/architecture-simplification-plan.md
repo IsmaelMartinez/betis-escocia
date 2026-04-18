@@ -487,7 +487,7 @@ Global mock in `tests/setup.ts` resolves translation keys against `messages/es.j
 
 ### Phase 8.4: Remaining Work — TODO
 
-- **Zod schema localization (DEFERRED):** 5 schema files in `src/lib/schemas/` (`contact.ts`, `rsvp.ts`, `admin.ts`, `trivia.ts`, `index.ts`) still return Spanish error messages. Low impact because client forms rely on HTML5 validation and rarely surface Zod errors. Cleanest fix is schema factories that accept a translator + API routes reading `Accept-Language` and building the schema per request.
+- **Zod schema localization — DONE:** `contact.ts`, `rsvp.ts`, and `trivia.ts` now export `createXxxSchema(t)` factories alongside the existing default exports (which retain Spanish strings for backward compatibility). `createApiHandler` accepts an `i18nSchema: (t) => ZodSchema` option — when set, the handler resolves the locale from the `x-next-intl-locale` header or `Accept-Language`, builds a translator against the `Validation` namespace, and validates against the locale-aware schema. Errors returned from the API are therefore in the caller's language. Client forms (`RSVPForm`, `RSVPWidget`) use `useTranslations("Validation")` with the factory via `useMemo`. The `admin.ts` schema still carries Spanish strings — staff-only, deferred.
 - **Admin panel:** `src/app/[locale]/admin/*` is still in Spanish. Staff-only surface; can be migrated in a dedicated pass.
 - **Dashboard:** `src/app/[locale]/dashboard/*` likewise staff-facing content not yet localised.
 - **Localised pathnames:** once translations settle, consider `defineRouting` pathname aliases (`/en/matches` → resolves to `/en/partidos` internal path) for better SEO on the English side.

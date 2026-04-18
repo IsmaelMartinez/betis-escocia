@@ -1,5 +1,5 @@
 import { createApiHandler } from "@/lib/api/apiUtils";
-import { contactSchema } from "@/lib/schemas/contact";
+import { createContactSchema } from "@/lib/schemas/contact";
 import {
   supabase,
   getAuthenticatedSupabaseClient,
@@ -12,7 +12,7 @@ import { StandardErrors } from "@/lib/utils/standardErrors";
 // POST - Submit contact form
 export const POST = createApiHandler({
   auth: "none", // Contact supports anonymous submissions
-  schema: contactSchema,
+  i18nSchema: (t) => createContactSchema(t),
   handler: async (validatedData, context) => {
     const { name, email, phone, type, subject, message } = validatedData;
 

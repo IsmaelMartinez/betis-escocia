@@ -1,6 +1,6 @@
 import { createApiHandler } from '@/lib/api/apiUtils';
 import { supabase, createUserTriviaScore, getUserDailyTriviaScore, getAuthenticatedSupabaseClient, type SupabaseClient } from '@/lib/api/supabase';
-import { triviaScoreSchema } from '@/lib/schemas/trivia';
+import { createTriviaScoreSchema } from '@/lib/schemas/trivia';
 import { log } from '@/lib/utils/logger';
 import { StandardErrors } from '@/lib/utils/standardErrors';
 import {
@@ -485,7 +485,7 @@ export const GET = createApiHandler({
 // POST - Consolidated endpoint for score submission with comprehensive error handling
 export const POST = createApiHandler({
   auth: 'user', // Requires authentication
-  schema: triviaScoreSchema,
+  i18nSchema: (t) => createTriviaScoreSchema(t),
   handler: async (validatedData, context) => {
     const { userId, authenticatedSupabase, request } = context;
     const { searchParams } = new URL(request.url);

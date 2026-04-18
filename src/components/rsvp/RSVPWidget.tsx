@@ -21,7 +21,8 @@ import Field, { ValidatedInput, ValidatedTextarea } from "@/components/Field";
 import { useUser } from "@clerk/nextjs";
 import { hasFeature } from "@/lib/features/featureFlags";
 import { useRSVPData } from "@/hooks/data/useRSVPData";
-import { rsvpSchema, type RSVPInput } from "@/lib/schemas/rsvp";
+import { useTranslations } from "next-intl";
+import { createRsvpSchema, type RSVPInput } from "@/lib/schemas/rsvp";
 
 export interface EventDetails {
   id?: number;
@@ -120,6 +121,12 @@ export default function RSVPWidget({
     };
   }, [isAuthEnabled, user, currentRSVP]);
 
+  const tValidation = useTranslations("Validation");
+  const schema = useMemo(
+    () => createRsvpSchema((key) => tValidation(key)),
+    [tValidation],
+  );
+
   const {
     register,
     handleSubmit: handleFormSubmit,
@@ -127,7 +134,7 @@ export default function RSVPWidget({
     setValue,
     reset,
   } = useForm<RSVPInput>({
-    resolver: zodResolver(rsvpSchema),
+    resolver: zodResolver(schema),
     defaultValues: initialFormData,
   });
 
