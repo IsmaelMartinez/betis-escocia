@@ -1,6 +1,9 @@
 import sitemap from "../../../src/app/sitemap";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { getEnabledNavigationItems, hasFeature } from "@/lib/features/featureFlags";
+import {
+  getEnabledNavigationItems,
+  hasFeature,
+} from "@/lib/features/featureFlags";
 
 // Mock the featureFlags module
 vi.mock("@/lib/features/featureFlags", () => ({
