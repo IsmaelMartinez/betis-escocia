@@ -4,19 +4,30 @@ import {
   StandingEntry,
 } from "@/services/footballDataService";
 import axios from "axios";
+import { getTranslations } from "next-intl/server";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Suspense } from "react";
-import { withFeatureFlag, FeatureWrapper } from "@/lib/features/featureProtection";
+import {
+  withFeatureFlag,
+  FeatureWrapper,
+} from "@/lib/features/featureProtection";
 import CulturalFusionHero from "@/components/hero/CulturalFusionHero";
 
-export const metadata: Metadata = {
-  title: "Clasificación de La Liga",
-  description:
-    "Clasificación actual de La Liga Santander con la posición del Real Betis. Puntos, partidos jugados y estadísticas completas.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Clasificacion" });
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+  };
+}
 
 import {
   getPositionStyle,
@@ -25,7 +36,6 @@ import {
   getFormResultStyle,
 } from "./utils";
 
-// Standing row component
 function StandingRow({
   entry,
   isBetis,
@@ -40,7 +50,6 @@ function StandingRow({
     <tr
       className={`${isBetis ? "bg-betis-verde-pale border-betis-verde/20" : "hover:bg-gray-50"} transition-colors`}
     >
-      {/* Position */}
       <td className="px-3 py-4 text-sm">
         <div className="flex items-center space-x-2">
           <span className={`font-medium ${getPositionStyle(entry.position)}`}>
@@ -56,7 +65,6 @@ function StandingRow({
         </div>
       </td>
 
-      {/* Team */}
       <td className="px-3 py-4">
         <div className="flex items-center space-x-3">
           <Image
@@ -80,34 +88,28 @@ function StandingRow({
         </div>
       </td>
 
-      {/* Points */}
       <td className="px-3 py-4 text-sm font-bold text-center">
         <span className={isBetis ? "text-betis-verde-dark" : "text-gray-900"}>
           {entry.points}
         </span>
       </td>
 
-      {/* Played Games */}
       <td className="px-3 py-4 text-sm text-center text-gray-600 hidden sm:table-cell">
         {entry.playedGames}
       </td>
 
-      {/* Won */}
       <td className="px-3 py-4 text-sm text-center text-gray-600 hidden md:table-cell">
         {entry.won}
       </td>
 
-      {/* Draw */}
       <td className="px-3 py-4 text-sm text-center text-gray-600 hidden md:table-cell">
         {entry.draw}
       </td>
 
-      {/* Lost */}
       <td className="px-3 py-4 text-sm text-center text-gray-600 hidden md:table-cell">
         {entry.lost}
       </td>
 
-      {/* Goal Difference */}
       <td className="px-3 py-4 text-sm text-center text-gray-600 hidden lg:table-cell">
         <span
           className={
@@ -119,7 +121,6 @@ function StandingRow({
         </span>
       </td>
 
-      {/* Form */}
       <td className="px-3 py-4 hidden lg:table-cell">
         <div className="flex space-x-1">
           {formResults.map((result, index) => (
@@ -136,41 +137,40 @@ function StandingRow({
   );
 }
 
-// Main standings content component
 async function StandingsContent() {
   const service = new FootballDataService(axios.create());
   const standings = await service.getLaLigaStandings();
+  const t = await getTranslations("Clasificacion");
 
   if (!standings) {
-    throw new Error("No se pudieron cargar las clasificaciones de La Liga");
+    throw new Error(t("errorLoad"));
   }
 
   const betisEntry = standings.table.find((entry) => entry.team.id === 90);
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section - Cultural Fusion Design */}
       <CulturalFusionHero containerClassName="max-w-4xl">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
           <div className="text-center md:text-left flex-1">
             <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
-              Clasificación
+              {t("heroTitle")}
             </h1>
             <p className="font-accent text-2xl sm:text-3xl text-oro-bright text-shadow-lg italic">
-              La Liga
+              {t("heroSubtitle")}
             </p>
           </div>
 
           {betisEntry && (
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-center">
               <div className="font-heading text-sm text-oro-bright mb-2 uppercase tracking-wide">
-                Posición Betis
+                {t("betisBadgePosition")}
               </div>
               <div className="font-display text-5xl font-black text-white mb-2">
                 {betisEntry.position}º
               </div>
               <div className="font-body text-lg text-white/90">
-                {betisEntry.points} puntos
+                {t("betisBadgePoints", { points: betisEntry.points })}
               </div>
             </div>
           )}
@@ -178,71 +178,69 @@ async function StandingsContent() {
       </CulturalFusionHero>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Competition Legend */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 mb-8 p-6">
           <h3 className="font-heading text-lg font-bold text-scotland-navy mb-4 uppercase tracking-wide">
-            Leyenda de Competiciones
+            {t("legendHeading")}
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="flex items-center space-x-2">
               <span className="w-3 h-3 bg-betis-verde rounded-full"></span>
               <span className="font-body text-sm text-gray-700">
-                Champions League (1-4)
+                {t("legendChampions")}
               </span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="w-3 h-3 bg-scotland-navy rounded-full"></span>
               <span className="font-body text-sm text-gray-700">
-                Europa League (5-6)
+                {t("legendEuropa")}
               </span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="w-3 h-3 bg-orange-500 rounded-full"></span>
               <span className="font-body text-sm text-gray-700">
-                Conference League (7)
+                {t("legendConference")}
               </span>
             </div>
             <div className="flex items-center space-x-2">
               <span className="w-3 h-3 bg-red-500 rounded-full"></span>
               <span className="font-body text-sm text-gray-700">
-                Descenso (18-20)
+                {t("legendRelegation")}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Standings Table */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Pos
+                    {t("columnPosition")}
                   </th>
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Equipo
+                    {t("columnTeam")}
                   </th>
                   <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Pts
+                    {t("columnPoints")}
                   </th>
                   <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
-                    PJ
+                    {t("columnPlayed")}
                   </th>
                   <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
-                    G
+                    {t("columnWon")}
                   </th>
                   <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
-                    E
+                    {t("columnDrawn")}
                   </th>
                   <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
-                    P
+                    {t("columnLost")}
                   </th>
                   <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
-                    DG
+                    {t("columnGoalDifference")}
                   </th>
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
-                    Forma
+                    {t("columnForm")}
                   </th>
                 </tr>
               </thead>
@@ -259,14 +257,13 @@ async function StandingsContent() {
           </div>
         </div>
 
-        {/* Actions */}
         <div className="mt-12 flex justify-center">
           <FeatureWrapper feature="show-partidos">
             <Link
               href="/partidos"
               className="inline-flex items-center justify-center px-8 py-4 bg-betis-verde text-white font-heading font-bold rounded-xl hover:bg-betis-verde-dark transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl uppercase tracking-wide"
             >
-              Ver Partidos del Betis
+              {t("ctaMatches")}
             </Link>
           </FeatureWrapper>
         </div>
@@ -275,7 +272,6 @@ async function StandingsContent() {
   );
 }
 
-// Main page component with error boundary and loading
 async function StandingsPage() {
   return (
     <ErrorBoundary>
@@ -292,5 +288,4 @@ async function StandingsPage() {
   );
 }
 
-// Export the protected component
 export default withFeatureFlag(StandingsPage, "show-clasificacion");

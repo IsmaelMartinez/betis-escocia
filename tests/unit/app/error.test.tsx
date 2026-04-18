@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import ErrorComponent from '../../../src/app/error';
+import ErrorComponent from '../../../src/app/[locale]/error';
 
 describe('Error component', () => {
   it('renders correctly with error message and buttons', () => {

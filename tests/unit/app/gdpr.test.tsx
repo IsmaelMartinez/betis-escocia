@@ -42,7 +42,7 @@ describe("GDPR Page", () => {
   it("should render loading state when auth is undefined", async () => {
     mockUseAuth.mockReturnValue({ isSignedIn: undefined });
 
-    const GDPRPage = (await import("@/app/gdpr/page")).default;
+    const GDPRPage = (await import("@/app/[locale]/gdpr/page")).default;
     render(<GDPRPage />);
 
     expect(screen.getByText("Cargando...")).toBeInTheDocument();
@@ -51,7 +51,7 @@ describe("GDPR Page", () => {
   it("should render GDPR content for authenticated users", async () => {
     mockUseAuth.mockReturnValue({ isSignedIn: true });
 
-    const GDPRPage = (await import("@/app/gdpr/page")).default;
+    const GDPRPage = (await import("@/app/[locale]/gdpr/page")).default;
     render(<GDPRPage />);
 
     // Signed-in users should see GDPR content (no redirect)
@@ -64,7 +64,7 @@ describe("GDPR Page", () => {
   it("should render GDPR content for unauthenticated users", async () => {
     mockUseAuth.mockReturnValue({ isSignedIn: false });
 
-    const GDPRPage = (await import("@/app/gdpr/page")).default;
+    const GDPRPage = (await import("@/app/[locale]/gdpr/page")).default;
     render(<GDPRPage />);
 
     expect(
@@ -80,7 +80,7 @@ describe("GDPR Page", () => {
   it("should render header with shield icon for unauthenticated users", async () => {
     mockUseAuth.mockReturnValue({ isSignedIn: false });
 
-    const GDPRPage = (await import("@/app/gdpr/page")).default;
+    const GDPRPage = (await import("@/app/[locale]/gdpr/page")).default;
     render(<GDPRPage />);
 
     // Shield icon should be present (rendered by lucide-react)
@@ -96,7 +96,7 @@ describe("GDPR Page", () => {
   it("should render GDPR access information for unauthenticated users", async () => {
     mockUseAuth.mockReturnValue({ isSignedIn: false });
 
-    const GDPRPage = (await import("@/app/gdpr/page")).default;
+    const GDPRPage = (await import("@/app/[locale]/gdpr/page")).default;
     render(<GDPRPage />);
 
     expect(screen.getByText("Acceso a tus Datos GDPR")).toBeInTheDocument();
@@ -110,7 +110,7 @@ describe("GDPR Page", () => {
   it("should render data retention information for unauthenticated users", async () => {
     mockUseAuth.mockReturnValue({ isSignedIn: false });
 
-    const GDPRPage = (await import("@/app/gdpr/page")).default;
+    const GDPRPage = (await import("@/app/[locale]/gdpr/page")).default;
     render(<GDPRPage />);
 
     expect(
@@ -126,7 +126,7 @@ describe("GDPR Page", () => {
   it("should render contact form link for unauthenticated users", async () => {
     mockUseAuth.mockReturnValue({ isSignedIn: false });
 
-    const GDPRPage = (await import("@/app/gdpr/page")).default;
+    const GDPRPage = (await import("@/app/[locale]/gdpr/page")).default;
     render(<GDPRPage />);
 
     const contactLink = screen.getByRole("link", {
@@ -138,7 +138,7 @@ describe("GDPR Page", () => {
   it("should render card components for unauthenticated users", async () => {
     mockUseAuth.mockReturnValue({ isSignedIn: false });
 
-    const GDPRPage = (await import("@/app/gdpr/page")).default;
+    const GDPRPage = (await import("@/app/[locale]/gdpr/page")).default;
     render(<GDPRPage />);
 
     expect(screen.getByTestId("card")).toBeInTheDocument();
@@ -148,7 +148,7 @@ describe("GDPR Page", () => {
   it("should have proper page structure and styling", async () => {
     mockUseAuth.mockReturnValue({ isSignedIn: false });
 
-    const GDPRPage = (await import("@/app/gdpr/page")).default;
+    const GDPRPage = (await import("@/app/[locale]/gdpr/page")).default;
     render(<GDPRPage />);
 
     // Check main container
@@ -167,7 +167,7 @@ describe("GDPR Page", () => {
   it("should not redirect when auth is false", async () => {
     mockUseAuth.mockReturnValue({ isSignedIn: false });
 
-    const GDPRPage = (await import("@/app/gdpr/page")).default;
+    const GDPRPage = (await import("@/app/[locale]/gdpr/page")).default;
     render(<GDPRPage />);
 
     expect(mockPush).not.toHaveBeenCalled();

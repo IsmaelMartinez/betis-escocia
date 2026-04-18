@@ -438,3 +438,57 @@ src/lib/
 - No performance impact (same code, better organized)
 - No change to user-facing behavior
 - No new dependencies required
+
+---
+
+## Phase 8: Internationalisation (i18n) — IN PROGRESS
+
+**Date:** 2026-04-18
+
+### Context
+
+Up to this point the site mixed hardcoded Spanish UI with a minor amount of English (Clerk auth, some admin labels). The codebase already carried i18n *intent* — `openGraph.alternateLocale: "en_GB"`, `nameEn` fields on navigation items — but no library was installed. A comprehensive audit identified ~800–1000 hardcoded user-facing strings across 17 page routes, five Zod schemas with Spanish error messages, and Spanish route paths.
+
+### Decisions
+
+- **Library:** `next-intl@4` — highest benchmark score in the space, first-class Next.js 16 App Router support, ICU message syntax, typed messages.
+- **Locales:** `es` (default) + `en`.
+- **Locale prefix strategy:** `as-needed` — `/` stays Spanish (no breaking URL change), `/en/...` serves English. Preserves SEO and all existing deep links.
+- **Route structure:** all user-facing routes moved under `src/app/[locale]/`; API routes (`src/app/api/`), `globals.css`, `favicon.ico`, `global-error.tsx`, and `sitemap.ts` stay at the root.
+- **Middleware:** composed in `src/middleware.ts` — Clerk auth enforced first, then `next-intl/middleware` handles locale routing. API requests bypass i18n entirely.
+- **Player/match data:** source-language content (Spanish player descriptions in `src/data/leyendas.ts`, DB-backed trivia questions) left untranslated for now — UI chrome is localised, data isn't.
+
+### Phase 8.1: Foundation — DONE
+
+- Installed `next-intl@4.9.1`; patched security-critical `@clerk/nextjs` to 7.2.3 (GHSA-vqx2-fgx2-5wq9, CVSS 9.1) and `axios` to 1.15.0 (GHSA-3p68-rc4w-qgx5) as paired quick wins.
+- Created `src/i18n/{routing,navigation,request}.ts`; messages in `messages/{es,en}.json`.
+- Wired `createNextIntlPlugin` into `next.config.js`.
+- Moved every user-facing route under `src/app/[locale]/`.
+- Introduced `LanguageSwitcher` component wired to `createNavigation`.
+- Renamed `NavigationItem.name`/`nameEn` → single `translationKey` field that resolves to `Navigation.*` keys at render time.
+- Migrated `layout.tsx` to use `generateMetadata`, `setRequestLocale`, `NextIntlClientProvider`; `html lang={locale}` now derives from the URL.
+
+### Phase 8.2: Public Page Migration — DONE
+
+All 14 user-facing public pages migrated: `home`, `nosotros`, `unete`, `gdpr`, `partidos`, `joaquin`, `jugadores-historicos`, `clasificacion`, `rsvp`, `trivia`, `contacto`, `error.tsx`, `not-found.tsx`, plus the shared `Layout` component (header, footer, nav, debug panel). Added translations in Spanish and English for every user-facing string across these pages. Async server-component pages use `getTranslations` in `generateMetadata`; client components use `useTranslations`. Locale-aware navigation uses the wrapped `Link` from `@/i18n/navigation` so links preserve the current locale.
+
+`rsvp` additionally uses `useLocale()` to switch `date-fns` between `es` and `enGB` for date formatting. `contacto` refactored `src/lib/constants/contact.ts` so `FORM_TYPES` carry `nameKey`/`descriptionKey` rather than hardcoded Spanish strings, and `getDefaultSubject` became `getDefaultSubjectKey`.
+
+### Phase 8.3: Test Infrastructure — DONE
+
+Global mock in `tests/setup.ts` resolves translation keys against `messages/es.json`, so test assertions continue to compare against real user-facing strings rather than key literals. The mock caches one translator instance per namespace so `t` has a stable identity across renders — without this, effects with `[t]` dependencies re-ran every render and blocked state transitions in the trivia page during tests. Also mocks `next-intl/server`, `next-intl/middleware`, and `@/i18n/navigation`. Middleware unit tests updated: non-API routes now return the next-intl response rather than `NextResponse.next()`, so those specific assertions were removed.
+
+### Phase 8.4: Remaining Work — TODO
+
+- **Zod schema localization (DEFERRED):** 5 schema files in `src/lib/schemas/` (`contact.ts`, `rsvp.ts`, `admin.ts`, `trivia.ts`, `index.ts`) still return Spanish error messages. Low impact because client forms rely on HTML5 validation and rarely surface Zod errors. Cleanest fix is schema factories that accept a translator + API routes reading `Accept-Language` and building the schema per request.
+- **Admin panel:** `src/app/[locale]/admin/*` is still in Spanish. Staff-only surface; can be migrated in a dedicated pass.
+- **Dashboard:** `src/app/[locale]/dashboard/*` likewise staff-facing content not yet localised.
+- **Localised pathnames:** once translations settle, consider `defineRouting` pathname aliases (`/en/matches` → resolves to `/en/partidos` internal path) for better SEO on the English side.
+- **Database content strategy:** trivia questions and answers live in `trivia_questions` / `trivia_answers` Supabase tables as single-language rows. A follow-up decision is whether to add a `locale` column, duplicate the table, or accept that the trivia content stays Spanish regardless of UI locale.
+
+### Verification Targets
+
+- `tsc --noEmit` must remain clean.
+- All 117 test files must pass (2,274 tests at the time of writing).
+- `npm run build` must compile; the existing `/clasificacion` prerender failure is a pre-existing football-data API auth issue unrelated to i18n.
+- Both `/es/*` and `/en/*` routes must render in production.

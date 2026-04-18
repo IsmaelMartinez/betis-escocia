@@ -137,8 +137,10 @@ const { withSentryConfig } = require("@sentry/nextjs");
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
+const createNextIntlPlugin = require("next-intl/plugin");
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
-module.exports = withBundleAnalyzer(withSentryConfig(nextConfig, {
+module.exports = withNextIntl(withBundleAnalyzer(withSentryConfig(nextConfig, {
   // For all available options, see: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
   // Upload a larger amount of data to Sentry
@@ -160,4 +162,4 @@ module.exports = withBundleAnalyzer(withSentryConfig(nextConfig, {
   autoInstrumentClientFunctions: true,
 
   // For all available options, see: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-}));
+})));

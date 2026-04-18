@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import RootLayout from "../../../src/app/layout";
+import RootLayout from "../../../src/app/[locale]/layout";
 import { ClerkProvider } from "@clerk/nextjs";
 import * as Sentry from "@sentry/nextjs";
 import Layout from "@/components/layout/Layout";
@@ -66,8 +66,16 @@ describe("RootLayout", () => {
     );
   });
 
-  it("renders children correctly within the layout structure", () => {
-    render(RootLayout({ children: <p>Test Children</p> }));
+  const renderLayout = async (children: React.ReactNode = <p>Test Children</p>) => {
+    const element = await RootLayout({
+      children,
+      params: Promise.resolve({ locale: "es" }),
+    });
+    return render(element);
+  };
+
+  it("renders children correctly within the layout structure", async () => {
+    await renderLayout();
 
     expect(screen.getByText("Test Children")).toBeInTheDocument();
     expect(screen.getByTestId("mock-layout")).toBeInTheDocument();
@@ -77,28 +85,23 @@ describe("RootLayout", () => {
     expect(screen.getByTestId("mock-clerk-provider")).toBeInTheDocument();
   });
 
-  it("renders all expected top-level components", () => {
-    render(RootLayout({ children: <p>Test Children</p> }));
+  it("renders all expected top-level components", async () => {
+    await renderLayout();
 
     expect(screen.getByTestId("mock-facebook-sdk")).toBeInTheDocument();
     expect(screen.getByTestId("mock-offline-detector")).toBeInTheDocument();
     expect(screen.getByTestId("mock-sentry-user-context")).toBeInTheDocument();
-    // Analytics and SpeedInsights are only rendered on Vercel (when VERCEL=1)
-    // They are conditionally rendered, so we check they're NOT present in test env
     expect(screen.queryByTestId("mock-analytics")).not.toBeInTheDocument();
     expect(screen.queryByTestId("mock-speed-insights")).not.toBeInTheDocument();
   });
 
-  it("renders without errors", () => {
-    expect(() => {
-      render(RootLayout({ children: <p>Test Children</p> }));
-    }).not.toThrow();
+  it("renders without errors", async () => {
+    await expect(renderLayout()).resolves.not.toThrow();
   });
 
-  it("passes debugInfo to Layout component", () => {
-    render(RootLayout({ children: <p>Test Children</p> }));
+  it("passes debugInfo to Layout component", async () => {
+    await renderLayout();
 
-    // Layout should be called with debugInfo as null (simplified implementation)
     const layoutCalls = vi.mocked(Layout).mock.calls;
     expect(layoutCalls.length).toBeGreaterThan(0);
     expect(layoutCalls[0][0]).toMatchObject({

@@ -8,7 +8,7 @@ import {
   getPositionBadge,
   formatForm,
   getFormResultStyle,
-} from "@/app/clasificacion/utils";
+} from "@/app/[locale]/clasificacion/utils";
 
 // Mock the dependencies
 vi.mock("@/services/footballDataService");

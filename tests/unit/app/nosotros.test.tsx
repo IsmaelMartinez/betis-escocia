@@ -31,16 +31,20 @@ vi.mock("lucide-react", () => ({
 describe("Nosotros Page", () => {
   describe("Basic rendering", () => {
     it("should render the main heading", async () => {
-      const NosotrosPage = (await import("@/app/nosotros/page")).default;
-      render(<NosotrosPage />);
+      const { NosotrosContent } = await import(
+        "@/app/[locale]/nosotros/page"
+      );
+      render(<NosotrosContent />);
 
       expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
       expect(screen.getByText("Nosotros")).toBeInTheDocument();
     });
 
     it("should render the hero section tagline", async () => {
-      const NosotrosPage = (await import("@/app/nosotros/page")).default;
-      render(<NosotrosPage />);
+      const { NosotrosContent } = await import(
+        "@/app/[locale]/nosotros/page"
+      );
+      render(<NosotrosContent />);
 
       expect(
         screen.getByText("Más que una peña, somos familia"),
@@ -51,8 +55,10 @@ describe("Nosotros Page", () => {
 
   describe("Three main cards", () => {
     it("should render all three card headings", async () => {
-      const NosotrosPage = (await import("@/app/nosotros/page")).default;
-      render(<NosotrosPage />);
+      const { NosotrosContent } = await import(
+        "@/app/[locale]/nosotros/page"
+      );
+      render(<NosotrosContent />);
 
       expect(screen.getByText("Nuestros Orígenes")).toBeInTheDocument();
       expect(screen.getByText("Nuestra Familia")).toBeInTheDocument();
@@ -60,8 +66,10 @@ describe("Nosotros Page", () => {
     });
 
     it("should render founding story in card 1", async () => {
-      const NosotrosPage = (await import("@/app/nosotros/page")).default;
-      render(<NosotrosPage />);
+      const { NosotrosContent } = await import(
+        "@/app/[locale]/nosotros/page"
+      );
+      render(<NosotrosContent />);
 
       expect(screen.getByText(/4 de diciembre de 2010/)).toBeInTheDocument();
       expect(
@@ -73,8 +81,10 @@ describe("Nosotros Page", () => {
     });
 
     it("should render LaLiga quote in card 1", async () => {
-      const NosotrosPage = (await import("@/app/nosotros/page")).default;
-      render(<NosotrosPage />);
+      const { NosotrosContent } = await import(
+        "@/app/[locale]/nosotros/page"
+      );
+      render(<NosotrosContent />);
 
       expect(
         screen.getByText(
@@ -85,8 +95,10 @@ describe("Nosotros Page", () => {
     });
 
     it("should render community description in card 2", async () => {
-      const NosotrosPage = (await import("@/app/nosotros/page")).default;
-      render(<NosotrosPage />);
+      const { NosotrosContent } = await import(
+        "@/app/[locale]/nosotros/page"
+      );
+      render(<NosotrosContent />);
 
       expect(screen.getByText(/todos son bienvenidos/)).toBeInTheDocument();
       expect(
@@ -97,8 +109,10 @@ describe("Nosotros Page", () => {
     });
 
     it("should render condensed timeline in card 3", async () => {
-      const NosotrosPage = (await import("@/app/nosotros/page")).default;
-      render(<NosotrosPage />);
+      const { NosotrosContent } = await import(
+        "@/app/[locale]/nosotros/page"
+      );
+      render(<NosotrosContent />);
 
       // Check for the 3 key milestones
       expect(screen.getByText("2010")).toBeInTheDocument();
@@ -115,8 +129,10 @@ describe("Nosotros Page", () => {
     });
 
     it("should render icons for all cards", async () => {
-      const NosotrosPage = (await import("@/app/nosotros/page")).default;
-      render(<NosotrosPage />);
+      const { NosotrosContent } = await import(
+        "@/app/[locale]/nosotros/page"
+      );
+      render(<NosotrosContent />);
 
       expect(screen.getAllByTestId("heart-icon").length).toBeGreaterThan(0);
       expect(screen.getAllByTestId("users-icon").length).toBeGreaterThan(0);
@@ -126,8 +142,10 @@ describe("Nosotros Page", () => {
 
   describe("Call to action section", () => {
     it("should render CTA heading and text", async () => {
-      const NosotrosPage = (await import("@/app/nosotros/page")).default;
-      render(<NosotrosPage />);
+      const { NosotrosContent } = await import(
+        "@/app/[locale]/nosotros/page"
+      );
+      render(<NosotrosContent />);
 
       expect(
         screen.getByText(/¿Quieres ser parte de nuestra historia?/),
@@ -138,8 +156,10 @@ describe("Nosotros Page", () => {
     });
 
     it("should render navigation links", async () => {
-      const NosotrosPage = (await import("@/app/nosotros/page")).default;
-      render(<NosotrosPage />);
+      const { NosotrosContent } = await import(
+        "@/app/[locale]/nosotros/page"
+      );
+      render(<NosotrosContent />);
 
       const uneteLink = screen.getByRole("link", {
         name: /Únete a Nosotros/,
@@ -153,8 +173,10 @@ describe("Nosotros Page", () => {
 
   describe("Design system consistency", () => {
     it("should use cultural fusion design patterns", async () => {
-      const NosotrosPage = (await import("@/app/nosotros/page")).default;
-      const { container } = render(<NosotrosPage />);
+      const { NosotrosContent } = await import(
+        "@/app/[locale]/nosotros/page"
+      );
+      const { container } = render(<NosotrosContent />);
 
       // Check for design system classes
       expect(container.querySelector(".bg-hero-fusion")).toBeInTheDocument();
@@ -167,8 +189,10 @@ describe("Nosotros Page", () => {
     });
 
     it("should use typography system classes", async () => {
-      const NosotrosPage = (await import("@/app/nosotros/page")).default;
-      render(<NosotrosPage />);
+      const { NosotrosContent } = await import(
+        "@/app/[locale]/nosotros/page"
+      );
+      render(<NosotrosContent />);
 
       const heading = screen.getByText("Nosotros");
       expect(heading).toHaveClass("font-display");
@@ -177,8 +201,10 @@ describe("Nosotros Page", () => {
 
   describe("Accessibility", () => {
     it("should have proper heading hierarchy", async () => {
-      const NosotrosPage = (await import("@/app/nosotros/page")).default;
-      render(<NosotrosPage />);
+      const { NosotrosContent } = await import(
+        "@/app/[locale]/nosotros/page"
+      );
+      render(<NosotrosContent />);
 
       const headings = screen.getAllByRole("heading");
       expect(headings.length).toBeGreaterThan(0);
@@ -190,8 +216,10 @@ describe("Nosotros Page", () => {
     });
 
     it("should have proper link structure", async () => {
-      const NosotrosPage = (await import("@/app/nosotros/page")).default;
-      render(<NosotrosPage />);
+      const { NosotrosContent } = await import(
+        "@/app/[locale]/nosotros/page"
+      );
+      render(<NosotrosContent />);
 
       const links = screen.getAllByRole("link");
       expect(links.length).toBeGreaterThan(0);

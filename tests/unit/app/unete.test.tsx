@@ -31,8 +31,8 @@ vi.mock("lucide-react", () => ({
 describe("Unete Page", () => {
   describe("Basic rendering", () => {
     it("should render the main heading", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
-      render(<UnetePage />);
+      const { UneteContent } = await import("@/app/[locale]/unete/page");
+      render(<UneteContent />);
 
       const h1 = screen.getByRole("heading", { level: 1 });
       expect(h1).toBeInTheDocument();
@@ -40,8 +40,8 @@ describe("Unete Page", () => {
     });
 
     it("should render tagline", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
-      render(<UnetePage />);
+      const { UneteContent } = await import("@/app/[locale]/unete/page");
+      render(<UneteContent />);
 
       expect(
         screen.getByText(/Tres cosas que necesitas saber/),
@@ -51,8 +51,8 @@ describe("Unete Page", () => {
 
   describe("Three main cards", () => {
     it("should render all three card headings", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
-      render(<UnetePage />);
+      const { UneteContent } = await import("@/app/[locale]/unete/page");
+      render(<UneteContent />);
 
       expect(screen.getByText("1. Aparece")).toBeInTheDocument();
       expect(screen.getByText("2. Conéctate")).toBeInTheDocument();
@@ -60,8 +60,8 @@ describe("Unete Page", () => {
     });
 
     it("should render location information in card 1", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
-      render(<UnetePage />);
+      const { UneteContent } = await import("@/app/[locale]/unete/page");
+      render(<UneteContent />);
 
       expect(screen.getByText("Polwarth Tavern")).toBeInTheDocument();
       expect(screen.getByText(/35 Polwarth Crescent/)).toBeInTheDocument();
@@ -72,8 +72,8 @@ describe("Unete Page", () => {
     });
 
     it("should render social media links in card 2", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
-      render(<UnetePage />);
+      const { UneteContent } = await import("@/app/[locale]/unete/page");
+      render(<UneteContent />);
 
       const facebookLink = screen.getByRole("link", { name: /Facebook/ });
       expect(facebookLink).toHaveAttribute(
@@ -89,8 +89,8 @@ describe("Unete Page", () => {
     });
 
     it("should render benefits list in card 3", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
-      render(<UnetePage />);
+      const { UneteContent } = await import("@/app/[locale]/unete/page");
+      render(<UneteContent />);
 
       expect(screen.getByText(/Sin cuotas ni gastos/)).toBeInTheDocument();
       expect(
@@ -103,8 +103,8 @@ describe("Unete Page", () => {
 
   describe("Visitor information section", () => {
     it("should render visitor welcome message", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
-      render(<UnetePage />);
+      const { UneteContent } = await import("@/app/[locale]/unete/page");
+      render(<UneteContent />);
 
       expect(screen.getByText(/¿De visita en Escocia?/)).toBeInTheDocument();
       expect(
@@ -115,8 +115,8 @@ describe("Unete Page", () => {
 
   describe("Links and CTAs", () => {
     it("should render Google Maps link", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
-      render(<UnetePage />);
+      const { UneteContent } = await import("@/app/[locale]/unete/page");
+      render(<UneteContent />);
 
       const mapsLink = screen.getByRole("link", { name: /Abrir en Maps/ });
       expect(mapsLink).toHaveAttribute(
@@ -126,8 +126,8 @@ describe("Unete Page", () => {
     });
 
     it("should render Ver Próximos Partidos CTA", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
-      render(<UnetePage />);
+      const { UneteContent } = await import("@/app/[locale]/unete/page");
+      render(<UneteContent />);
 
       const ctaLink = screen.getByRole("link", {
         name: /Ver Próximos Partidos/,
@@ -138,8 +138,8 @@ describe("Unete Page", () => {
 
   describe("Accessibility", () => {
     it("should have proper heading structure", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
-      render(<UnetePage />);
+      const { UneteContent } = await import("@/app/[locale]/unete/page");
+      render(<UneteContent />);
 
       const headings = screen.getAllByRole("heading");
       expect(headings.length).toBeGreaterThan(0);
@@ -150,8 +150,8 @@ describe("Unete Page", () => {
     });
 
     it("should have external links with proper attributes", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
-      render(<UnetePage />);
+      const { UneteContent } = await import("@/app/[locale]/unete/page");
+      render(<UneteContent />);
 
       const externalLinks = screen.getAllByRole("link", {
         name: /Facebook|Instagram|Maps/,
@@ -165,8 +165,8 @@ describe("Unete Page", () => {
 
   describe("Design system consistency", () => {
     it("should use cultural fusion design patterns", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
-      const { container } = render(<UnetePage />);
+      const { UneteContent } = await import("@/app/[locale]/unete/page");
+      const { container } = render(<UneteContent />);
 
       // Check for design system classes
       expect(container.querySelector(".bg-hero-fusion")).toBeInTheDocument();
@@ -179,8 +179,8 @@ describe("Unete Page", () => {
     });
 
     it("should render icons from Lucide React", async () => {
-      const UnetePage = (await import("@/app/unete/page")).default;
-      render(<UnetePage />);
+      const { UneteContent } = await import("@/app/[locale]/unete/page");
+      render(<UneteContent />);
 
       expect(screen.getAllByTestId("map-pin-icon").length).toBeGreaterThan(0);
       expect(screen.getAllByTestId("clock-icon").length).toBeGreaterThan(0);

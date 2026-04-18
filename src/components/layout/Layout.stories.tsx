@@ -5,18 +5,16 @@ import type { NavigationItem } from "@/lib/features/featureFlags";
 
 const mockNavigationItems: NavigationItem[] = [
   {
-    name: "Partidos",
+    translationKey: "partidos",
     href: "/partidos",
-    nameEn: "Matches",
     feature: "show-partidos",
   },
   {
-    name: "Nosotros",
+    translationKey: "nosotros",
     href: "/nosotros",
-    nameEn: "About",
     feature: "show-nosotros",
   },
-  { name: "Únete", href: "/unete", nameEn: "Join", feature: "show-unete" },
+  { translationKey: "unete", href: "/unete", feature: "show-unete" },
 ];
 
 const meta: Meta<typeof Layout> = {

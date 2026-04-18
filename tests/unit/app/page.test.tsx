@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, within, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
-import Home from "../../../src/app/page";
+import { HomeContent as Home } from "../../../src/app/[locale]/page";
 
 // Mock components and modules
 vi.mock("@/components/hero/HeroCommunity", () => ({

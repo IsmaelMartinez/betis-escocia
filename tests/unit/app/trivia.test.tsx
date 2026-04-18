@@ -126,7 +126,7 @@ describe("TriviaPage", () => {
         isLoaded: true,
       });
 
-      const TriviaPage = (await import("@/app/trivia/page")).default;
+      const TriviaPage = (await import("@/app/[locale]/trivia/page")).default;
       render(<TriviaPage />);
 
       expect(mockPush).toHaveBeenCalledWith("/sign-in");
@@ -138,7 +138,7 @@ describe("TriviaPage", () => {
         isLoaded: false,
       });
 
-      const TriviaPage = (await import("@/app/trivia/page")).default;
+      const TriviaPage = (await import("@/app/[locale]/trivia/page")).default;
       render(<TriviaPage />);
 
       expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
@@ -159,7 +159,7 @@ describe("TriviaPage", () => {
         }),
       ) as any;
 
-      const TriviaPage = (await import("@/app/trivia/page")).default;
+      const TriviaPage = (await import("@/app/[locale]/trivia/page")).default;
       render(<TriviaPage />);
 
       await waitFor(() => {
@@ -191,7 +191,7 @@ describe("TriviaPage", () => {
         }),
       ) as any;
 
-      const TriviaPage = (await import("@/app/trivia/page")).default;
+      const TriviaPage = (await import("@/app/[locale]/trivia/page")).default;
       render(<TriviaPage />);
 
       await waitFor(() => {
@@ -199,14 +199,14 @@ describe("TriviaPage", () => {
           screen.getByText("¡Trivia Diaria Completada!"),
         ).toBeInTheDocument();
         expect(screen.getByText("3/5")).toBeInTheDocument();
-        expect(screen.getByText("60% Correct")).toBeInTheDocument();
+        expect(screen.getByText("60% Correcto")).toBeInTheDocument();
       });
     });
   });
 
   describe("Game Flow", () => {
     it("should start game when clicking start button", async () => {
-      const TriviaPage = (await import("@/app/trivia/page")).default;
+      const TriviaPage = (await import("@/app/[locale]/trivia/page")).default;
       render(<TriviaPage />);
 
       await waitFor(() => {
@@ -226,7 +226,7 @@ describe("TriviaPage", () => {
     });
 
     it("should show question counter and score", async () => {
-      const TriviaPage = (await import("@/app/trivia/page")).default;
+      const TriviaPage = (await import("@/app/[locale]/trivia/page")).default;
       render(<TriviaPage />);
 
       // Start the game
@@ -235,13 +235,13 @@ describe("TriviaPage", () => {
       });
 
       await waitFor(() => {
-        expect(screen.getByText("Pregunta 1 of 2")).toBeInTheDocument();
+        expect(screen.getByText("Pregunta 1 de 2")).toBeInTheDocument();
         expect(screen.getByText("Puntuación: 0")).toBeInTheDocument();
       });
     });
 
     it("should handle correct answer selection", async () => {
-      const TriviaPage = (await import("@/app/trivia/page")).default;
+      const TriviaPage = (await import("@/app/[locale]/trivia/page")).default;
       render(<TriviaPage />);
 
       // Start game
@@ -264,7 +264,7 @@ describe("TriviaPage", () => {
     });
 
     it("should handle incorrect answer selection", async () => {
-      const TriviaPage = (await import("@/app/trivia/page")).default;
+      const TriviaPage = (await import("@/app/[locale]/trivia/page")).default;
       render(<TriviaPage />);
 
       // Start game
@@ -287,7 +287,7 @@ describe("TriviaPage", () => {
     });
 
     it("should prevent multiple answer selections", async () => {
-      const TriviaPage = (await import("@/app/trivia/page")).default;
+      const TriviaPage = (await import("@/app/[locale]/trivia/page")).default;
       render(<TriviaPage />);
 
       // Start game
@@ -337,7 +337,7 @@ describe("TriviaPage", () => {
         }),
       ) as any;
 
-      const TriviaPage = (await import("@/app/trivia/page")).default;
+      const TriviaPage = (await import("@/app/[locale]/trivia/page")).default;
       render(<TriviaPage />);
 
       await waitFor(() => {
@@ -358,7 +358,7 @@ describe("TriviaPage", () => {
         }),
       ) as any;
 
-      const TriviaPage = (await import("@/app/trivia/page")).default;
+      const TriviaPage = (await import("@/app/[locale]/trivia/page")).default;
       render(<TriviaPage />);
 
       await waitFor(() => {
@@ -383,7 +383,7 @@ describe("TriviaPage", () => {
         }),
       ) as any;
 
-      const TriviaPage = (await import("@/app/trivia/page")).default;
+      const TriviaPage = (await import("@/app/[locale]/trivia/page")).default;
       render(<TriviaPage />);
 
       await waitFor(() => {
@@ -392,13 +392,13 @@ describe("TriviaPage", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText("No trivia questions available."),
+          screen.getByText("No hay preguntas de trivia disponibles."),
         ).toBeInTheDocument();
       });
     });
 
     it("should handle basic trivia game flow", async () => {
-      const TriviaPage = (await import("@/app/trivia/page")).default;
+      const TriviaPage = (await import("@/app/[locale]/trivia/page")).default;
       render(<TriviaPage />);
 
       // Should show start screen

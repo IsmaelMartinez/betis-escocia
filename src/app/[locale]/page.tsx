@@ -1,5 +1,7 @@
-import Link from "next/link";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import HeroCommunity from "@/components/hero/HeroCommunity";
 import { hasFeature } from "@/lib/features/featureFlags";
 
@@ -20,7 +22,6 @@ const BetisEfemerides = dynamic(
   },
 );
 
-// Lazy load widgets that are below the fold for better LCP
 const UpcomingMatchesWidget = dynamic(
   () => import("@/components/match/UpcomingMatchesWidget"),
   {
@@ -61,8 +62,19 @@ const ClassificationWidget = dynamic(
   },
 );
 
-export default function Home() {
-  // Get feature flags on server to pass to client components
+type Props = {
+  params: Promise<{ locale: string }>;
+};
+
+export default async function Home({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  return <HomeContent />;
+}
+
+export function HomeContent() {
+  const t = useTranslations("HomePage");
   const showPartidos = hasFeature("show-partidos");
   const showClasificacion = hasFeature("show-clasificacion");
   const showRsvp = hasFeature("show-rsvp");
@@ -72,24 +84,19 @@ export default function Home() {
     <>
       <HeroCommunity showPartidos={showPartidos} showRsvp={showRsvp} />
 
-      {/* Upcoming Matches and Classification Widgets */}
-      {/* El Tercio Nuevo: Warm canvas + subtle tartan texture */}
       <section className="relative py-20 overflow-hidden">
-        {/* Background layers */}
         <div className="absolute inset-0 bg-canvas-warm" />
         <div className="absolute inset-0 pattern-tartan-subtle opacity-40" />
         <div className="absolute left-0 top-0 bottom-0 w-4 pattern-verdiblanco-whisper" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            {/* Upcoming Matches */}
             <div className="lg:col-span-3">
               {showPartidos && (
                 <>
-                  {/* Section header with display typography */}
                   <div className="mb-8 text-center lg:text-left">
                     <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-black text-scotland-navy mb-3 uppercase tracking-tight">
-                      Próximos Partidos
+                      {t("upcomingMatchesTitle")}
                     </h2>
                     <div className="h-1 w-32 bg-gradient-to-r from-betis-verde via-betis-oro to-scotland-navy mx-auto lg:mx-0 rounded-full" />
                   </div>
@@ -98,7 +105,6 @@ export default function Home() {
               )}
             </div>
 
-            {/* Classification */}
             <div className="lg:col-span-1">
               {showClasificacion && <ClassificationWidget className="" />}
             </div>
@@ -106,18 +112,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Efemérides - Tal día como hoy en la historia del Betis */}
       {showEfemerides && (
         <section className="relative py-16 overflow-hidden">
-          {/* Background layers */}
           <div className="absolute inset-0 bg-betis-verde-pale" />
           <div className="absolute inset-0 pattern-verdiblanco-whisper opacity-30" />
 
           <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Section header */}
             <div className="mb-8 text-center">
               <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black text-scotland-navy mb-3 uppercase tracking-tight">
-                Tal Día Como Hoy
+                {t("efemeridesTitle")}
               </h2>
               <div className="h-1 w-24 bg-gradient-to-r from-betis-verde via-betis-oro to-betis-verde mx-auto rounded-full" />
             </div>
@@ -126,51 +129,42 @@ export default function Home() {
         </section>
       )}
 
-      {/* Join Us CTA - El Tercio Nuevo: Layered cultural fusion */}
       <section className="relative py-24 overflow-hidden">
-        {/* Multi-layer background - Cultural fusion */}
         <div className="absolute inset-0 bg-hero-fusion" />
         <div className="absolute inset-0 pattern-tartan-navy opacity-25" />
         <div className="absolute left-0 top-0 bottom-0 w-8 pattern-verdiblanco-subtle opacity-30" />
         <div className="absolute right-0 top-0 bottom-0 w-8 pattern-verdiblanco-subtle opacity-30" />
 
-        {/* Gold accent glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl bg-oro-glow opacity-40 pointer-events-none" />
 
-        {/* Text readability overlay */}
         <div className="absolute inset-0 bg-black/15" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8">
             <span className="text-white font-heading font-medium text-sm tracking-wide">
-              🏴󠁧󠁢󠁳󠁣󠁴󠁿 Bienvenidos a Escocia
+              🏴󠁧󠁢󠁳󠁣󠁴󠁿 {t("welcomeBadge")}
             </span>
           </div>
 
-          {/* Display typography - massive impact */}
           <h2 className="font-display text-4xl sm:text-5xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight leading-none">
-            ¿Estás de visita
-            <br />
-            en Escocia?
+            {t("heroTitle")}
           </h2>
 
           <p className="font-accent text-2xl sm:text-3xl lg:text-4xl mb-6 text-oro-bright text-shadow-lg italic">
-            ¡Ven a ver los partidos con nosotros!
+            {t("heroSubtitle")}
           </p>
 
           <p className="font-body text-lg sm:text-xl lg:text-2xl mb-12 max-w-3xl mx-auto text-white/95 leading-relaxed text-shadow-lg">
-            Todos los béticos son bienvenidos. No importa de dónde vengas, aquí
-            tienes una familia que comparte tu pasión por el Betis.
+            {t("heroDescription")}
           </p>
 
-          {/* CTA Buttons - enhanced with new styling */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-20">
             <Link
               href="/unete"
               className="group bg-oro-bright hover:bg-oro-antique text-scotland-navy px-12 py-6 rounded-2xl font-display font-black text-xl shadow-2xl transition-all duration-300 transform hover:scale-105 hover:shadow-[0_0_30px_rgba(255,215,0,0.4)] uppercase tracking-wide"
             >
               <span className="flex items-center gap-3">
-                💬 Únete a la Familia
+                💬 {t("ctaJoin")}
               </span>
             </Link>
 
@@ -180,52 +174,40 @@ export default function Home() {
               rel="noopener noreferrer"
               className="group bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white hover:border-white px-10 py-5 rounded-2xl font-heading font-bold text-lg text-white hover:text-betis-verde transition-all duration-300 transform hover:scale-105"
             >
-              <span className="flex items-center gap-2">📘 Facebook</span>
+              <span className="flex items-center gap-2">
+                📘 {t("ctaFacebook")}
+              </span>
             </a>
           </div>
 
-          {/* Contact info cards - with cultural patterns */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {/* Location Card */}
             <div className="group relative bg-white/10 backdrop-blur-md rounded-2xl p-7 border border-white/20 hover:bg-white/20 hover:border-oro-bright transition-all duration-300 overflow-hidden">
               <div className="absolute top-0 right-0 w-16 h-16 pattern-verdiblanco-diagonal-subtle opacity-20" />
               <h3 className="font-heading text-xl font-bold mb-4 text-oro-bright uppercase tracking-wide flex items-center gap-2">
-                📍 Ubicación
+                📍 {t("locationCardTitle")}
               </h3>
-              <p className="font-body text-base text-white/90 leading-relaxed">
-                Polwarth Tavern
-                <br />
-                Edinburgh EH11 1HR
+              <p className="font-body text-base text-white/90 leading-relaxed whitespace-pre-line">
+                {t("locationCardBody")}
               </p>
             </div>
 
-            {/* Schedule Card */}
             <div className="group relative bg-white/10 backdrop-blur-md rounded-2xl p-7 border border-white/20 hover:bg-white/20 hover:border-oro-bright transition-all duration-300 overflow-hidden">
               <div className="absolute top-0 right-0 w-16 h-16 pattern-tartan-subtle opacity-30" />
               <h3 className="font-heading text-xl font-bold mb-4 text-oro-bright uppercase tracking-wide flex items-center gap-2">
-                ⏰ Horarios
+                ⏰ {t("scheduleCardTitle")}
               </h3>
-              <p className="font-body text-base text-white/90 leading-relaxed">
-                15 min antes del partido
-                <br />
-                Todos los eventos
-                <br />
-                Fútbol · Reuniones · Celebraciones
+              <p className="font-body text-base text-white/90 leading-relaxed whitespace-pre-line">
+                {t("scheduleCardBody")}
               </p>
             </div>
 
-            {/* Atmosphere Card */}
             <div className="group relative bg-white/10 backdrop-blur-md rounded-2xl p-7 border border-white/20 hover:bg-white/20 hover:border-oro-bright transition-all duration-300 overflow-hidden">
               <div className="absolute top-0 right-0 w-16 h-16 pattern-verdiblanco-diagonal-subtle opacity-20" />
               <h3 className="font-heading text-xl font-bold mb-4 text-oro-bright uppercase tracking-wide flex items-center gap-2">
-                💚 Ambiente
+                💚 {t("atmosphereCardTitle")}
               </h3>
-              <p className="font-body text-base text-white/90 leading-relaxed">
-                100% bético
-                <br />
-                Familiar y acogedor
-                <br />
-                Cervezas frías garantizadas
+              <p className="font-body text-base text-white/90 leading-relaxed whitespace-pre-line">
+                {t("atmosphereCardBody")}
               </p>
             </div>
           </div>

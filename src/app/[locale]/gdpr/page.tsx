@@ -3,26 +3,25 @@
 export const dynamic = "force-dynamic";
 
 import { useAuth } from "@clerk/nextjs";
+import { useTranslations } from "next-intl";
 import { Shield, Mail } from "lucide-react";
 import Card, { CardBody } from "@/components/ui/Card";
 
 export default function GDPRPage() {
   const { isSignedIn } = useAuth();
+  const t = useTranslations("Gdpr");
 
   if (isSignedIn === undefined) {
-    // Render a loading state while Clerk is initializing
     return (
       <div className="min-h-screen bg-gray-50 py-8 flex items-center justify-center">
-        <p>Cargando...</p>
+        <p>{t("loading")}</p>
       </div>
     );
   }
 
-  // Show GDPR content for both authenticated and unauthenticated users
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <div className="bg-betis-green/10 p-3 rounded-full">
@@ -30,16 +29,13 @@ export default function GDPRPage() {
             </div>
           </div>
           <h1 className="text-3xl font-black text-betis-black mb-4">
-            Protección de Datos Personales
+            {t("pageTitle")}
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            En cumplimiento del Reglamento General de Protección de Datos
-            (GDPR), puedes acceder a tus datos personales o solicitar su
-            eliminación.
+            {t("pageDescription")}
           </p>
         </div>
 
-        {/* Message for unauthenticated users */}
         <div className="mt-8 text-center">
           <Card>
             <CardBody>
@@ -47,23 +43,17 @@ export default function GDPRPage() {
                 <Mail className="h-6 w-6 text-betis-green" />
               </div>
               <h3 className="font-semibold text-betis-black mb-2">
-                Acceso a tus Datos GDPR
+                {t("cardHeading")}
               </h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Para poder consultar y borrar tus datos necesitas estar logeado.
-                Ponte en contacto con nosotros utilizando el formulario si no
-                tienes sesión de usuario pero tienes datos en nuestro sistema.
-              </p>
+              <p className="text-sm text-gray-600 mb-4">{t("cardBody")}</p>
               <p className="text-xs text-gray-500 mb-4">
-                Información sobre retención de datos: Tanto los RSVPs como la
-                información de contacto se eliminan automáticamente después de 3
-                meses para cumplir con el GDPR.
+                {t("retentionNote")}
               </p>
               <a
-                href="/contacto" // Assuming /contacto is the path to the contact form
+                href="/contacto"
                 className="text-betis-green hover:text-betis-green-dark font-medium"
               >
-                Ir al formulario de contacto
+                {t("contactLink")}
               </a>
             </CardBody>
           </Card>

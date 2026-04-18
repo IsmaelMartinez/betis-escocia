@@ -70,7 +70,7 @@ describe('RSVP Page', () => {
 
   describe('Basic Rendering', () => {
     it('should render the main heading', async () => {
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       expect(screen.getByText('¿Vienes al Polwarth?')).toBeInTheDocument();
@@ -78,7 +78,7 @@ describe('RSVP Page', () => {
     });
 
     it('should render the next match information', async () => {
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       expect(screen.getByText('Próximo Partido')).toBeInTheDocument();
@@ -87,7 +87,7 @@ describe('RSVP Page', () => {
     });
 
     it('should render venue information', async () => {
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       expect(screen.getAllByText('Polwarth Tavern').length).toBeGreaterThanOrEqual(1);
@@ -96,14 +96,14 @@ describe('RSVP Page', () => {
     });
 
     it('should render the RSVP form by default', async () => {
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       expect(screen.getByTestId('rsvp-form')).toBeInTheDocument();
     });
 
     it('should render why RSVP section', async () => {
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       expect(screen.getByText('¿Por qué confirmar tu asistencia?')).toBeInTheDocument();
@@ -119,7 +119,7 @@ describe('RSVP Page', () => {
         get: vi.fn((param) => param === 'match' ? '123' : null)
       });
 
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       await waitFor(() => {
@@ -139,7 +139,7 @@ describe('RSVP Page', () => {
         }
       ]);
 
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       await waitFor(() => {
@@ -167,7 +167,7 @@ describe('RSVP Page', () => {
         }
       ]);
 
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       await waitFor(() => {
@@ -181,7 +181,7 @@ describe('RSVP Page', () => {
         { id: 2, opponent: 'Barcelona', date_time: '2025-06-30T18:00:00', competition: 'LaLiga', rsvp_count: 3, total_attendees: 3 }
       ]);
 
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       await waitFor(() => {
@@ -211,7 +211,7 @@ describe('RSVP Page', () => {
       };
       (global.fetch as any).mockResolvedValue(mockResponse);
 
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       await waitFor(() => {
@@ -234,7 +234,7 @@ describe('RSVP Page', () => {
       };
       (global.fetch as any).mockResolvedValue(mockResponse);
 
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       await waitFor(() => {
@@ -245,7 +245,7 @@ describe('RSVP Page', () => {
     it('should handle RSVP data loading errors gracefully', async () => {
       (global.fetch as any).mockRejectedValue(new Error('Network error'));
 
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       // Should still render with default data
@@ -264,7 +264,7 @@ describe('RSVP Page', () => {
       };
       (global.fetch as any).mockResolvedValue(mockResponse);
 
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       await waitFor(() => {
@@ -275,7 +275,7 @@ describe('RSVP Page', () => {
 
   describe('Form Interaction', () => {
     it('should show confirmation button when form is hidden', async () => {
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       // Submit the form to hide it
@@ -287,7 +287,7 @@ describe('RSVP Page', () => {
     });
 
     it('should show form again when confirmation button is clicked', async () => {
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       // Submit the form to hide it
@@ -314,7 +314,7 @@ describe('RSVP Page', () => {
       };
       (global.fetch as any).mockResolvedValue(mockResponse);
 
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       // Submit the form
@@ -332,7 +332,7 @@ describe('RSVP Page', () => {
         get: vi.fn((param) => param === 'match' ? 'invalid-id' : null)
       });
 
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       // Should handle invalid match ID gracefully and still render
@@ -356,7 +356,7 @@ describe('RSVP Page', () => {
         { id: 2, opponent: 'Barcelona', date_time: '2025-06-30T18:00:00', competition: 'LaLiga', rsvp_count: 3, total_attendees: 3 }
       ]);
 
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       await waitFor(async () => {
@@ -379,7 +379,7 @@ describe('RSVP Page', () => {
     it('should handle fetch errors when loading available matches', async () => {
       mockGetUpcomingMatches.mockRejectedValue(new Error('Database error'));
 
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       // Should still render the page with default data
@@ -394,7 +394,7 @@ describe('RSVP Page', () => {
       };
       (global.fetch as any).mockResolvedValue(mockResponse);
 
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       // Should still render with default data
@@ -408,7 +408,7 @@ describe('RSVP Page', () => {
       };
       (global.fetch as any).mockResolvedValue(mockResponse);
 
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       // Should handle missing data gracefully
@@ -418,7 +418,7 @@ describe('RSVP Page', () => {
 
   describe('Accessibility', () => {
     it('should have proper heading structure', async () => {
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       const headings = screen.getAllByRole('heading');
@@ -434,7 +434,7 @@ describe('RSVP Page', () => {
         { id: 2, opponent: 'Barcelona', date_time: '2025-06-30T18:00:00', competition: 'LaLiga', rsvp_count: 3, total_attendees: 3 }
       ]);
 
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       await waitFor(() => {
@@ -446,7 +446,7 @@ describe('RSVP Page', () => {
     });
 
     it('should provide meaningful text content', async () => {
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       // Check for informative text
@@ -469,7 +469,7 @@ describe('RSVP Page', () => {
         }
       ]);
 
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       // React should automatically escape the content
@@ -482,7 +482,7 @@ describe('RSVP Page', () => {
         get: vi.fn((param) => param === 'match' ? 'abc123' : null)
       });
 
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       // Should handle non-numeric match ID gracefully
@@ -494,7 +494,7 @@ describe('RSVP Page', () => {
         get: vi.fn((param) => param === 'match' ? '999999999999999999999' : null)
       });
 
-      const RSVPPage = (await import('@/app/rsvp/page')).default;
+      const RSVPPage = (await import('@/app/[locale]/rsvp/page')).default;
       render(<RSVPPage />);
 
       // Should handle large numbers gracefully

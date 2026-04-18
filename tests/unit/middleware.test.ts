@@ -102,9 +102,9 @@ describe('Middleware', () => {
 
     if (!response) throw new Error('Response is null or undefined');
 
-    // Middleware should process the request without redirecting
+    // Middleware should process the request without redirecting. For non-API
+    // routes the response now comes from next-intl, not NextResponse.next().
     expect(response.url).toBeUndefined();
-    expect(mockNextResponseNext).toHaveBeenCalled();
   });
 
   it('should allow access to public routes without authentication', async () => {
@@ -117,7 +117,6 @@ describe('Middleware', () => {
 
     if (!response) throw new Error('Response is null or undefined');
 
-    expect(mockNextResponseNext).toHaveBeenCalled();
     expect(response.url).toBeUndefined();
   });
 
@@ -160,7 +159,6 @@ describe('Middleware', () => {
     if (!response) throw new Error('Response is null or undefined');
 
     expect(response.url).toBeUndefined();
-    expect(mockNextResponseNext).toHaveBeenCalled();
   });
 
   it('should allow authenticated users to access admin routes', async () => {
@@ -174,7 +172,6 @@ describe('Middleware', () => {
     if (!response) throw new Error('Response is null or undefined');
 
     expect(response.url).toBeUndefined();
-    expect(mockNextResponseNext).toHaveBeenCalled();
   });
 
   it('should handle rate limiting for API routes', async () => {
@@ -234,6 +231,5 @@ describe('Middleware', () => {
     if (!response) throw new Error('Response is null or undefined');
 
     expect(response.url).toBeUndefined();
-    expect(mockNextResponseNext).toHaveBeenCalled();
   });
 });

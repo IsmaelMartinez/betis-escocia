@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState, useCallback } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import {
   Star,
   Trophy,
@@ -23,6 +24,7 @@ const ALL_FILTER = "todos" as const;
 type EraFilter = PlayerEra | typeof ALL_FILTER;
 
 function PlayerCardDetails({ player }: { player: Player }) {
+  const t = useTranslations("JugadoresHistoricos");
   return (
     <div className="pt-3 border-t border-gray-100 space-y-3">
       <p className="font-body text-gray-700 text-sm leading-relaxed">
@@ -55,7 +57,7 @@ function PlayerCardDetails({ player }: { player: Player }) {
         onClick={(e) => e.stopPropagation()}
       >
         <Play className="h-3.5 w-3.5" />
-        Ver Vídeos
+        {t("videoLink")}
       </a>
     </div>
   );
@@ -128,6 +130,7 @@ function EraHeader({
   years: string;
   playerCount: number;
 }) {
+  const t = useTranslations("JugadoresHistoricos");
   return (
     <div className="text-center mb-8">
       <div className="inline-flex items-center gap-3 mb-3">
@@ -135,7 +138,8 @@ function EraHeader({
           {years}
         </span>
         <span className="bg-betis-verde/10 text-betis-verde-dark px-3 py-1 rounded-full font-heading font-bold text-xs">
-          {playerCount} {playerCount === 1 ? "leyenda" : "leyendas"}
+          {playerCount}{" "}
+          {playerCount === 1 ? t("legendSingular") : t("legendPlural")}
         </span>
       </div>
       <h2 className="font-display text-3xl sm:text-4xl font-black text-scotland-navy uppercase tracking-tight mb-2">
@@ -150,6 +154,7 @@ function EraHeader({
 
 export default function JugadoresHistoricos() {
   const [activeEra, setActiveEra] = useState<EraFilter>(ALL_FILTER);
+  const t = useTranslations("JugadoresHistoricos");
 
   const playerCountByEra = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -189,21 +194,20 @@ export default function JugadoresHistoricos() {
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8">
             <span className="text-white font-heading font-medium text-sm tracking-wide">
               <Star className="inline h-4 w-4 text-betis-oro mr-1" />
-              Jugadores Legendarios
+              {t("heroBadge")}
             </span>
           </div>
 
           <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black mb-6 text-white text-shadow-xl uppercase tracking-tight">
-            Leyendas Béticas
+            {t("heroTitle")}
           </h1>
 
           <p className="font-accent text-2xl sm:text-3xl text-oro-bright mb-8 text-shadow-lg italic">
-            Los jugadores que hicieron historia en el Villamarín
+            {t("heroSubtitle")}
           </p>
 
           <p className="font-body text-lg text-white/90 max-w-2xl mx-auto leading-relaxed">
-            De los clásicos del 78 a los campeones de Copa del 2022. Un viaje
-            por las leyendas que forjaron la historia del Real Betis Balompié.
+            {t("heroDescription")}
           </p>
         </div>
       </section>
@@ -220,7 +224,7 @@ export default function JugadoresHistoricos() {
                   : "bg-white text-gray-600 border border-gray-200 hover:border-betis-verde hover:text-betis-verde"
               }`}
             >
-              Todos{" "}
+              {t("filterAll")}{" "}
               <span className="opacity-70 text-xs">
                 ({playerCountByEra[ALL_FILTER]})
               </span>
@@ -277,10 +281,10 @@ export default function JugadoresHistoricos() {
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="font-display text-3xl sm:text-4xl font-black mb-6 text-white drop-shadow-xl uppercase tracking-tight">
-            Comparte la pasión bética con nosotros
+            {t("ctaHeading")}
           </h2>
           <p className="font-body text-xl mb-8 text-white/95 leading-relaxed drop-shadow-lg">
-            Vive cada partido rodeado de béticos en Edimburgo.
+            {t("ctaDescription")}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -288,7 +292,7 @@ export default function JugadoresHistoricos() {
               className="inline-flex items-center gap-3 bg-oro-bright hover:bg-oro-antique text-scotland-navy px-10 py-5 rounded-2xl font-display font-black text-xl transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-[0_0_30px_rgba(255,215,0,0.4)] uppercase tracking-wide"
             >
               <Heart className="h-6 w-6" />
-              Únete a Nosotros
+              {t("ctaJoin")}
             </Link>
           </div>
         </div>

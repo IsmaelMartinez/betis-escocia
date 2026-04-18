@@ -33,21 +33,18 @@ vi.mock("@/lib/features/featureFlags", () => ({
 // Default navigation items for tests
 const defaultNavigationItems = [
   {
-    name: "RSVP",
+    translationKey: "rsvp",
     href: "/rsvp",
-    nameEn: "RSVP",
     feature: "show-rsvp" as const,
   },
   {
-    name: "Únete",
+    translationKey: "unete",
     href: "/unete",
-    nameEn: "Join",
     feature: "show-unete" as const,
   },
   {
-    name: "Contacto",
+    translationKey: "contacto",
     href: "/contacto",
-    nameEn: "Contact",
     feature: "show-contacto" as const,
   },
 ];
@@ -220,7 +217,7 @@ describe("Layout Component", () => {
       );
 
       // Find the mobile menu button by aria-label
-      const menuButton = screen.getByLabelText(/toggle mobile menu/i);
+      const menuButton = screen.getByLabelText(/abrir menú móvil/i);
       expect(menuButton).toBeInTheDocument();
     });
 
@@ -231,7 +228,7 @@ describe("Layout Component", () => {
         </Layout>,
       );
 
-      const menuButton = screen.getByLabelText(/toggle mobile menu/i);
+      const menuButton = screen.getByLabelText(/abrir menú móvil/i);
 
       // Should be able to click the button without errors
       await userEvent.click(menuButton);

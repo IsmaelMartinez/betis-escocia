@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import ContactPage from "../../../src/app/contacto/page";
+import ContactPage from "../../../src/app/[locale]/contacto/page";
 import { useUser } from "@clerk/nextjs";
 
 // Mock the dependencies

@@ -20,9 +20,8 @@ export type FeatureName =
 
 // Navigation item interface
 export interface NavigationItem {
-  name: string;
+  translationKey: string;
   href: string;
-  nameEn: string;
   feature: FeatureName | null;
 }
 
@@ -118,42 +117,36 @@ export function hasFeature(featureName: FeatureName): boolean {
  */
 export function getEnabledNavigationItems(): NavigationItem[] {
   const allNavigationItems: NavigationItem[] = [
-    { name: "RSVP", href: "/rsvp", nameEn: "RSVP", feature: "show-rsvp" },
+    { translationKey: "rsvp", href: "/rsvp", feature: "show-rsvp" },
     {
-      name: "Partidos",
+      translationKey: "partidos",
       href: "/partidos",
-      nameEn: "Matches",
       feature: "show-partidos",
     },
     {
-      name: "Clasificación",
+      translationKey: "clasificacion",
       href: "/clasificacion",
-      nameEn: "Standings",
       feature: "show-clasificacion",
     },
     {
-      name: "Nosotros",
+      translationKey: "nosotros",
       href: "/nosotros",
-      nameEn: "About",
       feature: "show-nosotros",
     },
     {
-      name: "Leyendas",
+      translationKey: "leyendas",
       href: "/jugadores-historicos",
-      nameEn: "Legends",
       feature: "show-jugadores-historicos",
     },
     {
-      name: "Joaquín",
+      translationKey: "joaquin",
       href: "/joaquin",
-      nameEn: "Joaquín",
       feature: null,
     },
-    { name: "Únete", href: "/unete", nameEn: "Join", feature: "show-unete" },
+    { translationKey: "unete", href: "/unete", feature: "show-unete" },
     {
-      name: "Contacto",
+      translationKey: "contacto",
       href: "/contacto",
-      nameEn: "Contact",
       feature: "show-contacto",
     },
   ];

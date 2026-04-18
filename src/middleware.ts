@@ -1,67 +1,49 @@
 import { NextResponse } from "next/server";
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import createIntlMiddleware from "next-intl/middleware";
+import { routing } from "@/i18n/routing";
 
-// Define route matchers
-const isPublicRoute = createRouteMatcher([
-  "/",
-  "/rsvp",
-  "/contacto",
-  "/clasificacion",
-  "/partidos",
-  "/partidos/(.*)",
-  "/nosotros",
-  "/unete",
-  "/gdpr",
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/api/contact",
-  "/api/rsvp",
-  "/api/matches",
-  "/api/standings",
-  "/api/gdpr",
+const handleI18n = createIntlMiddleware(routing);
+
+const isProtectedRoute = createRouteMatcher([
+  "/dashboard(.*)",
+  "/:locale/dashboard(.*)",
 ]);
 
-// Protected routes that require authentication
-const isProtectedRoute = createRouteMatcher(["/dashboard(.*)"]);
-
-const isAdminRoute = createRouteMatcher(["/admin(.*)", "/api/admin(.*)"]);
+const isAdminRoute = createRouteMatcher([
+  "/admin(.*)",
+  "/:locale/admin(.*)",
+  "/api/admin(.*)",
+]);
 
 export default clerkMiddleware(async (auth, request) => {
-  // Continue with standard response (security headers now handled by next.config.js)
-  const response = NextResponse.next();
+  const { pathname } = request.nextUrl;
 
-  // Skip authentication for public routes
-  if (isPublicRoute(request)) {
-    return response;
+  // API routes: run auth checks only, skip i18n routing entirely.
+  if (pathname.startsWith("/api")) {
+    if (isAdminRoute(request)) {
+      const { userId } = await auth();
+      if (!userId) {
+        return NextResponse.redirect(new URL("/sign-in", request.url));
+      }
+    }
+    return NextResponse.next();
   }
 
-  // Get user info
-  const { userId } = await auth();
-
-  // Protected routes (dashboard, etc.) - require authentication
-  if (isProtectedRoute(request)) {
+  // Page routes: enforce auth first, then let next-intl handle locale routing.
+  if (isProtectedRoute(request) || isAdminRoute(request)) {
+    const { userId } = await auth();
     if (!userId) {
-      // Redirect to sign-in page
       return NextResponse.redirect(new URL("/sign-in", request.url));
     }
-    return response;
   }
 
-  // Admin route protection - require authentication only
-  // Role checking is handled by individual route handlers and HOCs
-  if (isAdminRoute(request)) {
-    if (!userId) {
-      // Redirect to sign-in page
-      return NextResponse.redirect(new URL("/sign-in", request.url));
-    }
-
-    return response;
-  }
-
-  // Default: allow access for non-matched routes
-  return response;
+  return handleI18n(request);
 });
 
 export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: [
+    "/((?!_next|_vercel|monitoring-tunnel|.*\\..*).*)",
+    "/(api|trpc)(.*)",
+  ],
 };

@@ -91,5 +91,123 @@ afterEach(() => {
   server.resetHandlers();
 });
 
+// Mock next-intl so components that call useTranslations/useLocale render
+// without requiring a real NextIntlClientProvider in every test.
+// Resolves keys against messages/es.json to preserve test assertions against
+// real UI strings.
+import esMessages from "../messages/es.json" with { type: "json" };
+
+const resolveKey = (
+  namespace: string | undefined,
+  key: string,
+  values?: Record<string, unknown>,
+) => {
+  const fullPath = namespace ? `${namespace}.${key}` : key;
+  let node: unknown = esMessages;
+  for (const segment of fullPath.split(".")) {
+    if (node && typeof node === "object" && segment in (node as object)) {
+      node = (node as Record<string, unknown>)[segment];
+    } else {
+      return fullPath;
+    }
+  }
+  let result = typeof node === "string" ? node : fullPath;
+  if (values) {
+    result = Object.entries(values).reduce(
+      (out, [name, value]) => out.replace(`{${name}}`, String(value)),
+      result,
+    );
+  }
+  return result;
+};
+
+// Cache `t` functions per namespace so the reference is stable across renders
+// and doesn't break useEffect dependency arrays.
+const translatorCache = new Map<string, ReturnType<typeof makeTranslator>>();
+function makeTranslator(namespace: string | undefined) {
+  const t = (key: string, values?: Record<string, unknown>) =>
+    resolveKey(namespace, key, values);
+  t.rich = (key: string) => resolveKey(namespace, key);
+  t.raw = (key: string) => resolveKey(namespace, key);
+  t.has = () => true;
+  t.markup = (key: string) => resolveKey(namespace, key);
+  return t;
+}
+function getTranslator(namespace?: string) {
+  const cacheKey = namespace ?? "";
+  let cached = translatorCache.get(cacheKey);
+  if (!cached) {
+    cached = makeTranslator(namespace);
+    translatorCache.set(cacheKey, cached);
+  }
+  return cached;
+}
+
+vi.mock("next-intl", () => ({
+  useTranslations: (namespace?: string) => getTranslator(namespace),
+  useLocale: () => "es",
+  useMessages: () => esMessages,
+  useFormatter: () => ({
+    dateTime: (value: Date | number) => new Date(value).toISOString(),
+    number: (value: number) => String(value),
+    relativeTime: () => "",
+    list: (items: string[]) => items.join(", "),
+  }),
+  useNow: () => new Date(),
+  useTimeZone: () => "UTC",
+  hasLocale: (locales: readonly string[], value: unknown) =>
+    typeof value === "string" && locales.includes(value),
+  NextIntlClientProvider: ({ children }: { children: React.ReactNode }) =>
+    children,
+}));
+
+vi.mock("next-intl/middleware", () => ({
+  default: () => () => ({ headers: new Headers() }),
+}));
+
+vi.mock("next-intl/server", () => ({
+  getTranslations: async (arg?: string | { namespace?: string }) => {
+    const namespace =
+      typeof arg === "string" ? arg : (arg?.namespace ?? undefined);
+    return getTranslator(namespace);
+  },
+  getLocale: async () => "es",
+  getMessages: async () => esMessages,
+  getFormatter: async () => ({
+    dateTime: (value: Date | number) => new Date(value).toISOString(),
+    number: (value: number) => String(value),
+    relativeTime: () => "",
+    list: (items: string[]) => items.join(", "),
+  }),
+  setRequestLocale: () => {},
+  getRequestConfig: (fn: unknown) => fn,
+}));
+
+vi.mock("@/i18n/navigation", async () => {
+  const React = await import("react");
+  return {
+    Link: ({
+      href,
+      children,
+      ...rest
+    }: {
+      href: string;
+      children: React.ReactNode;
+    } & React.AnchorHTMLAttributes<HTMLAnchorElement>) =>
+      React.createElement("a", { href, ...rest }, children),
+    redirect: () => {},
+    usePathname: () => "/",
+    useRouter: () => ({
+      push: vi.fn(),
+      replace: vi.fn(),
+      prefetch: vi.fn(),
+      back: vi.fn(),
+      forward: vi.fn(),
+      refresh: vi.fn(),
+    }),
+    getPathname: ({ href }: { href: string }) => href,
+  };
+});
+
 // Test environment setup complete
 // Feature flags are now environment variable-based and don't require special test setup
