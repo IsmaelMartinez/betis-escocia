@@ -29,13 +29,13 @@
     "prepare": "lefthook install"
   },
   "dependencies": {
-    "@clerk/nextjs": "^7.2.3",
+    "@clerk/nextjs": "^7.2.1",
     "@hookform/resolvers": "^5.2.2",
     "@sentry/nextjs": "^10.47.0",
     "@supabase/supabase-js": "^2.101.1",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
-    "axios": "^1.15.0",
+    "axios": "^1.14.0",
     "axios-rate-limit": "^1.8.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",

@@ -76,15 +76,23 @@ describe("Feature Flags - Simplified System", () => {
       const enabledItems = getEnabledNavigationItems();
 
       // Should include items that are enabled by default
-      expect(enabledItems.some((item) => item.translationKey === "nosotros")).toBe(true);
-      expect(enabledItems.some((item) => item.translationKey === "leyendas")).toBe(true);
-      expect(enabledItems.some((item) => item.translationKey === "unete")).toBe(true);
-      expect(enabledItems.some((item) => item.translationKey === "clasificacion")).toBe(
+      expect(
+        enabledItems.some((item) => item.translationKey === "nosotros"),
+      ).toBe(true);
+      expect(
+        enabledItems.some((item) => item.translationKey === "leyendas"),
+      ).toBe(true);
+      expect(enabledItems.some((item) => item.translationKey === "unete")).toBe(
         true,
       );
+      expect(
+        enabledItems.some((item) => item.translationKey === "clasificacion"),
+      ).toBe(true);
 
       // Should include Partidos (enabled by default)
-      expect(enabledItems.some((item) => item.translationKey === "partidos")).toBe(true);
+      expect(
+        enabledItems.some((item) => item.translationKey === "partidos"),
+      ).toBe(true);
     });
 
     it("should exclude items when disabled via environment variables", () => {
@@ -93,7 +101,9 @@ describe("Feature Flags - Simplified System", () => {
 
       const enabledItems = getEnabledNavigationItems();
 
-      expect(enabledItems.some((item) => item.translationKey === "partidos")).toBe(false);
+      expect(
+        enabledItems.some((item) => item.translationKey === "partidos"),
+      ).toBe(false);
     });
   });
 
