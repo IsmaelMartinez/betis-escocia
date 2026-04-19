@@ -51,9 +51,14 @@ describe("sitemap", () => {
 
   it("should generate sitemap with dynamic pages when navigation items are enabled", () => {
     vi.mocked(getEnabledNavigationItems).mockReturnValue([
-      { href: "/", translationKey: "home", feature: null }, // Should be filtered out as it's a static page
-      { href: "/unete", translationKey: "unete", feature: null },
-      { href: "/contacto", translationKey: "contacto", feature: null },
+      { href: "/", name: "Home", nameEn: "Home", feature: null }, // Should be filtered out as it's a static page
+      { href: "/unete", name: "Únete", nameEn: "Join Us", feature: null },
+      {
+        href: "/nosotros",
+        name: "Nosotros",
+        nameEn: "About",
+        feature: "show-nosotros",
+      },
     ]);
 
     const result = sitemap();
@@ -79,10 +84,10 @@ describe("sitemap", () => {
           priority: 0.9,
         },
         {
-          url: `${baseUrl}/contacto`,
+          url: `${baseUrl}/nosotros`,
           lastModified: mockDate,
           changeFrequency: "monthly",
-          priority: 0.9,
+          priority: 0.8,
         },
       ]),
     );
@@ -91,23 +96,24 @@ describe("sitemap", () => {
 
   it("should handle different priorities for dynamic pages", () => {
     vi.mocked(getEnabledNavigationItems).mockReturnValue([
-      { href: "/unete", translationKey: "unete", feature: null },
+      { href: "/unete", name: "Únete", nameEn: "Join Us", feature: null },
       {
-        href: "/contacto",
-        translationKey: "contacto",
-        feature: "show-contacto",
+        href: "/nosotros",
+        name: "Nosotros",
+        nameEn: "About",
+        feature: "show-nosotros",
       },
     ]);
 
     const result = sitemap();
 
     const unetePage = result.find((page) => page.url === `${baseUrl}/unete`);
-    const contactoPage = result.find(
-      (page) => page.url === `${baseUrl}/contacto`,
+    const nosotrosPage = result.find(
+      (page) => page.url === `${baseUrl}/nosotros`,
     );
 
     expect(unetePage?.priority).toBe(0.9);
-    expect(contactoPage?.priority).toBe(0.9);
+    expect(nosotrosPage?.priority).toBe(0.8);
   });
 
   it("should exclude /partidos from sitemap when show-partidos feature is disabled", () => {

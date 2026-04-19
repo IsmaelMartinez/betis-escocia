@@ -91,10 +91,10 @@ src/
 The project uses **environment variables** for simple, build-time feature control:
 
 ```typescript
-import { hasFeature } from "@/lib/featureFlags";
+import { hasFeature } from "@/lib/features/featureFlags";
 
 // Check if feature is enabled (synchronous)
-const isEnabled = hasFeature("show-rsvp");
+const isEnabled = hasFeature("show-clerk-auth");
 if (!isEnabled) return null;
 ```
 
@@ -106,17 +106,21 @@ if (!isEnabled) return null;
 
 ### Key Flags
 
-- `show-rsvp` - RSVP functionality (default: disabled)
-- `show-contacto` - Contact form (default: disabled)
-- `show-clasificacion` - League standings (default: disabled)
-- `show-partidos` - Match information (default: disabled)
-- `show-clerk-auth` - Authentication features (default: disabled)
-- `show-debug-info` - Debug information (default: disabled)
+Source of truth: `src/lib/features/featureFlags.ts`.
 
-### Always-On Features (No Flags Needed)
+#### Enabled by Default (Core Features)
 
-- `nosotros` - About page
-- `unete` - Join/membership functionality
+- `show-nosotros` - About page
+- `show-unete` - Join / membership page
+- `show-clasificacion` - League standings
+- `show-partidos` - Match schedule and results
+- `show-jugadores-historicos` - Legends page
+- `show-efemerides` - Betis history efemérides
+
+#### Disabled by Default
+
+- `show-clerk-auth` - Authentication UI
+- `show-debug-info` - Debug info panel
 
 ### Setup
 
@@ -265,7 +269,7 @@ npm run update-trivia  # Updates all trivia questions safely
 ```typescript
 // Always start mobile, scale up
 <div className="p-4 md:p-6 lg:p-8">
-  <h1 className="text-xl md:text-2xl lg:text-3xl text-green-600">
+  <h1 className="text-xl md:text-2xl lg:text-3xl text-betis-verde">
     Betis Content
   </h1>
 </div>
@@ -274,10 +278,10 @@ npm run update-trivia  # Updates all trivia questions safely
 #### Feature Flag Pattern
 
 ```typescript
-import { hasFeature } from '@/lib/featureFlags';
+import { hasFeature } from '@/lib/features/featureFlags';
 
 export default function FeatureComponent() {
-  const isEnabled = hasFeature('show-rsvp');
+  const isEnabled = hasFeature('show-clerk-auth');
   if (!isEnabled) return null;
 
   return <div>Feature content</div>;

@@ -11,7 +11,6 @@ const meta: Meta<typeof HeroCommunity> = {
   tags: ["autodocs"],
   argTypes: {
     showPartidos: { control: "boolean", description: "Show Partidos link" },
-    showRsvp: { control: "boolean", description: "Show RSVP section" },
   },
 };
 
@@ -21,20 +20,11 @@ type Story = StoryObj<typeof HeroCommunity>;
 export const Default: Story = {
   args: {
     showPartidos: true,
-    showRsvp: true,
   },
 };
 
 export const WithoutPartidos: Story = {
   args: {
     showPartidos: false,
-    showRsvp: true,
-  },
-};
-
-export const WithoutRsvp: Story = {
-  args: {
-    showPartidos: true,
-    showRsvp: false,
   },
 };

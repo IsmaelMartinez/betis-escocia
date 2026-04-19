@@ -48,7 +48,7 @@ export default function SignInPage() {
                 borderRadius: "0.375rem",
               },
             }}
-            fallbackRedirectUrl={`${prefix}/dashboard`}
+            fallbackRedirectUrl={prefix || "/"}
           />
         </div>
       </div>

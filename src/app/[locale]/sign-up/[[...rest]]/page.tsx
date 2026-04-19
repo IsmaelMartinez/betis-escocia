@@ -82,7 +82,7 @@ export default function SignUpPage() {
                 borderRadius: "0.375rem",
               },
             }}
-            fallbackRedirectUrl={`${prefix}/dashboard`}
+            fallbackRedirectUrl={prefix || "/"}
           />
         </div>
       </div>

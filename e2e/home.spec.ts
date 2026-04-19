@@ -1,7 +1,6 @@
 import { test, expect } from "./fixtures";
 
-// TODO: Re-enable these tests when feature flags (RSVP, Partidos) are enabled in CI environment
-// These tests check for RSVP widget and navigation to feature-flagged pages
+// TODO: Re-enable these tests when feature flags (Partidos) are enabled in CI environment
 test.describe.skip("Home Page Happy Path", () => {
   test("should load successfully and display key elements", async ({
     page,
@@ -15,8 +14,6 @@ test.describe.skip("Home Page Happy Path", () => {
     await expect(page.locator("nav")).toBeVisible();
     // Look for the logo/home link instead of "Inicio" text
     await expect(page.locator('header a[href="/"]')).toBeVisible();
-    // Check for RSVP widget (now embedded on homepage)
-    await expect(page.getByText("🍺 Confirmar Asistencia")).toBeVisible();
 
     // 2.1.4 Ensure no console errors or network failures on page load
     page.on("console", (msg) => {
@@ -37,7 +34,6 @@ test.describe.skip("Home Page Happy Path", () => {
     await page.goto("/");
 
     // 2.1.3 Verify basic navigation to other unauthenticated pages
-    // Navigate to Partidos page instead (RSVP is now embedded)
     await page.getByRole("link", { name: "Partidos" }).click();
     await expect(page).toHaveURL("/partidos");
     await expect(

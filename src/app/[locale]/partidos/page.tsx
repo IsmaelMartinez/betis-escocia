@@ -4,14 +4,9 @@ import { useTranslations } from "next-intl";
 import { ApiErrorBoundary } from "@/components/ErrorBoundary";
 import BetisPositionWidget from "@/components/widgets/BetisPositionWidget";
 import AllDatabaseMatches from "@/components/match/AllDatabaseMatches";
-import RSVPModal, { useRSVPModal } from "@/components/rsvp/RSVPModal";
 import SidebarCard from "@/components/SidebarCard";
-import { Calendar } from "lucide-react";
-import { hasFeature } from "@/lib/features/featureFlags";
 
 export default function MatchesPage() {
-  const { isOpen, openModal, closeModal } = useRSVPModal();
-  const isRSVPEnabled = hasFeature("show-rsvp");
   const t = useTranslations("Partidos");
 
   return (
@@ -43,26 +38,6 @@ export default function MatchesPage() {
 
             <div className="lg:col-span-1">
               <div className="sticky top-8 space-y-6">
-                {isRSVPEnabled && (
-                  <SidebarCard>
-                    <div className="w-12 h-12 bg-betis-verde rounded-full flex items-center justify-center mb-4 mx-auto">
-                      <Calendar className="h-6 w-6 text-white" />
-                    </div>
-                    <h3 className="font-heading text-lg font-bold text-scotland-navy mb-2 text-center uppercase tracking-wide">
-                      {t("nextMatchHeading")}
-                    </h3>
-                    <p className="font-body text-sm text-gray-600 mb-4 text-center">
-                      {t("nextMatchQuestion")}
-                    </p>
-                    <button
-                      onClick={openModal}
-                      className="w-full bg-betis-verde hover:bg-betis-verde-dark text-white font-heading font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl uppercase tracking-wide text-sm"
-                    >
-                      ✅ {t("nextMatchCta")}
-                    </button>
-                  </SidebarCard>
-                )}
-
                 <SidebarCard patternClass="pattern-tartan-subtle">
                   <BetisPositionWidget />
                 </SidebarCard>
@@ -71,21 +46,6 @@ export default function MatchesPage() {
           </div>
         </div>
       </section>
-
-      {isRSVPEnabled && (
-        <RSVPModal
-          isOpen={isOpen}
-          onClose={closeModal}
-          event={{
-            id: undefined,
-            title: t("modalEventTitle"),
-            date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-            location: t("modalEventLocation"),
-            description: t("modalEventDescription"),
-          }}
-          modalTitle={t("modalTitle")}
-        />
-      )}
     </div>
   );
 }

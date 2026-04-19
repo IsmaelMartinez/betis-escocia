@@ -33,9 +33,9 @@ vi.mock("@/lib/features/featureFlags", () => ({
 // Default navigation items for tests
 const defaultNavigationItems = [
   {
-    translationKey: "rsvp",
-    href: "/rsvp",
-    feature: "show-rsvp" as const,
+    translationKey: "partidos",
+    href: "/partidos",
+    feature: "show-partidos" as const,
   },
   {
     translationKey: "unete",
@@ -43,9 +43,9 @@ const defaultNavigationItems = [
     feature: "show-unete" as const,
   },
   {
-    translationKey: "contacto",
-    href: "/contacto",
-    feature: "show-contacto" as const,
+    translationKey: "nosotros",
+    href: "/nosotros",
+    feature: "show-nosotros" as const,
   },
 ];
 
@@ -74,10 +74,9 @@ describe("Layout Component", () => {
 
       // Check for main navigation elements (now uppercase in display font)
       expect(screen.getByText("NO BUSQUES MÁS")).toBeInTheDocument();
-      expect(screen.getByText("RSVP")).toBeInTheDocument();
+      expect(screen.getByText("Partidos")).toBeInTheDocument();
       expect(screen.getByText("Únete")).toBeInTheDocument();
-      // Contacto appears in both nav and footer, so check for at least one
-      expect(screen.getAllByText("Contacto").length).toBeGreaterThan(0);
+      expect(screen.getByText("Nosotros")).toBeInTheDocument();
     });
 
     it("should have proper HTML structure", () => {
@@ -104,13 +103,13 @@ describe("Layout Component", () => {
 
       // Get links from the nav element specifically
       const nav = container.querySelector("nav");
-      const rsvpLink = nav?.querySelector('a[href="/rsvp"]');
+      const partidosLink = nav?.querySelector('a[href="/partidos"]');
       const joinLink = nav?.querySelector('a[href="/unete"]');
-      const contactLink = nav?.querySelector('a[href="/contacto"]');
+      const nosotrosLink = nav?.querySelector('a[href="/nosotros"]');
 
-      expect(rsvpLink).toBeInTheDocument();
+      expect(partidosLink).toBeInTheDocument();
       expect(joinLink).toBeInTheDocument();
-      expect(contactLink).toBeInTheDocument();
+      expect(nosotrosLink).toBeInTheDocument();
     });
 
     it("should render logo with correct link", () => {

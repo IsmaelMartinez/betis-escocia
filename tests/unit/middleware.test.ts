@@ -134,7 +134,7 @@ describe("Middleware", () => {
         __clerkAuthMock: () => Promise<{ userId: string | null }>;
       }
     ).__clerkAuthMock = vi.fn(async () => ({ userId: null }));
-    const request = new NextRequest("http://localhost/rsvp", {
+    const request = new NextRequest("http://localhost/partidos", {
       headers: { "x-forwarded-for": "127.0.0.1" },
     });
 
@@ -148,29 +148,6 @@ describe("Middleware", () => {
     if (!response) throw new Error("Response is null or undefined");
 
     expect(response.url).toBeUndefined();
-  });
-
-  it("should redirect unauthenticated users from protected routes", async () => {
-    (
-      globalThis as unknown as {
-        __clerkAuthMock: () => Promise<{ userId: string | null }>;
-      }
-    ).__clerkAuthMock = vi.fn(async () => ({ userId: null }));
-    const request = new NextRequest("http://localhost/dashboard", {
-      headers: { "x-forwarded-for": "127.0.0.1" },
-    });
-
-    type MockResponse = { headers: Headers; url?: string; status?: number };
-    const response = (await (
-      middleware as unknown as (
-        req: NextRequest,
-      ) => Promise<MockResponse | undefined>
-    )(request))!; // Use non-null assertion
-
-    if (!response) throw new Error("Response is null or undefined");
-
-    expect(response.url).toBe("http://localhost/sign-in");
-    expect(response.status).toBe(307);
   });
 
   it("should redirect unauthenticated users from admin routes", async () => {
@@ -196,28 +173,6 @@ describe("Middleware", () => {
     expect(response.status).toBe(307);
   });
 
-  it("should allow authenticated users to access protected routes", async () => {
-    (
-      globalThis as unknown as {
-        __clerkAuthMock: () => Promise<{ userId: string | null }>;
-      }
-    ).__clerkAuthMock = vi.fn(async () => ({ userId: "user_123" }));
-    const request = new NextRequest("http://localhost/dashboard/profile", {
-      headers: { "x-forwarded-for": "127.0.0.1" },
-    });
-
-    type MockResponse = { headers: Headers; url?: string; status?: number };
-    const response = (await (
-      middleware as unknown as (
-        req: NextRequest,
-      ) => Promise<MockResponse | undefined>
-    )(request))!;
-
-    if (!response) throw new Error("Response is null or undefined");
-
-    expect(response.url).toBeUndefined();
-  });
-
   it("should allow authenticated users to access admin routes", async () => {
     (
       globalThis as unknown as {
@@ -238,31 +193,6 @@ describe("Middleware", () => {
     if (!response) throw new Error("Response is null or undefined");
 
     expect(response.url).toBeUndefined();
-  });
-
-  it("should handle rate limiting for API routes", async () => {
-    (
-      globalThis as unknown as {
-        __clerkAuthMock: () => Promise<{ userId: string | null }>;
-      }
-    ).__clerkAuthMock = vi.fn(async () => ({ userId: null }));
-    const request = new NextRequest("http://localhost/api/contact", {
-      method: "POST",
-      headers: { "x-forwarded-for": "127.0.0.1" },
-    });
-
-    type MockResponse = { headers: Headers; url?: string; status?: number };
-    const response = (await (
-      middleware as unknown as (
-        req: NextRequest,
-      ) => Promise<MockResponse | undefined>
-    )(request))!;
-
-    if (!response) throw new Error("Response is null or undefined");
-
-    // Should process API request (rate limiting is handled in middleware)
-    expect(response.url).toBeUndefined();
-    expect(mockNextResponseNext).toHaveBeenCalled();
   });
 
   it("should handle API admin routes correctly", async () => {
@@ -294,7 +224,7 @@ describe("Middleware", () => {
         __clerkAuthMock: () => Promise<{ userId: string | null }>;
       }
     ).__clerkAuthMock = vi.fn(async () => ({ userId: null }));
-    const request = new NextRequest("http://localhost/api/contact", {
+    const request = new NextRequest("http://localhost/api/matches", {
       headers: { "x-forwarded-for": "127.0.0.1" },
     });
 

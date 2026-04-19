@@ -10,7 +10,9 @@ describe("NotFound component", () => {
     expect(screen.getByText("404")).toBeInTheDocument();
     expect(screen.getByText("Página no encontrada")).toBeInTheDocument();
     expect(
-      screen.getByText("La página que buscas no existe o ha sido movida."),
+      screen.getByText(
+        "La página que buscas no existe o ha sido movida.",
+      ),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: /Volver al inicio/i }),

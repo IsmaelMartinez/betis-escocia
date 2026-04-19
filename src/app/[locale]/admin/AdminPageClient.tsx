@@ -3,39 +3,21 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import {
-  supabase,
-  RSVP,
-  ContactSubmission,
   Match,
   createMatch,
   updateMatch,
   deleteMatch,
   getMatches,
-  updateContactSubmissionStatus,
 } from "@/lib/api/supabase";
-import {
-  Users,
-  Mail,
-  TrendingUp,
-  Download,
-  RefreshCw,
-  Calendar,
-  Plus,
-  RotateCcw,
-} from "lucide-react";
-import { exportRSVPs, exportContacts } from "@/lib/utils/csvExport";
-import Card, { CardHeader, CardBody } from "@/components/ui/Card";
+import { RefreshCw, Calendar, Plus, RotateCcw } from "lucide-react";
+import Card, { CardBody } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import MessageComponent from "@/components/MessageComponent";
 import dynamicImport from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { withAdminRole } from "@/lib/auth/withAdminRole";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { DATE_FORMAT } from "@/lib/constants/dateFormats";
 import { log } from "@/lib/utils/logger";
-import clsx from "clsx";
 
 // Lazy load heavy admin components to reduce initial bundle size
 const MatchForm = dynamicImport(() => import("@/components/admin/MatchForm"), {
@@ -47,22 +29,8 @@ const MatchesList = dynamicImport(
     loading: () => <LoadingSpinner />,
   },
 );
-const ContactSubmissionsList = dynamicImport(
-  () => import("@/components/admin/ContactSubmissionsList"),
-  {
-    loading: () => <LoadingSpinner />,
-  },
-);
-interface AdminStats {
-  totalRSVPs: number;
-  totalAttendees: number;
-  totalContacts: number;
-  totalMatches: number;
-  recentRSVPs: RSVP[];
-  recentContacts: ContactSubmission[];
-}
 
-type AdminView = "dashboard" | "matches" | "match-form" | "contacts";
+type AdminView = "dashboard" | "matches" | "match-form";
 
 interface MatchFormData {
   mode: "create" | "edit";
@@ -74,10 +42,10 @@ interface AdminPageClientProps {
 }
 
 function AdminPageClient({ showPartidos }: AdminPageClientProps) {
-  const { isLoaded, isSignedIn, getToken } = useAuth();
+  const { isLoaded, isSignedIn } = useAuth();
   const { user } = useUser();
   const router = useRouter();
-  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -87,59 +55,6 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
   const [matchFormData, setMatchFormData] = useState<MatchFormData>({
     mode: "create",
   });
-  const [matches, setMatches] = useState<Match[]>([]);
-  const [contactFilterStatus, setContactFilterStatus] = useState<
-    ContactSubmission["status"][]
-  >(["new", "in progress"]);
-  const [allContactSubmissions, setAllContactSubmissions] = useState<
-    ContactSubmission[]
-  >([]);
-  const handleUpdateContactStatus = async (
-    id: number,
-    status: ContactSubmission["status"],
-  ) => {
-    if (!user?.id) {
-      setError("User not authenticated.");
-      return;
-    }
-    setRefreshing(true);
-    try {
-      const clerkToken = await getToken();
-      if (!clerkToken) {
-        setError("Authentication token not available.");
-        setRefreshing(false);
-        return;
-      }
-      const result = await updateContactSubmissionStatus(
-        id,
-        status,
-        user.id,
-        clerkToken,
-      );
-      if (result.success) {
-        await fetchStats(); // Refresh data
-      } else {
-        setError(result.error || "Error al actualizar el estado del contacto");
-      }
-    } catch (err) {
-      log.error("Failed to update contact status in admin panel", err, {
-        contactId: id,
-        newStatus: status,
-        userId: user?.id,
-      });
-      setError("Error al actualizar el estado del contacto");
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
-  const handleContactFilterChange = (status: ContactSubmission["status"]) => {
-    setContactFilterStatus((prev) =>
-      prev.includes(status)
-        ? prev.filter((s) => s !== status)
-        : [...prev, status],
-    );
-  };
 
   // Redirect to sign-in if not authenticated
   useEffect(() => {
@@ -148,59 +63,16 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
     }
   }, [isLoaded, isSignedIn, router]);
 
-  const fetchStats = useCallback(async () => {
+  const fetchMatches = useCallback(async () => {
     try {
       setError(null);
-
-      // Fetch all data in parallel for better performance
-      const [rsvpResult, allContactResult, matchesData] = await Promise.all([
-        supabase
-          .from("rsvps")
-          .select("*")
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("contact_submissions")
-          .select("*")
-          .order("created_at", { ascending: false }),
-        getMatches(),
-      ]);
-
-      const { data: rsvpData, error: rsvpError } = rsvpResult;
-      if (rsvpError) throw rsvpError;
-
-      const { data: allContactData, error: allContactError } = allContactResult;
-      if (allContactError) throw allContactError;
-      setAllContactSubmissions(allContactData || []);
-
-      // Fetch recent contact data for dashboard
-      const recentContactData = (allContactData || [])
-        .filter((c) => c.status === "new")
-        .slice(0, 5);
-
+      const matchesData = await getMatches();
       setMatches(matchesData || []);
-
-      // Calculate stats
-      const totalRSVPs = rsvpData?.length || 0;
-      const totalAttendees =
-        rsvpData?.reduce((sum, rsvp) => sum + rsvp.attendees, 0) || 0;
-      const totalContacts = allContactData?.length || 0;
-      const totalMatches = matchesData?.length || 0;
-      const recentRSVPs = rsvpData?.slice(0, 5) || [];
-      const recentContacts = recentContactData || [];
-
-      setStats({
-        totalRSVPs,
-        totalAttendees,
-        totalContacts,
-        totalMatches,
-        recentRSVPs,
-        recentContacts,
-      });
     } catch (err) {
-      log.error("Failed to fetch admin stats", err, {
+      log.error("Failed to fetch matches", err, {
         userId: user?.id,
       });
-      setError("Error al cargar las estadísticas del panel de administración");
+      setError("Error al cargar los partidos");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -209,7 +81,7 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await fetchStats();
+    await fetchMatches();
   };
 
   const handleSyncMatches = async () => {
@@ -228,7 +100,7 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
 
       if (result.success) {
         setSyncMessage(result.message);
-        await fetchStats(); // Refresh data after sync
+        await fetchMatches();
       } else {
         setSyncMessage(`Error: ${result.message}`);
       }
@@ -256,7 +128,7 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
       const result = await response.json();
 
       if (result.success) {
-        await fetchStats(); // Refresh data after sync
+        await fetchMatches();
         return { success: true };
       } else {
         return { success: false, error: result.message };
@@ -275,7 +147,7 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
     const result = await createMatch(data);
     if (result.success) {
       setCurrentView("matches");
-      await fetchStats(); // Refresh data
+      await fetchMatches();
     }
     return result;
   };
@@ -287,7 +159,7 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
     const result = await updateMatch(matchFormData.match.id, data);
     if (result.success) {
       setCurrentView("matches");
-      await fetchStats(); // Refresh data
+      await fetchMatches();
     }
     return result;
   };
@@ -306,7 +178,7 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
   const handleDeleteMatch = async (matchId: number) => {
     const result = await deleteMatch(matchId);
     if (result.success) {
-      await fetchStats(); // Refresh data
+      await fetchMatches();
     }
     return result;
   };
@@ -323,19 +195,16 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
     const result = await deleteMatch(matchFormData.match.id);
     if (result.success) {
       setCurrentView("matches");
-      await fetchStats(); // Refresh data
+      await fetchMatches();
     }
     return result;
   };
 
-  const handleExportRSVPs = () => exportRSVPs(user?.id);
-  const handleExportContacts = () => exportContacts(user?.id);
-
   useEffect(() => {
     if (isSignedIn) {
-      fetchStats();
+      fetchMatches();
     }
-  }, [isSignedIn, fetchStats]);
+  }, [isSignedIn, fetchMatches]);
 
   // Auto-clear sync message after 5 seconds with proper cleanup
   useEffect(() => {
@@ -390,14 +259,12 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
                 Panel de Administración
               </h1>
               <p className="text-gray-600 mt-2">
-                {currentView === "dashboard" &&
-                  "Gestión de RSVPs, contactos y partidos de la Peña Bética"}
+                {currentView === "dashboard" && "Gestión de partidos"}
                 {currentView === "matches" && "Gestión de partidos"}
                 {currentView === "match-form" &&
                   (matchFormData.mode === "create"
                     ? "Crear nuevo partido"
                     : "Editar partido")}
-                {currentView === "contacts" && "Gestión de contactos"}
               </p>
               {user && (
                 <p className="text-sm text-betis-green mt-1">
@@ -437,52 +304,6 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
               </Button>
             </div>
           </div>
-
-          {/* Navigation */}
-          <div className="mt-6 border-b border-gray-200">
-            <nav className="-mb-px flex space-x-8">
-              <button
-                onClick={() => setCurrentView("dashboard")}
-                className={clsx(
-                  "py-2 px-1 border-b-2 font-medium text-sm",
-                  currentView === "dashboard"
-                    ? "border-betis-green text-betis-green"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
-                )}
-              >
-                <Users className="h-4 w-4 inline mr-2" />
-                Dashboard
-              </button>
-
-              {showPartidos && (
-                <button
-                  onClick={() => setCurrentView("matches")}
-                  className={clsx(
-                    "py-2 px-1 border-b-2 font-medium text-sm",
-                    currentView === "matches"
-                      ? "border-betis-green text-betis-green"
-                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
-                  )}
-                >
-                  <Calendar className="h-4 w-4 inline mr-2" />
-                  Partidos
-                </button>
-              )}
-
-              <button
-                onClick={() => setCurrentView("contacts")}
-                className={clsx(
-                  "py-2 px-1 border-b-2 font-medium text-sm",
-                  currentView === "contacts"
-                    ? "border-betis-green text-betis-green"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
-                )}
-              >
-                <Mail className="h-4 w-4 inline mr-2" />
-                Contactos
-              </button>
-            </nav>
-          </div>
         </div>
 
         {/* Sync Message */}
@@ -495,227 +316,31 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
           </div>
         )}
 
-        {/* Content based on current view */}
+        {/* Dashboard: stats + jump to matches */}
         {currentView === "dashboard" && (
-          <>
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {showPartidos && (
               <Card className="hover-lift">
                 <CardBody className="text-center">
                   <div className="mx-auto w-12 h-12 bg-betis-green/10 rounded-lg flex items-center justify-center mb-4">
-                    <Users className="h-6 w-6 text-betis-green" />
+                    <Calendar className="h-6 w-6 text-betis-green" />
                   </div>
                   <div className="text-3xl font-black text-betis-black mb-2">
-                    {stats?.totalRSVPs}
+                    {matches.length}
                   </div>
-                  <div className="text-sm text-gray-600">RSVPs Totales</div>
+                  <div className="text-sm text-gray-600 mb-4">
+                    Partidos Guardados
+                  </div>
+                  <Button
+                    variant="primary"
+                    onClick={() => setCurrentView("matches")}
+                  >
+                    Gestionar partidos
+                  </Button>
                 </CardBody>
               </Card>
-
-              <Card className="hover-lift">
-                <CardBody className="text-center">
-                  <div className="mx-auto w-12 h-12 bg-betis-green/10 rounded-lg flex items-center justify-center mb-4">
-                    <TrendingUp className="h-6 w-6 text-betis-green" />
-                  </div>
-                  <div className="text-3xl font-black text-betis-black mb-2">
-                    {stats?.totalAttendees}
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    Asistentes Confirmados
-                  </div>
-                </CardBody>
-              </Card>
-
-              <Card className="hover-lift">
-                <CardBody className="text-center">
-                  <div className="mx-auto w-12 h-12 bg-betis-green/10 rounded-lg flex items-center justify-center mb-4">
-                    <Mail className="h-6 w-6 text-betis-green" />
-                  </div>
-                  <div className="text-3xl font-black text-betis-black mb-2">
-                    {stats?.totalContacts}
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    Mensajes de Contacto
-                  </div>
-                </CardBody>
-              </Card>
-
-              {showPartidos && (
-                <Card className="hover-lift">
-                  <CardBody className="text-center">
-                    <div className="mx-auto w-12 h-12 bg-betis-green/10 rounded-lg flex items-center justify-center mb-4">
-                      <Calendar className="h-6 w-6 text-betis-green" />
-                    </div>
-                    <div className="text-3xl font-black text-betis-black mb-2">
-                      {stats?.totalMatches}
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      Partidos Guardados
-                    </div>
-                  </CardBody>
-                </Card>
-              )}
-            </div>
-
-            {/* Export Actions */}
-            <div className="mb-8">
-              <Card>
-                <CardHeader>
-                  <h2 className="text-xl font-bold text-betis-black">
-                    Exportar Datos
-                  </h2>
-                </CardHeader>
-                <CardBody>
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Button
-                      onClick={handleExportRSVPs}
-                      variant="primary"
-                      leftIcon={<Download className="h-4 w-4" />}
-                    >
-                      Exportar RSVPs (CSV)
-                    </Button>
-                    <Button
-                      onClick={handleExportContacts}
-                      variant="secondary"
-                      leftIcon={<Download className="h-4 w-4" />}
-                    >
-                      Exportar Contactos (CSV)
-                    </Button>
-                  </div>
-                </CardBody>
-              </Card>
-            </div>
-
-            {/* Recent Data */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Recent RSVPs */}
-              <Card>
-                <CardHeader>
-                  <h2 className="text-xl font-bold text-betis-black">
-                    RSVPs Recientes
-                  </h2>
-                </CardHeader>
-                <CardBody>
-                  {stats?.recentRSVPs.length === 0 ? (
-                    <p className="text-gray-500 text-center py-4">
-                      No hay RSVPs recientes
-                    </p>
-                  ) : (
-                    <div className="space-y-4">
-                      {stats?.recentRSVPs.map((rsvp) => (
-                        <div
-                          key={rsvp.id}
-                          className="border-l-4 border-betis-green bg-gray-50 p-4 rounded-r-lg"
-                        >
-                          <div className="flex justify-between items-start mb-2">
-                            <div className="font-semibold text-betis-black">
-                              {rsvp.name}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {format(new Date(rsvp.created_at), DATE_FORMAT, {
-                                locale: es,
-                              })}
-                            </div>
-                          </div>
-                          <div className="text-sm text-gray-600 mb-1">
-                            {rsvp.email}
-                          </div>
-                          <div className="text-sm">
-                            <span className="font-medium">Asistentes:</span>{" "}
-                            {rsvp.attendees} |
-                            <span className="font-medium"> Partido:</span>{" "}
-                            {format(new Date(rsvp.match_date), DATE_FORMAT, {
-                              locale: es,
-                            })}
-                          </div>
-                          {rsvp.message && (
-                            <div className="text-sm text-gray-600 mt-2 italic">
-                              &ldquo;{rsvp.message}&rdquo;
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CardBody>
-              </Card>
-
-              {/* Recent Contacts */}
-              <Card>
-                <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-bold text-betis-black">
-                      Contactos Recientes
-                    </h2>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentView("contacts")}
-                    >
-                      Ver Todos
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardBody>
-                  {stats?.recentContacts.length === 0 ? (
-                    <p className="text-gray-500 text-center py-4">
-                      No hay contactos recientes
-                    </p>
-                  ) : (
-                    <div className="space-y-4">
-                      {stats?.recentContacts.map((contact) => (
-                        <div
-                          key={contact.id}
-                          className="border-l-4 border-betis-green bg-gray-50 p-4 rounded-r-lg"
-                        >
-                          <div className="flex justify-between items-start mb-2">
-                            <div className="font-semibold text-betis-black">
-                              {contact.name}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {format(
-                                new Date(contact.created_at),
-                                DATE_FORMAT,
-                                { locale: es },
-                              )}
-                            </div>
-                          </div>
-                          <div className="text-sm text-gray-600 mb-1">
-                            {contact.email}
-                          </div>
-                          <div className="text-sm mb-2">
-                            <select
-                              value={contact.status}
-                              onChange={(e) =>
-                                handleUpdateContactStatus(
-                                  contact.id,
-                                  e.target.value as ContactSubmission["status"],
-                                )
-                              }
-                              className="inline-block bg-gray-100 text-gray-800 px-2 py-1 rounded text-xs font-medium mr-2 focus:outline-none focus:ring-2 focus:ring-betis-green"
-                            >
-                              <option value="new">New</option>
-                              <option value="in progress">In Progress</option>
-                              <option value="resolved">Resolved</option>
-                            </select>
-                            <span className="inline-block bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs font-medium">
-                              {contact.type}
-                            </span>
-                          </div>
-                          <div className="text-sm font-medium text-gray-700 mb-1">
-                            {contact.subject}
-                          </div>
-                          <div className="text-sm text-gray-600 truncate">
-                            {contact.message}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CardBody>
-              </Card>
-            </div>
-          </>
+            )}
+          </div>
         )}
 
         {/* Matches Management View */}
@@ -757,43 +382,6 @@ function AdminPageClient({ showPartidos }: AdminPageClientProps) {
             }
             isLoading={loading}
           />
-        )}
-
-        {/* Contacts Management View */}
-        {currentView === "contacts" && (
-          <>
-            <div className="mb-6">
-              <label
-                htmlFor="contactFilter"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Filtrar por estado:
-              </label>
-              <div className="flex space-x-2">
-                {(["new", "in progress", "resolved"] as const).map((status) => (
-                  <Button
-                    key={status}
-                    variant={
-                      contactFilterStatus.includes(status)
-                        ? "primary"
-                        : "outline"
-                    }
-                    onClick={() => handleContactFilterChange(status)}
-                  >
-                    {status.charAt(0).toUpperCase() + status.slice(1)}
-                  </Button>
-                ))}
-              </div>
-            </div>
-            <ContactSubmissionsList
-              submissions={allContactSubmissions.filter((sub) =>
-                contactFilterStatus.includes(sub.status),
-              )}
-              onUpdateStatus={handleUpdateContactStatus}
-              isLoading={loading}
-              error={error}
-            />
-          </>
         )}
       </div>
     </div>

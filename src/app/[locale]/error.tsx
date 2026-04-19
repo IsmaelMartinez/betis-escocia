@@ -44,18 +44,6 @@ export default function Error({
           >
             {t("backHome")}
           </Link>
-
-          <div className="text-sm text-gray-500 mt-4">
-            <p>
-              {t("contactPrompt")}{" "}
-              <Link
-                href="/contacto"
-                className="text-betis-green hover:underline"
-              >
-                {t("contactLink")}
-              </Link>
-            </p>
-          </div>
         </div>
       </div>
     </div>

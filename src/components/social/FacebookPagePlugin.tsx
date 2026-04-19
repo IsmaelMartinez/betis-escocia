@@ -1,7 +1,22 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Facebook } from 'lucide-react';
+import { useEffect, useState } from "react";
+
+// Facebook is a brand icon. lucide-react 1.x removed brand icons, so we inline
+// the SVG here instead of importing it.
+function Facebook({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.15 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.77l-.44 2.91h-2.33V22c4.78-.79 8.44-4.94 8.44-9.94Z" />
+    </svg>
+  );
+}
 
 interface FacebookPagePluginProps {
   showHeader?: boolean;
@@ -34,7 +49,7 @@ export default function FacebookPagePlugin({
 }: FacebookPagePluginProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  
+
   useEffect(() => {
     // Load Facebook SDK
     const loadFacebookSDK = () => {
@@ -45,20 +60,20 @@ export default function FacebookPagePlugin({
       }
 
       // Set up Facebook SDK initialization
-      window.fbAsyncInit = function() {
+      window.fbAsyncInit = function () {
         window.FB?.init({
           xfbml: true,
-          version: 'v18.0'
+          version: "v18.0",
         });
         setIsLoading(false);
       };
 
       // Load Facebook SDK script
-      const script = document.createElement('script');
+      const script = document.createElement("script");
       script.async = true;
       script.defer = true;
-      script.crossOrigin = 'anonymous';
-      script.src = 'https://connect.facebook.net/es_ES/sdk.js';
+      script.crossOrigin = "anonymous";
+      script.src = "https://connect.facebook.net/es_ES/sdk.js";
       script.onload = () => {
         if (window.fbAsyncInit) {
           window.fbAsyncInit();
@@ -68,7 +83,7 @@ export default function FacebookPagePlugin({
         setHasError(true);
         setIsLoading(false);
       };
-      
+
       document.head.appendChild(script);
     };
 
@@ -77,7 +92,9 @@ export default function FacebookPagePlugin({
     // Cleanup
     return () => {
       // Remove script if component unmounts
-      const script = document.querySelector('script[src*="connect.facebook.net"]');
+      const script = document.querySelector(
+        'script[src*="connect.facebook.net"]',
+      );
       if (script) {
         script.remove();
       }
@@ -97,32 +114,36 @@ export default function FacebookPagePlugin({
           </div>
         </div>
       )}
-      
+
       <div className="p-4">
         {/* Loading state */}
         {isLoading && (
           <div className="text-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-            <p className="text-gray-600 text-sm">Cargando contenido de Facebook...</p>
+            <p className="text-gray-600 text-sm">
+              Cargando contenido de Facebook...
+            </p>
           </div>
         )}
-        
+
         {/* Error state */}
         {hasError && (
           <div className="text-center py-8">
             <div className="text-red-500 mb-2">
               <Facebook className="h-8 w-8 mx-auto opacity-50" />
             </div>
-            <p className="text-gray-600 text-sm">Error al cargar el contenido de Facebook</p>
+            <p className="text-gray-600 text-sm">
+              Error al cargar el contenido de Facebook
+            </p>
           </div>
         )}
-        
+
         {/* Facebook Group Plugin */}
         {!isLoading && !hasError && (
           <div className="mb-4">
             {/* Use Facebook Page Plugin instead of Group plugin for better compatibility */}
-            <div 
-              className="fb-page" 
+            <div
+              className="fb-page"
               data-href="https://www.facebook.com/penabetiscaescocesa"
               data-tabs="timeline"
               data-width={width}
@@ -132,23 +153,31 @@ export default function FacebookPagePlugin({
               data-hide-cover="false"
               data-show-facepile="true"
             >
-              <blockquote cite="https://www.facebook.com/penabetiscaescocesa" className="fb-xfbml-parse-ignore">
-                <a href="https://www.facebook.com/penabetiscaescocesa">Peña Bética Escocesa</a>
+              <blockquote
+                cite="https://www.facebook.com/penabetiscaescocesa"
+                className="fb-xfbml-parse-ignore"
+              >
+                <a href="https://www.facebook.com/penabetiscaescocesa">
+                  Peña Bética Escocesa
+                </a>
               </blockquote>
             </div>
           </div>
         )}
-        
+
         {/* Fallback message */}
         <div className="text-center text-gray-600 text-sm">
-          <p>Si no puedes ver el contenido, visita nuestra página directamente en Facebook.</p>
+          <p>
+            Si no puedes ver el contenido, visita nuestra página directamente en
+            Facebook.
+          </p>
         </div>
       </div>
-      
+
       <div className="p-4 border-t bg-gray-50">
-        <a 
-          href="https://www.facebook.com/penabetiscaescocesa" 
-          target="_blank" 
+        <a
+          href="https://www.facebook.com/penabetiscaescocesa"
+          target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
         >

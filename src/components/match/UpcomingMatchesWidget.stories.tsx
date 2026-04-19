@@ -141,12 +141,7 @@ const meta: Meta<typeof UpcomingMatchesWidget> = {
     msw: {
       handlers: [
         http.get("/api/upcoming-matches", () => {
-          const matchesWithRsvp = mockUpcomingMatches.map((match) => ({
-            ...match,
-            rsvp_count: Math.floor(Math.random() * 20),
-            total_attendees: Math.floor(Math.random() * 50),
-          }));
-          return HttpResponse.json(matchesWithRsvp);
+          return HttpResponse.json(mockUpcomingMatches);
         }),
       ],
     },

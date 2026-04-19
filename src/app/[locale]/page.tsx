@@ -77,12 +77,11 @@ export function HomeContent() {
   const t = useTranslations("HomePage");
   const showPartidos = hasFeature("show-partidos");
   const showClasificacion = hasFeature("show-clasificacion");
-  const showRsvp = hasFeature("show-rsvp");
   const showEfemerides = hasFeature("show-efemerides");
 
   return (
     <>
-      <HeroCommunity showPartidos={showPartidos} showRsvp={showRsvp} />
+      <HeroCommunity showPartidos={showPartidos} />
 
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-canvas-warm" />

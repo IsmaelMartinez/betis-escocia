@@ -1,27 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Heart,
-  Coffee,
-  Smile,
-  ChevronDown,
-  ChevronUp,
-  Users,
-  Calendar,
-} from "lucide-react";
+import { Heart, Coffee, Smile, Calendar } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useState, memo } from "react";
-
-// Lazy load RSVPWidget since it's only shown when expanded
-const RSVPWidget = dynamic(() => import("../rsvp/RSVPWidget"), {
-  loading: () => (
-    <div className="animate-pulse">
-      <div className="h-32 bg-gray-200 rounded"></div>
-    </div>
-  ),
-  ssr: false,
-});
+import { memo } from "react";
 
 // Lazy load CommunityStats - not critical for initial render
 const CommunityStats = dynamic(() => import("../widgets/CommunityStats"), {
@@ -48,12 +30,9 @@ const CommunityStats = dynamic(() => import("../widgets/CommunityStats"), {
 
 interface HeroCommunityProps {
   readonly showPartidos: boolean;
-  readonly showRsvp: boolean;
 }
 
-function HeroCommunity({ showPartidos, showRsvp }: HeroCommunityProps) {
-  const [isRSVPExpanded, setIsRSVPExpanded] = useState(false);
-
+function HeroCommunity({ showPartidos }: HeroCommunityProps) {
   return (
     <section className="relative min-h-screen overflow-hidden">
       {/* ============================================
@@ -187,43 +166,6 @@ function HeroCommunity({ showPartidos, showRsvp }: HeroCommunityProps) {
               <div className="mb-8 relative">
                 <CommunityStats />
               </div>
-
-              {/* Expandable RSVP Section - controlled by feature flag */}
-              {showRsvp && (
-                <div className="border-t border-gray-100 pt-6">
-                  <button
-                    onClick={() => setIsRSVPExpanded(!isRSVPExpanded)}
-                    className="w-full flex items-center justify-between text-left mb-4 hover:text-betis-verde transition-colors duration-200 group"
-                  >
-                    <h3 className="font-heading text-lg font-bold text-scotland-navy uppercase tracking-wide flex items-center gap-2">
-                      <Users className="h-5 w-5 text-betis-verde" />
-                      Confirmar Asistencia
-                    </h3>
-                    {isRSVPExpanded ? (
-                      <ChevronUp className="h-5 w-5 text-betis-verde" />
-                    ) : (
-                      <ChevronDown className="h-5 w-5 text-gray-400 group-hover:text-betis-verde transition-colors" />
-                    )}
-                  </button>
-
-                  {isRSVPExpanded && (
-                    <div className="transition-all duration-300 ease-in-out">
-                      <RSVPWidget
-                        event={{
-                          id: undefined,
-                          title: "Real Betis - Próximo Partido",
-                          date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-                          location: "Edinburgh",
-                          description:
-                            "Únete a la peña para el próximo partido del Betis",
-                        }}
-                        displayMode="inline"
-                        className="border-none shadow-none"
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
 
             {/* Floating accent elements */}

@@ -14,32 +14,29 @@ vi.mock("next/link", () => ({
 
 // Mock supabase functions
 vi.mock("@/lib/api/supabase", () => ({
-  getUpcomingMatchesWithRSVPCounts: vi.fn(),
+  getUpcomingMatches: vi.fn(),
 }));
 
 // Mock FeatureWrapper to always render children (feature enabled)
 vi.mock("@/lib/features/featureProtection", () => ({
-  FeatureWrapper: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  FeatureWrapper: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
 }));
 
 // Import the mocked function
-import { getUpcomingMatchesWithRSVPCounts } from "@/lib/api/supabase";
+import { getUpcomingMatches } from "@/lib/api/supabase";
 
 describe("UpcomingMatchesWidget Component", () => {
-  const mockMatches: (Match & {
-    rsvp_count: number;
-    total_attendees: number;
-  })[] = [
+  const mockMatches: Match[] = [
     {
       id: 1,
       date_time: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week from now
       opponent: "Valencia CF",
       competition: "La Liga",
       home_away: "home",
-      rsvp_count: 15,
-      total_attendees: 12,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(), // Added updated_at
+      updated_at: new Date().toISOString(),
     },
     {
       id: 2,
@@ -47,10 +44,8 @@ describe("UpcomingMatchesWidget Component", () => {
       opponent: "Real Sociedad",
       competition: "Copa del Rey",
       home_away: "away",
-      rsvp_count: 8,
-      total_attendees: 5,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(), // Added updated_at
+      updated_at: new Date().toISOString(),
     },
   ];
 
@@ -65,7 +60,7 @@ describe("UpcomingMatchesWidget Component", () => {
 
   describe("Loading state", () => {
     it("renders loading skeleton", () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockImplementation(
+      vi.mocked(getUpcomingMatches).mockImplementation(
         () => new Promise(() => {}), // Never resolves
       );
 
@@ -80,7 +75,7 @@ describe("UpcomingMatchesWidget Component", () => {
     });
 
     it("shows skeleton items for matches", () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockImplementation(
+      vi.mocked(getUpcomingMatches).mockImplementation(
         () => new Promise(() => {}), // Never resolves
       );
 
@@ -93,7 +88,7 @@ describe("UpcomingMatchesWidget Component", () => {
 
   describe("Error state", () => {
     it("renders error message when API fails", async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockRejectedValueOnce(
+      vi.mocked(getUpcomingMatches).mockRejectedValueOnce(
         new Error("API Error"),
       );
 
@@ -109,7 +104,7 @@ describe("UpcomingMatchesWidget Component", () => {
     });
 
     it("handles reload button click", async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockRejectedValueOnce(
+      vi.mocked(getUpcomingMatches).mockRejectedValueOnce(
         new Error("API Error"),
       );
 
@@ -125,7 +120,7 @@ describe("UpcomingMatchesWidget Component", () => {
 
   describe("Empty state", () => {
     it("renders empty state when no matches", async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce([]);
+      vi.mocked(getUpcomingMatches).mockResolvedValueOnce([]);
 
       render(<UpcomingMatchesWidget />);
 
@@ -142,7 +137,7 @@ describe("UpcomingMatchesWidget Component", () => {
     });
 
     it("shows links to matches page in empty state", async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce([]);
+      vi.mocked(getUpcomingMatches).mockResolvedValueOnce([]);
 
       render(<UpcomingMatchesWidget />);
 
@@ -156,7 +151,7 @@ describe("UpcomingMatchesWidget Component", () => {
     });
 
     it("renders empty state when matches is null", async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(null);
+      vi.mocked(getUpcomingMatches).mockResolvedValueOnce(null);
 
       render(<UpcomingMatchesWidget />);
 
@@ -170,9 +165,7 @@ describe("UpcomingMatchesWidget Component", () => {
 
   describe("Success state with matches", () => {
     it("renders matches correctly", async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(
-        mockMatches,
-      );
+      vi.mocked(getUpcomingMatches).mockResolvedValueOnce(mockMatches);
 
       render(<UpcomingMatchesWidget />);
 
@@ -185,9 +178,7 @@ describe("UpcomingMatchesWidget Component", () => {
     });
 
     it("displays home/away indicators correctly", async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(
-        mockMatches,
-      );
+      vi.mocked(getUpcomingMatches).mockResolvedValueOnce(mockMatches);
 
       render(<UpcomingMatchesWidget />);
 
@@ -200,9 +191,7 @@ describe("UpcomingMatchesWidget Component", () => {
     });
 
     it("highlights Betis team name correctly", async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(
-        mockMatches,
-      );
+      vi.mocked(getUpcomingMatches).mockResolvedValueOnce(mockMatches);
 
       render(<UpcomingMatchesWidget />);
 
@@ -214,49 +203,8 @@ describe("UpcomingMatchesWidget Component", () => {
       });
     });
 
-    it("shows RSVP counts when available", async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(
-        mockMatches,
-      );
-
-      render(<UpcomingMatchesWidget />);
-
-      await waitFor(() => {
-        expect(screen.getAllByText("15")).toHaveLength(1); // rsvp_count for first match
-        expect(screen.getAllByText("8")).toHaveLength(1); // rsvp_count for second match
-        expect(screen.getAllByText("confirmaciones")).toHaveLength(2); // Both matches show confirmaciones
-        expect(screen.getAllByText("12")).toHaveLength(1); // total_attendees for first match
-        expect(screen.getAllByText("5")).toHaveLength(1); // total_attendees for second match
-        expect(screen.getAllByText(/asistentes/)).toHaveLength(2); // Both matches show asistentes (using regex)
-      });
-    });
-
-    it("shows RSVP button for upcoming matches", async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(
-        mockMatches,
-      );
-
-      render(<UpcomingMatchesWidget />);
-
-      await waitFor(() => {
-        const rsvpButtons = screen.getAllByText("📝 Confirmar Asistencia");
-        expect(rsvpButtons).toHaveLength(2); // Both matches are upcoming
-
-        expect(rsvpButtons[0].closest("a")).toHaveAttribute(
-          "href",
-          "/rsvp?match=1",
-        );
-        expect(rsvpButtons[1].closest("a")).toHaveAttribute(
-          "href",
-          "/rsvp?match=2",
-        );
-      });
-    });
-
     it("formats match dates correctly", async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(
-        mockMatches,
-      );
+      vi.mocked(getUpcomingMatches).mockResolvedValueOnce(mockMatches);
 
       render(<UpcomingMatchesWidget />);
 
@@ -270,9 +218,7 @@ describe("UpcomingMatchesWidget Component", () => {
     });
 
     it("applies grid layout for multiple matches", async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(
-        mockMatches,
-      );
+      vi.mocked(getUpcomingMatches).mockResolvedValueOnce(mockMatches);
 
       render(<UpcomingMatchesWidget />);
 
@@ -283,9 +229,7 @@ describe("UpcomingMatchesWidget Component", () => {
     });
 
     it("uses space-y layout for single match", async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce([
-        mockMatches[0],
-      ]);
+      vi.mocked(getUpcomingMatches).mockResolvedValueOnce([mockMatches[0]]);
 
       render(<UpcomingMatchesWidget />);
 
@@ -296,9 +240,7 @@ describe("UpcomingMatchesWidget Component", () => {
     });
 
     it('renders "Ver todos los partidos" link', async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(
-        mockMatches,
-      );
+      vi.mocked(getUpcomingMatches).mockResolvedValueOnce(mockMatches);
 
       render(<UpcomingMatchesWidget />);
 
@@ -314,9 +256,7 @@ describe("UpcomingMatchesWidget Component", () => {
     });
 
     it('shows header "Ver todos" link', async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(
-        mockMatches,
-      );
+      vi.mocked(getUpcomingMatches).mockResolvedValueOnce(mockMatches);
 
       render(<UpcomingMatchesWidget />);
 
@@ -328,73 +268,9 @@ describe("UpcomingMatchesWidget Component", () => {
     });
   });
 
-  describe("Match display details", () => {
-    it("handles matches without RSVP counts", async () => {
-      const matchesWithoutRSVP = mockMatches.map((match) => ({
-        ...match,
-        rsvp_count: 0,
-        total_attendees: 0,
-      }));
-
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(
-        matchesWithoutRSVP,
-      );
-
-      render(<UpcomingMatchesWidget />);
-
-      await waitFor(() => {
-        // Should still show RSVP buttons but no counts
-        const rsvpButtons = screen.getAllByText("📝 Confirmar Asistencia");
-        expect(rsvpButtons.length).toBeGreaterThanOrEqual(1);
-        expect(screen.queryByText("confirmaciones")).not.toBeInTheDocument();
-      });
-    });
-
-    it("shows total attendees when available without confirmations", async () => {
-      const matchesWithAttendeesOnly = mockMatches.map((match) => ({
-        ...match,
-        rsvp_count: 0,
-        total_attendees: 5,
-      }));
-
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(
-        matchesWithAttendeesOnly,
-      );
-
-      render(<UpcomingMatchesWidget />);
-
-      await waitFor(() => {
-        // Should not show RSVP counts section if rsvp_count is 0
-        expect(screen.queryByText("confirmaciones")).not.toBeInTheDocument();
-      });
-    });
-
-    it("handles past matches by not showing RSVP button", async () => {
-      const pastMatch = {
-        ...mockMatches[0],
-        date_time: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week ago
-      };
-
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce([
-        pastMatch,
-      ]);
-
-      render(<UpcomingMatchesWidget />);
-
-      await waitFor(() => {
-        expect(
-          screen.queryByText("📝 Confirmar Asistencia"),
-        ).not.toBeInTheDocument();
-        expect(screen.getByText("Valencia CF")).toBeInTheDocument();
-      });
-    });
-  });
-
   describe("Custom styling", () => {
     it("applies custom className", async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(
-        mockMatches,
-      );
+      vi.mocked(getUpcomingMatches).mockResolvedValueOnce(mockMatches);
 
       const { container } = render(
         <UpcomingMatchesWidget className="custom-widget-class" />,
@@ -409,21 +285,17 @@ describe("UpcomingMatchesWidget Component", () => {
 
   describe("API integration", () => {
     it("calls API with correct limit", async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(
-        mockMatches,
-      );
+      vi.mocked(getUpcomingMatches).mockResolvedValueOnce(mockMatches);
 
       render(<UpcomingMatchesWidget />);
 
       await waitFor(() => {
-        expect(getUpcomingMatchesWithRSVPCounts).toHaveBeenCalledWith(2);
+        expect(getUpcomingMatches).toHaveBeenCalledWith(2);
       });
     });
 
     it("handles API response with data", async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(
-        mockMatches,
-      );
+      vi.mocked(getUpcomingMatches).mockResolvedValueOnce(mockMatches);
 
       render(<UpcomingMatchesWidget />);
 
@@ -435,30 +307,13 @@ describe("UpcomingMatchesWidget Component", () => {
 
   describe("Accessibility", () => {
     it("has proper heading structure", async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(
-        mockMatches,
-      );
+      vi.mocked(getUpcomingMatches).mockResolvedValueOnce(mockMatches);
 
       render(<UpcomingMatchesWidget />);
 
       await waitFor(() => {
         const heading = screen.getByText("Próximos Partidos");
         expect(heading).toHaveClass("text-xl", "font-bold");
-      });
-    });
-
-    it("has accessible button styling", async () => {
-      vi.mocked(getUpcomingMatchesWithRSVPCounts).mockResolvedValueOnce(
-        mockMatches,
-      );
-
-      render(<UpcomingMatchesWidget />);
-
-      await waitFor(() => {
-        const rsvpButtons = screen.getAllByText("📝 Confirmar Asistencia");
-        rsvpButtons.forEach((button) => {
-          expect(button).toHaveClass("bg-betis-verde", "text-white");
-        });
       });
     });
   });

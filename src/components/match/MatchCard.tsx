@@ -3,8 +3,6 @@
 import React from "react";
 import { Calendar } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { FeatureWrapper } from "@/lib/features/featureProtection";
 import type { MatchCardProps } from "@/types/match";
 import type { Match as DatabaseMatch } from "@/lib/api/supabase";
 import { format } from "date-fns";
@@ -18,9 +16,6 @@ import {
 // Adapter function to convert database match to MatchCardProps
 export function convertDatabaseMatchToCardProps(
   dbMatch: DatabaseMatch,
-  rsvpCount?: number,
-  totalAttendees?: number,
-  showRSVP: boolean = true,
 ): MatchCardProps {
   const isUpcoming = new Date(dbMatch.date_time) > new Date();
 
@@ -53,22 +48,11 @@ export function convertDatabaseMatchToCardProps(
             away: dbMatch.away_score,
           }
         : undefined,
-    // Add RSVP info if available
-    rsvpInfo:
-      rsvpCount !== undefined && totalAttendees !== undefined
-        ? {
-            rsvpCount,
-            totalAttendees,
-          }
-        : undefined,
-    // Control RSVP button visibility
-    showRSVP,
   };
 }
 
 const MatchCard: React.FC<MatchCardProps> = (props) => {
   const {
-    id,
     opponent,
     date,
     competition,
@@ -79,12 +63,7 @@ const MatchCard: React.FC<MatchCardProps> = (props) => {
     opponentCrest,
     competitionEmblem,
     score,
-    rsvpInfo,
-    showRSVP,
   } = props;
-
-  const isUpcoming =
-    status === "SCHEDULED" || status === "TIMED" || new Date(date) > new Date();
 
   // Format date with Spanish locale
   const formatDate = (dateString: string): string => {
@@ -227,50 +206,13 @@ const MatchCard: React.FC<MatchCardProps> = (props) => {
         </div>
 
         {/* Match status */}
-        <div className="mb-4 text-center">
+        <div className="text-center">
           <span
             className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusInfo.color}`}
           >
             {statusInfo.text}
           </span>
         </div>
-
-        {/* RSVP section for upcoming matches */}
-        {isUpcoming && showRSVP && (
-          <FeatureWrapper feature="show-rsvp">
-            <div className="border-t border-gray-200 pt-4">
-              {rsvpInfo && (
-                <div className="flex items-center justify-between mb-3">
-                  <div className="text-sm text-gray-600">
-                    <span className="font-medium text-betis-green">
-                      {rsvpInfo.rsvpCount}
-                    </span>{" "}
-                    confirmaciones
-                    {rsvpInfo.totalAttendees > 0 && (
-                      <span className="ml-2">
-                        •{" "}
-                        <span className="font-medium text-betis-green">
-                          {rsvpInfo.totalAttendees}
-                        </span>{" "}
-                        asistentes
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              <Link
-                href={`/rsvp?match=${id}`}
-                className="block w-full bg-betis-verde hover:bg-betis-verde-dark text-white text-center py-2 px-4 rounded-md font-medium transition-colors text-sm"
-              >
-                📝 Confirmar Asistencia
-                {rsvpInfo && rsvpInfo.totalAttendees > 0
-                  ? ` (${rsvpInfo.totalAttendees})`
-                  : ""}
-              </Link>
-            </div>
-          </FeatureWrapper>
-        )}
       </div>
     </div>
   );

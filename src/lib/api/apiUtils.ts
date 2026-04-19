@@ -15,7 +15,7 @@ import {
 } from "@/lib/api/supabase";
 import { routing } from "@/i18n/routing";
 import { log } from "@/lib/utils/logger";
-import type { ValidationTranslator } from "@/lib/schemas/contact";
+import type { ValidationTranslator } from "@/lib/schemas/trivia";
 
 /**
  * Resolve the active locale for an API request. Prefers the `x-next-intl-locale`

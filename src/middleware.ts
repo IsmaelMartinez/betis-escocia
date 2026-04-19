@@ -5,11 +5,6 @@ import { routing } from "@/i18n/routing";
 
 const handleI18n = createIntlMiddleware(routing);
 
-const isProtectedRoute = createRouteMatcher([
-  "/dashboard(.*)",
-  "/:locale/dashboard(.*)",
-]);
-
 const isAdminRoute = createRouteMatcher([
   "/admin(.*)",
   "/:locale/admin(.*)",
@@ -44,8 +39,9 @@ export default clerkMiddleware(async (auth, request) => {
     return NextResponse.next();
   }
 
-  // Page routes: enforce auth first, then let next-intl handle locale routing.
-  if (isProtectedRoute(request) || isAdminRoute(request)) {
+  // Page routes: enforce admin auth first, then let next-intl handle locale
+  // routing. Role checking is handled by individual route handlers and HOCs.
+  if (isAdminRoute(request)) {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.redirect(signInUrl(request, pathname));

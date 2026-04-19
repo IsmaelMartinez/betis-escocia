@@ -48,9 +48,7 @@ validateEnvironmentVariables();
  * Pass through all environment variables needed by Next.js
  */
 function buildWebServerEnv(): Record<string, string> {
-  const env: Record<string, string> = {
-    NEXT_PUBLIC_FEATURE_ADMIN_PUSH_NOTIFICATIONS: "true",
-  };
+  const env: Record<string, string> = {};
 
   // Add all required and optional env vars
   [...REQUIRED_ENV_VARS, ...OPTIONAL_ENV_VARS].forEach((varName) => {
@@ -83,13 +81,9 @@ export default defineConfig({
 
     launchOptions: {
       env: {
-        NEXT_PUBLIC_FEATURE_CLASIFICACION: "true",
-        NEXT_PUBLIC_FEATURE_RSVP: "true",
-        NEXT_PUBLIC_FEATURE_PARTIDOS: "true",
-        NEXT_PUBLIC_FEATURE_NOSOTROS: "true",
-        NEXT_PUBLIC_FEATURE_UNETE: "true",
+        // Feature flags for E2E testing — core flags are enabled by default,
+        // so only the disabled-by-default flags need to be explicitly set.
         NEXT_PUBLIC_FEATURE_CLERK_AUTH: "true",
-        // Feature flags for E2E testing
       },
     },
 
@@ -110,7 +104,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: "NEXT_PUBLIC_FEATURE_ADMIN_PUSH_NOTIFICATIONS=true npm run dev",
+    command: "npm run dev",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000, // Increased timeout to 120 seconds

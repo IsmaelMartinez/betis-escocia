@@ -1,5 +1,6 @@
 import { z } from "zod";
-import type { ValidationTranslator } from "./contact";
+
+export type ValidationTranslator = (key: string) => string;
 
 const defaultT: ValidationTranslator = (key) => {
   const fallback: Record<string, string> = {

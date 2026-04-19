@@ -6,11 +6,12 @@ Real Betis supporters club website in Edinburgh. We watch matches at **Polwarth 
 
 ```bash
 npm install
-cp .env.example .env.local  # Fill in your keys
-npm run dev                 # http://localhost:3000
+cp .env.local.example .env.local  # Fill in your keys
+npm run dev                       # http://localhost:3000
 ```
 
 ### Required Environment Variables
+
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
@@ -32,7 +33,7 @@ npm run type-check    # TypeScript
 
 ## Tech Stack
 
-- **Next.js 15** + React 19 + TypeScript
+- **Next.js 16** + React 19 + TypeScript
 - **Supabase** (PostgreSQL with RLS)
 - **Clerk** (authentication)
 - **Tailwind CSS 4**

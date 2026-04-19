@@ -36,9 +36,6 @@ const meta: Meta<typeof MatchTicket> = {
     isHome: {
       control: "boolean",
     },
-    showRSVP: {
-      control: "boolean",
-    },
   },
   decorators: [
     (Story) => (
@@ -61,11 +58,6 @@ const upcomingMatch = {
   isHome: true,
   status: "SCHEDULED" as const,
   matchday: 19,
-  rsvpInfo: {
-    rsvpCount: 12,
-    totalAttendees: 18,
-  },
-  showRSVP: true,
 };
 
 const liveMatch = {
@@ -77,7 +69,6 @@ const liveMatch = {
   status: "IN_PLAY" as const,
   matchday: 18,
   score: { home: 1, away: 2 },
-  showRSVP: false,
 };
 
 const finishedMatch = {
@@ -90,7 +81,6 @@ const finishedMatch = {
   matchday: undefined,
   score: { home: 3, away: 1 },
   result: "W",
-  showRSVP: false,
 };
 
 export const Upcoming: Story = {
@@ -180,15 +170,6 @@ export const Postponed: Story = {
   args: {
     ...upcomingMatch,
     status: "POSTPONED",
-    showRSVP: false,
-  },
-};
-
-export const WithoutRSVP: Story = {
-  args: {
-    ...upcomingMatch,
-    showRSVP: false,
-    rsvpInfo: undefined,
   },
 };
 

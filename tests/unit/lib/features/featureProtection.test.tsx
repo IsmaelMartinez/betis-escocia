@@ -41,7 +41,7 @@ describe("featureProtection", () => {
       mockHasFeature.mockReturnValue(true);
       const ProtectedComponent = withFeatureFlag(
         TestComponent,
-        "show-contacto",
+        "show-partidos",
       );
 
       render(<ProtectedComponent title="Protected Component" />);
@@ -60,7 +60,7 @@ describe("featureProtection", () => {
 
       const ProtectedComponent = withFeatureFlag(
         TestComponent,
-        "show-contacto",
+        "show-partidos",
       );
 
       expect(() => render(<ProtectedComponent />)).toThrow("NEXT_NOT_FOUND");
@@ -69,18 +69,21 @@ describe("featureProtection", () => {
 
     it("should check the correct feature flag", () => {
       mockHasFeature.mockReturnValue(true);
-      const ProtectedComponent = withFeatureFlag(TestComponent, "show-rsvp");
+      const ProtectedComponent = withFeatureFlag(
+        TestComponent,
+        "show-nosotros",
+      );
 
       render(<ProtectedComponent />);
 
-      expect(mockHasFeature).toHaveBeenCalledWith("show-rsvp");
+      expect(mockHasFeature).toHaveBeenCalledWith("show-nosotros");
     });
 
     it("should pass through all props to the wrapped component", () => {
       mockHasFeature.mockReturnValue(true);
       const ProtectedComponent = withFeatureFlag(
         TestComponent,
-        "show-contacto",
+        "show-partidos",
       );
 
       render(<ProtectedComponent title="Custom Title" />);
@@ -92,7 +95,7 @@ describe("featureProtection", () => {
       mockHasFeature.mockReturnValue(true);
       const ProtectedComponent = withFeatureFlag(
         TestComponent,
-        "show-contacto",
+        "show-partidos",
       );
 
       expect(
@@ -102,15 +105,15 @@ describe("featureProtection", () => {
 
     it("should handle multiple instances with different feature flags", () => {
       mockHasFeature.mockImplementation(
-        (flag) => (flag as string) === "show-contacto",
+        (flag) => (flag as string) === "show-partidos",
       );
       // Mock notFound to throw for disabled features
       mockNotFound.mockImplementation(() => {
         throw new Error("NEXT_NOT_FOUND");
       });
 
-      const TriviaProtected = withFeatureFlag(TestComponent, "show-contacto");
-      const RSVPProtected = withFeatureFlag(TestComponent, "show-rsvp");
+      const TriviaProtected = withFeatureFlag(TestComponent, "show-partidos");
+      const RSVPProtected = withFeatureFlag(TestComponent, "show-nosotros");
 
       render(<TriviaProtected title="Trivia" />);
       expect(screen.getByText("Trivia")).toBeInTheDocument();
@@ -118,7 +121,7 @@ describe("featureProtection", () => {
       expect(() => render(<RSVPProtected title="RSVP" />)).toThrow(
         "NEXT_NOT_FOUND",
       );
-      expect(mockHasFeature).toHaveBeenCalledWith("show-rsvp");
+      expect(mockHasFeature).toHaveBeenCalledWith("show-nosotros");
     });
   });
 
@@ -146,21 +149,21 @@ describe("featureProtection", () => {
       mockHasFeature.mockReturnValue(true);
 
       const TestHookComponent = () => {
-        const isEnabled = useFeatureFlag("show-contacto");
+        const isEnabled = useFeatureFlag("show-partidos");
         return <div>{isEnabled ? "enabled" : "disabled"}</div>;
       };
 
       render(<TestHookComponent />);
 
       expect(screen.getByText("enabled")).toBeInTheDocument();
-      expect(mockHasFeature).toHaveBeenCalledWith("show-contacto");
+      expect(mockHasFeature).toHaveBeenCalledWith("show-partidos");
     });
 
     it("should return false when feature is disabled", () => {
       mockHasFeature.mockReturnValue(false);
 
       const TestHookComponent = () => {
-        const isEnabled = useFeatureFlag("show-contacto");
+        const isEnabled = useFeatureFlag("show-partidos");
         return <div>{isEnabled ? "enabled" : "disabled"}</div>;
       };
 
@@ -173,7 +176,7 @@ describe("featureProtection", () => {
       mockHasFeature.mockReturnValue(false);
 
       const TestHookComponent = () => {
-        useFeatureFlag("show-contacto", "/dashboard");
+        useFeatureFlag("show-partidos", "/dashboard");
         return <div>content</div>;
       };
 
@@ -187,7 +190,7 @@ describe("featureProtection", () => {
       const originalHref = window.location.href;
 
       const TestHookComponent = () => {
-        useFeatureFlag("show-contacto", "/dashboard");
+        useFeatureFlag("show-partidos", "/dashboard");
         return <div>content</div>;
       };
 
@@ -201,7 +204,7 @@ describe("featureProtection", () => {
       const originalHref = window.location.href;
 
       const TestHookComponent = () => {
-        useFeatureFlag("show-contacto");
+        useFeatureFlag("show-partidos");
         return <div>content</div>;
       };
 
@@ -216,7 +219,7 @@ describe("featureProtection", () => {
       mockHasFeature.mockReturnValue(false);
 
       const TestHookComponent = () => {
-        const isEnabled = useFeatureFlag("show-contacto", "/dashboard");
+        const isEnabled = useFeatureFlag("show-partidos", "/dashboard");
         return <div>{isEnabled ? "enabled" : "disabled"}</div>;
       };
 
@@ -231,7 +234,7 @@ describe("featureProtection", () => {
       mockHasFeature.mockReturnValue(true);
 
       render(
-        <FeatureWrapper feature={"show-contacto"}>
+        <FeatureWrapper feature={"show-partidos"}>
           <div data-testid="feature-content">Feature Content</div>
         </FeatureWrapper>,
       );
@@ -245,7 +248,7 @@ describe("featureProtection", () => {
 
       render(
         <FeatureWrapper
-          feature={"show-contacto"}
+          feature={"show-partidos"}
           fallback={<div data-testid="fallback">Fallback Content</div>}
         >
           <div data-testid="feature-content">Feature Content</div>
@@ -261,7 +264,7 @@ describe("featureProtection", () => {
       mockHasFeature.mockReturnValue(false);
 
       const { container } = render(
-        <FeatureWrapper feature={"show-contacto"}>
+        <FeatureWrapper feature={"show-partidos"}>
           <div data-testid="feature-content">Feature Content</div>
         </FeatureWrapper>,
       );
@@ -274,19 +277,19 @@ describe("featureProtection", () => {
       mockHasFeature.mockReturnValue(true);
 
       render(
-        <FeatureWrapper feature={"show-rsvp"}>
+        <FeatureWrapper feature={"show-nosotros"}>
           <div>Content</div>
         </FeatureWrapper>,
       );
 
-      expect(mockHasFeature).toHaveBeenCalledWith("show-rsvp");
+      expect(mockHasFeature).toHaveBeenCalledWith("show-nosotros");
     });
 
     it("should handle multiple children", () => {
       mockHasFeature.mockReturnValue(true);
 
       render(
-        <FeatureWrapper feature={"show-contacto"}>
+        <FeatureWrapper feature={"show-partidos"}>
           <div data-testid="child-1">Child 1</div>
           <div data-testid="child-2">Child 2</div>
           <span>Child 3</span>
@@ -303,7 +306,7 @@ describe("featureProtection", () => {
 
       render(
         <FeatureWrapper
-          feature={"show-contacto"}
+          feature={"show-partidos"}
           fallback={
             <div data-testid="complex-fallback">
               <h2>Feature Disabled</h2>
@@ -330,7 +333,7 @@ describe("featureProtection", () => {
       mockHasFeature.mockReturnValue(false);
 
       const { rerender } = render(
-        <FeatureWrapper feature={"show-contacto"}>
+        <FeatureWrapper feature={"show-partidos"}>
           <div data-testid="feature-content">Feature Content</div>
         </FeatureWrapper>,
       );
@@ -341,7 +344,7 @@ describe("featureProtection", () => {
       mockHasFeature.mockReturnValue(true);
 
       rerender(
-        <FeatureWrapper feature={"show-contacto"}>
+        <FeatureWrapper feature={"show-partidos"}>
           <div data-testid="feature-content">Feature Content</div>
         </FeatureWrapper>,
       );
@@ -353,7 +356,7 @@ describe("featureProtection", () => {
       mockHasFeature.mockReturnValue(true);
 
       render(
-        <FeatureWrapper feature={"show-contacto"}>
+        <FeatureWrapper feature={"show-partidos"}>
           Simple string content
         </FeatureWrapper>,
       );
@@ -364,14 +367,14 @@ describe("featureProtection", () => {
     it("should handle nested FeatureWrapper components", () => {
       mockHasFeature.mockImplementation(
         (flag) =>
-          (flag as string) === "show-contacto" ||
-          (flag as string) === "show-rsvp",
+          (flag as string) === "show-partidos" ||
+          (flag as string) === "show-nosotros",
       );
 
       render(
-        <FeatureWrapper feature={"show-contacto"}>
+        <FeatureWrapper feature={"show-partidos"}>
           <div data-testid="outer-feature">
-            <FeatureWrapper feature={"show-rsvp"}>
+            <FeatureWrapper feature={"show-nosotros"}>
               <div data-testid="inner-feature">Nested Feature Content</div>
             </FeatureWrapper>
           </div>
@@ -382,8 +385,8 @@ describe("featureProtection", () => {
       expect(screen.getByTestId("inner-feature")).toBeInTheDocument();
       expect(screen.getByText("Nested Feature Content")).toBeInTheDocument();
 
-      expect(mockHasFeature).toHaveBeenCalledWith("show-contacto");
-      expect(mockHasFeature).toHaveBeenCalledWith("show-rsvp");
+      expect(mockHasFeature).toHaveBeenCalledWith("show-partidos");
+      expect(mockHasFeature).toHaveBeenCalledWith("show-nosotros");
     });
   });
 
@@ -409,7 +412,7 @@ describe("featureProtection", () => {
 
       const ProtectedFunctional = withFeatureFlag(
         FunctionalComponent,
-        "show-contacto",
+        "show-partidos",
       );
 
       render(<ProtectedFunctional message="Functional works" />);
@@ -427,7 +430,7 @@ describe("featureProtection", () => {
         }
       }
 
-      const ProtectedClass = withFeatureFlag(ClassComponent, "show-contacto");
+      const ProtectedClass = withFeatureFlag(ClassComponent, "show-partidos");
 
       render(<ProtectedClass title="Class works" />);
 
@@ -443,7 +446,7 @@ describe("featureProtection", () => {
       });
 
       const TestComponent = () => {
-        const isEnabled = useFeatureFlag("show-contacto");
+        const isEnabled = useFeatureFlag("show-partidos");
         return <div>{isEnabled ? "enabled" : "disabled"}</div>;
       };
 

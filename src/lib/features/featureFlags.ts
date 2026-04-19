@@ -13,9 +13,7 @@ export type FeatureName =
   | "show-jugadores-historicos"
   | "show-clerk-auth"
   | "show-debug-info"
-  | "show-rsvp"
   | "show-unete"
-  | "show-contacto"
   | "show-efemerides";
 
 // Navigation item interface
@@ -34,9 +32,7 @@ const DEFAULT_FEATURES: Record<FeatureName, boolean> = {
   "show-jugadores-historicos": true, // Core: Historic players
   "show-clerk-auth": false, // Phase 2: user accounts
   "show-debug-info": false,
-  "show-rsvp": false, // Phase 2: RSVP functionality
   "show-unete": true, // Core: Join page
-  "show-contacto": false, // Phase 2: contact form
   "show-efemerides": true, // Core: Betis history efemérides
 };
 
@@ -48,9 +44,7 @@ const ENV_VAR_MAP: Record<FeatureName, string> = {
   "show-jugadores-historicos": "NEXT_PUBLIC_FEATURE_JUGADORES_HISTORICOS",
   "show-clerk-auth": "NEXT_PUBLIC_FEATURE_CLERK_AUTH",
   "show-debug-info": "NEXT_PUBLIC_FEATURE_DEBUG_INFO",
-  "show-rsvp": "NEXT_PUBLIC_FEATURE_RSVP",
   "show-unete": "NEXT_PUBLIC_FEATURE_UNETE",
-  "show-contacto": "NEXT_PUBLIC_FEATURE_CONTACTO",
   "show-efemerides": "NEXT_PUBLIC_FEATURE_EFEMERIDES",
 };
 
@@ -117,7 +111,6 @@ export function hasFeature(featureName: FeatureName): boolean {
  */
 export function getEnabledNavigationItems(): NavigationItem[] {
   const allNavigationItems: NavigationItem[] = [
-    { translationKey: "rsvp", href: "/rsvp", feature: "show-rsvp" },
     {
       translationKey: "partidos",
       href: "/partidos",
@@ -144,11 +137,6 @@ export function getEnabledNavigationItems(): NavigationItem[] {
       feature: null,
     },
     { translationKey: "unete", href: "/unete", feature: "show-unete" },
-    {
-      translationKey: "contacto",
-      href: "/contacto",
-      feature: "show-contacto",
-    },
   ];
 
   return allNavigationItems.filter((item) => {
