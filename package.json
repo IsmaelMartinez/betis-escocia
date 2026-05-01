@@ -8,6 +8,7 @@
   "overrides": {
     "eslint": "^10.2.1",
     "glob": "^10.4.5",
+    "postcss": ">=8.5.10",
     "rimraf": "^5.0.10"
   },
   "scripts": {
