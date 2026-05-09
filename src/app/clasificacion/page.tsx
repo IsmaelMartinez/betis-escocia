@@ -18,6 +18,12 @@ export const metadata: Metadata = {
     "Clasificación actual de La Liga Santander con la posición del Real Betis. Puntos, partidos jugados y estadísticas completas.",
 };
 
+// Render at request time. Static prerender would call football-data.org during
+// `next build`, which fails when the workflow lacks the API key — e.g. on
+// Dependabot CI runs that don't get repository secrets. Real-time standings are
+// also a better fit for a fan-facing page than build-pinned data.
+export const dynamic = "force-dynamic";
+
 import {
   getPositionStyle,
   getPositionBadge,
