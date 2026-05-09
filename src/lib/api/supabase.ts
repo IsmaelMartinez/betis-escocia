@@ -4,47 +4,22 @@ import { log } from "@/lib/utils/logger";
 // Next.js automatically loads .env.local - no dotenv needed
 export type { SupabaseClient };
 
-const NOT_CONFIGURED = "Supabase not configured: set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.";
+// Default to placeholder values so module evaluation succeeds when env vars
+// are missing (e.g. CI builds on Dependabot PRs that don't get repository
+// secrets, or local dev without a Supabase project). createClient accepts any
+// string URL — it stores the value without validating it — so the build can
+// collect page data and unit tests can mock `@supabase/supabase-js` cleanly.
+// At runtime any actual API call against a placeholder URL fails at request
+// time with a clear network error, which is the "optional" semantic.
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co";
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "placeholder-anon-key";
 
-function readSupabaseEnv(): { url: string; key: string } {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) throw new Error(NOT_CONFIGURED);
-  return { url, key };
-}
-
-let _client: SupabaseClient | null = null;
-function getClient(): SupabaseClient {
-  if (_client) return _client;
-  const { url, key } = readSupabaseEnv();
-  _client = createClient(url, key);
-  return _client;
-}
-
-// Lazy-loaded singleton. The Proxy keeps the existing `supabase.from(...)` call
-// sites working unchanged but defers `createClient` until first property access,
-// so module evaluation succeeds even when the env vars are missing (e.g. CI
-// builds on Dependabot PRs that don't get repository secrets, or local dev
-// without a Supabase project). Property access throws clearly if the env vars
-// are still missing at call time. The `get` trap binds method values to the
-// real client so SupabaseClient methods that rely on `this` (e.g. `from`,
-// `auth.signIn`) keep working when invoked through the Proxy.
-export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
-  get(_target, prop) {
-    const client = getClient();
-    const value = Reflect.get(client, prop);
-    return typeof value === "function" ? value.bind(client) : value;
-  },
-  set(_target, prop, value) {
-    return Reflect.set(getClient(), prop, value);
-  },
-}) as SupabaseClient;
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export function getAuthenticatedSupabaseClient(
   supabaseAccessToken: string,
 ): SupabaseClient {
-  const { url, key } = readSupabaseEnv();
-  return createClient(url, key, {
+  return createClient(supabaseUrl, supabaseAnonKey, {
     global: {
       headers: { Authorization: `Bearer ${supabaseAccessToken}` },
     },
