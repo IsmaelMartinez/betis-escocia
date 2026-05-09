@@ -26,10 +26,17 @@ function getClient(): SupabaseClient {
 // so module evaluation succeeds even when the env vars are missing (e.g. CI
 // builds on Dependabot PRs that don't get repository secrets, or local dev
 // without a Supabase project). Property access throws clearly if the env vars
-// are still missing at call time.
+// are still missing at call time. The `get` trap binds method values to the
+// real client so SupabaseClient methods that rely on `this` (e.g. `from`,
+// `auth.signIn`) keep working when invoked through the Proxy.
 export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
   get(_target, prop) {
-    return Reflect.get(getClient(), prop);
+    const client = getClient();
+    const value = Reflect.get(client, prop);
+    return typeof value === "function" ? value.bind(client) : value;
+  },
+  set(_target, prop, value) {
+    return Reflect.set(getClient(), prop, value);
   },
 }) as SupabaseClient;
 
