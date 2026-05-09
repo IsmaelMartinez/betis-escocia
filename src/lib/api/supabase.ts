@@ -4,15 +4,40 @@ import { log } from "@/lib/utils/logger";
 // Next.js automatically loads .env.local - no dotenv needed
 export type { SupabaseClient };
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const NOT_CONFIGURED = "Supabase not configured: set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.";
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+function readSupabaseEnv(): { url: string; key: string } {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) throw new Error(NOT_CONFIGURED);
+  return { url, key };
+}
+
+let _client: SupabaseClient | null = null;
+function getClient(): SupabaseClient {
+  if (_client) return _client;
+  const { url, key } = readSupabaseEnv();
+  _client = createClient(url, key);
+  return _client;
+}
+
+// Lazy-loaded singleton. The Proxy keeps the existing `supabase.from(...)` call
+// sites working unchanged but defers `createClient` until first property access,
+// so module evaluation succeeds even when the env vars are missing (e.g. CI
+// builds on Dependabot PRs that don't get repository secrets, or local dev
+// without a Supabase project). Property access throws clearly if the env vars
+// are still missing at call time.
+export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
+  get(_target, prop) {
+    return Reflect.get(getClient(), prop);
+  },
+}) as SupabaseClient;
 
 export function getAuthenticatedSupabaseClient(
   supabaseAccessToken: string,
 ): SupabaseClient {
-  return createClient(supabaseUrl, supabaseAnonKey, {
+  const { url, key } = readSupabaseEnv();
+  return createClient(url, key, {
     global: {
       headers: { Authorization: `Bearer ${supabaseAccessToken}` },
     },
