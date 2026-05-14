@@ -1,18 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { 
+import {
   userQuerySchema,
   userUpdateSchema,
   userDeleteSchema,
   userRoleSchema,
   matchSchema,
-  notificationPreferencesSchema,
   type Role,
   type UserQueryParams,
   type UserUpdateData,
   type UserDeleteData,
   type UserRoleInput,
-  type MatchInput,
-  type NotificationPreferencesInput
+  type MatchInput
 } from '@/lib/schemas/admin';
 import { ZodError } from 'zod';
 
@@ -436,32 +434,6 @@ describe('Admin Schema', () => {
     });
   });
 
-  describe('notificationPreferencesSchema', () => {
-    describe('Valid cases', () => {
-      it('should validate enabled notifications', () => {
-        const result = notificationPreferencesSchema.parse({ enabled: true });
-        expect(result.enabled).toBe(true);
-      });
-
-      it('should validate disabled notifications', () => {
-        const result = notificationPreferencesSchema.parse({ enabled: false });
-        expect(result.enabled).toBe(false);
-      });
-    });
-
-    describe('Invalid cases', () => {
-      it('should reject non-boolean values', () => {
-        expect(() => notificationPreferencesSchema.parse({ enabled: 'true' })).toThrow(ZodError);
-        expect(() => notificationPreferencesSchema.parse({ enabled: 1 })).toThrow(ZodError);
-        expect(() => notificationPreferencesSchema.parse({ enabled: 'yes' })).toThrow(ZodError);
-      });
-
-      it('should reject missing enabled field', () => {
-        expect(() => notificationPreferencesSchema.parse({})).toThrow(ZodError);
-      });
-    });
-  });
-
   describe('Type inference', () => {
     it('should infer correct TypeScript types', () => {
       const queryParams: UserQueryParams = { limit: 25, offset: 50 };
@@ -474,7 +446,6 @@ describe('Admin Schema', () => {
         competition: 'Test League',
         home_away: 'home'
       };
-      const notificationData: NotificationPreferencesInput = { enabled: true };
 
       // These should not throw TypeScript errors
       expect(queryParams.limit).toBe(25);
@@ -482,7 +453,6 @@ describe('Admin Schema', () => {
       expect(deleteData.userId).toBe('user_456');
       expect(roleData.role).toBe('moderator');
       expect(matchData.home_away).toBe('home');
-      expect(notificationData.enabled).toBe(true);
     });
 
     it('should properly type Role enum', () => {
@@ -527,14 +497,5 @@ describe('Admin Schema', () => {
       expect(result.matchday).toBe(35);
     });
 
-    it('should handle notification preference updates', () => {
-      // Enable notifications
-      const enableNotifications = notificationPreferencesSchema.parse({ enabled: true });
-      expect(enableNotifications.enabled).toBe(true);
-      
-      // Disable notifications
-      const disableNotifications = notificationPreferencesSchema.parse({ enabled: false });
-      expect(disableNotifications.enabled).toBe(false);
-    });
   });
 });

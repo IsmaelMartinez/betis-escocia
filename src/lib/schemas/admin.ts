@@ -66,10 +66,3 @@ export const matchSchema = z.object({
 });
 
 export type MatchInput = z.infer<typeof matchSchema>;
-
-// Notification preferences schema
-export const notificationPreferencesSchema = z.object({
-  enabled: z.boolean()
-});
-
-export type NotificationPreferencesInput = z.infer<typeof notificationPreferencesSchema>;

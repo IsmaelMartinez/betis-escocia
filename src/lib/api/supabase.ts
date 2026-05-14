@@ -176,22 +176,3 @@ export async function deleteMatch(id: number) {
 
   return { success: true };
 }
-
-// Notification Preferences types
-export interface NotificationPreference {
-  id: number;
-  user_id: string;
-  enabled: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface NotificationPreferenceInsert {
-  user_id: string;
-  enabled: boolean;
-}
-
-export interface NotificationPreferenceUpdate {
-  enabled?: boolean;
-  updated_at?: string;
-}

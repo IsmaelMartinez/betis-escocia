@@ -23,7 +23,7 @@ Already-dead tables in the schema: `rsvps`, `contact_submissions`,
 
 ## Phases
 
-### Phase 1 — Delete trivia (IN PROGRESS)
+### Phase 1 — Delete trivia (DONE)
 
 Trivia has the deepest Clerk-Supabase coupling (RLS via Clerk JWT,
 `user_trivia_scores` daily limits, three tables). Removing it
@@ -61,11 +61,15 @@ pass with no trivia references in `src/`.
 - Lose: admin manual match edits, historical match cache. Public UX
   stays the same.
 
-### Phase 3 — Standings without cache
+### Phase 3 — Standings without cache (DONE)
 
-- Remove `classification_cache` usage in `/api/standings`.
-- Hit Football-Data.org directly each request, or wrap with a short
-  in-memory cache. No user-visible change.
+- `/api/standings` now wraps `FootballDataService.getLaLigaStandings()`
+  with `unstable_cache` (24h revalidate). No DB read/write on the path.
+- `classification_cache` removed from `sql/0001_setup.sql`; live-DB
+  `DROP TABLE` still pending Phase 4.
+- Stale-fallback-on-API-error behaviour intentionally dropped: a fresh
+  fetch failure now surfaces as a 400 instead of returning stale cache.
+  Acceptable given 24h cache window + Football-Data uptime.
 
 ### Phase 4 — Drop Supabase
 
@@ -86,3 +90,15 @@ pass with no trivia references in `src/`.
 - Migrating to a different DB or backend.
 - Re-enabling any of the removed features in a "lite" form
   (e.g. localStorage trivia).
+
+## Dead match components (follow-up)
+
+The following components in `src/components/match/` have no callers in
+`src/app/` and can be deleted whenever convenient:
+
+- `FilteredMatches.tsx` (+ story + test)
+- `PaginatedMatches.tsx` (+ story)
+- `MatchTicket.tsx` (+ story)
+- `CompetitionFilter.tsx` (+ story) — only used by `FilteredMatches`
+
+Not deleted in the current cleanup pass to keep the diff scoped.
