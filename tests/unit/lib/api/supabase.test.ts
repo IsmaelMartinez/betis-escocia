@@ -388,5 +388,4 @@ describe("supabase", () => {
       expect(result).toEqual({ success: false, error: "Delete failed" });
     });
   });
-
 });

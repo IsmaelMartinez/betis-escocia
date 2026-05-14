@@ -1,21 +1,25 @@
-import { clerk, clerkSetup } from '@clerk/testing/playwright';
-import { chromium, FullConfig } from '@playwright/test';
-import path from 'path';
+import { clerk, clerkSetup } from "@clerk/testing/playwright";
+import { chromium, FullConfig } from "@playwright/test";
+import path from "path";
 
 async function globalSetup(config: FullConfig) {
   const { baseURL } = config.projects[0].use;
 
   // Ensure compatibility with @clerk/testing by setting the expected environment variable
   // if it's not already set but NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is available
-  if (!process.env.CLERK_PUBLISHABLE_KEY && process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
-    process.env.CLERK_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  if (
+    !process.env.CLERK_PUBLISHABLE_KEY &&
+    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+  ) {
+    process.env.CLERK_PUBLISHABLE_KEY =
+      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
   }
 
   // Configure Playwright with Clerk
   await clerkSetup();
 
   // Define the path to the storage file, which is `user.json`
-  const authFile = path.join(__dirname, '../playwright/.clerk/user.json');
+  const authFile = path.join(__dirname, "../playwright/.clerk/user.json");
 
   const browser = await chromium.launch();
   const page = await browser.newPage();
@@ -24,20 +28,20 @@ async function globalSetup(config: FullConfig) {
   page.setDefaultTimeout(60000);
 
   // Navigate to the base URL first
-  await page.goto(baseURL || '/');
+  await page.goto(baseURL || "/");
 
   // Perform authentication steps.
   await clerk.signIn({
     page,
     signInParams: {
-      strategy: 'password',
+      strategy: "password",
       identifier: process.env.CLERK_TEST_EMAIL!,
       password: process.env.CLERK_TEST_PASSWORD!,
     },
   });
 
   // Wait for the page to be idle after sign-in to ensure all redirects and authentication processes are complete
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState("networkidle");
 
   await page.context().storageState({ path: authFile });
   await browser.close();
