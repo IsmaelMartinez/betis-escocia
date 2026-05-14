@@ -95,46 +95,6 @@ CREATE INDEX IF NOT EXISTS idx_contact_submissions_status ON contact_submissions
 CREATE INDEX IF NOT EXISTS idx_contact_submissions_type ON contact_submissions(type);
 
 -- =============================================================================
--- TRIVIA SYSTEM TABLES
--- =============================================================================
-
--- Trivia Questions
-CREATE TABLE IF NOT EXISTS trivia_questions (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    question_text TEXT NOT NULL,
-    category VARCHAR(50) NOT NULL CHECK (category IN ('betis', 'scotland', 'whisky')),
-    difficulty VARCHAR(20) DEFAULT 'medium' CHECK (difficulty IN ('easy', 'medium', 'hard')),
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-CREATE INDEX IF NOT EXISTS idx_trivia_questions_category ON trivia_questions(category);
-CREATE INDEX IF NOT EXISTS idx_trivia_questions_difficulty ON trivia_questions(difficulty);
-
--- Trivia Answers
-CREATE TABLE IF NOT EXISTS trivia_answers (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    question_id UUID NOT NULL REFERENCES trivia_questions(id) ON DELETE CASCADE,
-    answer_text TEXT NOT NULL,
-    is_correct BOOLEAN NOT NULL DEFAULT FALSE,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-CREATE INDEX IF NOT EXISTS idx_trivia_answers_question_id ON trivia_answers(question_id);
-CREATE INDEX IF NOT EXISTS idx_trivia_answers_is_correct ON trivia_answers(is_correct);
-
--- User Trivia Scores
-CREATE TABLE IF NOT EXISTS user_trivia_scores (
-    id SERIAL PRIMARY KEY,
-    user_id TEXT NOT NULL,
-    daily_score INTEGER NOT NULL,
-    timestamp TIMESTAMPTZ DEFAULT NOW()
-);
-
-CREATE INDEX IF NOT EXISTS idx_user_trivia_scores_user_id ON user_trivia_scores(user_id);
-CREATE INDEX IF NOT EXISTS idx_user_trivia_scores_timestamp ON user_trivia_scores(timestamp);
-CREATE INDEX IF NOT EXISTS idx_user_trivia_scores_user_id_timestamp ON user_trivia_scores(user_id, timestamp DESC);
-
--- =============================================================================
 -- CACHING TABLES
 -- =============================================================================
 
@@ -365,9 +325,6 @@ GROUP BY m.id, m.opponent, m.date_time;
 ALTER TABLE matches ENABLE ROW LEVEL SECURITY;
 ALTER TABLE rsvps ENABLE ROW LEVEL SECURITY;
 ALTER TABLE contact_submissions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE trivia_questions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE trivia_answers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE user_trivia_scores ENABLE ROW LEVEL SECURITY;
 ALTER TABLE classification_cache ENABLE ROW LEVEL SECURITY;
 ALTER TABLE betis_news ENABLE ROW LEVEL SECURITY;
 ALTER TABLE players ENABLE ROW LEVEL SECURITY;
@@ -430,32 +387,6 @@ CREATE POLICY "Allow admin update on contact_submissions" ON contact_submissions
     FOR UPDATE USING (
         (auth.jwt()->'claims'->'publicMetadata'->>'role' = 'admin')
     );
-
--- =============================================================================
--- TRIVIA POLICIES
--- =============================================================================
-
-CREATE POLICY "Allow public read on trivia_questions" ON trivia_questions
-    FOR SELECT USING (true);
-
-CREATE POLICY "Allow admin insert on trivia_questions" ON trivia_questions
-    FOR INSERT WITH CHECK (
-        (auth.jwt()->'claims'->'publicMetadata'->>'role' = 'admin')
-    );
-
-CREATE POLICY "Allow public read on trivia_answers" ON trivia_answers
-    FOR SELECT USING (true);
-
-CREATE POLICY "Allow admin insert on trivia_answers" ON trivia_answers
-    FOR INSERT WITH CHECK (
-        (auth.jwt()->'claims'->'publicMetadata'->>'role' = 'admin')
-    );
-
-CREATE POLICY "Allow users to view own trivia scores" ON user_trivia_scores
-    FOR SELECT USING (user_id = auth.jwt() ->> 'sub');
-
-CREATE POLICY "Allow users to insert own trivia scores" ON user_trivia_scores
-    FOR INSERT WITH CHECK (user_id = auth.jwt() ->> 'sub');
 
 -- =============================================================================
 -- CLASSIFICATION CACHE POLICIES
@@ -543,8 +474,6 @@ CREATE POLICY "Admin delete access" ON news_players
 -- Grant specific permissions following principle of least privilege
 -- Public read tables
 GRANT SELECT ON TABLE matches TO anon, authenticated;
-GRANT SELECT ON TABLE trivia_questions TO anon, authenticated;
-GRANT SELECT ON TABLE trivia_answers TO anon, authenticated;
 GRANT SELECT ON TABLE classification_cache TO anon, authenticated;
 GRANT SELECT ON TABLE betis_news TO anon, authenticated;
 GRANT SELECT ON TABLE players TO anon, authenticated;
@@ -553,13 +482,11 @@ GRANT SELECT ON TABLE news_players TO anon, authenticated;
 -- Public read/write tables
 GRANT SELECT, INSERT ON TABLE rsvps TO anon, authenticated;
 GRANT SELECT, INSERT ON TABLE contact_submissions TO anon, authenticated;
-GRANT SELECT, INSERT ON TABLE user_trivia_scores TO anon, authenticated;
 
 -- Sequences (allow usage and select for ID generation)
 GRANT USAGE, SELECT ON SEQUENCE matches_id_seq TO anon, authenticated;
 GRANT USAGE, SELECT ON SEQUENCE rsvps_id_seq TO anon, authenticated;
 GRANT USAGE, SELECT ON SEQUENCE contact_submissions_id_seq TO anon, authenticated;
-GRANT USAGE, SELECT ON SEQUENCE user_trivia_scores_id_seq TO anon, authenticated;
 GRANT USAGE, SELECT ON SEQUENCE classification_cache_id_seq TO anon, authenticated;
 GRANT USAGE, SELECT ON SEQUENCE betis_news_id_seq TO anon, authenticated;
 GRANT USAGE, SELECT ON SEQUENCE players_id_seq TO anon, authenticated;
@@ -578,9 +505,6 @@ GRANT EXECUTE ON FUNCTION cleanup_old_contact_submissions() TO anon, authenticat
 COMMENT ON TABLE matches IS 'Football match information with external API integration';
 COMMENT ON TABLE rsvps IS 'User RSVPs for match viewing parties at Polwarth Tavern';
 COMMENT ON TABLE contact_submissions IS 'Contact form submissions with status tracking';
-COMMENT ON TABLE trivia_questions IS 'Trivia questions for daily quiz game';
-COMMENT ON TABLE trivia_answers IS 'Multiple choice answers for trivia questions';
-COMMENT ON TABLE user_trivia_scores IS 'Daily trivia scores for authenticated users';
 COMMENT ON TABLE classification_cache IS 'Cached football league standings from external API';
 COMMENT ON TABLE betis_news IS 'Betis news from RSS feeds. Transfer rumors: ai_probability > 0, regular news: ai_probability = 0.';
 COMMENT ON TABLE players IS 'Normalized player tracking for transfer rumors';
