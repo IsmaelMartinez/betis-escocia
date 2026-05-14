@@ -1,5 +1,5 @@
 import { clerk, clerkSetup } from '@clerk/testing/playwright';
-import { chromium, FullConfig, expect } from '@playwright/test';
+import { chromium, FullConfig } from '@playwright/test';
 import path from 'path';
 
 async function globalSetup(config: FullConfig) {
@@ -38,12 +38,6 @@ async function globalSetup(config: FullConfig) {
 
   // Wait for the page to be idle after sign-in to ensure all redirects and authentication processes are complete
   await page.waitForLoadState('networkidle');
-
-  // Navigate to the protected trivia page and verify access
-  await page.goto(`${baseURL}/trivia`);
-  await page.waitForURL(`${baseURL}/trivia`); // Ensure the URL is the trivia page
-  
-  await expect(page.locator('h1', { hasText: 'Betis & Scotland Trivia Challenge' })).toBeVisible();
 
   await page.context().storageState({ path: authFile });
   await browser.close();

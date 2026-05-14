@@ -112,11 +112,11 @@ describe("featureProtection", () => {
         throw new Error("NEXT_NOT_FOUND");
       });
 
-      const TriviaProtected = withFeatureFlag(TestComponent, "show-partidos");
+      const PartidosProtected = withFeatureFlag(TestComponent, "show-partidos");
       const RSVPProtected = withFeatureFlag(TestComponent, "show-nosotros");
 
-      render(<TriviaProtected title="Trivia" />);
-      expect(screen.getByText("Trivia")).toBeInTheDocument();
+      render(<PartidosProtected title="Partidos" />);
+      expect(screen.getByText("Partidos")).toBeInTheDocument();
 
       expect(() => render(<RSVPProtected title="RSVP" />)).toThrow(
         "NEXT_NOT_FOUND",

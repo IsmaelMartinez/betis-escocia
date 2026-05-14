@@ -74,24 +74,6 @@ describe("StandardErrors", () => {
 
     it.skip("should have orders specific errors (skipped until shop feature)", () => {});
 
-    it("should have trivia specific errors", () => {
-      expect(StandardErrors.TRIVIA.DAILY_SCORE_ERROR).toBe(
-        "Error al verificar puntuación diaria",
-      );
-      expect(StandardErrors.TRIVIA.ALREADY_PLAYED).toBe(
-        "Ya has jugado hoy. Vuelve mañana para una nueva partida",
-      );
-      expect(StandardErrors.TRIVIA.SAVE_SCORE_ERROR).toBe(
-        "Error al guardar la puntuación",
-      );
-      expect(StandardErrors.TRIVIA.FETCH_SCORE_ERROR).toBe(
-        "Error al obtener puntuación total",
-      );
-      expect(StandardErrors.TRIVIA.AUTHENTICATION_REQUIRED).toBe(
-        "Se requiere autenticación para jugar",
-      );
-    });
-
     it("should have standings specific errors", () => {
       expect(StandardErrors.STANDINGS.FETCH_ERROR).toBe(
         "No se pudieron obtener las clasificaciones",
@@ -270,16 +252,9 @@ describe("StandardErrors", () => {
         StandardErrors.VOTING.ALREADY_VOTED,
         400,
       );
-      const triviaError = createStandardError(
-        StandardErrors.TRIVIA.ALREADY_PLAYED,
-        409,
-      );
 
       expect(getErrorMessage(votingError)).toBe(
         "Ya has votado anteriormente. Solo se permite un voto por persona",
-      );
-      expect(getErrorMessage(triviaError)).toBe(
-        "Ya has jugado hoy. Vuelve mañana para una nueva partida",
       );
     });
   });

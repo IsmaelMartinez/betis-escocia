@@ -34,7 +34,6 @@ npm run build-storybook # Build Storybook
 ### Utilities
 
 ```bash
-npm run update-trivia   # Update trivia questions in database
 npm run lighthouse:accessibility # Run Lighthouse audit
 ```
 
@@ -219,17 +218,14 @@ export default function MyComponent() {
 
 ```typescript
 import { createApiHandler } from "@/lib/apiUtils";
-import { triviaSubmitSchema } from "@/lib/schemas";
+import { mySchema } from "@/lib/schemas";
 
-// POST - Submit trivia score
 export const POST = createApiHandler({
   auth: "user", // 'none' | 'user' | 'admin' | 'optional'
-  schema: triviaSubmitSchema, // Zod schema for validation
+  schema: mySchema, // Zod schema for validation
   handler: async (validatedData, context) => {
     // validatedData is type-safe and validated
     // context provides user info, request, supabase clients
-    const { score } = validatedData;
-
     return {
       success: true,
       message: "Success message",
@@ -359,10 +355,6 @@ test('renders component correctly', () => {
 
 ## Key Features
 
-### Community Features
-
-- **Trivia Game**: Betis & Scotland themed with 15-second timer, pointing system
-
 ### Data Management
 
 - **Match Data**: Football-Data.org API integration with caching
@@ -398,60 +390,6 @@ User management functionality has been removed from the admin panel to:
 - **Route Protection**: `withAdminRole` HOC ensures admin access
 - **API Security**: All admin API routes use `createApiHandler` with `auth: 'admin'`
 
-## Trivia Game Implementation
-
-### Architecture (2025 Update)
-
-- **State**: Streamlined to three core variables
-- **Component**: Single `TriviaPage` component
-- **API**: Single `/api/trivia` endpoint with query parameters
-- **Performance**: 65% faster API responses, 85% less data transfer per request
-
-### Database Design
-
-- **Tables**: `trivia_questions`, `trivia_answers` with proper UUID relationships
-- **Data Structure**: Questions with multiple choice answers, correct answer flagging
-- **Categories**: Real Betis history, Scottish football, general knowledge
-- **Optimization**: Direct database randomization with `ORDER BY RANDOM() LIMIT 5`
-
-### Game Mechanics
-
-- **Format**: 5-question trivia format with daily play limitation
-- **Timer**: Simple 15-second countdown per question using `setTimeout`
-- **Scoring**: Percentage-based scoring system with immediate feedback
-- **Engagement**: "Once per day" messaging encourages regular participation
-- **State Machine**: Clear transitions: `idle → loading → playing → feedback → completed`
-
-### Technical Implementation
-
-- **Frontend**: Single consolidated component (`src/app/trivia/page.tsx`) with inline timer/score
-- **API**: Consolidated endpoint `/api/trivia?action=questions|submit|score|total`
-- **State Management**: 3-variable system: `gameState`, `currentData`, `error`
-- **Utilities**: Shared functions in `/src/lib/trivia/utils.ts` for common operations
-- **Performance Tracking**: Built-in monitoring with `TriviaPerformanceTracker`
-- **Error Handling**: Structured errors with context using `TriviaError` class
-
-### Key Patterns for Development
-
-```typescript
-// Simplified state system (USE THIS PATTERN)
-const [gameState, setGameState] = useState<GameState>('loading');
-const [currentData, setCurrentData] = useState<CurrentData>({ /* consolidated */ });
-const [error, setError] = useState<string | null>(null);
-
-// Consolidated API usage
-GET /api/trivia?action=questions   // Get questions (default)
-POST /api/trivia?action=submit     // Submit score (default)
-GET /api/trivia?action=total       // Get total score
-
-// State machine transitions (FOLLOW THIS PATTERN)
-const handleAnswerClick = () => {
-  setCurrentData(prev => ({ ...prev, selectedAnswer: answerId }));
-  setGameState('feedback');
-  setTimeout(() => goToNextQuestion(), 2000);
-};
-```
-
 ## Areas for Future Enhancement
 
 ### Performance & Scalability
@@ -469,7 +407,6 @@ const handleAnswerClick = () => {
 
 ### User Engagement
 
-- **Trivia Enhancements**: Leaderboards, expanded question database
 - **Social Features**: Enhanced photo sharing, match predictions
 - **Internationalization**: Multi-language support if needed
 

@@ -11,7 +11,7 @@ export default function SignInPage() {
             Acceso a la Peña Bética
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Inicia sesión para jugar al trivia
+            Inicia sesión en tu cuenta
           </p>
         </div>
         <div className="bg-white p-8 rounded-lg shadow-md">
