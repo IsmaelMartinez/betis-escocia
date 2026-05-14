@@ -52,7 +52,7 @@ export default function SignUpPage() {
             Únete a la Peña Bética
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Crea tu cuenta para jugar al trivia
+            Crea tu cuenta de la Peña Bética
           </p>
         </div>
         <div className="bg-white p-8 rounded-lg shadow-md">

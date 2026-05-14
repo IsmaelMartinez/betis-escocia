@@ -1,5 +1,4 @@
 // Main exports for all schemas
-export * from "./trivia";
 export * from "./admin";
 
 // Common validation utilities

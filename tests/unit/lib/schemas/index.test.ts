@@ -7,7 +7,6 @@ import {
   type ErrorResponse,
   type SuccessResponse,
   // Test that all exports are available
-  triviaScoreSchema,
   userUpdateSchema,
 } from "@/lib/schemas/index";
 import { ZodError } from "zod";
@@ -16,7 +15,6 @@ describe("Schemas Index", () => {
   describe("Export Availability", () => {
     it("should export all schema modules correctly", () => {
       // Test that main schema exports are available
-      expect(triviaScoreSchema).toBeDefined();
       expect(userUpdateSchema).toBeDefined();
     });
 

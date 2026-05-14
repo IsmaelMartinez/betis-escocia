@@ -5,7 +5,7 @@ This directory contains the consolidated database schema and seed data for the B
 ## Files
 
 - **0001_setup.sql** - Complete database schema with all tables, functions, triggers, views, RLS policies, and grants
-- **0002_seed_data.sql** - Sample data for development (trivia questions, matches, RSVPs, contacts)
+- **0002_seed_data.sql** - Sample data for development (matches, RSVPs, contacts)
 
 ## Migration Numbering
 
@@ -44,7 +44,6 @@ The consolidated schema file is organized into logical sections:
 2. **Tables** - All tables with complete column definitions
    - Core tables (matches)
    - Legacy tables retained in schema but no longer used by the application (rsvps, contact_submissions — removed from the app in commit 90bbbf2; their scripts live in `legacy/`)
-   - Trivia system (trivia_questions, trivia_answers, user_trivia_scores)
    - Caching (classification_cache)
    - Soylenti/News (betis_news, players, news_players)
 3. **Functions** - Database functions for triggers and cleanup
@@ -59,7 +58,7 @@ The consolidated schema file is organized into logical sections:
 The current schema represents the evolution of 15 incremental migrations (0000-0014) that have been consolidated into a single file:
 
 - **0000**: Foundation schema with core tables
-- **0001**: Seed data + user_trivia_scores fixes (SERIAL instead of UUID)
+- **0001**: Seed data and schema fixes
 - **0002**: betis_news table for Soylenti feature with AI analysis
 - **0003**: Transfer direction and status tracking
 - **0004**: Players and news_players tables
@@ -80,8 +79,8 @@ The current schema represents the evolution of 15 incremental migrations (0000-0
 
 All tables have RLS enabled with appropriate policies:
 
-- **Public tables**: matches, trivia questions/answers allow public read access
-- **User-scoped tables**: rsvps, contact_submissions, user_trivia_scores allow users to view/insert their own data
+- **Public tables**: matches allow public read access
+- **User-scoped tables**: rsvps, contact_submissions allow users to view/insert their own data
 - **Admin tables**: betis_news, players, news_players require admin role for write operations
 
 ### JWT Claims Structure

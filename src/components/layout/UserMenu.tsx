@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { User, LogIn, LogOut, UserPlus, Calendar, Trophy } from "lucide-react";
+import { User, LogIn, LogOut, UserPlus, Trophy } from "lucide-react";
 import { useUser, useClerk } from "@clerk/nextjs";
 
 interface UserMenuProps {
@@ -46,24 +46,18 @@ export default function UserMenu({ variant, onNavigate }: UserMenuProps) {
             {isOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl py-2 z-50 border border-gray-100">
                 {isAdmin && (
-                  <Link
-                    href="/admin"
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-betis-verde-pale hover:text-betis-verde transition-colors"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <Trophy size={16} />
-                    Admin
-                  </Link>
+                  <>
+                    <Link
+                      href="/admin"
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-betis-verde-pale hover:text-betis-verde transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Trophy size={16} />
+                      Admin
+                    </Link>
+                    <div className="border-t border-gray-100 my-1" />
+                  </>
                 )}
-                <Link
-                  href="/trivia"
-                  className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-betis-verde-pale hover:text-betis-verde transition-colors"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Calendar size={16} />
-                  Trivia
-                </Link>
-                <div className="border-t border-gray-100 my-1" />
                 <button
                   onClick={handleSignOut}
                   className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
@@ -110,14 +104,6 @@ export default function UserMenu({ variant, onNavigate }: UserMenuProps) {
               Admin
             </Link>
           )}
-          <Link
-            href="/trivia"
-            className="flex items-center gap-3 px-4 py-3 text-white hover:text-betis-oro hover:bg-white/10 rounded-xl transition-all font-heading font-semibold"
-            onClick={onNavigate}
-          >
-            <Calendar size={20} />
-            Trivia
-          </Link>
           <button
             onClick={handleSignOut}
             className="flex items-center gap-3 w-full px-4 py-3 text-white hover:text-red-400 hover:bg-white/10 rounded-xl transition-all font-heading font-semibold"

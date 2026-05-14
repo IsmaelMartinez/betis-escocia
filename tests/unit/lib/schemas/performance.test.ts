@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { triviaScoreSchema } from "../../../../src/lib/schemas/trivia";
 import { userUpdateSchema } from "../../../../src/lib/schemas/admin";
 
 describe("Performance and Load Testing", () => {
@@ -54,25 +53,6 @@ describe("Performance and Load Testing", () => {
   }
 
   describe("Individual Schema Performance", () => {
-    it("should validate trivia schema performance", () => {
-      const testData = {
-        score: 8,
-        totalQuestions: 10,
-        email: "performance@example.com",
-        completedAt: new Date().toISOString(),
-      };
-
-      const metrics = measureSchemaPerformance(
-        "triviaScoreSchema",
-        triviaScoreSchema,
-        testData,
-      );
-
-      expect(metrics.avgTime).toBeLessThan(1);
-      // Increased threshold for CI environment variability (was 50ms, increased to 100ms)
-      expect(metrics.maxTime).toBeLessThan(100);
-    });
-
     it("should validate admin schema performance", () => {
       const testData = {
         userId: "user_performance_123",
