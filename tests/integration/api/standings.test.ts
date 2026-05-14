@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import axios from 'axios';
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import axios from "axios";
 
-vi.mock('next/server', () => {
+vi.mock("next/server", () => {
   class MockNextRequest {
     url: string;
     nextUrl: URL;
@@ -11,7 +11,7 @@ vi.mock('next/server', () => {
     constructor(url: string, init?: RequestInit) {
       this.url = url;
       this.nextUrl = new URL(url);
-      this.method = init?.method || 'GET';
+      this.method = init?.method || "GET";
       this.headers = new Headers(init?.headers);
     }
   }
@@ -30,19 +30,19 @@ vi.mock('next/server', () => {
 // unstable_cache wraps a function and returns it; for unit tests we just
 // pass the function through so each invocation actually exercises the
 // underlying service call (the cache itself is exercised in integration).
-vi.mock('next/cache', () => ({
+vi.mock("next/cache", () => ({
   unstable_cache: (fn: (...args: unknown[]) => unknown) => fn,
 }));
 
-import { NextRequest } from 'next/server';
+import { NextRequest } from "next/server";
 
-vi.mock('axios');
+vi.mock("axios");
 
 const standingsResult = {
   table: [
     {
       position: 1,
-      team: { id: 90, name: 'Real Betis', crest: 'betis.png' },
+      team: { id: 90, name: "Real Betis", crest: "betis.png" },
       playedGames: 10,
       won: 7,
       draw: 2,
@@ -54,7 +54,7 @@ const standingsResult = {
     },
     {
       position: 2,
-      team: { id: 81, name: 'Barcelona', crest: 'barca.png' },
+      team: { id: 81, name: "Barcelona", crest: "barca.png" },
       playedGames: 10,
       won: 6,
       draw: 3,
@@ -67,9 +67,11 @@ const standingsResult = {
   ],
 };
 
-const getLaLigaStandingsMock = vi.fn(() => Promise.resolve(standingsResult as unknown));
+const getLaLigaStandingsMock = vi.fn(() =>
+  Promise.resolve(standingsResult as unknown),
+);
 
-vi.mock('@/services/footballDataService', () => ({
+vi.mock("@/services/footballDataService", () => ({
   FootballDataService: class {
     getLaLigaStandings() {
       return getLaLigaStandingsMock();
@@ -77,7 +79,7 @@ vi.mock('@/services/footballDataService', () => ({
   },
 }));
 
-vi.mock('@/lib/utils/logger', () => ({
+vi.mock("@/lib/utils/logger", () => ({
   log: {
     info: vi.fn(),
     error: vi.fn(),
@@ -85,7 +87,7 @@ vi.mock('@/lib/utils/logger', () => ({
   },
 }));
 
-describe('Standings API', () => {
+describe("Standings API", () => {
   const mockAxios = vi.mocked(axios);
 
   beforeEach(() => {
@@ -94,35 +96,35 @@ describe('Standings API', () => {
     mockAxios.create = vi.fn(() => ({}) as never);
   });
 
-  describe('GET /api/standings', () => {
-    it('returns standings from Football-Data via the cache wrapper', async () => {
-      const { GET } = await import('@/app/api/standings/route');
-      const request = new NextRequest('http://localhost:3000/api/standings');
+  describe("GET /api/standings", () => {
+    it("returns standings from Football-Data via the cache wrapper", async () => {
+      const { GET } = await import("@/app/api/standings/route");
+      const request = new NextRequest("http://localhost:3000/api/standings");
 
       const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.data.standings.table).toHaveLength(2);
-      expect(data.data.standings.table[0].team.name).toBe('Real Betis');
-      expect(typeof data.data.lastUpdated).toBe('string');
+      expect(data.data.standings.table[0].team.name).toBe("Real Betis");
+      expect(typeof data.data.lastUpdated).toBe("string");
     });
 
-    it('returns 400 when the upstream API returns no standings', async () => {
+    it("returns 400 when the upstream API returns no standings", async () => {
       getLaLigaStandingsMock.mockResolvedValue(null as never);
 
-      const { GET } = await import('@/app/api/standings/route');
-      const request = new NextRequest('http://localhost:3000/api/standings');
+      const { GET } = await import("@/app/api/standings/route");
+      const request = new NextRequest("http://localhost:3000/api/standings");
 
       const response = await GET(request);
 
       expect(response.status).toBe(400);
     });
 
-    it('completes within a reasonable time', async () => {
+    it("completes within a reasonable time", async () => {
       const startTime = Date.now();
-      const { GET } = await import('@/app/api/standings/route');
-      const request = new NextRequest('http://localhost:3000/api/standings');
+      const { GET } = await import("@/app/api/standings/route");
+      const request = new NextRequest("http://localhost:3000/api/standings");
 
       await GET(request);
 
