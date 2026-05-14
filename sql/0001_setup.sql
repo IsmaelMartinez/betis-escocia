@@ -95,19 +95,6 @@ CREATE INDEX IF NOT EXISTS idx_contact_submissions_status ON contact_submissions
 CREATE INDEX IF NOT EXISTS idx_contact_submissions_type ON contact_submissions(type);
 
 -- =============================================================================
--- CACHING TABLES
--- =============================================================================
-
--- Classification Cache: Cached football league standings from external API
-CREATE TABLE IF NOT EXISTS classification_cache (
-    id SERIAL PRIMARY KEY,
-    data JSONB NOT NULL,
-    last_updated TIMESTAMPTZ NOT NULL
-);
-
-CREATE INDEX IF NOT EXISTS idx_classification_cache_last_updated ON classification_cache(last_updated);
-
--- =============================================================================
 -- SOYLENTI TABLES (Transfer Rumors & News)
 -- =============================================================================
 
@@ -325,7 +312,6 @@ GROUP BY m.id, m.opponent, m.date_time;
 ALTER TABLE matches ENABLE ROW LEVEL SECURITY;
 ALTER TABLE rsvps ENABLE ROW LEVEL SECURITY;
 ALTER TABLE contact_submissions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE classification_cache ENABLE ROW LEVEL SECURITY;
 ALTER TABLE betis_news ENABLE ROW LEVEL SECURITY;
 ALTER TABLE players ENABLE ROW LEVEL SECURITY;
 ALTER TABLE news_players ENABLE ROW LEVEL SECURITY;
@@ -387,19 +373,6 @@ CREATE POLICY "Allow admin update on contact_submissions" ON contact_submissions
     FOR UPDATE USING (
         (auth.jwt()->'claims'->'publicMetadata'->>'role' = 'admin')
     );
-
--- =============================================================================
--- CLASSIFICATION CACHE POLICIES
--- =============================================================================
-
-CREATE POLICY "Allow public read on classification_cache" ON classification_cache
-    FOR SELECT USING (true);
-
-CREATE POLICY "Allow public insert on classification_cache" ON classification_cache
-    FOR INSERT WITH CHECK (true);
-
-CREATE POLICY "Allow public update on classification_cache" ON classification_cache
-    FOR UPDATE USING (true);
 
 -- =============================================================================
 -- BETIS NEWS POLICIES
@@ -474,7 +447,6 @@ CREATE POLICY "Admin delete access" ON news_players
 -- Grant specific permissions following principle of least privilege
 -- Public read tables
 GRANT SELECT ON TABLE matches TO anon, authenticated;
-GRANT SELECT ON TABLE classification_cache TO anon, authenticated;
 GRANT SELECT ON TABLE betis_news TO anon, authenticated;
 GRANT SELECT ON TABLE players TO anon, authenticated;
 GRANT SELECT ON TABLE news_players TO anon, authenticated;
@@ -487,7 +459,6 @@ GRANT SELECT, INSERT ON TABLE contact_submissions TO anon, authenticated;
 GRANT USAGE, SELECT ON SEQUENCE matches_id_seq TO anon, authenticated;
 GRANT USAGE, SELECT ON SEQUENCE rsvps_id_seq TO anon, authenticated;
 GRANT USAGE, SELECT ON SEQUENCE contact_submissions_id_seq TO anon, authenticated;
-GRANT USAGE, SELECT ON SEQUENCE classification_cache_id_seq TO anon, authenticated;
 GRANT USAGE, SELECT ON SEQUENCE betis_news_id_seq TO anon, authenticated;
 GRANT USAGE, SELECT ON SEQUENCE players_id_seq TO anon, authenticated;
 GRANT USAGE, SELECT ON SEQUENCE news_players_id_seq TO anon, authenticated;
@@ -505,7 +476,6 @@ GRANT EXECUTE ON FUNCTION cleanup_old_contact_submissions() TO anon, authenticat
 COMMENT ON TABLE matches IS 'Football match information with external API integration';
 COMMENT ON TABLE rsvps IS 'User RSVPs for match viewing parties at Polwarth Tavern';
 COMMENT ON TABLE contact_submissions IS 'Contact form submissions with status tracking';
-COMMENT ON TABLE classification_cache IS 'Cached football league standings from external API';
 COMMENT ON TABLE betis_news IS 'Betis news from RSS feeds. Transfer rumors: ai_probability > 0, regular news: ai_probability = 0.';
 COMMENT ON TABLE players IS 'Normalized player tracking for transfer rumors';
 COMMENT ON TABLE news_players IS 'Junction table linking news to players with roles';

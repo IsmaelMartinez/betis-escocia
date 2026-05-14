@@ -44,7 +44,6 @@ The consolidated schema file is organized into logical sections:
 2. **Tables** - All tables with complete column definitions
    - Core tables (matches)
    - Legacy tables retained in schema but no longer used by the application (rsvps, contact_submissions — removed from the app in commit 90bbbf2; their scripts live in `legacy/`)
-   - Caching (classification_cache)
    - Soylenti/News (betis_news, players, news_players)
 3. **Functions** - Database functions for triggers and cleanup
 4. **Triggers** - Automatic updated_at triggers

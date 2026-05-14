@@ -1,80 +1,23 @@
-import { createApiHandler, ApiContext } from "@/lib/api/apiUtils";
+import { createApiHandler } from "@/lib/api/apiUtils";
 import {
   FootballDataService,
   StandingEntry,
 } from "@/services/footballDataService";
 import axios from "axios";
-import { supabase } from "@/lib/api/supabase";
+import { unstable_cache } from "next/cache";
 import { log } from "@/lib/utils/logger";
 
 export const dynamic = "force-dynamic";
 
-const CACHE_DURATION_HOURS = 24;
+const CACHE_DURATION_SECONDS = 24 * 60 * 60;
 
 type StandingsResponse = {
   standings: { table: StandingEntry[] };
   lastUpdated: string;
-  source: "cache" | "api";
 };
 
-async function getCachedStandings() {
-  const { data, error } = await supabase
-    .from("classification_cache")
-    .select("data, last_updated")
-    .order("last_updated", { ascending: false })
-    .limit(1);
-
-  if (error) {
-    log.error("Failed to fetch cached standings from database", error);
-    return null;
-  }
-
-  return data?.[0] || null;
-}
-
-async function setCachedStandings(standings: { table: StandingEntry[] }) {
-  const { error } = await supabase
-    .from("classification_cache")
-    .upsert(
-      { id: 1, data: standings, last_updated: new Date().toISOString() },
-      { onConflict: "id" },
-    );
-
-  if (error) {
-    log.error("Failed to save standings to cache", error);
-  } else {
-    log.info("Successfully cached LaLiga standings", undefined, {
-      teamCount: standings.table?.length || 0,
-    });
-  }
-}
-
-async function getStandings(forceRefresh = false): Promise<StandingsResponse> {
-  // Check cache first
-  const cachedData = await getCachedStandings();
-
-  if (!forceRefresh && cachedData && cachedData.data) {
-    const lastUpdated = new Date(cachedData.last_updated);
-    const now = new Date();
-    const diffHours =
-      (now.getTime() - lastUpdated.getTime()) / (1000 * 60 * 60);
-
-    if (diffHours < CACHE_DURATION_HOURS) {
-      log.info("Returning cached standings data", undefined, {
-        cacheAge: Math.round(diffHours * 100) / 100,
-        source: "cache",
-      });
-
-      return {
-        standings: cachedData.data,
-        lastUpdated: cachedData.last_updated,
-        source: "cache",
-      };
-    }
-  }
-
-  // Fetch fresh data from API
-  try {
+const fetchStandings = unstable_cache(
+  async (): Promise<StandingsResponse> => {
     const service = new FootballDataService(axios.create());
     const standings = await service.getLaLigaStandings();
 
@@ -82,43 +25,20 @@ async function getStandings(forceRefresh = false): Promise<StandingsResponse> {
       throw new Error("No se pudieron obtener las clasificaciones");
     }
 
-    // Cache the fresh data
-    await setCachedStandings(standings);
-
-    log.info("Successfully fetched fresh standings data", undefined, {
+    log.info("Fetched fresh LaLiga standings", undefined, {
       teamCount: standings.table?.length || 0,
-      source: "football-data-api",
     });
 
     return {
-      standings: standings,
+      standings,
       lastUpdated: new Date().toISOString(),
-      source: "api",
     };
-  } catch (error) {
-    // Fall back to stale cache rather than returning an error
-    if (cachedData && cachedData.data) {
-      const cacheAgeHours =
-        (new Date().getTime() - new Date(cachedData.last_updated).getTime()) /
-        (1000 * 60 * 60);
-      log.error("API fetch failed, returning stale cache", error as Error, {
-        cacheAge: Math.round(cacheAgeHours * 100) / 100,
-      });
-      return {
-        standings: cachedData.data,
-        lastUpdated: cachedData.last_updated,
-        source: "cache" as const,
-      };
-    }
-    throw error;
-  }
-}
+  },
+  ["la-liga-standings"],
+  { revalidate: CACHE_DURATION_SECONDS, tags: ["la-liga-standings"] },
+);
 
 export const GET = createApiHandler({
   auth: "none",
-  handler: async (_data: unknown, context: ApiContext) => {
-    const url = new URL(context.request.url);
-    const forceRefresh = url.searchParams.get("forceRefresh") === "true";
-    return await getStandings(forceRefresh);
-  },
+  handler: async (): Promise<StandingsResponse> => fetchStandings(),
 });
