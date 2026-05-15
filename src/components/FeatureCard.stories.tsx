@@ -14,7 +14,6 @@ const meta: Meta<typeof FeatureCard> = {
   component: FeatureCard,
   parameters: {
     layout: "centered",
-    clerk: { enabled: false },
   },
   tags: ["autodocs"],
   argTypes: {

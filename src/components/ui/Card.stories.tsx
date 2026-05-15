@@ -6,7 +6,6 @@ const meta: Meta<typeof Card> = {
   component: Card,
   parameters: {
     layout: 'centered',
-    clerk: { enabled: false }, // This component does not use Clerk
   },
   tags: ['autodocs'],
   argTypes: {

@@ -137,7 +137,6 @@ const meta: Meta<typeof UpcomingMatchesWidget> = {
   component: UpcomingMatchesWidget,
   parameters: {
     layout: "centered",
-    clerk: { enabled: false }, // This component does not use Clerk
     msw: {
       handlers: [
         http.get("/api/upcoming-matches", () => {

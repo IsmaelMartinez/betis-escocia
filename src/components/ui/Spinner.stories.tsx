@@ -6,7 +6,6 @@ const meta: Meta<typeof Spinner> = {
   component: Spinner,
   parameters: {
     layout: 'centered',
-    clerk: { enabled: false }, // Disable Clerk for this component
   },
   tags: ['autodocs'],
   argTypes: {

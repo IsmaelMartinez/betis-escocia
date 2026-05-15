@@ -16,7 +16,6 @@ const meta: Meta<typeof OfflineDetector> = {
   component: OfflineDetector,
   parameters: {
     layout: "fullscreen",
-    clerk: { enabled: false }, // This component does not use Clerk
   },
   tags: ["autodocs"],
   decorators: [
@@ -61,7 +60,6 @@ export const Offline: Story = {
 //   component: OfflineMessage,
 //   parameters: {
 //     layout: 'centered',
-//     clerk: { enabled: false },
 //   },
 //   tags: ['autodocs'],
 //   argTypes: {

@@ -13,7 +13,6 @@ const meta: Meta<typeof ImageGallery> = {
   component: ImageGallery,
   parameters: {
     layout: "fullscreen",
-    clerk: { enabled: false }, // This component does not use Clerk
   },
   tags: ["autodocs"],
   argTypes: {
