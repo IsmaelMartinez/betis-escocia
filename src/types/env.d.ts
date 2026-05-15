@@ -3,9 +3,6 @@
 
 declare namespace NodeJS {
   interface ProcessEnv {
-    // Supabase Service Role Key (for server-side operations that bypass RLS)
-    SUPABASE_SERVICE_ROLE_KEY: string;
-
     // Football Data API Configuration
     FOOTBALL_DATA_API_KEY: string;
     FOOTBALL_DATA_API_URL: string;
