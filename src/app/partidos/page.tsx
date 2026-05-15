@@ -2,7 +2,7 @@
 
 import { ApiErrorBoundary } from "@/components/ErrorBoundary";
 import BetisPositionWidget from "@/components/widgets/BetisPositionWidget";
-import AllDatabaseMatches from "@/components/match/AllDatabaseMatches";
+import AllMatches from "@/components/match/AllMatches";
 import SidebarCard from "@/components/SidebarCard";
 
 export default function MatchesPage() {
@@ -32,7 +32,7 @@ export default function MatchesPage() {
             {/* Main content - matches from database */}
             <div className="lg:col-span-3">
               <ApiErrorBoundary>
-                <AllDatabaseMatches />
+                <AllMatches />
               </ApiErrorBoundary>
             </div>
 

@@ -36,8 +36,8 @@ async function getMatches(params: z.infer<typeof matchesQuerySchema>): Promise<M
           matches = (await service.getRecentBetisResultsForCards(10)) || [];
           break;
         case 'all': {
-          const upcoming = (await service.getUpcomingBetisMatchesForCards(5)) || [];
-          const recent = (await service.getRecentBetisResultsForCards(5)) || [];
+          const upcoming = (await service.getUpcomingBetisMatchesForCards(50)) || [];
+          const recent = (await service.getRecentBetisResultsForCards(50)) || [];
           matches = [...upcoming, ...recent];
           break;
         }

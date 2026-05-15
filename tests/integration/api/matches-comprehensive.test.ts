@@ -168,8 +168,8 @@ describe('Matches API - Comprehensive Tests', () => {
       expect(data.matches).toHaveLength(4); // 2 upcoming + 2 recent
       expect(data.count).toBe(4);
       expect(data.source).toBe('live-api');
-      expect(mockGetUpcomingBetisMatchesForCards).toHaveBeenCalledWith(5);
-      expect(mockGetRecentBetisResultsForCards).toHaveBeenCalledWith(5);
+      expect(mockGetUpcomingBetisMatchesForCards).toHaveBeenCalledWith(50);
+      expect(mockGetRecentBetisResultsForCards).toHaveBeenCalledWith(50);
     });
 
     it('should return empty matches for unsupported types (conference, friendlies)', async () => {

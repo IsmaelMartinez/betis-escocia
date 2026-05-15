@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import MatchCard, {
-  convertDatabaseMatchToCardProps,
+  convertFootballDataMatchToCardProps,
 } from "@/components/match/MatchCard";
-import type { Match as DatabaseMatch } from "@/lib/api/supabase";
+import type { Match as FootballDataMatch } from "@/types/match";
 
 // Mock dependencies
 vi.mock("next/image", () => ({
@@ -259,86 +259,99 @@ describe("MatchCard", () => {
   });
 });
 
-describe("convertDatabaseMatchToCardProps", () => {
-  const mockDbMatch: DatabaseMatch = {
-    id: 1,
-    date_time: new Date(Date.now() + 86400000).toISOString(),
-    opponent: "Valencia CF",
-    competition: "LaLiga",
-    home_away: "home",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+describe("convertFootballDataMatchToCardProps", () => {
+  const betisHomeMatch: FootballDataMatch = {
+    id: 101,
+    utcDate: new Date(Date.now() + 86400000).toISOString(),
     status: "SCHEDULED",
     matchday: 15,
-    home_score: undefined,
-    away_score: undefined,
-    result: undefined,
+    stage: "REGULAR_SEASON",
+    lastUpdated: new Date().toISOString(),
+    homeTeam: {
+      id: 90,
+      name: "Real Betis",
+      shortName: "Betis",
+      tla: "BET",
+      crest: "https://example.com/betis.png",
+    },
+    awayTeam: {
+      id: 95,
+      name: "Valencia CF",
+      shortName: "Valencia",
+      tla: "VAL",
+      crest: "https://example.com/valencia.png",
+    },
+    score: {
+      duration: "REGULAR",
+      fullTime: { home: null, away: null },
+      halfTime: { home: null, away: null },
+    },
+    competition: {
+      id: 2014,
+      name: "LaLiga",
+      code: "PD",
+      type: "LEAGUE",
+      emblem: "https://example.com/laliga.png",
+    },
+    season: {
+      id: 1,
+      startDate: "2025-08-01",
+      endDate: "2026-05-31",
+      currentMatchday: 15,
+    },
   };
 
-  it("converts database match to card props correctly", () => {
-    const result = convertDatabaseMatchToCardProps(mockDbMatch);
+  it("marks Betis as home and uses the opponent's team details", () => {
+    const result = convertFootballDataMatchToCardProps(betisHomeMatch);
 
     expect(result).toEqual({
-      id: 1,
+      id: 101,
       opponent: "Valencia CF",
-      date: mockDbMatch.date_time,
+      date: betisHomeMatch.utcDate,
       competition: "LaLiga",
       isHome: true,
       status: "SCHEDULED",
-      result: undefined,
       matchday: 15,
+      opponentCrest: "https://example.com/valencia.png",
+      competitionEmblem: "https://example.com/laliga.png",
       score: undefined,
     });
   });
 
-  it("handles finished matches correctly", () => {
-    const finishedMatch: DatabaseMatch = {
-      ...mockDbMatch,
-      date_time: new Date(Date.now() - 86400000).toISOString(),
-      status: "FINISHED",
-      home_score: 3,
-      away_score: 1,
-      result: "W",
+  it("marks Betis as away when away team id is 90", () => {
+    const awayMatch: FootballDataMatch = {
+      ...betisHomeMatch,
+      homeTeam: betisHomeMatch.awayTeam,
+      awayTeam: betisHomeMatch.homeTeam,
     };
 
-    const result = convertDatabaseMatchToCardProps(finishedMatch);
+    const result = convertFootballDataMatchToCardProps(awayMatch);
+
+    expect(result.isHome).toBe(false);
+    expect(result.opponent).toBe("Valencia CF");
+    expect(result.opponentCrest).toBe("https://example.com/valencia.png");
+  });
+
+  it("populates score when fullTime values are present", () => {
+    const finishedMatch: FootballDataMatch = {
+      ...betisHomeMatch,
+      status: "FINISHED",
+      score: {
+        duration: "REGULAR",
+        fullTime: { home: 3, away: 1 },
+        halfTime: { home: 2, away: 0 },
+      },
+    };
+
+    const result = convertFootballDataMatchToCardProps(finishedMatch);
 
     expect(result.status).toBe("FINISHED");
     expect(result.score).toEqual({ home: 3, away: 1 });
-    expect(result.result).toBe("W");
   });
 
-  it("handles away matches correctly", () => {
-    const awayMatch: DatabaseMatch = {
-      ...mockDbMatch,
-      home_away: "away",
-    };
-
-    const result = convertDatabaseMatchToCardProps(awayMatch);
-
-    expect(result.isHome).toBe(false);
-  });
-
-  it("handles null scores correctly", () => {
-    const matchWithNullScores: DatabaseMatch = {
-      ...mockDbMatch,
-      home_score: undefined,
-      away_score: undefined,
-    };
-
-    const result = convertDatabaseMatchToCardProps(matchWithNullScores);
+  it("leaves score undefined when fullTime values are null", () => {
+    const result = convertFootballDataMatchToCardProps(betisHomeMatch);
 
     expect(result.score).toBeUndefined();
-  });
-
-  it("sets default status based on date when status is missing", () => {
-    const matchWithoutStatus: DatabaseMatch = {
-      ...mockDbMatch,
-      status: undefined,
-    };
-
-    const result = convertDatabaseMatchToCardProps(matchWithoutStatus);
-
-    expect(result.status).toBe("SCHEDULED"); // future date should default to SCHEDULED
   });
 });
