@@ -62,9 +62,8 @@ export default function AllMatches({ className = "" }: AllMatchesProps) {
     [matches],
   );
 
-  const now = useMemo(() => new Date(), []);
   const isUpcoming = (match: MatchCardProps): boolean =>
-    new Date(match.date) > now;
+    new Date(match.date) > new Date();
 
   const filteredMatches = useMemo(() => {
     return matches.filter((match) => {
@@ -75,7 +74,7 @@ export default function AllMatches({ className = "" }: AllMatchesProps) {
         competitionFilter === "all" || match.competition === competitionFilter;
       return passesTimeFilter && passesCompetitionFilter;
     });
-  }, [matches, filter, competitionFilter, now]);
+  }, [matches, filter, competitionFilter]);
 
   const sortedMatches = useMemo(() => {
     return [...filteredMatches].sort((a, b) => {

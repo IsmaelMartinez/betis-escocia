@@ -11,8 +11,7 @@ import {
   getCompetitionBadge,
   getCompetitionDisplayName,
 } from "@/lib/constants/competitions";
-
-const REAL_BETIS_TEAM_ID = 90;
+import { REAL_BETIS_TEAM_ID } from "@/services/footballDataService";
 
 export function convertFootballDataMatchToCardProps(
   match: Match,
