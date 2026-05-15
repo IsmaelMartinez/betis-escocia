@@ -12,7 +12,6 @@ const meta: Meta<typeof ErrorBoundary> = {
   component: ErrorBoundary,
   parameters: {
     layout: "centered",
-    clerk: { enabled: false }, // This component does not use Clerk
   },
   tags: ["autodocs"],
   argTypes: {

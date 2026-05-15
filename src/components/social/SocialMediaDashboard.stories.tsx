@@ -7,7 +7,6 @@ const meta: Meta<typeof SocialMediaDashboard> = {
   component: SocialMediaDashboard,
   parameters: {
     layout: "fullscreen",
-    clerk: { enabled: false }, // This component does not use Clerk
   },
   tags: ["autodocs"],
   argTypes: {

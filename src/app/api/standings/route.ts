@@ -39,6 +39,5 @@ const fetchStandings = unstable_cache(
 );
 
 export const GET = createApiHandler({
-  auth: "none",
   handler: async (): Promise<StandingsResponse> => fetchStandings(),
 });

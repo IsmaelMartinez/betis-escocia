@@ -6,7 +6,6 @@ const meta: Meta<typeof CulturalFusionHero> = {
   component: CulturalFusionHero,
   parameters: {
     layout: "fullscreen",
-    clerk: { enabled: false },
   },
   tags: ["autodocs"],
   argTypes: {

@@ -6,7 +6,6 @@ const meta: Meta<typeof FacebookPagePlugin> = {
   component: FacebookPagePlugin,
   parameters: {
     layout: "centered",
-    clerk: { enabled: false }, // This component does not use Clerk
   },
   tags: ["autodocs"],
   argTypes: {

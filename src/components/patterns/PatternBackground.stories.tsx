@@ -12,7 +12,6 @@ const meta: Meta<typeof PatternBackground> = {
   component: PatternBackground,
   parameters: {
     layout: "fullscreen",
-    clerk: { enabled: false },
   },
   tags: ["autodocs"],
   argTypes: {

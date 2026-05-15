@@ -81,7 +81,6 @@ async function getMatches(
 }
 
 export const GET = createApiHandler({
-  auth: "none",
   schema: matchesQuerySchema,
   handler: async (validatedData) => {
     return await getMatches(validatedData);

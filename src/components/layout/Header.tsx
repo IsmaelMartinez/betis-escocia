@@ -4,18 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { Menu, X, MapPin } from "lucide-react";
 import BetisLogo from "@/components/BetisLogo";
-import UserMenu from "@/components/layout/UserMenu";
 import { type NavigationItem } from "@/lib/features/featureFlags";
 
 interface HeaderProps {
   readonly navigationItems: NavigationItem[];
-  readonly isAuthEnabled: boolean;
 }
 
-export default function Header({
-  navigationItems,
-  isAuthEnabled,
-}: HeaderProps) {
+export default function Header({ navigationItems }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -77,8 +72,6 @@ export default function Header({
                   )}
                 </Link>
               ))}
-
-              {isAuthEnabled && <UserMenu variant="desktop" />}
             </div>
 
             {/* Mobile menu button */}
@@ -112,13 +105,6 @@ export default function Header({
                 {item.name}
               </Link>
             ))}
-
-            {isAuthEnabled && (
-              <UserMenu
-                variant="mobile"
-                onNavigate={() => setIsMenuOpen(false)}
-              />
-            )}
           </div>
         </div>
       )}

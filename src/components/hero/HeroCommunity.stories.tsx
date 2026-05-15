@@ -6,7 +6,6 @@ const meta: Meta<typeof HeroCommunity> = {
   component: HeroCommunity,
   parameters: {
     layout: "fullscreen",
-    clerk: { enabled: false }, // This component does not use Clerk directly
   },
   tags: ["autodocs"],
   argTypes: {

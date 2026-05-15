@@ -47,7 +47,6 @@ const meta: Meta<typeof BetisPositionWidget> = {
   component: BetisPositionWidget,
   parameters: {
     layout: "centered",
-    clerk: { enabled: false }, // This component does not use Clerk
     msw: {
       handlers: [
         http.get("/api/standings", () => {

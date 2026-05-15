@@ -14,9 +14,6 @@ import {
   getEnabledNavigationItems,
 } from "@/lib/features/featureFlags";
 import * as Sentry from "@sentry/nextjs";
-import SentryUserContext from "@/components/SentryUserContext";
-
-import { ClerkProvider } from "@clerk/nextjs";
 import FacebookSDK from "@/components/social/FacebookSDK";
 
 // Conditionally import Vercel Analytics/SpeedInsights only in production on Vercel
@@ -185,12 +182,6 @@ export default function RootLayout({
         {/* Preconnect to third-party domains for faster loading */}
         <link
           rel="preconnect"
-          href="https://clerk.com"
-          crossOrigin="anonymous"
-        />
-        <link rel="dns-prefetch" href="https://clerk.com" />
-        <link
-          rel="preconnect"
           href="https://connect.facebook.net"
           crossOrigin="anonymous"
         />
@@ -202,18 +193,11 @@ export default function RootLayout({
         <FacebookSDK />
 
         <OfflineDetector />
-        <ClerkProvider
-          signInUrl="/sign-in"
-          signUpUrl="/sign-up"
-          afterSignOutUrl="/"
-        >
-          <SentryUserContext />
-          <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
-            <Layout debugInfo={debugInfo} navigationItems={navigationItems}>
-              {children}
-            </Layout>
-          </Sentry.ErrorBoundary>
-        </ClerkProvider>
+        <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
+          <Layout debugInfo={debugInfo} navigationItems={navigationItems}>
+            {children}
+          </Layout>
+        </Sentry.ErrorBoundary>
         {isVercel && <Analytics />}
         {isVercel && <SpeedInsights />}
       </body>

@@ -3,7 +3,7 @@ import DebugInfoPanel, {
 } from "@/components/layout/DebugInfoPanel";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
-import { hasFeature, type NavigationItem } from "@/lib/features/featureFlags";
+import { type NavigationItem } from "@/lib/features/featureFlags";
 
 interface LayoutProps {
   readonly children: React.ReactNode;
@@ -16,11 +16,9 @@ export default function Layout({
   debugInfo,
   navigationItems,
 }: LayoutProps) {
-  const isAuthEnabled = hasFeature("show-clerk-auth");
-
   return (
     <div className="min-h-screen bg-canvas-warm flex flex-col">
-      <Header navigationItems={navigationItems} isAuthEnabled={isAuthEnabled} />
+      <Header navigationItems={navigationItems} />
 
       <main className="flex-1">{children}</main>
 

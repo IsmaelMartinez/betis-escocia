@@ -34,7 +34,6 @@ const meta: Meta<typeof CompetitionFilter> = {
   component: CompetitionFilter,
   parameters: {
     layout: "centered",
-    clerk: { enabled: false }, // This component does not use Clerk
   },
   tags: ["autodocs"],
   argTypes: {

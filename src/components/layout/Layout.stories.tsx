@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
 import Layout from "./Layout";
-import { setMockUser } from "@/lib/clerk/__mocks__/storybook";
 import type { NavigationItem } from "@/lib/features/featureFlags";
 
 const mockNavigationItems: NavigationItem[] = [
@@ -22,10 +21,7 @@ const mockNavigationItems: NavigationItem[] = [
 const meta: Meta<typeof Layout> = {
   title: "Layout/Layout",
   component: Layout,
-  parameters: {
-    layout: "fullscreen",
-    clerk: { enabled: true }, // Enable Clerk for this component as it uses Clerk hooks
-  },
+  parameters: { layout: "fullscreen" },
   tags: ["autodocs"],
   argTypes: {
     debugInfo: {
@@ -40,82 +36,42 @@ type Story = StoryObj<typeof Layout>;
 
 export const Default: Story = {
   args: {
+    debugInfo: null,
+    navigationItems: mockNavigationItems,
+  },
+};
+
+export const WithDebugInfo: Story = {
+  args: {
     debugInfo: {
-      features: { "show-clerk-auth": true, "show-partidos": true },
+      features: {
+        "show-partidos": true,
+        "show-clasificacion": true,
+        "show-nosotros": true,
+        "show-jugadores-historicos": true,
+        "show-unete": true,
+        "show-efemerides": true,
+        "show-debug-info": true,
+      },
       environment: "development",
-      enabledFeatures: ["show-clerk-auth", "show-partidos"],
+      enabledFeatures: [
+        "show-partidos",
+        "show-clasificacion",
+        "show-nosotros",
+        "show-jugadores-historicos",
+        "show-unete",
+        "show-efemerides",
+        "show-debug-info",
+      ],
       disabledFeatures: [],
     },
     navigationItems: mockNavigationItems,
   },
-  render: (args) => {
-    setMockUser(null); // Ensure no user is logged in by default
-    return <Layout {...args} />;
-  },
 };
 
-export const LoggedIn: Story = {
+export const NoNavigation: Story = {
   args: {
-    debugInfo: {
-      features: { "show-clerk-auth": true, "show-partidos": true },
-      environment: "development",
-      enabledFeatures: ["show-clerk-auth", "show-partidos"],
-      disabledFeatures: [],
-    },
-    navigationItems: mockNavigationItems,
-  },
-  render: (args) => {
-    setMockUser({
-      id: "user_123",
-      firstName: "John",
-      lastName: "Doe",
-      emailAddresses: [{ emailAddress: "john.doe@example.com" }],
-      publicMetadata: { role: "member" },
-      createdAt: new Date(),
-      lastSignInAt: new Date(),
-      imageUrl: "https://example.com/avatar.jpg",
-    });
-    return <Layout {...args} />;
-  },
-};
-
-export const LoggedInAdmin: Story = {
-  args: {
-    debugInfo: {
-      features: { "show-clerk-auth": true, "show-partidos": true },
-      environment: "development",
-      enabledFeatures: ["show-clerk-auth", "show-partidos"],
-      disabledFeatures: [],
-    },
-    navigationItems: mockNavigationItems,
-  },
-  render: (args) => {
-    setMockUser({
-      id: "user_admin",
-      firstName: "Admin",
-      lastName: "User",
-      emailAddresses: [{ emailAddress: "admin@example.com" }],
-      publicMetadata: { role: "admin" },
-      createdAt: new Date(),
-      lastSignInAt: new Date(),
-      imageUrl: "https://example.com/admin-avatar.jpg",
-    });
-    return <Layout {...args} />;
-  },
-};
-
-export const FeatureFlagsDisabled: Story = {
-  args: {
-    debugInfo: {
-      features: { "show-clerk-auth": false, "show-partidos": false },
-      environment: "development",
-      enabledFeatures: [],
-      disabledFeatures: ["show-clerk-auth", "show-partidos"],
-    },
+    debugInfo: null,
     navigationItems: [],
-  },
-  render: (args) => {
-    setMockUser(null); // Ensure no user is logged in by default
-    return <Layout {...args} />;
   },
 };

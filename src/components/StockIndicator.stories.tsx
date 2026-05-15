@@ -6,7 +6,6 @@ const meta: Meta<typeof StockIndicator> = {
   component: StockIndicator,
   parameters: {
     layout: "centered",
-    clerk: { enabled: false }, // This component does not use Clerk
   },
   tags: ["autodocs"],
   argTypes: {

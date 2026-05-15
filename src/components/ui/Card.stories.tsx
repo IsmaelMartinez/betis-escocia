@@ -1,23 +1,22 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import Card, { CardHeader, CardBody, CardFooter } from './Card';
+import type { Meta, StoryObj } from "@storybook/nextjs";
+import Card, { CardHeader, CardBody, CardFooter } from "./Card";
 
 const meta: Meta<typeof Card> = {
-  title: 'UI/Card',
+  title: "UI/Card",
   component: Card,
   parameters: {
-    layout: 'centered',
-    clerk: { enabled: false }, // This component does not use Clerk
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     variant: {
-      control: 'select',
-      options: ['base', 'interactive', 'elevated', 'betis'],
-      description: 'Visual style of the card',
+      control: "select",
+      options: ["base", "interactive", "elevated", "betis"],
+      description: "Visual style of the card",
     },
     className: {
-      control: 'text',
-      description: 'Additional CSS classes',
+      control: "text",
+      description: "Additional CSS classes",
     },
     children: {
       control: false, // Rendered directly in stories
@@ -48,7 +47,7 @@ export const Default: Story = {
 
 export const Interactive: Story = {
   args: {
-    variant: 'interactive',
+    variant: "interactive",
     children: (
       <>
         <CardHeader>
@@ -64,7 +63,7 @@ export const Interactive: Story = {
 
 export const Elevated: Story = {
   args: {
-    variant: 'elevated',
+    variant: "elevated",
     children: (
       <>
         <CardHeader>
@@ -80,7 +79,7 @@ export const Elevated: Story = {
 
 export const BetisThemed: Story = {
   args: {
-    variant: 'betis',
+    variant: "betis",
     children: (
       <>
         <CardHeader>
@@ -104,5 +103,3 @@ export const CardWithOnlyBody: Story = {
     ),
   },
 };
-
-

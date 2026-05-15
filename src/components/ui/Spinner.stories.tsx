@@ -1,23 +1,22 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import Spinner from './Spinner';
+import type { Meta, StoryObj } from "@storybook/nextjs";
+import Spinner from "./Spinner";
 
 const meta: Meta<typeof Spinner> = {
-  title: 'UI/Spinner',
+  title: "UI/Spinner",
   component: Spinner,
   parameters: {
-    layout: 'centered',
-    clerk: { enabled: false }, // Disable Clerk for this component
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
-      description: 'Size of the spinner',
+      control: "select",
+      options: ["sm", "md", "lg"],
+      description: "Size of the spinner",
     },
     className: {
-      control: 'text',
-      description: 'Additional CSS classes',
+      control: "text",
+      description: "Additional CSS classes",
     },
   },
 };
@@ -27,25 +26,25 @@ type Story = StoryObj<typeof Spinner>;
 
 export const Small: Story = {
   args: {
-    size: 'sm',
+    size: "sm",
   },
 };
 
 export const Medium: Story = {
   args: {
-    size: 'md',
+    size: "md",
   },
 };
 
 export const Large: Story = {
   args: {
-    size: 'lg',
+    size: "lg",
   },
 };
 
 export const CustomColor: Story = {
   args: {
-    size: 'md',
-    className: 'text-blue-500',
+    size: "md",
+    className: "text-blue-500",
   },
 };

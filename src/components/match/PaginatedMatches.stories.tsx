@@ -266,7 +266,6 @@ const meta: Meta<typeof PaginatedMatches> = {
   component: PaginatedMatches,
   parameters: {
     layout: "fullscreen",
-    clerk: { enabled: false }, // This component does not use Clerk
     msw: {
       handlers: [
         http.get("/api/matches", ({ request }) => {
