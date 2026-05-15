@@ -1,14 +1,19 @@
-import { createApiHandler } from '@/lib/api/apiUtils';
-import { FootballDataService } from '@/services/footballDataService';
-import axios from 'axios';
-import type { Match, MatchCardProps } from '@/types/match';
-import { z } from 'zod';
-import { log } from '@/lib/utils/logger';
+import { createApiHandler } from "@/lib/api/apiUtils";
+import { FootballDataService } from "@/services/footballDataService";
+import axios from "axios";
+import type { Match, MatchCardProps } from "@/types/match";
+import { z } from "zod";
+import { log } from "@/lib/utils/logger";
 
 // Request validation schema
 const matchesQuerySchema = z.object({
-  type: z.enum(['all', 'upcoming', 'recent', 'conference', 'friendlies']).default('all'),
-  live: z.string().default('false').transform(val => val === 'true')
+  type: z
+    .enum(["all", "upcoming", "recent", "conference", "friendlies"])
+    .default("all"),
+  live: z
+    .string()
+    .default("false")
+    .transform((val) => val === "true"),
 });
 
 type MatchesResponse = {
@@ -16,10 +21,12 @@ type MatchesResponse = {
   matches: (Match | MatchCardProps)[];
   count: number;
   timestamp: string;
-  source: 'live-api' | 'local-data';
+  source: "live-api" | "local-data";
 };
 
-async function getMatches(params: z.infer<typeof matchesQuerySchema>): Promise<MatchesResponse> {
+async function getMatches(
+  params: z.infer<typeof matchesQuerySchema>,
+): Promise<MatchesResponse> {
   const { type, live: useLive } = params;
   let matches: (Match | MatchCardProps)[] = [];
 
@@ -27,17 +34,19 @@ async function getMatches(params: z.infer<typeof matchesQuerySchema>): Promise<M
     // Use live Football-Data.org API
     try {
       const service = new FootballDataService(axios.create());
-      
+
       switch (type) {
-        case 'upcoming':
+        case "upcoming":
           matches = (await service.getUpcomingBetisMatchesForCards(10)) || [];
           break;
-        case 'recent':
+        case "recent":
           matches = (await service.getRecentBetisResultsForCards(10)) || [];
           break;
-        case 'all': {
-          const upcoming = (await service.getUpcomingBetisMatchesForCards(50)) || [];
-          const recent = (await service.getRecentBetisResultsForCards(50)) || [];
+        case "all": {
+          const upcoming =
+            (await service.getUpcomingBetisMatchesForCards(50)) || [];
+          const recent =
+            (await service.getRecentBetisResultsForCards(50)) || [];
           matches = [...upcoming, ...recent];
           break;
         }
@@ -45,16 +54,16 @@ async function getMatches(params: z.infer<typeof matchesQuerySchema>): Promise<M
           matches = [];
           break;
       }
-      
-      log.info('Successfully fetched live match data', undefined, {
+
+      log.info("Successfully fetched live match data", undefined, {
         type,
         matchCount: matches.length,
-        source: 'football-data-api'
+        source: "football-data-api",
       });
     } catch (apiError) {
-      log.warn('Live API error, falling back to empty results', undefined, {
+      log.warn("Live API error, falling back to empty results", undefined, {
         error: apiError instanceof Error ? apiError.message : String(apiError),
-        type
+        type,
       });
       matches = [];
     }
@@ -67,17 +76,17 @@ async function getMatches(params: z.infer<typeof matchesQuerySchema>): Promise<M
     matches,
     count: matches.length,
     timestamp: new Date().toISOString(),
-    source: useLive ? 'live-api' : 'local-data',
+    source: useLive ? "live-api" : "local-data",
   };
 }
 
 export const GET = createApiHandler({
-  auth: 'none',
+  auth: "none",
   schema: matchesQuerySchema,
   handler: async (validatedData) => {
     return await getMatches(validatedData);
-  }
+  },
 });
 
 export const revalidate = 1800; // 30 minutes cache
-export const dynamic = 'force-dynamic'; // This route requires dynamic rendering
+export const dynamic = "force-dynamic"; // This route requires dynamic rendering

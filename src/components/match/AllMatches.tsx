@@ -2,9 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { Match, MatchCardProps } from "@/types/match";
-import MatchCard, {
-  convertFootballDataMatchToCardProps,
-} from "./MatchCard";
+import MatchCard, { convertFootballDataMatchToCardProps } from "./MatchCard";
 
 type Filter = "upcoming" | "past" | "all";
 
@@ -74,8 +72,7 @@ export default function AllMatches({ className = "" }: AllMatchesProps) {
         filter === "all" ||
         (filter === "upcoming" ? isUpcoming(match) : !isUpcoming(match));
       const passesCompetitionFilter =
-        competitionFilter === "all" ||
-        match.competition === competitionFilter;
+        competitionFilter === "all" || match.competition === competitionFilter;
       return passesTimeFilter && passesCompetitionFilter;
     });
   }, [matches, filter, competitionFilter, now]);
@@ -100,8 +97,7 @@ export default function AllMatches({ className = "" }: AllMatchesProps) {
         target === "all" ||
         (target === "upcoming" ? isUpcoming(match) : !isUpcoming(match));
       const matchesCompetition =
-        competitionFilter === "all" ||
-        match.competition === competitionFilter;
+        competitionFilter === "all" || match.competition === competitionFilter;
       return matchesTime && matchesCompetition;
     }).length;
   };
@@ -236,8 +232,8 @@ export default function AllMatches({ className = "" }: AllMatchesProps) {
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
           <div className="text-gray-400 text-4xl mb-4">📅</div>
           <p className="text-gray-600">
-            No hay partidos{" "}
-            {filter === "upcoming" ? "próximos" : "pasados"} en esta competición.
+            No hay partidos {filter === "upcoming" ? "próximos" : "pasados"} en
+            esta competición.
           </p>
         </div>
       ) : (

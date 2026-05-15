@@ -37,9 +37,7 @@ export function convertFootballDataMatchToCardProps(
     matchday: match.matchday,
     opponentCrest: opponentTeam.crest,
     competitionEmblem: match.competition.emblem,
-    score: hasScore
-      ? { home: fullTime.home, away: fullTime.away }
-      : undefined,
+    score: hasScore ? { home: fullTime.home, away: fullTime.away } : undefined,
   };
 }
 
