@@ -1,23 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError, ZodSchema } from "zod";
-import { checkAdminRole } from "@/lib/auth/adminApiProtection";
-import { getAuth } from "@clerk/nextjs/server";
 import { log } from "@/lib/utils/logger";
-
-export type AuthRequirement = "admin" | "user" | "optional" | "none";
 
 export interface ApiContext {
   request: NextRequest;
   params?: Promise<Record<string, string>>;
-  user?: {
-    id: string;
-    isAdmin: boolean;
-  };
-  userId?: string;
 }
 
 export interface ApiHandlerConfig<TInput = unknown, TOutput = unknown> {
-  auth?: AuthRequirement;
   schema?: ZodSchema<TInput>;
   handler: (data: TInput, context: ApiContext) => Promise<TOutput>;
 }
@@ -84,57 +74,6 @@ export function handleZodError(error: ZodError): NextResponse<ApiResponse> {
   return createErrorResponse("Datos de entrada inválidos", 400, errorMessages);
 }
 
-async function handleAuthentication(
-  request: NextRequest,
-  authRequirement: AuthRequirement,
-): Promise<{ context: ApiContext; error?: NextResponse }> {
-  const context: ApiContext = { request };
-
-  if (authRequirement === "none") {
-    return { context };
-  }
-
-  if (authRequirement === "optional") {
-    const { userId } = getAuth(request);
-    if (userId) {
-      context.user = { id: userId, isAdmin: false };
-      context.userId = userId;
-    }
-    return { context };
-  }
-
-  if (authRequirement === "admin") {
-    const { user, isAdmin, error } = await checkAdminRole();
-    if (!isAdmin || !user) {
-      return {
-        context,
-        error: createErrorResponse(
-          error || "Acceso de administrador requerido",
-          !user ? 401 : 403,
-        ),
-      };
-    }
-    context.user = { id: user.id, isAdmin: true };
-    context.userId = user.id;
-    return { context };
-  }
-
-  if (authRequirement === "user") {
-    const { userId } = getAuth(request);
-    if (!userId) {
-      return {
-        context,
-        error: createErrorResponse("Autenticación requerida", 401),
-      };
-    }
-    context.user = { id: userId, isAdmin: false };
-    context.userId = userId;
-    return { context };
-  }
-
-  return { context };
-}
-
 export function createApiHandler<TInput = unknown, TOutput = unknown>(
   config: ApiHandlerConfig<TInput, TOutput>,
 ) {
@@ -143,14 +82,7 @@ export function createApiHandler<TInput = unknown, TOutput = unknown>(
     routeContext?: { params: Promise<Record<string, string>> },
   ): Promise<NextResponse> => {
     try {
-      const { context, error: authError } = await handleAuthentication(
-        request,
-        config.auth || "none",
-      );
-
-      if (authError) {
-        return authError;
-      }
+      const context: ApiContext = { request };
 
       if (routeContext && routeContext.params) {
         context.params = routeContext.params;
@@ -206,32 +138,4 @@ export function createApiHandler<TInput = unknown, TOutput = unknown>(
       return createErrorResponse("Error interno del servidor", 500);
     }
   };
-}
-
-export function getQueryParams<T>(
-  request: NextRequest,
-  schema?: ZodSchema<T>,
-): { params: T; error?: NextResponse } {
-  try {
-    const { searchParams } = new URL(request.url);
-    const params = Object.fromEntries(searchParams.entries());
-
-    if (schema) {
-      const validatedParams = schema.parse(params);
-      return { params: validatedParams };
-    }
-
-    return { params: params as T };
-  } catch (error) {
-    if (error instanceof ZodError) {
-      return {
-        params: {} as T,
-        error: handleZodError(error),
-      };
-    }
-    return {
-      params: {} as T,
-      error: createErrorResponse("Parámetros de consulta inválidos", 400),
-    };
-  }
 }

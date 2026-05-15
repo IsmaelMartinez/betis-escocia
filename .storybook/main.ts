@@ -31,7 +31,6 @@ const config: StorybookConfig = {
     
     config.resolve.alias = {
       ...config.resolve.alias,
-      "@clerk/nextjs": path.resolve(__dirname, "../__mocks__/@clerk/nextjs.ts"),
       "next/image": path.resolve(__dirname, "../__mocks__/next/image.tsx"),
     };
 

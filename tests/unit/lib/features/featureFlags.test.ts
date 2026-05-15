@@ -33,8 +33,7 @@ describe("Feature Flags - Simplified System", () => {
       expect(hasFeature("show-clasificacion")).toBe(true);
       expect(hasFeature("show-partidos")).toBe(true);
 
-      // Disabled by default (Phase 2 or optional features)
-      expect(hasFeature("show-clerk-auth")).toBe(false);
+      // Disabled by default
       expect(hasFeature("show-debug-info")).toBe(false);
     });
   });

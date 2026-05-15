@@ -11,7 +11,6 @@ export type FeatureName =
   | "show-partidos"
   | "show-nosotros"
   | "show-jugadores-historicos"
-  | "show-clerk-auth"
   | "show-debug-info"
   | "show-unete"
   | "show-efemerides";
@@ -31,7 +30,6 @@ const DEFAULT_FEATURES: Record<FeatureName, boolean> = {
   "show-partidos": true, // Core: match schedule and results
   "show-nosotros": true, // Core: About page
   "show-jugadores-historicos": true, // Core: Historic players
-  "show-clerk-auth": false, // Phase 2: user accounts
   "show-debug-info": false,
   "show-unete": true, // Core: Join page
   "show-efemerides": true, // Core: Betis history efemérides
@@ -43,7 +41,6 @@ const ENV_VAR_MAP: Record<FeatureName, string> = {
   "show-partidos": "NEXT_PUBLIC_FEATURE_PARTIDOS",
   "show-nosotros": "NEXT_PUBLIC_FEATURE_NOSOTROS",
   "show-jugadores-historicos": "NEXT_PUBLIC_FEATURE_JUGADORES_HISTORICOS",
-  "show-clerk-auth": "NEXT_PUBLIC_FEATURE_CLERK_AUTH",
   "show-debug-info": "NEXT_PUBLIC_FEATURE_DEBUG_INFO",
   "show-unete": "NEXT_PUBLIC_FEATURE_UNETE",
   "show-efemerides": "NEXT_PUBLIC_FEATURE_EFEMERIDES",
