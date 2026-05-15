@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Match, MatchCardProps } from "@/types/match";
 import MatchCard, { convertFootballDataMatchToCardProps } from "./MatchCard";
 
@@ -20,38 +20,29 @@ export default function AllMatches({ className = "" }: AllMatchesProps) {
   const [competitionFilter, setCompetitionFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchAllMatches() {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const response = await fetch("/api/matches?type=all&live=true");
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-        const payload = (await response.json()) as {
-          matches: Match[];
-        };
-        if (cancelled) return;
-        setMatches(
-          (payload.matches ?? []).map(convertFootballDataMatchToCardProps),
-        );
-      } catch (err) {
-        if (cancelled) return;
-        console.error("Error fetching matches:", err);
-        setError("Error al cargar los partidos");
-      } finally {
-        if (!cancelled) setIsLoading(false);
+  const fetchAllMatches = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const response = await fetch("/api/matches?type=all&live=true");
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
       }
+      const payload = (await response.json()) as { matches: Match[] };
+      setMatches(
+        (payload.matches ?? []).map(convertFootballDataMatchToCardProps),
+      );
+    } catch (err) {
+      console.error("Error fetching matches:", err);
+      setError("Error al cargar los partidos");
+    } finally {
+      setIsLoading(false);
     }
-
-    fetchAllMatches();
-    return () => {
-      cancelled = true;
-    };
   }, []);
+
+  useEffect(() => {
+    fetchAllMatches();
+  }, [fetchAllMatches]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -90,16 +81,19 @@ export default function AllMatches({ className = "" }: AllMatchesProps) {
   const endIndex = startIndex + MATCHES_PER_PAGE;
   const pagedMatches = sortedMatches.slice(startIndex, endIndex);
 
-  const countFor = (target: Filter): number => {
-    return matches.filter((match) => {
-      const matchesTime =
-        target === "all" ||
-        (target === "upcoming" ? isUpcoming(match) : !isUpcoming(match));
-      const matchesCompetition =
-        competitionFilter === "all" || match.competition === competitionFilter;
-      return matchesTime && matchesCompetition;
-    }).length;
-  };
+  const counts = useMemo(() => {
+    const competitionScoped =
+      competitionFilter === "all"
+        ? matches
+        : matches.filter((m) => m.competition === competitionFilter);
+    const upcoming = competitionScoped.filter(isUpcoming).length;
+    const past = competitionScoped.length - upcoming;
+    return {
+      all: competitionScoped.length,
+      upcoming,
+      past,
+    } as Record<Filter, number>;
+  }, [matches, competitionFilter]);
 
   if (isLoading) {
     return (
@@ -137,7 +131,7 @@ export default function AllMatches({ className = "" }: AllMatchesProps) {
           </h3>
           <p className="text-red-600 mb-4">{error}</p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => fetchAllMatches()}
             className="bg-betis-verde hover:bg-betis-verde-dark text-white px-4 py-2 rounded-md font-medium transition-colors"
           >
             Reintentar
@@ -169,7 +163,7 @@ export default function AllMatches({ className = "" }: AllMatchesProps) {
         <h2 className="text-2xl font-bold text-gray-900 mb-4">
           Todos los Partidos
           <span className="text-lg font-normal text-gray-600 ml-2">
-            ({countFor(filter)}{" "}
+            ({counts[filter]}{" "}
             {filter === "all"
               ? "total"
               : filter === "upcoming"
@@ -195,7 +189,7 @@ export default function AllMatches({ className = "" }: AllMatchesProps) {
                 : value === "upcoming"
                   ? "Próximos"
                   : "Pasados"}{" "}
-              ({countFor(value)})
+              ({counts[value]})
             </button>
           ))}
         </div>

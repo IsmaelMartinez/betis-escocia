@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -19,38 +19,31 @@ export default function UpcomingMatchesWidget({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchMatches() {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const response = await fetch("/api/matches?type=upcoming&live=true");
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-        const payload = (await response.json()) as { matches: Match[] };
-        if (cancelled) return;
-        setMatches(
-          (payload.matches ?? [])
-            .slice(0, 2)
-            .map(convertFootballDataMatchToCardProps),
-        );
-      } catch (err) {
-        if (cancelled) return;
-        console.error("Error fetching upcoming matches widget:", err);
-        setError("Error al cargar los próximos partidos");
-      } finally {
-        if (!cancelled) setIsLoading(false);
+  const fetchMatches = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const response = await fetch("/api/matches?type=upcoming&live=true");
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
       }
+      const payload = (await response.json()) as { matches: Match[] };
+      setMatches(
+        (payload.matches ?? [])
+          .slice(0, 2)
+          .map(convertFootballDataMatchToCardProps),
+      );
+    } catch (err) {
+      console.error("Error fetching upcoming matches widget:", err);
+      setError("Error al cargar los próximos partidos");
+    } finally {
+      setIsLoading(false);
     }
-
-    fetchMatches();
-    return () => {
-      cancelled = true;
-    };
   }, []);
+
+  useEffect(() => {
+    fetchMatches();
+  }, [fetchMatches]);
 
   if (isLoading) {
     return (
@@ -83,7 +76,7 @@ export default function UpcomingMatchesWidget({
           <div className="text-red-600 text-sm mb-2">⚠️</div>
           <p className="text-red-600 text-sm mb-3">{error}</p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => fetchMatches()}
             className="text-xs bg-betis-verde hover:bg-betis-verde-dark text-white px-3 py-1 rounded font-medium transition-colors"
           >
             Reintentar
