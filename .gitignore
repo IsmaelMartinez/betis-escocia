@@ -41,9 +41,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# clerk configuration (can include secrets)
-/.clerk/
-
 # playwright reports
 playwright-report/
 
@@ -52,8 +49,6 @@ test-results/
 
 # lighthouse reports
 lighthouse-report.json
-
-playwright/.clerk
 
 *storybook.log
 storybook-static
