@@ -1,137 +1,63 @@
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import sitemap from "../../../src/app/sitemap";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import {
-  getEnabledNavigationItems,
-  hasFeature,
-} from "@/lib/features/featureFlags";
 
-// Mock the featureFlags module
-vi.mock("@/lib/features/featureFlags", () => ({
-  getEnabledNavigationItems: vi.fn(),
-  hasFeature: vi.fn(),
-}));
+const BASE_URL = "https://betis-escocia.vercel.app";
 
 describe("sitemap", () => {
-  const baseUrl = "https://betis-escocia.vercel.app";
   const mockDate = new Date("2025-01-01T12:00:00.000Z");
 
   beforeEach(() => {
-    vi.clearAllMocks();
-    // Mock Date to ensure consistent lastModified values
     vi.useFakeTimers();
     vi.setSystemTime(mockDate);
-    // Default: show-partidos is enabled
-    vi.mocked(hasFeature).mockReturnValue(true);
   });
 
   afterEach(() => {
     vi.useRealTimers();
   });
 
-  it("should generate sitemap with only static pages when no dynamic navigation items are enabled", () => {
-    vi.mocked(getEnabledNavigationItems).mockReturnValue([]);
-
-    const result = sitemap();
-
-    expect(result).toEqual([
-      {
-        url: baseUrl,
-        lastModified: mockDate,
-        changeFrequency: "weekly",
-        priority: 1,
-      },
-      {
-        url: `${baseUrl}/partidos`,
-        lastModified: mockDate,
-        changeFrequency: "daily",
-        priority: 0.9,
-      },
-    ]);
+  it("emits the home page with weekly cadence and priority 1", () => {
+    const home = sitemap().find((page) => page.url === BASE_URL);
+    expect(home).toEqual({
+      url: BASE_URL,
+      lastModified: mockDate,
+      changeFrequency: "weekly",
+      priority: 1,
+    });
   });
 
-  it("should generate sitemap with dynamic pages when navigation items are enabled", () => {
-    vi.mocked(getEnabledNavigationItems).mockReturnValue([
-      { href: "/", name: "Home", nameEn: "Home", feature: null }, // Should be filtered out as it's a static page
-      { href: "/unete", name: "Únete", nameEn: "Join Us", feature: null },
-      {
-        href: "/nosotros",
-        name: "Nosotros",
-        nameEn: "About",
-        feature: "show-nosotros",
-      },
-    ]);
+  it("emits /partidos with daily cadence and priority 0.9", () => {
+    const partidos = sitemap().find(
+      (page) => page.url === `${BASE_URL}/partidos`,
+    );
+    expect(partidos).toEqual({
+      url: `${BASE_URL}/partidos`,
+      lastModified: mockDate,
+      changeFrequency: "daily",
+      priority: 0.9,
+    });
+  });
 
-    const result = sitemap();
-
-    expect(result).toEqual(
+  it("emits every public route exactly once", () => {
+    const urls = sitemap().map((p) => p.url);
+    expect(new Set(urls).size).toBe(urls.length);
+    expect(urls).toEqual(
       expect.arrayContaining([
-        {
-          url: baseUrl,
-          lastModified: mockDate,
-          changeFrequency: "weekly",
-          priority: 1,
-        },
-        {
-          url: `${baseUrl}/partidos`,
-          lastModified: mockDate,
-          changeFrequency: "daily",
-          priority: 0.9,
-        },
-        {
-          url: `${baseUrl}/unete`,
-          lastModified: mockDate,
-          changeFrequency: "monthly",
-          priority: 0.9,
-        },
-        {
-          url: `${baseUrl}/nosotros`,
-          lastModified: mockDate,
-          changeFrequency: "monthly",
-          priority: 0.8,
-        },
+        BASE_URL,
+        `${BASE_URL}/partidos`,
+        `${BASE_URL}/clasificacion`,
+        `${BASE_URL}/nosotros`,
+        `${BASE_URL}/unete`,
+        `${BASE_URL}/jugadores-historicos`,
+        `${BASE_URL}/joaquin`,
       ]),
     );
-    expect(result.length).toBe(4); // Static + partidos + 2 dynamic
   });
 
-  it("should handle different priorities for dynamic pages", () => {
-    vi.mocked(getEnabledNavigationItems).mockReturnValue([
-      { href: "/unete", name: "Únete", nameEn: "Join Us", feature: null },
-      {
-        href: "/nosotros",
-        name: "Nosotros",
-        nameEn: "About",
-        feature: "show-nosotros",
-      },
-    ]);
-
-    const result = sitemap();
-
-    const unetePage = result.find((page) => page.url === `${baseUrl}/unete`);
-    const nosotrosPage = result.find(
-      (page) => page.url === `${baseUrl}/nosotros`,
-    );
-
-    expect(unetePage?.priority).toBe(0.9);
-    expect(nosotrosPage?.priority).toBe(0.8);
-  });
-
-  it("should exclude /partidos from sitemap when show-partidos feature is disabled", () => {
-    vi.mocked(getEnabledNavigationItems).mockReturnValue([]);
-    vi.mocked(hasFeature).mockReturnValue(false);
-
-    const result = sitemap();
-
-    expect(result).toEqual([
-      {
-        url: baseUrl,
-        lastModified: mockDate,
-        changeFrequency: "weekly",
-        priority: 1,
-      },
-    ]);
-    expect(
-      result.find((page) => page.url.includes("/partidos")),
-    ).toBeUndefined();
+  it("gives /unete a higher priority than the other monthly pages", () => {
+    const pages = sitemap();
+    const unete = pages.find((p) => p.url === `${BASE_URL}/unete`);
+    const nosotros = pages.find((p) => p.url === `${BASE_URL}/nosotros`);
+    expect(unete?.priority).toBe(0.9);
+    expect(nosotros?.priority).toBe(0.8);
   });
 });

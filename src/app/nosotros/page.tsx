@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Heart, Users, Calendar } from "lucide-react";
-import { FeatureWrapper } from "@/lib/features/featureProtection";
 import InfoCard from "@/components/InfoCard";
 
 export default function Nosotros() {
@@ -160,15 +159,13 @@ export default function Nosotros() {
               <Heart className="h-6 w-6" />
               Únete a Nosotros
             </Link>
-            <FeatureWrapper feature="show-partidos">
-              <Link
-                href="/partidos"
-                className="inline-flex items-center gap-3 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border-2 border-white/30 px-10 py-5 rounded-2xl font-heading font-bold text-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wide"
-              >
-                <Calendar className="h-6 w-6" />
-                Ver Partidos
-              </Link>
-            </FeatureWrapper>
+            <Link
+              href="/partidos"
+              className="inline-flex items-center gap-3 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border-2 border-white/30 px-10 py-5 rounded-2xl font-heading font-bold text-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wide"
+            >
+              <Calendar className="h-6 w-6" />
+              Ver Partidos
+            </Link>
           </div>
         </div>
       </section>

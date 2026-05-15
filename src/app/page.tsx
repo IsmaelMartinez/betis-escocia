@@ -1,7 +1,6 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import HeroCommunity from "@/components/hero/HeroCommunity";
-import { hasFeature } from "@/lib/features/featureFlags";
 
 const BetisEfemerides = dynamic(
   () => import("@/components/widgets/BetisEfemerides"),
@@ -62,14 +61,9 @@ const ClassificationWidget = dynamic(
 );
 
 export default function Home() {
-  // Get feature flags on server to pass to client components
-  const showPartidos = hasFeature("show-partidos");
-  const showClasificacion = hasFeature("show-clasificacion");
-  const showEfemerides = hasFeature("show-efemerides");
-
   return (
     <>
-      <HeroCommunity showPartidos={showPartidos} />
+      <HeroCommunity />
 
       {/* Upcoming Matches and Classification Widgets */}
       {/* El Tercio Nuevo: Warm canvas + subtle tartan texture */}
@@ -83,47 +77,41 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Upcoming Matches */}
             <div className="lg:col-span-3">
-              {showPartidos && (
-                <>
-                  {/* Section header with display typography */}
-                  <div className="mb-8 text-center lg:text-left">
-                    <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-black text-scotland-navy mb-3 uppercase tracking-tight">
-                      Próximos Partidos
-                    </h2>
-                    <div className="h-1 w-32 bg-gradient-to-r from-betis-verde via-betis-oro to-scotland-navy mx-auto lg:mx-0 rounded-full" />
-                  </div>
-                  <UpcomingMatchesWidget className="" />
-                </>
-              )}
+              {/* Section header with display typography */}
+              <div className="mb-8 text-center lg:text-left">
+                <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-black text-scotland-navy mb-3 uppercase tracking-tight">
+                  Próximos Partidos
+                </h2>
+                <div className="h-1 w-32 bg-gradient-to-r from-betis-verde via-betis-oro to-scotland-navy mx-auto lg:mx-0 rounded-full" />
+              </div>
+              <UpcomingMatchesWidget className="" />
             </div>
 
             {/* Classification */}
             <div className="lg:col-span-1">
-              {showClasificacion && <ClassificationWidget className="" />}
+              <ClassificationWidget className="" />
             </div>
           </div>
         </div>
       </section>
 
       {/* Efemérides - Tal día como hoy en la historia del Betis */}
-      {showEfemerides && (
-        <section className="relative py-16 overflow-hidden">
-          {/* Background layers */}
-          <div className="absolute inset-0 bg-betis-verde-pale" />
-          <div className="absolute inset-0 pattern-verdiblanco-whisper opacity-30" />
+      <section className="relative py-16 overflow-hidden">
+        {/* Background layers */}
+        <div className="absolute inset-0 bg-betis-verde-pale" />
+        <div className="absolute inset-0 pattern-verdiblanco-whisper opacity-30" />
 
-          <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Section header */}
-            <div className="mb-8 text-center">
-              <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black text-scotland-navy mb-3 uppercase tracking-tight">
-                Tal Día Como Hoy
-              </h2>
-              <div className="h-1 w-24 bg-gradient-to-r from-betis-verde via-betis-oro to-betis-verde mx-auto rounded-full" />
-            </div>
-            <BetisEfemerides />
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section header */}
+          <div className="mb-8 text-center">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black text-scotland-navy mb-3 uppercase tracking-tight">
+              Tal Día Como Hoy
+            </h2>
+            <div className="h-1 w-24 bg-gradient-to-r from-betis-verde via-betis-oro to-betis-verde mx-auto rounded-full" />
           </div>
-        </section>
-      )}
+          <BetisEfemerides />
+        </div>
+      </section>
 
       {/* Join Us CTA - El Tercio Nuevo: Layered cultural fusion */}
       <section className="relative py-24 overflow-hidden">

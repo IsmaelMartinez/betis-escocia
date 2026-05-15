@@ -9,10 +9,6 @@ import {
 import "./globals.css";
 import Layout from "@/components/layout/Layout";
 import OfflineDetector from "@/components/OfflineDetector";
-import {
-  getFeatureFlagsStatus,
-  getEnabledNavigationItems,
-} from "@/lib/features/featureFlags";
 import * as Sentry from "@sentry/nextjs";
 import FacebookSDK from "@/components/social/FacebookSDK";
 
@@ -171,11 +167,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Get feature flags debug info (returns null if debug mode is disabled)
-  const debugInfo = getFeatureFlagsStatus();
-  // Get navigation items on the server to avoid hydration mismatch
-  const navigationItems = getEnabledNavigationItems();
-
   return (
     <html lang="es">
       <head>
@@ -194,9 +185,7 @@ export default function RootLayout({
 
         <OfflineDetector />
         <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
-          <Layout debugInfo={debugInfo} navigationItems={navigationItems}>
-            {children}
-          </Layout>
+          <Layout>{children}</Layout>
         </Sentry.ErrorBoundary>
         {isVercel && <Analytics />}
         {isVercel && <SpeedInsights />}

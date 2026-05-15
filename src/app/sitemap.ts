@@ -1,44 +1,50 @@
 import { MetadataRoute } from "next";
-import {
-  getEnabledNavigationItems,
-  hasFeature,
-} from "@/lib/features/featureFlags";
+
+const BASE_URL = "https://betis-escocia.vercel.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://betis-escocia.vercel.app";
-  const enabledNavigation = getEnabledNavigationItems();
-
-  // Static pages that are always available
-  const staticPages = [
+  return [
     {
-      url: baseUrl,
+      url: BASE_URL,
       lastModified: new Date(),
-      changeFrequency: "weekly" as const,
+      changeFrequency: "weekly",
       priority: 1,
     },
-  ];
-
-  // Dynamic pages based on feature flags (excluding /partidos which has special handling)
-  const dynamicPages = enabledNavigation
-    .filter((item) => item.href !== "/" && item.href !== "/partidos")
-    .map((item) => ({
-      url: `${baseUrl}${item.href}`,
+    {
+      url: `${BASE_URL}/partidos`,
       lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: item.href === "/unete" ? 0.9 : 0.8,
-    }));
-
-  // Special pages with different priorities (only if feature enabled)
-  const specialPages = hasFeature("show-partidos")
-    ? [
-        {
-          url: `${baseUrl}/partidos`,
-          lastModified: new Date(),
-          changeFrequency: "daily" as const,
-          priority: 0.9,
-        },
-      ]
-    : [];
-
-  return [...staticPages, ...dynamicPages, ...specialPages];
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/unete`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${BASE_URL}/clasificacion`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/nosotros`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/jugadores-historicos`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/joaquin`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+  ];
 }

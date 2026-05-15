@@ -28,11 +28,7 @@ const CommunityStats = dynamic(() => import("../widgets/CommunityStats"), {
   ),
 });
 
-interface HeroCommunityProps {
-  readonly showPartidos: boolean;
-}
-
-function HeroCommunity({ showPartidos }: HeroCommunityProps) {
+function HeroCommunity() {
   return (
     <section className="relative min-h-screen overflow-hidden">
       {/* ============================================
@@ -137,15 +133,13 @@ function HeroCommunity({ showPartidos }: HeroCommunityProps) {
                 <Heart className="mr-3 h-5 w-5 group-hover:animate-pulse" />
                 ÚNETE A LA FAMILIA
               </Link>
-              {showPartidos && (
-                <Link
-                  href="/partidos"
-                  className="group bg-white hover:bg-betis-verde-pale text-betis-verde-dark border-2 border-betis-verde-dark px-8 py-4 rounded-xl font-heading font-bold text-lg transition-all duration-300 flex items-center justify-center"
-                >
-                  <Calendar className="mr-3 h-5 w-5" />
-                  VER PARTIDOS
-                </Link>
-              )}
+              <Link
+                href="/partidos"
+                className="group bg-white hover:bg-betis-verde-pale text-betis-verde-dark border-2 border-betis-verde-dark px-8 py-4 rounded-xl font-heading font-bold text-lg transition-all duration-300 flex items-center justify-center"
+              >
+                <Calendar className="mr-3 h-5 w-5" />
+                VER PARTIDOS
+              </Link>
             </div>
           </div>
 

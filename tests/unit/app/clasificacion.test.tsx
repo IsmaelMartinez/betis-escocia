@@ -12,13 +12,6 @@ import {
 
 // Mock the dependencies
 vi.mock("@/services/footballDataService");
-vi.mock("@/lib/features/featureProtection", () => ({
-  withFeatureFlag: vi.fn((Component) => Component),
-  FeatureWrapper: vi.fn(({ children }) => (
-    <div data-testid="feature-wrapper">{children}</div>
-  )),
-}));
-
 vi.mock("@/components/ErrorBoundary", () => ({
   ErrorBoundary: vi.fn(({ children }) => (
     <div data-testid="error-boundary">{children}</div>
