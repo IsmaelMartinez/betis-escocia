@@ -103,7 +103,9 @@ describe("Nosotros Page", () => {
       expect(
         screen.getByText(/Primera peña oficial del Betis en Reino Unido/),
       ).toBeInTheDocument();
-      expect(screen.getByText(/Nuevo hogar en Polwarth Tavern/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Nuevo hogar en Polwarth Tavern/),
+      ).toBeInTheDocument();
       expect(
         screen.getByText(/Reconocimiento oficial de LaLiga/),
       ).toBeInTheDocument();
@@ -128,7 +130,9 @@ describe("Nosotros Page", () => {
         screen.getByText(/¿Quieres ser parte de nuestra historia?/),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Tu historia también puede formar parte de la nuestra/),
+        screen.getByText(
+          /Tu historia también puede formar parte de la nuestra/,
+        ),
       ).toBeInTheDocument();
     });
 

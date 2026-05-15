@@ -10,7 +10,6 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-
 // Mock Lucide React icons
 vi.mock("lucide-react", () => ({
   MapPin: vi.fn(({ className }) => (
