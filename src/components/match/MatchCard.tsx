@@ -3,8 +3,7 @@
 import React from "react";
 import { Calendar } from "lucide-react";
 import Image from "next/image";
-import type { MatchCardProps } from "@/types/match";
-import type { Match as DatabaseMatch } from "@/lib/api/supabase";
+import type { Match, MatchCardProps } from "@/types/match";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { DATETIME_FORMAT } from "@/lib/constants/dateFormats";
@@ -12,42 +11,32 @@ import {
   getCompetitionBadge,
   getCompetitionDisplayName,
 } from "@/lib/constants/competitions";
+import { REAL_BETIS_TEAM_ID } from "@/lib/constants/team";
 
-// Adapter function to convert database match to MatchCardProps
-export function convertDatabaseMatchToCardProps(
-  dbMatch: DatabaseMatch,
+export function convertFootballDataMatchToCardProps(
+  match: Match,
 ): MatchCardProps {
-  const isUpcoming = new Date(dbMatch.date_time) > new Date();
+  const isHome = match.homeTeam.id === REAL_BETIS_TEAM_ID;
+  const opponentTeam = isHome ? match.awayTeam : match.homeTeam;
+  const fullTime = match.score?.fullTime;
+  const hasScore =
+    fullTime &&
+    fullTime.home !== null &&
+    fullTime.away !== null &&
+    fullTime.home !== undefined &&
+    fullTime.away !== undefined;
 
   return {
-    id: dbMatch.id,
-    opponent: dbMatch.opponent,
-    date: dbMatch.date_time,
-    competition: dbMatch.competition,
-    isHome: dbMatch.home_away === "home",
-    status:
-      (dbMatch.status as
-        | "SCHEDULED"
-        | "FINISHED"
-        | "IN_PLAY"
-        | "PAUSED"
-        | "POSTPONED"
-        | "SUSPENDED"
-        | "CANCELLED"
-        | "AWARDED"
-        | "TIMED") || (isUpcoming ? "SCHEDULED" : "FINISHED"),
-    result: dbMatch.result || (isUpcoming ? undefined : "FINALIZADO"),
-    matchday: dbMatch.matchday,
-    score:
-      dbMatch.home_score !== null &&
-      dbMatch.away_score !== null &&
-      dbMatch.home_score !== undefined &&
-      dbMatch.away_score !== undefined
-        ? {
-            home: dbMatch.home_score,
-            away: dbMatch.away_score,
-          }
-        : undefined,
+    id: match.id,
+    opponent: opponentTeam.name,
+    date: match.utcDate,
+    competition: match.competition.name,
+    isHome,
+    status: match.status,
+    matchday: match.matchday,
+    opponentCrest: opponentTeam.crest,
+    competitionEmblem: match.competition.emblem,
+    score: hasScore ? { home: fullTime.home, away: fullTime.away } : undefined,
   };
 }
 

@@ -9,10 +9,8 @@ vi.mock("@/components/ErrorBoundary", () => ({
   ),
 }));
 
-vi.mock("@/components/match/AllDatabaseMatches", () => ({
-  default: () => (
-    <div data-testid="all-database-matches">All Database Matches Component</div>
-  ),
+vi.mock("@/components/match/AllMatches", () => ({
+  default: () => <div data-testid="all-matches">All Matches Component</div>,
 }));
 
 vi.mock("@/components/widgets/BetisPositionWidget", () => ({
@@ -51,7 +49,7 @@ describe("MatchesPage", () => {
       render(<MatchesPage />);
 
       expect(screen.getByTestId("api-error-boundary")).toBeInTheDocument();
-      expect(screen.getByTestId("all-database-matches")).toBeInTheDocument();
+      expect(screen.getByTestId("all-matches")).toBeInTheDocument();
       expect(screen.getByTestId("betis-position-widget")).toBeInTheDocument();
     });
   });
@@ -73,7 +71,7 @@ describe("MatchesPage", () => {
       render(<MatchesPage />);
 
       const matchesSection = screen
-        .getByTestId("all-database-matches")
+        .getByTestId("all-matches")
         .closest(".lg\\:col-span-3");
       const sidebarSection = screen
         .getByTestId("betis-position-widget")
@@ -91,11 +89,11 @@ describe("MatchesPage", () => {
       );
     });
 
-    it("should wrap AllDatabaseMatches in ApiErrorBoundary", () => {
+    it("should wrap AllMatches in ApiErrorBoundary", () => {
       render(<MatchesPage />);
 
       const errorBoundary = screen.getByTestId("api-error-boundary");
-      const matchesComponent = screen.getByTestId("all-database-matches");
+      const matchesComponent = screen.getByTestId("all-matches");
 
       expect(errorBoundary).toContainElement(matchesComponent);
     });

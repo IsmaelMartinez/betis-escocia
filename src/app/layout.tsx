@@ -9,7 +9,6 @@ import {
 import "./globals.css";
 import Layout from "@/components/layout/Layout";
 import OfflineDetector from "@/components/OfflineDetector";
-import BackgroundMatchSync from "@/components/match/BackgroundMatchSync";
 import {
   getFeatureFlagsStatus,
   getEnabledNavigationItems,
@@ -203,7 +202,6 @@ export default function RootLayout({
         <FacebookSDK />
 
         <OfflineDetector />
-        <BackgroundMatchSync />
         <ClerkProvider
           signInUrl="/sign-in"
           signUpUrl="/sign-up"
