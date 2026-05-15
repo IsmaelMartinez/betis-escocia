@@ -24,8 +24,6 @@ vi.mock('@/lib/api/apiUtils', () => ({
           request,
           user: undefined,
           userId: undefined,
-          authenticatedSupabase: undefined,
-          supabase: undefined
         };
         
         const result = await config.handler(validatedData, context);
