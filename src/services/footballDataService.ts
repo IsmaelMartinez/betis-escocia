@@ -3,13 +3,13 @@ import rateLimit from "axios-rate-limit";
 import type { Match } from "@/types/match";
 import { getYear, isAfter, isBefore, compareDesc, compareAsc } from "date-fns";
 import { log } from "@/lib/utils/logger";
+import { REAL_BETIS_TEAM_ID } from "@/lib/constants/team";
 
 const API_KEY = process.env.FOOTBALL_DATA_API_KEY;
 const BASE_URL =
   process.env.FOOTBALL_DATA_API_URL || "https://api.football-data.org/v4";
 
-// Competition and Team Constants
-export const REAL_BETIS_TEAM_ID = 90;
+export { REAL_BETIS_TEAM_ID };
 export const LALIGA_COMPETITION_ID = "PD";
 
 // Helper function to determine current football season
