@@ -30,13 +30,8 @@ This document outlines the guidelines and patterns for code maintenance, refacto
 ### Documentation Update Procedures
 
 - **Documentation Updates**: Update relevant ADRs, README.md, and technical docs when making significant changes.
-- **Feature Documentation**: Update feature flags, API docs, or user guides as needed.
-- **Historical Organization**: Move completed work to historical documentation:
-  - Move `tasks-prd-[feature].md` to `docs/historical/completed-tasks/`
-  - Move `prd-[feature].md` to `docs/historical/implemented-features/`
-  - Update `docs/historical/documentation-reorganization.md` with the move.
 - **README Updates**: Update main README.md if the feature affects user-facing functionality.
-- **Merge Documentation**: Merge any research/comparison docs into existing documentation (e.g., feature flag comparisons into main feature flag docs).
+- **Merge Documentation**: Fold one-off research / comparison notes into the existing canonical doc rather than leaving the comparison sitting alongside it.
 
 ### Code Cleanup and Optimization Patterns
 
