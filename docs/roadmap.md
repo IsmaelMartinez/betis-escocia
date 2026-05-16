@@ -15,7 +15,7 @@ The static-site simplification ran over six PRs in May 2026:
 - **#431** — removed obsolete ADRs and rewrote the docs to match reality.
 - **#432** — deleted orphan components (FilteredMatches, PaginatedMatches, CompetitionFilter, FacebookPagePlugin, InstagramEmbed, SocialMediaDashboard), stripped `log.database` / `log.featureFlag`, dropped the mock-heavy `matches.test.ts`, trimmed unused CSP origins (reCAPTCHA, hCaptcha, Cloudflare Turnstile, Google Fonts since `next/font` self-hosts), fixed a stale `nextConfigPath` in `.storybook/main.ts`.
 
-The end-state matches `/Users/ismael.martinez/.claude-home/plans/groovy-orbiting-meadow.md`.
+End-state: a public static page reading match data from football-data.org, with no DB, auth, admin, or feature-flag surface.
 
 ## Near-term: maintenance
 
