@@ -94,7 +94,10 @@ export function createApiHandler<TInput = unknown, TOutput = unknown>(
       if (result && typeof result === "object" && "success" in result) {
         return NextResponse.json(result);
       }
-      return NextResponse.json({ success: true, data: result });
+      return NextResponse.json({
+        success: true,
+        ...(result !== undefined && result !== null && { data: result }),
+      });
     } catch (error) {
       log.error("API Handler Error:", error);
 
