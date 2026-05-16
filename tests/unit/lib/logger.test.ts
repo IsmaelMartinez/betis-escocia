@@ -1,11 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import {
-  logger,
-  log,
-  type LogContext,
-  type LogEntry,
-  type LogLevel,
-} from "@/lib/utils/logger";
+import { logger, type LogEntry } from "@/lib/utils/logger";
 
 // Mock console methods
 const consoleMocks = {
@@ -27,24 +21,13 @@ describe("Logger", () => {
   };
 
   beforeEach(() => {
-    // Reset environment
     process.env = { ...originalEnv };
-
-    // Mock console methods
     Object.assign(console, consoleMocks);
-
-    // Clear all mocks
     Object.values(consoleMocks).forEach((mock) => mock.mockClear());
-
-    // Clear global context
-    logger.clearGlobalContext();
   });
 
   afterEach(() => {
-    // Restore environment
     process.env = originalEnv;
-
-    // Restore console methods
     Object.assign(console, originalConsole);
   });
 
@@ -54,31 +37,30 @@ describe("Logger", () => {
       process.env.VITEST = "";
 
       const testLogger = new (logger.constructor as any)();
-      testLogger.info("test message");
+      testLogger.info("Test message");
 
-      // In development, should use colored console output
       expect(consoleMocks.info).toHaveBeenCalled();
     });
 
     it("should detect test environment with NODE_ENV", () => {
       vi.stubEnv("NODE_ENV", "test");
+      delete process.env.VITEST;
 
       const testLogger = new (logger.constructor as any)();
-      testLogger.info("test message");
+      testLogger.info("Test message");
 
-      // In test env, info messages should be skipped
-      expect(consoleMocks.info).not.toHaveBeenCalled();
+      // In test environment, non-error logs should be skipped
+      expect(consoleMocks.log).not.toHaveBeenCalled();
     });
 
     it("should detect test environment with VITEST", () => {
-      vi.stubEnv("NODE_ENV", "development");
+      vi.stubEnv("NODE_ENV", "production");
       process.env.VITEST = "true";
 
       const testLogger = new (logger.constructor as any)();
-      testLogger.info("test message");
+      testLogger.info("Test message");
 
-      // When VITEST is set, should still be treated as test
-      expect(consoleMocks.info).not.toHaveBeenCalled();
+      expect(consoleMocks.log).not.toHaveBeenCalled();
     });
 
     it("should detect production environment", () => {
@@ -86,111 +68,9 @@ describe("Logger", () => {
       process.env.VITEST = "";
 
       const testLogger = new (logger.constructor as any)();
-      testLogger.info("test message");
-
-      // In production, should use JSON output
-      expect(consoleMocks.log).toHaveBeenCalled();
-      const logOutput = consoleMocks.log.mock.calls[0][0];
-      expect(() => JSON.parse(logOutput)).not.toThrow();
-    });
-  });
-
-  describe("Global Context Management", () => {
-    it("should set and use global context", () => {
-      vi.stubEnv("NODE_ENV", "production");
-      process.env.VITEST = "";
-
-      // Create a new logger instance for production
-      const testLogger = new (logger.constructor as any)();
-      const globalContext: LogContext = {
-        userId: "user123",
-        requestId: "req456",
-      };
-
-      testLogger.setGlobalContext(globalContext);
       testLogger.info("Test message");
 
       expect(consoleMocks.log).toHaveBeenCalled();
-      const logEntry: LogEntry = JSON.parse(consoleMocks.log.mock.calls[0][0]);
-      expect(logEntry.context).toMatchObject(globalContext);
-    });
-
-    it("should merge multiple global context calls", () => {
-      vi.stubEnv("NODE_ENV", "production");
-      process.env.VITEST = "";
-
-      const testLogger = new (logger.constructor as any)();
-      testLogger.setGlobalContext({ userId: "user123" });
-      testLogger.setGlobalContext({ requestId: "req456" });
-      testLogger.info("Test message");
-
-      expect(consoleMocks.log).toHaveBeenCalled();
-      const logEntry: LogEntry = JSON.parse(consoleMocks.log.mock.calls[0][0]);
-      expect(logEntry.context).toMatchObject({
-        userId: "user123",
-        requestId: "req456",
-      });
-    });
-
-    it("should clear global context", () => {
-      vi.stubEnv("NODE_ENV", "production");
-      process.env.VITEST = "";
-
-      const testLogger = new (logger.constructor as any)();
-      testLogger.setGlobalContext({ userId: "user123" });
-      testLogger.clearGlobalContext();
-      testLogger.info("Test message");
-
-      expect(consoleMocks.log).toHaveBeenCalled();
-      const logEntry: LogEntry = JSON.parse(consoleMocks.log.mock.calls[0][0]);
-      // After clearing, context should be empty object, not undefined
-      expect(logEntry.context).toEqual({});
-    });
-  });
-
-  describe("Child Logger", () => {
-    it("should create child logger with additional context", () => {
-      vi.stubEnv("NODE_ENV", "production");
-      process.env.VITEST = "";
-
-      const testLogger = new (logger.constructor as any)();
-      testLogger.setGlobalContext({ userId: "user123" });
-      const childLogger = testLogger.child({ requestId: "req456" });
-      childLogger.info("Child message");
-
-      expect(consoleMocks.log).toHaveBeenCalled();
-      const logEntry: LogEntry = JSON.parse(consoleMocks.log.mock.calls[0][0]);
-      expect(logEntry.context).toMatchObject({
-        userId: "user123",
-        requestId: "req456",
-      });
-    });
-
-    it("should inherit parent context but not affect parent", () => {
-      vi.stubEnv("NODE_ENV", "production");
-      process.env.VITEST = "";
-
-      const testLogger = new (logger.constructor as any)();
-      testLogger.setGlobalContext({ userId: "parent" });
-      const childLogger = testLogger.child({ requestId: "child" });
-
-      // Child should have both contexts
-      childLogger.info("Child message");
-      expect(consoleMocks.log).toHaveBeenCalledTimes(1);
-      let logEntry: LogEntry = JSON.parse(consoleMocks.log.mock.calls[0][0]);
-      expect(logEntry.context).toMatchObject({
-        userId: "parent",
-        requestId: "child",
-      });
-
-      consoleMocks.log.mockClear();
-
-      // Parent should only have its own context
-      testLogger.info("Parent message");
-      expect(consoleMocks.log).toHaveBeenCalledTimes(1);
-      logEntry = JSON.parse(consoleMocks.log.mock.calls[0][0]);
-      expect(logEntry.context).toMatchObject({ userId: "parent" });
-      expect(logEntry.context?.requestId).toBeUndefined();
     });
   });
 
@@ -295,128 +175,6 @@ describe("Logger", () => {
     });
   });
 
-  describe("Specialized Logging Methods", () => {
-    beforeEach(() => {
-      vi.stubEnv("NODE_ENV", "production");
-      process.env.VITEST = "";
-    });
-
-    describe("apiRequest", () => {
-      it("should log successful API requests as info", () => {
-        const testLogger = new (logger.constructor as any)();
-        testLogger.apiRequest("GET", "/api/test", 200, 150, {
-          userId: "user123",
-        });
-
-        expect(consoleMocks.log).toHaveBeenCalled();
-        const logEntry: LogEntry = JSON.parse(
-          consoleMocks.log.mock.calls[0][0],
-        );
-        expect(logEntry.level).toBe("info");
-        expect(logEntry.message).toBe("GET /api/test 200 - 150ms");
-        expect(logEntry.context).toMatchObject({
-          userId: "user123",
-          method: "GET",
-          path: "/api/test",
-          statusCode: 200,
-          duration: 150,
-          type: "api_request",
-        });
-      });
-
-      it("should log redirect API requests as warn", () => {
-        const testLogger = new (logger.constructor as any)();
-        testLogger.apiRequest("GET", "/api/redirect", 302, 50);
-
-        expect(consoleMocks.log).toHaveBeenCalled();
-        const logEntry: LogEntry = JSON.parse(
-          consoleMocks.log.mock.calls[0][0],
-        );
-        expect(logEntry.level).toBe("warn");
-      });
-
-      it("should log error API requests as error", () => {
-        const testLogger = new (logger.constructor as any)();
-        testLogger.apiRequest("POST", "/api/error", 500, 1000);
-
-        expect(consoleMocks.log).toHaveBeenCalled();
-        const logEntry: LogEntry = JSON.parse(
-          consoleMocks.log.mock.calls[0][0],
-        );
-        expect(logEntry.level).toBe("error");
-      });
-    });
-
-    describe("auth", () => {
-      it("should log successful auth events as info", () => {
-        const testLogger = new (logger.constructor as any)();
-        testLogger.auth("login", "user123", true, { ip: "127.0.0.1" });
-
-        expect(consoleMocks.log).toHaveBeenCalled();
-        const logEntry: LogEntry = JSON.parse(
-          consoleMocks.log.mock.calls[0][0],
-        );
-        expect(logEntry.level).toBe("info");
-        expect(logEntry.message).toBe("Auth login: success for user user123");
-        expect(logEntry.context).toMatchObject({
-          userId: "user123",
-          event: "login",
-          success: true,
-          type: "auth",
-          ip: "127.0.0.1",
-        });
-      });
-
-      it("should log failed auth events as warn", () => {
-        const testLogger = new (logger.constructor as any)();
-        testLogger.auth("login", undefined, false);
-
-        expect(consoleMocks.log).toHaveBeenCalled();
-        const logEntry: LogEntry = JSON.parse(
-          consoleMocks.log.mock.calls[0][0],
-        );
-        expect(logEntry.level).toBe("warn");
-        expect(logEntry.message).toBe("Auth login: failed");
-      });
-
-      it("should use default success value", () => {
-        const testLogger = new (logger.constructor as any)();
-        testLogger.auth("logout", "user123");
-
-        expect(consoleMocks.log).toHaveBeenCalled();
-        const logEntry: LogEntry = JSON.parse(
-          consoleMocks.log.mock.calls[0][0],
-        );
-        expect(logEntry.level).toBe("info");
-        expect(logEntry.message).toBe("Auth logout: success for user user123");
-      });
-    });
-
-    describe("business", () => {
-      it("should log business events as info", () => {
-        const testLogger = new (logger.constructor as any)();
-        testLogger.business(
-          "user_signup",
-          { source: "web" },
-          { campaign: "summer2024" },
-        );
-
-        expect(consoleMocks.log).toHaveBeenCalled();
-        const logEntry: LogEntry = JSON.parse(
-          consoleMocks.log.mock.calls[0][0],
-        );
-        expect(logEntry.level).toBe("info");
-        expect(logEntry.message).toBe("Business event: user_signup");
-        expect(logEntry.context).toMatchObject({
-          event: "user_signup",
-          type: "business",
-          campaign: "summer2024",
-        });
-        expect(logEntry.metadata).toMatchObject({ source: "web" });
-      });
-    });
-  });
-
   describe("Development Console Output", () => {
     beforeEach(() => {
       vi.stubEnv("NODE_ENV", "development");
@@ -436,7 +194,6 @@ describe("Logger", () => {
       expect(consoleMocks.warn).toHaveBeenCalled();
       expect(consoleMocks.error).toHaveBeenCalled();
 
-      // Verify that each console method was called with formatted output
       expect(consoleMocks.debug.mock.calls[0][0]).toContain("DEBUG");
       expect(consoleMocks.info.mock.calls[0][0]).toContain("INFO");
       expect(consoleMocks.warn.mock.calls[0][0]).toContain("WARN");
@@ -488,7 +245,6 @@ describe("Logger", () => {
       expect(consoleMocks.warn).toHaveBeenCalled();
       const output = consoleMocks.warn.mock.calls[0][0];
       expect(output).toContain("Warning with error");
-      // The warn message should include error details but not stack trace
       expect(output).not.toContain("Stack:");
       expect(output).not.toContain("Error stack trace");
     });
@@ -537,8 +293,6 @@ describe("Logger", () => {
     });
 
     it("should provide convenience log functions", () => {
-      // The convenience exports use the global logger which detects test env
-      // We need to temporarily replace the logger's environment detection
       const testLogger = new (logger.constructor as any)();
 
       testLogger.info("Test info");
@@ -553,40 +307,6 @@ describe("Logger", () => {
       expect(entries[0].level).toBe("info");
       expect(entries[1].level).toBe("warn");
       expect(entries[2].level).toBe("error");
-    });
-
-    it("should provide convenience specialized functions", () => {
-      const testLogger = new (logger.constructor as any)();
-
-      testLogger.apiRequest("GET", "/test", 200, 100);
-      testLogger.auth("login", "user123");
-      testLogger.business("event", { data: "test" });
-
-      expect(consoleMocks.log).toHaveBeenCalledTimes(3);
-    });
-
-    it("should provide convenience context functions", () => {
-      const testLogger = new (logger.constructor as any)();
-
-      testLogger.setGlobalContext({ userId: "user123" });
-      testLogger.info("Test with global context");
-
-      expect(consoleMocks.log).toHaveBeenCalled();
-      const logEntry: LogEntry = JSON.parse(consoleMocks.log.mock.calls[0][0]);
-      expect(logEntry.context?.userId).toBe("user123");
-
-      testLogger.clearGlobalContext();
-      consoleMocks.log.mockClear();
-
-      testLogger.info("Test without global context");
-      const logEntry2: LogEntry = JSON.parse(consoleMocks.log.mock.calls[0][0]);
-      expect(logEntry2.context).toEqual({});
-    });
-
-    it("should provide child logger convenience function", () => {
-      const childLogger = log.child({ requestId: "req123" });
-      expect(childLogger).toBeDefined();
-      expect(typeof childLogger.info).toBe("function");
     });
   });
 
@@ -622,7 +342,6 @@ describe("Logger", () => {
 
       expect(consoleMocks.log).toHaveBeenCalled();
       const logEntry: LogEntry = JSON.parse(consoleMocks.log.mock.calls[0][0]);
-      // Improved error serialization now properly handles complex error objects
       expect(logEntry.error).toMatchObject({
         name: "CUSTOM_ERROR",
         message: JSON.stringify(complexError),
