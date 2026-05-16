@@ -16,11 +16,11 @@ Leverage Next.js built-in security rather than custom implementations.
 
 ## What We Use
 
-| Security Need    | Solution                              |
-| ---------------- | ------------------------------------- |
-| CSP headers      | `next.config.js`                      |
-| XSS prevention   | React default                         |
-| Input validation | Zod schemas in `createApiHandler`     |
+| Security Need    | Solution                          |
+| ---------------- | --------------------------------- |
+| CSP headers      | `next.config.js`                  |
+| XSS prevention   | React default                     |
+| Input validation | Zod schemas in `createApiHandler` |
 
 The site is a public static page reading match data from football-data.org. There is no database, no authentication, no user submissions, and no admin surface, so authorisation, RLS, CSRF, and rate-limiting are no longer in scope.
 

@@ -414,12 +414,12 @@ import { Users, Clock, CheckCircle } from "lucide-react";
 
 **Props:**
 
-| Prop          | Type         | Description                                                                                                        | Default          |
-| ------------- | ------------ | ------------------------------------------------------------------------------------------------------------------ | ---------------- |
-| `icon`        | `LucideIcon` | Lucide React icon component. **(required)**                                                                        | -                |
-| `iconBgColor` | `string`     | One of `bg-betis-verde`, `bg-betis-verde-dark`, `bg-betis-oro`, `bg-scotland-navy`, `bg-scotland-blue`.           | `bg-betis-verde` |
-| `title`       | `string`     | Feature title. **(required)**                                                                                      | -                |
-| `description` | `string`     | Feature description. **(required)**                                                                                | -                |
+| Prop          | Type         | Description                                                                                             | Default          |
+| ------------- | ------------ | ------------------------------------------------------------------------------------------------------- | ---------------- |
+| `icon`        | `LucideIcon` | Lucide React icon component. **(required)**                                                             | -                |
+| `iconBgColor` | `string`     | One of `bg-betis-verde`, `bg-betis-verde-dark`, `bg-betis-oro`, `bg-scotland-navy`, `bg-scotland-blue`. | `bg-betis-verde` |
+| `title`       | `string`     | Feature title. **(required)**                                                                           | -                |
+| `description` | `string`     | Feature description. **(required)**                                                                     | -                |
 
 **Features:**
 

@@ -12,16 +12,16 @@ The site deploys to Vercel via its GitHub integration. Merging to `main` trigger
 
 Set these in the Vercel project's "Environment Variables" panel. Required ones must be present in the Production environment; Preview environments can copy them as needed.
 
-| Variable                    | Scope            | Required? | Purpose                                              |
-| --------------------------- | ---------------- | --------- | ---------------------------------------------------- |
-| `FOOTBALL_DATA_API_KEY`     | Server           | Yes       | Auth token for football-data.org.                    |
-| `NEXT_PUBLIC_SITE_URL`      | Client + server  | Optional  | Used by `sitemap.ts` and `metadataBase`.             |
-| `NEXT_PUBLIC_SENTRY_DSN`    | Client           | Optional  | Sentry client DSN.                                   |
-| `SENTRY_DSN`                | Server           | Optional  | Sentry server DSN.                                   |
-| `NEXT_PUBLIC_SENTRY_RELEASE`| Client           | Optional  | Release tag for Sentry.                              |
-| `GOOGLE_SITE_VERIFICATION`  | Server (build)   | Optional  | Google Search Console verification.                  |
-| `FOOTBALL_DATA_API_URL`     | Server           | Optional  | Override the football-data.org base URL.             |
-| `API_RATE_LIMIT_PER_MINUTE` | Server           | Optional  | Tweak the axios-rate-limit cap.                      |
+| Variable                     | Scope           | Required? | Purpose                                  |
+| ---------------------------- | --------------- | --------- | ---------------------------------------- |
+| `FOOTBALL_DATA_API_KEY`      | Server          | Yes       | Auth token for football-data.org.        |
+| `NEXT_PUBLIC_SITE_URL`       | Client + server | Optional  | Used by `sitemap.ts` and `metadataBase`. |
+| `NEXT_PUBLIC_SENTRY_DSN`     | Client          | Optional  | Sentry client DSN.                       |
+| `SENTRY_DSN`                 | Server          | Optional  | Sentry server DSN.                       |
+| `NEXT_PUBLIC_SENTRY_RELEASE` | Client          | Optional  | Release tag for Sentry.                  |
+| `GOOGLE_SITE_VERIFICATION`   | Server (build)  | Optional  | Google Search Console verification.      |
+| `FOOTBALL_DATA_API_URL`      | Server          | Optional  | Override the football-data.org base URL. |
+| `API_RATE_LIMIT_PER_MINUTE`  | Server          | Optional  | Tweak the axios-rate-limit cap.          |
 
 Vercel's analytics/speed-insights are auto-enabled in production builds when the `VERCEL=1` env var is set (it is, on Vercel).
 

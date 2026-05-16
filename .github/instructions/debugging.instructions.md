@@ -35,7 +35,7 @@ Guidelines for debugging the Peña Bética Escocesa site. The site is a public s
 
 - **403 / 401**: `FOOTBALL_DATA_API_KEY` missing or invalid. Verify the value in `.env.local` (local dev) or the Vercel project's Environment Variables panel (prod).
 - **429**: rate-limited. `FootballDataService` already wraps axios with `axios-rate-limit`; if you're seeing this you have probably set `API_RATE_LIMIT_PER_MINUTE` too high or you're running multiple instances against the same key.
-- **Empty match list**: the season parameter expects the *start* year of the season (e.g. `2025` for the 2025-2026 season). See `getCurrentFootballSeason()` in `footballDataService.ts`.
+- **Empty match list**: the season parameter expects the _start_ year of the season (e.g. `2025` for the 2025-2026 season). See `getCurrentFootballSeason()` in `footballDataService.ts`.
 - **Stale data after deploy**: `/api/matches` is cached at 30 min, `/api/standings` at 24 h via `unstable_cache`. Either wait for the cache window or call `revalidatePath('/api/standings')` from a server action if you need to force a refresh in code.
 
 #### Sentry not capturing errors

@@ -102,11 +102,10 @@ e2e/                     # Playwright E2E tests (all public-route)
 ### CSS Variables (defined in `globals.css`)
 
 ```css
---betis-verde: #048d47       /* Authentic Betis green */
---betis-verde-dark: #036b38  /* Hover states, headers */
---betis-verde-light: #e8f5ed /* Light backgrounds */
---betis-oro: #d4af37         /* Gold highlights, CTAs */
---scotland-navy: #0b1426     /* Footer, dark sections */
+--betis-verde: #048d47 /* Authentic Betis green */ --betis-verde-dark: #036b38
+  /* Hover states, headers */ --betis-verde-light: #e8f5ed
+  /* Light backgrounds */ --betis-oro: #d4af37 /* Gold highlights, CTAs */
+  --scotland-navy: #0b1426 /* Footer, dark sections */;
 ```
 
 ### Mobile-First Design
