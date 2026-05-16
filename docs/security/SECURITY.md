@@ -29,13 +29,14 @@ React's default escaping handles HTML rendering. No raw HTML injection helpers a
 
 The CSP allows these external origins (see `next.config.js`):
 
-- `connect-src` / `script-src`: Vercel Analytics / Vercel Live, Facebook SDK (`connect.facebook.net`), Google reCAPTCHA, hCaptcha, Cloudflare Turnstile.
-- `frame-src`: Facebook for the page plugin, Vercel Live, the same captcha providers.
+- `script-src`: `connect.facebook.net` (Facebook SDK), Vercel Live / Analytics (`vercel.live`, `va.vercel-scripts.com`, `vercel.app`).
+- `style-src`: `'self'` plus `'unsafe-inline'` (Tailwind 4 emits inline styles during SSR).
+- `font-src`: `'self' data:` only — Google Fonts are self-hosted via `next/font/google` (Next.js downloads the font files at build time and serves them from `/_next/static/media/`).
+- `connect-src`: `vercel.live`, `vercel.app`.
+- `frame-src`: `www.facebook.com` (share dialogs), Vercel Live.
 - `img-src` is `'self' data: https: blob:` to allow club crests served by football-data.org.
 
 Sentry is not listed in the CSP — browser-side Sentry traffic is rewritten through the local `tunnelRoute: "/monitoring-tunnel"` so the connection target stays on `'self'`.
-
-The captcha origins are present because the CSP is shared across pages, but no form on the site actually uses them after the static-site simplification. They can be trimmed in a follow-up.
 
 ## Reporting a vulnerability
 
