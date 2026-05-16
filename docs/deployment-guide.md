@@ -18,7 +18,8 @@ Set these in the Vercel project's "Environment Variables" panel. Required ones m
 | `NEXT_PUBLIC_SITE_URL`       | Client + server | Optional  | Used by `sitemap.ts` and `metadataBase`. |
 | `NEXT_PUBLIC_SENTRY_DSN`     | Client          | Optional  | Sentry client DSN.                       |
 | `SENTRY_DSN`                 | Server          | Optional  | Sentry server DSN.                       |
-| `NEXT_PUBLIC_SENTRY_RELEASE` | Client          | Optional  | Release tag for Sentry.                  |
+| `NEXT_PUBLIC_SENTRY_RELEASE` | Client          | Optional  | Release tag for client-side Sentry events. |
+| `SENTRY_RELEASE`            | Server          | Optional  | Release tag for server-side Sentry events. |
 | `GOOGLE_SITE_VERIFICATION`   | Server (build)  | Optional  | Google Search Console verification.      |
 | `FOOTBALL_DATA_API_URL`      | Server          | Optional  | Override the football-data.org base URL. |
 | `API_RATE_LIMIT_PER_MINUTE`  | Server          | Optional  | Tweak the axios-rate-limit cap.          |
@@ -27,13 +28,12 @@ Vercel's analytics/speed-insights are auto-enabled in production builds when the
 
 ## CI
 
-`.github/workflows/ci.yml` runs lint, type-check, the Vitest suite, and CodeQL on every PR. The `Tests (Required)` status is the merge gate. The Vercel preview deploy is non-blocking but useful for manual smoke checks.
+`.github/workflows/ci.yml` runs lint, type-check, the Vitest suite, and the production build on every PR (`Tests (Required)` job). It also runs a non-blocking quality job that builds Storybook and uploads coverage to Codecov. GitHub's default code-scanning (CodeQL) runs separately and reports back as the `CodeQL` check. The `Tests (Required)` status is the merge gate; the Vercel preview deploy is non-blocking but useful for manual smoke checks.
 
 ## Caching
 
-- `/api/matches` is wrapped with `unstable_cache` at 30 minutes (declared via `export const revalidate = 1800`).
-- `/api/standings` is wrapped with `unstable_cache` at 24 hours.
-- Both routes set `export const dynamic = "force-dynamic"` so they're treated as functions on Vercel; the cache lives at the `unstable_cache` layer rather than the route layer.
+- `/api/matches` uses route-segment caching: `export const revalidate = 1800` (30 min) plus `export const dynamic = "force-dynamic"`. Cache is keyed at the Next.js route layer.
+- `/api/standings` wraps the football-data fetch in `unstable_cache` with a 24 h window, then exports `dynamic = "force-dynamic"` so the route itself is a function on Vercel. Cache is keyed at the `unstable_cache` layer; manual invalidation is via `revalidateTag("la-liga-standings")`.
 - Static assets (`/images/*`, `/_next/static/*`, `/fonts/*`) have one-year immutable cache headers via `next.config.js`.
 
 ## Domains and DNS

@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Real Betis supporters club website in Edinburgh, mobile-first, serving match viewing parties at Polwarth Tavern. Built on Next.js 16 with TypeScript. The site is a public static page: no database, no authentication, no admin surface. Match and standings data come directly from football-data.org via `unstable_cache`.
+Real Betis supporters club website in Edinburgh, mobile-first, serving match viewing parties at Polwarth Tavern. Built on Next.js 16 with TypeScript. The site is a public static page: no database, no authentication, no admin surface. Match and standings data come directly from football-data.org — `/api/standings` is wrapped with `unstable_cache` (24 h); `/api/matches` uses route-segment `revalidate` (30 min).
 
 **For comprehensive project details, architecture decisions, and implementation guides, see [CLAUDE.md](../CLAUDE.md).**
 
@@ -46,7 +46,7 @@ This project uses Storybook v10. Things to know when generating story code:
 
 ## Data flow
 
-`/api/matches` and `/api/standings` are the only data-fetching surfaces. Both wrap `FootballDataService` with `unstable_cache` and return JSON. Client components (`AllMatches`, `UpcomingMatchesWidget`, `ClassificationWidget`) fetch directly from these routes; server components like `/clasificacion` and `/partidos/[matchId]` call `FootballDataService` server-side.
+`/api/matches` and `/api/standings` are the only data-fetching surfaces. Both call `FootballDataService` and return JSON. `/api/matches` caches via route-segment config (`export const revalidate = 1800`); `/api/standings` wraps the fetch in `unstable_cache` (24 h, tag `"la-liga-standings"`). Client components (`AllMatches`, `UpcomingMatchesWidget`, `ClassificationWidget`) fetch directly from these routes; server components like `/clasificacion` and `/partidos/[matchId]` call `FootballDataService` server-side.
 
 ## Additional resources
 

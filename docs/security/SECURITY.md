@@ -27,11 +27,13 @@ React's default escaping handles HTML rendering. No raw HTML injection helpers a
 
 ## Third-party origins
 
-The CSP allows these external origins:
+The CSP allows these external origins (see `next.config.js`):
 
-- `connect-src` / `script-src`: Vercel Analytics, Sentry, Facebook SDK, Google reCAPTCHA, hCaptcha, Cloudflare Turnstile.
+- `connect-src` / `script-src`: Vercel Analytics / Vercel Live, Facebook SDK (`connect.facebook.net`), Google reCAPTCHA, hCaptcha, Cloudflare Turnstile.
 - `frame-src`: Facebook for the page plugin, Vercel Live, the same captcha providers.
 - `img-src` is `'self' data: https: blob:` to allow club crests served by football-data.org.
+
+Sentry is not listed in the CSP — browser-side Sentry traffic is rewritten through the local `tunnelRoute: "/monitoring-tunnel"` so the connection target stays on `'self'`.
 
 The captcha origins are present because the CSP is shared across pages, but no form on the site actually uses them after the static-site simplification. They can be trimmed in a follow-up.
 

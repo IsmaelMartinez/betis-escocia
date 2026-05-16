@@ -31,6 +31,8 @@ Optional:
 | `NEXT_PUBLIC_SITE_URL`      | Used by `sitemap.ts` and `metadataBase`. Defaults to prod. |
 | `NEXT_PUBLIC_SENTRY_DSN`    | Sentry client DSN. Sentry is silent without it.            |
 | `SENTRY_DSN`                | Sentry server DSN (used by the Next.js Sentry SDK).        |
+| `NEXT_PUBLIC_SENTRY_RELEASE`| Release tag for client Sentry events.                      |
+| `SENTRY_RELEASE`            | Release tag for server Sentry events.                      |
 | `GOOGLE_SITE_VERIFICATION`  | Google Search Console verification tag.                    |
 | `FOOTBALL_DATA_API_URL`     | Override the football-data.org base URL (rare).            |
 | `API_RATE_LIMIT_PER_MINUTE` | Override the default 10 req/min cap.                       |
@@ -42,7 +44,7 @@ Pre-commit hooks (lint, prettier, type-check) run via Lefthook; they install on 
 - **Next.js 16 App Router** with React 19 and TypeScript.
 - **Public pages** are statically rendered where possible: `/`, `/nosotros`, `/unete`, `/jugadores-historicos`, `/joaquin`, and `/partidos` are `○ (Static)`.
 - **Dynamic pages** that fetch from football-data.org on demand: `/clasificacion`, `/partidos/[matchId]`.
-- **API routes** at `/api/matches` and `/api/standings` wrap `FootballDataService` with `unstable_cache` (30 min and 24 h respectively).
+- **API routes** at `/api/matches` and `/api/standings` both call `FootballDataService`. `/api/matches` caches via route-segment config (`export const revalidate = 1800`, 30 min). `/api/standings` wraps the fetch in `unstable_cache` (24 h).
 - **No database, no authentication, no admin surface.** All site content is either compile-time static (TypeScript constants in `src/data/`) or comes from football-data.org.
 
 ## Code Patterns

@@ -63,6 +63,7 @@ afterEach(() => {
 Test the route handler directly through the `createApiHandler` wrapper. The wrapper validates query params via Zod and shapes responses; assert against the parsed JSON.
 
 ```typescript
+import { NextRequest } from "next/server";
 import { GET } from "@/app/api/matches/route";
 
 const request = new NextRequest(

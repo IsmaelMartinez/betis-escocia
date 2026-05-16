@@ -38,7 +38,7 @@ This document outlines the guidelines and patterns for code maintenance, refacto
 #### Performance Optimization
 
 - **Image Optimization**: Ensure Next.js `Image` component is used effectively with proper `priority` and `sizes` for LCP.
-- **Data Fetching**: Tune `unstable_cache` windows on `/api/matches` (currently 30 min) and `/api/standings` (currently 24 h) if the freshness/cost trade-off changes.
+- **Data Fetching**: Tune the cache windows if the freshness/cost trade-off changes — `/api/matches` uses route-segment `revalidate = 1800` (30 min); `/api/standings` wraps the fetch in `unstable_cache` (24 h, tag `"la-liga-standings"`).
 - **Bundle Size**: Analyze and reduce JavaScript bundle size via `@next/bundle-analyzer`.
 
 #### Scalability

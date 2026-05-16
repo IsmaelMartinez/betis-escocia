@@ -34,7 +34,7 @@ npm run type-check    # TypeScript
 
 - **Next.js 16** + React 19 + TypeScript
 - **Tailwind CSS 4** with custom Betis branding
-- **football-data.org** for match and standings data, cached via `unstable_cache`
+- **football-data.org** for match and standings data — `/api/standings` is wrapped with `unstable_cache` (24 h); `/api/matches` uses route-segment `revalidate` (30 min)
 - **Sentry** for error monitoring
 - **Vitest** + **Playwright** + **Storybook**
 
