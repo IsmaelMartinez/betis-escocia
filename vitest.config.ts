@@ -23,12 +23,7 @@ export default defineConfig({
       url: "http://localhost/",
     },
     env: {
-      NEXT_PUBLIC_SUPABASE_URL: "https://test-supabase-url.com",
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: "test-anon-key",
-      SUPABASE_SERVICE_ROLE_KEY: "test-service-role-key",
-      // Test environment configuration
       NEXT_PUBLIC_DEBUG_MODE: "false",
-      // Disable Telegram feed delay in tests
       TELEGRAM_FEED_DELAY_MS: "0",
     },
     // Include all unit and integration tests, exclude E2E tests

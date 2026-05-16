@@ -2,18 +2,18 @@
 
 This document is a brainstorming space for future features. Current and in-progress work lives in [`docs/roadmap.md`](../docs/roadmap.md); this file is intentionally forward-looking only.
 
-## 📋 **Quick Status Overview** (Last updated: 2026-04-14)
+## 📋 **Quick Status Overview** (Last updated: 2026-05-17)
 
-| Category           | Status               |
-| ------------------ | -------------------- |
-| Games              | ✅ Daily Trivia live |
-| Community Profiles | ❌ Not started       |
-| La Porra           | ❌ Idea only         |
-| E-commerce         | ❌ Idea only         |
-| Voting System      | ❌ Idea only         |
-| i18n               | ❌ Idea only         |
+| Category           | Status         |
+| ------------------ | -------------- |
+| Games              | ❌ Idea only   |
+| Community Profiles | ❌ Not started |
+| La Porra           | ❌ Idea only   |
+| E-commerce         | ❌ Idea only   |
+| Voting System      | ❌ Idea only   |
+| i18n               | ❌ Idea only   |
 
-The RSVP, Contact, Dashboard, GDPR, and OneSignal admin-notification surfaces that previously appeared here were removed from the codebase in commit 90bbbf2. If any of them come back in the future, re-introduce them as fresh ideas below.
+The RSVP, Contact, Dashboard, GDPR, OneSignal admin-notification, and Daily Trivia surfaces that previously appeared here were removed from the codebase during the 2026-05 static-site simplification. If any of them come back in the future, re-introduce them as fresh ideas below.
 
 ## 🎯 **Core Feature Ideas**
 
@@ -55,17 +55,13 @@ The RSVP, Contact, Dashboard, GDPR, and OneSignal admin-notification surfaces th
 
 ## 🎮 **Games & Engagement**
 
-### ✅ Live
-
-- **Daily Trivia Challenge**: 5-question daily quiz about Real Betis & Scotland, 15-second timer per question, daily play limit, user score history.
-
 ### 🚧 Future Ideas
 
+- **Daily Trivia Challenge** — 5-question daily quiz about Real Betis & Scotland. A version existed previously and was removed; would need a fresh take that fits the static-site model.
 - **Guess the Lineup** — Interactive team selection for matches
 - **Guess the Score** — Match prediction system
 - **Crossword puzzles** — Real Betis history and players
 - **Word Search** — Themed puzzles
-- **Expanded trivia categories** — history, players, managers, Scottish football crossovers
 - **3D Penalty Shootout** — Browser-based 3D football game
   - Technology options: Three.js + TypeScript (recommended) or Rust + WebAssembly
   - Features: Physics simulation, goalkeeper AI, multiple difficulty levels

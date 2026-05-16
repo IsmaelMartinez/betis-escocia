@@ -163,7 +163,7 @@ describe("ClassificationWidget Component", () => {
       });
     });
 
-    it("shows generic error message in mock environment", async () => {
+    it("surfaces the API error message when response is not ok", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         json: async () => ({ error: "Custom API error" }),
@@ -172,10 +172,7 @@ describe("ClassificationWidget Component", () => {
       render(<ClassificationWidget />);
 
       await waitFor(() => {
-        // In mock environment, component shows generic error message
-        expect(
-          screen.getByText(/Error al cargar la clasificación/),
-        ).toBeInTheDocument();
+        expect(screen.getByText(/Custom API error/)).toBeInTheDocument();
       });
     });
   });
@@ -366,7 +363,7 @@ describe("ClassificationWidget Component", () => {
       });
     });
 
-    it("validates API error handling logic in mock environment", async () => {
+    it("shows the empty-payload error when response is ok but has no standings", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({}),
@@ -375,9 +372,8 @@ describe("ClassificationWidget Component", () => {
       render(<ClassificationWidget />);
 
       await waitFor(() => {
-        // In mock environment, component shows generic error message
         expect(
-          screen.getByText(/Error al cargar la clasificación/),
+          screen.getByText(/No se pudieron cargar las clasificaciones/),
         ).toBeInTheDocument();
       });
     });
