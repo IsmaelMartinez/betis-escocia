@@ -36,12 +36,16 @@ import { z } from "zod";
 
 const querySchema = z.object({
   type: z.enum(["all", "upcoming", "recent"]).default("all"),
+  live: z
+    .string()
+    .default("false")
+    .transform((val) => val === "true"),
 });
 
 export const GET = createApiHandler({
   schema: querySchema,
-  handler: async ({ type }) => {
-    return { success: true, items: await fetchItems(type) };
+  handler: async ({ type, live }) => {
+    return { success: true, items: await fetchItems(type, live) };
   },
 });
 ```
