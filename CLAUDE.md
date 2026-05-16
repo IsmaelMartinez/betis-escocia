@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Real Betis supporters club website in Edinburgh with mobile-first design, serving match viewing parties at Polwarth Tavern. Built on Next.js 16 with TypeScript, featuring secure-by-default architecture using feature flags.
+Real Betis supporters club website in Edinburgh, mobile-first, serving match viewing parties at Polwarth Tavern. Built on Next.js 16 with TypeScript. The site is a public static page: no database, no authentication, no admin surface. Match and standings data come directly from football-data.org via `unstable_cache`.
 
 ## Essential Commands
 
@@ -12,58 +12,33 @@ Real Betis supporters club website in Edinburgh with mobile-first design, servin
 
 ```bash
 npm run dev              # Start dev server with Turbopack
-npm run build           # Production build
-npm run start          # Start production server
-npm run lint           # Run ESLint
-npm run type-check     # TypeScript type checking
+npm run build            # Production build
+npm run start            # Start production server
+npm run lint             # Run ESLint
+npm run type-check       # TypeScript type checking
 ```
 
 ### Testing
 
 ```bash
-npm test                # Run Vitest unit & integration tests
-npm run test:watch     # Vitest watch mode
-npm run test:coverage  # Vitest coverage report with v8 provider
-npm run test:silent    # Vitest with minimal JSON output
-npm run test:e2e       # Playwright E2E tests (headless)
-npm run test:e2e:headed # Playwright E2E tests (headed)
-npm run storybook      # Storybook dev server
-npm run build-storybook # Build Storybook
-```
-
-### Utilities
-
-```bash
-npm run lighthouse:accessibility # Run Lighthouse audit
+npm test                 # Run Vitest unit & integration tests
+npm run test:watch       # Vitest watch mode
+npm run test:coverage    # Vitest coverage report with v8 provider
+npm run test:e2e         # Playwright E2E tests (headless)
+npm run test:e2e:headed  # Playwright E2E tests (headed)
+npm run storybook        # Storybook dev server
+npm run build-storybook  # Build Storybook
 ```
 
 ### Pre-commit Hooks (Lefthook)
 
-Pre-commit hooks automatically run before each commit to catch issues early:
-
-- **ESLint**: Auto-fixes linting errors
-- **Prettier**: Auto-formats code
-- **TypeScript**: Type checking
-
-**Skip hooks** (if needed):
-
-```bash
-LEFTHOOK=0 git commit -m "message"
-```
-
-Hooks are configured in `lefthook.yml` and install automatically via the `prepare` script.
+Pre-commit hooks run before each commit: ESLint, Prettier, TypeScript. They install via the `prepare` script. Skip with `LEFTHOOK=0 git commit -m "..."` if absolutely necessary.
 
 ### Branch Protection & Deployment
 
-- **Branch protection**: `main` requires PRs — never push directly
-- **Deployment**: Vercel's GitHub integration auto-deploys on merge to main (CI deploy job commented out pending secret configuration, see issue #329)
-- **Dependabot**: Configured in `.github/dependabot.yml` with grouped minor/patch updates; `next`, `react`, `react-dom` excluded from grouping for isolated review
-
-### npm Gotchas
-
-- **Lockfile corruption**: If dependency installs go wrong (e.g., installing then reverting a major version), reset both `package.json` and `package-lock.json` from main and reinstall cleanly rather than trying to fix incrementally
-- **`--legacy-peer-deps`**: Avoid — causes missing transitive dependencies. Use `overrides` in `package.json` for peer dep conflicts instead
-- **Peer dep overrides**: The `overrides` field in `package.json` resolves peer dependency mismatches (e.g., `"eslint": "^10.0.0"` for typescript-eslint compatibility)
+- `main` requires PRs; never push directly.
+- Vercel's GitHub integration auto-deploys on merge to main.
+- Dependabot groups minor/patch updates; `next`, `react`, `react-dom` are excluded from grouping for isolated review.
 
 ## Architecture Overview
 
@@ -71,78 +46,39 @@ Hooks are configured in `lefthook.yml` and install automatically via the `prepar
 
 - **Frontend**: Next.js 16 App Router, React 19, TypeScript
 - **Styling**: Tailwind CSS 4 with custom Betis branding
-- **Database**: Supabase (PostgreSQL) with Row Level Security
-- **Authentication**: Clerk with role-based permissions
-- **Feature Flags**: Environment variables for feature rollouts
+- **External data**: football-data.org for matches and La Liga standings — `/api/standings` uses `unstable_cache` (24 h); `/api/matches` uses route-segment `revalidate` (30 min)
+- **Observability**: Sentry for error monitoring
 - **Testing**: Vitest 4 + Playwright + Storybook v10
 
 ### Key Directories
 
 ```
 src/
-├── app/                 # Next.js App Router (pages & API routes)
+├── app/                 # Next.js App Router (pages & two API routes)
 ├── components/          # Reusable React components
-├── lib/                 # Utilities, API clients, auth helpers
-├── middleware.ts        # Route protection & security headers
-└── types/              # TypeScript type definitions
+├── lib/                 # Utilities, constants, the API handler wrapper
+├── services/            # FootballDataService (axios-rate-limited client)
+└── types/               # TypeScript type definitions
 
 tests/
-├── unit/               # Vitest unit tests
-├── integration/        # Vitest integration tests
-└── helpers/            # Test utilities
+├── unit/                # Vitest unit tests
+├── integration/         # Vitest integration tests (API routes)
+└── helpers/             # Test utilities
 
-e2e/                    # Playwright E2E tests
-sql/                    # Database migrations & scripts
+e2e/                     # Playwright E2E tests (all public-route)
 ```
 
-## Critical Architectural Patterns
+### Routes
 
-### Feature Flag System (Environment Variables)
+- Public pages: `/`, `/partidos`, `/partidos/[matchId]`, `/clasificacion`, `/nosotros`, `/unete`, `/jugadores-historicos`, `/joaquin`
+- API: `/api/matches` (route-segment `revalidate = 1800`) and `/api/standings` (wrapped with `unstable_cache`, 24 h). Both call `FootballDataService` and set `dynamic = "force-dynamic"`.
+- `/sitemap.xml` is generated by `src/app/sitemap.ts`
 
-- **Simple approach**: Environment variable-based flags, cached in production only
-- **Usage**: `hasFeature('flag-name')` (synchronous)
-- **Configuration**: Set `NEXT_PUBLIC_FEATURE_*=true` to enable disabled-by-default features, or `=false` to disable core features
-- **Location**: `src/lib/features/featureFlags.ts`
-- **Enabled by default**: Nosotros, Únete (Join), Clasificación (standings), Partidos (matches), Jugadores Históricos (legends), Efemérides
-- **Disabled by default**: Clerk Auth, Debug Info
-- **Development mode**: No caching - changes to `.env.local` apply immediately
-- **Documentation**: See `docs/adr/004-feature-flags.md`
-- **Auto-sync**: Partidos feature includes automatic background sync that updates past matches with missing data when users visit the site
+## Design System (CRITICAL FOR AI AGENTS)
 
-### Authentication Flow (Clerk + Supabase)
+**Never use generic Tailwind greens.** Always use branded color classes.
 
-- **Dual mode**: Anonymous submissions + authenticated user management
-- **API Protection**: Use `checkAdminRole()` from `@/lib/auth/adminApiProtection`
-- **Role hierarchy**: `admin` > `moderator` > `user` (in `publicMetadata.role`)
-- **Database integration**: `getAuthenticatedSupabaseClient(clerkToken)` for RLS
-- **Documentation**: See `docs/adr/001-clerk-authentication.md`
-
-### Database Patterns (Supabase)
-
-- **RLS enabled**: Always use authenticated client for user data
-- **User data**: Anonymous and authenticated submissions stored separately
-- **Cache strategy**: Use `classification_cache` table for external API data
-- **Location**: `src/lib/api/supabase.ts` for client and types
-
-## Component Development
-
-### Storybook Integration
-
-- **Purpose**: Component development, documentation, and testing
-- **Version**: v10 with Vitest addon integration
-- **Pattern**: Create `.stories.tsx` files alongside components
-- **Import updates**: Use `import { within, userEvent } from 'storybook/test'`
-
-### Mobile-First Design
-
-- **Always start mobile**, scale up with responsive breakpoints
-- **Follow the Design System**: See `docs/design-system.md` for complete guidelines
-
-### Design System (CRITICAL FOR AI AGENTS)
-
-**⚠️ NEVER use generic Tailwind greens.** Always use branded color classes.
-
-#### Brand Colors
+### Brand Colors
 
 - **Primary Green**: `bg-betis-verde` (not `bg-green-600`)
 - **Dark Green**: `bg-betis-verde-dark` (not `bg-green-700`)
@@ -151,9 +87,9 @@ sql/                    # Database migrations & scripts
 - **Gold Accent**: `bg-betis-oro` (not `bg-yellow-400`)
 - **Scottish Navy**: `bg-scotland-navy` (for footer/dark sections)
 
-#### Color Migration Reference
+### Color Migration Reference
 
-| DON'T USE ❌                  | USE INSTEAD ✅                                  |
+| DON'T USE                     | USE INSTEAD                                     |
 | ----------------------------- | ----------------------------------------------- |
 | `bg-green-50/100`             | `bg-betis-verde-pale/light`                     |
 | `bg-green-500/600`            | `bg-betis-verde`                                |
@@ -163,7 +99,7 @@ sql/                    # Database migrations & scripts
 | `hover:bg-green-700`          | `hover:bg-betis-verde-dark`                     |
 | `border-green-*`              | `border-betis-verde` or `border-betis-verde/20` |
 
-#### CSS Variables (defined in `globals.css`)
+### CSS Variables (defined in `globals.css`)
 
 ```css
 --betis-verde: #048d47 /* Authentic Betis green */ --betis-verde-dark: #036b38
@@ -172,287 +108,88 @@ sql/                    # Database migrations & scripts
   --scotland-navy: #0b1426 /* Footer, dark sections */;
 ```
 
-#### Component Patterns
+### Mobile-First Design
 
-```jsx
-// ✅ Correct - uses branded classes
-<button className="bg-betis-verde hover:bg-betis-verde-dark text-white">
+Always start mobile and scale up with responsive breakpoints. See `docs/design-system.md` for the complete palette, typography, accessibility requirements, and component examples.
 
-// ❌ Wrong - generic Tailwind
-<button className="bg-green-600 hover:bg-green-700 text-white">
+## API Route Pattern
 
-// ✅ Footer (Scottish Navy)
-<footer className="bg-scotland-navy text-white">
-  <h3 className="text-betis-oro">Heading</h3>
-</footer>
-```
-
-#### Full Documentation
-
-See `docs/design-system.md` for:
-
-- Complete color palette with hex values
-- Typography guidelines
-- Component examples
-- Accessibility requirements
-- Migration reference table
-
-### Secure Component Pattern
+Both API routes use the small `createApiHandler` wrapper for Zod validation and consistent error/response shaping.
 
 ```typescript
-import { hasFeature } from "@/lib/features/featureFlags";
+import { createApiHandler } from "@/lib/api/apiUtils";
+import { z } from "zod";
 
-export default function MyComponent() {
-  const isEnabled = hasFeature("my-feature-flag");
-  if (!isEnabled) return null;
+const querySchema = z.object({
+  type: z.enum(["all", "upcoming", "recent"]).default("all"),
+  live: z
+    .string()
+    .default("false")
+    .transform((val) => val === "true"),
+});
 
-  return <div>Feature content</div>;
-}
-```
-
-## API Route Patterns
-
-### Abstracted Route Pattern (Recommended)
-
-**Most business routes use the `createApiHandler` pattern for consistency:**
-
-```typescript
-import { createApiHandler } from "@/lib/apiUtils";
-import { mySchema } from "@/lib/schemas";
-
-export const POST = createApiHandler({
-  auth: "user", // 'none' | 'user' | 'admin' | 'optional'
-  schema: mySchema, // Zod schema for validation
-  handler: async (validatedData, context) => {
-    // validatedData is type-safe and validated
-    // context provides user info, request, supabase clients
-    return {
-      success: true,
-      message: "Success message",
-    };
+export const GET = createApiHandler({
+  schema: querySchema,
+  handler: async (data) => {
+    return { success: true, items: await fetchItems(data.type, data.live) };
   },
 });
 ```
 
-**When to use `createApiHandler`:**
+Both routes are anonymous; there is no auth context.
 
-- Simple CRUD operations with standard validation
-- New API routes being developed
-- Routes requiring consistent error handling
-- APIs with straightforward authentication needs
+## Component Development
 
-**When to use Legacy Pattern (Rarely):**
+### Storybook Integration
 
-- Server-Sent Events (SSE) endpoints that return streaming responses
-- External integrations with very specific protocol requirements
-
-**✅ Complete**: All standard API routes now use `createApiHandler`.
-
-### Legacy Protected Route Pattern
-
-```typescript
-import { checkAdminRole } from "@/lib/auth/adminApiProtection";
-import { getAuth } from "@clerk/nextjs/server";
-
-export async function POST(request: NextRequest) {
-  const { user, isAdmin, error } = await checkAdminRole();
-  if (!isAdmin) return NextResponse.json({ error }, { status: 401 });
-
-  const { getToken } = getAuth(request);
-  const token = await getToken({ template: "supabase" });
-  const supabase = getAuthenticatedSupabaseClient(token);
-
-  // Implementation here
-}
-```
+- Storybook v10 with the Vitest addon.
+- Create `.stories.tsx` files alongside components.
+- Use `import { within, userEvent } from 'storybook/test'`.
+- Mocks live in `__mocks__/next/image.tsx`; MSW handles API mocking.
 
 ## Testing Patterns
 
-### Vitest Configuration
+### Vitest
 
-- **Test runner**: Vitest with jsdom environment for React components
-- **Coverage**: v8 provider with 80% threshold for lines, functions, branches, statements
-- **Setup**: Global setup in `tests/setup.ts` with DOM testing library matchers
-- **Config**: `vitest.config.ts` with path aliases and environment variables
+- jsdom environment for React components.
+- v8 coverage with 80% thresholds.
+- Global setup in `tests/setup.ts`.
 
-### Mocking Patterns
+### Mocking external data
 
-- **Clerk mocking**: Mock `@clerk/nextjs/server` for authentication tests
-- **Supabase mocking**: Mock database operations with controlled responses
-- **MSW integration**: Service worker for external API mocking
-- **Environment variables**: Test-specific values in `vitest.config.ts`
+- Storybook stories: MSW handlers in `tests/msw/handlers.ts`.
+- API-route integration tests: mock `FootballDataService` directly (see `tests/integration/api/matches-comprehensive.test.ts`).
+- Component unit tests (`AllMatches`, `UpcomingMatchesWidget`): stub `global.fetch` with `vi.stubGlobal("fetch", vi.fn())` — simpler than wiring MSW for a single-call surface.
 
-### Test Compatibility with Abstracted Routes
+### E2E (Playwright)
 
-**✅ Complete**: All API route tests have been updated to work with the `createApiHandler` pattern.
-
-**Current Pattern (All Tests Use This)**:
-
-```typescript
-// ✅ Tests work with Zod validation by providing valid data
-const validData = {
-  name: "Test User",
-  email: "test@example.com", // Valid email format
-  subject: "Test Subject", // Meets min length requirements
-  message: "Test message", // Meets min length requirements
-};
-
-// Mock successful Supabase operations
-(supabase.from as any).mockReturnValue({
-  insert: vi.fn(() => ({
-    select: vi.fn(() => ({
-      single: vi.fn(() => Promise.resolve({ data: { id: 1 }, error: null })),
-    })),
-  })),
-});
-```
-
-**Legacy Pattern (No Longer Used)**:
-
-```typescript
-// ❌ Old tests mocked validation functions that are no longer used
-vi.spyOn(security, "validateInputLength").mockReturnValue({ isValid: true });
-vi.spyOn(security, "validateEmail").mockReturnValue({ isValid: true });
-```
-
-**When Writing New Tests**:
-
-1. Provide valid data that passes Zod schema validation
-2. Test validation by providing invalid data that Zod will reject
-3. Mock Supabase operations rather than validation functions
-4. Expect error messages from Zod validation failures
-
-### Example Test
-
-```typescript
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
-
-// Mocking with Vitest
-vi.mock('@/lib/features/featureFlags', () => ({
-  hasFeature: vi.fn(() => true),
-}));
-
-// Component testing
-test('renders component correctly', () => {
-  render(<MyComponent />);
-  expect(screen.getByRole('button')).toBeInTheDocument();
-});
-```
-
-### API Route Testing
-
-- Mock external services first (Clerk, Supabase)
-- Mock security functions to return valid by default
-- Test success cases, validation failures, rate limiting, database errors
-- Use established NextResponse mocking pattern
-
-### E2E Testing (Playwright)
-
-- **Auth setup**: Pre-configured in `playwright/global.setup.ts`
-- **Base URL**: Defaults to `http://localhost:3000`
-- **Pattern**: Test user workflows end-to-end with real authentication
-
-## Key Features
-
-### Data Management
-
-- **Match Data**: Football-Data.org API integration with caching
-- **Admin Dashboard**: Match sync and management
-- **User Management**: Handled directly through Clerk dashboard or API
-
-## Admin Panel Architecture
-
-### Current Structure
-
-The admin panel (`/admin`) provides a streamlined interface for match management:
-
-- **Dashboard**: Overview with match count
-- **Partidos (Matches)**: Complete match management including creation, editing, deletion, and sync
-
-### User Management Migration
-
-User management functionality has been removed from the admin panel to:
-
-- Reduce complexity and maintenance burden
-- Leverage Clerk's robust user management capabilities
-- Focus admin panel on core content management
-
-**User operations now handled via:**
-
-- Clerk Dashboard: Web-based user management interface
-- Clerk Management API: Programmatic user operations
-- Clerk Webhooks: User lifecycle event handling
-
-### Admin Authentication & Authorization
-
-- **Authentication**: Clerk-based with admin role requirement
-- **Route Protection**: `withAdminRole` HOC ensures admin access
-- **API Security**: All admin API routes use `createApiHandler` with `auth: 'admin'`
-
-## Areas for Future Enhancement
-
-### Performance & Scalability
-
-- **API Rate Limiting**: Implement for public routes
-- **Database Indexing**: Optimize for frequent queries
-- **Bundle Size**: Analyze and reduce JavaScript bundles
-- **Image Optimization**: Ensure proper Next.js Image usage
-
-### Developer Experience
-
-- **Type Generation**: Consider `supabase gen types` for schema sync
-- **CI/CD Enhancement**: Add performance audits, security scans
-- **Documentation**: Expand component documentation in Storybook
-
-### User Engagement
-
-- **Social Features**: Enhanced photo sharing, match predictions
-- **Internationalization**: Multi-language support if needed
-
-## Documentation References
-
-For comprehensive details, always check:
-
-- **Developer Guide**: `docs/developer-guide.md` for complete development guide
-- **Testing Guide**: `docs/testing-guide.md` for testing strategies and patterns
-- **ADRs**: `docs/adr/` for architectural decisions
-- **Security**: `docs/security/` for security implementation details
+- All specs target public routes; no auth setup is required.
+- Base URL defaults to `http://localhost:3000`.
 
 ## Environment Setup
 
-Required environment variables:
+Only one variable is required:
 
-- `NEXT_PUBLIC_SUPABASE_URL` & `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` & `CLERK_SECRET_KEY`
+- `FOOTBALL_DATA_API_KEY` — get one free at football-data.org
 
-Optional feature flags (only for disabled/experimental features):
+Optional:
 
-- `NEXT_PUBLIC_FEATURE_CLERK_AUTH=true` (enables authenticated user flows)
-- `NEXT_PUBLIC_FEATURE_DEBUG_INFO=true` (shows the feature flag debug panel)
-
-Optional debugging:
-
-- `NEXT_PUBLIC_DEBUG_MODE=true`
+- `NEXT_PUBLIC_SITE_URL` — used by `sitemap.ts` and `metadataBase`; defaults to the production Vercel URL
+- `NEXT_PUBLIC_SENTRY_DSN` — Sentry client DSN; without it, Sentry is silent in production
+- `GOOGLE_SITE_VERIFICATION` — Google Search Console verification meta tag
 
 ## Repo Butler
 
-This repo is monitored by [Repo Butler](https://github.com/IsmaelMartinez/repo-butler), a portfolio health agent that observes repo health daily and generates dashboards, governance proposals, and tier classifications.
+This repo is monitored by [Repo Butler](https://github.com/IsmaelMartinez/repo-butler), a portfolio health agent.
 
-**Your report:** https://ismaelmartinez.github.io/repo-butler/betis-escocia.html
-**Portfolio dashboard:** https://ismaelmartinez.github.io/repo-butler/
-**Consumer guide:** https://github.com/IsmaelMartinez/repo-butler/blob/main/docs/consumer-guide.md
+- **Per-repo report**: https://ismaelmartinez.github.io/repo-butler/betis-escocia.html
+- **Portfolio dashboard**: https://ismaelmartinez.github.io/repo-butler/
+- **Consumer guide**: https://github.com/IsmaelMartinez/repo-butler/blob/main/docs/consumer-guide.md
 
-### Querying Reginald (the butler MCP server)
-
-To query your repo's health tier, governance findings, and portfolio data from any Claude Code session, add the MCP server once (adjust the path to your local repo-butler checkout):
+Add the butler MCP server once (adjust the path to your local checkout):
 
 ```bash
 claude mcp add repo-butler node /path/to/repo-butler/src/mcp.js
 ```
 
 Available tools: `get_health_tier`, `get_campaign_status`, `query_portfolio`, `get_snapshot_diff`, `get_governance_findings`.
-
-When working on health improvements, check the per-repo report for the current tier checklist and use the consumer guide for fix instructions.
-
-If this repo deploys a page, set its GitHub repository Homepage URL (the Website field in the repo's About section — not `package.json`'s `homepage`) to the canonical URL. That's how repo-butler surfaces the deployed link in dashboards and agent cards.

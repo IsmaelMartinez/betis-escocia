@@ -6,18 +6,17 @@ Real Betis supporters club website in Edinburgh. We watch matches at **Polwarth 
 
 ```bash
 npm install
-cp .env.local.example .env.local  # Fill in your keys
+cp .env.local.example .env.local  # set FOOTBALL_DATA_API_KEY
 npm run dev                       # http://localhost:3000
 ```
 
 ### Required Environment Variables
 
 ```bash
-NEXT_PUBLIC_SUPABASE_URL=...
-NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=...
-CLERK_SECRET_KEY=...
+FOOTBALL_DATA_API_KEY=your-key   # free at https://www.football-data.org/
 ```
+
+Optional: `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SENTRY_DSN`, `GOOGLE_SITE_VERIFICATION`. See `docs/developer-guide.md` for the full list.
 
 ## Commands
 
@@ -34,16 +33,29 @@ npm run type-check    # TypeScript
 ## Tech Stack
 
 - **Next.js 16** + React 19 + TypeScript
-- **Supabase** (PostgreSQL with RLS)
-- **Clerk** (authentication)
-- **Tailwind CSS 4**
+- **Tailwind CSS 4** with custom Betis branding
+- **football-data.org** for match and standings data — `/api/standings` is wrapped with `unstable_cache` (24 h); `/api/matches` uses route-segment `revalidate` (30 min)
+- **Sentry** for error monitoring
 - **Vitest** + **Playwright** + **Storybook**
+
+No database. No authentication. The site is a static public page; match data flows directly from football-data.org.
+
+## Features
+
+- Match listing and individual match pages (`/partidos`)
+- La Liga standings (`/clasificacion`)
+- About the peña (`/nosotros`)
+- Joining and visiting info (`/unete`)
+- Historic Betis players (`/jugadores-historicos`)
+- Joaquín easter egg (`/joaquin`)
+- Daily Betis "efemérides" on the homepage
 
 ## Documentation
 
-- [Developer Guide](docs/developer-guide.md) - Full setup and patterns
-- [Testing Guide](docs/testing-guide.md) - Test strategies
-- [ADRs](docs/adr/) - Architecture decisions
+- [Developer Guide](docs/developer-guide.md) — full setup and patterns
+- [Testing Guide](docs/testing-guide.md) — test strategies
+- [Deployment Guide](docs/deployment-guide.md) — Vercel deploy specifics
+- [ADRs](docs/adr/) — architecture decisions
 
 ## Social
 

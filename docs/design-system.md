@@ -291,12 +291,12 @@ import { PatternBackground, HeroBackground, CulturalCard } from '@/components/pa
 </button>
 ```
 
-### MatchTicket Component
+### MatchCard Component
 
 ```tsx
-import MatchTicket from "@/components/match/MatchTicket";
+import MatchCard from "@/components/match/MatchCard";
 
-<MatchTicket
+<MatchCard
   id={1}
   opponent="Sevilla FC"
   date="2025-01-15T20:00:00"
@@ -304,10 +304,6 @@ import MatchTicket from "@/components/match/MatchTicket";
   isHome={true}
   status="SCHEDULED"
   matchday={19}
-  variant="upcoming"
-  priority="derby" // 'normal' | 'featured' | 'derby'
-  showRSVP={true}
-  rsvpInfo={{ rsvpCount: 12, totalAttendees: 18 }}
 />;
 ```
 
@@ -418,12 +414,12 @@ import { Users, Clock, CheckCircle } from "lucide-react";
 
 **Props:**
 
-| Prop          | Type         | Description                                                                                                        | Default          |
-| ------------- | ------------ | ------------------------------------------------------------------------------------------------------------------ | ---------------- |
-| `icon`        | `LucideIcon` | Lucide React icon component. **(required)**                                                                        | -                |
-| `iconBgColor` | `string`     | One of `bg-betis-verde`, `bg-betis-verde-dark`, `bg-betis-oro`, `bg-scotland-navy`, `bg-scotland-blue`.           | `bg-betis-verde` |
-| `title`       | `string`     | Feature title. **(required)**                                                                                      | -                |
-| `description` | `string`     | Feature description. **(required)**                                                                                | -                |
+| Prop          | Type         | Description                                                                                             | Default          |
+| ------------- | ------------ | ------------------------------------------------------------------------------------------------------- | ---------------- |
+| `icon`        | `LucideIcon` | Lucide React icon component. **(required)**                                                             | -                |
+| `iconBgColor` | `string`     | One of `bg-betis-verde`, `bg-betis-verde-dark`, `bg-betis-oro`, `bg-scotland-navy`, `bg-scotland-blue`. | `bg-betis-verde` |
+| `title`       | `string`     | Feature title. **(required)**                                                                           | -                |
+| `description` | `string`     | Feature description. **(required)**                                                                     | -                |
 
 **Features:**
 

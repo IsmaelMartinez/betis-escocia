@@ -31,10 +31,9 @@ Key testing files:
 
 - **Unit tests**: Vitest in `tests/unit/`
 - **Integration tests**: API routes in `tests/integration/`
-- **E2E tests**: Playwright with Clerk auth pre-setup
+- **E2E tests**: Playwright (public routes only, no auth setup)
 - **Component tests**: Storybook v10 with Vitest addon
 
-### Vitest Configuration and ES Module Handling
+### Mocking external surfaces
 
-- **Problem**: Vitest encounters `SyntaxError: Unexpected token 'export'` when importing Clerk packages.
-- **Solution**: Mock Clerk modules at the top of test files before any imports:
+The only external surface is football-data.org via `FootballDataService`. Mock the service at the top of API-route tests:

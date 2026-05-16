@@ -4,28 +4,23 @@ Concise documentation of key architectural decisions.
 
 ## Index
 
-| #                                    | Decision                        | Status        |
-| ------------------------------------ | ------------------------------- | ------------- |
-| [001](./001-clerk-authentication.md) | Clerk Authentication            | ✅ Accepted   |
-| [002](./002-football-api.md)         | Football-Data.org API           | ✅ Accepted   |
-| [003](./003-supabase-database.md)    | Supabase Database               | ✅ Accepted   |
-| [004](./004-feature-flags.md)        | Feature Flags (env vars)        | ✅ Accepted   |
-| [005](./005-classification-cache.md) | Classification Cache            | ✅ Accepted   |
-| [006](./006-clerk-supabase-jwt.md)   | Clerk-Supabase JWT              | ✅ Accepted   |
-| [007](./007-trivia-system.md)        | Trivia Game System              | ✅ Accepted   |
-| [008](./008-testing-strategy.md)     | Testing (Vitest + Playwright)   | ✅ Accepted   |
-| [009](./009-storybook.md)            | Storybook                       | ✅ Accepted   |
-| [010](./010-error-monitoring.md)     | Sentry Error Monitoring         | ✅ Accepted   |
-| [011](./011-admin-notifications.md)  | Admin Notifications (OneSignal) | ⚠️ Superseded |
-| [012](./012-libraries.md)            | Core Libraries                  | ✅ Accepted   |
-| [013](./013-security.md)             | Security Architecture           | ✅ Accepted   |
-| [014](./014-database-migrations.md)  | Database Migration Naming       | ✅ Accepted   |
+| #                                | Decision                      | Status                             |
+| -------------------------------- | ----------------------------- | ---------------------------------- |
+| [002](./002-football-api.md)     | Football-Data.org API         | ✅ Accepted                        |
+| [004](./004-feature-flags.md)    | Feature Flags (env vars)      | ⚠️ Superseded (removed 2026-05-16) |
+| [008](./008-testing-strategy.md) | Testing (Vitest + Playwright) | ✅ Accepted                        |
+| [009](./009-storybook.md)        | Storybook                     | ✅ Accepted                        |
+| [010](./010-error-monitoring.md) | Sentry Error Monitoring       | ✅ Accepted                        |
+| [012](./012-libraries.md)        | Core Libraries                | ✅ Accepted                        |
+| [013](./013-security.md)         | Security Architecture         | ✅ Accepted                        |
+
+ADRs 001 (Clerk), 003 (Supabase), 005 (Classification Cache), 006 (Clerk-Supabase JWT), 007 (Trivia System), 011 (Admin Notifications), and 014 (Database Migrations) were removed during the 2026-05 static-site simplification. The site no longer has a database, authentication, or user-submitted content. Match and standings data come directly from football-data.org; `/api/standings` caches with `unstable_cache` (24 h) and `/api/matches` uses route-segment `revalidate` (30 min).
 
 ## Creating New ADRs
 
 1. Use the next sequential number (015, 016, etc.)
 2. Follow naming: `NNN-kebab-case-title.md`
-3. Keep it concise - focus on **decision** and **why**
+3. Keep it concise — focus on **decision** and **why**
 4. Update this index
 
 ## Template
@@ -35,7 +30,7 @@ Concise documentation of key architectural decisions.
 
 ## Status
 
-Accepted | Proposed | Deprecated
+Accepted | Proposed | Deprecated | Superseded
 
 ## Decision
 

@@ -12,61 +12,42 @@ alwaysApply: false
 
 ## Description
 
-This document outlines the guidelines and patterns for debugging and problem-solving, covering common pitfalls and error resolution strategies for various parts of the system.
+Guidelines for debugging the Peña Bética Escocesa site. The site is a public static page with two football-data.org-backed API routes; most classical web-app failure modes (auth, RLS, form abuse) do not apply.
 
-## Relevant Files
+## Relevant files
 
-- `src/app/error.tsx`: Next.js error boundary for application-level errors.
-- `src/app/global-error.tsx`: Next.js global error boundary.
-- `src/components/ErrorBoundary.tsx`: Reusable React error boundary component.
-- `docs/adr/`: Architecture Decision Records, which may contain context for specific issues.
-- `docs/historical/clerk-error-handling-test.md`: Historical documentation on Clerk error handling.
+- `src/app/error.tsx` — Next.js page-level error boundary
+- `src/app/global-error.tsx` — Next.js global error boundary
+- `src/components/ErrorBoundary.tsx` — reusable React error boundary
+- `src/services/footballDataService.ts` — axios-rate-limited client; most data-related errors surface here
+- `docs/adr/` — Architecture Decision Records for surviving systems
 
 ## Guidelines
 
-### Common Pitfalls to Avoid
+### Common pitfalls
 
-- **Strategic Task Deferral**: When encountering unexpectedly complex or time-consuming tasks, consider deferring them to focus on more manageable tasks to maintain momentum and avoid getting stuck.
-- **Don't mock Clerk incorrectly** - use `getAuth()` and `currentUser()` consistently.
-- **Avoid hardcoded role checks** - use `checkAdminRole()` utility.
-- **Don't forget RLS** - user data requires authenticated Supabase client.
-- **Test environment isolation** - set feature flag env vars per environment (see `docs/feature-flags-deployment.md`).
-- **Always use latest stable versions** - research current library versions before implementation to ensure security, performance, and access to newest features.
-- **Verify library version compatibility** - ensure that all libraries, especially those related to styling (e.g., Tailwind CSS, PostCSS) and build processes (e.g., Next.js, Storybook), are compatible with each other to avoid integration issues and unexpected behavior.
+- **Always use latest stable versions** — research current library versions before implementation.
+- **Verify library version compatibility** — Tailwind/PostCSS, Next.js/Storybook compatibility matrices change between majors.
 
-### Error Resolution Patterns
+### Error resolution patterns
 
-#### Clerk Authentication Issues
+#### football-data.org API errors
 
-- **Problem**: Incorrect Clerk authentication in Next.js API routes.
-- **Solution**: When retrieving user information in Next.js API routes, use `getAuth(request)` from `@clerk/nextjs/server` to reliably get the `userId` for authenticated users, even if the route is publicly accessible. This ensures the `userId` is correctly populated in database submissions.
+- **403 / 401**: `FOOTBALL_DATA_API_KEY` missing or invalid. Verify the value in `.env.local` (local dev) or the Vercel project's Environment Variables panel (prod).
+- **429**: rate-limited. `FootballDataService` already wraps axios with `axios-rate-limit`; if you're seeing this you have probably set `API_RATE_LIMIT_PER_MINUTE` too high or you're running multiple instances against the same key.
+- **Empty match list**: the season parameter expects the _start_ year of the season (e.g. `2025` for the 2025-2026 season). See `getCurrentFootballSeason()` in `footballDataService.ts`.
+- **Stale data after deploy**: `/api/matches` caches at 30 min via route-segment `revalidate`; `/api/standings` caches at 24 h via `unstable_cache` (tag `"la-liga-standings"`). For matches, wait for the cache window or hit the route with a different query to force a fresh segment; for standings, call `revalidateTag("la-liga-standings")` from a server action to force a refresh in code.
 
-#### Supabase Row-Level Security (RLS) Policies
+#### Sentry not capturing errors
 
-- **Problem**: Unexpected `42501` errors due to RLS policies.
-- **Solution**: Be mindful of RLS policies, especially when adding new columns or tables. An overly broad "deny all" policy can override more specific "allow" policies. Ensure explicit `INSERT`, `SELECT`, and `UPDATE` policies are in place for relevant roles (e.g., `anon`, `authenticated`). **Crucially, after making RLS changes, you MUST refresh the Supabase schema cache by restarting your Supabase project (e.g., via the Supabase dashboard or `docker compose restart` for local setups).**
+- Confirm `NEXT_PUBLIC_SENTRY_DSN` (client) and `SENTRY_DSN` (server) are set; without them the Sentry SDK is silent.
+- Source maps are uploaded by `@sentry/nextjs` during the build; if stack traces are obfuscated, check the CI logs for a "Sentry source map" upload error.
 
-#### Asynchronous Feature Flag Rendering
+#### `react/no-unescaped-entities` in Storybook stories
 
-- **Problem**: Incorrect conditional rendering of UI elements based on asynchronous feature flag checks (e.g., `isFeatureEnabledAsync`).
-- **Solution**: Ensure the asynchronous call is handled within a `useEffect` hook. Store the feature flag status in a component's state and use that state for conditional rendering. Directly calling asynchronous functions in the render method will lead to incorrect behavior as the Promise object itself is truthy, not its resolved value.
+- Escape literal quotes/apostrophes inside JSX text with `&quot;` or `&apos;`. Lower concern; only affects Storybook build/dev.
 
-#### Trivia Game Database Relationships
+### Troubleshooting sections in existing documentation
 
-- **Problem**: Empty answer arrays in trivia game.
-- **Solution**: When populating trivia answers, ensure proper UUID relationships between `trivia_questions` and `trivia_answers` tables. Empty answer arrays typically indicate missing or incorrect foreign key relationships. Always verify question UUIDs exist before inserting corresponding answers.
-
-#### Timer Component Type Safety
-
-- **Problem**: Type safety issues with reusable timer components like `GameTimer`.
-- **Solution**: Ensure proper TypeScript types for props. Use specific types like `number` instead of `any` for properties like `resetTrigger` to maintain type safety and prevent runtime errors.
-
-#### `react/no-unescaped-entities` in Storybook `Page.tsx`
-
-- **Problem**: `react/no-unescaped-entities` error in `src/stories/Page.tsx`.
-- **Solution**: The error can be resolved by escaping double quotes within text content using `&quot;` (e.g., changing `"args"` to `&quot;args&quot;`). This is a lower concern as it primarily affects Storybook build/development time.
-
-### Troubleshooting Sections in Existing Documentation
-
-- Refer to `docs/historical/clerk-error-handling-test.md` for specific Clerk error handling scenarios.
-- Consult relevant ADRs in `docs/adr/` for architectural decisions that might impact debugging.
+- Consult relevant ADRs in `docs/adr/` for the architectural decisions that might be biting you.
+- `docs/api/football-data-api-implementation.md` documents quirks of the football-data.org integration.

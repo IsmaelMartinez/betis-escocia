@@ -1,539 +1,93 @@
 # Testing Guide
 
-Comprehensive testing strategy for the Peña Bética Escocesa website.
+The site uses Vitest for unit and integration tests, and Playwright for end-to-end tests. Storybook covers component-level visual checks.
 
-## Overview
+## Running tests
 
-The project uses a multi-layered testing approach:
+```bash
+npm test                 # Full Vitest run
+npm run test:watch       # Watch mode
+npm run test:coverage    # v8 coverage with 80% thresholds
+npm run test:e2e         # Playwright (headless)
+npm run test:e2e:headed  # Playwright with browser UI
+npm run storybook        # Storybook dev server
+```
 
-- **Unit Tests**: Component and utility testing with Vitest
-- **Integration Tests**: API and database integration with Vitest
-- **E2E Tests**: Complete user workflows with Playwright
-- **Component Tests**: Isolated development with Storybook
-- **Visual Tests**: UI consistency (when Chromatic is configured)
-
-## Unit & Integration Testing (Vitest)
-
-### Configuration
-
-- **Config**: `vitest.config.ts`
-- **Environment**: jsdom for React components
-- **Coverage**: v8 provider with 80% threshold
-- **Setup**: `tests/setup.ts` with DOM testing library
-
-### File Organization
+## Layout
 
 ```
 tests/
-├── unit/          # Component and utility tests
-├── integration/   # API route and database tests
-└── helpers/       # Shared test utilities
+├── unit/                # Vitest unit tests for components and pure functions
+├── integration/         # Vitest integration tests for API routes
+├── helpers/             # Test utilities
+├── msw/                 # MSW handlers for external API mocking
+└── setup.ts             # jsdom + jest-dom matchers
+
+e2e/                     # Playwright specs (public routes only)
 ```
 
-### Running Tests
+## Patterns
 
-```bash
-npm test                # Run all tests
-npm run test:watch     # Watch mode
-npm run test:coverage  # Coverage report
-npm run test:silent    # Minimal JSON output
-```
+### Component tests
 
-### Testing Patterns
-
-#### Component Testing
+Use `@testing-library/react` plus the `jest-dom` matchers wired up in `tests/setup.ts`. Mock heavy children with `vi.mock(...)`:
 
 ```typescript
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-
-// Mock external dependencies - feature flags are now synchronous
-vi.mock('@/lib/features/featureFlags', () => ({
-  hasFeature: vi.fn(() => true),
-}));
-
-vi.mock('@clerk/nextjs/server', () => ({
-  getAuth: vi.fn(() => ({ userId: 'user_123' })),
-}));
-
-describe('MyComponent', () => {
-  it('renders correctly', () => {
-    render(<MyComponent />);
-    expect(screen.getByRole('button')).toBeInTheDocument();
-  });
-
-  it('handles user interaction', async () => {
-    const user = userEvent.setup();
-    render(<MyComponent />);
-
-    await user.click(screen.getByRole('button'));
-    expect(screen.getByText('Clicked')).toBeInTheDocument();
-  });
-});
-```
-
-#### API Route Testing
-
-```typescript
-import { describe, it, expect, vi } from "vitest";
-import { POST } from "@/app/api/trivia/route";
-
-// Mock authentication
-vi.mock("@/lib/auth/adminApiProtection", () => ({
-  checkAdminRole: vi.fn(() =>
-    Promise.resolve({
-      user: { id: "user_123" },
-      isAdmin: false,
-      error: null,
-    }),
+vi.mock("@/components/match/MatchCard", () => ({
+  default: ({ opponent }: { opponent: string }) => (
+    <div data-testid="match-card">{opponent}</div>
   ),
 }));
-
-// Mock database
-vi.mock("@/lib/api/supabase", () => ({
-  getAuthenticatedSupabaseClient: vi.fn(() => ({
-    from: vi.fn(() => ({
-      insert: vi.fn(() => Promise.resolve({ data: {}, error: null })),
-    })),
-  })),
-}));
-
-describe("/api/trivia", () => {
-  it("submits a score successfully", async () => {
-    const request = new Request(
-      "http://localhost:3000/api/trivia?action=submit",
-      {
-        method: "POST",
-        body: JSON.stringify({ score: 4 }),
-      },
-    );
-
-    const response = await POST(request);
-    expect(response.status).toBe(200);
-  });
-});
 ```
 
-### Mocking Strategies
+### Mocking `fetch` for client components
 
-#### Feature Flag Mocking
+`AllMatches` and `UpcomingMatchesWidget` fetch directly from `/api/matches`. Stub `fetch` per test rather than reaching for MSW:
 
 ```typescript
-vi.mock("@/lib/features/featureFlags", () => ({
-  hasFeature: vi.fn((flag: string) => {
-    const enabledFlags = ["show-clasificacion", "show-partidos"];
-    return enabledFlags.includes(flag);
-  }),
-}));
-```
-
-#### Clerk Authentication Mocking
-
-```typescript
-vi.mock("@clerk/nextjs/server", () => ({
-  getAuth: vi.fn(() => ({
-    userId: "user_123",
-    sessionId: "sess_123",
-  })),
-  clerkClient: {
-    users: {
-      getUser: vi.fn(() =>
-        Promise.resolve({
-          id: "user_123",
-          publicMetadata: { role: "admin" },
-        }),
-      ),
-    },
-  },
-}));
-```
-
-#### Supabase Mocking
-
-```typescript
-vi.mock("@/lib/api/supabase", () => ({
-  getAuthenticatedSupabaseClient: vi.fn(() => ({
-    from: vi.fn((table: string) => ({
-      select: vi.fn(() =>
-        Promise.resolve({
-          data: [],
-          error: null,
-        }),
-      ),
-      insert: vi.fn(() =>
-        Promise.resolve({
-          data: {},
-          error: null,
-        }),
-      ),
-      update: vi.fn(() =>
-        Promise.resolve({
-          data: {},
-          error: null,
-        }),
-      ),
-    })),
-  })),
-}));
-```
-
-## E2E Testing (Playwright)
-
-### Configuration
-
-- **Config**: `playwright.config.ts`
-- **Browsers**: Chromium, Firefox, WebKit
-- **Auth**: Pre-configured in `playwright/global.setup.ts`
-- **Base URL**: `http://localhost:3000` (configurable)
-
-### Running Tests
-
-```bash
-npm run test:e2e        # Headless mode
-npm run test:e2e:headed # Headed mode (debugging)
-npx playwright show-report  # View results
-```
-
-### Test Organization
-
-```
-e2e/
-├── admin-notifications.spec.ts  # Admin notification workflows
-├── home.spec.ts                # Public page functionality
-├── trivia.spec.ts              # Trivia game interactions
-├── fixtures.ts                 # Shared test fixtures
-└── helpers/
-    └── feature-flag-mock.ts    # Feature flag mocking utilities
-```
-
-### Testing Patterns
-
-#### Public User Workflow
-
-```typescript
-import { test, expect } from "@playwright/test";
-
-test("user can submit RSVP", async ({ page }) => {
-  await page.goto("/");
-
-  // Fill RSVP form
-  await page.fill('[data-testid="name-input"]', "John Doe");
-  await page.selectOption('[data-testid="match-select"]', "match_123");
-  await page.check('[data-testid="attending-yes"]');
-
-  // Submit and verify
-  await page.click('[data-testid="submit-rsvp"]');
-  await expect(page.getByText("RSVP submitted successfully")).toBeVisible();
-});
-```
-
-#### Admin Workflow
-
-```typescript
-import { test, expect } from "@playwright/test";
-
-test("admin can view dashboard", async ({ page }) => {
-  // Uses pre-configured admin auth from global.setup.ts
-  await page.goto("/admin", {
-    storageState: "playwright/.clerk/user.json",
-  });
-
-  await expect(
-    page.getByRole("heading", {
-      name: "Admin Dashboard",
-    }),
-  ).toBeVisible();
-
-  // Test admin-specific functionality
-  await page.click('[data-testid="notifications-panel"]');
-  await expect(page.getByText("Notification Preferences")).toBeVisible();
-});
-```
-
-#### Permission Testing
-
-```typescript
-test("requires notification permission for admin alerts", async ({
-  page,
-  context,
-}) => {
-  // Grant notification permission
-  await context.grantPermissions(["notifications"]);
-
-  await page.goto("/admin");
-  await page.click('[data-testid="enable-notifications"]');
-
-  await expect(page.getByText("Notifications enabled")).toBeVisible();
-});
-```
-
-#### Feature Flag Mocking in E2E
-
-```typescript
-// Feature flags are environment variables, so set them in playwright.config.ts
-// (see the `launchOptions.env` block). At test time they're read statically by
-// the app, so there's no runtime mock to install per-test.
-test.beforeEach(async ({ page }) => {
-  // e.g. navigate to a feature-flagged page after env has been configured
-  await page.goto("/admin");
-});
-```
-
-## Component Testing (Storybook)
-
-### Configuration
-
-- **Version**: Storybook v10 with Vitest addon
-- **Framework**: `@storybook/nextjs-vite`
-- **Location**: Stories alongside components as `*.stories.tsx`
-
-### Running Storybook
-
-```bash
-npm run storybook        # Development server
-npm run build-storybook  # Static build
-```
-
-### Story Patterns
-
-#### Basic Component Story
-
-```typescript
-import type { Meta, StoryObj } from "@storybook/react";
-import { Button } from "./Button";
-
-const meta: Meta<typeof Button> = {
-  title: "UI/Button",
-  component: Button,
-  parameters: {
-    layout: "centered",
-  },
-  tags: ["autodocs"],
-  argTypes: {
-    variant: {
-      control: "select",
-      options: ["primary", "secondary", "outline"],
-    },
-  },
-};
-
-export default meta;
-type Story = StoryObj<typeof Button>;
-
-export const Primary: Story = {
-  args: {
-    variant: "primary",
-    children: "Primary Button",
-  },
-};
-
-export const Secondary: Story = {
-  args: {
-    variant: "secondary",
-    children: "Secondary Button",
-  },
-};
-```
-
-#### Feature Flag Testing
-
-```typescript
-// Feature flags are mocked at the module level
-export const FeatureEnabled: Story = {
-  parameters: {
-    mockFeatureFlags: {
-      'show-clerk-auth': true,
-    },
-  },
-  render: (args) => <MyComponent {...args} />,
-};
-
-export const FeatureDisabled: Story = {
-  parameters: {
-    mockFeatureFlags: {
-      'show-clerk-auth': false,
-    },
-  },
-  render: (args) => <MyComponent {...args} />,
-};
-```
-
-#### Authentication State Testing
-
-```typescript
-import { withClerk, SignedIn, SignedOut } from '@clerk/nextjs/testing';
-
-const meta: Meta<typeof UserProfile> = {
-  title: 'Components/UserProfile',
-  component: UserProfile,
-  decorators: [withClerk()],
-};
-
-export const LoggedIn: Story = {
-  render: (args) => (
-    <SignedIn>
-      <UserProfile {...args} />
-    </SignedIn>
-  ),
-};
-
-export const LoggedOut: Story = {
-  render: () => (
-    <SignedOut>
-      <div>Please log in</div>
-    </SignedOut>
-  ),
-};
-
-export const AdminUser: Story = {
-  render: (args) => (
-    <SignedIn user={{ unsafeMetadata: { role: 'admin' } }}>
-      <UserProfile {...args} />
-    </SignedIn>
-  ),
-};
-```
-
-## CI/CD Integration
-
-### GitHub Actions Workflow
-
-All tests run automatically on push and pull requests:
-
-1. **Lint & Type Check**: ESLint and TypeScript validation
-2. **Unit Tests**: Vitest with coverage reporting
-3. **Storybook Build**: Component documentation build
-4. **E2E Tests**: Playwright across multiple browsers
-5. **Build**: Production build verification
-
-### Quality Gates
-
-- **Coverage Threshold**: 80% for lines, functions, branches, statements
-- **Lint**: Must pass ESLint rules
-- **Type Safety**: Must pass TypeScript strict mode
-- **Build**: Must compile successfully for production
-- **E2E**: Core user workflows must pass
-
-## Test Data Management
-
-### Database Testing
-
-- Use Supabase test project for integration tests
-- Mock database responses in unit tests
-- Clean up test data after E2E runs
-
-### Environment Variables
-
-Test-specific environment variables in `vitest.config.ts`:
-
-```typescript
-export default defineConfig({
-  test: {
-    environment: "jsdom",
-    setupFiles: ["./tests/setup.ts"],
-    env: {
-      NEXT_PUBLIC_SUPABASE_URL: "http://localhost:54321",
-      NEXT_PUBLIC_FEATURE_DEBUG_INFO: "true",
-    },
-  },
-});
-```
-
-## Best Practices
-
-### Test Organization
-
-- **One test file per component/utility**
-- **Group related tests with `describe` blocks**
-- **Use descriptive test names** that explain behavior
-- **Mock external dependencies** at the top level
-
-### Assertions
-
-- **Use semantic queries**: `getByRole`, `getByLabelText` over `getByTestId`
-- **Test user behavior**: Click, type, navigate as users would
-- **Verify outcomes**: Check for visible changes, not implementation details
-
-### Performance
-
-- **Mock heavy dependencies**: External APIs, large libraries
-- **Parallelize when possible**: Run tests concurrently
-- **Clean up properly**: Reset mocks, clear state between tests
-
-### Maintenance
-
-- **Keep tests simple**: One concept per test
-- **Update tests with code changes**: Tests should evolve with features
-- **Document complex test setup**: Explain why specific mocks are needed
-
-## Troubleshooting
-
-### Common Issues
-
-#### Tests Not Finding Elements
-
-```typescript
-// Bad: Generic selector
-await page.click(".button");
-
-// Good: Semantic selector
-await page.click("button", { name: "Submit RSVP" });
-
-// Better: Test ID for complex cases
-await page.click('[data-testid="submit-rsvp"]');
-```
-
-#### Mock Not Working
-
-```typescript
-// Ensure mocks are hoisted
-vi.mock("@/lib/features/featureFlags", () => ({
-  hasFeature: vi.fn(),
-}));
-
-// Reset mocks between tests
 beforeEach(() => {
-  vi.clearAllMocks();
+  vi.stubGlobal("fetch", vi.fn());
+});
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+
+(fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
+  ok: true,
+  json: async () => ({ matches: sampleMatches }),
 });
 ```
 
-#### Async Test Issues
+### API route tests
+
+Test the route handler directly through the `createApiHandler` wrapper. The wrapper validates query params via Zod and shapes responses; assert against the parsed JSON.
 
 ```typescript
-// Always await async operations
-await expect(page.getByText("Loading...")).toBeVisible();
-await expect(page.getByText("Loaded!")).toBeVisible();
+import { NextRequest } from "next/server";
+import { GET } from "@/app/api/matches/route";
 
-// Use waitFor for complex conditions
-await waitFor(() => {
-  expect(screen.getByText("Data loaded")).toBeInTheDocument();
-});
+const request = new NextRequest(
+  "http://localhost:3000/api/matches?type=all&live=true",
+);
+const response = await GET(request);
+const data = await response.json();
+
+expect(response.status).toBe(200);
+expect(data.matches).toBeInstanceOf(Array);
 ```
 
-#### E2E Flaky Tests
+`FootballDataService` should be mocked so tests don't hit the live API; see `tests/integration/api/matches-comprehensive.test.ts` for a working example.
 
-- **Add explicit waits**: `page.waitForSelector()` instead of `sleep()`
-- **Use data attributes**: More reliable than CSS selectors
-- **Check for element state**: Visible, enabled before interacting
-- **Mock external services**: Prevent network-dependent failures
+## E2E
 
-## Coverage Requirements
+All Playwright specs target public routes (`/`, `/partidos`, `/clasificacion`, etc.). There is no auth setup; `playwright.config.ts` only requires `FOOTBALL_DATA_API_KEY` in CI for the matches/standings pages to render real data. Tests can run against the bundled `npm run dev` server (configured automatically) or any environment via `PLAYWRIGHT_BASE_URL`.
 
-### Minimum Coverage Targets
+Use the `fixtures.ts` helpers in `e2e/` for shared selectors and navigation utilities.
 
-- **Lines**: 80%
-- **Functions**: 80%
-- **Branches**: 80%
-- **Statements**: 80%
+## Storybook
 
-### Focus Areas
+Storybook v10 with the Vitest addon. Stories live next to components as `*.stories.tsx`. The MSW addon is available for stories that need a mocked API response. Run `npm run storybook` on port 6006.
 
-- **Critical paths**: Authentication, RSVP submission, admin actions
-- **Error handling**: API failures, validation errors, network issues
-- **Edge cases**: Empty states, permission boundaries, feature flag variations
-- **Accessibility**: Screen reader compatibility, keyboard navigation
+## Coverage
 
----
-
-This testing strategy ensures reliable, maintainable code that serves the Betis community effectively. **¡Viva er Betis manque pierda!** 🟢⚪
+`vitest.config.ts` enforces 80% thresholds for lines, functions, branches, and statements. CI fails if coverage drops below those numbers.

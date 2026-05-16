@@ -2,57 +2,39 @@
 
 ## Description
 
-This document outlines the guidelines and patterns for CI/CD and deployment workflows, specifically focusing on the project's integration with GitHub Actions and Vercel.
+Guidelines for CI/CD and deployment workflows. The project deploys to Vercel via its native Git integration; CI runs lint, type-check, the Vitest suite, build, and (non-blocking) Storybook build + coverage.
 
-## Relevant Files
+## Relevant files
 
-- `.github/workflows/enhanced-deploy.yml`: The primary GitHub Actions workflow definition.
-- `next.config.js`: Next.js configuration.
-- `.env.local`, `.env.development`, `.env.production`: Environment variable files.
+- `.github/workflows/ci.yml` — required and non-blocking jobs.
+- `next.config.js` — Next.js configuration, CSP, image patterns.
+- `.env.local.example` — required and optional environment variables.
 
 ## Guidelines
 
-### CI/CD Pipeline Structure (GitHub Actions)
+### CI pipeline (GitHub Actions)
 
-- The project utilizes a single, comprehensive GitHub Actions workflow: `enhanced-deploy.yml`.
-- This workflow runs a series of quality checks in parallel:
-  ```
-  Pipeline Jobs (run in parallel):
-  ├── lint (ESLint)
-  ├── type-check (TypeScript)
-  ├── storybook-build (Component Documentation)
-  ├── vitest (Unit/Integration)
-  ├── e2e-tests (Playwright)
-  └── build-and-lighthouse (Final build + Lighthouse audit)
-  ```
-- All quality gate jobs must pass before the final build and deployment step.
-- Storybook build artifacts are uploaded for 30 days retention.
-- **Reference**: For detailed job configurations, consult `.github/workflows/enhanced-deploy.yml`.
+Two jobs run on every push and PR:
 
-### Vercel Deployment
+- **Tests (Required)** — `npm run lint`, `npm run type-check`, `npm test`, `npm run build`. This is the merge gate.
+- **Quality Checks (Non-blocking)** — `npm run build-storybook`, `npm run test:coverage`, Codecov upload. Failures do not block merge.
 
-- The project is deployed to Vercel via its native Git integration.
-- Upon a push to the `main` branch (or a pull request merge), Vercel automatically triggers a build using `npm run build`.
-- There are no separate Vercel-specific deployment scripts or patterns beyond the standard Next.js build process.
+Both jobs run on Node 22 and share a single secret: `FOOTBALL_DATA_API_KEY`.
 
-### Environment Setup Requirements
+### Vercel deployment
 
-- Ensure the following environment variables are set for both local development and Vercel deployments:
+Vercel's GitHub integration deploys on every PR (preview) and on every merge to `main` (production). The CI pipeline does not handle deploys.
 
-  ```bash
-  # Core services
-  NEXT_PUBLIC_SUPABASE_URL=
-  NEXT_PUBLIC_SUPABASE_ANON_KEY=
-  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-  CLERK_SECRET_KEY=
+### Environment setup
 
-  # Feature flags (optional - use to override defaults)
-  # NEXT_PUBLIC_FEATURE_CLASIFICACION=true
-  # NEXT_PUBLIC_FEATURE_PARTIDOS=true
-  # NEXT_PUBLIC_FEATURE_NOSOTROS=true
+Required:
 
-  # Development helpers (for local development)
-  NEXT_PUBLIC_DEBUG_MODE=true
-  ```
+- `FOOTBALL_DATA_API_KEY` — football-data.org API key.
 
-- **Validation Steps**: Verify that all necessary environment variables are correctly configured in the deployment environment to prevent runtime errors.
+Optional:
+
+- `NEXT_PUBLIC_SITE_URL` — overrides the canonical site URL for the sitemap and Open Graph metadata.
+- `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_RELEASE` — Sentry wiring.
+- `GOOGLE_SITE_VERIFICATION` — Google Search Console verification.
+
+See `docs/deployment-guide.md` for the full table including scope (client/server/build) and `docs/developer-guide.md` for local-dev specifics.

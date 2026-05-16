@@ -2,60 +2,19 @@
 
 ## Status
 
-Accepted
+Superseded (2026-05-16). Kept for historical context.
 
 ## Decision
 
-**Environment variable-based feature flags** for simple feature control.
+Originally: environment-variable-based feature flags for simple, synchronous feature control via `hasFeature("flag-name")`.
 
-## Why Environment Variables
+## Why It Was Superseded
 
-After evaluating Flagsmith (too complex for our needs), we settled on simple environment variables:
+By 2026-05 every remaining flag was on-by-default with no realistic toggling case (auth/admin/trivia/DB had been removed in earlier iterations of the static-site simplification). The runtime cost of env-lookup + cache and the surface of a `FeatureWrapper` component / `withFeatureFlag` HOC were carrying weight without earning any. Navigation links are now hard-coded in `src/components/layout/Header.tsx`; every page renders unconditionally.
 
-- **Simplicity**: Synchronous resolution, no external dependencies
-- **Performance**: Cached in production, no caching in development for hot reload support
-- **Cost**: Free, no external service
-- **Sufficient**: Our scale doesn't need real-time flag updates
-
-## Implementation
-
-```typescript
-// src/lib/features/featureFlags.ts
-import { hasFeature } from "@/lib/features/featureFlags";
-
-// Synchronous check
-if (hasFeature("show-clerk-auth")) {
-  // Feature enabled
-}
-```
-
-## Default Feature States
-
-Source of truth: `src/lib/features/featureFlags.ts`.
-
-### Enabled by Default (Core Features)
-
-- `show-nosotros` - About page
-- `show-unete` - Join functionality
-- `show-clasificacion` - League standings
-- `show-partidos` - Match schedule and results
-- `show-jugadores-historicos` - Legends page
-- `show-efemerides` - Betis history efemérides
-
-### Disabled by Default (Set `=true` to Enable)
-
-- `show-clerk-auth` - Authentication UI
-- `show-debug-info` - Debug panel
-
-## Environment Variable Examples
-
-```bash
-# Enable authenticated flows + debug panel
-NEXT_PUBLIC_FEATURE_CLERK_AUTH=true
-NEXT_PUBLIC_FEATURE_DEBUG_INFO=true
-```
+If a real toggling need returns, reach for a single inline `process.env.NEXT_PUBLIC_FEATURE_X === "true"` check at the call site or revisit a managed flag service (Flagsmith was originally rejected here as too heavy for the site's scale; that judgement still stands at the time of removal).
 
 ## References
 
-- `src/lib/features/featureFlags.ts`
-- `docs/feature-flags-deployment.md`
+- Removal commit: PR #430 (2026-05-16)
+- `src/components/layout/Header.tsx` for the hard-coded navigation
