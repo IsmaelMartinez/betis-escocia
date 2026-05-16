@@ -347,60 +347,6 @@ describe("Logger", () => {
       });
     });
 
-    describe("database", () => {
-      it("should log successful database operations as debug", () => {
-        logger.database("SELECT", "users", 25, undefined, {
-          query: "SELECT * FROM users",
-        });
-
-        // Debug logs are skipped in test, but we can verify it would be called
-        expect(consoleMocks.log).not.toHaveBeenCalled();
-      });
-
-      it("should log database errors", () => {
-        const testLogger = new (logger.constructor as any)();
-        const dbError = new Error("Connection failed");
-        testLogger.database("INSERT", "users", undefined, dbError);
-
-        expect(consoleMocks.log).toHaveBeenCalled();
-        const logEntry: LogEntry = JSON.parse(
-          consoleMocks.log.mock.calls[0][0],
-        );
-        expect(logEntry.level).toBe("error");
-        expect(logEntry.message).toBe("Database INSERT failed on users");
-        expect(logEntry.context).toMatchObject({
-          operation: "INSERT",
-          table: "users",
-          type: "database",
-        });
-        expect(logEntry.error).toMatchObject({
-          name: "Error",
-          message: "Connection failed",
-        });
-      });
-
-      it("should log database operations with duration", () => {
-        vi.stubEnv("NODE_ENV", "development");
-        process.env.VITEST = "";
-
-        const testLogger = new (logger.constructor as any)();
-        testLogger.database("UPDATE", "users", 45);
-
-        expect(consoleMocks.debug).toHaveBeenCalled();
-        // Can't easily parse console debug output, but we know it was called
-      });
-
-      it("should log database operations without duration", () => {
-        vi.stubEnv("NODE_ENV", "development");
-        process.env.VITEST = "";
-
-        const testLogger = new (logger.constructor as any)();
-        testLogger.database("DELETE", "sessions");
-
-        expect(consoleMocks.debug).toHaveBeenCalled();
-      });
-    });
-
     describe("auth", () => {
       it("should log successful auth events as info", () => {
         const testLogger = new (logger.constructor as any)();

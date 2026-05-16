@@ -141,29 +141,6 @@ class Logger {
   }
 
   /**
-   * Log database operations
-   */
-  database(operation: string, table: string, duration?: number, error?: Error, context?: LogContext): void {
-    const message = error 
-      ? `Database ${operation} failed on ${table}` 
-      : `Database ${operation} on ${table}${duration ? ` - ${duration}ms` : ''}`;
-    
-    const level = error ? 'error' : 'debug';
-    
-    this.log(level, message, {
-      ...context,
-      operation,
-      table,
-      duration,
-      type: 'database'
-    }, undefined, error ? {
-      name: error.name,
-      message: error.message,
-      stack: error.stack
-    } : undefined);
-  }
-
-  /**
    * Log authentication events
    */
   auth(event: string, userId?: string, success: boolean = true, context?: LogContext): void {
@@ -309,7 +286,6 @@ export const log = {
   warn: logger.warn.bind(logger),
   error: logger.error.bind(logger),
   apiRequest: logger.apiRequest.bind(logger),
-  database: logger.database.bind(logger),
   auth: logger.auth.bind(logger),
   featureFlag: logger.featureFlag.bind(logger),
   business: logger.business.bind(logger),

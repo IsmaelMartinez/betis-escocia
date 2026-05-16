@@ -4,15 +4,13 @@
 const cspDirectives = {
   "default-src": "'self'",
   "script-src":
-    "'self' 'unsafe-inline' 'unsafe-eval' https://connect.facebook.net https://vercel.live https://va.vercel-scripts.com https://vercel.app https://www.google.com https://www.gstatic.com https://www.recaptcha.net https://recaptcha.net https://js.hcaptcha.com https://hcaptcha.com https://challenges.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com",
-  "style-src":
-    "'self' 'unsafe-inline' https://www.google.com https://www.gstatic.com https://hcaptcha.com https://challenges.cloudflare.com",
+    "'self' 'unsafe-inline' 'unsafe-eval' https://connect.facebook.net https://vercel.live https://va.vercel-scripts.com https://vercel.app",
+  "style-src": "'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src": "'self' data: https: blob:",
-  "font-src": "'self' data: https://www.gstatic.com https://fonts.gstatic.com",
-  "connect-src":
-    "'self' https://vercel.live https://vercel.app https://www.google.com https://www.recaptcha.net https://recaptcha.net https://hcaptcha.com https://api.hcaptcha.com https://challenges.cloudflare.com",
+  "font-src": "'self' data: https://fonts.gstatic.com",
+  "connect-src": "'self' https://vercel.live https://vercel.app",
   "frame-src":
-    "'self' https://www.facebook.com https://www.google.com https://www.recaptcha.net https://recaptcha.net https://hcaptcha.com https://newassets.hcaptcha.com https://challenges.cloudflare.com https://vercel.live https://*.vercel.live",
+    "'self' https://www.facebook.com https://vercel.live https://*.vercel.live",
   "worker-src": "'self' blob:",
   "child-src": "'self' blob:",
   "object-src": "'none'",

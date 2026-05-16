@@ -11,7 +11,7 @@ const config: StorybookConfig = {
   framework: {
     name: "@storybook/nextjs",
     options: {
-      nextConfigPath: "../next.config.mjs",
+      nextConfigPath: "../next.config.js",
     },
   },
   webpackFinal: async (config) => {
