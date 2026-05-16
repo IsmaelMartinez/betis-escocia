@@ -37,12 +37,11 @@ This document outlines the guidelines and patterns for code maintenance, refacto
 
 #### Performance Optimization
 - **Image Optimization**: Ensure Next.js `Image` component is used effectively with proper `priority` and `sizes` for LCP.
-- **Data Fetching**: Optimize Supabase queries, consider server-side caching strategies (Next.js `revalidate` options, SWR/React Query).
-- **Bundle Size**: Analyze and reduce JavaScript bundle size.
+- **Data Fetching**: Tune `unstable_cache` windows on `/api/matches` (currently 30 min) and `/api/standings` (currently 24 h) if the freshness/cost trade-off changes.
+- **Bundle Size**: Analyze and reduce JavaScript bundle size via `@next/bundle-analyzer`.
 
 #### Scalability
-- **API Rate Limiting**: Implement rate limiting for public API routes to prevent abuse.
-- **Database Indexing**: Ensure appropriate database indexes are in place for frequently queried columns in Supabase.
+- **football-data.org rate limit**: `axios-rate-limit` caps at 10 req/min via `API_RATE_LIMIT_PER_MINUTE`. The `unstable_cache` layer keeps real outbound traffic far below this.
 
 #### Robust Error Handling & Logging
 - Review error boundaries (`src/app/error.tsx`, `src/app/global-error.tsx`, `src/components/ErrorBoundary.tsx`) and ensure comprehensive logging (e.g., Sentry, LogRocket) is in place for production.

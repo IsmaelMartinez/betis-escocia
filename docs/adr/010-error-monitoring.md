@@ -9,7 +9,7 @@ Accepted
 ## Why Sentry
 - **Error visibility**: Automatic exception capture with context
 - **Performance**: Web Vitals and custom transaction monitoring
-- **Debugging**: Stack traces, breadcrumbs, user context (via Clerk)
+- **Debugging**: Stack traces, breadcrumbs
 - **Cost**: Free tier covers our needs
 
 ## Configuration

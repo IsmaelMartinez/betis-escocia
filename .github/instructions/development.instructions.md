@@ -12,90 +12,68 @@ alwaysApply: false
 
 ## Description
 
-This document outlines the guidelines and patterns for the code development workflow, covering architectural decisions, integration patterns, and component development.
+Guidelines and patterns for the code development workflow on the Peña Bética Escocesa site. The site is a public static page with two football-data.org-backed API routes — no database, no authentication, no admin surface.
 
-## Relevant Files
+## Relevant files
 
-> For complete architecture overview, see [CLAUDE.md](../../CLAUDE.md)
+> For the complete architecture overview, see [CLAUDE.md](../../CLAUDE.md).
 
 Key development files:
 
-- `src/lib/features/featureFlags.ts`: Environment variable feature flag system
-- `src/lib/auth/adminApiProtection.ts`: API security utilities
-- `src/lib/api/supabase.ts`: Database client and type definitions
+- `src/lib/api/apiUtils.ts` — `createApiHandler` (Zod validation + response shaping)
+- `src/services/footballDataService.ts` — axios-rate-limited football-data.org client
+- `src/lib/constants/team.ts` — `REAL_BETIS_TEAM_ID`
+- `src/data/` — static TypeScript data (`leyendas`, `efemerides`)
 
 ## Guidelines
 
-### Critical Architecture Patterns
-
-#### Feature Flag System (Environment Variables)
-
-> See [CLAUDE.md](../../CLAUDE.md) for complete implementation details
-
-- **Pattern**: `hasFeature('flag-name')` (synchronous)
-- **Location**: `src/lib/features/featureFlags.ts`
-- **Core features enabled by default**: Nosotros, Únete (Join), Clasificación, Partidos, Jugadores Históricos, Efemérides
-
-#### Authentication Flow (Clerk + Supabase)
-
-> See [CLAUDE.md](../../CLAUDE.md) for complete authentication patterns
-
-- **API protection**: Use `checkAdminRole()` from `@/lib/auth/adminApiProtection`
-- **Role hierarchy**: `admin` > `moderator` > `user`
-- **Database**: Use `getAuthenticatedSupabaseClient(clerkToken)` for RLS
-
-#### API Route Patterns
+### API route pattern
 
 ```typescript
-// Standard protected API route structure
-import { getAuth, currentUser } from "@clerk/nextjs/server";
-import { checkAdminRole } from "@/lib/auth/adminApiProtection";
+// Standard API route structure
+import { createApiHandler } from "@/lib/api/apiUtils";
+import { z } from "zod";
 
-export async function POST(request: NextRequest) {
-  const { user, isAdmin, error } = await checkAdminRole();
-  if (!isAdmin) return NextResponse.json({ error }, { status: 401 });
+const querySchema = z.object({
+  type: z.enum(["all", "upcoming", "recent"]).default("all"),
+});
 
-  // For user-specific data, use authenticated Supabase client
-  const { getToken } = getAuth(request);
-  const token = await getToken({ template: "supabase" });
-  const supabase = getAuthenticatedSupabaseClient(token);
-}
+export const GET = createApiHandler({
+  schema: querySchema,
+  handler: async ({ type }) => {
+    return { success: true, items: await fetchItems(type) };
+  },
+});
 ```
 
-#### Database Integration (Supabase)
+The wrapper handles Zod validation, response shaping, error mapping, and `BusinessLogicError` → HTTP status mapping. Handlers that return an object with a `success` field have it passed through verbatim; otherwise the data is wrapped in `createSuccessResponse(...)`.
 
-> See [CLAUDE.md](../../CLAUDE.md) for complete database patterns
+### External data fetching
 
-- **RLS enabled**: Always use authenticated client for user data
-- **Cache strategy**: Use `classification_cache` table for external API data
-- **Client location**: `src/lib/api/supabase.ts`
+`FootballDataService` is the only external HTTP client. It's already rate-limited via `axios-rate-limit` and key-bound. Server-side fetches should wrap calls in `unstable_cache`:
 
-### Component & Page Patterns
+```typescript
+import { unstable_cache } from "next/cache";
+
+const fetchStandings = unstable_cache(
+  async () => new FootballDataService(axios.create()).getLaLigaStandings(),
+  ["la-liga-standings"],
+  { revalidate: 24 * 60 * 60, tags: ["la-liga-standings"] },
+);
+```
+
+### Component patterns
 
 #### Storybook for Component Development and Testing
 
-- **Purpose**: Storybook is used for developing, documenting, and testing UI components in isolation.
-- **Component Development**: Create stories (`.stories.tsx`) for each component to showcase its different states and variations.
-- **UI Testing**: Leverage Storybook's integration with Vitest (`@storybook/addon-vitest`) for comprehensive component testing, including visual regression testing and interaction testing.
-- **Usage**: Run `npm run storybook` to start the Storybook development server.
-- **Reference**: See ADR `docs/adr/009-storybook.md` and the Storybook workflow notes in `docs/storybook/`.
+- Storybook v10 with the Vitest addon (`@storybook/addon-vitest`).
+- Create `.stories.tsx` files alongside each component.
+- Run `npm run storybook` to start the dev server on port 6006.
+- See ADR `docs/adr/009-storybook.md`.
 
-#### Secure Component Pattern
+#### Mobile-first styling
 
-```tsx
-import { hasFeature } from "@/lib/features/featureFlags";
-
-export default function MyComponent() {
-  const isEnabled = hasFeature("my-feature-flag");
-  if (!isEnabled) return null;
-
-  return <div>Feature content</div>;
-}
-```
-
-#### Mobile-First Styling
-
-- **Always start with mobile** breakpoints, scale up.
-- **Betis branding**: Use branded classes like `bg-betis-verde` / `bg-betis-verde-dark` (never generic Tailwind greens). See `docs/design-system.md` for the full palette.
-- **Gold accents**: `text-betis-oro` for highlights on dark backgrounds.
-- **Responsive navigation**: Hamburger menu pattern in `src/components/layout/Layout.tsx`.
+- Always start with mobile breakpoints and scale up.
+- Use branded classes (`bg-betis-verde`, `bg-betis-verde-dark`, `bg-betis-oro`, `bg-scotland-navy`) — never generic Tailwind greens. See `docs/design-system.md` for the full palette.
+- Gold accents (`text-betis-oro`) for highlights on dark backgrounds.
+- Hamburger menu pattern lives in `src/components/layout/Header.tsx`.

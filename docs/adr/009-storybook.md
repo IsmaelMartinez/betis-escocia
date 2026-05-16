@@ -48,9 +48,8 @@ npm run build-storybook # Static build
 ```
 
 ## Mocking Strategy
-- Clerk: Mocked via `ClerkDecorator` component
 - MSW: Service worker for API mocking
-- Next.js Image: Mocked for Storybook compatibility
+- Next.js Image: Mocked for Storybook compatibility (see `__mocks__/next/image.tsx`)
 
 ## Viewport Presets
 - Small mobile: 320x568

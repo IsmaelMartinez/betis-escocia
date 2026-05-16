@@ -1,14 +1,12 @@
 # Roadmap
 
-**Last updated:** 2026-04-13
+**Last updated:** 2026-05-16
 
-This document tracks planned work for the Betis Escocia project, organized into near-term, mid-term, and future priorities.
+This document tracks planned and possible future work for the Peña Bética Escocesa site after the 2026-05 static-site simplification (PRs #427–#430). The site is now a public static page with two football-data.org-backed API routes; the database, authentication, admin panel, trivia, RSVP/contact surface, and feature-flag abstraction have all been removed.
 
----
+## Near-term: maintenance
 
-## Near-Term: Dependency & Maintenance
-
-### Major Dependency Upgrades
+### Major dependency upgrades
 
 These packages are pinned below latest major versions and need explicit migration:
 
@@ -18,116 +16,42 @@ These packages are pinned below latest major versions and need explicit migratio
 | `typescript`   | 5.9.x   | 6.x    | Medium | TS 6 introduces new strictness rules. Run `tsc --noEmit` after upgrade to assess impact.             |
 | `undici`       | 7.x     | 8.x    | Low    | Dev dependency only. May affect MSW/test mocking. Test suite is the main validation.                 |
 
-### Security & Audit
+### Audit
 
-- 6 remaining low-severity vulnerabilities, all in `elliptic` deep inside `@storybook/nextjs`. No fix available without a Storybook major downgrade. Monitor for upstream resolution.
+- A handful of low-severity advisories remain in `elliptic` deep inside `@storybook/nextjs`. No fix available without a Storybook major downgrade. Monitor for upstream resolution.
 - Dependabot is configured for weekly grouped minor/patch updates with `next`, `react`, `react-dom` excluded for isolated review.
-- CI deploy job is commented out pending secret configuration (see former issue #329).
 
----
+## Mid-term: leftover cleanup
 
-## Mid-Term: Architecture Simplification (In Progress)
+A final iteration-6 sweep is planned to remove orphaned components and tighten the surviving surface:
 
-From the [architecture simplification plan](architecture-simplification-plan.md). Phases 1-3 are complete. The RSVP/Contacto/Dashboard/GDPR surface area was removed in commit 90bbbf2 rather than refactored, so several originally-planned Phase 4-7 splits no longer apply.
+- Delete dead match components in `src/components/match/` with no callers (`FilteredMatches`, `PaginatedMatches`, `CompetitionFilter`).
+- Trim `src/lib/api/apiUtils.ts` further: with only two `auth-less` routes left, the wrapper is over-engineered.
+- Consider whether `tests/integration/api/matches.test.ts` adds anything beyond `matches-comprehensive.test.ts`; if not, delete.
+- Trim the CSP allowances in `next.config.js` for captcha / Facebook / hCaptcha origins now that no form on the site uses them.
+- Re-evaluate Storybook: with the site reduced to a handful of public components, the dev dependency footprint may not be worth it.
 
-### Phase 4: Split Large Components (In Progress)
+## Future: enhancement ideas
 
-Target components remaining after the RSVP/Contacto/Dashboard cleanup:
+### Performance
 
-| Component                | Lines | Status     | Plan                                                                |
-| ------------------------ | ----- | ---------- | ------------------------------------------------------------------- |
-| `AllDatabaseMatches.tsx` | ~490  | Planned    | Extract filtering/pagination into custom hooks.                     |
-| `Layout.tsx`             | 36    | Done       | Split into Header, Footer, UserMenu, DebugInfoPanel.                |
-| `AdminPageClient.tsx`    | —     | Simplified | Trimmed to matches-only orchestration; RSVP/Contacto views removed. |
+- **Bundle Size Analysis**: Use the existing `@next/bundle-analyzer` to audit JavaScript bundles.
+- **Image Optimization**: Audit Next.js Image usage across the site.
 
-### Phase 5: Database Module Split
+### Developer experience
 
-Split monolithic `supabase.ts` into domain modules. After the recent cleanup the file is smaller, but a split still improves locality:
-
-```
-src/lib/api/supabase/
-├── client.ts           # Client initialization
-├── matches.ts          # Match CRUD
-├── trivia.ts           # Trivia operations
-├── classification.ts   # Classification cache
-└── index.ts            # Re-exports
-```
-
-### Phase 6: Test Infrastructure Cleanup
-
-- Centralize mocks into `tests/mocks/` (Supabase, Clerk, navigation)
-- Expand MSW handlers for all external APIs (currently only 1 endpoint)
-- Reduce setup overhead in test files with heavy mocking
-
-### Phase 7: Hook Extraction
-
-Extract remaining business logic from components into reusable hooks:
-
-- `useMatchFilters` / `usePagination` (from AllDatabaseMatches)
-- `useTriviaGame` (from trivia/page)
-
----
-
-## Mid-Term: Feature Enablement
-
-Features currently behind feature flags, disabled by default:
-
-| Feature        | Flag              | Status          | What's Needed                                                                                      |
-| -------------- | ----------------- | --------------- | -------------------------------------------------------------------------------------------------- |
-| **Clerk Auth** | `show-clerk-auth` | Built, disabled | User accounts and login. Enable when user-facing features (profiles, auth-gated flows) are needed. |
-| **Debug Info** | `show-debug-info` | Built, disabled | Developer-only. Enable per-environment via env vars.                                               |
-
----
-
-## Future: Enhancement Ideas
-
-### Performance & Scalability
-
-- **API Rate Limiting**: Implement for public routes (trivia, contact form)
-- **Database Indexing**: Optimize for frequent queries
-- **Bundle Size Analysis**: Use existing `@next/bundle-analyzer` to audit JavaScript bundles
-- **Image Optimization**: Audit Next.js Image usage across the site
-
-### User Engagement
-
-- **Trivia Leaderboards**: Expand the trivia system with competitive rankings
-- **Expanded Question Database**: More Betis & Scottish football trivia
-- **Match Predictions**: Let users predict match scores
-- **Social Features**: Enhanced photo sharing via Galeria
-
-### Developer Experience
-
-- **Supabase Type Generation**: Use `supabase gen types` for automatic schema sync
-- **CI/CD Enhancement**: Add performance audits, security scans to pipeline
-- **Component Documentation**: Expand Storybook coverage for all components
-- **Internationalization**: Multi-language support if the community grows
+- **CI/CD Enhancement**: Add Lighthouse / accessibility audits to the pipeline.
+- **Component Documentation**: Expand Storybook coverage for the surviving components.
 
 ### Infrastructure
 
-- **CI Deploy Job**: Re-enable Vercel deployment via CI once secrets are configured
-- **E2E Test Coverage**: Expand Playwright tests for critical user flows
-- **Monitoring**: Leverage Sentry more fully for performance monitoring and session replay
+- **E2E Test Coverage**: Expand Playwright tests for the public routes (currently smoke-only).
+- **Monitoring**: Leverage Sentry more fully for performance monitoring and session replay if traffic justifies it.
 
----
+## What's working well (preserve)
 
-## What's Working Well (Preserve)
-
-These parts of the architecture are solid and should not be refactored:
-
-- `createApiHandler` pattern for API routes
-- Feature flag system (environment variable-based)
-- Structured logger with environment awareness
-- ADR practice (14 records documenting key decisions)
+- `createApiHandler` pattern for API routes (validation + response shaping)
+- ADR practice (a slim set of records documenting load-bearing decisions)
 - CI/CD pipeline with required vs. non-blocking checks
-- Security posture: CSP headers, RLS, Clerk admin enforcement
-- Design system with branded color classes
+- Branded design tokens (`bg-betis-verde`, `bg-betis-oro`, `bg-scotland-navy`)
 - Repo Butler health monitoring
-
----
-
-## How to Use This Document
-
-- Check this roadmap before starting new work to avoid duplication
-- Update status fields as work progresses
-- Move completed items to the bottom or remove them
-- Add new ideas to the appropriate section with enough context for any contributor

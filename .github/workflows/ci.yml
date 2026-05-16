@@ -15,10 +15,6 @@ jobs:
       contents: read        # Read repository contents
       checks: write         # Write check results
     env:
-      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
       FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
     steps:
       - uses: actions/checkout@v6
@@ -46,10 +42,6 @@ jobs:
       contents: read        # Read repository contents
     continue-on-error: true
     env:
-      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
       FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
     steps:
       - uses: actions/checkout@v6
@@ -72,74 +64,6 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-  # NOTE: E2E tests disabled — requires a Supabase database which is not
-  # available (free tier limited to 2 projects). Re-enable when a test
-  # database is provisioned.
-  #
-  # e2e:
-  #   name: E2E Tests (Required)
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     contents: read
-  #     actions: write
-  #   if: github.event_name == 'pull_request'
-  #   env:
-  #     NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-  #     NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-  #     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-  #     CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
-  #     CLERK_TEST_EMAIL: ${{ secrets.CLERK_TEST_EMAIL }}
-  #     CLERK_TEST_PASSWORD: ${{ secrets.CLERK_TEST_PASSWORD }}
-  #     FOOTBALL_DATA_API_KEY: ${{ secrets.FOOTBALL_DATA_API_KEY }}
-  #     NEXT_PUBLIC_FEATURE_CLERK_AUTH: "true"
-  #   steps:
-  #     - uses: actions/checkout@v6
-  #     - name: Setup Node.js
-  #       uses: actions/setup-node@v6
-  #       with:
-  #         node-version: "22"
-  #         cache: "npm"
-  #     - name: Install dependencies
-  #       run: npm ci
-  #     - name: Install Playwright browsers
-  #       run: npx playwright install --with-deps
-  #     - name: Run E2E tests
-  #       run: npm run test:e2e
-  #     - name: Upload E2E test results
-  #       uses: actions/upload-artifact@v4
-  #       if: always()
-  #       with:
-  #         name: playwright-report
-  #         path: playwright-report/
-  #         retention-days: 7
-
-  # NOTE: Production deployment is currently handled by Vercel's automatic GitHub
-  # integration. The CI pipeline runs tests and quality checks, but does not
-  # perform production deploys while this job is commented out.
-  #
-  # TODO: Configure Vercel secrets (VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID),
-  # disable Vercel's automatic Git integration so deploys are gated by CI, and
-  # uncomment the deploy job below. See issue #329.
-  #
-  # deploy:
-  #   name: Deploy to Production
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     contents: read        # Read repository contents
-  #     deployments: write    # Write deployment status
-  #   needs: [test]
-  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-  #   environment: production
-  #   steps:
-  #     - uses: actions/checkout@v6
-  #     - name: Deploy to Vercel
-  #       uses: amondnet/vercel-action@v25
-  #       with:
-  #         vercel-token: ${{ secrets.VERCEL_TOKEN }}
-  #         vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-  #         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-  #         vercel-args: '--prod'
-  #     - name: Deployment successful
-  #       run: |
-  #         echo "Tests passed and deployment completed!"
-  #         echo "Production URL: https://betis-escocia.vercel.app"
+  # NOTE: Production deployment is handled by Vercel's automatic GitHub
+  # integration. The CI pipeline runs tests and quality checks; deploys
+  # happen via Vercel directly on merge to main.

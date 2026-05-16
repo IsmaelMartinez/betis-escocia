@@ -16,7 +16,7 @@ Accepted
 - Real browser automation
 - Multi-browser support (Chrome, Firefox, Safari)
 - Excellent debugging tools
-- Clerk authentication integration via `@clerk/testing`
+- All E2E specs target public routes (no auth setup required)
 
 ## Test Structure
 ```

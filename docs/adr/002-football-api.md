@@ -27,9 +27,9 @@ The API `season` parameter expects the **start year** of the season (e.g., `2025
 ## Implementation
 
 - API integrated for match display and standings
-- Real Betis filtered by team ID
-- Error handling and rate limiting in place
-- Results cached via `classification_cache` table (see ADR-005)
+- Real Betis filtered by team ID (90, exported from `src/lib/constants/team.ts`)
+- Error handling and rate limiting handled by `axios-rate-limit` in `src/services/footballDataService.ts`
+- Results cached server-side with Next.js `unstable_cache` (30 min for matches, 24 h for standings)
 
 ## References
 

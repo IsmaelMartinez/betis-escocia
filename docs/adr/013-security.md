@@ -1,35 +1,33 @@
 # ADR-013: Security Architecture
 
 ## Status
+
 Accepted
 
 ## Decision
-**Leverage Next.js built-in security** rather than custom implementations.
+
+Leverage Next.js built-in security rather than custom implementations.
 
 ## Approach
-- **CSP**: Configured in `next.config.js` (not custom code)
-- **Rate limiting**: Next.js middleware
-- **XSS protection**: React's built-in escaping
-- **Validation**: Zod schemas in API routes
+
+- CSP and security headers configured in `next.config.js`
+- XSS prevention via React's built-in escaping
+- Input validation via Zod schemas in API routes
 
 ## What We Use
-| Security Need | Solution |
-|--------------|----------|
-| CSP headers | `next.config.js` |
-| Rate limiting | Middleware |
-| XSS prevention | React default |
-| Input validation | Zod schemas |
-| Authentication | Clerk |
-| Authorization | RLS + Clerk roles |
+
+| Security Need    | Solution                              |
+| ---------------- | ------------------------------------- |
+| CSP headers      | `next.config.js`                      |
+| XSS prevention   | React default                         |
+| Input validation | Zod schemas in `createApiHandler`     |
+
+The site is a public static page reading match data from football-data.org. There is no database, no authentication, no user submissions, and no admin surface, so authorisation, RLS, CSRF, and rate-limiting are no longer in scope.
 
 ## What We Removed
+
 - Custom HTML sanitization (React handles this)
 - Custom CSP generation (moved to config)
-- Custom CSRF tokens (not needed with SameSite cookies)
-- In-memory rate limiting (moved to middleware)
-
-## Result
-- Reduced `security.ts` from 205 to ~50 lines
-- Better security (framework-tested implementations)
-- Easier maintenance
-
+- Custom CSRF tokens (no forms accept user-submitted data)
+- In-memory rate limiting (no surfaces left to rate-limit)
+- Auth/authorisation layer (Clerk + RLS removed in PR #428 / #429)
