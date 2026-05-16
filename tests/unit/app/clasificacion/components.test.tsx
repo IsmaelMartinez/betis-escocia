@@ -33,13 +33,6 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-// Mock feature protection
-vi.mock("@/lib/features/featureProtection", () => ({
-  FeatureWrapper: ({ children, feature }: any) => (
-    <div data-testid={`feature-${feature}`}>{children}</div>
-  ),
-}));
-
 // Import and create standalone components for testing
 import {
   getPositionStyle,

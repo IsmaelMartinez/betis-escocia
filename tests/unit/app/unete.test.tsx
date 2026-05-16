@@ -10,11 +10,6 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-// Mock FeatureWrapper
-vi.mock("@/lib/features/featureProtection", () => ({
-  FeatureWrapper: ({ children }: any) => children,
-}));
-
 // Mock Lucide React icons
 vi.mock("lucide-react", () => ({
   MapPin: vi.fn(({ className }) => (

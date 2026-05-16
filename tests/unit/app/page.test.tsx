@@ -13,11 +13,6 @@ vi.mock("@/components/match/UpcomingMatchesWidget", () => ({
 vi.mock("@/components/widgets/ClassificationWidget", () => ({
   default: vi.fn(() => <div data-testid="mock-classification-widget" />),
 }));
-// Mock feature flags to return true (features enabled)
-vi.mock("@/lib/features/featureFlags", () => ({
-  hasFeature: vi.fn(() => true),
-}));
-
 describe("Home page", () => {
   it("renders HeroCommunity component", () => {
     render(<Home />);
@@ -51,7 +46,6 @@ describe("Home page", () => {
       screen.getByText(/Todos los béticos son bienvenidos/i),
     ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Únete/i })).toBeInTheDocument();
-    // Facebook and YouTube links are wrapped in FeatureWrapper for social media feature
   });
 
   it("renders contact info section with correct details", () => {

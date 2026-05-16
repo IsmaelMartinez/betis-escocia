@@ -4,13 +4,17 @@ import { useState } from "react";
 import Link from "next/link";
 import { Menu, X, MapPin } from "lucide-react";
 import BetisLogo from "@/components/BetisLogo";
-import { type NavigationItem } from "@/lib/features/featureFlags";
 
-interface HeaderProps {
-  readonly navigationItems: NavigationItem[];
-}
+const NAV_ITEMS = [
+  { name: "Partidos", href: "/partidos" },
+  { name: "Clasificación", href: "/clasificacion" },
+  { name: "Nosotros", href: "/nosotros" },
+  { name: "Leyendas", href: "/jugadores-historicos" },
+  { name: "Joaquín", href: "/joaquin" },
+  { name: "Únete", href: "/unete" },
+] as const;
 
-export default function Header({ navigationItems }: HeaderProps) {
+export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -58,7 +62,7 @@ export default function Header({ navigationItems }: HeaderProps) {
 
             {/* Desktop Navigation - scoreboard style */}
             <div className="hidden md:flex items-center gap-1">
-              {navigationItems.map((item, index) => (
+              {NAV_ITEMS.map((item, index) => (
                 <Link
                   key={item.name}
                   href={item.href}
@@ -67,7 +71,7 @@ export default function Header({ navigationItems }: HeaderProps) {
                   <span className="relative z-10">{item.name}</span>
                   <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors rounded" />
                   {/* Separator dot */}
-                  {index < navigationItems.length - 1 && (
+                  {index < NAV_ITEMS.length - 1 && (
                     <span className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-1 bg-betis-oro/50 rounded-full" />
                   )}
                 </Link>
@@ -95,7 +99,7 @@ export default function Header({ navigationItems }: HeaderProps) {
           className="md:hidden bg-scotland-navy border-t border-white/10"
         >
           <div className="px-4 py-4 space-y-1">
-            {navigationItems.map((item) => (
+            {NAV_ITEMS.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}

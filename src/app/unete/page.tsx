@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { MapPin, Clock, Users } from "lucide-react";
-import { FeatureWrapper } from "@/lib/features/featureProtection";
 
 export default function Unete() {
   return (
@@ -185,14 +184,12 @@ export default function Unete() {
           <p className="font-body text-xl mb-8 text-white/95 leading-relaxed drop-shadow-lg">
             El próximo partido puede ser el momento perfecto para conocernos.
           </p>
-          <FeatureWrapper feature="show-partidos">
-            <Link
-              href="/partidos"
-              className="inline-flex items-center gap-3 bg-oro-bright hover:bg-oro-antique text-scotland-navy px-10 py-5 rounded-2xl font-display font-black text-xl transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-[0_0_30px_rgba(255,215,0,0.4)] uppercase tracking-wide"
-            >
-              📅 Ver Próximos Partidos
-            </Link>
-          </FeatureWrapper>
+          <Link
+            href="/partidos"
+            className="inline-flex items-center gap-3 bg-oro-bright hover:bg-oro-antique text-scotland-navy px-10 py-5 rounded-2xl font-display font-black text-xl transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-[0_0_30px_rgba(255,215,0,0.4)] uppercase tracking-wide"
+          >
+            📅 Ver Próximos Partidos
+          </Link>
         </div>
       </section>
     </div>

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Heart, Users, Calendar } from "lucide-react";
-import { FeatureWrapper } from "@/lib/features/featureProtection";
 import InfoCard from "@/components/InfoCard";
 
 export default function Nosotros() {
@@ -52,17 +51,15 @@ export default function Nosotros() {
                 Betis.
               </p>
               <p className="text-sm">
-                Esa coincidencia fue el inicio de una gran amistad bética y
-                la primera peña oficial del Real Betis en Reino Unido.
+                Esa coincidencia fue el inicio de una gran amistad bética y la
+                primera peña oficial del Real Betis en Reino Unido.
               </p>
               <div className="pt-4 border-t border-gray-100">
                 <p className="text-sm italic text-betis-verde-dark">
                   "La idea vino tomando algo en un pub. Simplemente lo
                   decidieron así."
                 </p>
-                <p className="text-xs text-gray-600 mt-2">
-                  — LaLiga oficial
-                </p>
+                <p className="text-xs text-gray-600 mt-2">— LaLiga oficial</p>
               </div>
             </InfoCard>
 
@@ -74,8 +71,8 @@ export default function Nosotros() {
               patternClass="pattern-tartan-subtle"
             >
               <p className="text-sm">
-                Desde 2010, hemos acogido a béticos de toda España que viven
-                en Escocia, estudiantes de intercambio, turistas de paso...{" "}
+                Desde 2010, hemos acogido a béticos de toda España que viven en
+                Escocia, estudiantes de intercambio, turistas de paso...{" "}
                 <strong className="text-betis-verde-dark">
                   todos son bienvenidos
                 </strong>
@@ -88,8 +85,7 @@ export default function Nosotros() {
               </p>
               <div className="pt-4 border-t border-gray-100">
                 <p className="text-sm font-semibold text-betis-verde-dark">
-                  Reconocidos por LaLiga como "bastión" del betismo en
-                  Escocia
+                  Reconocidos por LaLiga como "bastión" del betismo en Escocia
                 </p>
               </div>
             </InfoCard>
@@ -160,15 +156,13 @@ export default function Nosotros() {
               <Heart className="h-6 w-6" />
               Únete a Nosotros
             </Link>
-            <FeatureWrapper feature="show-partidos">
-              <Link
-                href="/partidos"
-                className="inline-flex items-center gap-3 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border-2 border-white/30 px-10 py-5 rounded-2xl font-heading font-bold text-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wide"
-              >
-                <Calendar className="h-6 w-6" />
-                Ver Partidos
-              </Link>
-            </FeatureWrapper>
+            <Link
+              href="/partidos"
+              className="inline-flex items-center gap-3 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border-2 border-white/30 px-10 py-5 rounded-2xl font-heading font-bold text-lg transition-all duration-300 transform hover:scale-105 uppercase tracking-wide"
+            >
+              <Calendar className="h-6 w-6" />
+              Ver Partidos
+            </Link>
           </div>
         </div>
       </section>

@@ -10,11 +10,6 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-// Mock FeatureWrapper to always render children (feature enabled)
-vi.mock("@/lib/features/featureProtection", () => ({
-  FeatureWrapper: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
-
 // Mock Lucide React icons
 vi.mock("lucide-react", () => ({
   Heart: vi.fn(({ className }) => (
@@ -108,7 +103,9 @@ describe("Nosotros Page", () => {
       expect(
         screen.getByText(/Primera peña oficial del Betis en Reino Unido/),
       ).toBeInTheDocument();
-      expect(screen.getByText(/Nuevo hogar en Polwarth Tavern/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Nuevo hogar en Polwarth Tavern/),
+      ).toBeInTheDocument();
       expect(
         screen.getByText(/Reconocimiento oficial de LaLiga/),
       ).toBeInTheDocument();
@@ -133,7 +130,9 @@ describe("Nosotros Page", () => {
         screen.getByText(/¿Quieres ser parte de nuestra historia?/),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Tu historia también puede formar parte de la nuestra/),
+        screen.getByText(
+          /Tu historia también puede formar parte de la nuestra/,
+        ),
       ).toBeInTheDocument();
     });
 

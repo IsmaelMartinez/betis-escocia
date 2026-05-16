@@ -9,7 +9,6 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
-import { withFeatureFlag, FeatureWrapper } from "@/lib/features/featureProtection";
 import CulturalFusionHero from "@/components/hero/CulturalFusionHero";
 
 export const metadata: Metadata = {
@@ -267,14 +266,12 @@ async function StandingsContent() {
 
         {/* Actions */}
         <div className="mt-12 flex justify-center">
-          <FeatureWrapper feature="show-partidos">
-            <Link
-              href="/partidos"
-              className="inline-flex items-center justify-center px-8 py-4 bg-betis-verde text-white font-heading font-bold rounded-xl hover:bg-betis-verde-dark transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl uppercase tracking-wide"
-            >
-              Ver Partidos del Betis
-            </Link>
-          </FeatureWrapper>
+          <Link
+            href="/partidos"
+            className="inline-flex items-center justify-center px-8 py-4 bg-betis-verde text-white font-heading font-bold rounded-xl hover:bg-betis-verde-dark transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl uppercase tracking-wide"
+          >
+            Ver Partidos del Betis
+          </Link>
         </div>
       </div>
     </div>
@@ -298,5 +295,4 @@ async function StandingsPage() {
   );
 }
 
-// Export the protected component
-export default withFeatureFlag(StandingsPage, "show-clasificacion");
+export default StandingsPage;
