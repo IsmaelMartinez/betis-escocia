@@ -379,7 +379,6 @@ import CulturalFusionHero from "@/components/hero/CulturalFusionHero";
 
 - `containerClassName` (`string`, optional): Additional classes for the content container. Use this for width and alignment variations. Defaults to `"max-w-6xl text-center"`.
 
-
 ### FeatureCard
 
 A modern card component for displaying features with icons and descriptions.
@@ -427,7 +426,6 @@ import { Users, Clock, CheckCircle } from "lucide-react";
 - Icon container with background color options
 - Pattern overlay accent (verdiblanco-diagonal-subtle)
 - Typography system integration
-
 
 ---
 
@@ -607,4 +605,3 @@ All color combinations meet WCAG AA standards (4.5:1 for normal text, 3:1 for la
 | 1.0.0   | 2025-01-15 | Initial design system creation                                 |
 
 ---
-
