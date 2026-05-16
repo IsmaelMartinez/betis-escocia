@@ -41,6 +41,7 @@ Items that were considered during iteration 6 but deferred. None are blocking; p
 - **Trim `apiUtils.ts` further.** With only two `auth-less` routes left, the wrapper still ships a `BusinessLogicError` class and a fall-through `createSuccessResponse` branch that is unreachable in practice. Inlining the validation into each route would lose ~100 lines but couple them; keeping the wrapper is cheap.
 - **Re-evaluate Storybook.** With the site reduced to ~25 surviving components, the dev-dependency footprint (Storybook v10, addons, MSW Storybook addon) may not be worth the value. Removing it would drop several MB of `devDependencies` but lose the visual-isolation workflow.
 - **Strip the remaining specialised logger helpers.** `log.auth`, `log.apiRequest`, `log.business`, `log.child` have no live callers. Left in place during iteration 6 because they're idiomatic logger surface; revisit if the logger gets touched for another reason.
+- **Drop FacebookSDK and the Facebook CSP origins.** `src/components/social/FacebookSDK.tsx` still injects `connect.facebook.net/en_GB/sdk.js` with `xfbml=1`, but the only consumers (`FacebookPagePlugin`, embed-style components) were deleted in #432. The SDK now loads and does nothing. Removing the component lets `connect.facebook.net` and `www.facebook.com` come out of the CSP too.
 
 ## Future: enhancement ideas
 
