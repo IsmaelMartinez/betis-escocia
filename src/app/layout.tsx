@@ -10,7 +10,6 @@ import "./globals.css";
 import Layout from "@/components/layout/Layout";
 import OfflineDetector from "@/components/OfflineDetector";
 import * as Sentry from "@sentry/nextjs";
-import FacebookSDK from "@/components/social/FacebookSDK";
 
 // Conditionally import Vercel Analytics/SpeedInsights only in production on Vercel
 const isVercel = process.env.VERCEL === "1";
@@ -150,10 +149,6 @@ export const metadata: Metadata = {
   category: "Sports",
   classification: "Community Organization",
   referrer: "origin-when-cross-origin",
-  other: {
-    preconnect: "https://connect.facebook.net",
-    "dns-prefetch": "https://www.facebook.com",
-  },
 };
 
 export const viewport: Viewport = {
@@ -169,20 +164,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <head>
-        {/* Preconnect to third-party domains for faster loading */}
-        <link
-          rel="preconnect"
-          href="https://connect.facebook.net"
-          crossOrigin="anonymous"
-        />
-        <link rel="dns-prefetch" href="https://connect.facebook.net" />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${displayFont.variable} ${bodyFont.variable} ${accentFont.variable} antialiased`}
       >
-        <FacebookSDK />
-
         <OfflineDetector />
         <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
           <Layout>{children}</Layout>

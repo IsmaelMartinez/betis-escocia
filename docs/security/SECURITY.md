@@ -29,11 +29,11 @@ React's default escaping handles HTML rendering. No raw HTML injection helpers a
 
 The CSP allows these external origins (see `next.config.js`):
 
-- `script-src`: `connect.facebook.net` (Facebook SDK), Vercel Live / Analytics (`vercel.live`, `va.vercel-scripts.com`, `vercel.app`).
+- `script-src`: `'self'`, `'unsafe-inline'`, `'unsafe-eval'`, plus Vercel Live / Analytics (`vercel.live`, `va.vercel-scripts.com`, `vercel.app`). The two `unsafe-*` allowances are required by Next.js bootstrap scripts and `next/dynamic`.
 - `style-src`: `'self'` plus `'unsafe-inline'` (Tailwind 4 emits inline styles during SSR).
 - `font-src`: `'self' data:` only — Google Fonts are self-hosted via `next/font/google` (Next.js downloads the font files at build time and serves them from `/_next/static/media/`).
-- `connect-src`: `vercel.live`, `vercel.app`.
-- `frame-src`: `www.facebook.com` (share dialogs), Vercel Live.
+- `connect-src`: `'self'`, `vercel.live`, `vercel.app`.
+- `frame-src`: `'self'` and Vercel Live.
 - `img-src` is `'self' data: https: blob:` to allow club crests served by football-data.org.
 
 Sentry is not listed in the CSP — browser-side Sentry traffic is rewritten through the local `tunnelRoute: "/monitoring-tunnel"` so the connection target stays on `'self'`.

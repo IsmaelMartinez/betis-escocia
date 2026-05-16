@@ -4,13 +4,12 @@
 const cspDirectives = {
   "default-src": "'self'",
   "script-src":
-    "'self' 'unsafe-inline' 'unsafe-eval' https://connect.facebook.net https://vercel.live https://va.vercel-scripts.com https://vercel.app",
+    "'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://va.vercel-scripts.com https://vercel.app",
   "style-src": "'self' 'unsafe-inline'",
   "img-src": "'self' data: https: blob:",
   "font-src": "'self' data:",
   "connect-src": "'self' https://vercel.live https://vercel.app",
-  "frame-src":
-    "'self' https://www.facebook.com https://vercel.live https://*.vercel.live",
+  "frame-src": "'self' https://vercel.live https://*.vercel.live",
   "worker-src": "'self' blob:",
   "child-src": "'self' blob:",
   "object-src": "'none'",
