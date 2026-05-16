@@ -124,7 +124,7 @@ class Logger {
         cause: error.cause,
       };
     } else if (error && typeof error === "object") {
-      // Handle Supabase/PostgreSQL errors and other object errors
+      // Handle plain-object errors that expose code/message/hint fields
       const errorObj = error as Record<string, unknown>;
       errorInfo = {
         name: (errorObj.code as string) || "Unknown Error",
@@ -185,24 +185,6 @@ class Logger {
       event,
       success,
       type: "auth",
-    });
-  }
-
-  /**
-   * Log feature flag usage
-   */
-  featureFlag(
-    flag: string,
-    enabled: boolean,
-    userId?: string,
-    context?: LogContext,
-  ): void {
-    this.debug(`Feature flag ${flag}: ${enabled ? "enabled" : "disabled"}`, {
-      ...context,
-      userId,
-      flag,
-      enabled,
-      type: "feature_flag",
     });
   }
 
@@ -334,7 +316,6 @@ export const log = {
   error: logger.error.bind(logger),
   apiRequest: logger.apiRequest.bind(logger),
   auth: logger.auth.bind(logger),
-  featureFlag: logger.featureFlag.bind(logger),
   business: logger.business.bind(logger),
   child: logger.child.bind(logger),
   setGlobalContext: logger.setGlobalContext.bind(logger),

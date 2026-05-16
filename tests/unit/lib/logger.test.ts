@@ -392,30 +392,6 @@ describe("Logger", () => {
       });
     });
 
-    describe("featureFlag", () => {
-      it("should log feature flag usage as debug", () => {
-        vi.stubEnv("NODE_ENV", "development");
-        process.env.VITEST = "";
-
-        const testLogger = new (logger.constructor as any)();
-        testLogger.featureFlag("new-feature", true, "user123", {
-          experiment: "A",
-        });
-
-        expect(consoleMocks.debug).toHaveBeenCalled();
-      });
-
-      it("should log disabled feature flags", () => {
-        vi.stubEnv("NODE_ENV", "development");
-        process.env.VITEST = "";
-
-        const testLogger = new (logger.constructor as any)();
-        testLogger.featureFlag("old-feature", false, "user123");
-
-        expect(consoleMocks.debug).toHaveBeenCalled();
-      });
-    });
-
     describe("business", () => {
       it("should log business events as info", () => {
         const testLogger = new (logger.constructor as any)();
