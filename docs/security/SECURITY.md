@@ -30,8 +30,8 @@ React's default escaping handles HTML rendering. No raw HTML injection helpers a
 The CSP allows these external origins (see `next.config.js`):
 
 - `script-src`: `connect.facebook.net` (Facebook SDK), Vercel Live / Analytics (`vercel.live`, `va.vercel-scripts.com`, `vercel.app`).
-- `style-src`: `fonts.googleapis.com` (Google Fonts CSS).
-- `font-src`: `fonts.gstatic.com` (Google Fonts files).
+- `style-src`: `'self'` plus `'unsafe-inline'` (Tailwind 4 emits inline styles during SSR).
+- `font-src`: `'self' data:` only — Google Fonts are self-hosted via `next/font/google` (Next.js downloads the font files at build time and serves them from `/_next/static/media/`).
 - `connect-src`: `vercel.live`, `vercel.app`.
 - `frame-src`: `www.facebook.com` (share dialogs), Vercel Live.
 - `img-src` is `'self' data: https: blob:` to allow club crests served by football-data.org.
