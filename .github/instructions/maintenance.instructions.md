@@ -25,7 +25,7 @@ This document outlines the guidelines and patterns for code maintenance, refacto
 ### Dependency Management Guidelines
 
 - **Latest Library Versions**: Always use the latest stable versions of libraries and frameworks to ensure security, performance, and access to newest features. Research current versions before implementation.
-- **Verify library version compatibility**: Ensure that all libraries, especially those related to styling (e.g., Tailwind CSS, PostCSS) and build processes (e.g., Next.js, Storybook), are compatible with each other to avoid integration issues and unexpected behavior.
+- **Verify library version compatibility**: Ensure that all libraries, especially those related to styling (e.g., Tailwind CSS, PostCSS) and build processes (e.g., Next.js), are compatible with each other to avoid integration issues and unexpected behavior.
 
 ### Documentation Update Procedures
 
