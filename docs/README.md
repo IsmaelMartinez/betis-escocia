@@ -21,7 +21,6 @@ Welcome to the Peña Bética Escocesa website documentation.
 
 ## External Resources
 
-- **[Storybook](storybook/)** - Component design tokens and templates
 - **[Templates](templates/)** - Documentation and workflow templates
 
 ---

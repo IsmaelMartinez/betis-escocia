@@ -27,7 +27,7 @@ Guidelines for debugging the Peña Bética Escocesa site. The site is a public s
 ### Common pitfalls
 
 - **Always use latest stable versions** — research current library versions before implementation.
-- **Verify library version compatibility** — Tailwind/PostCSS, Next.js/Storybook compatibility matrices change between majors.
+- **Verify library version compatibility** — Tailwind/PostCSS and Next.js major versions can have breaking peer changes.
 
 ### Error resolution patterns
 
@@ -42,10 +42,6 @@ Guidelines for debugging the Peña Bética Escocesa site. The site is a public s
 
 - Confirm `NEXT_PUBLIC_SENTRY_DSN` (client) and `SENTRY_DSN` (server) are set; without them the Sentry SDK is silent.
 - Source maps are uploaded by `@sentry/nextjs` during the build; if stack traces are obfuscated, check the CI logs for a "Sentry source map" upload error.
-
-#### `react/no-unescaped-entities` in Storybook stories
-
-- Escape literal quotes/apostrophes inside JSX text with `&quot;` or `&apos;`. Lower concern; only affects Storybook build/dev.
 
 ### Troubleshooting sections in existing documentation
 

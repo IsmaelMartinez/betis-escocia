@@ -1,6 +1,6 @@
 # Testing Guide
 
-The site uses Vitest for unit and integration tests, and Playwright for end-to-end tests. Storybook covers component-level visual checks.
+The site uses Vitest for unit and integration tests, and Playwright for end-to-end tests.
 
 ## Running tests
 
@@ -10,7 +10,6 @@ npm run test:watch       # Watch mode
 npm run test:coverage    # v8 coverage with 80% thresholds
 npm run test:e2e         # Playwright (headless)
 npm run test:e2e:headed  # Playwright with browser UI
-npm run storybook        # Storybook dev server
 ```
 
 ## Layout
@@ -83,10 +82,6 @@ expect(data.matches).toBeInstanceOf(Array);
 All Playwright specs target public routes (`/`, `/partidos`, `/clasificacion`, etc.). There is no auth setup; `playwright.config.ts` only requires `FOOTBALL_DATA_API_KEY` in CI for the matches/standings pages to render real data. Tests can run against the bundled `npm run dev` server (configured automatically) or any environment via `PLAYWRIGHT_BASE_URL`.
 
 Use the `fixtures.ts` helpers in `e2e/` for shared selectors and navigation utilities.
-
-## Storybook
-
-Storybook v10 with the Vitest addon. Stories live next to components as `*.stories.tsx`. The MSW addon is available for stories that need a mocked API response. Run `npm run storybook` on port 6006.
 
 ## Coverage
 

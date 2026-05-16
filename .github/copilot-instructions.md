@@ -6,14 +6,6 @@ Real Betis supporters club website in Edinburgh, mobile-first, serving match vie
 
 **For comprehensive project details, architecture decisions, and implementation guides, see [CLAUDE.md](../CLAUDE.md).**
 
-## Storybook v10 notes
-
-This project uses Storybook v10. Things to know when generating story code:
-
-- Many Storybook packages (`@storybook/test`, `@storybook/addon-actions`, `@storybook/addon-controls`, `@storybook/addon-interactions`, `@storybook/addon-viewport`) are consolidated into the main `storybook` package. Use `import { within, userEvent } from 'storybook/test';` for `play` functions.
-- `@storybook/addon-vitest` is the recommended test integration over the older runner.
-- Storybook 9+ requires Node 20+, Next.js 14+, and Vite 5+.
-
 ## Workflow Routing
 
 - **Development**: `.github/instructions/development.instructions.md`

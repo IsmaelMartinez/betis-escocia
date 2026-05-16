@@ -23,12 +23,7 @@ export default defineConfig({
       url: "http://localhost/",
     },
     env: {
-      NEXT_PUBLIC_SUPABASE_URL: "https://test-supabase-url.com",
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: "test-anon-key",
-      SUPABASE_SERVICE_ROLE_KEY: "test-service-role-key",
-      // Test environment configuration
       NEXT_PUBLIC_DEBUG_MODE: "false",
-      // Disable Telegram feed delay in tests
       TELEGRAM_FEED_DELAY_MS: "0",
     },
     // Include all unit and integration tests, exclude E2E tests
@@ -48,7 +43,7 @@ export default defineConfig({
       "playwright.config.ts",
       "tests/canary/**", // Exclude canary tests as they're placeholders
     ],
-    setupFiles: ["tests/setup.ts"], // Use main test setup instead of Storybook-specific
+    setupFiles: ["tests/setup.ts"],
     // Coverage configuration
     coverage: {
       provider: "v8",
@@ -60,7 +55,6 @@ export default defineConfig({
         "dist/**",
         "node_modules/**",
         ".next/**",
-        "storybook-static/**",
 
         // Configuration files
         "**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*",
@@ -77,19 +71,12 @@ export default defineConfig({
         "__mocks__/**",
 
         // Development and documentation
-        ".storybook/**",
         "scripts/**",
-        "sql/**",
         "docs/**",
         "public/**",
-        "tasks/**",
 
         // TypeScript declaration files
         "**/*.d.ts",
-
-        // Stories and development files
-        "**/*.stories.{js,jsx,ts,tsx}",
-        "src/stories/**",
 
         // Specific project exclusions
         "src/instrumentation*.ts", // Sentry instrumentation

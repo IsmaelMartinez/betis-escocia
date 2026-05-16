@@ -68,13 +68,6 @@ const fetchStandings = unstable_cache(
 
 ### Component patterns
 
-#### Storybook for Component Development and Testing
-
-- Storybook v10 with the Vitest addon (`@storybook/addon-vitest`).
-- Create `.stories.tsx` files alongside each component.
-- Run `npm run storybook` to start the dev server on port 6006.
-- See ADR `docs/adr/009-storybook.md`.
-
 #### Mobile-first styling
 
 - Always start with mobile breakpoints and scale up.

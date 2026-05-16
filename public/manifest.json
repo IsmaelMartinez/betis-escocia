@@ -82,7 +82,7 @@
       "name": "Próximos Partidos",
       "short_name": "Partidos",
       "description": "Ver próximos partidos del Betis",
-      "url": "/",
+      "url": "/partidos",
       "icons": [
         {
           "src": "/images/logo_no_texto.jpg",
@@ -92,23 +92,10 @@
       ]
     },
     {
-      "name": "RSVP",
-      "short_name": "RSVP",
-      "description": "Confirmar asistencia a eventos",
-      "url": "/rsvp",
-      "icons": [
-        {
-          "src": "/images/logo_no_texto.jpg",
-          "sizes": "192x192",
-          "type": "image/jpeg"
-        }
-      ]
-    },
-    {
-      "name": "Contacto",
-      "short_name": "Contacto",
-      "description": "Contactar con la peña",
-      "url": "/contacto",
+      "name": "Clasificación",
+      "short_name": "LaLiga",
+      "description": "Clasificación de La Liga",
+      "url": "/clasificacion",
       "icons": [
         {
           "src": "/images/logo_no_texto.jpg",

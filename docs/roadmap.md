@@ -31,16 +31,7 @@ These packages are pinned below latest major versions and need explicit migratio
 
 ### Audit
 
-- A handful of low-severity advisories remain in `elliptic` deep inside `@storybook/nextjs`. No fix available without a Storybook major downgrade. Monitor for upstream resolution.
 - Dependabot is configured for weekly grouped minor/patch updates with `next`, `react`, `react-dom` excluded for isolated review.
-
-## Mid-term: optional follow-ups
-
-Items that were considered during iteration 6 but deferred. None are blocking; pick up if they earn their keep.
-
-- **Trim `apiUtils.ts` further.** With only two `auth-less` routes left, the wrapper still ships a `BusinessLogicError` class and a fall-through `createSuccessResponse` branch that is unreachable in practice. Inlining the validation into each route would lose ~100 lines but couple them; keeping the wrapper is cheap.
-- **Re-evaluate Storybook.** With the site reduced to ~25 surviving components, the dev-dependency footprint (Storybook v10, addons, MSW Storybook addon) may not be worth the value. Removing it would drop several MB of `devDependencies` but lose the visual-isolation workflow.
-- **Strip the remaining specialised logger helpers.** `log.auth`, `log.apiRequest`, `log.business`, `log.child` have no live callers. Left in place during iteration 6 because they're idiomatic logger surface; revisit if the logger gets touched for another reason.
 
 ## Future: enhancement ideas
 
@@ -52,7 +43,6 @@ Items that were considered during iteration 6 but deferred. None are blocking; p
 ### Developer experience
 
 - **CI/CD Enhancement**: Add Lighthouse / accessibility audits to the pipeline.
-- **Component Documentation**: Expand Storybook coverage for the surviving components (if Storybook stays — see mid-term).
 
 ### Infrastructure
 

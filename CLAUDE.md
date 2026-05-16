@@ -26,8 +26,6 @@ npm run test:watch       # Vitest watch mode
 npm run test:coverage    # Vitest coverage report with v8 provider
 npm run test:e2e         # Playwright E2E tests (headless)
 npm run test:e2e:headed  # Playwright E2E tests (headed)
-npm run storybook        # Storybook dev server
-npm run build-storybook  # Build Storybook
 ```
 
 ### Pre-commit Hooks (Lefthook)
@@ -48,7 +46,7 @@ Pre-commit hooks run before each commit: ESLint, Prettier, TypeScript. They inst
 - **Styling**: Tailwind CSS 4 with custom Betis branding
 - **External data**: football-data.org for matches and La Liga standings — `/api/standings` uses `unstable_cache` (24 h); `/api/matches` uses route-segment `revalidate` (30 min)
 - **Observability**: Sentry for error monitoring
-- **Testing**: Vitest 4 + Playwright + Storybook v10
+- **Testing**: Vitest 4 + Playwright
 
 ### Key Directories
 
@@ -138,15 +136,6 @@ export const GET = createApiHandler({
 
 Both routes are anonymous; there is no auth context.
 
-## Component Development
-
-### Storybook Integration
-
-- Storybook v10 with the Vitest addon.
-- Create `.stories.tsx` files alongside components.
-- Use `import { within, userEvent } from 'storybook/test'`.
-- Mocks live in `__mocks__/next/image.tsx`; MSW handles API mocking.
-
 ## Testing Patterns
 
 ### Vitest
@@ -157,9 +146,8 @@ Both routes are anonymous; there is no auth context.
 
 ### Mocking external data
 
-- Storybook stories: MSW handlers in `tests/msw/handlers.ts`.
 - API-route integration tests: mock `FootballDataService` directly (see `tests/integration/api/matches-comprehensive.test.ts`).
-- Component unit tests (`AllMatches`, `UpcomingMatchesWidget`): stub `global.fetch` with `vi.stubGlobal("fetch", vi.fn())` — simpler than wiring MSW for a single-call surface.
+- Component unit tests (`AllMatches`, `UpcomingMatchesWidget`): stub `global.fetch` with `vi.stubGlobal("fetch", vi.fn())`.
 
 ### E2E (Playwright)
 

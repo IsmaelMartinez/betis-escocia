@@ -29,10 +29,9 @@ Key testing files:
 
 > See [CLAUDE.md](../../CLAUDE.md) for complete testing patterns and examples
 
-- **Unit tests**: Vitest in `tests/unit/`
+- **Unit tests**: Vitest in `tests/unit/` (component tests live under `tests/unit/components/`)
 - **Integration tests**: API routes in `tests/integration/`
 - **E2E tests**: Playwright (public routes only, no auth setup)
-- **Component tests**: Storybook v10 with Vitest addon
 
 ### Mocking external surfaces
 
