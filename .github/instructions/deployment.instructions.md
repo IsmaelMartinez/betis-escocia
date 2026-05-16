@@ -2,7 +2,7 @@
 
 ## Description
 
-Guidelines for CI/CD and deployment workflows. The project deploys to Vercel via its native Git integration; CI runs lint, type-check, the Vitest suite, build, and (non-blocking) Storybook build + coverage.
+Guidelines for CI/CD and deployment workflows. The project deploys to Vercel via its native Git integration; CI runs lint, type-check, the Vitest suite, build, and (non-blocking) coverage.
 
 ## Relevant files
 
@@ -17,7 +17,7 @@ Guidelines for CI/CD and deployment workflows. The project deploys to Vercel via
 Two jobs run on every push and PR:
 
 - **Tests (Required)** — `npm run lint`, `npm run type-check`, `npm test`, `npm run build`. This is the merge gate.
-- **Quality Checks (Non-blocking)** — `npm run build-storybook`, `npm run test:coverage`, Codecov upload. Failures do not block merge.
+- **Quality Checks (Non-blocking)** — `npm run test:coverage`, Codecov upload. Failures do not block merge.
 
 Both jobs run on Node 22 and share a single secret: `FOOTBALL_DATA_API_KEY`.
 

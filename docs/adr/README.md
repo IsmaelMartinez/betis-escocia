@@ -9,7 +9,6 @@ Concise documentation of key architectural decisions.
 | [002](./002-football-api.md)     | Football-Data.org API         | ✅ Accepted                        |
 | [004](./004-feature-flags.md)    | Feature Flags (env vars)      | ⚠️ Superseded (removed 2026-05-16) |
 | [008](./008-testing-strategy.md) | Testing (Vitest + Playwright) | ✅ Accepted                        |
-| [009](./009-storybook.md)        | Storybook                     | ✅ Accepted                        |
 | [010](./010-error-monitoring.md) | Sentry Error Monitoring       | ✅ Accepted                        |
 | [012](./012-libraries.md)        | Core Libraries                | ✅ Accepted                        |
 | [013](./013-security.md)         | Security Architecture         | ✅ Accepted                        |

@@ -28,7 +28,7 @@ Vercel's analytics/speed-insights are auto-enabled in production builds when the
 
 ## CI
 
-`.github/workflows/ci.yml` runs lint, type-check, the Vitest suite, and the production build on every PR (`Tests (Required)` job). It also runs a non-blocking quality job that builds Storybook and uploads coverage to Codecov. GitHub's default code-scanning (CodeQL) runs separately and reports back as the `CodeQL` check. The `Tests (Required)` status is the merge gate; the Vercel preview deploy is non-blocking but useful for manual smoke checks.
+`.github/workflows/ci.yml` runs lint, type-check, the Vitest suite, and the production build on every PR (`Tests (Required)` job). It also runs a non-blocking quality job that uploads coverage to Codecov. GitHub's default code-scanning (CodeQL) runs separately and reports back as the `CodeQL` check. The `Tests (Required)` status is the merge gate; the Vercel preview deploy is non-blocking but useful for manual smoke checks.
 
 ## Caching
 

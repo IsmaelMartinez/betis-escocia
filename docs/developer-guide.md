@@ -77,7 +77,7 @@ Create `src/app/<route>/page.tsx`. If the page depends on external data, wrap fe
 
 ### Adding a new component
 
-Create the component plus a `.stories.tsx` alongside it. Mobile-first, use the Betis brand tokens (see `docs/design-system.md` and `CLAUDE.md`). Run `npm run storybook` to develop in isolation.
+Create the component under `src/components/`. Mobile-first, use the Betis brand tokens (see `docs/design-system.md` and `CLAUDE.md`). Cover behaviour with a co-located unit test (`*.test.tsx`).
 
 ## Common Tasks
 

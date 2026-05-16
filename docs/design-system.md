@@ -379,7 +379,6 @@ import CulturalFusionHero from "@/components/hero/CulturalFusionHero";
 
 - `containerClassName` (`string`, optional): Additional classes for the content container. Use this for width and alignment variations. Defaults to `"max-w-6xl text-center"`.
 
-**Storybook:** See `src/components/hero/CulturalFusionHero.stories.tsx` for examples
 
 ### FeatureCard
 
@@ -429,7 +428,6 @@ import { Users, Clock, CheckCircle } from "lucide-react";
 - Pattern overlay accent (verdiblanco-diagonal-subtle)
 - Typography system integration
 
-**Storybook:** See `src/components/FeatureCard.stories.tsx` for all variations
 
 ---
 
@@ -610,7 +608,3 @@ All color combinations meet WCAG AA standards (4.5:1 for normal text, 3:1 for la
 
 ---
 
-## Related Documentation
-
-- [Storybook: Design Tokens](storybook/design-tokens.mdx)
-- [Storybook: Patterns](storybook/patterns.mdx)

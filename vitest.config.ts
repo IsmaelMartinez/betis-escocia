@@ -48,7 +48,7 @@ export default defineConfig({
       "playwright.config.ts",
       "tests/canary/**", // Exclude canary tests as they're placeholders
     ],
-    setupFiles: ["tests/setup.ts"], // Use main test setup instead of Storybook-specific
+    setupFiles: ["tests/setup.ts"],
     // Coverage configuration
     coverage: {
       provider: "v8",
@@ -60,7 +60,6 @@ export default defineConfig({
         "dist/**",
         "node_modules/**",
         ".next/**",
-        "storybook-static/**",
 
         // Configuration files
         "**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*",
@@ -77,19 +76,12 @@ export default defineConfig({
         "__mocks__/**",
 
         // Development and documentation
-        ".storybook/**",
         "scripts/**",
-        "sql/**",
         "docs/**",
         "public/**",
-        "tasks/**",
 
         // TypeScript declaration files
         "**/*.d.ts",
-
-        // Stories and development files
-        "**/*.stories.{js,jsx,ts,tsx}",
-        "src/stories/**",
 
         // Specific project exclusions
         "src/instrumentation*.ts", // Sentry instrumentation

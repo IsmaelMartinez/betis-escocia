@@ -25,7 +25,6 @@ npm run dev           # Development server
 npm run build         # Production build
 npm test              # Run tests
 npm run test:e2e      # E2E tests
-npm run storybook     # Component dev (port 6006)
 npm run lint          # ESLint
 npm run type-check    # TypeScript
 ```
@@ -36,7 +35,7 @@ npm run type-check    # TypeScript
 - **Tailwind CSS 4** with custom Betis branding
 - **football-data.org** for match and standings data — `/api/standings` is wrapped with `unstable_cache` (24 h); `/api/matches` uses route-segment `revalidate` (30 min)
 - **Sentry** for error monitoring
-- **Vitest** + **Playwright** + **Storybook**
+- **Vitest** + **Playwright**
 
 No database. No authentication. The site is a static public page; match data flows directly from football-data.org.
 
