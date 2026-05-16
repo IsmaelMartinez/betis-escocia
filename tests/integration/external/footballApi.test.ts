@@ -18,14 +18,6 @@ vi.mock("@/lib/utils/logger", () => ({
     info: vi.fn(),
     warn: vi.fn(),
     error: vi.fn(),
-    database: vi.fn(),
-    business: vi.fn(),
-    apiRequest: vi.fn(),
-    auth: vi.fn(),
-    featureFlag: vi.fn(),
-    child: vi.fn(),
-    setGlobalContext: vi.fn(),
-    clearGlobalContext: vi.fn(),
   },
 }));
 
