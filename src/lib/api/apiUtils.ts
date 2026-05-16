@@ -2,27 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { ZodError, ZodSchema } from "zod";
 import { log } from "@/lib/utils/logger";
 
-export interface ApiContext {
+interface ApiContext {
   request: NextRequest;
   params?: Promise<Record<string, string>>;
 }
 
-export interface ApiHandlerConfig<TInput = unknown, TOutput = unknown> {
+interface ApiHandlerConfig<TInput = unknown, TOutput = unknown> {
   schema?: ZodSchema<TInput>;
   handler: (data: TInput, context: ApiContext) => Promise<TOutput>;
 }
 
-export class BusinessLogicError extends Error {
-  constructor(
-    message: string,
-    public statusCode: number = 400,
-  ) {
-    super(message);
-    this.name = "BusinessLogicError";
-  }
-}
-
-export interface ApiResponse<T = unknown> {
+interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   message?: string;
@@ -30,18 +20,7 @@ export interface ApiResponse<T = unknown> {
   details?: string[];
 }
 
-export function createSuccessResponse<T>(
-  data?: T,
-  message?: string,
-): NextResponse<ApiResponse<T>> {
-  return NextResponse.json({
-    success: true,
-    ...(data !== undefined && { data }),
-    ...(message && { message }),
-  });
-}
-
-export function createErrorResponse(
+function createErrorResponse(
   error: string,
   status: number,
   details?: string[],
@@ -56,7 +35,7 @@ export function createErrorResponse(
   );
 }
 
-export function handleZodError(error: ZodError): NextResponse<ApiResponse> {
+function handleZodError(error: ZodError): NextResponse<ApiResponse> {
   const errorMessages = error.issues.map((issue) => {
     const path = issue.path.join(".");
     switch (issue.code) {
@@ -96,16 +75,9 @@ export function createApiHandler<TInput = unknown, TOutput = unknown>(
             const url = new URL(request.url);
             const queryParams = Object.fromEntries(url.searchParams.entries());
             validatedData = config.schema.parse(queryParams);
-          } else if (
-            request.method === "POST" ||
-            request.method === "PUT" ||
-            request.method === "PATCH" ||
-            request.method === "DELETE"
-          ) {
+          } else {
             const body = await request.json();
             validatedData = config.schema.parse(body);
-          } else {
-            validatedData = {} as TInput;
           }
         } catch (error) {
           if (error instanceof ZodError) {
@@ -122,15 +94,12 @@ export function createApiHandler<TInput = unknown, TOutput = unknown>(
       if (result && typeof result === "object" && "success" in result) {
         return NextResponse.json(result);
       }
-      return createSuccessResponse(result);
+      return NextResponse.json({ success: true, data: result });
     } catch (error) {
       log.error("API Handler Error:", error);
 
       if (error instanceof ZodError) {
         return handleZodError(error);
-      }
-      if (error instanceof BusinessLogicError) {
-        return createErrorResponse(error.message, error.statusCode);
       }
       if (error instanceof Error) {
         return createErrorResponse(error.message, 400);
