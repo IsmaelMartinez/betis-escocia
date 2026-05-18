@@ -11,7 +11,6 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
     console.error("Application error:", error);
   }, [error]);
 
@@ -20,7 +19,7 @@ export default function Error({
       <div className="max-w-md w-full text-center">
         <div className="mb-8">
           <h1 className="text-6xl font-black text-red-600 mb-4">¡Oops!</h1>
-          <h2 className="text-2xl font-bold text-betis-black mb-4">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
             Algo salió mal
           </h2>
           <p className="text-gray-600 mb-8">
@@ -31,14 +30,14 @@ export default function Error({
         <div className="space-y-4">
           <button
             onClick={() => reset()}
-            className="inline-block bg-betis-green text-white px-6 py-3 rounded-lg font-semibold hover:bg-betis-green/90 transition-colors mr-4"
+            className="inline-block bg-betis-verde text-white px-6 py-3 rounded-lg font-semibold hover:bg-betis-verde-dark transition-colors mr-4"
           >
             Intentar de nuevo
           </button>
 
           <Link
             href="/"
-            className="inline-block bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors"
+            className="inline-block bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-betis-verde-dark transition-colors"
           >
             Volver al inicio
           </Link>
