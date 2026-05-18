@@ -9,11 +9,10 @@ Concise documentation of key architectural decisions.
 | [002](./002-football-api.md)     | Football-Data.org API         | ✅ Accepted                        |
 | [004](./004-feature-flags.md)    | Feature Flags (env vars)      | ⚠️ Superseded (removed 2026-05-16) |
 | [008](./008-testing-strategy.md) | Testing (Vitest + Playwright) | ✅ Accepted                        |
-| [010](./010-error-monitoring.md) | Sentry Error Monitoring       | ✅ Accepted                        |
 | [012](./012-libraries.md)        | Core Libraries                | ✅ Accepted                        |
 | [013](./013-security.md)         | Security Architecture         | ✅ Accepted                        |
 
-ADRs 001 (Clerk), 003 (Supabase), 005 (Classification Cache), 006 (Clerk-Supabase JWT), 007 (Trivia System), 011 (Admin Notifications), and 014 (Database Migrations) were removed during the 2026-05 static-site simplification. The site no longer has a database, authentication, or user-submitted content. Match and standings data come directly from football-data.org; `/api/standings` caches with `unstable_cache` (24 h) and `/api/matches` uses route-segment `revalidate` (30 min).
+ADRs 001 (Clerk), 003 (Supabase), 005 (Classification Cache), 006 (Clerk-Supabase JWT), 007 (Trivia System), 009 (Storybook), 010 (Sentry Error Monitoring), 011 (Admin Notifications), and 014 (Database Migrations) were removed during the 2026-05 static-site simplification. The site no longer has a database, authentication, user-submitted content, or error monitoring. Match and standings data come directly from football-data.org; `/api/standings` caches with `unstable_cache` (24 h) and `/api/matches` uses route-segment `revalidate` (30 min).
 
 ## Creating New ADRs
 

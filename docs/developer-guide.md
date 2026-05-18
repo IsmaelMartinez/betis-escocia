@@ -26,16 +26,12 @@ Only `FOOTBALL_DATA_API_KEY` is required. Get a free key at https://www.football
 
 Optional:
 
-| Variable                     | Purpose                                                    |
-| ---------------------------- | ---------------------------------------------------------- |
-| `NEXT_PUBLIC_SITE_URL`       | Used by `sitemap.ts` and `metadataBase`. Defaults to prod. |
-| `NEXT_PUBLIC_SENTRY_DSN`     | Sentry client DSN. Sentry is silent without it.            |
-| `SENTRY_DSN`                 | Sentry server DSN (used by the Next.js Sentry SDK).        |
-| `NEXT_PUBLIC_SENTRY_RELEASE` | Release tag for client Sentry events.                      |
-| `SENTRY_RELEASE`             | Release tag for server Sentry events.                      |
-| `GOOGLE_SITE_VERIFICATION`   | Google Search Console verification tag.                    |
-| `FOOTBALL_DATA_API_URL`      | Override the football-data.org base URL (rare).            |
-| `API_RATE_LIMIT_PER_MINUTE`  | Override the default 10 req/min cap.                       |
+| Variable                    | Purpose                                                    |
+| --------------------------- | ---------------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL`      | Used by `sitemap.ts` and `metadataBase`. Defaults to prod. |
+| `GOOGLE_SITE_VERIFICATION`  | Google Search Console verification tag.                    |
+| `FOOTBALL_DATA_API_URL`     | Override the football-data.org base URL (rare).            |
+| `API_RATE_LIMIT_PER_MINUTE` | Override the default 10 req/min cap.                       |
 
 Pre-commit hooks (lint, prettier, type-check) run via Lefthook; they install on `npm install` via the `prepare` script.
 

@@ -38,11 +38,6 @@ Guidelines for debugging the Peña Bética Escocesa site. The site is a public s
 - **Empty match list**: the season parameter expects the _start_ year of the season (e.g. `2025` for the 2025-2026 season). See `getCurrentFootballSeason()` in `footballDataService.ts`.
 - **Stale data after deploy**: `/api/matches` caches at 30 min via route-segment `revalidate`; `/api/standings` caches at 24 h via `unstable_cache` (tag `"la-liga-standings"`). For matches, wait for the cache window or hit the route with a different query to force a fresh segment; for standings, call `revalidateTag("la-liga-standings")` from a server action to force a refresh in code.
 
-#### Sentry not capturing errors
-
-- Confirm `NEXT_PUBLIC_SENTRY_DSN` (client) and `SENTRY_DSN` (server) are set; without them the Sentry SDK is silent.
-- Source maps are uploaded by `@sentry/nextjs` during the build; if stack traces are obfuscated, check the CI logs for a "Sentry source map" upload error.
-
 ### Troubleshooting sections in existing documentation
 
 - Consult relevant ADRs in `docs/adr/` for the architectural decisions that might be biting you.

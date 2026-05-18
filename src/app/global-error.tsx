@@ -1,7 +1,6 @@
-'use client';
-import * as Sentry from "@sentry/nextjs";
-import { useEffect } from 'react';
-import Link from 'next/link';
+"use client";
+import { useEffect } from "react";
+import Link from "next/link";
 
 export default function GlobalError({
   error,
@@ -11,9 +10,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
-    console.error('Global application error:', error);
-    Sentry.captureException(error);
+    console.error("Global application error:", error);
   }, [error]);
 
   return (
@@ -30,7 +27,7 @@ export default function GlobalError({
                 Ha ocurrido un error crítico en la aplicación.
               </p>
             </div>
-            
+
             <div className="space-y-4">
               <button
                 onClick={() => reset()}
@@ -38,7 +35,7 @@ export default function GlobalError({
               >
                 Intentar de nuevo
               </button>
-              
+
               <Link
                 href="/"
                 className="inline-block bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-betis-verde-dark transition-colors"

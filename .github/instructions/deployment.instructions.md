@@ -34,7 +34,6 @@ Required:
 Optional:
 
 - `NEXT_PUBLIC_SITE_URL` — overrides the canonical site URL for the sitemap and Open Graph metadata.
-- `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_RELEASE` — Sentry wiring.
 - `GOOGLE_SITE_VERIFICATION` — Google Search Console verification.
 
 See `docs/deployment-guide.md` for the full table including scope (client/server/build) and `docs/developer-guide.md` for local-dev specifics.

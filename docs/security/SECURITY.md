@@ -23,7 +23,7 @@ The only inputs accepted by the API are query parameters on `/api/matches` (whic
 
 ## XSS
 
-React's default escaping handles HTML rendering. No raw HTML injection helpers are used in product code; the only place Next.js inlines untrusted strings is the Sentry telemetry tunnel route, which routes browser → Sentry traffic and does not render HTML.
+React's default escaping handles HTML rendering. No raw HTML injection helpers are used in product code.
 
 ## Third-party origins
 
@@ -35,8 +35,6 @@ The CSP allows these external origins (see `next.config.js`):
 - `connect-src`: `'self'`, `vercel.live`, `vercel.app`.
 - `frame-src`: `'self'` and Vercel Live.
 - `img-src` is `'self' data: https: blob:` to allow club crests served by football-data.org.
-
-Sentry is not listed in the CSP — browser-side Sentry traffic is rewritten through the local `tunnelRoute: "/monitoring-tunnel"` so the connection target stays on `'self'`.
 
 ## Reporting a vulnerability
 
