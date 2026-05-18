@@ -1,37 +1,30 @@
 # Roadmap
 
-**Last updated:** 2026-05-16
+**Last updated:** 2026-05-18
 
-This document tracks planned and possible future work for the Peña Bética Escocesa site after the 2026-05 static-site simplification (PRs #427–#432). The site is now a public static page with two football-data.org-backed API routes; the database, authentication, admin panel, trivia, RSVP/contact surface, and feature-flag abstraction have all been removed, and a final dead-code/CSP/orphan-component sweep landed in PR #432.
+This document tracks planned and possible future work for the Peña Bética Escocesa site after the 2026-05 static-site simplification. The site is now a public static site with two football-data.org-backed API routes; the database, authentication, admin panel, trivia, RSVP/contact surface, feature-flag abstraction, Storybook, MSW, and Sentry observability have all been removed.
 
 ## Recently completed
 
-The static-site simplification ran over six PRs in May 2026:
+The static-site simplification ran over twelve PRs in May 2026:
 
 - **#427** — switched `/partidos` to the live football-data.org API, removed the admin panel and background sync.
 - **#428** — removed the Supabase dependency, SQL folder, and remaining DB helpers.
 - **#429** — removed Clerk authentication, middleware, sign-in/sign-up pages.
 - **#430** — removed the feature-flag abstraction and inlined the nav.
 - **#431** — removed obsolete ADRs and rewrote the docs to match reality.
-- **#432** — deleted orphan components (FilteredMatches, PaginatedMatches, CompetitionFilter, FacebookPagePlugin, InstagramEmbed, SocialMediaDashboard), stripped `log.database` / `log.featureFlag`, dropped the mock-heavy `matches.test.ts`, trimmed unused CSP origins (reCAPTCHA, hCaptcha, Cloudflare Turnstile, Google Fonts since `next/font` self-hosts), fixed a stale `nextConfigPath` in `.storybook/main.ts`.
+- **#432** — deleted orphan components, stripped dead logger helpers, trimmed unused CSP origins, dropped the mock-heavy `matches.test.ts`.
+- **#434** — dropped the orphan FacebookSDK and trimmed Facebook CSP origins.
+- **#435** — trimmed dead `BusinessLogicError` and unexported `apiUtils` helpers.
+- **#436** — stripped dead logger helpers (`auth`, `apiRequest`, `business`, `child`).
+- **#437 / #438** — removed Storybook entirely; cleanup sweep removed dead schemas, MSW, stale `.vscode/` directory and Supabase env vars in `vitest.config.ts`, refreshed PWA shortcuts.
+- **#439** — removed Sentry error monitoring (never fully wired in Vercel) and the `@sentry/nextjs` dependency.
 
-End-state: a public static page reading match data from football-data.org, with no DB, auth, admin, or feature-flag surface.
+End-state: a public static site with one external data source (football-data.org), no DB / auth / admin / trivia / RSVP/contact / feature flags / Storybook / MSW / Sentry.
 
 ## Near-term: maintenance
 
-### Major dependency upgrades
-
-These packages are pinned below latest major versions and need explicit migration:
-
-| Package        | Current | Latest | Risk   | Notes                                                                                                |
-| -------------- | ------- | ------ | ------ | ---------------------------------------------------------------------------------------------------- |
-| `lucide-react` | 0.577.0 | 1.x    | Medium | Icon library used across the site. v1 renamed/reorganized icons. Audit all imports before upgrading. |
-| `typescript`   | 5.9.x   | 6.x    | Medium | TS 6 introduces new strictness rules. Run `tsc --noEmit` after upgrade to assess impact.             |
-| `undici`       | 7.x     | 8.x    | Low    | Dev dependency only. May affect MSW/test mocking. Test suite is the main validation.                 |
-
-### Audit
-
-- Dependabot is configured for weekly grouped minor/patch updates with `next`, `react`, `react-dom` excluded for isolated review.
+Dependabot is configured for weekly grouped minor/patch updates with `next`, `react`, `react-dom` excluded for isolated review. Major framework versions (Next.js, React, TypeScript) and the icon library (`lucide-react`) are all on current latest; revisit when the next major drops.
 
 ## Future: enhancement ideas
 
