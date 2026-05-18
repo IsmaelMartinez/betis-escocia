@@ -16,7 +16,7 @@ npm run dev                       # http://localhost:3000
 FOOTBALL_DATA_API_KEY=your-key   # free at https://www.football-data.org/
 ```
 
-Optional: `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SENTRY_DSN`, `GOOGLE_SITE_VERIFICATION`. See `docs/developer-guide.md` for the full list.
+Optional: `NEXT_PUBLIC_SITE_URL`, `GOOGLE_SITE_VERIFICATION`. See `docs/developer-guide.md` for the full list.
 
 ## Commands
 
@@ -34,7 +34,6 @@ npm run type-check    # TypeScript
 - **Next.js 16** + React 19 + TypeScript
 - **Tailwind CSS 4** with custom Betis branding
 - **football-data.org** for match and standings data — `/api/standings` is wrapped with `unstable_cache` (24 h); `/api/matches` uses route-segment `revalidate` (30 min)
-- **Sentry** for error monitoring
 - **Vitest** + **Playwright**
 
 No database. No authentication. The site is a static public page; match data flows directly from football-data.org.

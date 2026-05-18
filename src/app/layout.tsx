@@ -9,7 +9,6 @@ import {
 import "./globals.css";
 import Layout from "@/components/layout/Layout";
 import OfflineDetector from "@/components/OfflineDetector";
-import * as Sentry from "@sentry/nextjs";
 
 // Conditionally import Vercel Analytics/SpeedInsights only in production on Vercel
 const isVercel = process.env.VERCEL === "1";
@@ -168,9 +167,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${displayFont.variable} ${bodyFont.variable} ${accentFont.variable} antialiased`}
       >
         <OfflineDetector />
-        <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
-          <Layout>{children}</Layout>
-        </Sentry.ErrorBoundary>
+        <Layout>{children}</Layout>
         {isVercel && <Analytics />}
         {isVercel && <SpeedInsights />}
       </body>

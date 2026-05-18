@@ -47,7 +47,7 @@ This document outlines the guidelines and patterns for code maintenance, refacto
 
 #### Robust Error Handling & Logging
 
-- Review error boundaries (`src/app/error.tsx`, `src/app/global-error.tsx`, `src/components/ErrorBoundary.tsx`) and ensure comprehensive logging (e.g., Sentry, LogRocket) is in place for production.
+- Review error boundaries (`src/app/error.tsx`, `src/app/global-error.tsx`, `src/components/ErrorBoundary.tsx`) and ensure errors are surfaced clearly to users; the site has no external error monitoring, so Vercel deployment logs are the only post-deploy signal.
 
 #### Centralized State Management
 

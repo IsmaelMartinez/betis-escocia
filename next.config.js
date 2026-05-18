@@ -113,42 +113,12 @@ const nextConfig = {
   // Only enable source maps in production if needed for debugging
   productionBrowserSourceMaps: false,
   experimental: {
-    optimizePackageImports: [
-      "lucide-react",
-      "date-fns",
-      "@sentry/nextjs",
-      "zod",
-    ],
+    optimizePackageImports: ["lucide-react", "date-fns", "zod"],
   },
 };
 
-const { withSentryConfig } = require("@sentry/nextjs");
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
 
-module.exports = withBundleAnalyzer(
-  withSentryConfig(nextConfig, {
-    // For all available options, see: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-
-    // Upload a larger amount of data to Sentry
-    widenClientFileUpload: true,
-
-    // Transpiles SDK to be compatible with older browsers.
-    // Remove this if you only support modern browsers
-    transpileClientSDK: true,
-
-    // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
-    // This can't be configured when a custom `server.dev.url` is set in the Sentry config.
-    tunnelRoute: "/monitoring-tunnel",
-
-    // Hides source maps from generated client bundles.
-    hideSourceMaps: true,
-
-    // Automatically tree-shake Sentry SDKs to optimize bundle size.
-    autoInstrumentServerFunctions: true,
-    autoInstrumentClientFunctions: true,
-
-    // For all available options, see: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-  }),
-);
+module.exports = withBundleAnalyzer(nextConfig);

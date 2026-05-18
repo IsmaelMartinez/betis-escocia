@@ -62,7 +62,6 @@ export default defineConfig({
         "tailwind.config.js",
         "postcss.config.mjs",
         "next.config.js",
-        "sentry.*.config.ts",
 
         // Test files and directories
         "playwright/**",
@@ -79,7 +78,6 @@ export default defineConfig({
         "**/*.d.ts",
 
         // Specific project exclusions
-        "src/instrumentation*.ts", // Sentry instrumentation
         "src/middleware.ts", // Already well-tested, complex to mock
       ],
       include: ["src/**/*.{js,jsx,ts,tsx}"],

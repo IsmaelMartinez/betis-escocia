@@ -45,7 +45,6 @@ Pre-commit hooks run before each commit: ESLint, Prettier, TypeScript. They inst
 - **Frontend**: Next.js 16 App Router, React 19, TypeScript
 - **Styling**: Tailwind CSS 4 with custom Betis branding
 - **External data**: football-data.org for matches and La Liga standings — `/api/standings` uses `unstable_cache` (24 h); `/api/matches` uses route-segment `revalidate` (30 min)
-- **Observability**: Sentry for error monitoring
 - **Testing**: Vitest 4 + Playwright
 
 ### Key Directories
@@ -163,7 +162,6 @@ Only one variable is required:
 Optional:
 
 - `NEXT_PUBLIC_SITE_URL` — used by `sitemap.ts` and `metadataBase`; defaults to the production Vercel URL
-- `NEXT_PUBLIC_SENTRY_DSN` — Sentry client DSN; without it, Sentry is silent in production
 - `GOOGLE_SITE_VERIFICATION` — Google Search Console verification meta tag
 
 ## Repo Butler

@@ -47,7 +47,6 @@ These packages are pinned below latest major versions and need explicit migratio
 ### Infrastructure
 
 - **E2E Test Coverage**: Expand Playwright tests for the public routes (currently smoke-only).
-- **Monitoring**: Leverage Sentry more fully for performance monitoring and session replay if traffic justifies it.
 
 ## What's working well (preserve)
 
