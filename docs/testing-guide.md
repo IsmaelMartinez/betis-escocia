@@ -19,8 +19,7 @@ tests/
 ├── unit/                # Vitest unit tests for components and pure functions
 ├── integration/         # Vitest integration tests for API routes
 ├── helpers/             # Test utilities
-├── msw/                 # MSW handlers for external API mocking
-└── setup.ts             # jsdom + jest-dom matchers
+└── setup.ts             # jsdom + jest-dom matchers + fetch polyfill
 
 e2e/                     # Playwright specs (public routes only)
 ```
@@ -41,7 +40,7 @@ vi.mock("@/components/match/MatchCard", () => ({
 
 ### Mocking `fetch` for client components
 
-`AllMatches` and `UpcomingMatchesWidget` fetch directly from `/api/matches`. Stub `fetch` per test rather than reaching for MSW:
+`AllMatches` and `UpcomingMatchesWidget` fetch directly from `/api/matches`. Stub `fetch` per test:
 
 ```typescript
 beforeEach(() => {
