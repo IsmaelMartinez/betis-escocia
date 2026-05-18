@@ -1,5 +1,37 @@
 @import "tailwindcss";
 
+/* Register brand-color CSS variables as Tailwind v4 theme colors so
+ * modifier variants (hover:, focus:, group-hover:, etc.) are generated
+ * for every utility shape (bg-, text-, border-, ring-, from-, to-, ...).
+ * Without this block, only the static utility classes defined further
+ * below work, and any `hover:bg-betis-verde-dark` etc. silently no-ops.
+ */
+@theme inline {
+  --color-betis-verde: var(--betis-verde);
+  --color-betis-verde-dark: var(--betis-verde-dark);
+  --color-betis-verde-light: var(--betis-verde-light);
+  --color-betis-verde-pale: var(--betis-verde-pale);
+  --color-betis-oro: var(--betis-oro);
+  --color-betis-oro-dark: var(--betis-oro-dark);
+  --color-betis-oro-light: var(--betis-oro-light);
+  --color-betis-blanco: var(--betis-blanco);
+  --color-betis-negro: var(--betis-negro);
+  --color-betis-dark: var(--betis-dark);
+  --color-scotland-navy: var(--scotland-navy);
+  --color-scotland-blue: var(--scotland-blue);
+  --color-canvas-warm: var(--canvas-warm);
+  --color-oro-bright: var(--oro-bright);
+  --color-oro-antique: var(--oro-antique);
+
+  /* Legacy aliases — kept until call sites migrate to the canonical names */
+  --color-betis-green: var(--betis-verde);
+  --color-betis-green-dark: var(--betis-verde-dark);
+  --color-betis-green-light: var(--betis-verde-light);
+  --color-betis-gold: var(--betis-oro);
+  --color-betis-gold-dark: var(--betis-oro-dark);
+  --color-betis-black: var(--betis-negro);
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
