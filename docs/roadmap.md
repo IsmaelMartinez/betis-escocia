@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-05-18
 
-This document tracks planned and possible future work for the Peña Bética Escocesa site after the 2026-05 static-site simplification. The site is now a public static page with two football-data.org-backed API routes; the database, authentication, admin panel, trivia, RSVP/contact surface, feature-flag abstraction, Storybook, MSW, and Sentry observability have all been removed.
+This document tracks planned and possible future work for the Peña Bética Escocesa site after the 2026-05 static-site simplification. The site is now a public static site with two football-data.org-backed API routes; the database, authentication, admin panel, trivia, RSVP/contact surface, feature-flag abstraction, Storybook, MSW, and Sentry observability have all been removed.
 
 ## Recently completed
 
@@ -17,10 +17,10 @@ The static-site simplification ran over twelve PRs in May 2026:
 - **#434** — dropped the orphan FacebookSDK and trimmed Facebook CSP origins.
 - **#435** — trimmed dead `BusinessLogicError` and unexported `apiUtils` helpers.
 - **#436** — stripped dead logger helpers (`auth`, `apiRequest`, `business`, `child`).
-- **#437 / #438** — removed Storybook entirely; cleanup sweep removed dead schemas, MSW, stale `.vscode/` and `vitest.config.ts` env vars, refreshed PWA shortcuts.
+- **#437 / #438** — removed Storybook entirely; cleanup sweep removed dead schemas, MSW, stale `.vscode/` directory and Supabase env vars in `vitest.config.ts`, refreshed PWA shortcuts.
 - **#439** — removed Sentry error monitoring (never fully wired in Vercel) and the `@sentry/nextjs` dependency.
 
-End-state: a public static page with twelve routes (ten static + two dynamic API routes), one external dependency (football-data.org), no DB / auth / admin / feature flags / Storybook / MSW / Sentry.
+End-state: a public static site with one external data source (football-data.org), no DB / auth / admin / trivia / RSVP/contact / feature flags / Storybook / MSW / Sentry.
 
 ## Near-term: maintenance
 
