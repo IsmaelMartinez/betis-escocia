@@ -140,13 +140,13 @@ async function MatchDetailContent({ matchId }: { matchId: number }) {
         <nav className="mb-8" aria-label="Navegación de migas de pan">
           <ol className="flex items-center space-x-2 text-sm text-gray-600">
             <li>
-              <Link href="/" className="hover:text-betis-verde transition-colors">
+              <Link href="/" className="hover:text-betis-verde-dark transition-colors">
                 Inicio
               </Link>
             </li>
             <li className="text-gray-400">/</li>
             <li>
-              <Link href="/partidos" className="hover:text-betis-verde transition-colors">
+              <Link href="/partidos" className="hover:text-betis-verde-dark transition-colors">
                 Partidos
               </Link>
             </li>

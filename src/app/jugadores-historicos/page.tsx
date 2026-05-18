@@ -217,7 +217,7 @@ export default function JugadoresHistoricos() {
               className={`px-4 py-2 rounded-full font-heading font-bold text-sm transition-all duration-200 ${
                 activeEra === ALL_FILTER
                   ? "bg-betis-verde text-white shadow-lg"
-                  : "bg-white text-gray-600 border border-gray-200 hover:border-betis-verde hover:text-betis-verde"
+                  : "bg-white text-gray-600 border border-gray-200 hover:border-betis-verde hover:text-betis-verde-dark"
               }`}
             >
               Todos{" "}
@@ -232,7 +232,7 @@ export default function JugadoresHistoricos() {
                 className={`px-4 py-2 rounded-full font-heading font-bold text-sm transition-all duration-200 ${
                   activeEra === era
                     ? "bg-betis-verde text-white shadow-lg"
-                    : "bg-white text-gray-600 border border-gray-200 hover:border-betis-verde hover:text-betis-verde"
+                    : "bg-white text-gray-600 border border-gray-200 hover:border-betis-verde hover:text-betis-verde-dark"
                 }`}
               >
                 {ERA_CONFIG[era].title}{" "}
