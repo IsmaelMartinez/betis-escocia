@@ -41,9 +41,7 @@ function PlayerCardDetails({ player }: { player: Player }) {
       {player.stats && (
         <div className="flex items-center gap-2">
           <BarChart3 className="h-4 w-4 text-gray-400 flex-shrink-0" />
-          <p className="font-heading text-xs text-gray-500">
-            {player.stats}
-          </p>
+          <p className="font-heading text-xs text-gray-500">{player.stats}</p>
         </div>
       )}
 
