@@ -108,7 +108,10 @@ const nextConfig = {
   reactStrictMode: true,
   // Performance optimizations
   compiler: {
-    removeConsole: process.env.NODE_ENV === "production",
+    removeConsole:
+      process.env.NODE_ENV === "production"
+        ? { exclude: ["error", "warn"] }
+        : false,
   },
   // Only enable source maps in production if needed for debugging
   productionBrowserSourceMaps: false,
