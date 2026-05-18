@@ -165,7 +165,7 @@ export default function Home() {
               href="https://www.facebook.com/groups/beticosenescocia/"
               target="_blank"
               rel="noopener noreferrer"
-              className="group bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white hover:border-white px-10 py-5 rounded-2xl font-heading font-bold text-lg text-white hover:text-betis-verde transition-all duration-300 transform hover:scale-105"
+              className="group bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white hover:border-white px-10 py-5 rounded-2xl font-heading font-bold text-lg text-white hover:text-betis-verde-dark transition-all duration-300 transform hover:scale-105"
             >
               <span className="flex items-center gap-2">📘 Facebook</span>
             </a>
