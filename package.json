@@ -31,7 +31,7 @@
     "@hookform/resolvers": "^5.4.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
-    "axios": "^1.16.1",
+    "axios": "^1.17.0",
     "axios-rate-limit": "^1.9.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
@@ -40,7 +40,7 @@
     "next": "^16.2.7",
     "react": "^19.2.5",
     "react-dom": "^19.2.7",
-    "react-hook-form": "^7.77.0",
+    "react-hook-form": "^7.78.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -67,11 +67,11 @@
     "tailwindcss": "^4",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",
-    "undici": "^8.3.0",
+    "undici": "^8.4.0",
     "vitest": "^4.1.5"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "^4.61.0",
+    "@rollup/rollup-linux-x64-gnu": "^4.61.1",
     "@tailwindcss/oxide-linux-x64-gnu": "^4.2.4",
     "lightningcss-linux-x64-gnu": "^1.32.0"
   }
