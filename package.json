@@ -9,9 +9,11 @@
     "@babel/plugin-transform-modules-systemjs": "^7.29.4",
     "eslint": "^10.2.1",
     "glob": "^10.4.5",
+    "lighthouse": {
+      "@sentry/node": "^10.54.0"
+    },
     "postcss": "^8.5.10",
-    "rimraf": "^5.0.10",
-    "@sentry/node": "^10.54.0"
+    "rimraf": "^5.0.10"
   },
   "scripts": {
     "dev": "next dev --turbopack",
