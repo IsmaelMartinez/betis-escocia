@@ -5,7 +5,19 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
+    # Hold TypeScript majors: no typescript-eslint release supports TS 7 yet
+    # (typescript-eslint/typescript-eslint#10940). #470 sat 63 days red.
+    ignore:
+      - dependency-name: "typescript"
+        update-types:
+          - "version-update:semver-major"
     groups:
+      # vitest and its @vitest/* plugins are co-versioned; a major bump of
+      # one without the other fails npm ci with ERESOLVE (#500).
+      vitest:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
       all-minor-and-patch:
         applies-to: version-updates
         patterns:
