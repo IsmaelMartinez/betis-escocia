@@ -5,7 +5,21 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
+    # Hold TypeScript majors: typescript-eslint's peer range is
+    # typescript >=4.8.4 <6.1.0, so 7.x cannot install (#470 sat 63 days
+    # red). Remove this ignore once that peer range admits 7.x; upstream
+    # context is typescript-eslint/typescript-eslint#10940 (TS 7 is the Go port).
+    ignore:
+      - dependency-name: "typescript"
+        update-types:
+          - "version-update:semver-major"
     groups:
+      # vitest and its @vitest/* plugins are co-versioned; a major bump of
+      # one without the other fails npm ci with ERESOLVE (#500).
+      vitest:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
       all-minor-and-patch:
         applies-to: version-updates
         patterns:
