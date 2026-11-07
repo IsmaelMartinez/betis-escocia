@@ -4,7 +4,7 @@
 
 Real Betis supporters club website in Edinburgh, mobile-first, serving match viewing parties at Polwarth Tavern. Built on Next.js 16 with TypeScript. The site is a public static page: no database, no authentication, no admin surface. Match and standings data come directly from football-data.org — `/api/standings` is wrapped with `unstable_cache` (24 h); `/api/matches` uses route-segment `revalidate` (30 min).
 
-**For comprehensive project details, architecture decisions, and implementation guides, see [CLAUDE.md](../CLAUDE.md).**
+**For comprehensive project details, architecture decisions, and implementation guides, see [AGENTS.md](../AGENTS.md).**
 
 ## Workflow Routing
 
@@ -42,7 +42,7 @@ Real Betis supporters club website in Edinburgh, mobile-first, serving match vie
 
 ## Additional resources
 
-- **[CLAUDE.md](../CLAUDE.md)** — primary project reference with architecture and patterns
+- **[AGENTS.md](../AGENTS.md)** — primary project reference with architecture and patterns
 - **ADRs** — `docs/adr/` for the surviving architecture decisions
 
 ## Quick Reference

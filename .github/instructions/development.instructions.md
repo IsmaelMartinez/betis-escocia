@@ -16,7 +16,7 @@ Guidelines and patterns for the code development workflow on the Peña Bética E
 
 ## Relevant files
 
-> For the complete architecture overview, see [CLAUDE.md](../../CLAUDE.md).
+> For the complete architecture overview, see [AGENTS.md](../../AGENTS.md).
 
 Key development files:
 

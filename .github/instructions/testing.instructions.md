@@ -15,7 +15,7 @@ This document outlines the guidelines and patterns for the testing workflow, cov
 
 ## Relevant Files
 
-> For complete testing architecture, see [CLAUDE.md](../../CLAUDE.md)
+> For complete testing architecture, see [AGENTS.md](../../AGENTS.md)
 
 Key testing files:
 
@@ -27,7 +27,7 @@ Key testing files:
 
 ### Testing Strategy Overview
 
-> See [CLAUDE.md](../../CLAUDE.md) for complete testing patterns and examples
+> See [AGENTS.md](../../AGENTS.md) for complete testing patterns and examples
 
 - **Unit tests**: Vitest in `tests/unit/` (component tests live under `tests/unit/components/`)
 - **Integration tests**: API routes in `tests/integration/`
