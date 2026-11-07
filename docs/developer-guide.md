@@ -73,7 +73,7 @@ Create `src/app/<route>/page.tsx`. If the page depends on external data, wrap fe
 
 ### Adding a new component
 
-Create the component under `src/components/`. Mobile-first, use the Betis brand tokens (see `docs/design-system.md` and `CLAUDE.md`). Cover behaviour with a unit test in `tests/unit/components/`.
+Create the component under `src/components/`. Mobile-first, use the Betis brand tokens (see `docs/design-system.md` and `AGENTS.md`). Cover behaviour with a unit test in `tests/unit/components/`.
 
 ## Common Tasks
 
@@ -102,7 +102,7 @@ Lefthook runs the first three on commit, but `npm run build` only runs in CI; it
 
 ## References
 
-- `CLAUDE.md` — quick orientation aimed at Claude Code sessions
+- `AGENTS.md` — quick orientation aimed at AI coding agents
 - `docs/testing-guide.md` — how the test suites are structured
 - `docs/deployment-guide.md` — Vercel deploy specifics
 - `docs/design-system.md` — colour, typography, accessibility

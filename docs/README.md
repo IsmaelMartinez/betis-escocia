@@ -25,4 +25,4 @@ Welcome to the Peña Bética Escocesa website documentation.
 
 ---
 
-For project overview and Claude Code instructions, see [CLAUDE.md](../CLAUDE.md) in the project root.
+For project overview and AI agent instructions, see [AGENTS.md](../AGENTS.md) in the project root.
